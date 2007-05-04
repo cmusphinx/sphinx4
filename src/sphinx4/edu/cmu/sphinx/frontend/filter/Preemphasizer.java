@@ -11,108 +11,90 @@
  */
 package edu.cmu.sphinx.frontend.filter;
 
-import edu.cmu.sphinx.frontend.BaseDataProcessor;
-import edu.cmu.sphinx.frontend.Data;
-import edu.cmu.sphinx.frontend.DataEndSignal;
-import edu.cmu.sphinx.frontend.DataProcessingException;
-import edu.cmu.sphinx.frontend.DoubleData;
-import edu.cmu.sphinx.util.props.PropertyException;
-import edu.cmu.sphinx.util.props.PropertySheet;
-import edu.cmu.sphinx.util.props.PropertyType;
-import edu.cmu.sphinx.util.props.Registry;
+import edu.cmu.sphinx.frontend.*;
+import edu.cmu.sphinx.util.props.*;
 
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
- * Implements a high-pass filter that compensates for attenuation in the audio
- * data. Speech signals have an attenuation (a decrease in intensity of a
- * signal) of 20 dB/dec. It increases the relative magnitude of the higher
- * frequencies with respect to the lower frequencies.
- * 
- * The Preemphasizer takes a {@link Data}object that usually represents audio
- * data as input, and outputs the same {@link Data}object, but with
- * preemphasis applied. For each value X[i] in the input Data object X, the
- * following formula is applied to obtain the output Data object Y:
- * <p>
- * <code>
- * Y[i] = X[i] - (X[i-1] * preemphasisFactor)
- * </code>
- * <p>
+ * Implements a high-pass filter that compensates for attenuation in the audio data. Speech signals have an attenuation
+ * (a decrease in intensity of a signal) of 20 dB/dec. It increases the relative magnitude of the higher frequencies
+ * with respect to the lower frequencies.
+ * <p/>
+ * The Preemphasizer takes a {@link Data}object that usually represents audio data as input, and outputs the same {@link
+ * Data}object, but with preemphasis applied. For each value X[i] in the input Data object X, the following formula is
+ * applied to obtain the output Data object Y:
+ * <p/>
+ * <code> Y[i] = X[i] - (X[i-1] * preemphasisFactor) </code>
+ * <p/>
  * where 'i' denotes time.
- * <p>
- * The preemphasis factor has a value defined by the field {@link
- * #PROP_PREEMPHASIS_FACTOR}, with default defined by {@link
- * #PROP_PREEMPHASIS_FACTOR_DEFAULT}. A common value for this factor is
- * something around 0.97.
- * <p>
- * Other {@link Data}objects are passed along unchanged through this
- * Preemphasizer.
- * <p>
- * The Preemphasizer emphasizes the high frequency components, because they
- * usually contain much less energy than lower frequency components, even
- * though they are still important for speech recognition. It is a high-pass
- * filter because it allows the high frequency components to "pass through",
- * while weakening or filtering out the low frequency components.
+ * <p/>
+ * The preemphasis factor has a value defined by the field {@link #PROP_PREEMPHASIS_FACTOR}, with default defined by
+ * {@link #PROP_PREEMPHASIS_FACTOR_DEFAULT}. A common value for this factor is something around 0.97.
+ * <p/>
+ * Other {@link Data}objects are passed along unchanged through this Preemphasizer.
+ * <p/>
+ * The Preemphasizer emphasizes the high frequency components, because they usually contain much less energy than lower
+ * frequency components, even though they are still important for speech recognition. It is a high-pass filter because
+ * it allows the high frequency components to "pass through", while weakening or filtering out the low frequency
+ * components.
  */
 public class Preemphasizer extends BaseDataProcessor {
-    /**
-     * The name of the SphinxProperty for preemphasis factor/alpha.
-     */
+
+    /** The name of the SphinxProperty for preemphasis factor/alpha. */
+    @S4Double(defaultValue = 0.97)
     public static final String PROP_PREEMPHASIS_FACTOR = "factor";
-    /**
-     * The default value of PROP_PREEMPHASIS_FACTOR.
-     */
+    /** The default value of PROP_PREEMPHASIS_FACTOR. */
     public static final double PROP_PREEMPHASIS_FACTOR_DEFAULT = 0.97;
     private double preemphasisFactor;
     private double prior;
 
+
     /*
-     * (non-Javadoc)
-     * 
-     * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
-     */
-    public static Map getConfigurationInfo(){
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
+    */
+    public static Map getConfigurationInfo() {
         Map info = new HashMap();
-        
-        info.put(new String("PROP_PREEMPHASIS_FACTOR_TYPE"),new String("DOUBLE"));    
+
+        info.put(new String("PROP_PREEMPHASIS_FACTOR_TYPE"), new String("DOUBLE"));
         return info;
     }
 
-    
+
     /*
-     * (non-Javadoc)
-     * 
-     * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
-     *      edu.cmu.sphinx.util.props.Registry)
-     */
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
+    *      edu.cmu.sphinx.util.props.Registry)
+    */
     public void register(String name, Registry registry)
             throws PropertyException {
         super.register(name, registry);
         registry.register(PROP_PREEMPHASIS_FACTOR, PropertyType.DOUBLE);
     }
 
+
     /*
-     * (non-Javadoc)
-     * 
-     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
-     */
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
+    */
     public void newProperties(PropertySheet ps) throws PropertyException {
         super.newProperties(ps);
         preemphasisFactor = ps.getDouble(PROP_PREEMPHASIS_FACTOR,
                 PROP_PREEMPHASIS_FACTOR_DEFAULT);
     }
 
+
     /**
-     * Returns the next Data object being processed by this Preemphasizer, or
-     * if it is a Signal, it is returned without modification.
-     * 
-     * @return the next available Data object, returns null if no Data object
-     *         is available
-     * 
-     * @throws DataProcessingException
-     *                 if there is a processing error
-     * 
+     * Returns the next Data object being processed by this Preemphasizer, or if it is a Signal, it is returned without
+     * modification.
+     *
+     * @return the next available Data object, returns null if no Data object is available
+     * @throws DataProcessingException if there is a processing error
      * @see Data
      */
     public Data getData() throws DataProcessingException {
@@ -129,12 +111,11 @@ public class Preemphasizer extends BaseDataProcessor {
         return input;
     }
 
+
     /**
-     * Applies pre-emphasis filter to the given Audio. The preemphasis is
-     * applied in place.
-     * 
-     * @param in
-     *                audio data
+     * Applies pre-emphasis filter to the given Audio. The preemphasis is applied in place.
+     *
+     * @param in audio data
      */
     private void applyPreemphasis(double[] in) {
         // set the prior value for the next Audio

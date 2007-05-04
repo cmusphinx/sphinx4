@@ -14,169 +14,118 @@ package edu.cmu.sphinx.decoder.search;
 
 // a test search manager.
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.logging.Logger;
-import java.util.logging.Level;
-import java.util.Map;
-import java.util.Set;
-
 import edu.cmu.sphinx.decoder.pruner.Pruner;
 import edu.cmu.sphinx.decoder.scorer.AcousticScorer;
-import edu.cmu.sphinx.linguist.HMMSearchState;
-import edu.cmu.sphinx.linguist.Linguist;
+import edu.cmu.sphinx.linguist.*;
 import edu.cmu.sphinx.linguist.acoustic.HMM;
 import edu.cmu.sphinx.linguist.acoustic.HMMPosition;
-import edu.cmu.sphinx.linguist.SearchGraph;
-import edu.cmu.sphinx.linguist.SearchState;
-import edu.cmu.sphinx.linguist.UnitSearchState;
-import edu.cmu.sphinx.linguist.SearchStateArc;
-import edu.cmu.sphinx.linguist.WordSearchState;
-import edu.cmu.sphinx.linguist.WordSequence;
 import edu.cmu.sphinx.linguist.dictionary.Word;
 import edu.cmu.sphinx.result.Result;
 import edu.cmu.sphinx.util.LogMath;
 import edu.cmu.sphinx.util.StatisticsVariable;
 import edu.cmu.sphinx.util.Timer;
-import edu.cmu.sphinx.util.props.PropertyException;
-import edu.cmu.sphinx.util.props.PropertySheet;
-import edu.cmu.sphinx.util.props.PropertyType;
-import edu.cmu.sphinx.util.props.Registry;
+import edu.cmu.sphinx.util.props.*;
+
+import java.io.IOException;
+import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
- * Provides the breadth first search. To perform recognition an application
- * should call initialize before recognition begins, and repeatedly call <code> recognize </code>
- * until Result.isFinal() returns true. Once a final result has been obtained,
- * <code> terminate </code> should be called.
- * 
+ * Provides the breadth first search. To perform recognition an application should call initialize before recognition
+ * begins, and repeatedly call <code> recognize </code> until Result.isFinal() returns true. Once a final result has
+ * been obtained, <code> terminate </code> should be called.
+ * <p/>
  * All scores and probabilities are maintained in the log math log domain.
  */
 
 public class WordPruningBreadthFirstSearchManager implements SearchManager {
-    /**
-     * Sphinx property that defines the name of the linguist to be used by this
-     * search manager.
-     */
+
+    /** Sphinx property that defines the name of the linguist to be used by this search manager. */
+    @S4Component(type = Linguist.class)
     public final static String PROP_LINGUIST = "linguist";
-    /**
-     * Sphinx property that defines the name of the linguist to be used by this
-     * search manager.
-     */
+    /** Sphinx property that defines the name of the linguist to be used by this search manager. */
+    @S4Component(type = Pruner.class)
     public final static String PROP_PRUNER = "pruner";
-    /**
-     * Sphinx property that defines the name of the scorer to be used by this
-     * search manager.
-     */
+    /** Sphinx property that defines the name of the scorer to be used by this search manager. */
+    @S4Component(type = AcousticScorer.class)
     public final static String PROP_SCORER = "scorer";
-    /**
-     * Sphinx property that defines the name of the logmath to be used by this
-     * search manager.
-     */
+    /** Sphinx property that defines the name of the logmath to be used by this search manager. */
+    @S4Component(type = LogMath.class)
     public final static String PROP_LOG_MATH = "logMath";
     /**
-     * A sphinx property than, when set to <code>true</code> will cause the
-     * recognizer to count up all the tokens in the active list after every
-     * frame.
+     * A sphinx property than, when set to <code>true</code> will cause the recognizer to count up all the tokens in the
+     * active list after every frame.
      */
+    @S4Boolean(defaultValue = false)
     public final static String PROP_SHOW_TOKEN_COUNT = "showTokenCount";
-    /**
-     * The default value for the PROP_SHOW_TOKEN_COUNT property
-     */
+    /** The default value for the PROP_SHOW_TOKEN_COUNT property */
     public final static boolean PROP_SHOW_TOKEN_COUNT_DEFAULT = false;
 
-    /**
-     * The default value for the PROP_WANT_ENTRY_PRUNING property
-     */
+    /** The default value for the PROP_WANT_ENTRY_PRUNING property */
     public final static boolean PROP_WANT_ENTRY_PRUNING_DEFAULT = false;
     /**
-     * A sphinx property that controls the number of frames processed for every
-     * time the decode growth step is skipped. Setting this property to zero
-     * disables grow skipping. Setting this number to a small integer will
-     * increase the speed of the decoder but will also decrease its accuracy.
-     * The higher the number, the less often the grow code is skipped.
+     * A sphinx property that controls the number of frames processed for every time the decode growth step is skipped.
+     * Setting this property to zero disables grow skipping. Setting this number to a small integer will increase the
+     * speed of the decoder but will also decrease its accuracy. The higher the number, the less often the grow code is
+     * skipped.
      */
+    @S4Integer(defaultValue = 0)
     public final static String PROP_GROW_SKIP_INTERVAL = "growSkipInterval";
-    /**
-     * The default value for the PROP_GROW_SKIP_INTERVAL property.
-     */
+    /** The default value for the PROP_GROW_SKIP_INTERVAL property. */
     public final static int PROP_GROW_SKIP_INTERVAL_DEFAULT = 0;
 
-    /**
-     * Sphinx property that defines the type of active list to use
-     */
+    /** Sphinx property that defines the type of active list to use */
+    @S4Component(type = ActiveListManager.class)
     public final static String PROP_ACTIVE_LIST_MANAGER = "activeListManager";
 
-    /**
-     * Sphinx property for checking if the order of states is valid.
-     */
+    /** Sphinx property for checking if the order of states is valid. */
+    @S4Boolean(defaultValue = false)
     public final static String PROP_CHECK_STATE_ORDER = "checkStateOrder";
 
-    /**
-     * The default value of the PROP_CHECK_STATE_ORDER property.
-     */
+    /** The default value of the PROP_CHECK_STATE_ORDER property. */
     public final static boolean PROP_CHECK_STATE_ORDER_DEFAULT = false;
 
-    /**
-     * Sphinx property that specifies whether to build a word lattice.
-     */
+    /** Sphinx property that specifies whether to build a word lattice. */
+    @S4Boolean(defaultValue = true)
     public final static String PROP_BUILD_WORD_LATTICE = "buildWordLattice";
 
-    /**
-     * The default value of the PROP_BUILD_WORD_LATTICE property.
-     */
+    /** The default value of the PROP_BUILD_WORD_LATTICE property. */
     public final static boolean PROP_BUILD_WORD_LATTICE_DEFAULT = true;
 
-    /**
-     * Sphinx property that specifies the maximum lattice edges
-     */
+    /** Sphinx property that specifies the maximum lattice edges */
+    @S4Integer(defaultValue = 100)
     public final static String PROP_MAX_LATTICE_EDGES = "maxLatticeEdges";
 
-    /**
-     * The default value of the PROP_MAX_LATTICE_EDGES property.
-     */
+    /** The default value of the PROP_MAX_LATTICE_EDGES property. */
     public final static int PROP_MAX_LATTICE_EDGES_DEFAULT = 100;
 
     /**
-     * A sphinx property that controls the amount of simple acoustic lookahead
-     * performed. Setting the property to zero (the default) disables simple
-     * acoustic lookahead. The lookahead need not be an integer.
+     * A sphinx property that controls the amount of simple acoustic lookahead performed. Setting the property to zero
+     * (the default) disables simple acoustic lookahead. The lookahead need not be an integer.
      */
+    @S4Double(defaultValue = 0)
     public final static String PROP_ACOUSTIC_LOOKAHEAD_FRAMES = "acousticLookaheadFrames";
 
-    /**
-     * The default value for the PROP_ACOUSTIC_LOOKAHEAD_FRAMES property.
-     */
+    /** The default value for the PROP_ACOUSTIC_LOOKAHEAD_FRAMES property. */
     public final static float PROP_ACOUSTIC_LOOKAHEAD_FRAMES_DEFAULT = 0F;
 
 
     /**
-     * A sphinx property that controls whether or not we keep all tokens. If
-     * this is set to false, only word tokens are retained, otherwise all
-     * tokens are retained.
-     *  
+     * A sphinx property that controls whether or not we keep all tokens. If this is set to false, only word tokens are
+     * retained, otherwise all tokens are retained.
      */
+    @S4Boolean(defaultValue = false)
     public final static String PROP_KEEP_ALL_TOKENS = "keepAllTokens";
 
-    /**
-     * The default value for the PROP_ACOUSTIC_LOOKAHEAD_FRAMES property.
-     */
+    /** The default value for the PROP_ACOUSTIC_LOOKAHEAD_FRAMES property. */
     public final static boolean PROP_KEEP_ALL_TOKENS_DEFAULT = false;
 
-    /**
-     * Sphinx4 property that specifies the relative beam width
-     */
+    /** Sphinx4 property that specifies the relative beam width */
+    @S4Double(defaultValue = 0.0)
     public final static String PROP_RELATIVE_BEAM_WIDTH = "relativeBeamWidth";
 
-    /**
-     * Sphinx4 property that specifies the default value for the relative beam
-     * width
-     */
+    /** Sphinx4 property that specifies the default value for the relative beam width */
     public final static float PROP_RELATIVE_BEAM_WIDTH_DEFAULT = 0.0f;
 
     // TODO: since the token stacks are permanently disabled,
@@ -225,47 +174,49 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
     private int currentFrameNumber; // the current frame number
     private ActiveList activeList; // the list of active tokens
     private List<Token> resultList; // the current set of results
-    private Map<Object,Object> bestTokenMap;
+    private Map<Object, Object> bestTokenMap;
     private AlternateHypothesisManager loserManager;
     private int numStateOrder;
     // private TokenTracker tokenTracker;
     // private TokenTypeTracker tokenTypeTracker;
     private Map<SearchState, Token> skewMap;
 
+
     /*
-     * (non-Javadoc)
-     * 
-     * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
-     */
-    public static Map getConfigurationInfo(){
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
+    */
+    public static Map getConfigurationInfo() {
         Map info = new HashMap();
-        info.put(new String("PROP_GROW_SKIP_INTERVAL_TYPE"),new String("INTEGER"));
-        info.put(new String("PROP_RELATIVE_BEAM_WIDTH_TYPE"),new String("DOUBLE"));
-        info.put(new String("PROP_LOG_MATH_TYPE"),new String("COMPONENT")); 
-        info.put(new String("PROP_LOG_MATH_CLASSTYPE"),new String("edu.cmu.sphinx.util.LogMath"));
-        info.put(new String("PROP_SHOW_TOKEN_COUNT_TYPE"),new String("BOOLEAN"));
-        info.put(new String("PROP_CHECK_STATE_ORDER_TYPE"),new String("BOOLEAN"));
-        info.put(new String("PROP_BUILD_WORD_LATTICE_TYPE"),new String("BOOLEAN"));
-        info.put(new String("PROP_KEEP_ALL_TOKENS_TYPE"),new String("BOOLEAN"));
-        info.put(new String("PROP_MAX_LATTICE_EDGES_TYPE"),new String("INTEGER"));
-        info.put(new String("PROP_ACOUSTIC_LOOKAHEAD_FRAMES_TYPE"),new String("FLOAT"));
-        info.put(new String("PROP_LINGUIST_TYPE"),new String("COMPONENT")); 
-        info.put(new String("PROP_LINGUIST_CLASSTYPE"),new String("edu.cmu.sphinx.linguist.Linguist"));
-        info.put(new String("PROP_PRUNER_TYPE"),new String("COMPONENT")); 
-        info.put(new String("PROP_PRUNER_CLASSTYPE"),new String("edu.cmu.sphinx.decoder.pruner.Pruner"));
-        info.put(new String("PROP_SCORER_TYPE"),new String("COMPONENT")); 
-        info.put(new String("PROP_SCORER_CLASSTYPE"),new String("edu.cmu.sphinx.decoder.scorer.AcousticScorer"));
-        info.put(new String("PROP_ACTIVE_LIST_MANAGER_TYPE"),new String("COMPONENT")); 
-        info.put(new String("PROP_ACTIVE_LIST_MANAGER_CLASSTYPE"),new String("edu.cmu.sphinx.decoder.search.ActiveListManager"));
+        info.put(new String("PROP_GROW_SKIP_INTERVAL_TYPE"), new String("INTEGER"));
+        info.put(new String("PROP_RELATIVE_BEAM_WIDTH_TYPE"), new String("DOUBLE"));
+        info.put(new String("PROP_LOG_MATH_TYPE"), new String("COMPONENT"));
+        info.put(new String("PROP_LOG_MATH_CLASSTYPE"), new String("edu.cmu.sphinx.util.LogMath"));
+        info.put(new String("PROP_SHOW_TOKEN_COUNT_TYPE"), new String("BOOLEAN"));
+        info.put(new String("PROP_CHECK_STATE_ORDER_TYPE"), new String("BOOLEAN"));
+        info.put(new String("PROP_BUILD_WORD_LATTICE_TYPE"), new String("BOOLEAN"));
+        info.put(new String("PROP_KEEP_ALL_TOKENS_TYPE"), new String("BOOLEAN"));
+        info.put(new String("PROP_MAX_LATTICE_EDGES_TYPE"), new String("INTEGER"));
+        info.put(new String("PROP_ACOUSTIC_LOOKAHEAD_FRAMES_TYPE"), new String("FLOAT"));
+        info.put(new String("PROP_LINGUIST_TYPE"), new String("COMPONENT"));
+        info.put(new String("PROP_LINGUIST_CLASSTYPE"), new String("edu.cmu.sphinx.linguist.Linguist"));
+        info.put(new String("PROP_PRUNER_TYPE"), new String("COMPONENT"));
+        info.put(new String("PROP_PRUNER_CLASSTYPE"), new String("edu.cmu.sphinx.decoder.pruner.Pruner"));
+        info.put(new String("PROP_SCORER_TYPE"), new String("COMPONENT"));
+        info.put(new String("PROP_SCORER_CLASSTYPE"), new String("edu.cmu.sphinx.decoder.scorer.AcousticScorer"));
+        info.put(new String("PROP_ACTIVE_LIST_MANAGER_TYPE"), new String("COMPONENT"));
+        info.put(new String("PROP_ACTIVE_LIST_MANAGER_CLASSTYPE"), new String("edu.cmu.sphinx.decoder.search.ActiveListManager"));
         return info;
     }
-        
+
+
     /*
-     * (non-Javadoc)
-     * 
-     * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
-     *      edu.cmu.sphinx.util.props.Registry)
-     */
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
+    *      edu.cmu.sphinx.util.props.Registry)
+    */
     public void register(String name, Registry registry)
             throws PropertyException {
         this.name = name;
@@ -284,11 +235,12 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
         registry.register(PROP_RELATIVE_BEAM_WIDTH, PropertyType.DOUBLE);
     }
 
+
     /*
-     * (non-Javadoc)
-     * 
-     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
-     */
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
+    */
     public void newProperties(PropertySheet ps) throws PropertyException {
         logMath = (LogMath) ps.getComponent(PROP_LOG_MATH, LogMath.class);
         logger = ps.getLogger();
@@ -319,20 +271,22 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
         this.relativeBeamWidth = logMath.linearToLog(linearRelativeBeamWidth);
     }
 
+
     /*
-     * (non-Javadoc)
-     * 
-     * @see edu.cmu.sphinx.util.props.Configurable#getName()
-     */
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.util.props.Configurable#getName()
+    */
     public String getName() {
         return name;
     }
 
+
     /*
-     * (non-Javadoc)
-     * 
-     * @see edu.cmu.sphinx.decoder.search.SearchManager#allocate()
-     */
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.decoder.search.SearchManager#allocate()
+    */
     public void allocate() throws IOException {
         // tokenTracker = new TokenTracker();
         // tokenTypeTracker = new TokenTypeTracker();
@@ -347,27 +301,26 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
                 .getStatisticsVariable("curTokensScored");
         tokensCreated = StatisticsVariable
                 .getStatisticsVariable("tokensCreated");
-        
+
         linguist.allocate();
         pruner.allocate();
         scorer.allocate();
     }
 
+
     /*
-     * (non-Javadoc)
-     * 
-     * @see edu.cmu.sphinx.decoder.search.SearchManager#deallocate()
-     */
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.decoder.search.SearchManager#deallocate()
+    */
     public void deallocate() {
         scorer.deallocate();
         pruner.deallocate();
         linguist.deallocate();
     }
 
-    /**
-     * Called at the start of recognition. Gets the search manager ready to
-     * recognize
-     */
+
+    /** Called at the start of recognition. Gets the search manager ready to recognize */
     public void startRecognition() {
         linguist.startRecognition();
         pruner.startRecognition();
@@ -375,12 +328,11 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
         localStart();
     }
 
+
     /**
      * Performs the recognition for the given number of frames.
-     * 
-     * @param nFrames
-     *                the number of frames to recognize
-     * 
+     *
+     * @param nFrames the number of frames to recognize
      * @return the current result
      */
     public Result recognize(int nFrames) {
@@ -388,34 +340,34 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
         Result result;
 
         try {
-        
-        for (int i = 0; i < nFrames && !done; i++) {
-            // System.out.println("Frame " + currentFrameNumber);
-            // score the emitting list
 
-            // tokenTracker.startFrame();
-            activeList = activeListManager.getEmittingList();
-            if (activeList != null) {
-                do {
+            for (int i = 0; i < nFrames && !done; i++) {
+                // System.out.println("Frame " + currentFrameNumber);
+                // score the emitting list
+
+                // tokenTracker.startFrame();
+                activeList = activeListManager.getEmittingList();
+                if (activeList != null) {
+                    do {
                         currentFrameNumber++;
                         done = !scoreTokens();
-                } while (!done
-                        && (growSkipInterval > 1 && 
+                    } while (!done
+                            && (growSkipInterval > 1 &&
                             ((currentFrameNumber % growSkipInterval) == 0)));
-                if (!done) {
-                    bestTokenMap = createBestTokenMap();
-                    // prune and grow the emitting list
-                    pruneBranches();
+                    if (!done) {
+                        bestTokenMap = createBestTokenMap();
+                        // prune and grow the emitting list
+                        pruneBranches();
 
-                    resultList = new LinkedList<Token>();
-                    growEmittingBranches();
-                    // prune and grow the non-emitting lists
-                    // activeListManager.dump();
-                    growNonEmittingLists();
+                        resultList = new LinkedList<Token>();
+                        growEmittingBranches();
+                        // prune and grow the non-emitting lists
+                        // activeListManager.dump();
+                        growNonEmittingLists();
+                    }
                 }
+                // tokenTracker.stopFrame();
             }
-            // tokenTracker.stopFrame();
-        }
         } catch (OutOfMemoryError e) {
             done = true;
             activeList = null;
@@ -423,9 +375,9 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
             System.out.println("OutOfMemoryError: Aborting recognition");
         }
 
-            result = new Result(loserManager, activeList, resultList,
-                                currentFrameNumber, done, logMath);
-        
+        result = new Result(loserManager, activeList, resultList,
+                currentFrameNumber, done, logMath);
+
         // tokenTypeTracker.show();
         if (showTokenCount) {
             showTokenCount();
@@ -433,23 +385,23 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
         return result;
     }
 
+
     /**
      * creates a new best token map with the best size
-     * 
+     *
      * @return the best token map
      */
-    private Map<Object,Object> createBestTokenMap() {
+    private Map<Object, Object> createBestTokenMap() {
         // int mapSize = activeList.size() * 10;
         int mapSize = activeList.size() * 4;
         if (mapSize == 0) {
             mapSize = 1;
         }
-        return new HashMap<Object,Object>(mapSize, 0.3F);
+        return new HashMap<Object, Object>(mapSize, 0.3F);
     }
 
-    /**
-     * Terminates a recognition
-     */
+
+    /** Terminates a recognition */
     public void stopRecognition() {
         localStop();
         scorer.stopRecognition();
@@ -457,10 +409,8 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
         linguist.stopRecognition();
     }
 
-    /**
-     * Gets the initial grammar node from the linguist and creates a
-     * GrammarNodeToken
-     */
+
+    /** Gets the initial grammar node from the linguist and creates a GrammarNodeToken */
     protected void localStart() {
         SearchGraph searchGraph = linguist.getSearchGraph();
         currentFrameNumber = 0;
@@ -479,32 +429,30 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
         activeList.add(new Token(state, currentFrameNumber));
         resultList = new LinkedList<Token>();
 
-        bestTokenMap = new HashMap<Object,Object>();
+        bestTokenMap = new HashMap<Object, Object>();
         growBranches();
         growNonEmittingLists();
         // tokenTracker.setEnabled(false);
         // tokenTracker.startUtterance();
     }
 
-    /**
-     * Local cleanup for this search manager
-     */
+
+    /** Local cleanup for this search manager */
     protected void localStop() {
         // tokenTracker.stopUtterance();
     }
 
+
     /**
-     * Goes through the active list of tokens and expands each token, finding
-     * the set of successor tokens until all the successor tokens are emitting
-     * tokens.
-     *  
+     * Goes through the active list of tokens and expands each token, finding the set of successor tokens until all the
+     * successor tokens are emitting tokens.
      */
     protected void growBranches() {
         growTimer.start();
         Iterator iterator = activeList.iterator();
         float relativeBeamThreshold = activeList.getBeamThreshold();
         if (logger.isLoggable(Level.FINE)) {
-            logger.fine("Frame: " + currentFrameNumber 
+            logger.fine("Frame: " + currentFrameNumber
                     + " thresh : " + relativeBeamThreshold + " bs "
                     + activeList.getBestScore() + " tok "
                     + activeList.getBestToken());
@@ -522,8 +470,8 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
 
 
     /**
-     * Grows the emitting branches. This version applies a simple acoustic
-     * lookahead based upon the rate of change in the current acoustic score.
+     * Grows the emitting branches. This version applies a simple acoustic lookahead based upon the rate of change in
+     * the current acoustic score.
      */
     protected void growEmittingBranches() {
         if (acousticLookaheadFrames > 0F) {
@@ -531,8 +479,8 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
             float bestScore = -Float.MAX_VALUE;
             for (Iterator i = activeList.iterator(); i.hasNext();) {
                 Token t = (Token) i.next();
-                float score = t.getScore() + t.getAcousticScore() 
-                            * acousticLookaheadFrames;
+                float score = t.getScore() + t.getAcousticScore()
+                        * acousticLookaheadFrames;
                 if (score > bestScore) {
                     bestScore = score;
                 }
@@ -553,11 +501,7 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
     }
 
 
-
-    /**
-     * Grow the non-emitting ActiveLists, until the tokens reach an emitting
-     * state.
-     */
+    /** Grow the non-emitting ActiveLists, until the tokens reach an emitting state. */
     private void growNonEmittingLists() {
         for (Iterator i = activeListManager.getNonEmittingListIterator(); i
                 .hasNext();) {
@@ -570,13 +514,11 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
         }
     }
 
+
     /**
-     * Calculate the acoustic scores for the active list. The active list
-     * should contain only emitting tokens.
-     * 
-     * @return <code>true</code> if there are more frames to score,
-     *         otherwise, false
-     *  
+     * Calculate the acoustic scores for the active list. The active list should contain only emitting tokens.
+     *
+     * @return <code>true</code> if there are more frames to score, otherwise, false
      */
     protected boolean scoreTokens() {
         boolean moreTokens;
@@ -601,12 +543,11 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
 
     }
 
+
     /**
-     * Keeps track of and reports all of the active word histories for the
-     * given active list
-     * 
-     * @param activeList
-     *                the activelist to track
+     * Keeps track of and reports all of the active word histories for the given active list
+     *
+     * @param activeList the activelist to track
      */
     private void monitorWords(ActiveList activeList) {
         WordTracker tracker = new WordTracker(currentFrameNumber);
@@ -618,11 +559,11 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
         tracker.dump();
     }
 
+
     /**
      * Keeps track of and reports statistics about the number of active states
-     * 
-     * @param activeList
-     *                the active list of states
+     *
+     * @param activeList the active list of states
      */
     private void monitorStates(ActiveList activeList) {
 
@@ -634,22 +575,19 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
         }
     }
 
-    /**
-     * Removes unpromising branches from the active list
-     *  
-     */
+
+    /** Removes unpromising branches from the active list */
     protected void pruneBranches() {
         pruneTimer.start();
         activeList = pruner.prune(activeList);
         pruneTimer.stop();
     }
 
+
     /**
      * Gets the best token for this state
-     * 
-     * @param state
-     *                the state of interest
-     * 
+     *
+     * @param state the state of interest
      * @return the best token
      */
     protected Token getBestToken(SearchState state) {
@@ -675,15 +613,12 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
         }
     }
 
+
     /**
      * Sets the best token for a given state
-     * 
-     * @param token
-     *                the best token
-     * 
-     * @param state
-     *                the state
-     * 
+     *
+     * @param token the best token
+     * @param state the state
      */
     protected void setBestToken(Token token, SearchState state) {
         Object key = getStateKey(state);
@@ -699,15 +634,13 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
         }
     }
 
+
     /**
-     * Find the best token to use as a predecessor token given a candidate
-     * predecessor. The predecessor is the most recent word token unless
-     * keepAllTokens is set, in which case, the predecessor is always the
-     * candidate predecessor.
-     * 
-     * @param token
-     *                the token of interest
-     * 
+     * Find the best token to use as a predecessor token given a candidate predecessor. The predecessor is the most
+     * recent word token unless keepAllTokens is set, in which case, the predecessor is always the candidate
+     * predecessor.
+     *
+     * @param token the token of interest
      * @return the immediate successor word token
      */
     protected Token getWordPredecessor(Token token) {
@@ -730,16 +663,13 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
         }
     }
 
+
     /**
-     * Returns the state key for the given state. If we are using token stacks
-     * then the key will be related to the search state and the word history
-     * (depending on the type of token stacks), otherwise, the key will simply
-     * be the state itself. Currently we are not using token stacks so the
-     * state is the key.
-     * 
-     * @param state
-     *                the state to get the key for
-     * 
+     * Returns the state key for the given state. If we are using token stacks then the key will be related to the
+     * search state and the word history (depending on the type of token stacks), otherwise, the key will simply be the
+     * state itself. Currently we are not using token stacks so the state is the key.
+     *
+     * @param state the state to get the key for
      * @return the key for the given state
      */
     private Object getStateKey(SearchState state) {
@@ -755,9 +685,8 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
         }
     }
 
-    /**
-     * Checks that the given two states are in legitimate order.
-     */
+
+    /** Checks that the given two states are in legitimate order. */
     private void checkStateOrder(SearchState fromState, SearchState toState) {
         if (fromState.getOrder() == numStateOrder - 1) {
             return;
@@ -766,8 +695,8 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
         if (fromState.getOrder() > toState.getOrder()) {
             throw new Error("IllegalState order: from "
                     + fromState.getClass().getName() + " "
-                    + fromState.toPrettyString() 
-                    + " order: " + fromState.getOrder() 
+                    + fromState.toPrettyString()
+                    + " order: " + fromState.getOrder()
                     + " to "
                     + toState.getClass().getName() + " "
                     + toState.toPrettyString()
@@ -775,15 +704,12 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
         }
     }
 
+
     /**
-     * Collects the next set of emitting tokens from a token and accumulates
-     * them in the active or result lists
-     * 
-     * @param token
-     *                the token to collect successors from be immediately
-     *                expaned are placed. Null if we should always expand all
-     *                nodes.
-     *  
+     * Collects the next set of emitting tokens from a token and accumulates them in the active or result lists
+     *
+     * @param token the token to collect successors from be immediately expaned are placed. Null if we should always
+     *              expand all nodes.
      */
     protected void collectSuccessorTokens(Token token) {
 
@@ -872,9 +798,9 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
         }
     }
 
+
     /**
-     * Determines whether or not we've visited the state associated with this
-     * token since the previous frame.
+     * Determines whether or not we've visited the state associated with this token since the previous frame.
      *
      * @return true if we've visted the search state since the last frame
      */
@@ -892,9 +818,12 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
         }
         return false;
     }
+
+
     protected void activeListAdd(Token token) {
         activeListManager.add(token);
     }
+
 
     protected void activeListReplace(Token old, Token newToken) {
         activeListManager.replace(old, newToken);
@@ -906,13 +835,11 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
 
     private final static int SKEW = 0;
 
+
     /**
-     * Apply frame skew. Determine if the given token should be expanded based
-     * upon frame skew
-     * 
-     * @param t
-     *                the token to test
-     * 
+     * Apply frame skew. Determine if the given token should be expanded based upon frame skew
+     *
+     * @param t the token to test
      * @return <code>true</code> if the token should be expanded
      */
     private boolean skewPrune(Token t) {
@@ -920,12 +847,11 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
         // return skewPruneWord(t);
     }
 
+
     /**
      * Frame skew based on HMM states
-     * 
-     * @param t
-     *                the token to test
-     * 
+     *
+     * @param t the token to test
      * @return <code>true</code> if the token should be expanded
      */
     private boolean skewPruneHMM(Token t) {
@@ -960,12 +886,11 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
         return keep;
     }
 
+
     /**
      * Frame skew based on word states
-     * 
-     * @param t
-     *                the token to test
-     * 
+     *
+     * @param t the token to test
      * @return <code>true</code> if the token should be expanded
      */
     private boolean skewPruneWord(Token t) {
@@ -997,10 +922,8 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
         return keep;
     }
 
-    /**
-     * Counts all the tokens in the active list (and displays them). This is an
-     * expensive operation.
-     */
+
+    /** Counts all the tokens in the active list (and displays them). This is an expensive operation. */
     private void showTokenCount() {
         Set<Token> tokenSet = new HashSet<Token>();
 
@@ -1026,120 +949,130 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
         System.out.println("Result Lattice size: " + tokenSet.size());
     }
 
+
     /**
      * Returns the Linguist.
-     * 
+     *
      * @return the Linguist
      */
     public Linguist getLinguist() {
         return linguist;
     }
 
+
     /**
      * Returns the Pruner.
-     * 
+     *
      * @return the Pruner
      */
     public Pruner getPruner() {
         return pruner;
     }
 
+
     /**
      * Returns the AcousticScorer.
-     * 
+     *
      * @return the AcousticScorer
      */
     public AcousticScorer getScorer() {
         return scorer;
     }
 
+
     /**
      * Returns the LogMath used.
-     * 
+     *
      * @return the LogMath used
      */
     public LogMath getLogMath() {
         return logMath;
     }
 
+
     /**
      * Returns the best token map.
-     * 
+     *
      * @return the best token map
      */
     protected Map getBestTokenMap() {
         return bestTokenMap;
     }
 
+
     /**
      * Sets the best token Map.
-     * 
-     * @param bestTokenMap
-     *                the new best token Map
+     *
+     * @param bestTokenMap the new best token Map
      */
-    protected void setBestTokenMap(Map<Object,Object> bestTokenMap) {
+    protected void setBestTokenMap(Map<Object, Object> bestTokenMap) {
         this.bestTokenMap = bestTokenMap;
     }
 
+
     /**
      * Returns the ActiveList.
-     * 
+     *
      * @return the ActiveList
      */
     public ActiveList getActiveList() {
         return activeList;
     }
 
+
     /**
      * Sets the ActiveList.
-     * 
-     * @param activeList
-     *                the new ActiveList
+     *
+     * @param activeList the new ActiveList
      */
     public void setActiveList(ActiveList activeList) {
         this.activeList = activeList;
     }
 
+
     /**
      * Returns the result list.
-     * 
+     *
      * @return the result list
      */
     public List<Token> getResultList() {
         return resultList;
     }
 
+
     /**
      * Sets the result list.
-     * 
-     * @param resultList
-     *                the new result list
+     *
+     * @param resultList the new result list
      */
     public void setResultList(List<Token> resultList) {
         this.resultList = resultList;
     }
 
+
     /**
      * Returns the current frame number.
-     * 
+     *
      * @return the current frame number
      */
     public int getCurrentFrameNumber() {
         return currentFrameNumber;
     }
 
+
     /**
      * Returns the Timer for growing.
-     * 
+     *
      * @return the Timer for growing
      */
     public Timer getGrowTimer() {
         return growTimer;
     }
 
+
     /**
      * Returns the tokensCreated StatisticsVariable.
-     * 
+     *
      * @return the tokensCreated StatisticsVariable.
      */
     public StatisticsVariable getTokensCreated() {
@@ -1151,25 +1084,29 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
 // Experimental code
 // ---------------------------------------------------------
 // There's some experimental code here used to track tokens
+
 // and word beams.
 /**
- * A 'best token' key. This key will allow hmm states that have identical word
- * histories and are in the same HMM state to be treated equivalently. When
- * used as the best token key, only the best scoring token with a given word
- * history survives per HMM.
+ * A 'best token' key. This key will allow hmm states that have identical word histories and are in the same HMM state
+ * to be treated equivalently. When used as the best token key, only the best scoring token with a given word history
+ * survives per HMM.
  */
 
 class SinglePathThroughHMMKey {
+
     private HMMSearchState hmmSearchState;
+
 
     public SinglePathThroughHMMKey(HMMSearchState hmmSearchState) {
         this.hmmSearchState = hmmSearchState;
     }
 
+
     public int hashCode() {
         return hmmSearchState.getLexState().hashCode() * 13
                 + hmmSearchState.getWordHistory().hashCode();
     }
+
 
     public boolean equals(Object o) {
         if (this == o) {
@@ -1179,7 +1116,7 @@ class SinglePathThroughHMMKey {
             boolean equal = hmmSearchState.getLexState().equals(
                     other.hmmSearchState.getLexState())
                     && hmmSearchState.getWordHistory().equals(
-                            other.hmmSearchState.getWordHistory());
+                    other.hmmSearchState.getWordHistory());
             if (equal && false) {
                 System.out.println("SPTHK A: " + hmmSearchState);
                 System.out.println("SPTHK B: " + other.hmmSearchState);
@@ -1191,30 +1128,30 @@ class SinglePathThroughHMMKey {
 }
 
 /**
- * A quick and dirty token heap that allows us to perform token stack
- * experiments. It is not very efficient. We will likely replace this with
- * something better once we figure out how we want to prune things.
+ * A quick and dirty token heap that allows us to perform token stack experiments. It is not very efficient. We will
+ * likely replace this with something better once we figure out how we want to prune things.
  */
 
 class TokenHeap {
+
     Token[] tokens;
     int curSize = 0;
 
+
     /**
      * Creates a token heap with the maximum size
-     * 
-     * @param maxSize
-     *                the maximum size of the heap
+     *
+     * @param maxSize the maximum size of the heap
      */
     TokenHeap(int maxSize) {
         tokens = new Token[maxSize];
     }
 
+
     /**
      * Adds a token to the heap
-     * 
-     * @param token
-     *                the token to add
+     *
+     * @param token the token to add
      */
     void add(Token token) {
         // first, if an identical state exists, replace
@@ -1230,9 +1167,10 @@ class TokenHeap {
         fixupInsert();
     }
 
+
     /**
      * Returns the smallest scoring token on the heap
-     * 
+     *
      * @return the smallest scoring token
      */
     Token getSmallest() {
@@ -1243,25 +1181,25 @@ class TokenHeap {
         }
     }
 
+
     /**
      * Determines if the heap is ful
-     * 
+     *
      * @return <code>true</code> if the heap is full
      */
     boolean isFull() {
         return curSize == tokens.length;
     }
 
+
     /**
-     * Checks to see if there is already a token t on the heap that has the
-     * same search state. If so, this token replaces that one
-     * 
-     * @param t
-     *                the token to try to add to the heap
-     * 
+     * Checks to see if there is already a token t on the heap that has the same search state. If so, this token
+     * replaces that one
+     *
+     * @param t the token to try to add to the heap
      * @return <code>true</code> if the token was added
      */
-private boolean tryReplace(Token t) {
+    private boolean tryReplace(Token t) {
         for (int i = 0; i < curSize; i++) {
             if (t.getSearchState().equals(tokens[i].getSearchState())) {
                 assert t.getScore() > tokens[i].getScore();
@@ -1271,20 +1209,19 @@ private boolean tryReplace(Token t) {
         }
         return false;
     }
-    /**
-     * Orders the heap after an insert
-     */
+
+
+    /** Orders the heap after an insert */
     @SuppressWarnings({"unchecked"})
     private void fixupInsert() {
         Arrays.sort(tokens, 0, curSize - 1, Token.COMPARATOR);
     }
 
+
     /**
      * returns a token on the heap that matches the given search state
-     * 
-     * @param s
-     *                the search state
-     * 
+     *
+     * @param s the search state
      * @return the token that matches, or null
      */
     Token get(SearchState s) {
@@ -1297,32 +1234,31 @@ private boolean tryReplace(Token t) {
     }
 }
 
-/**
- * A class that keeps track of word histories
- */
+/** A class that keeps track of word histories */
 
 class WordTracker {
+
     Map<WordSequence, WordStats> statMap;
     int frameNumber;
     int stateCount;
     int maxWordHistories;
 
+
     /**
      * Creates a word tracker for the given frame number
-     * 
-     * @param frameNumber
-     *                the frame number
+     *
+     * @param frameNumber the frame number
      */
     WordTracker(int frameNumber) {
         statMap = new HashMap<WordSequence, WordStats>();
         this.frameNumber = frameNumber;
     }
 
+
     /**
      * Adds a word history for the given token to the word tracker
-     * 
-     * @param t
-     *                the token to add
+     *
+     * @param t the token to add
      */
     void add(Token t) {
         stateCount++;
@@ -1335,11 +1271,10 @@ class WordTracker {
         stats.update(t);
     }
 
-    /**
-     * Dumps the word histories in the tracker
-     */
-     @SuppressWarnings({"unchecked"})
-     void dump() {
+
+    /** Dumps the word histories in the tracker */
+    @SuppressWarnings({"unchecked"})
+    void dump() {
         dumpSummary();
         Object[] stats = statMap.values().toArray();
         Arrays.sort(stats, WordStats.COMPARATOR);
@@ -1348,20 +1283,18 @@ class WordTracker {
         }
     }
 
-    /**
-     * Dumps summary information in the tracker
-     */
+
+    /** Dumps summary information in the tracker */
     void dumpSummary() {
         System.out.println("Frame: " + frameNumber + " states: " + stateCount
                 + " histories " + statMap.size());
     }
 
+
     /**
      * Given a token, gets the word sequence represented by the token
-     * 
-     * @param token
-     *                the token of interest
-     * 
+     *
+     * @param token the token of interest
      * @return the word sequence for the token
      */
     private WordSequence getWordSequence(Token token) {
@@ -1380,11 +1313,10 @@ class WordTracker {
     }
 }
 
-/**
- * Keeps track of statistics for a particular word sequence
- */
+/** Keeps track of statistics for a particular word sequence */
 
 class WordStats {
+
     public final static Comparator COMPARATOR = new Comparator() {
         public int compare(Object o1, Object o2) {
             WordStats ws1 = (WordStats) o1;
@@ -1405,11 +1337,11 @@ class WordStats {
     private float minScore;
     private WordSequence ws;
 
+
     /**
      * Creates a word stat for the given sequence
-     * 
-     * @param ws
-     *                the word sequence
+     *
+     * @param ws the word sequence
      */
     WordStats(WordSequence ws) {
         size = 0;
@@ -1418,11 +1350,11 @@ class WordStats {
         this.ws = ws;
     }
 
+
     /**
      * Updates the stats based upon the scores for the given token
-     * 
-     * @param t
-     *                the token
+     *
+     * @param t the token
      */
     void update(Token t) {
         size++;
@@ -1434,9 +1366,10 @@ class WordStats {
         }
     }
 
+
     /**
      * Returns a string representation of the stats
-     * 
+     *
      * @return a string representation
      */
     public String toString() {
@@ -1447,9 +1380,8 @@ class WordStats {
 
 /**
  * A tool for tracking the types tokens created and placed in the beam
- *
- * TODO: Develop a mechanism  for adding trackers such as these in a
- * more general fashion.
+ * <p/>
+ * TODO: Develop a mechanism  for adding trackers such as these in a more general fashion.
  */
 class TokenTypeTracker {
     // keep track of the various types of states
@@ -1464,9 +1396,9 @@ class TokenTypeTracker {
     private int numHMMInternal;
     private int numTokens;
 
+
     /**
-     * Adds a token to this tracker. Records statistics about
-     * the type of token.
+     * Adds a token to this tracker. Records statistics about the type of token.
      *
      * @param t the token to track
      */
@@ -1480,7 +1412,7 @@ class TokenTypeTracker {
             numUnits++;
         } else if (s instanceof HMMSearchState) {
             numHMMs++;
-            HMM hmm = ((HMMSearchState)s).getHMMState().getHMM();
+            HMM hmm = ((HMMSearchState) s).getHMMState().getHMM();
             if (hmm.getPosition() == HMMPosition.BEGIN) {
                 numHMMBegin++;
             } else if (hmm.getPosition() == HMMPosition.END) {
@@ -1495,9 +1427,8 @@ class TokenTypeTracker {
         }
     }
 
-    /**
-     * Shows the accumulated statistics
-     */
+
+    /** Shows the accumulated statistics */
     void show() {
         System.out.println("TotalTokens: " + numTokens);
         System.out.println("      Words: " + numWords + pc(numWords));
@@ -1510,23 +1441,24 @@ class TokenTypeTracker {
         System.out.println("     Others: " + numOthers + pc(numOthers));
     }
 
+
     /**
      * Utility method for generating iteger percents
+     *
      * @param num the value to be converted into percent
      * @return a string representation as a percent
      */
     private String pc(int num) {
-         int percent = ((100 * num) / numTokens);
-         return " (" + percent + "%)";
+        int percent = ((100 * num) / numTokens);
+        return " (" + percent + "%)";
     }
 }
 
 
-/**
- * This debugging class is used to track the number of active tokens per state
- */
+/** This debugging class is used to track the number of active tokens per state */
 
 class TokenTracker {
+
     private Map<Object, TokenStats> stateMap;
     private boolean enabled;
     private int frame = 0;
@@ -1538,17 +1470,15 @@ class TokenTracker {
 
     /**
      * Enables or disables the token tracker
-     * 
-     * @param enabled
-     *                if <code>true</code> the tracker is enabled
+     *
+     * @param enabled if <code>true</code> the tracker is enabled
      */
     void setEnabled(boolean enabled) {
         this.enabled = enabled;
     }
 
-    /**
-     * Starts the per-utterance tracking
-     */
+
+    /** Starts the per-utterance tracking */
     void startUtterance() {
         if (enabled) {
             frame = 0;
@@ -1558,29 +1488,27 @@ class TokenTracker {
         }
     }
 
-    /**
-     * stops the per-utterance tracking
-     */
+
+    /** stops the per-utterance tracking */
     void stopUtterance() {
         if (enabled) {
             dumpSummary();
         }
     }
 
-    /**
-     * Starts the per-frame tracking
-     */
+
+    /** Starts the per-frame tracking */
     void startFrame() {
         if (enabled) {
             stateMap = new HashMap<Object, TokenStats>();
         }
     }
 
+
     /**
      * Adds a new token to the tracker
-     * 
-     * @param t
-     *                the token to add.
+     *
+     * @param t the token to add.
      */
     void add(Token t) {
         if (enabled) {
@@ -1589,9 +1517,8 @@ class TokenTracker {
         }
     }
 
-    /**
-     * Stops the per-frame tracking
-     */
+
+    /** Stops the per-frame tracking */
     void stopFrame() {
         if (enabled) {
             frame++;
@@ -1599,9 +1526,8 @@ class TokenTracker {
         }
     }
 
-    /**
-     * Dumps summary info about the tokens
-     */
+
+    /** Dumps summary info about the tokens */
     void dumpSummary() {
         if (enabled) {
             float avgStates = 0f;
@@ -1621,9 +1547,8 @@ class TokenTracker {
         }
     }
 
-    /**
-     * Dumps detailed info about the tokens
-     */
+
+    /** Dumps detailed info about the tokens */
     void dumpDetails() {
         if (enabled) {
             int maxStates = -Integer.MAX_VALUE;
@@ -1665,12 +1590,11 @@ class TokenTracker {
         }
     }
 
+
     /**
      * Gets the stats for a particular token
-     * 
-     * @param t
-     *                the token of interest
-     * 
+     *
+     * @param t the token of interest
      * @return the token stats associated with the given token
      */
     private TokenStats getStats(Token t) {
@@ -1684,16 +1608,15 @@ class TokenTracker {
     }
 }
 
-/**
- * A class for keeing track of statistics about tokens. Tracks the count, min
- * and max score for a particular state.
- */
+/** A class for keeing track of statistics about tokens. Tracks the count, min and max score for a particular state. */
 
 class TokenStats {
+
     int count;
     float maxScore;
     float minScore;
     boolean isHMM;
+
 
     TokenStats() {
         count = 0;
@@ -1701,9 +1624,8 @@ class TokenStats {
         minScore = Float.MIN_VALUE;
     }
 
-    /**
-     * Update this state with the given token
-     */
+
+    /** Update this state with the given token */
     public void update(Token t) {
         count++;
         if (t.getScore() > maxScore) {

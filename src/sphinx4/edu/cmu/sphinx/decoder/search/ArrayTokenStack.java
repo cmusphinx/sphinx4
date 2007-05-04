@@ -1,22 +1,19 @@
-
 /*
- * Copyright 1999-2002 Carnegie Mellon University.  
- * Portions Copyright 2002 Sun Microsystems, Inc.  
- * Portions Copyright 2002 Mitsubishi Electric Research Laboratories.
- * All Rights Reserved.  Use is subject to license terms.
- * 
- * See the file "license.terms" for information on usage and
- * redistribution of this file, and for a DISCLAIMER OF ALL 
- * WARRANTIES.
- *
- */
+* Copyright 1999-2002 Carnegie Mellon University.
+* Portions Copyright 2002 Sun Microsystems, Inc.
+* Portions Copyright 2002 Mitsubishi Electric Research Laboratories.
+* All Rights Reserved.  Use is subject to license terms.
+*
+* See the file "license.terms" for information on usage and
+* redistribution of this file, and for a DISCLAIMER OF ALL
+* WARRANTIES.
+*
+*/
 
 package edu.cmu.sphinx.decoder.search;
 
 
-/**
- * An array implementation of TokenStack.
- */
+/** An array implementation of TokenStack. */
 public class ArrayTokenStack implements TokenStack {
 
     private Token[] stack;
@@ -37,7 +34,6 @@ public class ArrayTokenStack implements TokenStack {
      * Adds the given Token to this TokenStack.
      *
      * @param newToken the new Token to add
-     *
      * @return the replaced Token, or null if no Token was replaced
      */
     public Token add(Token newToken) {
@@ -47,13 +43,13 @@ public class ArrayTokenStack implements TokenStack {
         // first look for the lowest scoring token
         for (int i = 0; i < stack.length; i++) {
             Token token = stack[i];
-	    if (token == null) {
-		stack[i] = newToken;
-		return null;
-	    } else {
+            if (token == null) {
+                stack[i] = newToken;
+                return null;
+            } else {
                 if (token.getFrameNumber() != newToken.getFrameNumber()) {
                     stack[i] = newToken;
-                    return token; 
+                    return token;
                 }
                 if (lowestToken == null) {
                     lowestToken = token;
@@ -75,16 +71,13 @@ public class ArrayTokenStack implements TokenStack {
             return null;
         }
     }
-            
+
 
     /**
-     * Returns true if the given score is higher than the lowest scoring
-     * token in this TokenStack.
+     * Returns true if the given score is higher than the lowest scoring token in this TokenStack.
      *
      * @param score the score the check
-     *
-     * @return true if the given score is higher than the lowest scoring
-     *    token, false otherwise
+     * @return true if the given score is higher than the lowest scoring token, false otherwise
      */
     public boolean isInsertable(float score, int frameNumber) {
         for (Token token : stack) {
@@ -99,8 +92,7 @@ public class ArrayTokenStack implements TokenStack {
 
 
     /**
-     * Returns the capacity of this TokenStack, that is, the maximum
-     * number of elements allowed in this TokenStack.
+     * Returns the capacity of this TokenStack, that is, the maximum number of elements allowed in this TokenStack.
      *
      * @return the capacity of this TokenStack
      */
@@ -109,10 +101,7 @@ public class ArrayTokenStack implements TokenStack {
     }
 
 
-
-    /**
-     * Removes all of the Tokens from this TokenStack
-     */
+    /** Removes all of the Tokens from this TokenStack */
     public void clear() {
         for (int i = 0; i < stack.length; i++) {
             stack[i] = null;

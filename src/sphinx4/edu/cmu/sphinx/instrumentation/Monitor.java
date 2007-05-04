@@ -14,14 +14,16 @@
  * WARRANTIES.
  *
  */
- 
+
 package edu.cmu.sphinx.instrumentation;
 
 import edu.cmu.sphinx.util.props.Configurable;
+
 /**
- * Common empty interface for Configurable monitors 
+ * Common empty interface for Configurable monitors
  *
  * @author Ariani
  */
-public interface Monitor extends Configurable{    
+public interface Monitor extends Configurable {
+
 }

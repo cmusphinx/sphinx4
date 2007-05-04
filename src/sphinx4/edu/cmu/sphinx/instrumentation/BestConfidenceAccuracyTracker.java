@@ -11,79 +11,70 @@
 package edu.cmu.sphinx.instrumentation;
 
 import edu.cmu.sphinx.linguist.dictionary.Word;
-import edu.cmu.sphinx.result.ConfidenceResult;
-import edu.cmu.sphinx.result.ConfidenceScorer;
-import edu.cmu.sphinx.result.Path;
-import edu.cmu.sphinx.result.Result;
-import edu.cmu.sphinx.result.WordResult;
+import edu.cmu.sphinx.result.*;
 import edu.cmu.sphinx.util.NISTAlign;
-import edu.cmu.sphinx.util.props.PropertyException;
-import edu.cmu.sphinx.util.props.PropertySheet;
-import edu.cmu.sphinx.util.props.PropertyType;
-import edu.cmu.sphinx.util.props.Registry;
+import edu.cmu.sphinx.util.props.*;
 
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
- * Tracks and reports recognition accuracy using the "confidenceScorer"
- * component specified in the ConfigurationManager.  The "confidenceScorer"
- * component is typically configured to be edu.cmu.sphinx.result.SausageMaker.
+ * Tracks and reports recognition accuracy using the "confidenceScorer" component specified in the ConfigurationManager.
+ * The "confidenceScorer" component is typically configured to be edu.cmu.sphinx.result.SausageMaker.
  *
  * @see edu.cmu.sphinx.result.SausageMaker
  */
 public class BestConfidenceAccuracyTracker extends AccuracyTracker {
 
-    /**
-     * Defines the class to use for confidence scoring.
-     */
+    /** Defines the class to use for confidence scoring. */
+    @S4Component(type = ConfidenceScorer.class)
     public final static String PROP_CONFIDENCE_SCORER = "confidenceScorer";
 
-    /**
-     * The confidence scorer
-     */
-    protected ConfidenceScorer confidenceScorer;    
-    
+    /** The confidence scorer */
+    protected ConfidenceScorer confidenceScorer;
+
+
     /*
-     * (non-Javadoc)
-     * 
-     * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
-     */
-    public static Map getConfigurationInfo(){
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
+    */
+    public static Map getConfigurationInfo() {
         Map info = new HashMap();
-     
-        info.put(new String("PROP_CONFIDENCE_SCORER_TYPE"),new String("COMPONENT")); 
-        info.put(new String("PROP_CONFIDENCE_SCORER_CLASSTYPE"),new String("edu.cmu.sphinx.result.ConfidenceScorer"));            
+
+        info.put(new String("PROP_CONFIDENCE_SCORER_TYPE"), new String("COMPONENT"));
+        info.put(new String("PROP_CONFIDENCE_SCORER_CLASSTYPE"), new String("edu.cmu.sphinx.result.ConfidenceScorer"));
         return info;
     }
-    
+
+
     /*
-     * (non-Javadoc)
-     * 
-     * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
-     *      edu.cmu.sphinx.util.props.Registry)
-     */
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
+    *      edu.cmu.sphinx.util.props.Registry)
+    */
     public void register(String name, Registry registry)
             throws PropertyException {
         super.register(name, registry);
         registry.register(PROP_CONFIDENCE_SCORER, PropertyType.COMPONENT);
     }
 
+
     /*
-     * (non-Javadoc)
-     * 
-     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
-     */
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
+    */
     public void newProperties(PropertySheet ps) throws PropertyException {
         super.newProperties(ps);
         confidenceScorer = (ConfidenceScorer) ps.getComponent(
-            PROP_CONFIDENCE_SCORER,
-            ConfidenceScorer.class);
+                PROP_CONFIDENCE_SCORER,
+                ConfidenceScorer.class);
     }
 
-    /**
-     * Gets the transcription with no fillers and no "<unk>".
-     */
+
+    /** Gets the transcription with no fillers and no "<unk>". */
     protected String getTranscriptionNoFiller(Path path) {
         StringBuffer buf = new StringBuffer();
         WordResult[] words = path.getWords();
@@ -95,10 +86,9 @@ public class BestConfidenceAccuracyTracker extends AccuracyTracker {
         }
         return (buf.toString().trim());
     }
-    
-    /**
-     * Gets the raw transcription
-     */
+
+
+    /** Gets the raw transcription */
     protected String getTranscriptionRaw(Path path) {
         StringBuffer buf = new StringBuffer();
         WordResult[] words = path.getWords();
@@ -108,22 +98,23 @@ public class BestConfidenceAccuracyTracker extends AccuracyTracker {
         }
         return (buf.toString().trim());
     }
-    
+
+
     /*
-     * (non-Javadoc)
-     * 
-     * @see edu.cmu.sphinx.result.ResultListener#newResult(edu.cmu.sphinx.result.Result)
-     */
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.result.ResultListener#newResult(edu.cmu.sphinx.result.Result)
+    */
     public void newResult(Result result) {
-        NISTAlign aligner = getAligner();        
+        NISTAlign aligner = getAligner();
         String ref = result.getReferenceText();
         if (result.isFinal() && (ref != null)) {
             try {
                 Path bestPath = null;
                 String hyp = "";
                 if (result.getBestFinalToken() != null) {
-                    ConfidenceResult confidenceResult = 
-                        confidenceScorer.score(result);
+                    ConfidenceResult confidenceResult =
+                            confidenceScorer.score(result);
                     bestPath = confidenceResult.getBestHypothesis();
                     hyp = getTranscriptionNoFiller(bestPath);
                 }

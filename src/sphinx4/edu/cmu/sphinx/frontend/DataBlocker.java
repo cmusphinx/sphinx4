@@ -5,9 +5,9 @@ import edu.cmu.sphinx.util.props.PropertySheet;
 import edu.cmu.sphinx.util.props.PropertyType;
 import edu.cmu.sphinx.util.props.Registry;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
-import java.util.HashMap;
 
 /**
  * A <code>DataProcessor</code> which wraps incoming <code>DoubleData</code>-objects into equally size blocks of defined
@@ -15,14 +15,10 @@ import java.util.HashMap;
  */
 public class DataBlocker extends BaseDataProcessor {
 
-    /**
-     * The SphinxProperty name for the block size of generated data-blocks in milliseconds.
-     */
+    /** The SphinxProperty name for the block size of generated data-blocks in milliseconds. */
     public static final String PROP_BLOCK_SIZE_MS = "blockSizeMs";
 
-    /**
-     * The default value for PROP_BLOCK_SIZE_MS.
-     */
+    /** The default value for PROP_BLOCK_SIZE_MS. */
     public static final float PROP_BLOCK_SIZE_MS_DEFAULT = 10;
 
     private double blockSizeMs;
@@ -99,17 +95,19 @@ public class DataBlocker extends BaseDataProcessor {
         return new DoubleData(newSampleBlock, sampleRate, collectTime, firstSample);
     }
 
+
     /*
-     * (non-Javadoc)
-     * 
-     * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
-     */
-    public static Map getConfigurationInfo(){
-        Map info = new HashMap();        
-        info.put(new String("PROP_BLOCK_SIZE_MS_TYPE"),new String("DOUBLE"));
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
+    */
+    public static Map getConfigurationInfo() {
+        Map info = new HashMap();
+        info.put(new String("PROP_BLOCK_SIZE_MS_TYPE"), new String("DOUBLE"));
         return info;
     }
-    
+
+
     public void register(String string, Registry registry) throws PropertyException {
         super.register(string, registry);
         registry.register(PROP_BLOCK_SIZE_MS, PropertyType.DOUBLE);

@@ -11,71 +11,48 @@
  */
 package edu.cmu.sphinx.frontend.util;
 
+import edu.cmu.sphinx.frontend.*;
+import edu.cmu.sphinx.util.props.*;
+
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Map;
 import java.util.HashMap;
-
-import edu.cmu.sphinx.frontend.BaseDataProcessor;
-import edu.cmu.sphinx.frontend.Data;
-import edu.cmu.sphinx.frontend.DataEndSignal;
-import edu.cmu.sphinx.frontend.DataProcessingException;
-import edu.cmu.sphinx.frontend.DataStartSignal;
-import edu.cmu.sphinx.frontend.DoubleData;
-import edu.cmu.sphinx.util.props.PropertyException;
-import edu.cmu.sphinx.util.props.PropertySheet;
-import edu.cmu.sphinx.util.props.PropertyType;
-import edu.cmu.sphinx.util.props.Registry;
+import java.util.Map;
 
 /**
- * A StreamDataSource converts data from an InputStream into Data objects. One
- * would call {@link #setInputStream(InputStream,String) setInputStream}to set
- * the input stream, and call {@link #getData}to obtain the Data object.
+ * A StreamDataSource converts data from an InputStream into Data objects. One would call {@link
+ * #setInputStream(InputStream,String) setInputStream}to set the input stream, and call {@link #getData}to obtain the
+ * Data object.
  */
 @SuppressWarnings({"UnnecessaryLocalVariable"})
 public class StreamDataSource extends BaseDataProcessor {
-    /**
-     * SphinxProperty for the sample rate.
-     */
-    public static final String PROP_SAMPLE_RATE =  "sampleRate";
-    /**
-     * Default value for PROP_SAMPLE_RATE.
-     */
+
+    /** SphinxProperty for the sample rate. */
+    @S4Integer(defaultValue = 16000)
+    public static final String PROP_SAMPLE_RATE = "sampleRate";
+    /** Default value for PROP_SAMPLE_RATE. */
     public static final int PROP_SAMPLE_RATE_DEFAULT = 16000;
-    /**
-     * SphinxProperty for the number of bytes to read from the InputStream each
-     * time.
-     */
-    public static final String PROP_BYTES_PER_READ =  "bytesPerRead";
-    /**
-     * Default value for PROP_BYTES_PER_READ.
-     */
+    /** SphinxProperty for the number of bytes to read from the InputStream each time. */
+    @S4Integer(defaultValue = 3200)
+    public static final String PROP_BYTES_PER_READ = "bytesPerRead";
+    /** Default value for PROP_BYTES_PER_READ. */
     public static final int PROP_BYTES_PER_READ_DEFAULT = 3200;
-    /**
-     * SphinxProperty for the number of bits per value.
-     */
+    /** SphinxProperty for the number of bits per value. */
+    @S4Integer(defaultValue = 16)
     public static final String PROP_BITS_PER_SAMPLE = "bitsPerSample";
-    /**
-     * Default value for PROP_BITS_PER_SAMPLE.
-     */
+    /** Default value for PROP_BITS_PER_SAMPLE. */
     public static final int PROP_BITS_PER_SAMPLE_DEFAULT = 16;
-    /**
-     * The SphinxProperty specifying whether the input data is big-endian.
-     */
-    public static final String PROP_BIG_ENDIAN_DATA =  "bigEndianData";
-    /**
-     * The default value for PROP_IS_DATA_BIG_ENDIAN.
-     */
+    /** The SphinxProperty specifying whether the input data is big-endian. */
+    @S4Boolean(defaultValue = true)
+    public static final String PROP_BIG_ENDIAN_DATA = "bigEndianData";
+    /** The default value for PROP_IS_DATA_BIG_ENDIAN. */
     public static final boolean PROP_BIG_ENDIAN_DATA_DEFAULT = true;
-    /**
-     * The SphinxProperty specifying whether the input data is signed.
-     */
-    public static final String PROP_SIGNED_DATA =  "signedData";
-    /**
-     * The default value of PROP_SIGNED_DATA.
-     */
+    /** The SphinxProperty specifying whether the input data is signed. */
+    @S4Boolean(defaultValue = true)
+    public static final String PROP_SIGNED_DATA = "signedData";
+    /** The default value of PROP_SIGNED_DATA. */
     public static final boolean PROP_SIGNED_DATA_DEFAULT = true;
-    
+
     private InputStream dataStream;
     private int sampleRate;
     private int bytesPerRead;
@@ -87,29 +64,31 @@ public class StreamDataSource extends BaseDataProcessor {
     private boolean utteranceEndSent = false;
     private boolean utteranceStarted = false;
 
+
     /*
-     * (non-Javadoc)
-     * 
-     * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
-     */
-    public static Map getConfigurationInfo(){
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
+    */
+    public static Map getConfigurationInfo() {
         Map info = new HashMap();
 
-        info.put(new String("PROP_BIG_ENDIAN_DATA_TYPE"),new String("BOOLEAN"));
-        info.put(new String("PROP_SIGNED_DATA_TYPE"),new String("BOOLEAN"));
-        info.put(new String("PROP_SAMPLE_RATE_TYPE"),new String("INTEGER"));
-        info.put(new String("PROP_BITS_PER_SAMPLE_TYPE"),new String("INTEGER"));
-        info.put(new String("PROP_BYTES_PER_READ_TYPE"),new String("INTEGER"));
-       
+        info.put(new String("PROP_BIG_ENDIAN_DATA_TYPE"), new String("BOOLEAN"));
+        info.put(new String("PROP_SIGNED_DATA_TYPE"), new String("BOOLEAN"));
+        info.put(new String("PROP_SAMPLE_RATE_TYPE"), new String("INTEGER"));
+        info.put(new String("PROP_BITS_PER_SAMPLE_TYPE"), new String("INTEGER"));
+        info.put(new String("PROP_BYTES_PER_READ_TYPE"), new String("INTEGER"));
+
         return info;
     }
-    
+
+
     /*
-     * (non-Javadoc)
-     * 
-     * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
-     *      edu.cmu.sphinx.util.props.Registry)
-     */
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
+    *      edu.cmu.sphinx.util.props.Registry)
+    */
     public void register(String name, Registry registry)
             throws PropertyException {
         super.register(name, registry);
@@ -120,47 +99,48 @@ public class StreamDataSource extends BaseDataProcessor {
         registry.register(PROP_SIGNED_DATA, PropertyType.BOOLEAN);
     }
 
+
     /*
-     * (non-Javadoc)
-     * 
-     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
-     */
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
+    */
     public void newProperties(PropertySheet ps) throws PropertyException {
         super.newProperties(ps);
         sampleRate = ps.getInt(PROP_SAMPLE_RATE, PROP_SAMPLE_RATE_DEFAULT);
         bytesPerRead = ps.getInt(PROP_BYTES_PER_READ,
-                                 PROP_BYTES_PER_READ_DEFAULT);
+                PROP_BYTES_PER_READ_DEFAULT);
         int bitsPerSample = ps.getInt(PROP_BITS_PER_SAMPLE,
-                                      PROP_BITS_PER_SAMPLE_DEFAULT);
+                PROP_BITS_PER_SAMPLE_DEFAULT);
         if (bitsPerSample % 8 != 0) {
             throw new Error("StreamDataSource: bits per sample must be a " +
-                            "multiple of 8.");
+                    "multiple of 8.");
         }
         bytesPerValue = bitsPerSample / 8;
         bigEndian = ps.getBoolean(PROP_BIG_ENDIAN_DATA,
-                                  PROP_BIG_ENDIAN_DATA_DEFAULT);
+                PROP_BIG_ENDIAN_DATA_DEFAULT);
         signedData = ps.getBoolean(PROP_SIGNED_DATA, PROP_SIGNED_DATA_DEFAULT);
         if (bytesPerRead % 2 == 1) {
             bytesPerRead++;
         }
     }
 
+
     /*
-     * (non-Javadoc)
-     * 
-     * @see edu.cmu.sphinx.frontend.DataProcessor#initialize(edu.cmu.sphinx.frontend.CommonConfig)
-     */
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.frontend.DataProcessor#initialize(edu.cmu.sphinx.frontend.CommonConfig)
+    */
     public void initialize() {
         super.initialize();
     }
 
+
     /**
      * Sets the InputStream from which this StreamDataSource reads.
-     * 
-     * @param inputStream
-     *                the InputStream from which audio data comes
-     * @param streamName
-     *                the name of the InputStream
+     *
+     * @param inputStream the InputStream from which audio data comes
+     * @param streamName  the name of the InputStream
      */
     public void setInputStream(InputStream inputStream, String streamName) {
         dataStream = inputStream;
@@ -170,15 +150,13 @@ public class StreamDataSource extends BaseDataProcessor {
         totalValuesRead = 0;
     }
 
+
     /**
-     * Reads and returns the next Data from the InputStream of
-     * StreamDataSource, return null if no data is read and end of file is
-     * reached.
-     * 
+     * Reads and returns the next Data from the InputStream of StreamDataSource, return null if no data is read and end
+     * of file is reached.
+     *
      * @return the next Data or <code>null</code> if none is available
-     * 
-     * @throws DataProcessingException
-     *                 if there is a data processing error
+     * @throws DataProcessingException if there is a data processing error
      */
     public Data getData() throws DataProcessingException {
         getTimer().start();
@@ -210,12 +188,11 @@ public class StreamDataSource extends BaseDataProcessor {
         return output;
     }
 
+
     /**
-     * Returns the next Data from the input stream, or null if there is none
-     * available
-     * 
+     * Returns the next Data from the input stream, or null if there is none available
+     *
      * @return a Data or null
-     * 
      * @throws java.io.IOException
      */
     private Data readNextFrame() throws DataProcessingException {
@@ -264,8 +241,9 @@ public class StreamDataSource extends BaseDataProcessor {
             doubleData = DataUtil.littleEndianBytesToValues(samplesBuffer, 0,
                     totalRead, bytesPerValue, signedData);
         }
-        return new DoubleData(doubleData,  sampleRate, collectTime, firstSample);
+        return new DoubleData(doubleData, sampleRate, collectTime, firstSample);
     }
+
 
     private void closeDataStream() throws IOException {
         streamEndReached = true;
@@ -273,13 +251,14 @@ public class StreamDataSource extends BaseDataProcessor {
             dataStream.close();
         }
     }
-    
+
+
     /**
      * Returns the duration of the current data stream in milliseconds.
      *
      * @return the duration of the current data stream in milliseconds
      */
     private long getDuration() {
-        return (long)(((double)totalValuesRead/(double)sampleRate) * 1000.0);
+        return (long) (((double) totalValuesRead / (double) sampleRate) * 1000.0);
     }
 }

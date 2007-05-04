@@ -11,94 +11,90 @@
  *
  */
 package edu.cmu.sphinx.decoder;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 
 import edu.cmu.sphinx.decoder.search.SearchManager;
 import edu.cmu.sphinx.result.Result;
 import edu.cmu.sphinx.result.ResultListener;
-import edu.cmu.sphinx.util.props.Configurable;
-import edu.cmu.sphinx.util.props.PropertyException;
-import edu.cmu.sphinx.util.props.PropertySheet;
-import edu.cmu.sphinx.util.props.PropertyType;
-import edu.cmu.sphinx.util.props.Registry;
-/**
- * The primary decoder class
- */
+import edu.cmu.sphinx.util.props.*;
+
+import java.io.IOException;
+import java.util.*;
+
+/** The primary decoder class */
 public class Decoder implements Configurable {
-    /**
-     * The sphinx property name for the number of features to recognize at
-     * once.
-     */
+
+    /** The sphinx property name for the number of features to recognize at once. */
+    @S4Integer(defaultValue = 100000)
     public final static String PROP_FEATURE_BLOCK_SIZE = "featureBlockSize";
-    /**
-     * The default value of the property PROP_FEATURE_BLOCK_SIZE.
-     */
+
+    /** The default value of the property PROP_FEATURE_BLOCK_SIZE. */
     public final static int PROP_FEATURE_BLOCK_SIZE_DEFAULT = 100000;
-    /**
-     * The sphinx property name for the name of the search manager to use
-     */
+
+    /** The sphinx property name for the name of the search manager to use */
+    @S4Component(type = SearchManager.class)
     public final static String PROP_SEARCH_MANAGER = "searchManager";
+
     private String name;
     private SearchManager searchManager;
     private int featureBlockSize;
-    
+
     private List resultListeners = Collections.synchronizedList(new ArrayList());
-    
+
+
     /*
-     * (non-Javadoc)
-     * 
-     * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
-     */
-    public static Map getConfigurationInfo(){
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
+    */
+    public static Map getConfigurationInfo() {
         Map info = new HashMap();
-        info.put(new String("PROP_SEARCH_MANAGER_TYPE"),new String("COMPONENT"));
-        info.put(new String("PROP_SEARCH_MANAGER_CLASSTYPE"),new String("edu.cmu.sphinx.decoder.search.SearchManager"));
-        info.put(new String("PROP_FEATURE_BLOCK_SIZE_TYPE"),new String("INTEGER"));           
+        info.put(new String("PROP_SEARCH_MANAGER_TYPE"), new String("COMPONENT"));
+        info.put(new String("PROP_SEARCH_MANAGER_CLASSTYPE"), new String("edu.cmu.sphinx.decoder.search.SearchManager"));
+        info.put(new String("PROP_FEATURE_BLOCK_SIZE_TYPE"), new String("INTEGER"));
         return info;
     }
-    
+
+
     /*
-     * (non-Javadoc)
-     * 
-     * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
-     *      edu.cmu.sphinx.util.props.Registry)
-     */
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
+    *      edu.cmu.sphinx.util.props.Registry)
+    */
     public void register(String name, Registry registry)
             throws PropertyException {
         this.name = name;
         registry.register(PROP_FEATURE_BLOCK_SIZE, PropertyType.INT);
         registry.register(PROP_SEARCH_MANAGER, PropertyType.COMPONENT);
     }
+
+
     /*
-     * (non-Javadoc)
-     * 
-     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
-     */
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
+    */
     public void newProperties(PropertySheet ps) throws PropertyException {
         featureBlockSize = ps.getInt(PROP_FEATURE_BLOCK_SIZE,
                 PROP_FEATURE_BLOCK_SIZE_DEFAULT);
         searchManager = (SearchManager) ps.getComponent(PROP_SEARCH_MANAGER,
                 SearchManager.class);
     }
-    
+
+
     /*
-     * (non-Javadoc)
-     * 
-     * @see edu.cmu.sphinx.util.props.Configurable#getName()
-     */
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.util.props.Configurable#getName()
+    */
     public String getName() {
         return name;
     }
-    
+
+
     /**
      * Decode frames until recognition is complete
-     * 
+     *
      * @param referenceText the reference text (or null)
      * @return a result
      */
@@ -115,60 +111,55 @@ public class Decoder implements Configurable {
         searchManager.stopRecognition();
         return result;
     }
-    
-    /**
-     * Allocate resources necessary for decoding
-     *
-     */
+
+
+    /** Allocate resources necessary for decoding */
     public void allocate() throws IOException {
         searchManager.allocate();
     }
-    
-    /**
-     * Deallocate resources
-     */
+
+
+    /** Deallocate resources */
     public void deallocate() {
         searchManager.deallocate();
     }
-    
-    
+
+
     /**
-     * Adds a result listener to this recognizer. A result listener is called
-     * whenever a new result is generated by the recognizer. This method can be
-     * called in any state.
-     * 
-     * @param resultListener
-     *            the listener to add
+     * Adds a result listener to this recognizer. A result listener is called whenever a new result is generated by the
+     * recognizer. This method can be called in any state.
+     *
+     * @param resultListener the listener to add
      */
     public void addResultListener(ResultListener resultListener) {
         resultListeners.add(resultListener);
     }
-    
-    
+
+
     /**
-     * Removes a previously added result listener. This method can be called in
-     * any state.
-     * 
-     * @param resultListener
-     *            the listener to remove
+     * Removes a previously added result listener. This method can be called in any state.
+     *
+     * @param resultListener the listener to remove
      */
     public void removeResultListener(ResultListener resultListener) {
         resultListeners.remove(resultListener);
     }
-    
+
+
     /**
      * fires the new result event
-     * 
+     *
      * @param result the new result
      */
     private void fireResultListeners(Result result) {
-        synchronized(resultListeners) {
-            for (Iterator i = resultListeners.iterator(); i.hasNext(); ) {
+        synchronized (resultListeners) {
+            for (Iterator i = resultListeners.iterator(); i.hasNext();) {
                 ResultListener resultListener = (ResultListener) i.next();
                 resultListener.newResult(result);
             }
         }
     }
+
 
     public SearchManager getSearchManager() {
         return searchManager;

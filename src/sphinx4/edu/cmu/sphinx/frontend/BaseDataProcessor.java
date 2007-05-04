@@ -18,64 +18,66 @@ import edu.cmu.sphinx.util.props.PropertyException;
 import edu.cmu.sphinx.util.props.PropertySheet;
 import edu.cmu.sphinx.util.props.Registry;
 
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
+
 /**
- * An abstract DataProcessor implementing elements common to all
- * concrete DataProcessors, such as name, predecessor, and timer.
+ * An abstract DataProcessor implementing elements common to all concrete DataProcessors, such as name, predecessor, and
+ * timer.
  */
-public  abstract class BaseDataProcessor implements DataProcessor {
+public abstract class BaseDataProcessor implements DataProcessor {
+
     private String name;
     private DataProcessor predecessor;
     private Timer timer;
 
+
     /*
-     * (non-Javadoc)
-     * 
-     * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
-     */
-    public static Map getConfigurationInfo(){
-        Map info = new HashMap();        
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
+    */
+    public static Map getConfigurationInfo() {
+        Map info = new HashMap();
         return info;
     }
-    
+
+
     /*
-     * (non-Javadoc)
-     * 
-     * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
-     *      edu.cmu.sphinx.util.props.Registry)
-     */
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
+    *      edu.cmu.sphinx.util.props.Registry)
+    */
     public void register(String name, Registry registry)
             throws PropertyException {
         setName(name);
     }
 
+
     /*
-     * (non-Javadoc)
-     * 
-     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
-     */
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
+    */
     public void newProperties(PropertySheet ps) throws PropertyException {
     }
+
+
     /**
      * Returns the processed Data output.
      *
-     * @return an Data object that has been processed by this DataProcessor 
-     *
+     * @return an Data object that has been processed by this DataProcessor
      * @throws DataProcessingException if a data processor error occurs
      */
     public abstract Data getData() throws DataProcessingException;
-    
-    
-    
-    /**
-     * Initializes this DataProcessor. This is typically called after the
-     * DataProcessor has been configured.
-     * 
-     */
-    public  void initialize() {
-        this.timer = Timer.getTimer(name); 
+
+
+    /** Initializes this DataProcessor. This is typically called after the DataProcessor has been configured. */
+    public void initialize() {
+        this.timer = Timer.getTimer(name);
     }
+
 
     /**
      * Returns the name of this DataProcessor.
@@ -85,13 +87,14 @@ public  abstract class BaseDataProcessor implements DataProcessor {
     public String getName() {
         return name;
     }
-    
+
+
     /**
      * Sets the name for this front end
      *
      * @param name the name
      */
-     private void setName(String name) {
+    private void setName(String name) {
         this.name = name;
     }
 
@@ -105,6 +108,7 @@ public  abstract class BaseDataProcessor implements DataProcessor {
         return predecessor;
     }
 
+
     /**
      * Returns the timer this DataProcessor uses.
      *
@@ -114,15 +118,16 @@ public  abstract class BaseDataProcessor implements DataProcessor {
         return timer;
     }
 
+
     /**
-     * Sets the predecessor DataProcessor. This method allows dynamic
-     * reconfiguration of the front end.
+     * Sets the predecessor DataProcessor. This method allows dynamic reconfiguration of the front end.
      *
      * @param predecessor the new predecessor of this DataProcessor
      */
     public void setPredecessor(DataProcessor predecessor) {
         this.predecessor = predecessor;
     }
+
 
     /**
      * Returns the name of this BaseDataProcessor.

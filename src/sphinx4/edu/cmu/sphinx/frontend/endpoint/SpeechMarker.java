@@ -14,16 +14,9 @@
 package edu.cmu.sphinx.frontend.endpoint;
 
 import edu.cmu.sphinx.frontend.*;
-import edu.cmu.sphinx.util.props.PropertyException;
-import edu.cmu.sphinx.util.props.PropertySheet;
-import edu.cmu.sphinx.util.props.PropertyType;
-import edu.cmu.sphinx.util.props.Registry;
+import edu.cmu.sphinx.util.props.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Map;
-import java.util.HashMap;
+import java.util.*;
 
 /**
  * Converts a stream of SpeechClassifiedData objects, marked as speech and non-speech, and mark out the regions that are
@@ -49,24 +42,28 @@ public class SpeechMarker extends BaseDataProcessor {
      * The Sphinx4 roperty for the minimum amount of time in speech (in milliseconds) to be considered as utterance
      * start.
      */
+    @S4Integer(defaultValue = 200)
     public static final String PROP_START_SPEECH = "startSpeech";
 
     /** The default value of PROP_START_SPEECH. */
     public static final int PROP_START_SPEECH_DEFAULT = 200;
 
     /** The SphinxProperty for the amount of time in silence (in milliseconds) to be considered as utterance end. */
+    @S4Integer(defaultValue = 500)
     public static final String PROP_END_SILENCE = "endSilence";
 
     /** The default value of PROP_END_SILENCE. */
     public static final int PROP_END_SILENCE_DEFAULT = 500;
 
     /** The SphinxProperty for the amount of time (in milliseconds) before speech start to be included as speech data. */
+    @S4Integer(defaultValue = 100)
     public static final String PROP_SPEECH_LEADER = "speechLeader";
 
     /** The default value of PROP_SPEECH_LEADER. */
     public static final int PROP_SPEECH_LEADER_DEFAULT = 100;
 
     /** The SphinxProperty for the amount of time (in milliseconds) after speech ends to be included as speech data. */
+    @S4Integer(defaultValue = 100)
     public static final String PROP_SPEECH_TRAILER = "speechTrailer";
 
     /** The default value of PROP_SPEECH_TRAILER. */
@@ -80,22 +77,23 @@ public class SpeechMarker extends BaseDataProcessor {
     private int speechLeader;
     private int speechTrailer;
 
+
     /*
-     * (non-Javadoc)
-     * 
-     * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
-     */
-    public static Map getConfigurationInfo(){
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
+    */
+    public static Map getConfigurationInfo() {
         Map info = new HashMap();
-       
-        info.put(new String("PROP_START_SPEECH_TYPE"),new String("INTEGER"));      
-        info.put(new String("PROP_END_SILENCE_TYPE"),new String("INTEGER")); 
-        info.put(new String("PROP_SPEECH_LEADER_TYPE"),new String("INTEGER")); 
-        info.put(new String("PROP_SPEECH_TRAILER_TYPE"),new String("INTEGER")); 
+
+        info.put(new String("PROP_START_SPEECH_TYPE"), new String("INTEGER"));
+        info.put(new String("PROP_END_SILENCE_TYPE"), new String("INTEGER"));
+        info.put(new String("PROP_SPEECH_LEADER_TYPE"), new String("INTEGER"));
+        info.put(new String("PROP_SPEECH_TRAILER_TYPE"), new String("INTEGER"));
         return info;
     }
 
-    
+
     /*
     * (non-Javadoc)
     *

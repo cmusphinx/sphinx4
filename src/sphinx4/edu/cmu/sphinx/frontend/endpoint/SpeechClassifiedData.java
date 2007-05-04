@@ -17,10 +17,7 @@ import edu.cmu.sphinx.frontend.Data;
 import edu.cmu.sphinx.frontend.DoubleData;
 
 
-/**
- * A container for DoubleData class that indicates whether the 
- * contained DoubleData is speech or not.
- */
+/** A container for DoubleData class that indicates whether the contained DoubleData is speech or not. */
 class SpeechClassifiedData implements Data {
 
     private boolean isSpeech;
@@ -31,14 +28,14 @@ class SpeechClassifiedData implements Data {
      * Constructs a SpeechClassifiedData object.
      *
      * @param doubleData the DoubleData
-     * @param isSpeech indicates whether the DoubleData is speech
+     * @param isSpeech   indicates whether the DoubleData is speech
      */
     protected SpeechClassifiedData(DoubleData doubleData, boolean isSpeech) {
         this.data = doubleData;
         this.isSpeech = isSpeech;
     }
 
-    
+
     /**
      * Sets whether this SpeechClassifiedData is speech or not.
      *
@@ -82,8 +79,8 @@ class SpeechClassifiedData implements Data {
     /**
      * Returns the time in milliseconds at which the audio data is collected.
      *
-     * @return the difference, in milliseconds, between the time the
-     *    audio data is collected and midnight, January 1, 1970
+     * @return the difference, in milliseconds, between the time the audio data is collected and midnight, January 1,
+     *         1970
      */
     public long getCollectTime() {
         return data.getCollectTime();
@@ -91,8 +88,7 @@ class SpeechClassifiedData implements Data {
 
 
     /**
-     * Returns the position of the first sample in the original data.
-     * The very first sample number is zero.
+     * Returns the position of the first sample in the original data. The very first sample number is zero.
      *
      * @return the position of the first sample in the original data
      */

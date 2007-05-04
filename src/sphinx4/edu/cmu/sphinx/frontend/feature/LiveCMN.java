@@ -14,10 +14,7 @@
 package edu.cmu.sphinx.frontend.feature;
 
 import edu.cmu.sphinx.frontend.*;
-import edu.cmu.sphinx.util.props.PropertyException;
-import edu.cmu.sphinx.util.props.PropertySheet;
-import edu.cmu.sphinx.util.props.PropertyType;
-import edu.cmu.sphinx.util.props.Registry;
+import edu.cmu.sphinx.util.props.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -46,8 +43,8 @@ public class LiveCMN extends BaseDataProcessor {
 
 
     /** The name of the SphinxProperty for the initial cepstral mean. This is a front-end dependent magic number. */
-    public static final String PROP_INITIAL_MEAN
-            = "initialMean";
+    @S4Double(defaultValue = 12.0)
+    public static final String PROP_INITIAL_MEAN = "initialMean";
 
 
     /** The default value for PROP_INITIAL_MEAN. */
@@ -55,6 +52,7 @@ public class LiveCMN extends BaseDataProcessor {
 
 
     /** The name of the SphinxProperty for the live CMN window size. */
+    @S4Integer(defaultValue = 100)
     public static final String PROP_CMN_WINDOW = "cmnWindow";
 
 
@@ -66,8 +64,8 @@ public class LiveCMN extends BaseDataProcessor {
      * The name of the SphinxProperty for the CMN shifting window. The shifting window specifies how many cepstrum after
      * which we re-calculate the cepstral mean.
      */
-    public static final String PROP_CMN_SHIFT_WINDOW
-            = "shiftWindow";
+    @S4Integer(defaultValue = 160)
+    public static final String PROP_CMN_SHIFT_WINDOW = "shiftWindow";
 
 
     /** The default value of PROP_CMN_SHIFT_WINDOW. */

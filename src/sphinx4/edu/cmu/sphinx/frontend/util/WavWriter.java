@@ -3,10 +3,7 @@ package edu.cmu.sphinx.frontend.util;
 import edu.cmu.sphinx.frontend.*;
 import edu.cmu.sphinx.frontend.endpoint.SpeechEndSignal;
 import edu.cmu.sphinx.frontend.endpoint.SpeechStartSignal;
-import edu.cmu.sphinx.util.props.PropertyException;
-import edu.cmu.sphinx.util.props.PropertySheet;
-import edu.cmu.sphinx.util.props.PropertyType;
-import edu.cmu.sphinx.util.props.Registry;
+import edu.cmu.sphinx.util.props.*;
 
 import javax.sound.sampled.AudioFileFormat;
 import javax.sound.sampled.AudioFormat;
@@ -30,6 +27,7 @@ public class WavWriter extends BaseDataProcessor {
      * The pathname which must obey the pattern: pattern + i + .wav. Only the pattern is required here (e.g.
      * wavdump/file). After each DataEndSignal the smalles unused 'i' is determined.
      */
+    @S4String
     public static final String PROP_OUT_FILE_NAME_PATTERN = "outFilePattern";
 
 
@@ -37,21 +35,25 @@ public class WavWriter extends BaseDataProcessor {
     private String outPattern = null;
 
     /** SphinxProperty for the number of bits per value. */
+    @S4Integer(defaultValue = 16)
     public static final String PROP_BITS_PER_SAMPLE = "bitsPerSample";
     /** Default value for PROP_BITS_PER_SAMPLE. */
     private int bitsPerSample = 16;
 
     /** The SphinxProperty specifying whether the input data is big-endian. */
+    @S4Boolean(defaultValue = true)
     public static final String PROP_BIG_ENDIAN_DATA = "bigEndianData";
     /** The default value for PROP_IS_DATA_BIG_ENDIAN. */
     private boolean isBigEndian = true;
 
     /** The SphinxProperty specifying whether the input data is signed. */
+    @S4Boolean(defaultValue = true)
     public static final String PROP_SIGNED_DATA = "signedData";
     /** The default value of PROP_SIGNED_DATA. */
     private boolean isSigned = true;
 
     /** The SphinxProperty specifying whether the input data is signed. */
+    @S4Boolean(defaultValue = false)
     public static final String PROP_CAPTURE_UTTERANCES = "captureUtterances";
     /** The default value of PROP_SIGNED_DATA. */
     private boolean captureUtts = false;

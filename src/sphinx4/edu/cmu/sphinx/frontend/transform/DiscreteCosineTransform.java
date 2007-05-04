@@ -15,73 +15,62 @@ import edu.cmu.sphinx.frontend.BaseDataProcessor;
 import edu.cmu.sphinx.frontend.Data;
 import edu.cmu.sphinx.frontend.DataProcessingException;
 import edu.cmu.sphinx.frontend.DoubleData;
-import edu.cmu.sphinx.util.props.PropertyException;
-import edu.cmu.sphinx.util.props.PropertySheet;
-import edu.cmu.sphinx.util.props.PropertyType;
-import edu.cmu.sphinx.util.props.Registry;
+import edu.cmu.sphinx.util.props.*;
 
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
- * Applies a logarithm and then a Discrete Cosine Transform (DCT) to the input
- * data. The input data is normally the mel spectrum. It has been proven that,
- * for a sequence of real numbers, the discrete cosine transform is equivalent
- * to the discrete Fourier transform. Therefore, this class corresponds to the
- * last stage of converting a signal to cepstra, defined as the inverse Fourier
- * transform of the logarithm of the Fourier transform of a signal. The
- * property {@link #PROP_CEPSTRUM_LENGTH}refers to the dimensionality of the
- * coefficients that are actually returned, defaulting to
- * {@link #PROP_CEPSTRUM_LENGTH_DEFAULT}. When the input is mel-spectrum, the
- * vector returned is the MFCC (Mel-Frequency Cepstral Coefficient) vector,
- * where the 0-th element is the energy value.
+ * Applies a logarithm and then a Discrete Cosine Transform (DCT) to the input data. The input data is normally the mel
+ * spectrum. It has been proven that, for a sequence of real numbers, the discrete cosine transform is equivalent to the
+ * discrete Fourier transform. Therefore, this class corresponds to the last stage of converting a signal to cepstra,
+ * defined as the inverse Fourier transform of the logarithm of the Fourier transform of a signal. The property {@link
+ * #PROP_CEPSTRUM_LENGTH}refers to the dimensionality of the coefficients that are actually returned, defaulting to
+ * {@link #PROP_CEPSTRUM_LENGTH_DEFAULT}. When the input is mel-spectrum, the vector returned is the MFCC (Mel-Frequency
+ * Cepstral Coefficient) vector, where the 0-th element is the energy value.
  */
 @SuppressWarnings({"UnnecessaryLocalVariable"})
 public class DiscreteCosineTransform extends BaseDataProcessor {
-    /**
-     * The name of the Sphinx Property for the number of filters in the
-     * filterbank.
-     */
+
+    /** The name of the Sphinx Property for the number of filters in the filterbank. */
+    @S4Integer(defaultValue = 40)
     public static final String PROP_NUMBER_FILTERS = "numberFilters";
-    /**
-     * The default value for PROP_NUMBER_FILTERS.
-     */
+    /** The default value for PROP_NUMBER_FILTERS. */
     public static final int PROP_NUMBER_FILTERS_DEFAULT = 40;
-    
-    /**
-     * The name of the sphinx property for the size of the ceptrum
-     */
+
+    /** The name of the sphinx property for the size of the ceptrum */
+    @S4Integer(defaultValue = 13)
     public static final String PROP_CEPSTRUM_LENGTH = "cepstrumLength";
-    
-    /**
-     * The default value for PROP_CEPSTRUM_LENGTH
-     */
+
+    /** The default value for PROP_CEPSTRUM_LENGTH */
     public static final int PROP_CEPSTRUM_LENGTH_DEFAULT = 13;
-    
-    
+
+
     private int cepstrumSize; // size of a Cepstrum
     private int numberMelFilters; // number of mel-filters
     private double[][] melcosine;
 
+
     /*
-     * (non-Javadoc)
-     * 
-     * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
-     */
-    public static Map getConfigurationInfo(){
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
+    */
+    public static Map getConfigurationInfo() {
         Map info = new HashMap();
- 
-        info.put(new String("PROP_NUMBER_FILTERS_TYPE"),new String("INTEGER"));
-        info.put(new String("PROP_CEPSTRUM_LENGTH_TYPE"),new String("INTEGER"));        
+
+        info.put(new String("PROP_NUMBER_FILTERS_TYPE"), new String("INTEGER"));
+        info.put(new String("PROP_CEPSTRUM_LENGTH_TYPE"), new String("INTEGER"));
         return info;
     }
-    
+
+
     /*
-     * (non-Javadoc)
-     * 
-     * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
-     *      edu.cmu.sphinx.util.props.Registry)
-     */
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
+    *      edu.cmu.sphinx.util.props.Registry)
+    */
     public void register(String name, Registry registry)
             throws PropertyException {
         super.register(name, registry);
@@ -89,11 +78,12 @@ public class DiscreteCosineTransform extends BaseDataProcessor {
         registry.register(PROP_CEPSTRUM_LENGTH, PropertyType.INT);
     }
 
+
     /*
-     * (non-Javadoc)
-     * 
-     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
-     */
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
+    */
     public void newProperties(PropertySheet ps) throws PropertyException {
         super.newProperties(ps);
         numberMelFilters = ps.getInt(PROP_NUMBER_FILTERS,
@@ -101,19 +91,18 @@ public class DiscreteCosineTransform extends BaseDataProcessor {
         cepstrumSize = ps.getInt(PROP_CEPSTRUM_LENGTH, PROP_CEPSTRUM_LENGTH_DEFAULT);
     }
 
+
     /*
-     * (non-Javadoc)
-     * 
-     * @see edu.cmu.sphinx.frontend.DataProcessor#initialize(edu.cmu.sphinx.frontend.CommonConfig)
-     */
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.frontend.DataProcessor#initialize(edu.cmu.sphinx.frontend.CommonConfig)
+    */
     public void initialize() {
         super.initialize();
-    }   
+    }
 
 
-    /**
-     * Compute the MelCosine filter bank.
-     */
+    /** Compute the MelCosine filter bank. */
     private void computeMelCosine() {
         melcosine = new double[cepstrumSize][numberMelFilters];
         double period = (double) 2 * numberMelFilters;
@@ -125,15 +114,13 @@ public class DiscreteCosineTransform extends BaseDataProcessor {
         }
     }
 
+
     /**
-     * Returns the next DoubleData object, which is the mel cepstrum of the
-     * input frame. Signals are returned unmodified.
-     * 
-     * @return the next available DoubleData melcepstrum, or Signal object, or
-     *         null if no Data is available
-     * 
-     * @throws DataProcessingException
-     *                 if a data processing error occurred
+     * Returns the next DoubleData object, which is the mel cepstrum of the input frame. Signals are returned
+     * unmodified.
+     *
+     * @return the next available DoubleData melcepstrum, or Signal object, or null if no Data is available
+     * @throws DataProcessingException if a data processing error occurred
      */
     public Data getData() throws DataProcessingException {
         Data input = getPredecessor().getData(); // get the spectrum
@@ -145,12 +132,11 @@ public class DiscreteCosineTransform extends BaseDataProcessor {
         return input;
     }
 
+
     /**
      * Process data, creating the mel cepstrum from an input spectrum frame.
-     * 
-     * @param input
-     *                a MelSpectrum frame
-     * 
+     *
+     * @param input a MelSpectrum frame
      * @return a mel Cepstrum frame
      */
     private DoubleData process(DoubleData input)
@@ -163,9 +149,9 @@ public class DiscreteCosineTransform extends BaseDataProcessor {
 
         } else if (melspectrum.length != numberMelFilters) {
             throw new IllegalArgumentException
-                ("MelSpectrum size is incorrect: melspectrum.length == " +
-                 melspectrum.length + ", numberMelFilters == " +
-                 numberMelFilters);
+                    ("MelSpectrum size is incorrect: melspectrum.length == " +
+                            melspectrum.length + ", numberMelFilters == " +
+                            numberMelFilters);
         }
         // first compute the log of the spectrum
         for (int i = 0; i < melspectrum.length; ++i) {
@@ -186,14 +172,12 @@ public class DiscreteCosineTransform extends BaseDataProcessor {
         return output;
     }
 
+
     /**
      * Apply the MelCosine filter to the given melspectrum.
-     * 
-     * @param melspectrum
-     *                the MelSpectrum data
-     * 
-     * @return MelCepstrum data produced by apply the MelCosine filter to the
-     *         MelSpectrum data
+     *
+     * @param melspectrum the MelSpectrum data
+     * @return MelCepstrum data produced by apply the MelCosine filter to the MelSpectrum data
      */
     private double[] applyMelCosine(double[] melspectrum) {
         // create the cepstrum

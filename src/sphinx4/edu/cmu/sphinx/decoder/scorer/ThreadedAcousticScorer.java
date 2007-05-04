@@ -12,19 +12,16 @@
 
 package edu.cmu.sphinx.decoder.scorer;
 
+import edu.cmu.sphinx.decoder.search.Token;
+import edu.cmu.sphinx.frontend.*;
+import edu.cmu.sphinx.util.props.*;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.logging.Logger;
 import java.util.Map;
-
-import edu.cmu.sphinx.frontend.*;
-import edu.cmu.sphinx.util.props.PropertyException;
-import edu.cmu.sphinx.util.props.PropertySheet;
-import edu.cmu.sphinx.util.props.PropertyType;
-import edu.cmu.sphinx.util.props.Registry;
-import edu.cmu.sphinx.decoder.search.Token;
+import java.util.logging.Logger;
 
 /**
  * An acoustic scorer that breaks the scoring up into a configurable number of separate threads.
@@ -34,6 +31,7 @@ import edu.cmu.sphinx.decoder.search.Token;
 public class ThreadedAcousticScorer implements AcousticScorer {
 
     /** Property the defines the frontend to retrieve features from for scoring */
+    @S4Component(type = FrontEnd.class)
     public final static String PROP_FRONTEND = "frontend";
 
     /**
@@ -44,6 +42,7 @@ public class ThreadedAcousticScorer implements AcousticScorer {
      * true. If you want exactly one thread to process scores set NUM_THREADS to 1 and isCpuRelative to false. The
      * default value is 1
      */
+    @S4Integer(defaultValue = 1)
     public final static String PROP_NUM_THREADS = "numThreads";
 
     /** The default value for PROP_NUM_THREADS. */
@@ -56,6 +55,7 @@ public class ThreadedAcousticScorer implements AcousticScorer {
      * zero. Also, if the number of threads is one, the states are scored on the calling thread, no separate threads are
      * started. The default value is false.
      */
+    @S4Boolean(defaultValue = false)
     public final static String PROP_IS_CPU_RELATIVE = "isCpuRelative";
 
     /** The default value for PROP_IS_CPU_RELATIVE. */
@@ -66,18 +66,21 @@ public class ThreadedAcousticScorer implements AcousticScorer {
      * over threading of the scoring that could happen if the number of threads is high compared to the size of the
      * activelist. The default is 50
      */
+    @S4Integer(defaultValue = 50)
     public final static String PROP_MIN_SCOREABLES_PER_THREAD = "minScoreablesPerThread";
 
     /** The default value for PROP_MIN_SCOREABLES_PER_THREAD. */
     public final static int PROP_MIN_SCOREABLES_PER_THREAD_DEFAULT = 50;
 
     /** A SphinxProperty specifying whether the scoreables should keep a reference to the scored features. */
+    @S4Boolean(defaultValue = false)
     public final static String PROP_SCOREABLES_KEEP_FEATURE = "scoreablesKeepFeature";
 
     /** The default value for PROP_SCOREABLES_KEEP_FEATURE. */
     public final static boolean PROP_SCOREABLES_KEEP_FEATURE_DEFAULT = false;
 
     /** A sphinx property that controls the amount of acoustic gain. */
+    @S4Double(defaultValue = 1.0)
     public final static String PROP_ACOUSTIC_GAIN = "acousticGain";
 
     /** The default value for the PROP_ACOUSTIC_LOOKAHEAD_FRAMES property. */

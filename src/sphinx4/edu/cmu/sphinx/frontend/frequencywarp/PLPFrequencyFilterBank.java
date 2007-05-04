@@ -16,30 +16,20 @@ import edu.cmu.sphinx.frontend.BaseDataProcessor;
 import edu.cmu.sphinx.frontend.Data;
 import edu.cmu.sphinx.frontend.DataProcessingException;
 import edu.cmu.sphinx.frontend.DoubleData;
-import edu.cmu.sphinx.util.props.PropertyException;
-import edu.cmu.sphinx.util.props.PropertySheet;
-import edu.cmu.sphinx.util.props.PropertyType;
-import edu.cmu.sphinx.util.props.Registry;
+import edu.cmu.sphinx.util.props.*;
 
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Filters an input power spectrum through a PLP filterbank. The
- * filters in the filterbank are placed in the frequency axis so as to
- * mimic the critical band, representing different perceptual effect
- * at different frequency bands. The filter outputs are also scaled
- * for equal loudness preemphasis. The filter shapes are defined by
- * the {@link PLPFilter} class. Like the {@link
- * MelFrequencyFilterBank}, this filter bank has characteristics
- * defined by the {@link #PROP_NUMBER_FILTERS number of filters}, the
- * {@link #PROP_MIN_FREQ minimum frequency}, and the {@link
- * #PROP_MAX_FREQ maximum frequency}. Unlike the
- * {@link MelFrequencyFilterBank}, the minimum and maximum frequencies here
- * refer to the <b>center</b> frequencies of the filters located at
- * the leftmost and rightmost positions, and not to the
- * edges. Therefore, this filter bank spans a frequency range that
- * goes beyond the limits suggested by the minimum and maximum
+ * Filters an input power spectrum through a PLP filterbank. The filters in the filterbank are placed in the frequency
+ * axis so as to mimic the critical band, representing different perceptual effect at different frequency bands. The
+ * filter outputs are also scaled for equal loudness preemphasis. The filter shapes are defined by the {@link PLPFilter}
+ * class. Like the {@link MelFrequencyFilterBank}, this filter bank has characteristics defined by the {@link
+ * #PROP_NUMBER_FILTERS number of filters}, the {@link #PROP_MIN_FREQ minimum frequency}, and the {@link #PROP_MAX_FREQ
+ * maximum frequency}. Unlike the {@link MelFrequencyFilterBank}, the minimum and maximum frequencies here refer to the
+ * <b>center</b> frequencies of the filters located at the leftmost and rightmost positions, and not to the edges.
+ * Therefore, this filter bank spans a frequency range that goes beyond the limits suggested by the minimum and maximum
  * frequencies.
  *
  * @author <a href="mailto:rsingh@cs.cmu.edu">rsingh</a>
@@ -48,43 +38,31 @@ import java.util.Map;
  */
 @SuppressWarnings({"UnnecessaryLocalVariable"})
 public class PLPFrequencyFilterBank extends BaseDataProcessor {
-    
-    /**
-     * The name of the Sphinx Property for the number of filters in
-     * the filterbank.
-     */
+
+    /** The name of the Sphinx Property for the number of filters in the filterbank. */
+    @S4Integer(defaultValue = 32)
     public static final String PROP_NUMBER_FILTERS = "numberFilters";
 
 
-    /**
-     * The default value of PROP_NUMBER_FILTERS.
-     */
+    /** The default value of PROP_NUMBER_FILTERS. */
     public static final int PROP_NUMBER_FILTERS_DEFAULT = 32;
 
 
-    /**
-     * The name of the Sphinx Property for the center frequency
-     * of the lowest filter in the filterbank.
-     */
+    /** The name of the Sphinx Property for the center frequency of the lowest filter in the filterbank. */
+    @S4Integer(defaultValue = 130)
     public static final String PROP_MIN_FREQ = "minimumFrequency";
 
 
-    /**
-     * The default value of PROP_MIN_FREQ.
-     */
+    /** The default value of PROP_MIN_FREQ. */
     public static final int PROP_MIN_FREQ_DEFAULT = 130;
 
 
-    /**
-     * The name of the Sphinx Property for the center frequency
-     * of the highest filter in the filterbank.
-     */
+    /** The name of the Sphinx Property for the center frequency of the highest filter in the filterbank. */
+    @S4Integer(defaultValue = 3600)
     public static final String PROP_MAX_FREQ = "maximumFrequency";
 
 
-    /**
-     * The default value of PROP_MAX_FREQ.
-     */
+    /** The default value of PROP_MAX_FREQ. */
     public static final int PROP_MAX_FREQ_DEFAULT = 3600;
 
 
@@ -96,26 +74,28 @@ public class PLPFrequencyFilterBank extends BaseDataProcessor {
     private PLPFilter[] criticalBandFilter;
     private double[] equalLoudnessScaling;
 
+
     /*
-     * (non-Javadoc)
-     * 
-     * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
-     */
-    public static Map getConfigurationInfo(){
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
+    */
+    public static Map getConfigurationInfo() {
         Map info = new HashMap();
-   
-        info.put(new String("PROP_NUMBER_FILTERS_TYPE"),new String("INTEGER"));
-        info.put(new String("PROP_MIN_FREQ_TYPE"),new String("DOUBLE"));
-        info.put(new String("PROP_MAX_FREQ_TYPE"),new String("DOUBLE"));        
+
+        info.put(new String("PROP_NUMBER_FILTERS_TYPE"), new String("INTEGER"));
+        info.put(new String("PROP_MIN_FREQ_TYPE"), new String("DOUBLE"));
+        info.put(new String("PROP_MAX_FREQ_TYPE"), new String("DOUBLE"));
         return info;
     }
-    
+
+
     /*
-     * (non-Javadoc)
-     * 
-     * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
-     *      edu.cmu.sphinx.util.props.Registry)
-     */
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
+    *      edu.cmu.sphinx.util.props.Registry)
+    */
     public void register(String name, Registry registry)
             throws PropertyException {
         super.register(name, registry);
@@ -124,186 +104,178 @@ public class PLPFrequencyFilterBank extends BaseDataProcessor {
         registry.register(PROP_NUMBER_FILTERS, PropertyType.INT);
     }
 
+
     /*
-     * (non-Javadoc)
-     * 
-     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
-     */
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
+    */
     public void newProperties(PropertySheet ps) throws PropertyException {
         super.newProperties(ps);
-        minFreq = ps.getDouble (PROP_MIN_FREQ, PROP_MIN_FREQ_DEFAULT);
-        maxFreq = ps.getDouble (PROP_MAX_FREQ, PROP_MAX_FREQ_DEFAULT);
-        numberFilters = ps.getInt (PROP_NUMBER_FILTERS, PROP_NUMBER_FILTERS_DEFAULT);
+        minFreq = ps.getDouble(PROP_MIN_FREQ, PROP_MIN_FREQ_DEFAULT);
+        maxFreq = ps.getDouble(PROP_MAX_FREQ, PROP_MAX_FREQ_DEFAULT);
+        numberFilters = ps.getInt(PROP_NUMBER_FILTERS, PROP_NUMBER_FILTERS_DEFAULT);
     }
 
-    /**
-     * Initializes this PLPFrequencyFilterBank object 
-     */
+
+    /** Initializes this PLPFrequencyFilterBank object */
     public void initialize() {
         super.initialize();
     }
 
+
     /**
-     * Build a PLP filterbank with the parameters given.
-     * The center frequencies of the PLP filters will be
-     * uniformly spaced between the minimum and maximum
-     * analysis frequencies on the Bark scale.
-     * on the Bark scale.
+     * Build a PLP filterbank with the parameters given. The center frequencies of the PLP filters will be uniformly
+     * spaced between the minimum and maximum analysis frequencies on the Bark scale. on the Bark scale.
      *
      * @throws IllegalArgumentException
      */
-    private void buildCriticalBandFilterbank() throws IllegalArgumentException{
-	double minBarkFreq;
-	double maxBarkFreq;
-	double deltaBarkFreq;
-	double nyquistFreq;
-	double centerFreq;
-	int numberDFTPoints = (numberFftPoints>>1) + 1;
-	double[] DFTFrequencies;
+    private void buildCriticalBandFilterbank() throws IllegalArgumentException {
+        double minBarkFreq;
+        double maxBarkFreq;
+        double deltaBarkFreq;
+        double nyquistFreq;
+        double centerFreq;
+        int numberDFTPoints = (numberFftPoints >> 1) + 1;
+        double[] DFTFrequencies;
 
-	/* This is the same class of warper called by PLPFilter.java */
-	FrequencyWarper bark = new FrequencyWarper();
+        /* This is the same class of warper called by PLPFilter.java */
+        FrequencyWarper bark = new FrequencyWarper();
 
-	this.criticalBandFilter = new PLPFilter[numberFilters];
+        this.criticalBandFilter = new PLPFilter[numberFilters];
 
-	if (numberFftPoints == 0) {
-	    throw new IllegalArgumentException("Number of FFT points is zero");
-	}
-	if (numberFilters < 1) {
-	    throw new IllegalArgumentException("Number of filters illegal: "
-					       + numberFilters);
-	}
+        if (numberFftPoints == 0) {
+            throw new IllegalArgumentException("Number of FFT points is zero");
+        }
+        if (numberFilters < 1) {
+            throw new IllegalArgumentException("Number of filters illegal: "
+                    + numberFilters);
+        }
 
-	DFTFrequencies = new double[numberDFTPoints];
-	nyquistFreq = sampleRate/2;
-	for (int i=0; i<numberDFTPoints; i++){
-	    DFTFrequencies[i] = (double)i*nyquistFreq/
-                                        (double)(numberDFTPoints-1);
-	}
+        DFTFrequencies = new double[numberDFTPoints];
+        nyquistFreq = sampleRate / 2;
+        for (int i = 0; i < numberDFTPoints; i++) {
+            DFTFrequencies[i] = (double) i * nyquistFreq /
+                    (double) (numberDFTPoints - 1);
+        }
 
-	/**
-	 * Find center frequencies of filters in the Bark scale
-	 * translate to linear frequency and create PLP filters
-	 * with these center frequencies.
-	 *
-	 * Note that minFreq and maxFreq specify the CENTER FREQUENCIES
-	 * of the lowest and highest PLP filters
-	 */
+        /**
+         * Find center frequencies of filters in the Bark scale
+         * translate to linear frequency and create PLP filters
+         * with these center frequencies.
+         *
+         * Note that minFreq and maxFreq specify the CENTER FREQUENCIES
+         * of the lowest and highest PLP filters
+         */
 
 
-	minBarkFreq = bark.hertzToBark(minFreq);
-	maxBarkFreq = bark.hertzToBark(maxFreq);
+        minBarkFreq = bark.hertzToBark(minFreq);
+        maxBarkFreq = bark.hertzToBark(maxFreq);
 
         if (numberFilters < 1) {
             throw new IllegalArgumentException("Number of filters illegal: "
-		                                               + numberFilters);
-	}
-	deltaBarkFreq = (maxBarkFreq - minBarkFreq)/(numberFilters+1);
+                    + numberFilters);
+        }
+        deltaBarkFreq = (maxBarkFreq - minBarkFreq) / (numberFilters + 1);
 
-	for (int i = 0; i < numberFilters; i++) {
-	    centerFreq = bark.barkToHertz(minBarkFreq + i*deltaBarkFreq);
-	    criticalBandFilter[i] = new PLPFilter(DFTFrequencies,centerFreq);
-	}
+        for (int i = 0; i < numberFilters; i++) {
+            centerFreq = bark.barkToHertz(minBarkFreq + i * deltaBarkFreq);
+            criticalBandFilter[i] = new PLPFilter(DFTFrequencies, centerFreq);
+        }
     }
 
+
     /**
-     * This function return the equal loudness preemphasis factor
-     * at any frequency. The preemphasis function is given by
-     *
+     * This function return the equal loudness preemphasis factor at any frequency. The preemphasis function is given
+     * by
+     * <p/>
      * E(w) = (w^2+56.8e6)*w^4/((w^2+6.3e6)^2(w^2+0.38e9)(w^6+9.58e26))
-     *
+     * <p/>
      * where w is frequency in radians/second
      */
-    private double loudnessScalingFunction(double freq){
-	double freqsquared = freq*freq;
-	double freqfourth = freqsquared*freqsquared;
-	double freqsixth = freqfourth*freqsquared;
+    private double loudnessScalingFunction(double freq) {
+        double freqsquared = freq * freq;
+        double freqfourth = freqsquared * freqsquared;
+        double freqsixth = freqfourth * freqsquared;
 
-	double numerator = (freqsquared + 56.8e6) * freqfourth;
-	double denominator = Math.pow((freqsquared + 6.3e6),2) * 
-	                              (freqsquared + 0.38e9) *
-	                              (freqsixth + 9.58e26);
+        double numerator = (freqsquared + 56.8e6) * freqfourth;
+        double denominator = Math.pow((freqsquared + 6.3e6), 2) *
+                (freqsquared + 0.38e9) *
+                (freqsixth + 9.58e26);
 
-	return numerator/denominator;
+        return numerator / denominator;
     }
 
-    /**
-     * Create an array of equal loudness preemphasis scaling terms
-     * for all the filters
-     */
-    private void buildEqualLoudnessScalingFactors(){
-	double centerFreq;
 
-	equalLoudnessScaling = new double[numberFilters];
-	for (int i = 0; i < numberFilters; i++){
-	    centerFreq = criticalBandFilter[i].centerFreqInHz * 2.0 * Math.PI;
-	    equalLoudnessScaling[i] = loudnessScalingFunction(centerFreq);
-	}
+    /** Create an array of equal loudness preemphasis scaling terms for all the filters */
+    private void buildEqualLoudnessScalingFactors() {
+        double centerFreq;
+
+        equalLoudnessScaling = new double[numberFilters];
+        for (int i = 0; i < numberFilters; i++) {
+            centerFreq = criticalBandFilter[i].centerFreqInHz * 2.0 * Math.PI;
+            equalLoudnessScaling[i] = loudnessScalingFunction(centerFreq);
+        }
     }
 
+
     /**
-     * Process data, creating the power spectrum from an input
-     * audio frame.
+     * Process data, creating the power spectrum from an input audio frame.
      *
      * @param input input power spectrum
-     *
      * @return PLP power spectrum
-     *
      * @throws java.lang.IllegalArgumentException
      *
      */
     private DoubleData process(DoubleData input) throws
-        IllegalArgumentException {
+            IllegalArgumentException {
 
-	double[] in = input.getValues();
-        
-        if (criticalBandFilter == null || 
-            sampleRate != input.getSampleRate()) {
+        double[] in = input.getValues();
+
+        if (criticalBandFilter == null ||
+                sampleRate != input.getSampleRate()) {
             numberFftPoints = (in.length - 1) * 2;
             sampleRate = input.getSampleRate();
             buildCriticalBandFilterbank();
             buildEqualLoudnessScalingFactors();
 
         } else if (in.length != ((numberFftPoints >> 1) + 1)) {
-	    throw new IllegalArgumentException
-               ("Window size is incorrect: in.length == " + in.length +
-                 ", numberFftPoints == " + ((numberFftPoints >> 1) + 1));
-	}
+            throw new IllegalArgumentException
+                    ("Window size is incorrect: in.length == " + in.length +
+                            ", numberFftPoints == " + ((numberFftPoints >> 1) + 1));
+        }
 
-	double[] outputPLPSpectralArray = new double[numberFilters];
+        double[] outputPLPSpectralArray = new double[numberFilters];
 
-	/**
-	 * Filter input power spectrum
-	 */
-	for (int i = 0; i < numberFilters; i++) {
-	    // First compute critical band filter output
-	    outputPLPSpectralArray[i] = criticalBandFilter[i].filterOutput(in);
-	    // Then scale it for equal loudness preemphasis
-	    outputPLPSpectralArray[i] *= equalLoudnessScaling[i];
-	}
+        /**
+         * Filter input power spectrum
+         */
+        for (int i = 0; i < numberFilters; i++) {
+            // First compute critical band filter output
+            outputPLPSpectralArray[i] = criticalBandFilter[i].filterOutput(in);
+            // Then scale it for equal loudness preemphasis
+            outputPLPSpectralArray[i] *= equalLoudnessScaling[i];
+        }
 
-	DoubleData output = new DoubleData
-            (outputPLPSpectralArray, input.getSampleRate(),
-             input.getCollectTime(), input.getFirstSampleNumber());
+        DoubleData output = new DoubleData
+                (outputPLPSpectralArray, input.getSampleRate(),
+                        input.getCollectTime(), input.getFirstSampleNumber());
 
         return output;
     }
 
 
     /**
-     * Reads the next Data object, which is the power spectrum of an
-     * audio input frame. However, it can also be other Data objects
-     * like a Signal, which is returned unmodified.
+     * Reads the next Data object, which is the power spectrum of an audio input frame. However, it can also be other
+     * Data objects like a Signal, which is returned unmodified.
      *
-     * @return the next available Data object, returns null if no
-     *         Data object is available
-     *
+     * @return the next available Data object, returns null if no Data object is available
      * @throws DataProcessingException if there is a data processing error
      */
     public Data getData() throws DataProcessingException {
 
-	Data input = getPredecessor().getData();
-        
+        Data input = getPredecessor().getData();
+
         getTimer().start();
 
         if (input != null) {
@@ -313,7 +285,7 @@ public class PLPFrequencyFilterBank extends BaseDataProcessor {
         }
 
         getTimer().stop();
-	
-      	return input;
-    }	
+
+        return input;
+    }
 }

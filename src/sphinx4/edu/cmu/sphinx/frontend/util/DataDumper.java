@@ -11,51 +11,32 @@
  */
 package edu.cmu.sphinx.frontend.util;
 
+import edu.cmu.sphinx.frontend.*;
+import edu.cmu.sphinx.util.props.*;
+
 import java.text.DecimalFormat;
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Logger;
-import edu.cmu.sphinx.frontend.BaseDataProcessor;
-import edu.cmu.sphinx.frontend.Data;
-import edu.cmu.sphinx.frontend.DataProcessingException;
-import edu.cmu.sphinx.frontend.DataStartSignal;
-import edu.cmu.sphinx.frontend.DoubleData;
-import edu.cmu.sphinx.frontend.FloatData;
-import edu.cmu.sphinx.frontend.Signal;
-import edu.cmu.sphinx.util.props.PropertyException;
-import edu.cmu.sphinx.util.props.PropertySheet;
-import edu.cmu.sphinx.util.props.PropertyType;
-import edu.cmu.sphinx.util.props.Registry;
 
 
-
-/**
- * Dumps the data
- */
+/** Dumps the data */
 public class DataDumper extends BaseDataProcessor {
-    /**
-     * The Sphinx property that specifies whether data dumping is enabled
-     */
+
+    /** The Sphinx property that specifies whether data dumping is enabled */
+    @S4Boolean(defaultValue = true)
     public final static String PROP_ENABLE = "enable";
-    /**
-     * The default value of PROP_ENABLE.
-     */
+    /** The default value of PROP_ENABLE. */
     public final static boolean PROP_ENABLE_DEFAULT = true;
-    /**
-     * The Sphinx property that specifies the format of the output.
-     */
+    /** The Sphinx property that specifies the format of the output. */
+    @S4String(defaultValue = "0.00000E00;-0.00000E00")
     public final static String PROP_OUTPUT_FORMAT = "outputFormat";
-    /**
-     * The default value of PROP_OUTPUT_FORMAT.
-     */
+    /** The default value of PROP_OUTPUT_FORMAT. */
     public final static String PROP_OUTPUT_FORMAT_DEFAULT = "0.00000E00;-0.00000E00";
-    /**
-     * The Sphinx property that enables the output of signals.
-     */
+    /** The Sphinx property that enables the output of signals. */
+    @S4Boolean(defaultValue = true)
     public final static String PROP_OUTPUT_SIGNALS = "outputSignals";
-    /**
-     * The default value of PROP_OUTPUT_SIGNALS.
-     */
+    /** The default value of PROP_OUTPUT_SIGNALS. */
     public final static boolean PROP_OUTPUT_SIGNALS_DEFAULT = true;
 
     // --------------------------
@@ -65,28 +46,30 @@ public class DataDumper extends BaseDataProcessor {
     private boolean enable;
     private boolean outputSignals;
     private DecimalFormat formatter;
-    private  Logger logger;
+    private Logger logger;
+
 
     /*
-     * (non-Javadoc)
-     * 
-     * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
-     */
-    public static Map getConfigurationInfo(){
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
+    */
+    public static Map getConfigurationInfo() {
         Map info = new HashMap();
-    
-        info.put(new String("PROP_ENABLE_TYPE"),new String("BOOLEAN"));
-        info.put(new String("PROP_OUTPUT_SIGNALS_TYPE"),new String("BOOLEAN"));
-        info.put(new String("PROP_OUTPUT_FORMATS_TYPE"),new String("STRING"));
+
+        info.put(new String("PROP_ENABLE_TYPE"), new String("BOOLEAN"));
+        info.put(new String("PROP_OUTPUT_SIGNALS_TYPE"), new String("BOOLEAN"));
+        info.put(new String("PROP_OUTPUT_FORMATS_TYPE"), new String("STRING"));
         return info;
     }
-    
+
+
     /*
-     * (non-Javadoc)
-     * 
-     * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
-     *      edu.cmu.sphinx.util.props.Registry)
-     */
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
+    *      edu.cmu.sphinx.util.props.Registry)
+    */
     public void register(String name, Registry registry)
             throws PropertyException {
         registry.register(PROP_ENABLE, PropertyType.BOOLEAN);
@@ -94,11 +77,12 @@ public class DataDumper extends BaseDataProcessor {
         registry.register(PROP_OUTPUT_SIGNALS, PropertyType.BOOLEAN);
     }
 
+
     /*
-     * (non-Javadoc)
-     * 
-     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
-     */
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
+    */
     public void newProperties(PropertySheet ps) throws PropertyException {
         super.newProperties(ps);
         logger = ps.getLogger();
@@ -110,21 +94,18 @@ public class DataDumper extends BaseDataProcessor {
                 PROP_OUTPUT_SIGNALS_DEFAULT);
     }
 
-    /**
-     * Constructs a DataDumper
-     */
+
+    /** Constructs a DataDumper */
     public void initialize() {
         super.initialize();
     }
 
+
     /**
-     * Reads and returns the next Data object from this DataProcessor, return
-     * null if there is no more audio data.
-     * 
+     * Reads and returns the next Data object from this DataProcessor, return null if there is no more audio data.
+     *
      * @return the next Data or <code>null</code> if none is available
-     * 
-     * @throws DataProcessingException
-     *                 if there is a data processing error
+     * @throws DataProcessingException if there is a data processing error
      */
     public Data getData() throws DataProcessingException {
         Data input = getPredecessor().getData();
@@ -134,11 +115,11 @@ public class DataDumper extends BaseDataProcessor {
         return input;
     }
 
+
     /**
      * Dumps the given input data
-     * 
-     * @param input
-     *                the data to dump
+     *
+     * @param input the data to dump
      */
     private void dumpData(Data input) {
         if (input instanceof Signal) {
@@ -151,7 +132,7 @@ public class DataDumper extends BaseDataProcessor {
         } else if (input instanceof DoubleData) {
             DoubleData dd = (DoubleData) input;
             double[] values = dd.getValues();
-            System.out.print("Frame " + values.length );
+            System.out.print("Frame " + values.length);
             for (int i = 0; i < values.length; i++) {
                 System.out.print(" " + formatter.format(values[i]));
             }
@@ -159,7 +140,7 @@ public class DataDumper extends BaseDataProcessor {
         } else if (input instanceof FloatData) {
             FloatData fd = (FloatData) input;
             float[] values = fd.getValues();
-            System.out.print("Frame " + values.length );
+            System.out.print("Frame " + values.length);
             for (int i = 0; i < values.length; i++) {
                 System.out.print(" " + formatter.format(values[i]));
             }

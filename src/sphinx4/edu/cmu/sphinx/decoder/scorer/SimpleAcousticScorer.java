@@ -12,12 +12,9 @@
 
 package edu.cmu.sphinx.decoder.scorer;
 
-import edu.cmu.sphinx.frontend.*;
-import edu.cmu.sphinx.util.props.PropertyException;
-import edu.cmu.sphinx.util.props.PropertySheet;
-import edu.cmu.sphinx.util.props.PropertyType;
-import edu.cmu.sphinx.util.props.Registry;
 import edu.cmu.sphinx.decoder.search.Token;
+import edu.cmu.sphinx.frontend.*;
+import edu.cmu.sphinx.util.props.*;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -27,30 +24,23 @@ import java.util.Map;
 
 
 /**
- * A Simple acoustic scorer.
- * a certain number of frames have been processed
+ * A Simple acoustic scorer. a certain number of frames have been processed
  * <p/>
  * Note that all scores are maintained in LogMath log base.
  */
 public class SimpleAcousticScorer implements AcousticScorer {
 
 
-    /**
-     * Property the defines the frontend to retrieve features from for scoring
-     */
-
+    /** Property the defines the frontend to retrieve features from for scoring */
+    @S4Component(type = FrontEnd.class)
     public final static String PROP_FRONTEND = "frontend";
 
 
-    /**
-     * Propertry that defines whether scores are normalized or not
-     */
-
+    /** Propertry that defines whether scores are normalized or not */
+    @S4Boolean(defaultValue = false)
     public final static String PROP_NORMALIZE_SCORES = "normalizeScores";
 
-    /**
-     * Default value for PROP_NORMALIZE_SCORES
-     */
+    /** Default value for PROP_NORMALIZE_SCORES */
 
     public final static boolean PROP_NORMALIZE_SCORES_DEFAULT = false;
 
@@ -61,57 +51,58 @@ public class SimpleAcousticScorer implements AcousticScorer {
     private FrontEnd frontEnd;
     private boolean normalizeScores;
 
+
     /*
-     * (non-Javadoc)
-     * 
-     * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
-     */
-    public static Map getConfigurationInfo(){
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
+    */
+    public static Map getConfigurationInfo() {
         Map info = new HashMap();
-        info.put(new String("PROP_FRONTEND_TYPE"),new String("COMPONENT"));
-        info.put(new String("PROP_FRONTEND_CLASSTYPE"),new String("edu.cmu.sphinx.frontend.FrontEnd"));
-        info.put(new String("PROP_NORMALIZE_SCORES_TYPE"),new String("BOOLEAN"));
+        info.put(new String("PROP_FRONTEND_TYPE"), new String("COMPONENT"));
+        info.put(new String("PROP_FRONTEND_CLASSTYPE"), new String("edu.cmu.sphinx.frontend.FrontEnd"));
+        info.put(new String("PROP_NORMALIZE_SCORES_TYPE"), new String("BOOLEAN"));
         return info;
     }
-    
+
+
     /* (non-Javadoc)
-     * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String, edu.cmu.sphinx.util.props.Registry)
-     */
+    * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String, edu.cmu.sphinx.util.props.Registry)
+    */
     public void register(String name, Registry registry) throws PropertyException {
         this.name = name;
         registry.register(PROP_FRONTEND, PropertyType.COMPONENT);
         registry.register(PROP_NORMALIZE_SCORES, PropertyType.BOOLEAN);
     }
 
+
     /* (non-Javadoc)
-     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
-     */
+    * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
+    */
     public void newProperties(PropertySheet ps) throws PropertyException {
         frontEnd = (FrontEnd) ps.getComponent(PROP_FRONTEND, FrontEnd.class);
         normalizeScores = ps.getBoolean(PROP_NORMALIZE_SCORES, PROP_NORMALIZE_SCORES_DEFAULT);
     }
 
+
     /* (non-Javadoc)
-     * @see edu.cmu.sphinx.util.props.Configurable#getName()
-     */
+    * @see edu.cmu.sphinx.util.props.Configurable#getName()
+    */
     public String getName() {
         return name;
     }
 
 
-    /**
-     * Starts the scorer
-     */
+    /** Starts the scorer */
     public void startRecognition() {
     }
+
 
     /**
      * Scores the given set of states
      *
-     * @param scoreableList a list containing scoreable objects to
-     *                      be scored
-     * @return true if there was a Data available to score
-     *         false if there was no more Data available to score
+     * @param scoreableList a list containing scoreable objects to be scored
+     * @return true if there was a Data available to score false if there was no more Data available to score
      */
     public Scoreable calculateScores(List<Token> scoreableList) {
 
@@ -177,9 +168,8 @@ public class SimpleAcousticScorer implements AcousticScorer {
         return best;
     }
 
-    /**
-     * Performs post-recognition cleanup.
-     */
+
+    /** Performs post-recognition cleanup. */
     public void stopRecognition() {
     }
 
@@ -190,9 +180,10 @@ public class SimpleAcousticScorer implements AcousticScorer {
     public void allocate() throws IOException {
     }
 
+
     /* (non-Javadoc)
-     * @see edu.cmu.sphinx.decoder.scorer.AcousticScorer#deallocate()
-     */
+    * @see edu.cmu.sphinx.decoder.scorer.AcousticScorer#deallocate()
+    */
     public void deallocate() {
     }
 

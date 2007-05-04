@@ -12,46 +12,33 @@
 
 package edu.cmu.sphinx.decoder.search;
 
-import java.util.List;
-import java.util.Iterator;
-import java.util.NoSuchElementException;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.logging.Logger;
+import edu.cmu.sphinx.util.props.*;
 
-import edu.cmu.sphinx.util.props.PropertyException;
-import edu.cmu.sphinx.util.props.PropertySheet;
-import edu.cmu.sphinx.util.props.PropertyType;
-import edu.cmu.sphinx.util.props.Registry;
+import java.util.*;
+import java.util.logging.Logger;
 
 /**
  * A list of ActiveLists. Different token types are placed in different lists.
- * 
+ * <p/>
  * This class is not thread safe and should only be used by a single thread.
- *  
  */
 public class SimpleActiveListManager implements ActiveListManager {
 
     /**
-     * This property is used in the Iterator returned by the
-     * getNonEmittingListIterator() method. When the Iterator.next() method is
-     * called, this property determines whether the lists prior to that
-     * returned by next() are empty (they should be empty). If they are not
-     * empty, an Error will be thrown.
+     * This property is used in the Iterator returned by the getNonEmittingListIterator() method. When the
+     * Iterator.next() method is called, this property determines whether the lists prior to that returned by next() are
+     * empty (they should be empty). If they are not empty, an Error will be thrown.
      */
+    @S4Boolean(defaultValue = false)
     public static final String PROP_CHECK_PRIOR_LISTS_EMPTY = "checkPriorListsEmpty";
 
-    /**
-     * The default value of PROP_CHECK_PRIOR_LISTS_EMPTY.
-     */
+    /** The default value of PROP_CHECK_PRIOR_LISTS_EMPTY. */
     public static final boolean PROP_CHECK_PRIOR_LISTS_EMPTY_DEFAULT = false;
 
-    /**
-     * Sphinx property that defines the name of the active list factory to be
-     * used by this search manager.
-     */
-    public final static String PROP_ACTIVE_LIST_FACTORIES = 
-        "activeListFactories";
+    /** Sphinx property that defines the name of the active list factory to be used by this search manager. */
+    @S4Component(type = ActiveListFactory.class)
+    public final static String PROP_ACTIVE_LIST_FACTORIES =
+            "activeListFactories";
 
     // --------------------------------------
     // Configuration data
@@ -63,62 +50,67 @@ public class SimpleActiveListManager implements ActiveListManager {
     private int absoluteWordBeam;
     private double relativeWordBeam;
     private ActiveList[] currentActiveLists;
-    
+
+
     /*
-     * (non-Javadoc)
-     * 
-     * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
-     */
-    public static Map getConfigurationInfo(){
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
+    */
+    public static Map getConfigurationInfo() {
         Map info = new HashMap();
-        info.put(new String("PROP_CHECK_PRIOR_LISTS_EMPTY_TYPE"),new String("BOOLEAN"));
-        info.put(new String("PROP_ACTIVE_LIST_FACTORIES_TYPE"),new String("COMPONENT_LIST")); 
-        info.put(new String("PROP_ACTIVE_LIST_FACTORIES_CLASSTYPE"),new String("edu.cmu.sphinx.decoder.search.ActiveListFactory"));
+        info.put(new String("PROP_CHECK_PRIOR_LISTS_EMPTY_TYPE"), new String("BOOLEAN"));
+        info.put(new String("PROP_ACTIVE_LIST_FACTORIES_TYPE"), new String("COMPONENT_LIST"));
+        info.put(new String("PROP_ACTIVE_LIST_FACTORIES_CLASSTYPE"), new String("edu.cmu.sphinx.decoder.search.ActiveListFactory"));
         return info;
     }
-    
+
+
     /*
-     * (non-Javadoc)
-     * 
-     * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
-     *      edu.cmu.sphinx.util.props.Registry)
-     */
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
+    *      edu.cmu.sphinx.util.props.Registry)
+    */
     public void register(String name, Registry registry)
             throws PropertyException {
         this.name = name;
         registry.register(PROP_ACTIVE_LIST_FACTORIES,
                 PropertyType.COMPONENT_LIST);
         registry.register(PROP_CHECK_PRIOR_LISTS_EMPTY, PropertyType.BOOLEAN);
-        
+
     }
 
+
     /*
-     * (non-Javadoc)
-     * 
-     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
-     */
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
+    */
     public void newProperties(PropertySheet ps) throws PropertyException {
         logger = ps.getLogger();
-        activeListFactories =  ps.getComponentList(PROP_ACTIVE_LIST_FACTORIES, 
-                    ActiveListFactory.class);
+        activeListFactories = ps.getComponentList(PROP_ACTIVE_LIST_FACTORIES,
+                ActiveListFactory.class);
         checkPriorLists = ps.getBoolean(PROP_CHECK_PRIOR_LISTS_EMPTY,
                 PROP_CHECK_PRIOR_LISTS_EMPTY_DEFAULT);
     }
 
+
     /*
-     * (non-Javadoc)
-     * 
-     * @see edu.cmu.sphinx.util.props.Configurable#getName()
-     */
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.util.props.Configurable#getName()
+    */
     public String getName() {
         return name;
     }
 
+
     /*
-     * (non-Javadoc)
-     * 
-     * @see edu.cmu.sphinx.decoder.search.ActiveListManager#setNumStateOrder(java.lang.Class[])
-     */
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.decoder.search.ActiveListManager#setNumStateOrder(java.lang.Class[])
+    */
     public void setNumStateOrder(int numStateOrder) {
         // check to make sure that we have the correct
         // number of active list factories for the given searc states
@@ -129,7 +121,7 @@ public class SimpleActiveListManager implements ActiveListManager {
             throw new Error("No active list factories configured");
         }
         if (activeListFactories.size() != currentActiveLists.length) {
-            logger.warning("Need " + currentActiveLists.length + 
+            logger.warning("Need " + currentActiveLists.length +
                     " active list factories, found " +
                     activeListFactories.size());
         }
@@ -138,9 +130,8 @@ public class SimpleActiveListManager implements ActiveListManager {
 
 
     /**
-     * Creates the emitting and non-emitting active lists. When creating the
-     * non-emitting active lists, we will look at their respective beam widths
-     * (eg, word beam, unit beam, state beam).
+     * Creates the emitting and non-emitting active lists. When creating the non-emitting active lists, we will look at
+     * their respective beam widths (eg, word beam, unit beam, state beam).
      */
     private void createActiveLists() {
         int nlists = activeListFactories.size();
@@ -149,7 +140,7 @@ public class SimpleActiveListManager implements ActiveListManager {
             if (which >= nlists) {
                 which = nlists - 1;
             }
-            ActiveListFactory alf = 
+            ActiveListFactory alf =
                     (ActiveListFactory) activeListFactories.get(which);
             currentActiveLists[i] = alf.newInstance();
         }
@@ -158,9 +149,8 @@ public class SimpleActiveListManager implements ActiveListManager {
 
     /**
      * Adds the given token to the list
-     * 
-     * @param token
-     *                the token to add
+     *
+     * @param token the token to add
      */
     public void add(Token token) {
         ActiveList activeList = findListFor(token);
@@ -171,9 +161,9 @@ public class SimpleActiveListManager implements ActiveListManager {
         activeList.add(token);
     }
 
+
     /**
-     * Given a token find the active list associated with the token
-     * type
+     * Given a token find the active list associated with the token type
      *
      * @param token
      * @return the active list
@@ -185,23 +175,20 @@ public class SimpleActiveListManager implements ActiveListManager {
 
     /**
      * Replaces an old token with a new token
-     * 
-     * @param oldToken
-     *                the token to replace (or null in which case, replace
-     *                works like add).
-     * 
-     * @param newToken
-     *                the new token to be placed in the list.
-     *  
+     *
+     * @param oldToken the token to replace (or null in which case, replace works like add).
+     * @param newToken the new token to be placed in the list.
      */
     public void replace(Token oldToken, Token newToken) {
         ActiveList activeList = findListFor(oldToken);
         assert activeList != null;
         activeList.replace(oldToken, newToken);
     }
+
+
     /**
      * Returns the emitting ActiveList, and removes it from this manager.
-     * 
+     *
      * @return the emitting ActiveList
      */
     public ActiveList getEmittingList() {
@@ -210,26 +197,32 @@ public class SimpleActiveListManager implements ActiveListManager {
         return list;
     }
 
+
     /**
-     * Returns an Iterator of all the non-emitting ActiveLists. The iteration
-     * order is the same as the search state order.
-     * 
+     * Returns an Iterator of all the non-emitting ActiveLists. The iteration order is the same as the search state
+     * order.
+     *
      * @return an Iterator of non-emitting ActiveLists
      */
     public Iterator getNonEmittingListIterator() {
         return (new NonEmittingListIterator());
     }
 
+
     private class NonEmittingListIterator implements Iterator {
+
         private int listPtr;
+
 
         public NonEmittingListIterator() {
             listPtr = -1;
         }
 
+
         public boolean hasNext() {
             return listPtr + 1 < currentActiveLists.length - 1;
         }
+
 
         public Object next() throws NoSuchElementException {
             listPtr++;
@@ -243,9 +236,8 @@ public class SimpleActiveListManager implements ActiveListManager {
             return currentActiveLists[listPtr];
         }
 
-        /**
-         * Check that all lists prior to listPtr is empty.
-         */
+
+        /** Check that all lists prior to listPtr is empty. */
         private void checkPriorLists() {
             for (int i = 0; i < listPtr; i++) {
                 ActiveList activeList = currentActiveLists[i];
@@ -256,26 +248,26 @@ public class SimpleActiveListManager implements ActiveListManager {
             }
         }
 
+
         public void remove() {
-            currentActiveLists[listPtr] = 
-                currentActiveLists[listPtr].newInstance();
+            currentActiveLists[listPtr] =
+                    currentActiveLists[listPtr].newInstance();
         }
     }
 
-    /**
-     * Outputs debugging info for this list manager
-     */
+
+    /** Outputs debugging info for this list manager */
     public void dump() {
         for (ActiveList al : currentActiveLists) {
             dumpList(al);
         }
     }
 
+
     /**
      * Dumps out debugging info for the given active list
-     * 
-     * @param al
-     *                the active list to dump
+     *
+     * @param al the active list to dump
      */
     private void dumpList(ActiveList al) {
         System.out.println("GBT " + al.getBestToken() + " size: " + al.size());

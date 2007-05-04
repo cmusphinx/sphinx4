@@ -11,17 +11,6 @@
  */
 package edu.cmu.sphinx.decoder.search;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import edu.cmu.sphinx.decoder.pruner.Pruner;
 import edu.cmu.sphinx.decoder.scorer.AcousticScorer;
 import edu.cmu.sphinx.linguist.Linguist;
@@ -32,87 +21,83 @@ import edu.cmu.sphinx.result.Result;
 import edu.cmu.sphinx.util.LogMath;
 import edu.cmu.sphinx.util.StatisticsVariable;
 import edu.cmu.sphinx.util.Timer;
-import edu.cmu.sphinx.util.props.PropertyException;
-import edu.cmu.sphinx.util.props.PropertySheet;
-import edu.cmu.sphinx.util.props.PropertyType;
-import edu.cmu.sphinx.util.props.Registry;
+import edu.cmu.sphinx.util.props.*;
+
+import java.io.IOException;
+import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
- * Provides the breadth first search. To perform recognition an application
- * should call initialize before recognition begins, and repeatedly call <code> recognize </code>
- * until Result.isFinal() returns true. Once a final result has been obtained,
- * <code> terminate </code> should be called.
- * 
+ * Provides the breadth first search. To perform recognition an application should call initialize before recognition
+ * begins, and repeatedly call <code> recognize </code> until Result.isFinal() returns true. Once a final result has
+ * been obtained, <code> terminate </code> should be called.
+ * <p/>
  * All scores and probabilities are maintained in the log math log domain.
  */
 
 // TODO - need to add in timing code.
 public class SimpleBreadthFirstSearchManager implements SearchManager {
-    /**
-     * Sphinx property that defines the name of the linguist to be used by this
-     * search manager.
-     */
+
+    /** Sphinx property that defines the name of the linguist to be used by this search manager. */
+    @S4Component(type = Linguist.class)
     public final static String PROP_LINGUIST = "linguist";
-    /**
-     * Sphinx property that defines the name of the linguist to be used by this
-     * search manager.
-     */
+
+    /** Sphinx property that defines the name of the linguist to be used by this search manager. */
+    @S4Component(type = Pruner.class)
     public final static String PROP_PRUNER = "pruner";
-    /**
-     * Sphinx property that defines the name of the scorer to be used by this
-     * search manager.
-     */
+
+    /** Sphinx property that defines the name of the scorer to be used by this search manager. */
+    @S4Component(type = AcousticScorer.class)
     public final static String PROP_SCORER = "scorer";
-    /**
-     * Sphinx property that defines the name of the logmath to be used by this
-     * search manager.
-     */
+
+    /** Sphinx property that defines the name of the logmath to be used by this search manager. */
+    @S4Component(type = LogMath.class)
     public final static String PROP_LOG_MATH = "logMath";
-    /**
-     * Sphinx property that defines the name of the active list factory to be
-     * used by this search manager.
-     */
+
+    /** Sphinx property that defines the name of the active list factory to be used by this search manager. */
+    @S4Component(type = ActiveListFactory.class)
     public final static String PROP_ACTIVE_LIST_FACTORY = "activeListFactory";
+
     /**
-     * A sphinx property than, when set to <code>true</code> will cause the
-     * recognizer to count up all the tokens in the active list after every
-     * frame.
+     * A sphinx property than, when set to <code>true</code> will cause the recognizer to count up all the tokens in the
+     * active list after every frame.
      */
+    @S4Boolean(defaultValue = false)
     public final static String PROP_SHOW_TOKEN_COUNT = "showTokenCount";
-    /**
-     * The default value for the PROP_SHOW_TOKEN_COUNT property
-     */
+
+    /** The default value for the PROP_SHOW_TOKEN_COUNT property */
     public final static boolean PROP_SHOW_TOKEN_COUNT_DEFAULT = false;
     /**
-     * Property that sets the minimum score relative to the maximum score in
-     * the word list for pruning. Words with a score less than
-     * relativeBeamWidth * maximumScore will be pruned from the list
+     * Property that sets the minimum score relative to the maximum score in the word list for pruning. Words with a
+     * score less than relativeBeamWidth * maximumScore will be pruned from the list
      */
+    @S4Double(defaultValue = 0.0)
     public final static String PROP_RELATIVE_WORD_BEAM_WIDTH = "relativeWordBeamWidth";
-    /**
-     * The default value for the PROP_RELATIVE_WORD_BEAM_WIDTH property
-     */
+
+    /** The default value for the PROP_RELATIVE_WORD_BEAM_WIDTH property */
     public final static double PROP_RELATIVE_WORD_BEAM_WIDTH_DEFAULT = 0.0;
+
     /**
-     * A sphinx property that controls whether or not relative beam pruning
-     * will be performed on the entry into a state.
+     * A sphinx property that controls whether or not relative beam pruning will be performed on the entry into a
+     * state.
      */
+    @S4Boolean(defaultValue = false)
     public final static String PROP_WANT_ENTRY_PRUNING = "wantEntryPruning";
-    /**
-     * The default value for the PROP_WANT_ENTRY_PRUNING property
-     */
+
+    /** The default value for the PROP_WANT_ENTRY_PRUNING property */
     public final static boolean PROP_WANT_ENTRY_PRUNING_DEFAULT = false;
+
     /**
-     * A sphinx property that controls the number of frames processed for every
-     * time the decode growth step is skipped. Setting this property to zero
-     * disables grow skipping. Setting this number to a small integer will
-     * increase the speed of the decoder but will also decrease its accuracy.
-     * The higher the number, the less often the grow code is skipped.
+     * A sphinx property that controls the number of frames processed for every time the decode growth step is skipped.
+     * Setting this property to zero disables grow skipping. Setting this number to a small integer will increase the
+     * speed of the decoder but will also decrease its accuracy. The higher the number, the less often the grow code is
+     * skipped.
      */
+    @S4Integer(defaultValue = 0)
     public final static String PROP_GROW_SKIP_INTERVAL = "growSkipInterval";
-    /**
-     * The default value for the PROP_GROW_SKIP_INTERVAL property.
-     */
+
+    /** The default value for the PROP_GROW_SKIP_INTERVAL property. */
     public final static int PROP_GROW_SKIP_INTERVAL_DEFAULT = 0;
 
     private Linguist linguist; // Provides grammar/language info
@@ -123,7 +108,7 @@ public class SimpleBreadthFirstSearchManager implements SearchManager {
     private List<Token> resultList; // the current set of results
     private LogMath logMath;
     private Logger logger;
-    
+
     // ------------------------------------
     // monitoring data
     // ------------------------------------
@@ -148,37 +133,39 @@ public class SimpleBreadthFirstSearchManager implements SearchManager {
     private float wordThreshold;
     private int growSkipInterval = 0;
     private ActiveListFactory activeListFactory;
-    
+
+
     /*
-     * (non-Javadoc)
-     * 
-     * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
-     */
-    public static Map getConfigurationInfo(){
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
+    */
+    public static Map getConfigurationInfo() {
         Map info = new HashMap();
-        info.put(new String("PROP_GROW_SKIP_INTERVAL_TYPE"),new String("INTEGER"));
-        info.put(new String("PROP_RELATIVE_WORD_BEAM_WIDTH_TYPE"),new String("DOUBLE"));
-        info.put(new String("PROP_LOG_MATH_TYPE"),new String("COMPONENT")); 
-        info.put(new String("PROP_LOG_MATH_CLASSTYPE"),new String("edu.cmu.sphinx.util.LogMath"));
-        info.put(new String("PROP_SHOW_TOKEN_COUNT_TYPE"),new String("BOOLEAN"));
-        info.put(new String("PROP_WANT_ENTRY_PRUNING_TYPE"),new String("BOOLEAN"));
-        info.put(new String("PROP_LINGUIST_TYPE"),new String("COMPONENT")); 
-        info.put(new String("PROP_LINGUIST_CLASSTYPE"),new String("edu.cmu.sphinx.linguist.Linguist"));
-        info.put(new String("PROP_PRUNER_TYPE"),new String("COMPONENT")); 
-        info.put(new String("PROP_PRUNER_CLASSTYPE"),new String("edu.cmu.sphinx.decoder.pruner.Pruner"));
-        info.put(new String("PROP_SCORER_TYPE"),new String("COMPONENT")); 
-        info.put(new String("PROP_SCORER_CLASSTYPE"),new String("edu.cmu.sphinx.decoder.scorer.AcousticScorer"));
-        info.put(new String("PROP_ACTIVE_LIST_FACTORY_TYPE"),new String("COMPONENT")); 
-        info.put(new String("PROP_ACTIVE_LIST_FACTORY_CLASSTYPE"),new String("edu.cmu.sphinx.decoder.search.ActiveListFactory"));
+        info.put(new String("PROP_GROW_SKIP_INTERVAL_TYPE"), new String("INTEGER"));
+        info.put(new String("PROP_RELATIVE_WORD_BEAM_WIDTH_TYPE"), new String("DOUBLE"));
+        info.put(new String("PROP_LOG_MATH_TYPE"), new String("COMPONENT"));
+        info.put(new String("PROP_LOG_MATH_CLASSTYPE"), new String("edu.cmu.sphinx.util.LogMath"));
+        info.put(new String("PROP_SHOW_TOKEN_COUNT_TYPE"), new String("BOOLEAN"));
+        info.put(new String("PROP_WANT_ENTRY_PRUNING_TYPE"), new String("BOOLEAN"));
+        info.put(new String("PROP_LINGUIST_TYPE"), new String("COMPONENT"));
+        info.put(new String("PROP_LINGUIST_CLASSTYPE"), new String("edu.cmu.sphinx.linguist.Linguist"));
+        info.put(new String("PROP_PRUNER_TYPE"), new String("COMPONENT"));
+        info.put(new String("PROP_PRUNER_CLASSTYPE"), new String("edu.cmu.sphinx.decoder.pruner.Pruner"));
+        info.put(new String("PROP_SCORER_TYPE"), new String("COMPONENT"));
+        info.put(new String("PROP_SCORER_CLASSTYPE"), new String("edu.cmu.sphinx.decoder.scorer.AcousticScorer"));
+        info.put(new String("PROP_ACTIVE_LIST_FACTORY_TYPE"), new String("COMPONENT"));
+        info.put(new String("PROP_ACTIVE_LIST_FACTORY_CLASSTYPE"), new String("edu.cmu.sphinx.decoder.search.ActiveListFactory"));
         return info;
     }
-    
+
+
     /*
-     * (non-Javadoc)
-     * 
-     * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
-     *      edu.cmu.sphinx.util.props.Registry)
-     */
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
+    *      edu.cmu.sphinx.util.props.Registry)
+    */
     public void register(String name, Registry registry)
             throws PropertyException {
         this.name = name;
@@ -193,11 +180,12 @@ public class SimpleBreadthFirstSearchManager implements SearchManager {
         registry.register(PROP_GROW_SKIP_INTERVAL, PropertyType.INT);
     }
 
+
     /*
-     * (non-Javadoc)
-     * 
-     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
-     */
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
+    */
     public void newProperties(PropertySheet ps) throws PropertyException {
         logger = ps.getLogger();
         logMath = (LogMath) ps.getComponent(PROP_LOG_MATH, LogMath.class);
@@ -219,10 +207,8 @@ public class SimpleBreadthFirstSearchManager implements SearchManager {
         logRelativeWordBeamWidth = logMath.linearToLog(relativeWordBeamWidth);
     }
 
-    /**
-     * Called at the start of recognition. Gets the search manager ready to
-     * recognize
-     */
+
+    /** Called at the start of recognition. Gets the search manager ready to recognize */
     public void startRecognition() {
         linguist.startRecognition();
         pruner.startRecognition();
@@ -233,14 +219,12 @@ public class SimpleBreadthFirstSearchManager implements SearchManager {
         }
     }
 
+
     /**
      * Performs the recognition for the given number of frames.
-     * 
-     * @param nFrames
-     *                the number of frames to recognize
-     * 
-     * @return the current result or null if there is no Result (due to the
-     *         lack of frames to recognize)
+     *
+     * @param nFrames the number of frames to recognize
+     * @return the current result or null if there is no Result (due to the lack of frames to recognize)
      */
     public Result recognize(int nFrames) {
         boolean done = false;
@@ -262,9 +246,8 @@ public class SimpleBreadthFirstSearchManager implements SearchManager {
         return result;
     }
 
-    /**
-     * Terminates a recognition
-     */
+
+    /** Terminates a recognition */
     public void stopRecognition() {
         localStop();
         scorer.stopRecognition();
@@ -272,10 +255,10 @@ public class SimpleBreadthFirstSearchManager implements SearchManager {
         linguist.stopRecognition();
     }
 
+
     /**
-     * Performs recognition for one frame. Returns true if recognition has been
-     * completed.
-     * 
+     * Performs recognition for one frame. Returns true if recognition has been completed.
+     *
      * @return <code>true</code> if recognition is completed.
      */
     protected boolean recognize() {
@@ -291,10 +274,8 @@ public class SimpleBreadthFirstSearchManager implements SearchManager {
         return !more;
     }
 
-    /**
-     * Gets the initial grammar node from the linguist and creates a
-     * GrammarNodeToken
-     */
+
+    /** Gets the initial grammar node from the linguist and creates a GrammarNodeToken */
     protected void localStart() {
         currentFrameNumber = 0;
         curTokensScored.value = 0;
@@ -307,17 +288,15 @@ public class SimpleBreadthFirstSearchManager implements SearchManager {
 
     }
 
-    /**
-     * Local cleanup for this search manager
-     */
+
+    /** Local cleanup for this search manager */
     protected void localStop() {
     }
 
+
     /**
-     * Goes through the active list of tokens and expands each token, finding
-     * the set of successor tokens until all the successor tokens are emitting
-     * tokens.
-     *  
+     * Goes through the active list of tokens and expands each token, finding the set of successor tokens until all the
+     * successor tokens are emitting tokens.
      */
     protected void growBranches() {
         int mapSize = activeList.size() * 10;
@@ -338,7 +317,7 @@ public class SimpleBreadthFirstSearchManager implements SearchManager {
             collectSuccessorTokens(token);
         }
         growTimer.stop();
-        if (logger.isLoggable(Level.FINE)) {  
+        if (logger.isLoggable(Level.FINE)) {
             int hmms = activeList.size();
             totalHmms += hmms;
             logger.fine("Frame: " + currentFrameNumber + " Hmms: "
@@ -346,13 +325,11 @@ public class SimpleBreadthFirstSearchManager implements SearchManager {
         }
     }
 
+
     /**
-     * Calculate the acoustic scores for the active list. The active list
-     * should contain only emitting tokens.
-     * 
-     * @return <code>true</code> if there are more frames to score,
-     *         otherwise, false
-     *  
+     * Calculate the acoustic scores for the active list. The active list should contain only emitting tokens.
+     *
+     * @return <code>true</code> if there are more frames to score, otherwise, false
      */
     protected boolean scoreTokens() {
         boolean moreTokens;
@@ -373,19 +350,18 @@ public class SimpleBreadthFirstSearchManager implements SearchManager {
         return moreTokens;
     }
 
+
     /**
      * Returns the total time since we start4ed
-     * 
+     *
      * @return the total time (in seconds)
      */
     private double getTotalTime() {
         return (System.currentTimeMillis() - startTime) / 1000.0;
     }
 
-    /**
-     * Removes unpromising branches from the active list
-     *  
-     */
+
+    /** Removes unpromising branches from the active list */
     protected void pruneBranches() {
         int startSize = activeList.size();
         pruneTimer.start();
@@ -394,12 +370,11 @@ public class SimpleBreadthFirstSearchManager implements SearchManager {
         pruneTimer.stop();
     }
 
+
     /**
      * Gets the best token for this state
-     * 
-     * @param state
-     *                the state of interest
-     * 
+     *
+     * @param state the state of interest
      * @return the best token
      */
     protected Token getBestToken(SearchState state) {
@@ -410,28 +385,23 @@ public class SimpleBreadthFirstSearchManager implements SearchManager {
         return best;
     }
 
+
     /**
      * Sets the best token for a given state
-     * 
-     * @param token
-     *                the best token
-     * 
-     * @param state
-     *                the state
-     * 
-     * @return the previous best token for the given state, or null if no
-     *         previous best token
+     *
+     * @param token the best token
+     * @param state the state
+     * @return the previous best token for the given state, or null if no previous best token
      */
     protected Token setBestToken(Token token, SearchState state) {
         return bestTokenMap.put(state, token);
     }
 
+
     /**
-     * Collects the next set of emitting tokens from a token and accumulates
-     * them in the active or result lists
-     * 
-     * @param token
-     *                the token to collect successors from
+     * Collects the next set of emitting tokens from a token and accumulates them in the active or result lists
+     *
+     * @param token the token to collect successors from
      */
     protected void collectSuccessorTokens(Token token) {
         SearchState state = token.getSearchState();
@@ -503,8 +473,7 @@ public class SimpleBreadthFirstSearchManager implements SearchManager {
 
 
     /**
-     * Determines whether or not we've visited the state associated with this
-     * token since the previous frame.
+     * Determines whether or not we've visited the state associated with this token since the previous frame.
      *
      * @param t the token to check
      * @return true if we've visted the search state since the last frame
@@ -523,10 +492,8 @@ public class SimpleBreadthFirstSearchManager implements SearchManager {
         return false;
     }
 
-    /**
-     * Counts all the tokens in the active list (and displays them). This is an
-     * expensive operation.
-     */
+
+    /** Counts all the tokens in the active list (and displays them). This is an expensive operation. */
     private void showTokenCount() {
         if (logger.isLoggable(Level.INFO)) {
             Set<Token> tokenSet = new HashSet<Token>();
@@ -549,66 +516,72 @@ public class SimpleBreadthFirstSearchManager implements SearchManager {
         }
     }
 
+
     /**
      * Returns the best token map.
-     * 
+     *
      * @return the best token map
      */
     protected Map<SearchState, Token> getBestTokenMap() {
         return bestTokenMap;
     }
 
+
     /**
      * Sets the best token Map.
-     * 
-     * @param bestTokenMap
-     *                the new best token Map
+     *
+     * @param bestTokenMap the new best token Map
      */
     protected void setBestTokenMap(Map<SearchState, Token> bestTokenMap) {
         this.bestTokenMap = bestTokenMap;
     }
 
+
     /**
      * Returns the result list.
-     * 
+     *
      * @return the result list
      */
     public List<Token> getResultList() {
         return resultList;
     }
 
+
     /**
      * Returns the current frame number.
-     * 
+     *
      * @return the current frame number
      */
     public int getCurrentFrameNumber() {
         return currentFrameNumber;
     }
 
+
     /**
      * Returns the Timer for growing.
-     * 
+     *
      * @return the Timer for growing
      */
     public Timer getGrowTimer() {
         return growTimer;
     }
 
+
     /**
      * Returns the tokensCreated StatisticsVariable.
-     * 
+     *
      * @return the tokensCreated StatisticsVariable.
      */
     public StatisticsVariable getTokensCreated() {
         return tokensCreated;
     }
 
+
     /*
-     * (non-Javadoc)
-     * 
-     * @see edu.cmu.sphinx.decoder.search.SearchManager#allocate()
-     */
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.decoder.search.SearchManager#allocate()
+    */
     public void allocate() throws IOException {
         totalTokensScored = StatisticsVariable
                 .getStatisticsVariable("totalTokensScored");
@@ -625,38 +598,43 @@ public class SimpleBreadthFirstSearchManager implements SearchManager {
         pruner.allocate();
         scorer.allocate();
 
-        scoreTimer = Timer.getTimer("scoring"); 
+        scoreTimer = Timer.getTimer("scoring");
         pruneTimer = Timer.getTimer("pruning");
         growTimer = Timer.getTimer("growing");
     }
 
+
     /*
-     * (non-Javadoc)
-     * 
-     * @see edu.cmu.sphinx.decoder.search.SearchManager#deallocate()
-     */
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.decoder.search.SearchManager#deallocate()
+    */
     public void deallocate() {
         scorer.deallocate();
         pruner.deallocate();
         linguist.deallocate();
     }
 
+
     /*
-     * (non-Javadoc)
-     * 
-     * @see edu.cmu.sphinx.util.props.Configurable#getName()
-     */
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.util.props.Configurable#getName()
+    */
     public String getName() {
         return name;
     }
+
 
     public Linguist getLinguist() {
         return linguist;
     }
 
+
     public Pruner getPruner() {
         return pruner;
     }
+
 
     public AcousticScorer getScorer() {
         return scorer;

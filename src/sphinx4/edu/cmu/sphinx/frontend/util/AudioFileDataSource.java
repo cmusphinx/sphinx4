@@ -12,10 +12,7 @@
 package edu.cmu.sphinx.frontend.util;
 
 import edu.cmu.sphinx.frontend.*;
-import edu.cmu.sphinx.util.props.PropertyException;
-import edu.cmu.sphinx.util.props.PropertySheet;
-import edu.cmu.sphinx.util.props.PropertyType;
-import edu.cmu.sphinx.util.props.Registry;
+import edu.cmu.sphinx.util.props.*;
 
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
@@ -46,6 +43,7 @@ import java.util.Map;
 public class AudioFileDataSource extends BaseDataProcessor {
 
     /** SphinxProperty for the number of bytes to read from the InputStream each time. */
+    @S4Integer(defaultValue = 3200)
     public static final String PROP_BYTES_PER_READ = "bytesPerRead";
     /** Default value for PROP_BYTES_PER_READ. */
     public static final int PROP_BYTES_PER_READ_DEFAULT = 3200;

@@ -23,22 +23,25 @@ import java.util.HashMap;
 import java.util.Map;
 
 /** Tracks and reports rejection accuracy. */
-public class RejectionTracker implements Configurable,
+public class RejectionTracker implements
         ResultListener,
         Resetable,
         Monitor,
         StateListener {
 
     /** A Sphinx property that defines which recognizer to monitor */
+    @S4Component(type = Recognizer.class)
     public final static String PROP_RECOGNIZER = "recognizer";
 
     /** A sphinx property that define whether summary accuracy information is displayed */
+    @S4Boolean(defaultValue = true)
     public final static String PROP_SHOW_SUMMARY = "showSummary";
 
     /** The default setting of PROP_SHOW_SUMMARY */
     public final static boolean PROP_SHOW_SUMMARY_DEFAULT = true;
 
     /** A sphinx property that define whether detailed accuracy information is displayed */
+    @S4Boolean(defaultValue = true)
     public final static String PROP_SHOW_DETAILS = "showDetails";
 
     /** The default setting of PROP_SHOW_DETAILS */

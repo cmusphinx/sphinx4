@@ -14,17 +14,9 @@ package edu.cmu.sphinx.frontend.window;
 
 import edu.cmu.sphinx.frontend.*;
 import edu.cmu.sphinx.frontend.util.DataUtil;
-import edu.cmu.sphinx.util.props.PropertyException;
-import edu.cmu.sphinx.util.props.PropertySheet;
-import edu.cmu.sphinx.util.props.PropertyType;
-import edu.cmu.sphinx.util.props.Registry;
+import edu.cmu.sphinx.util.props.*;
 
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.HashMap;
+import java.util.*;
 
 /**
  * Slices up a Data object into a number of overlapping windows (usually refered to as "frames" in the speech world). In
@@ -56,12 +48,14 @@ import java.util.HashMap;
 public class RaisedCosineWindower extends BaseDataProcessor {
 
     /** The SphinxProperty name for window size in milliseconds. */
+    @S4Double(defaultValue = 25.625)
     public static final String PROP_WINDOW_SIZE_MS = "windowSizeInMs";
 
     /** The default value for PROP_WINDOW_SIZE_MS. */
     public static final float PROP_WINDOW_SIZE_MS_DEFAULT = 25.625f;
 
     /** The SphinxProperty name for window shift in milliseconds, which has a default value of 10F. */
+    @S4Double(defaultValue = 10.0)
     public static final String PROP_WINDOW_SHIFT_MS = "windowShiftInMs";
 
     /** The default value for PROP_WINDOW_SHIFT_MS. */
@@ -71,6 +65,7 @@ public class RaisedCosineWindower extends BaseDataProcessor {
      * The name of the SphinxProperty for the alpha value of the Window, which has a default value of 0.46 (double),
      * which is the value for the RaisedCosineWindow.
      */
+    @S4Double(defaultValue = 0.46)
     public static final String PROP_ALPHA = "alpha";
 
 

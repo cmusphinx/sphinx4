@@ -12,51 +12,46 @@
 
 package edu.cmu.sphinx.decoder.search;
 
+import edu.cmu.sphinx.decoder.scorer.Scoreable;
+import edu.cmu.sphinx.frontend.Data;
+import edu.cmu.sphinx.linguist.HMMSearchState;
+import edu.cmu.sphinx.linguist.SearchState;
+import edu.cmu.sphinx.linguist.UnitSearchState;
+import edu.cmu.sphinx.linguist.WordSearchState;
+import edu.cmu.sphinx.linguist.acoustic.HMMState;
+import edu.cmu.sphinx.linguist.acoustic.Unit;
+import edu.cmu.sphinx.linguist.dictionary.Pronunciation;
+import edu.cmu.sphinx.linguist.dictionary.Word;
+
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
-import edu.cmu.sphinx.decoder.scorer.Scoreable;
-import edu.cmu.sphinx.frontend.Data;
-import edu.cmu.sphinx.linguist.HMMSearchState;
-import edu.cmu.sphinx.linguist.SearchState;
-import edu.cmu.sphinx.linguist.WordSearchState;
-import edu.cmu.sphinx.linguist.UnitSearchState;
-import edu.cmu.sphinx.linguist.acoustic.HMMState;
-import edu.cmu.sphinx.linguist.acoustic.Unit;
-import edu.cmu.sphinx.linguist.dictionary.Word;
-import edu.cmu.sphinx.linguist.dictionary.Pronunciation;
-
 /**
- * Represents a single state in the recognition trellis. Subclasses of
- * a token are used to represent the various emitting state.
- *
+ * Represents a single state in the recognition trellis. Subclasses of a token are used to represent the various
+ * emitting state.
+ * <p/>
  * All scores are maintained in LogMath log base
- *
  */
 public class Token implements Scoreable {
 
-    /**
-     * a token comparator that is used to order tokens in
-     * descending order
-     *
-     */
+    /** a token comparator that is used to order tokens in descending order */
     public final static Comparator COMPARATOR = new Comparator() {
-	    public int compare(Object o1, Object o2) {
-		Token t1 = (Token) o1;
-		Token t2 = (Token) o2;
+        public int compare(Object o1, Object o2) {
+            Token t1 = (Token) o1;
+            Token t2 = (Token) o2;
 
-		if (t1.getScore() > t2.getScore()) {
-		    return -1;
-		} else if (t1.getScore() ==  t2.getScore()) {
-		    return 0;
-		} else {
-		    return 1;
-		}
-	    }
-	};
+            if (t1.getScore() > t2.getScore()) {
+                return -1;
+            } else if (t1.getScore() == t2.getScore()) {
+                return 0;
+            } else {
+                return 1;
+            }
+        }
+    };
 
     private final static boolean COMBINE_BRANCHES = true;
 
@@ -79,14 +74,12 @@ public class Token implements Scoreable {
 
     private static Set predecessorClasses = null;
 
+
     /**
-     * Set the predecessor class. Used to modify the behavior of child() 
-     * so that the predecessor backpointer will skip internal states.  
-     * For example, when retaining tokens to form a word lattice, 
-     * it would be inefficient to
-     * keep any states but WordStates-- other types of states are not used
-     * and the memory should be saved.  On the other hand, a phoneme recognizer
-     * would require PronunciationStates to create a suitable result.
+     * Set the predecessor class. Used to modify the behavior of child() so that the predecessor backpointer will skip
+     * internal states. For example, when retaining tokens to form a word lattice, it would be inefficient to keep any
+     * states but WordStates-- other types of states are not used and the memory should be saved.  On the other hand, a
+     * phoneme recognizer would require PronunciationStates to create a suitable result.
      *
      * @param bpClasses
      */
@@ -94,68 +87,53 @@ public class Token implements Scoreable {
         predecessorClasses = bpClasses;
     }
 
+
     /**
-     * Constructs a new token that continues the search from the current token.
-     * If predessorClasses is null or if the class of the state is a member of
-     * predecessorClasses, the predecessor of the new token is set to the
-     * current token.  Otherwise it is set to the predecessor of the current
-     * token.  This behavior is used to save memory when building lattices.
+     * Constructs a new token that continues the search from the current token. If predessorClasses is null or if the
+     * class of the state is a member of predecessorClasses, the predecessor of the new token is set to the current
+     * token.  Otherwise it is set to the predecessor of the current token.  This behavior is used to save memory when
+     * building lattices.
      *
-     * @param state the SentenceHMMState associated with this token
-     *
-     * @param logTotalScore the total entry score for this token (in
-     * LogMath log base)
-     *
-     * @param logLanguageScore the language score associated with this
-     * token (in LogMath log base)
-     *
-     * @param logInsertionProbability the insertion probabilty  associated with
-     * this token (in LogMath log base)
-     *
-     * @param frameNumber the frame number associated with this token
+     * @param state                   the SentenceHMMState associated with this token
+     * @param logTotalScore           the total entry score for this token (in LogMath log base)
+     * @param logLanguageScore        the language score associated with this token (in LogMath log base)
+     * @param logInsertionProbability the insertion probabilty  associated with this token (in LogMath log base)
+     * @param frameNumber             the frame number associated with this token
      */
     public Token child(SearchState state,
                        float logTotalScore,
                        float logLanguageScore,
                        float logInsertionProbability,
                        int frameNumber) {
-       if ((predecessorClasses == null) || 
-	   predecessorClasses.contains(state.getClass())) {
-            return new Token(this, state, 
-			     logTotalScore, logLanguageScore, 
-			     logInsertionProbability, frameNumber);
+        if ((predecessorClasses == null) ||
+                predecessorClasses.contains(state.getClass())) {
+            return new Token(this, state,
+                    logTotalScore, logLanguageScore,
+                    logInsertionProbability, frameNumber);
         } else {
-            return new Token(predecessor, state, 
-			     logTotalScore, logLanguageScore, 
-			     logInsertionProbability, frameNumber);
+            return new Token(predecessor, state,
+                    logTotalScore, logLanguageScore,
+                    logInsertionProbability, frameNumber);
         }
     }
 
+
     /**
-     * Internal constructor for a token.  
-     * Used by classes Token, CombineToken, ParallelToken
+     * Internal constructor for a token. Used by classes Token, CombineToken, ParallelToken
      *
-     * @param predecessor the predecessor for this token
-     * @param state the SentenceHMMState associated with this token
-     *
-     * @param logTotalScore the total entry score for this token (in
-     * LogMath log base)
-     *
-     * @param logLanguageScore the language score associated with this
-     * token (in LogMath log base)
-     *
-     * @param logInsertionProbability the insertion probabilty  associated with
-     * this token (in LogMath log base)
-     *
-     * @param frameNumber the frame number associated with this token
-     *
+     * @param predecessor             the predecessor for this token
+     * @param state                   the SentenceHMMState associated with this token
+     * @param logTotalScore           the total entry score for this token (in LogMath log base)
+     * @param logLanguageScore        the language score associated with this token (in LogMath log base)
+     * @param logInsertionProbability the insertion probabilty  associated with this token (in LogMath log base)
+     * @param frameNumber             the frame number associated with this token
      */
     protected Token(Token predecessor,
-                  SearchState state,
-                  float logTotalScore,
-                  float logLanguageScore,
-                  float logInsertionProbability,
-                  int frameNumber) {
+                    SearchState state,
+                    float logTotalScore,
+                    float logLanguageScore,
+                    float logInsertionProbability,
+                    int frameNumber) {
         this.predecessor = predecessor;
         this.searchState = state;
         this.logTotalScore = logTotalScore;
@@ -167,24 +145,24 @@ public class Token implements Scoreable {
 
     }
 
+
     /**
      * Creates the initial token with the given word history depth
      *
-     * @param state the SearchState associated with this token
-     *
+     * @param state       the SearchState associated with this token
      * @param frameNumber the frame number for this token
      */
     public Token(SearchState state, int frameNumber) {
         this(null, state, 0.0f, 0.0f, 0.0f, frameNumber);
     }
 
+
     /**
-     * Creates a Token with the given acoustic and language scores and
-     * predecessor.
+     * Creates a Token with the given acoustic and language scores and predecessor.
      *
      * @param logAcousticScore the log acoustic score
      * @param logLanguageScore the log language score
-     * @param predecessor the predecessor Token
+     * @param predecessor      the predecessor Token
      */
     public Token(float logAcousticScore, float logLanguageScore,
                  Token predecessor) {
@@ -193,9 +171,9 @@ public class Token implements Scoreable {
         this.predecessor = predecessor;
     }
 
+
     /**
-     * Returns the predecessor for this token, or null if this token
-     * has no predecessors
+     * Returns the predecessor for this token, or null if this token has no predecessors
      *
      * @return the predecessor
      */
@@ -203,17 +181,18 @@ public class Token implements Scoreable {
         return predecessor;
     }
 
+
     /**
-     * Returns the frame number for this token. Note that for tokens that
-     * are associated with non-emitting states, the frame number
-     * represents the next frame number.  For emitting states, the
-     * frame number represents the current frame number.
+     * Returns the frame number for this token. Note that for tokens that are associated with non-emitting states, the
+     * frame number represents the next frame number.  For emitting states, the frame number represents the current
+     * frame number.
      *
      * @return the frame number for this token
      */
     public int getFrameNumber() {
         return frameNumber;
     }
+
 
     /**
      * Returns the feature for this Token.
@@ -228,9 +207,9 @@ public class Token implements Scoreable {
         }
     }
 
+
     /**
-     * Returns the score for the token. The score is a combination of
-     * language and acoustic scores
+     * Returns the score for the token. The score is a combination of language and acoustic scores
      *
      * @return the score of this frame (in logMath log base)
      */
@@ -238,15 +217,13 @@ public class Token implements Scoreable {
         return logTotalScore;
     }
 
+
     /**
-     * Calculates a score against the given feature. The score can be
-     * retreived with get score
+     * Calculates a score against the given feature. The score can be retreived with get score
      *
-     * @param feature the feature to be scored
-     * @param keepData whether this Scoreable should keep a reference
-     *    to the given feature
-     * @param gain gain to apply to the score;
-     *
+     * @param feature  the feature to be scored
+     * @param keepData whether this Scoreable should keep a reference to the given feature
+     * @param gain     gain to apply to the score;
      * @return the score for the feature
      */
     public float calculateScore(Data feature, boolean keepData, float gain) {
@@ -270,7 +247,6 @@ public class Token implements Scoreable {
      * Normalizes a previously calculated score
      *
      * @param maxLogScore the score to normalize this score with
-     *
      * @return the normalized score
      */
     public float normalizeScore(float maxLogScore) {
@@ -281,14 +257,13 @@ public class Token implements Scoreable {
 
 
     /**
-     * Gets the working score. The working score is used to maintain
-     * non-final scores during the search. Some search algorithms such
-     * as bushderby use the working score
+     * Gets the working score. The working score is used to maintain non-final scores during the search. Some search
+     * algorithms such as bushderby use the working score
      *
      * @return the working score (in logMath log base)
      */
     public float getWorkingScore() {
-	    return logWorkingScore;
+        return logWorkingScore;
     }
 
 
@@ -298,19 +273,19 @@ public class Token implements Scoreable {
      * @param logScore the working score (in logMath log base)
      */
     public void setWorkingScore(float logScore) {
-	    logWorkingScore = logScore;
+        logWorkingScore = logScore;
     }
 
 
     /**
      * Sets the score for this token
      *
-     * @param logScore the new score for the token (in logMath log
-     * base)
+     * @param logScore the new score for the token (in logMath log base)
      */
     public void setScore(float logScore) {
         this.logTotalScore = logScore;
     }
+
 
     /**
      * Returns the language score associated with this token
@@ -321,6 +296,7 @@ public class Token implements Scoreable {
         return logLanguageScore;
     }
 
+
     /**
      * Returns the insertionPenalty associated with this token
      *
@@ -330,12 +306,12 @@ public class Token implements Scoreable {
         return logInsertionProbability;
     }
 
-    /**
-     * Returns the acoustic score for this token (in logMath log base)
-     */
+
+    /** Returns the acoustic score for this token (in logMath log base) */
     public float getAcousticScore() {
         return logAcousticScore;
     }
+
 
     /**
      * Returns the SearchState associated with this token
@@ -346,26 +322,27 @@ public class Token implements Scoreable {
         return searchState;
     }
 
+
     /**
-     * Determines if this token is associated with an emitting state.
-     * An emitting state is a state that can be scored acoustically.
+     * Determines if this token is associated with an emitting state. An emitting state is a state that can be scored
+     * acoustically.
      *
-     * @return <code>true</code> if this token is associated with an
-     * emitting state
+     * @return <code>true</code> if this token is associated with an emitting state
      */
     public boolean isEmitting() {
         return searchState.isEmitting();
     }
 
+
     /**
      * Determines if this token is associated with a final SentenceHMM state.
      *
-     * @return <code>true</code> if this token is associated with a
-     * final state
+     * @return <code>true</code> if this token is associated with a final state
      */
     public boolean isFinal() {
         return searchState.isFinal();
     }
+
 
     /**
      * Determines if this token marks the end of a word
@@ -373,8 +350,9 @@ public class Token implements Scoreable {
      * @return <code>true</code> if this token marks the end of a word
      */
     public boolean isWord() {
-	return searchState instanceof WordSearchState;
+        return searchState instanceof WordSearchState;
     }
+
 
     /**
      * Retrieves the string representation of this object
@@ -389,20 +367,19 @@ public class Token implements Scoreable {
         }
         return
                 numFmt.format(getFrameNumber()) + " " +
-                scoreFmt.format(getScore()) + " " +
-                scoreFmt.format(getAcousticScore()) + " " +
-                scoreFmt.format(getLanguageScore()) + " " +
-                scoreFmt.format(getInsertionProbability())
-                + " " + getSearchState() + appString;
+                        scoreFmt.format(getScore()) + " " +
+                        scoreFmt.format(getAcousticScore()) + " " +
+                        scoreFmt.format(getLanguageScore()) + " " +
+                        scoreFmt.format(getInsertionProbability())
+                        + " " + getSearchState() + appString;
     }
 
 
-    /**
-     * dumps a branch of tokens
-     */
+    /** dumps a branch of tokens */
     public void dumpTokenPath() {
         dumpTokenPath(true);
     }
+
 
     /**
      * dumps a branch of tokens
@@ -427,12 +404,12 @@ public class Token implements Scoreable {
         System.out.println();
     }
 
+
     /**
      * Returns the string of words leading up to this token.
      *
-     * @param wantFiller if true, filler words are added
+     * @param wantFiller         if true, filler words are added
      * @param wantPronunciations if true append [ phoneme phoneme ... ] after each word
-     *
      * @return the word path
      */
     public String getWordPath(boolean wantFiller, boolean wantPronunciations) {
@@ -442,23 +419,23 @@ public class Token implements Scoreable {
         while (token != null) {
             if (token.isWord()) {
                 WordSearchState wordState =
-                    (WordSearchState) token.getSearchState();
+                        (WordSearchState) token.getSearchState();
                 Pronunciation pron = wordState.getPronunciation();
                 Word word = wordState.getPronunciation().getWord();
 
 //                System.out.println(token.getFrameNumber() + " " + word + " " + token.logLanguageScore + " " + token.logAcousticScore);
 
                 if (wantFiller || !word.isFiller()) {
-                    if( wantPronunciations ) {
-                        sb.insert(0,"]");
-                        Unit [] u = pron.getUnits();
-                        for( int i=u.length-1; i>=0; i-- ) {
-                            if( i<u.length-1 ) sb.insert(0,",");
+                    if (wantPronunciations) {
+                        sb.insert(0, "]");
+                        Unit[] u = pron.getUnits();
+                        for (int i = u.length - 1; i >= 0; i--) {
+                            if (i < u.length - 1) sb.insert(0, ",");
                             sb.insert(0, u[i].getName());
                         }
-                        sb.insert(0,"[");
+                        sb.insert(0, "[");
                     }
-                    sb.insert(0, word.getSpelling());                    
+                    sb.insert(0, word.getSpelling());
                     sb.insert(0, " ");
                 }
             }
@@ -467,9 +444,9 @@ public class Token implements Scoreable {
         return sb.toString().trim();
     }
 
+
     /**
-     * Returns the string of words for this token, with no embedded
-     * filler words
+     * Returns the string of words for this token, with no embedded filler words
      *
      * @return the string of words
      */
@@ -477,9 +454,9 @@ public class Token implements Scoreable {
         return getWordPath(false, false);
     }
 
+
     /**
-     * Returns the string of words for this token, with embedded
-     * silences
+     * Returns the string of words for this token, with embedded silences
      *
      * @return the string of words
      */
@@ -487,9 +464,9 @@ public class Token implements Scoreable {
         return getWordPath(true, false);
     }
 
+
     /**
-     * Returns the string of words and units for this token, with
-     * embedded silences.
+     * Returns the string of words and units for this token, with embedded silences.
      *
      * @return the string of words and units
      */
@@ -513,9 +490,10 @@ public class Token implements Scoreable {
         return sb.toString().trim();
     }
 
+
     /**
-     * Returns the word of this Token, the search state is a WordSearchState.
-     * If the search state is not a WordSearchState, return null.
+     * Returns the word of this Token, the search state is a WordSearchState. If the search state is not a
+     * WordSearchState, return null.
      *
      * @return the word of this Token, or null if this is not a word token
      */
@@ -528,25 +506,25 @@ public class Token implements Scoreable {
         }
     }
 
-    /**
-     * Shows the token count
-     */
+
+    /** Shows the token count */
     public static void showCount() {
         System.out.println("Cur count: " + curCount + " new " +
                 (curCount - lastCount));
         lastCount = curCount;
     }
 
+
     /**
-     * Returns the location of this Token in the ActiveList.
-     * In the HeapActiveList implementation, it is the index of the
-     * Token in the array backing the heap.
+     * Returns the location of this Token in the ActiveList. In the HeapActiveList implementation, it is the index of
+     * the Token in the array backing the heap.
      *
      * @return the location of this Token in the ActiveList
      */
     public final int getLocation() {
         return location;
     }
+
 
     /**
      * Sets the location of this Token in the ActiveList.
@@ -556,6 +534,7 @@ public class Token implements Scoreable {
     public final void setLocation(int location) {
         this.location = location;
     }
+
 
     /**
      * Determines if this branch is valid
@@ -568,8 +547,7 @@ public class Token implements Scoreable {
 
 
     /**
-     * Return the DecimalFormat object for formatting the print out
-     * of scores.
+     * Return the DecimalFormat object for formatting the print out of scores.
      *
      * @return the DecimalFormat object for formatting score print outs
      */
@@ -579,14 +557,14 @@ public class Token implements Scoreable {
 
 
     /**
-     * Return the DecimalFormat object for formatting the print out
-     * of numbers
+     * Return the DecimalFormat object for formatting the print out of numbers
      *
      * @return the DecimalFormat object for formatting number print outs
      */
     protected static DecimalFormat getNumberFormat() {
         return numFmt;
     }
+
 
     /**
      * Returns the application object
@@ -596,6 +574,7 @@ public class Token implements Scoreable {
     public Object getAppObject() {
         return appObject;
     }
+
 
     /**
      * Sets the application object

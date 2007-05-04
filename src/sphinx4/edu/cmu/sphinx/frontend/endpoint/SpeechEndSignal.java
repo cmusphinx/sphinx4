@@ -15,17 +15,14 @@ package edu.cmu.sphinx.frontend.endpoint;
 
 import edu.cmu.sphinx.frontend.Signal;
 
-/**
- * A signal that indicates the end of speech.
- */
+/** A signal that indicates the end of speech. */
 public class SpeechEndSignal extends Signal {
 
-    /**
-     * Constructs a SpeechEndSignal.
-     */
+    /** Constructs a SpeechEndSignal. */
     public SpeechEndSignal() {
         this(System.currentTimeMillis());
     }
+
 
     /**
      * Constructs a SpeechEndSignal with the given creation time.
@@ -35,6 +32,7 @@ public class SpeechEndSignal extends Signal {
     public SpeechEndSignal(long time) {
         super(time);
     }
+
 
     /**
      * Returns the string "SpeechEndSignal".

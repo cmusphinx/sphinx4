@@ -14,10 +14,9 @@
 package edu.cmu.sphinx.frontend;
 
 /**
- * Indicates events like beginning or end of data, data dropped,
- * quality changed, etc.. It implements the Data interface, and it will
- * pass between DataProcessors to inform them about the Data that is
- * passed between DataProcessors.
+ * Indicates events like beginning or end of data, data dropped, quality changed, etc.. It implements the Data
+ * interface, and it will pass between DataProcessors to inform them about the Data that is passed between
+ * DataProcessors.
  *
  * @see Data
  * @see DataProcessor
@@ -25,6 +24,7 @@ package edu.cmu.sphinx.frontend;
 public class Signal implements Data {
 
     private long time;  // the time this Signal was issued
+
 
     /**
      * Constructs a Signal with the given name.
@@ -34,6 +34,7 @@ public class Signal implements Data {
     protected Signal(long time) {
         this.time = time;
     }
+
 
     /**
      * Returns the time this Signal was created.

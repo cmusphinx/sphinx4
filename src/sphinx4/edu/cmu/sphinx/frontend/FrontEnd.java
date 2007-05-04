@@ -13,16 +13,9 @@
 
 package edu.cmu.sphinx.frontend;
 
-import java.util.Map;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Vector;
+import edu.cmu.sphinx.util.props.*;
 
-import edu.cmu.sphinx.util.props.PropertyException;
-import edu.cmu.sphinx.util.props.PropertySheet;
-import edu.cmu.sphinx.util.props.PropertyType;
-import edu.cmu.sphinx.util.props.Registry;
+import java.util.*;
 
 /**
  * FrontEnd is a wrapper class for the chain of front end processors. It provides methods for manipulating and
@@ -133,6 +126,7 @@ import edu.cmu.sphinx.util.props.Registry;
 public class FrontEnd extends BaseDataProcessor {
 
     /** the name of the property list of all the components of the frontend pipe line */
+    @S4ComponentList(type = DataProcessor.class)
     public final static String PROP_PIPELINE = "pipeline";
 
 

@@ -12,32 +12,28 @@
 
 package edu.cmu.sphinx.frontend.util;
 
+import javax.sound.sampled.AudioFileFormat;
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 
-import javax.sound.sampled.AudioFileFormat;
-import javax.sound.sampled.AudioFormat;
-import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioSystem;
 
-
-/**
- * Represents the complete audio data of an utterance.
- */
+/** Represents the complete audio data of an utterance. */
 public class Utterance {
 
     private String name;
     private ByteArrayOutputStream audioBuffer;
     private AudioFormat audioFormat;
-    
+
 
     /**
      * Constructs a default Utterance object.
      *
-     * @param name the name of this Utterance, e.g., it can be the
-     *    name of the audio file where the audio came from
+     * @param name   the name of this Utterance, e.g., it can be the name of the audio file where the audio came from
      * @param format the audio format of this Utterance
      */
     public Utterance(String name, AudioFormat format) {
@@ -45,6 +41,7 @@ public class Utterance {
         this.audioFormat = format;
         this.audioBuffer = new ByteArrayOutputStream();
     }
+
 
     /**
      * Returns the name of this Utterance.
@@ -55,6 +52,7 @@ public class Utterance {
         return name;
     }
 
+
     /**
      * Returns the audio format of this Utterance.
      *
@@ -63,6 +61,7 @@ public class Utterance {
     public AudioFormat getAudioFormat() {
         return audioFormat;
     }
+
 
     /**
      * Adds an audio frame into this Utterance.
@@ -75,6 +74,7 @@ public class Utterance {
         }
     }
 
+
     /**
      * Returns the complete audio stream of this utterance.
      *
@@ -84,6 +84,7 @@ public class Utterance {
         return audioBuffer.toByteArray();
     }
 
+
     /**
      * Returns the amount of time (in seconds) this Utterance lasts.
      *
@@ -91,22 +92,23 @@ public class Utterance {
      */
     public float getAudioTime() {
         return ((float) audioBuffer.size()) /
-            (audioFormat.getSampleRate() * 
-             audioFormat.getSampleSizeInBits()/8);
+                (audioFormat.getSampleRate() *
+                        audioFormat.getSampleSizeInBits() / 8);
     }
+
 
     /**
      * Save the audio as a WAV file in the given file.
      *
-     * @param fileName the name of the audio file
+     * @param fileName   the name of the audio file
      * @param fileFormat the audio file format
      */
     public void save(String fileName, AudioFileFormat.Type fileFormat)
-        throws IOException {
+            throws IOException {
         File file = new File(fileName);
         byte[] audio = getAudio();
         AudioInputStream ais = new AudioInputStream
-            ((new ByteArrayInputStream(audio)), getAudioFormat(), audio.length);
+                ((new ByteArrayInputStream(audio)), getAudioFormat(), audio.length);
         AudioSystem.write(ais, fileFormat, file);
     }
 }

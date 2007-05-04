@@ -1,13 +1,10 @@
 package edu.cmu.sphinx.frontend.endpoint;
 
 import edu.cmu.sphinx.frontend.*;
-import edu.cmu.sphinx.util.props.PropertyException;
-import edu.cmu.sphinx.util.props.PropertySheet;
-import edu.cmu.sphinx.util.props.PropertyType;
-import edu.cmu.sphinx.util.props.Registry;
+import edu.cmu.sphinx.util.props.*;
 
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Removes excessive non-speech-segments from a speech stream. Compared with <code>NonSpeechDatatFilter</code> this
@@ -22,6 +19,7 @@ public class ExcessiveNonSpeechPruner extends BaseDataProcessor {
      * The Sphinx Property for the maximum amount of (subsequent) none-speech time (in ms) to be preserved in the speech
      * stream.
      */
+    @S4Integer(defaultValue = Integer.MAX_VALUE)
     public static final String PROP_MAX_NON_SPEECH_TIME_MS = "maxNonSpeechTimeMs";
 
     /** The default value of PROP_MAX_NON_SPEECH_TIME. The default is chosen to prune nothing. */
@@ -78,18 +76,20 @@ public class ExcessiveNonSpeechPruner extends BaseDataProcessor {
         return -1;
     }
 
+
     /*
-     * (non-Javadoc)
-     * 
-     * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
-     */
-    public static Map getConfigurationInfo(){
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
+    */
+    public static Map getConfigurationInfo() {
         Map info = new HashMap();
-        
-        info.put(new String("PROP_MAX_NON_SPEECH_TIME_MS_TYPE"),new String("INTEGER"));
+
+        info.put(new String("PROP_MAX_NON_SPEECH_TIME_MS_TYPE"), new String("INTEGER"));
         return info;
     }
-    
+
+
     /*
     * (non-Javadoc)
     *

@@ -12,29 +12,16 @@
  */
 package edu.cmu.sphinx.decoder.search;
 
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Map;
-import java.util.HashMap;
-
 import edu.cmu.sphinx.util.LogMath;
-import edu.cmu.sphinx.util.props.PropertyException;
-import edu.cmu.sphinx.util.props.PropertySheet;
-import edu.cmu.sphinx.util.props.PropertyType;
-import edu.cmu.sphinx.util.props.Registry;
+import edu.cmu.sphinx.util.props.*;
 
-/**
- * A factory for PartitionActiveLists
- *  
- */
+import java.util.*;
+
+/** A factory for PartitionActiveLists */
 public class PartitionActiveListFactory implements ActiveListFactory {
 
-    /**
-     * Sphinx property that defines the name of the logmath to be used by this
-     * search manager.
-     */
+    /** Sphinx property that defines the name of the logmath to be used by this search manager. */
+    @S4Component(type = LogMath.class)
     public final static String PROP_LOG_MATH = "logMath";
 
     private String name;
@@ -42,27 +29,28 @@ public class PartitionActiveListFactory implements ActiveListFactory {
     private float logRelativeBeamWidth;
     private LogMath logMath;
 
+
     /*
-     * (non-Javadoc)
-     * 
-     * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
-     */
-    public static Map getConfigurationInfo(){
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
+    */
+    public static Map getConfigurationInfo() {
         Map info = new HashMap();
-        info.put(new String("PROP_ABSOLUTE_BEAM_WIDTH_TYPE"),new String("INTEGER"));
-        info.put(new String("PROP_LOG_MATH_TYPE"),new String("COMPONENT")); 
-        info.put(new String("PROP_LOG_MATH_CLASSTYPE"),new String("edu.cmu.sphinx.util.LogMath"));
-        info.put(new String("PROP_RELATIVE_BEAM_WIDTH_TYPE"),new String("DOUBLE"));
+        info.put(new String("PROP_ABSOLUTE_BEAM_WIDTH_TYPE"), new String("INTEGER"));
+        info.put(new String("PROP_LOG_MATH_TYPE"), new String("COMPONENT"));
+        info.put(new String("PROP_LOG_MATH_CLASSTYPE"), new String("edu.cmu.sphinx.util.LogMath"));
+        info.put(new String("PROP_RELATIVE_BEAM_WIDTH_TYPE"), new String("DOUBLE"));
         return info;
     }
-    
-    
+
+
     /*
-     * (non-Javadoc)
-     * 
-     * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
-     *      edu.cmu.sphinx.util.props.Registry)
-     */
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
+    *      edu.cmu.sphinx.util.props.Registry)
+    */
     public void register(String name, Registry registry)
             throws PropertyException {
         this.name = name;
@@ -71,11 +59,12 @@ public class PartitionActiveListFactory implements ActiveListFactory {
         registry.register(PROP_LOG_MATH, PropertyType.COMPONENT);
     }
 
+
     /*
-     * (non-Javadoc)
-     * 
-     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
-     */
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
+    */
     public void newProperties(PropertySheet ps) throws PropertyException {
         absoluteBeamWidth = ps.getInt(PROP_ABSOLUTE_BEAM_WIDTH,
                 PROP_ABSOLUTE_BEAM_WIDTH_DEFAULT);
@@ -85,37 +74,38 @@ public class PartitionActiveListFactory implements ActiveListFactory {
         logRelativeBeamWidth = logMath.linearToLog(relativeBeamWidth);
     }
 
+
     /*
-     * (non-Javadoc)
-     * 
-     * @see edu.cmu.sphinx.util.props.Configurable#getName()
-     */
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.util.props.Configurable#getName()
+    */
     public String getName() {
         return name;
     }
 
+
     /*
-     * (non-Javadoc)
-     * 
-     * @see edu.cmu.sphinx.decoder.search.ActiveListFactory#newInstance()
-     */
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.decoder.search.ActiveListFactory#newInstance()
+    */
     public ActiveList newInstance() {
         return new PartitionActiveList(absoluteBeamWidth, logRelativeBeamWidth);
     }
 
+
     /**
-     * An active list that does absolute beam with pruning by partitioning the
-     * token list based on absolute beam width, instead of sorting the token
-     * list, and then chopping the list up with the absolute beam width. The
-     * expected run time of this randomized partitioning algorithm is O(n),
-     * instead of O(n log n) for merge sort.
-     * 
-     * This class is not thread safe and should only be used by a single
-     * thread.
-     * 
+     * An active list that does absolute beam with pruning by partitioning the token list based on absolute beam width,
+     * instead of sorting the token list, and then chopping the list up with the absolute beam width. The expected run
+     * time of this randomized partitioning algorithm is O(n), instead of O(n log n) for merge sort.
+     * <p/>
+     * This class is not thread safe and should only be used by a single thread.
+     * <p/>
      * Note that all scores are maintained in the LogMath log base.
      */
     class PartitionActiveList implements ActiveList {
+
         private int size = 0;
         private int absoluteBeamWidth;
         private float logRelativeBeamWidth;
@@ -125,11 +115,10 @@ public class PartitionActiveListFactory implements ActiveListFactory {
         private Token[] tokenList;
         private Partitioner partitioner = new Partitioner();
 
-        /**
-         * Creates an empty active list
-         */
+
+        /** Creates an empty active list */
         public PartitionActiveList(int absoluteBeamWidth,
-                float logRelativeBeamWidth) {
+                                   float logRelativeBeamWidth) {
             this.absoluteBeamWidth = absoluteBeamWidth;
             this.logRelativeBeamWidth = logRelativeBeamWidth;
             int listSize = PROP_ABSOLUTE_BEAM_WIDTH_DEFAULT;
@@ -139,11 +128,11 @@ public class PartitionActiveListFactory implements ActiveListFactory {
             this.tokenList = new Token[listSize];
         }
 
+
         /**
          * Adds the given token to the list
-         * 
-         * @param token
-         *                the token to add
+         *
+         * @param token the token to add
          */
         public void add(Token token) {
             if (size < tokenList.length) {
@@ -160,9 +149,8 @@ public class PartitionActiveListFactory implements ActiveListFactory {
             }
         }
 
-        /**
-         * Doubles the capacity of the Token array.
-         */
+
+        /** Doubles the capacity of the Token array. */
         private void doubleCapacity() {
             // expand the token list
             Token[] newList = new Token[tokenList.length * 2];
@@ -170,16 +158,12 @@ public class PartitionActiveListFactory implements ActiveListFactory {
             tokenList = newList;
         }
 
+
         /**
          * Replaces an old token with a new token
-         * 
-         * @param oldToken
-         *                the token to replace (or null in which case, replace
-         *                works like add).
-         * 
-         * @param newToken
-         *                the new token to be placed in the list.
-         *  
+         *
+         * @param oldToken the token to replace (or null in which case, replace works like add).
+         * @param newToken the new token to be placed in the list.
          */
         public void replace(Token oldToken, Token newToken) {
             if (oldToken != null) {
@@ -200,10 +184,10 @@ public class PartitionActiveListFactory implements ActiveListFactory {
             }
         }
 
+
         /**
-         * Purges excess members. Remove all nodes that fall below the
-         * relativeBeamWidth
-         * 
+         * Purges excess members. Remove all nodes that fall below the relativeBeamWidth
+         *
          * @return a (possible new) active list
          */
         public ActiveList purge() {
@@ -222,18 +206,20 @@ public class PartitionActiveListFactory implements ActiveListFactory {
             return this;
         }
 
+
         /**
          * gets the beam threshold best upon the best scoring token
-         * 
+         *
          * @return the beam threshold
          */
         public float getBeamThreshold() {
             return getBestScore() + logRelativeBeamWidth;
         }
 
+
         /**
          * gets the best score in the list
-         * 
+         *
          * @return the best score
          */
         public float getBestScore() {
@@ -244,7 +230,7 @@ public class PartitionActiveListFactory implements ActiveListFactory {
 
             // a sanity check
             if (false) {
-                for (Iterator i = iterator(); i.hasNext(); ) {
+                for (Iterator i = iterator(); i.hasNext();) {
                     Token t = (Token) i.next();
                     if (t.getScore() > bestScore) {
                         System.out.println("GBS: found better score "
@@ -255,55 +241,60 @@ public class PartitionActiveListFactory implements ActiveListFactory {
             return bestScore;
         }
 
+
         /**
          * Sets the best scoring token for this active list
-         * 
-         * @param token
-         *                the best scoring token
+         *
+         * @param token the best scoring token
          */
         public void setBestToken(Token token) {
             bestToken = token;
         }
 
+
         /**
          * Gets the best scoring token for this active list
-         * 
+         *
          * @return the best scoring token
          */
         public Token getBestToken() {
             return bestToken;
         }
 
+
         /**
          * Retrieves the iterator for this tree.
-         * 
+         *
          * @return the iterator for this token list
          */
         public Iterator iterator() {
             return (new TokenArrayIterator(tokenList, size));
         }
 
+
         /**
          * Gets the list of all tokens
-         * 
+         *
          * @return the list of tokens
          */
         public List getTokens() {
             return Arrays.asList(tokenList).subList(0, size);
         }
 
+
         /**
          * Returns the number of tokens on this active list
-         * 
+         *
          * @return the size of the active list
          */
         public final int size() {
             return size;
         }
 
+
         /* (non-Javadoc)
-         * @see edu.cmu.sphinx.decoder.search.ActiveList#createNew()
-         */
+        * @see edu.cmu.sphinx.decoder.search.ActiveList#createNew()
+        */
         public ActiveList newInstance() {
             return PartitionActiveListFactory.this.newInstance();
         }
@@ -311,9 +302,11 @@ public class PartitionActiveListFactory implements ActiveListFactory {
 }
 
 class TokenArrayIterator implements Iterator {
+
     private Token[] tokenArray;
     private int size;
     private int pos;
+
 
     TokenArrayIterator(Token[] tokenArray, int size) {
         this.tokenArray = tokenArray;
@@ -321,16 +314,14 @@ class TokenArrayIterator implements Iterator {
         this.size = size;
     }
 
-    /**
-     * Returns true if the iteration has more tokens.
-     */
+
+    /** Returns true if the iteration has more tokens. */
     public boolean hasNext() {
         return pos < size;
     }
 
-    /**
-     * Returns the next token in the iteration.
-     */
+
+    /** Returns the next token in the iteration. */
     public Object next() throws NoSuchElementException {
         if (pos >= tokenArray.length) {
             throw new NoSuchElementException();
@@ -338,9 +329,8 @@ class TokenArrayIterator implements Iterator {
         return tokenArray[pos++];
     }
 
-    /**
-     * Unimplemented, throws an Error if called.
-     */
+
+    /** Unimplemented, throws an Error if called. */
     public void remove() {
         throw new Error("TokenArrayIterator.remove() unimplemented");
     }

@@ -13,24 +13,18 @@
 package edu.cmu.sphinx.decoder.search;
 
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 /**
- * Created by IntelliJ IDEA.
- * User: woelfel
- * Date: Jun 16, 2003
- * Time: 11:45:05 AM
- * To change this template use Options | File Templates.
+ * Created by IntelliJ IDEA. User: woelfel Date: Jun 16, 2003 Time: 11:45:05 AM To change this template use Options |
+ * File Templates.
  */
 public class AlternateHypothesisManager {
+
     private Map<Object, List<Token>> viterbiLoserMap = new HashMap<Object, List<Token>>();
     private int maxEdges;
+
 
     /**
      * Creates an alternate hypotheses manager
@@ -43,14 +37,10 @@ public class AlternateHypothesisManager {
 
 
     /**
-     * Collects adds alternate predecessors for a token
-     * that would have lost because of viterbi.
+     * Collects adds alternate predecessors for a token that would have lost because of viterbi.
      *
-     * @param token - a token that has an alternate lower
-     * scoring predecessor that still might be of interest
-     *
-     * @param predecessor - a predecessor that scores lower
-     * than token.getPredecessor().
+     * @param token       - a token that has an alternate lower scoring predecessor that still might be of interest
+     * @param predecessor - a predecessor that scores lower than token.getPredecessor().
      */
 
     public void addAlternatePredecessor(Token token, Token predecessor) {
@@ -63,23 +53,19 @@ public class AlternateHypothesisManager {
         list.add(predecessor);
     }
 
+
     /**
      * Returns a list of alternate predecessors for a token.
      *
-     * @param token - a token that may have alternate lower
-     * scoring predecessor that still might be of interest
-     *
-     * @return A list of predecessors that scores lower
-     * than token.getPredecessor().
+     * @param token - a token that may have alternate lower scoring predecessor that still might be of interest
+     * @return A list of predecessors that scores lower than token.getPredecessor().
      */
     public List<Token> getAlternatePredecessors(Token token) {
         return viterbiLoserMap.get(token);
     }
 
-    /**
-     * Purge all but max number of alternate preceding token
-     * hypotheses.
-     */
+
+    /** Purge all but max number of alternate preceding token hypotheses. */
     @SuppressWarnings({"unchecked"})
     public void purge() {
 

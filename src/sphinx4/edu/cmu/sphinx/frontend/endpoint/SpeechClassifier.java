@@ -13,39 +13,28 @@
 
 package edu.cmu.sphinx.frontend.endpoint;
 
+import edu.cmu.sphinx.frontend.*;
+import edu.cmu.sphinx.util.LogMath;
+import edu.cmu.sphinx.util.props.*;
+
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.HashMap;
-
-import edu.cmu.sphinx.frontend.*;
-import edu.cmu.sphinx.util.LogMath;
-import edu.cmu.sphinx.util.props.PropertyException;
-import edu.cmu.sphinx.util.props.PropertySheet;
-import edu.cmu.sphinx.util.props.PropertyType;
-import edu.cmu.sphinx.util.props.Registry;
 
 
 /**
  * Implements a level tracking endpointer invented by Bent Schmidt Nielsen.
- *
- * <p>This endpointer is composed of three main steps.
- * <ol>
- * <li>classification of audio into speech and non-speech
- * <li>inserting SPEECH_START and SPEECH_END signals around speech
- * <li>removing non-speech regions
- * </ol>
- *
- * <p>The first step, classification of audio into speech and non-speech,
- * uses Bent Schmidt Nielsen's algorithm. Each time audio comes in, 
- * the average signal level and the background noise level are updated,
- * using the signal level of the current audio. If the average signal
- * level is greater than the background noise level by a certain
- * threshold value (configurable), then the current audio is marked
- * as speech. Otherwise, it is marked as non-speech.
- *
- * <p>The second and third step of this endpointer are documented in the
- * classes {@link SpeechMarker SpeechMarker} and 
+ * <p/>
+ * <p>This endpointer is composed of three main steps. <ol> <li>classification of audio into speech and non-speech
+ * <li>inserting SPEECH_START and SPEECH_END signals around speech <li>removing non-speech regions </ol>
+ * <p/>
+ * <p>The first step, classification of audio into speech and non-speech, uses Bent Schmidt Nielsen's algorithm. Each
+ * time audio comes in, the average signal level and the background noise level are updated, using the signal level of
+ * the current audio. If the average signal level is greater than the background noise level by a certain threshold
+ * value (configurable), then the current audio is marked as speech. Otherwise, it is marked as non-speech.
+ * <p/>
+ * <p>The second and third step of this endpointer are documented in the classes {@link SpeechMarker SpeechMarker} and
  * {@link NonSpeechDataFilter NonSpeechDataFilter}.
  *
  * @see SpeechMarker
@@ -53,63 +42,45 @@ import edu.cmu.sphinx.util.props.Registry;
 @SuppressWarnings({"UnnecessaryLocalVariable"})
 public class SpeechClassifier extends BaseDataProcessor {
 
-    /**
-     * The SphinxProperty specifying the endpointing frame length
-     * in milliseconds.
-     */
+    /** The SphinxProperty specifying the endpointing frame length in milliseconds. */
+    @S4Integer(defaultValue = 10)
     public static final String PROP_FRAME_LENGTH_MS = "frameLengthInMs";
 
-    /**
-     * The default value of PROP_FRAME_LENGTH_MS.
-     */
+    /** The default value of PROP_FRAME_LENGTH_MS. */
     public static final int PROP_FRAME_LENGTH_MS_DEFAULT = 10;
 
-    /**
-     * The SphinxProperty specifying the minimum signal level used
-     * to update the background signal level.
-     */
+    /** The SphinxProperty specifying the minimum signal level used to update the background signal level. */
+    @S4Double(defaultValue = 0)
     public static final String PROP_MIN_SIGNAL = "minSignal";
 
-    /**
-     * The default value of PROP_MIN_SIGNAL.
-     */
+    /** The default value of PROP_MIN_SIGNAL. */
     public static final double PROP_MIN_SIGNAL_DEFAULT = 0;
 
     /**
-     * The SphinxProperty specifying the threshold. If the current signal
-     * level is greater than the background level by this threshold,
-     * then the current signal is marked as speech. Therefore,
-     * a lower threshold will make the endpointer more sensitive,
-     * that is, mark more audio as speech. A higher threshold will
-     * make the endpointer less sensitive, that is, mark less audio as speech.
+     * The SphinxProperty specifying the threshold. If the current signal level is greater than the background level by
+     * this threshold, then the current signal is marked as speech. Therefore, a lower threshold will make the
+     * endpointer more sensitive, that is, mark more audio as speech. A higher threshold will make the endpointer less
+     * sensitive, that is, mark less audio as speech.
      */
+    @S4Double(defaultValue = 10)
     public static final String PROP_THRESHOLD = "threshold";
 
-    /**
-     * The default value of PROP_THRESHOLD.
-     */
+    /** The default value of PROP_THRESHOLD. */
     public static final double PROP_THRESHOLD_DEFAULT = 10;
 
-    /**
-     * The SphinxProperty specifying the adjustment.
-     */
+    /** The SphinxProperty specifying the adjustment. */
+    @S4Double(defaultValue = 0.003)
     public static final String PROP_ADJUSTMENT = "adjustment";
 
-    /**
-     * The default value of PROP_ADJUSTMENT_DEFAULT.
-     */
+    /** The default value of PROP_ADJUSTMENT_DEFAULT. */
     public static final double PROP_ADJUSTMENT_DEFAULT = 0.003;
 
-    /**
-     * The SphinxProperty specifying whether to print debug messages.
-     */
+    /** The SphinxProperty specifying whether to print debug messages. */
+    @S4Boolean(defaultValue = false)
     public static final String PROP_DEBUG = "debug";
 
-    /**
-     * The default value of PROP_DEBUG.
-     */
+    /** The default value of PROP_DEBUG. */
     public static final boolean PROP_DEBUG_DEFAULT = false;
-
 
 
     private boolean debug;
@@ -122,29 +93,30 @@ public class SpeechClassifier extends BaseDataProcessor {
     private float frameLengthSec;
     List<Data> outputQueue = new LinkedList<Data>();
 
+
     /*
-     * (non-Javadoc)
-     * 
-     * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
-     */
-    public static Map getConfigurationInfo(){
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
+    */
+    public static Map getConfigurationInfo() {
         Map info = new HashMap();
-    
-        info.put(new String("PROP_FRAME_LENGTH_MS_TYPE"),new String("INTEGER"));
-        info.put(new String("PROP_ADJUSTMENT_TYPE"),new String("DOUBLE"));
-        info.put(new String("PROP_THRESHOLD_TYPE"),new String("DOUBLE"));
-        info.put(new String("PROP_MIN_SIGNAL_TYPE"),new String("DOUBLE"));
-        info.put(new String("PROP_DEBUG_TYPE"),new String("BOOLEAN"));
+
+        info.put(new String("PROP_FRAME_LENGTH_MS_TYPE"), new String("INTEGER"));
+        info.put(new String("PROP_ADJUSTMENT_TYPE"), new String("DOUBLE"));
+        info.put(new String("PROP_THRESHOLD_TYPE"), new String("DOUBLE"));
+        info.put(new String("PROP_MIN_SIGNAL_TYPE"), new String("DOUBLE"));
+        info.put(new String("PROP_DEBUG_TYPE"), new String("BOOLEAN"));
         return info;
     }
 
-    
+
     /*
-     * (non-Javadoc)
-     *
-     * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
-     *      edu.cmu.sphinx.util.props.Registry)
-     */
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
+    *      edu.cmu.sphinx.util.props.Registry)
+    */
     public void register(String name, Registry registry)
             throws PropertyException {
         super.register(name, registry);
@@ -155,15 +127,16 @@ public class SpeechClassifier extends BaseDataProcessor {
         registry.register(PROP_DEBUG, PropertyType.BOOLEAN);
     }
 
+
     /*
-     * (non-Javadoc)
-     *
-     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
-     */
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
+    */
     public void newProperties(PropertySheet ps) throws PropertyException {
         super.newProperties(ps);
         int frameLengthMs = ps.getInt
-            (PROP_FRAME_LENGTH_MS, PROP_FRAME_LENGTH_MS_DEFAULT);
+                (PROP_FRAME_LENGTH_MS, PROP_FRAME_LENGTH_MS_DEFAULT);
         frameLengthSec = ((float) frameLengthMs) / 1000.f;
         adjustment = ps.getDouble(PROP_ADJUSTMENT, PROP_ADJUSTMENT_DEFAULT);
         threshold = ps.getDouble(PROP_THRESHOLD, PROP_THRESHOLD_DEFAULT);
@@ -173,31 +146,25 @@ public class SpeechClassifier extends BaseDataProcessor {
         initialize();
     }
 
-    /**
-     * Initializes this LevelTracker endpointer
-     * and DataProcessor predecessor.
-     *
-     */
+
+    /** Initializes this LevelTracker endpointer and DataProcessor predecessor. */
     public void initialize() {
         super.initialize();
         reset();
     }
 
 
-    /**
-     * Resets this LevelTracker to a starting state.
-     */
+    /** Resets this LevelTracker to a starting state. */
     private void reset() {
         level = 0;
         background = 100;
     }
 
+
     /**
-     * Returns the logarithm base 10 of the root mean square of the
-     * given samples.
+     * Returns the logarithm base 10 of the root mean square of the given samples.
      *
      * @param samples the samples
-     *
      * @return the calculated log root mean square in log 10
      */
     private double logRootMeanSquare(double[] samples) {
@@ -208,14 +175,14 @@ public class SpeechClassifier extends BaseDataProcessor {
             sumOfSquares += sample * sample;
         }
         double rootMeanSquare = Math.sqrt
-            (sumOfSquares /samples.length);
+                (sumOfSquares / samples.length);
         rootMeanSquare = Math.max(rootMeanSquare, 1);
-        return (LogMath.log10((float)rootMeanSquare) * 20);
+        return (LogMath.log10((float) rootMeanSquare) * 20);
     }
 
+
     /**
-     * Classifies the given audio frame as speech or not, and updates
-     * the endpointing parameters.
+     * Classifies the given audio frame as speech or not, and updates the endpointing parameters.
      *
      * @param audio the audio frame
      */
@@ -224,7 +191,7 @@ public class SpeechClassifier extends BaseDataProcessor {
         // System.out.println("current: " + current);
         boolean isSpeech = false;
         if (current >= minSignal) {
-            level = ((level*averageNumber) + current)/(averageNumber + 1);
+            level = ((level * averageNumber) + current) / (averageNumber + 1);
             if (current < background) {
                 background = current;
             } else {
@@ -236,42 +203,42 @@ public class SpeechClassifier extends BaseDataProcessor {
             isSpeech = (level - background > threshold);
         }
         SpeechClassifiedData labeledAudio
-            = new SpeechClassifiedData(audio, isSpeech);
+                = new SpeechClassifiedData(audio, isSpeech);
         if (debug) {
             String speech = "";
             if (labeledAudio.isSpeech()) {
                 speech = "*";
             }
             System.out.println("Bkg: " + background + ", level: " + level +
-                               ", current: " + current + " " + speech);
+                    ", current: " + current + " " + speech);
         }
         outputQueue.add(labeledAudio);
     }
+
 
     /**
      * Returns the next Data object.
      *
      * @return the next Data object, or null if none available
-     *
      * @throws DataProcessingException if a data processing error occurs
      */
     public Data getData() throws DataProcessingException {
         if (outputQueue.size() == 0) {
             Data audio = getPredecessor().getData();
 
-            if(audio instanceof DataStartSignal)
+            if (audio instanceof DataStartSignal)
                 reset();
-            
+
             if (audio != null) {
                 if (audio instanceof DoubleData) {
                     DoubleData data = (DoubleData) audio;
                     if (data.getValues().length >
-                        ((int)(frameLengthSec * data.getSampleRate()))) {
+                            ((int) (frameLengthSec * data.getSampleRate()))) {
                         throw new Error
-                            ("Length of data frame is " +
-                             data.getValues().length +
-                             " samples, but the expected frame is <= " +
-                             (frameLengthSec * data.getSampleRate()));
+                                ("Length of data frame is " +
+                                        data.getValues().length +
+                                        " samples, but the expected frame is <= " +
+                                        (frameLengthSec * data.getSampleRate()));
                     }
                     classify(data);
                 } else {

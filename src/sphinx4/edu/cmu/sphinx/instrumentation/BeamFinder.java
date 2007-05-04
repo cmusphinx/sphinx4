@@ -12,11 +12,6 @@
 
 package edu.cmu.sphinx.instrumentation;
 
-import java.text.DecimalFormat;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-
 import edu.cmu.sphinx.decoder.search.Token;
 import edu.cmu.sphinx.recognizer.Recognizer;
 import edu.cmu.sphinx.recognizer.RecognizerState;
@@ -24,59 +19,46 @@ import edu.cmu.sphinx.recognizer.StateListener;
 import edu.cmu.sphinx.result.Result;
 import edu.cmu.sphinx.result.ResultListener;
 import edu.cmu.sphinx.util.LogMath;
-import edu.cmu.sphinx.util.props.Configurable;
-import edu.cmu.sphinx.util.props.Resetable;
-import edu.cmu.sphinx.util.props.PropertyException;
-import edu.cmu.sphinx.util.props.PropertySheet;
-import edu.cmu.sphinx.util.props.PropertyType;
-import edu.cmu.sphinx.util.props.Registry;
+import edu.cmu.sphinx.util.props.*;
 
+import java.text.DecimalFormat;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
- * Monitors the absolute and relative beam sizes required to achieve the
- * optimum recognition results and reports this data.
+ * Monitors the absolute and relative beam sizes required to achieve the optimum recognition results and reports this
+ * data.
  */
-public class BeamFinder implements Configurable, ResultListener,
-    Resetable, StateListener {
-    /**
-     * A Sphinx property that defines which recognizer to monitor
-     */
+public class BeamFinder implements ResultListener,
+        Resetable, StateListener {
+
+    /** A Sphinx property that defines which recognizer to monitor */
+    @S4Component(type = Recognizer.class)
     public final static String PROP_RECOGNIZER = "recognizer";
 
-    /**
-     * A Sphinx property that defines which recognizer to monitor
-     */
+    /** A Sphinx property that defines which recognizer to monitor */
+    @S4Component(type = LogMath.class)
     public final static String PROP_LOG_MATH = "logMath";
 
-    /**
-     * A sphinx property that define whether summary accuracy information is
-     * displayed
-     */
+    /** A sphinx property that define whether summary accuracy information is displayed */
+    @S4Boolean(defaultValue = true)
     public final static String PROP_SHOW_SUMMARY = "showSummary";
-    /**
-     * The default setting of PROP_SHOW_SUMMARY
-     */
+    /** The default setting of PROP_SHOW_SUMMARY */
     public final static boolean PROP_SHOW_SUMMARY_DEFAULT = true;
-    /**
-     * A sphinx property that define whether detailed accuracy information is
-     * displayed
-     */
+    /** A sphinx property that define whether detailed accuracy information is displayed */
+    @S4Boolean(defaultValue = true)
     public final static String PROP_SHOW_DETAILS = "showDetails";
-    /**
-     * The default setting of PROP_SHOW_DETAILS
-     */
+    /** The default setting of PROP_SHOW_DETAILS */
     public final static boolean PROP_SHOW_DETAILS_DEFAULT = true;
 
-    /**
-     * A sphinx property that define whether this beam tracker is enabled
-     */
+    /** A sphinx property that define whether this beam tracker is enabled */
+    @S4Boolean(defaultValue = true)
     public final static String PROP_ENABLED = "enable";
-    /**
-     * The default setting of PROP_ENABLED
-     */
+    /** The default setting of PROP_ENABLED */
     public final static boolean PROP_ENABLED_DEFAULT = true;
+
     // ------------------------------
     // Configuration data
     // ------------------------------
@@ -100,30 +82,32 @@ public class BeamFinder implements Configurable, ResultListener,
 
     private final static DecimalFormat logFormatter = new DecimalFormat("0.#E0");
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
-     */
-    public static Map getConfigurationInfo(){
-        Map info = new HashMap();
-        info.put(new String("PROP_SHOW_SUMMARY_TYPE"),new String("BOOLEAN"));
-        info.put(new String("PROP_SHOW_DETAILS_TYPE"),new String("BOOLEAN"));
-        info.put(new String("PROP_ENABLED_TYPE"),new String("BOOLEAN"));
 
-        info.put(new String("PROP_RECOGNIZER_TYPE"),new String("COMPONENT")); 
-        info.put(new String("PROP_RECOGNIZER_CLASSTYPE"),new String("edu.cmu.sphinx.recognizer.Recognizer"));
-        info.put(new String("PROP_LOG_MATH_TYPE"),new String("COMPONENT")); 
-        info.put(new String("PROP_LOG_MATH_CLASSTYPE"),new String("edu.cmu.sphinx.util.LogMath"));
+    /*
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
+    */
+    public static Map getConfigurationInfo() {
+        Map info = new HashMap();
+        info.put(new String("PROP_SHOW_SUMMARY_TYPE"), new String("BOOLEAN"));
+        info.put(new String("PROP_SHOW_DETAILS_TYPE"), new String("BOOLEAN"));
+        info.put(new String("PROP_ENABLED_TYPE"), new String("BOOLEAN"));
+
+        info.put(new String("PROP_RECOGNIZER_TYPE"), new String("COMPONENT"));
+        info.put(new String("PROP_RECOGNIZER_CLASSTYPE"), new String("edu.cmu.sphinx.recognizer.Recognizer"));
+        info.put(new String("PROP_LOG_MATH_TYPE"), new String("COMPONENT"));
+        info.put(new String("PROP_LOG_MATH_CLASSTYPE"), new String("edu.cmu.sphinx.util.LogMath"));
         return info;
     }
-    
+
+
     /*
-     * (non-Javadoc)
-     * 
-     * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
-     *      edu.cmu.sphinx.util.props.Registry)
-     */
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
+    *      edu.cmu.sphinx.util.props.Registry)
+    */
     public void register(String name, Registry registry)
             throws PropertyException {
         this.name = name;
@@ -134,11 +118,12 @@ public class BeamFinder implements Configurable, ResultListener,
         registry.register(PROP_ENABLED, PropertyType.BOOLEAN);
     }
 
+
     /*
-     * (non-Javadoc)
-     * 
-     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
-     */
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
+    */
     public void newProperties(PropertySheet ps) throws PropertyException {
         Recognizer newRecognizer = (Recognizer) ps.getComponent(
                 PROP_RECOGNIZER, Recognizer.class);
@@ -164,19 +149,18 @@ public class BeamFinder implements Configurable, ResultListener,
         enabled = ps.getBoolean(PROP_ENABLED, PROP_ENABLED_DEFAULT);
     }
 
+
     /*
-     * (non-Javadoc)
-     * 
-     * @see edu.cmu.sphinx.util.props.Configurable#getName()
-     */
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.util.props.Configurable#getName()
+    */
     public String getName() {
         return name;
     }
 
-    
-    /**
-     * Resets the beam statistics
-     */
+
+    /** Resets the beam statistics */
     public void reset() {
         maxAbsoluteBeam = 0;
         avgAbsoluteBeam = 0;
@@ -190,11 +174,12 @@ public class BeamFinder implements Configurable, ResultListener,
         totalUtterances = 0;
     }
 
+
     /*
-     * (non-Javadoc)
-     * 
-     * @see edu.cmu.sphinx.result.ResultListener#newResult(edu.cmu.sphinx.result.Result)
-     */
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.result.ResultListener#newResult(edu.cmu.sphinx.result.Result)
+    */
     public void newResult(Result result) {
         if (enabled) {
             process(result);
@@ -204,11 +189,12 @@ public class BeamFinder implements Configurable, ResultListener,
         }
     }
 
+
     /*
-     * (non-Javadoc)
-     * 
-     * @see edu.cmu.sphinx.recognizer.StateListener#statusChanged(edu.cmu.sphinx.recognizer.RecognizerState)
-     */
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.recognizer.StateListener#statusChanged(edu.cmu.sphinx.recognizer.RecognizerState)
+    */
     public void statusChanged(RecognizerState status) {
         if (enabled && status.equals(RecognizerState.DEALLOCATED)) {
             if (showSummary) {
@@ -217,11 +203,11 @@ public class BeamFinder implements Configurable, ResultListener,
         }
     }
 
+
     /**
      * Ranks the given set of tokens
-     * 
-     * @param result
-     *                the result to process
+     *
+     * @param result the result to process
      */
     @SuppressWarnings({"unchecked"})
     private void process(Result result) {
@@ -243,12 +229,12 @@ public class BeamFinder implements Configurable, ResultListener,
             }
         }
     }
+
+
     /**
-     * Checks to make sure that all upstream tokens are ranked. Primarily used
-     * fro debugging
-     * 
-     * @param token
-     *                the token to check
+     * Checks to make sure that all upstream tokens are ranked. Primarily used fro debugging
+     *
+     * @param token the token to check
      */
     @SuppressWarnings({"UnusedDeclaration"})
     private void checkRank(Token token) {
@@ -265,9 +251,8 @@ public class BeamFinder implements Configurable, ResultListener,
         }
     }
 
-    /**
-     * show the latest result
-     */
+
+    /** show the latest result */
     public void showLatestResult() {
         System.out.print("   Beam Abs Max: " + maxAbsoluteBeam + "  Avg: "
                 + avgAbsoluteBeam);
@@ -277,9 +262,8 @@ public class BeamFinder implements Configurable, ResultListener,
                 + logFormatter.format(logMath.logToLinear(avgRelativeBeam)));
     }
 
-    /**
-     * show the summary result
-     */
+
+    /** show the summary result */
     public void showSummary() {
         System.out.print("   Summary Beam Abs Max: " + totMaxAbsoluteBeam
                 + "  Avg: " + sumAbsoluteBeam / totalUtterances);
@@ -287,14 +271,14 @@ public class BeamFinder implements Configurable, ResultListener,
                 + logFormatter.format(logMath.logToLinear(totMaxRelativeBeam))
                 + "  Avg: "
                 + logFormatter.format(logMath.logToLinear(sumRelativeBeam
-                        / totalUtterances)));
+                / totalUtterances)));
     }
+
 
     /**
      * Collect statistics from the collected beam data
-     * 
-     * @param result
-     *                the result of interest
+     *
+     * @param result the result of interest
      */
     private void collectStatistics(Result result) {
         totalUtterances++;
@@ -302,11 +286,11 @@ public class BeamFinder implements Configurable, ResultListener,
         collectRelativeBeamStatistics(result);
     }
 
+
     /**
      * Collects the absolute beam statistics
-     * 
-     * @param result
-     *                the result of interest
+     *
+     * @param result the result of interest
      */
     private void collectAbsoluteBeamStatistics(Result result) {
         Token token = result.getBestToken();
@@ -340,13 +324,11 @@ public class BeamFinder implements Configurable, ResultListener,
         }
     }
 
+
     /**
-     * Returns the maximum relative beam for a the chain of tokens reachable
-     * from the given token
-     * 
-     * @param result
-     *                the result of interest
-     *  
+     * Returns the maximum relative beam for a the chain of tokens reachable from the given token
+     *
+     * @param result the result of interest
      */
     private void collectRelativeBeamStatistics(Result result) {
         Token token = result.getBestToken();
@@ -383,49 +365,49 @@ public class BeamFinder implements Configurable, ResultListener,
     }
 }
 
-/**
- * A token application object that keeps track of the absolute and relative
- * rank of a token
- */
+/** A token application object that keeps track of the absolute and relative rank of a token */
 
 class TokenRank {
+
     private int absoluteRank;
     private float relativeRank;
 
+
     /**
      * Creates a token rank object
-     * 
-     * @param abs
-     *                the absolute rank
-     * @param rel
-     *                the relative rank
+     *
+     * @param abs the absolute rank
+     * @param rel the relative rank
      */
     TokenRank(int abs, float rel) {
         absoluteRank = abs;
         relativeRank = rel;
     }
 
+
     /**
      * Gets the absolute rank
-     * 
+     *
      * @return the absolute rank
      */
     int getAbsoluteRank() {
         return absoluteRank;
     }
 
+
     /**
      * Gets the relative rank
-     * 
+     *
      * @return the relative rank
      */
     float getRelativeRank() {
         return relativeRank;
     }
 
+
     /**
      * Returns the string representation of this object
-     * 
+     *
      * @return the string representation of this object
      */
     public String toString() {

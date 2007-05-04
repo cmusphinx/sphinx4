@@ -13,9 +13,7 @@
 
 package edu.cmu.sphinx.frontend;
 
-/**
- * A Data object that holds data of primitive type double.
- */
+/** A Data object that holds data of primitive type double. */
 @SuppressWarnings({"UnnecessaryLocalVariable"})
 public class DoubleData implements Data, Cloneable {
 
@@ -26,14 +24,12 @@ public class DoubleData implements Data, Cloneable {
 
 
     /**
-     * Constructs a Data object with the given values, collect time,
-     * and first sample number.
+     * Constructs a Data object with the given values, collect time, and first sample number.
      *
-     * @param values the data values
-     * @param sampleRate the sample rate of the data
-     * @param collectTime the time at which this data is collected
-     * @param firstSampleNumber the position of the first sample in the
-     *                          original data
+     * @param values            the data values
+     * @param sampleRate        the sample rate of the data
+     * @param collectTime       the time at which this data is collected
+     * @param firstSampleNumber the position of the first sample in the original data
      */
     public DoubleData(double[] values, int sampleRate,
                       long collectTime, long firstSampleNumber) {
@@ -42,6 +38,7 @@ public class DoubleData implements Data, Cloneable {
         this.collectTime = collectTime;
         this.firstSampleNumber = firstSampleNumber;
     }
+
 
     /**
      * Returns a string that describes this DoubleData.
@@ -52,7 +49,7 @@ public class DoubleData implements Data, Cloneable {
         return ("DoubleData: " + sampleRate + "Hz, first sample #: " +
                 firstSampleNumber + ", collect time: " + collectTime);
     }
-        
+
 
     /**
      * Returns the values of this DoubleData object.
@@ -73,10 +70,9 @@ public class DoubleData implements Data, Cloneable {
         return sampleRate;
     }
 
-    
+
     /**
-     * Returns the position of the first sample in the original data.
-     * The very first sample number is zero.
+     * Returns the position of the first sample in the original data. The very first sample number is zero.
      *
      * @return the position of the first sample in the original data
      */
@@ -88,8 +84,8 @@ public class DoubleData implements Data, Cloneable {
     /**
      * Returns the time in milliseconds at which the audio data is collected.
      *
-     * @return the difference, in milliseconds, between the time the
-     *    audio data is collected and midnight, January 1, 1970
+     * @return the difference, in milliseconds, between the time the audio data is collected and midnight, January 1,
+     *         1970
      */
     public long getCollectTime() {
         return collectTime;
@@ -102,11 +98,11 @@ public class DoubleData implements Data, Cloneable {
      * @return a clone of this data object
      */
     public Object clone() throws CloneNotSupportedException {
-	try {
-	    Data data = (Data) super.clone();
-	    return data;
-	} catch (CloneNotSupportedException e) {
-	    throw new InternalError(e.toString());
-	}
+        try {
+            Data data = (Data) super.clone();
+            return data;
+        } catch (CloneNotSupportedException e) {
+            throw new InternalError(e.toString());
+        }
     }
 }
