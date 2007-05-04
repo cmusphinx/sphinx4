@@ -27,7 +27,7 @@ package edu.cmu.sphinx.util.props;
  * register method should call super.register before registering its own properties.
  * <p/>
  * <li> <b> Configuration</b> - shortly after registration, the component's <code>newProperties</code> method is called.
- *  This method is called with a <code>PropertySheet</code> containing the properties (from the external config file).
+ * This method is called with a <code>PropertySheet</code> containing the properties (from the external config file).
  * The component should extract the properties from the property sheet and validate them.  Invalid properties should be
  * reported by throwing a <code>PropertyException</code>. Typically, once a component gets its configuration data via
  * the <code>newData</code> method, the component will initialize itself.  Currently, the <code>newProperties</code>

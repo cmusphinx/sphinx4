@@ -172,20 +172,20 @@ public class BatchModeRecognizer implements Configurable {
     public void newProperties(PropertySheet ps) throws PropertyException {
         logger = ps.getLogger();
         cm = ps.getPropertyManager();
-        skip = ps.getInt(PROP_SKIP, PROP_SKIP_DEFAULT);
-        utteranceId = ps.getInt(PROP_COUNT, PROP_COUNT_DEFAULT);
+        skip = ps.getInt(PROP_SKIP);
+        utteranceId = ps.getInt(PROP_COUNT);
         if (utteranceId <= 0) {
             utteranceId = Integer.MAX_VALUE;
         }
-        whichBatch = ps.getInt(PROP_WHICH_BATCH, PROP_WHICH_BATCH_DEFAULT);
+        whichBatch = ps.getInt(PROP_WHICH_BATCH);
         totalBatches = ps
-                .getInt(PROP_TOTAL_BATCHES, PROP_TOTAL_BATCHES_DEFAULT);
-        usePooledBatchManager = ps.getBoolean(PROP_USE_POOLED_BATCH_MANAGER,
-                PROP_USE_POOLED_BATCH_MANAGER_DEFAULT);
-        recognizer = (Recognizer) ps.getComponent(PROP_RECOGNIZER,
-                Recognizer.class);
+                .getInt(PROP_TOTAL_BATCHES);
+        usePooledBatchManager = ps.getBoolean(PROP_USE_POOLED_BATCH_MANAGER
+        );
+        recognizer = (Recognizer) ps.getComponent(PROP_RECOGNIZER
+        );
         inputDataProcessors = ps.getComponentList
-                (PROP_INPUT_DATA_PROCESSORS, DataProcessor.class);
+                (PROP_INPUT_DATA_PROCESSORS);
     }
 
 
@@ -304,11 +304,11 @@ public class BatchModeRecognizer implements Configurable {
         ci.add("show", new CommandInterface() {
             public String execute(CommandInterpreter ci, String[] args) {
                 if (args.length < 2) {
-                    cm.showConfig();
+                    ConfigurationManagerUtils.showConfig(cm);
                 } else {
                     for (int i = 1; i < args.length; i++) {
                         String name = args[i];
-                        cm.showConfig(name);
+                       ConfigurationManagerUtils.showConfig(cm, name);
                     }
                 }
                 return "";
@@ -324,7 +324,8 @@ public class BatchModeRecognizer implements Configurable {
                 if (args.length != 2) {
                     ci.putResponse("Usage: edit component");
                 } else {
-                    cm.editConfig(args[1]);
+                    ConfigurationManagerUtils.editConfig(cm, args[1]);
+//                    cm.editConfig(args[1]);
                 }
                 return "";
             }
@@ -339,11 +340,8 @@ public class BatchModeRecognizer implements Configurable {
                 if (args.length != 2) {
                     ci.putResponse("Usage: save filename.xml");
                 } else {
-                    try {
-                        cm.save(new File(args[1]));
-                    } catch (IOException ioe) {
-                        ci.putResponse("Can't save, " + ioe);
-                    }
+                    ConfigurationManagerUtils.save(cm, new File(args[1]));
+//                    cm.save(new File(args[1]));
                 }
                 return "";
             }

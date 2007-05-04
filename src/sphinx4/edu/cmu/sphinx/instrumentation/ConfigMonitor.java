@@ -112,13 +112,13 @@ public class ConfigMonitor implements Configurable, Runnable, Monitor {
     public void newProperties(PropertySheet ps) throws PropertyException {
         logger = ps.getLogger();
         cm = ps.getPropertyManager();
-        showConfig = ps.getBoolean(PROP_SHOW_CONFIG, PROP_SHOW_CONFIG_DEFAULT);
-        showHTML = ps.getBoolean(PROP_SHOW_CONFIG_AS_HTML,
-                PROP_SHOW_CONFIG_AS_HTML_DEFAULT);
-        showGDL = ps.getBoolean(PROP_SHOW_CONFIG_AS_GDL,
-                PROP_SHOW_CONFIG_AS_GDL_DEFAULT);
-        saveXML = ps.getBoolean(PROP_SAVE_CONFIG_AS_XML,
-                PROP_SAVE_CONFIG_AS_XML_DEFAULT);
+        showConfig = ps.getBoolean(PROP_SHOW_CONFIG);
+        showHTML = ps.getBoolean(PROP_SHOW_CONFIG_AS_HTML
+        );
+        showGDL = ps.getBoolean(PROP_SHOW_CONFIG_AS_GDL
+        );
+        saveXML = ps.getBoolean(PROP_SAVE_CONFIG_AS_XML
+        );
     }
 
 
@@ -135,12 +135,14 @@ public class ConfigMonitor implements Configurable, Runnable, Monitor {
     */
     public void run() {
         if (showConfig) {
-            cm.showConfig();
+            ConfigurationManagerUtils.showConfig(cm);
+//            cm.showConfig();
         }
 
         if (showHTML) {
             try {
-                cm.showConfigAsHTML("foo.html");
+                ConfigurationManagerUtils.showConfigAsHTML(cm, "foo.html");
+//                cm.showConfigAsHTML("foo.html");
             } catch (IOException e) {
                 logger.warning("Can't open " + htmlPath + " " + e);
             }
@@ -148,18 +150,16 @@ public class ConfigMonitor implements Configurable, Runnable, Monitor {
 
         if (showGDL) {
             try {
-                cm.showConfigAsGDL(gdlPath);
+                ConfigurationManagerUtils.showConfigAsGDL(cm, gdlPath);
+//                cm.showConfigAsGDL(gdlPath);
             } catch (IOException e) {
                 logger.warning("Can't open " + gdlPath + " " + e);
             }
         }
 
         if (saveXML) {
-            try {
-                cm.save(new File(xmlPath));
-            } catch (IOException e) {
-                logger.warning("Can't save " + xmlPath + " " + e);
-            }
+            ConfigurationManagerUtils.save(cm, new File(xmlPath));
+//                cm.save(new File(xmlPath));
         }
     }
 

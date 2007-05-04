@@ -117,19 +117,19 @@ public class CardMatch implements Recorder, Configurable {
     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
     */
     public void newProperties(PropertySheet ps) throws PropertyException {
-        recognizer = (Recognizer) ps.getComponent(PROP_RECOGNIZER,
-                Recognizer.class);
+        recognizer = (Recognizer) ps.getComponent(PROP_RECOGNIZER
+        );
         grammar = (JSGFGrammar) ps
-                .getComponent(PROP_GRAMMAR, JSGFGrammar.class);
-        microphone = (Microphone) ps.getComponent(PROP_MICROPHONE,
-                Microphone.class);
+                .getComponent(PROP_GRAMMAR);
+        microphone = (Microphone) ps.getComponent(PROP_MICROPHONE
+        );
 
-        doEndpointing = ps.getBoolean(PROP_DO_ENDPOINTING,
-                PROP_DO_ENDPOINTING_DEFAULT);
-        useVoice = ps.getBoolean(PROP_USE_VOICE, PROP_USE_VOICE_DEFAULT);
+        doEndpointing = ps.getBoolean(PROP_DO_ENDPOINTING
+        );
+        useVoice = ps.getBoolean(PROP_USE_VOICE);
 
-        numberOfCards = ps.getInt(PROP_NUM_CARDS, PROP_NUM_CARDS_DEFAULT);
-        imageFiles = Arrays.asList(ps.getString(PROP_IMAGE_FILES, null).split(";"));
+        numberOfCards = ps.getInt(PROP_NUM_CARDS);
+        imageFiles = Arrays.asList(ps.getString(PROP_IMAGE_FILES).split(";"));
     }
 
 

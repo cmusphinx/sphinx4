@@ -3,10 +3,7 @@ package edu.cmu.sphinx.util.props;
 import edu.cmu.sphinx.util.SphinxLogFormatter;
 
 import java.io.*;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 import java.util.logging.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -30,12 +27,12 @@ public class ConfigurationManagerUtils {
      * @param path where to output the HTML
      * @throws java.io.IOException if an error occurs
      */
-    public static void showConfigAsHTML(ConMan conMan, String path) throws IOException {
+    public static void showConfigAsHTML(ConfigurationManager ConfigurationManager, String path) throws IOException {
         PrintStream out = new PrintStream(new FileOutputStream(path));
         dumpHeader(out);
-        String[] allNames = conMan.getInstanceNames(Object.class);
+        String[] allNames = ConfigurationManager.getInstanceNames(Object.class);
         for (String componentName : allNames) {
-            dumpComponentAsHTML(out, componentName, conMan.getPropertySheet(componentName));
+            dumpComponentAsHTML(out, componentName, ConfigurationManager.getPropertySheet(componentName));
         }
         dumpFooter(out);
         out.close();
@@ -72,7 +69,7 @@ public class ConfigurationManagerUtils {
      * @param out  where to dump the HTML
      * @param name the name of the component to dump
      */
-    public static void dumpComponentAsHTML(PrintStream out, String name, PropSheet properties) {
+    public static void dumpComponentAsHTML(PrintStream out, String name, PropertySheet properties) {
         out.println("<table border=1>");
         //        out.println("<table border=1 width=\"%80\">");
         out.print("    <tr><th bgcolor=\"#CCCCFF\" colspan=2>");
@@ -111,12 +108,12 @@ public class ConfigurationManagerUtils {
      * @param out  where to dump the GDL
      * @param name the name of the component to dump
      */
-    public void dumpComponentAsGDL(ConMan conMan, PrintStream out, String name) {
+    public static void dumpComponentAsGDL(ConfigurationManager ConfigurationManager, PrintStream out, String name) {
 
-        out.println("node: {title: \"" + name + "\" color: " + getColor(conMan, name)
+        out.println("node: {title: \"" + name + "\" color: " + getColor(ConfigurationManager, name)
                 + "}");
 
-        PropSheet properties = conMan.getPropertySheet(name);
+        PropertySheet properties = ConfigurationManager.getPropertySheet(name);
         Collection<String> propertyNames = properties.getRegisteredProperties();
 
         for (String propertyName : propertyNames) {
@@ -145,12 +142,12 @@ public class ConfigurationManagerUtils {
      * @param path where to output the GDL
      * @throws java.io.IOException if an error occurs
      */
-    public void showConfigAsGDL(ConMan conMan, String path) throws IOException {
+    public static void showConfigAsGDL(ConfigurationManager ConfigurationManager, String path) throws IOException {
         PrintStream out = new PrintStream(new FileOutputStream(path));
         dumpGDLHeader(out);
-        String[] allNames = conMan.getInstanceNames(Object.class);
+        String[] allNames = ConfigurationManager.getInstanceNames(Object.class);
         for (String componentName : allNames) {
-            dumpComponentAsGDL(conMan, out, componentName);
+            dumpComponentAsGDL(ConfigurationManager, out, componentName);
         }
         dumpGDLFooter(out);
         out.close();
@@ -162,7 +159,7 @@ public class ConfigurationManagerUtils {
      *
      * @param out the output stream
      */
-    private void dumpGDLHeader(PrintStream out) {
+    private static void dumpGDLHeader(PrintStream out) {
         out.println(" graph: {title: \"unix evolution\" ");
         out.println("         layoutalgorithm: tree");
         out.println("          scaling        : 2.0");
@@ -184,7 +181,7 @@ public class ConfigurationManagerUtils {
      * @param symbol the symbol to strip
      * @return the stripped symbol
      */
-    private String stripGlobalSymbol(String symbol) {
+    public static  String stripGlobalSymbol(String symbol) {
         Matcher matcher = globalSymbolPattern.matcher(symbol);
         if (matcher.matches()) {
             return matcher.group(1);
@@ -197,12 +194,12 @@ public class ConfigurationManagerUtils {
     /**
      * Gets the color for the given component
      *
-     * @param conMan
+     * @param ConfigurationManager
      * @param componentName the name of the component @return the color name for the component
      */
-    private String getColor(ConMan conMan, String componentName) {
+    private static String getColor(ConfigurationManager ConfigurationManager, String componentName) {
         try {
-            SimpleConfigurable c = conMan.lookup(componentName);
+            Configurable c = ConfigurationManager.lookup(componentName);
             Class cls = c.getClass();
             if (cls.getName().indexOf(".recognizer") > 1) {
                 return "cyan";
@@ -235,13 +232,13 @@ public class ConfigurationManagerUtils {
      *
      * @param out the output stream
      */
-    private void dumpGDLFooter(PrintStream out) {
+    private static void dumpGDLFooter(PrintStream out) {
         out.println("}");
     }
 
 
-    public void editConfig(ConMan conMan, String name) {
-        PropSheet ps = conMan.getPropertySheet(name);
+    public static void editConfig(ConfigurationManager ConfigurationManager, String name) {
+        PropertySheet ps = ConfigurationManager.getPropertySheet(name);
         boolean done;
 
         if (ps == null) {
@@ -276,7 +273,7 @@ public class ConfigurationManagerUtils {
                         return;
                     } else {
                         try {
-                            conMan.setProperty(name, propertyName, in);
+                            ConfigurationManager.setProperty(name, propertyName, in);
                             done = true;
                         } catch (PropertyException pe) {
                             System.out.println("error setting value " + pe);
@@ -293,7 +290,7 @@ public class ConfigurationManagerUtils {
 
 
     /** Configure the logger */
-    public static void configureLogger(ConMan conMan) {
+    public static void configureLogger(ConfigurationManager ConfigurationManager) {
         LogManager logManager = LogManager.getLogManager();
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         Properties props = new Properties();
@@ -323,7 +320,7 @@ public class ConfigurationManagerUtils {
                 if (handler.getFormatter() instanceof SphinxLogFormatter) {
                     SphinxLogFormatter slf = (SphinxLogFormatter) handler.getFormatter();
 
-                    String level = conMan.getGlobalProperties().get("logLevel");
+                    String level = ConfigurationManager.getGlobalProperties().get("logLevel");
                     if (level == null) {
                         level = Level.WARNING.getName();
                     }
@@ -340,7 +337,7 @@ public class ConfigurationManagerUtils {
      * <p/>
      * Note: This methods will not instantiate configurables.
      */
-    public static String toXML(ConMan cm) {
+    public static String toXML(ConfigurationManager cm) {
         StringBuffer sb = new StringBuffer();
         sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n");
         sb.append("\n<!--    Sphinx-4 Configuration file--> \n\n");
@@ -368,7 +365,7 @@ public class ConfigurationManagerUtils {
     }
 
 
-    private static String propSheet2XML(String instanceName, PropSheet ps) {
+    private static String propSheet2XML(String instanceName, PropertySheet ps) {
         StringBuffer sb = new StringBuffer();
         sb.append("<component name=\"" + instanceName + "\" type=\"" + ps.getConfigurableClass().getName() + "\">");
 
@@ -396,7 +393,7 @@ public class ConfigurationManagerUtils {
     }
 
 
-    public static void toConfigFile(ConMan cm, File cmLocation) {
+    public static void save(ConfigurationManager cm, File cmLocation) {
         assert cm != null;
         try {
             PrintWriter pw = new PrintWriter(new FileOutputStream(cmLocation));
@@ -406,6 +403,54 @@ public class ConfigurationManagerUtils {
             pw.close();
         } catch (FileNotFoundException e1) {
             e1.printStackTrace();
+        }
+    }
+
+
+
+    /** Shows the current configuration */
+    public static void showConfig(ConfigurationManager cm) {
+        System.out.println(" ============ config ============= ");
+        String[] allNames = cm.getInstanceNames(Object.class);
+        for (String allName : allNames) {
+            showConfig(cm, allName);
+        }
+    }
+
+     /**
+     * Show the configuration for the compnent with the given name
+     *
+     * @param name the component name
+     */
+    public static void showConfig(ConfigurationManager cm, String name) {
+//        Symbol symbol = cm.getsymbolTable.get(name);
+
+        if (!Arrays.asList(cm.getComponentNames()).contains(name)) {
+            System.out.println("No component: " + name);
+            return;
+        }
+        System.out.println(name + ":");
+
+        PropertySheet properties = cm.getPropertySheet(name);
+
+        for (String propertyName : properties.getRegisteredProperties()) {
+            System.out.print("    " + propertyName + " = ");
+            Object obj;
+            obj = properties.getRaw(propertyName);
+            if (obj instanceof String) {
+                System.out.println(obj);
+            } else if (obj instanceof List) {
+                List l = (List) obj;
+                for (Iterator k = l.iterator(); k.hasNext();) {
+                    System.out.print(k.next());
+                    if (k.hasNext()) {
+                        System.out.print(", ");
+                    }
+                }
+                System.out.println();
+            } else {
+                System.out.println("[DEFAULT]");
+            }
         }
     }
 }

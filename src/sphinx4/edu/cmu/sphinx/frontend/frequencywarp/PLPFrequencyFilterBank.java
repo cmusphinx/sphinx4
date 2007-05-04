@@ -112,9 +112,9 @@ public class PLPFrequencyFilterBank extends BaseDataProcessor {
     */
     public void newProperties(PropertySheet ps) throws PropertyException {
         super.newProperties(ps);
-        minFreq = ps.getDouble(PROP_MIN_FREQ, PROP_MIN_FREQ_DEFAULT);
-        maxFreq = ps.getDouble(PROP_MAX_FREQ, PROP_MAX_FREQ_DEFAULT);
-        numberFilters = ps.getInt(PROP_NUMBER_FILTERS, PROP_NUMBER_FILTERS_DEFAULT);
+        minFreq = ps.getDouble(PROP_MIN_FREQ);
+        maxFreq = ps.getDouble(PROP_MAX_FREQ);
+        numberFilters = ps.getInt(PROP_NUMBER_FILTERS);
     }
 
 

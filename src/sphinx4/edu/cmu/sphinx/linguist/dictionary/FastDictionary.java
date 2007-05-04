@@ -63,7 +63,7 @@ public class FastDictionary implements Dictionary {
      * The name of the SphinxProperty for the custom dictionary file paths. This addenda property points to a possibly
      * empty list of urls to dictionary addenda.  Each addendum should contain word pronunciations in the same Sphinx-3
      * dictionary format as the main dictionary.  Words in the addendum are added after the words in the main dictionary
-     *   and will override previously specified pronunciations.  If you wish to extend the set of pronunications for a
+     * and will override previously specified pronunciations.  If you wish to extend the set of pronunications for a
      * particular word, add a new pronunciation by number.  For example, in the following addendum, given that the
      * aforementioned main dictionary is specified, the pronunciation for 'EIGHT' will be overridden by the addenda,
      * while the pronunciation for 'SIX' and 'ZERO' will be augmented and a new pronunciation for 'ELEVEN' will be
@@ -161,16 +161,16 @@ public class FastDictionary implements Dictionary {
         addendaUrlList = this.getResourceList(PROP_ADDENDA, ps);
 
         addSilEndingPronunciation = ps.getBoolean(
-                PROP_ADD_SIL_ENDING_PRONUNCIATION,
-                PROP_ADD_SIL_ENDING_PRONUNCIATION_DEFAULT);
-        wordReplacement = ps.getString(Dictionary.PROP_WORD_REPLACEMENT,
-                PROP_WORD_REPLACEMENT_DEFAULT);
-        allowMissingWords = ps.getBoolean(Dictionary.PROP_ALLOW_MISSING_WORDS,
-                PROP_ALLOW_MISSING_WORDS_DEFAULT);
-        createMissingWords = ps.getBoolean(PROP_CREATE_MISSING_WORDS,
-                PROP_CREATE_MISSING_WORDS_DEFAULT);
-        unitManager = (UnitManager) ps.getComponent(PROP_UNIT_MANAGER,
-                UnitManager.class);
+                PROP_ADD_SIL_ENDING_PRONUNCIATION
+        );
+        wordReplacement = ps.getString(Dictionary.PROP_WORD_REPLACEMENT
+        );
+        allowMissingWords = ps.getBoolean(Dictionary.PROP_ALLOW_MISSING_WORDS
+        );
+        createMissingWords = ps.getBoolean(PROP_CREATE_MISSING_WORDS
+        );
+        unitManager = (UnitManager) ps.getComponent(PROP_UNIT_MANAGER
+        );
     }
 
 
@@ -506,8 +506,10 @@ public class FastDictionary implements Dictionary {
     private List<URL> getResourceList(String propertyListName, PropertySheet ps)
             throws PropertyException {
         List<URL> resourceList = new ArrayList<URL>();
-        List pathList = ps.getStrings(propertyListName);
-        if (pathList != null) {
+        String pathListString = ps.getString(propertyListName);
+
+        if (pathListString != null) {
+            List pathList = Arrays.asList(pathListString.split(";"));
             for (Iterator i = pathList.iterator(); i.hasNext();) {
                 String addendumPath = (String) i.next();
                 try {

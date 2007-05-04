@@ -180,17 +180,17 @@ public class ThreadedAcousticScorer implements AcousticScorer {
     */
     public void newProperties(PropertySheet ps) throws PropertyException {
         logger = ps.getLogger();
-        frontEnd = (BaseDataProcessor) ps.getComponent(PROP_FRONTEND, BaseDataProcessor.class);
-        boolean cpuRelative = ps.getBoolean(PROP_IS_CPU_RELATIVE,
-                PROP_IS_CPU_RELATIVE_DEFAULT);
-        numThreads = ps.getInt(PROP_NUM_THREADS, PROP_NUM_THREADS_DEFAULT);
-        minScoreablesPerThread = ps.getInt(PROP_MIN_SCOREABLES_PER_THREAD,
-                PROP_MIN_SCOREABLES_PER_THREAD_DEFAULT);
-        keepData = ps.getBoolean(PROP_SCOREABLES_KEEP_FEATURE,
-                PROP_SCOREABLES_KEEP_FEATURE_DEFAULT);
+        frontEnd = (BaseDataProcessor) ps.getComponent(PROP_FRONTEND);
+        boolean cpuRelative = ps.getBoolean(PROP_IS_CPU_RELATIVE
+        );
+        numThreads = ps.getInt(PROP_NUM_THREADS);
+        minScoreablesPerThread = ps.getInt(PROP_MIN_SCOREABLES_PER_THREAD
+        );
+        keepData = ps.getBoolean(PROP_SCOREABLES_KEEP_FEATURE
+        );
 
-        acousticGain = ps.getFloat(PROP_ACOUSTIC_GAIN,
-                PROP_ACOUSTIC_GAIN_DEFAULT);
+        acousticGain = ps.getFloat(PROP_ACOUSTIC_GAIN
+        );
 
         if (cpuRelative) {
             numThreads += Runtime.getRuntime().availableProcessors();

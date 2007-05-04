@@ -5,13 +5,14 @@ import junit.framework.Assert;
 import org.junit.Test;
 
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * DOCUMENT ME!
  *
  * @author Holger Brandl
  */
-public class TestConfigurable implements SimpleConfigurable {
+public class TestConfigurable implements Configurable {
 
     // note: no default component here
     @S4Component(type = AnotherDummyProcessor.class)
@@ -22,10 +23,19 @@ public class TestConfigurable implements SimpleConfigurable {
     public static final String PROP_ASTRING = "mystring";
     private String myString;
 
+    @S4Double(defaultValue = 1.3)
+    public static final String PROP_GAMMA = "gamma";
+    private double gamma;
 
-    public void newProperties(PropSheet ps) throws PropertyException {
+
+    public void register(String name, Registry registry) throws PropertyException {
+    }
+
+
+    public void newProperties(PropertySheet ps) throws PropertyException {
         dataProc = (DummyProcessor) ps.getComponent(PROP_DATA_PROC);
         myString = ps.getString(PROP_ASTRING);
+        gamma = ps.getDouble(PROP_GAMMA);
     }
 
 
@@ -43,12 +53,12 @@ public class TestConfigurable implements SimpleConfigurable {
     // note: it is not a bug but a feature of this test to print a stacktrace
     public void testDynamicConfCreationWithoutDefaultProperty() {
         try {
-            ConMan cm = new ConMan();
+            ConfigurationManager cm = new ConfigurationManager();
 
             String instanceName = "testconf";
             cm.addConfigurable(TestConfigurable.class, instanceName);
 
-            SimpleConfigurable configurable = cm.lookup(instanceName);
+            Configurable configurable = cm.lookup(instanceName);
             Assert.fail("add didn't fail without given default frontend");
         } catch (NullPointerException e) {
         } catch (PropertyException e) {
@@ -63,8 +73,31 @@ public class TestConfigurable implements SimpleConfigurable {
         HashMap<String, Object> props = new HashMap<String, Object>();
         props.put("dataProc", AnotherDummyProcessor.class);
 
-        TestConfigurable teco = (TestConfigurable) ConMan.getDefaultInstance(TestConfigurable.class, props);
+        TestConfigurable teco = (TestConfigurable) ConfigurationManager.getDefaultInstance(TestConfigurable.class, props);
         Assert.assertTrue(teco.myString == null);
     }
 
+
+
+    @Test
+    public void testPropSheetFromConfigurableInstance() throws PropertyException, InstantiationException {
+        String testString = "test";
+        double testDouble = 12;
+
+        Map<String, Object> props = new HashMap<String, Object>();
+        props.put(PROP_ASTRING, testString);
+        props.put(PROP_DATA_PROC, AnotherDummyProcessor.class);
+        TestConfigurable tc = (TestConfigurable) ConfigurationManager.getDefaultInstance(TestConfigurable.class, props);
+
+        // now create a property sheet in order to modify the configurable
+        PropertySheet propSheet = new PropertySheet(tc, new ConfigurationManager(), new RawPropertyData("tt", tc.getClass().getName()));
+        propSheet.setDouble(PROP_GAMMA, testDouble);
+        propSheet.setComponent(PROP_DATA_PROC, "tt", new AnotherDummyProcessor() );
+        tc.newProperties(propSheet);
+
+        // test whether old props were preserved and new ones were applied
+//        Assert.assertTrue(tc.myString.equals(testString));
+        Assert.assertTrue(tc.gamma == testDouble);
+        Assert.assertTrue(tc.dataProc != null && tc.dataProc instanceof AnotherDummyProcessor);
+    }
 }

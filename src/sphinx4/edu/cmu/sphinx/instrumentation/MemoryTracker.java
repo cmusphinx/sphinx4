@@ -95,7 +95,7 @@ public class MemoryTracker
     */
     public void newProperties(PropertySheet ps) throws PropertyException {
         Recognizer newRecognizer = (Recognizer) ps.getComponent(
-                PROP_RECOGNIZER, Recognizer.class);
+                PROP_RECOGNIZER);
         if (recognizer == null) {
             recognizer = newRecognizer;
             recognizer.addResultListener(this);
@@ -107,10 +107,10 @@ public class MemoryTracker
             recognizer.addResultListener(this);
             recognizer.addStateListener(this);
         }
-        showSummary = ps.getBoolean(PROP_SHOW_SUMMARY,
-                PROP_SHOW_SUMMARY_DEFAULT);
-        showDetails = ps.getBoolean(PROP_SHOW_DETAILS,
-                PROP_SHOW_DETAILS_DEFAULT);
+        showSummary = ps.getBoolean(PROP_SHOW_SUMMARY
+        );
+        showDetails = ps.getBoolean(PROP_SHOW_DETAILS
+        );
     }
 
 

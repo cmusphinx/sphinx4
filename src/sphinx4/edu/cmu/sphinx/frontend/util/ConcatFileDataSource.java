@@ -223,23 +223,23 @@ public class ConcatFileDataSource extends StreamDataSource
     */
     public void newProperties(PropertySheet ps) throws PropertyException {
         super.newProperties(ps);
-        int sampleRate = ps.getInt(PROP_SAMPLE_RATE, PROP_SAMPLE_RATE_DEFAULT);
+        int sampleRate = ps.getInt(PROP_SAMPLE_RATE);
         int bitsPerSample = ps.getInt
-                (PROP_BITS_PER_SAMPLE, PROP_BITS_PER_SAMPLE_DEFAULT);
+                (PROP_BITS_PER_SAMPLE);
         bytesPerSecond = sampleRate * (bitsPerSample / 8);
         addRandomSilence = ps.getBoolean
-                (PROP_ADD_RANDOM_SILENCE, PROP_ADD_RANDOM_SILENCE_DEFAULT);
-        maxSilence = ps.getInt(PROP_MAX_SILENCE, PROP_MAX_SILENCE_DEFAULT);
-        skip = ps.getInt(PROP_SKIP, PROP_SKIP_DEFAULT);
-        silenceFileName = ps.getString(PROP_SILENCE_FILE, PROP_SILENCE_FILE_DEFAULT);
+                (PROP_ADD_RANDOM_SILENCE);
+        maxSilence = ps.getInt(PROP_MAX_SILENCE);
+        skip = ps.getInt(PROP_SKIP);
+        silenceFileName = ps.getString(PROP_SILENCE_FILE);
         startFile = ps.getInt
-                (PROP_START_FILE, PROP_START_FILE_DEFAULT);
+                (PROP_START_FILE);
         totalFiles = ps.getInt
-                (PROP_TOTAL_FILES, PROP_TOTAL_FILES_DEFAULT);
+                (PROP_TOTAL_FILES);
         transcriptFile = ps.getString
-                (PROP_TRANSCRIPT_FILE, PROP_TRANSCRIPT_FILE_DEFAULT);
+                (PROP_TRANSCRIPT_FILE);
         batchFile = ps.getString
-                (PROP_BATCH_FILE, PROP_BATCH_FILE_DEFAULT);
+                (PROP_BATCH_FILE);
     }
 
 

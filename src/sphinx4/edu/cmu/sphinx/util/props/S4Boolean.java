@@ -8,7 +8,7 @@ import java.lang.annotation.RetentionPolicy;
  * A logical property.
  *
  * @author Holger Brandl
- * @see ConMan
+ * @see ConfigurationManager
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
@@ -16,4 +16,6 @@ import java.lang.annotation.RetentionPolicy;
 public @interface S4Boolean {
 
     boolean defaultValue();
+
+    boolean isNotDefined() default false;
 }

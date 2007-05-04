@@ -89,10 +89,10 @@ public class SimpleActiveListManager implements ActiveListManager {
     */
     public void newProperties(PropertySheet ps) throws PropertyException {
         logger = ps.getLogger();
-        activeListFactories = ps.getComponentList(PROP_ACTIVE_LIST_FACTORIES,
-                ActiveListFactory.class);
-        checkPriorLists = ps.getBoolean(PROP_CHECK_PRIOR_LISTS_EMPTY,
-                PROP_CHECK_PRIOR_LISTS_EMPTY_DEFAULT);
+        activeListFactories = ps.getComponentList(PROP_ACTIVE_LIST_FACTORIES
+        );
+        checkPriorLists = ps.getBoolean(PROP_CHECK_PRIOR_LISTS_EMPTY
+        );
     }
 
 

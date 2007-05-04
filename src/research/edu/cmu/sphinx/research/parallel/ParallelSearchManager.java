@@ -124,26 +124,26 @@ public class ParallelSearchManager implements SearchManager {
      */
     public void newProperties(PropertySheet ps) throws PropertyException {
 
-        logMath = (LogMath) ps.getComponent(PROP_LOG_MATH, LogMath.class);
+        logMath = (LogMath) ps.getComponent(PROP_LOG_MATH);
 
         linguist = (ParallelSimpleLinguist) ps.getComponent
-                (PROP_LINGUIST, ParallelSimpleLinguist.class);
+                (PROP_LINGUIST);
 
         scorer = (AcousticScorer) ps.getComponent
-                (PROP_SCORER, AcousticScorer.class);
+                (PROP_SCORER);
 
         activeListFactory = (ActiveListFactory) ps.getComponent
-                (PROP_ACTIVE_LIST_FACTORY, ActiveListFactory.class);
+                (PROP_ACTIVE_LIST_FACTORY);
 
         this.doFeaturePruning = ps.getBoolean
-                (PROP_DO_FEATURE_PRUNING, PROP_DO_FEATURE_PRUNING_DEFAULT);
+                (PROP_DO_FEATURE_PRUNING);
 
         this.doCombinePruning = ps.getBoolean
-                (PROP_DO_COMBINE_PRUNING, PROP_DO_COMBINE_PRUNING_DEFAULT);
+                (PROP_DO_COMBINE_PRUNING);
 
         if (doFeaturePruning) {
             featureScorePruner = (FeatureScorePruner) ps.getComponent
-                    (PROP_FEATURE_SCORE_PRUNER, FeatureScorePruner.class);
+                    (PROP_FEATURE_SCORE_PRUNER);
         }
 //        if (doCombinePruning) {
 //            combinedScorePruner = (CombinedScorePruner) ps.getComponent

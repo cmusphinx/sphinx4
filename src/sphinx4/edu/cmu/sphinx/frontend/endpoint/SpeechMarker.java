@@ -116,10 +116,10 @@ public class SpeechMarker extends BaseDataProcessor {
     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
     */
     public void newProperties(PropertySheet ps) throws PropertyException {
-        startSpeechTime = ps.getInt(PROP_START_SPEECH, PROP_START_SPEECH_DEFAULT);
-        endSilenceTime = ps.getInt(PROP_END_SILENCE, PROP_END_SILENCE_DEFAULT);
-        speechLeader = ps.getInt(PROP_SPEECH_LEADER, PROP_SPEECH_LEADER_DEFAULT);
-        speechTrailer = ps.getInt(PROP_SPEECH_TRAILER, PROP_SPEECH_TRAILER_DEFAULT);
+        startSpeechTime = ps.getInt(PROP_START_SPEECH);
+        endSilenceTime = ps.getInt(PROP_END_SILENCE);
+        speechLeader = ps.getInt(PROP_SPEECH_LEADER);
+        speechTrailer = ps.getInt(PROP_SPEECH_TRAILER);
     }
 
 

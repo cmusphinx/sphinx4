@@ -108,9 +108,9 @@ public class SimpleWordListGrammar extends Grammar implements Configurable {
     */
     public void newProperties(PropertySheet ps) throws PropertyException {
         super.newProperties(ps);
-        path = ps.getString(PROP_PATH, PROP_PATH_DEFAULT);
-        isLooping = ps.getBoolean(PROP_LOOP, PROP_LOOP_DEFAULT);
-        logMath = (LogMath) ps.getComponent(PROP_LOG_MATH, LogMath.class);
+        path = ps.getString(PROP_PATH);
+        isLooping = ps.getBoolean(PROP_LOOP);
+        logMath = (LogMath) ps.getComponent(PROP_LOG_MATH);
     }
 
 

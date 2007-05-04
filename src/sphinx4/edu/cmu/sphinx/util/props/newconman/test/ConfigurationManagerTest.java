@@ -20,7 +20,7 @@ public class ConfigurationManagerTest {
 
     @Test
     public void testDynamicConfCreation() throws PropertyException, InstantiationException {
-        ConMan cm = new ConMan();
+        ConfigurationManager cm = new ConfigurationManager();
 
         String instanceName = "docu";
         Map<String, Object> props = new HashMap<String, Object>();
@@ -36,16 +36,16 @@ public class ConfigurationManagerTest {
     @Test
     public void testSerialization() throws IOException, PropertyException {
         File configFile = new File("../../sphinx4/tests/other/testconfig.xml");
-        ConMan cm = new ConMan(configFile.toURI().toURL());
+        ConfigurationManager cm = new ConfigurationManager(configFile.toURI().toURL());
 
-        File tmpFile = File.createTempFile("conman", ".tmp.xml");
+        File tmpFile = File.createTempFile("ConfigurationManager", ".tmp.xml");
         tmpFile.deleteOnExit();
 
         System.out.println(ConfigurationManagerUtils.toXML(cm));
-        ConfigurationManagerUtils.toConfigFile(cm, tmpFile);
+        ConfigurationManagerUtils.save(cm, tmpFile);
 
         // now reload it
-        ConMan cmReloaded = new ConMan(tmpFile.toURI().toURL());
+        ConfigurationManager cmReloaded = new ConfigurationManager(tmpFile.toURI().toURL());
         Assert.assertTrue("deserialzed cm doesn't equal its original", cmReloaded.equals(cm));
     }
 
@@ -53,9 +53,9 @@ public class ConfigurationManagerTest {
     @Test
     public void testDynamicConfiguruationChange() throws IOException, PropertyException, InstantiationException {
         File configFile = new File("../../sphinx4/tests/other/testconfig.xml");
-        ConMan cm = new ConMan(configFile.toURI().toURL());
+        ConfigurationManager cm = new ConfigurationManager(configFile.toURI().toURL());
 
-        PropSheet propSheet = cm.getPropertySheet("duco");
+        PropertySheet propSheet = cm.getPropertySheet("duco");
 
         propSheet.setDouble("alpha", 11);
 
@@ -71,12 +71,12 @@ public class ConfigurationManagerTest {
 
     @Test
     public void testSerializeDynamicConfiguration() throws PropertyException, InstantiationException {
-        ConMan cm = new ConMan();
+        ConfigurationManager cm = new ConfigurationManager();
         String frontEndName = "myFrontEnd";
 
         cm.addConfigurable(DummyFrontEnd.class, frontEndName);
-        PropSheet propSheet = cm.getPropertySheet(frontEndName);
-        propSheet.setComponentList("dataProcs", Arrays.asList("fooBar"), Arrays.<SimpleConfigurable>asList(new AnotherDummyProcessor()));
+        PropertySheet propSheet = cm.getPropertySheet(frontEndName);
+        propSheet.setComponentList("dataProcs", Arrays.asList("fooBar"), Arrays.<Configurable>asList(new AnotherDummyProcessor()));
 
         String xmlString = ConfigurationManagerUtils.toXML(cm);
 

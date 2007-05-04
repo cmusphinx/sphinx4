@@ -178,8 +178,8 @@ public class FSTGrammar extends Grammar {
     */
     public void newProperties(PropertySheet ps) throws PropertyException {
         super.newProperties(ps);
-        path = ps.getString(PROP_PATH, PROP_PATH_DEFAULT);
-        logMath = (LogMath) ps.getComponent(PROP_LOG_MATH, LogMath.class);
+        path = ps.getString(PROP_PATH);
+        logMath = (LogMath) ps.getComponent(PROP_LOG_MATH);
     }
 
 

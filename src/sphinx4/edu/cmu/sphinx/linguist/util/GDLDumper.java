@@ -92,13 +92,13 @@ public class GDLDumper extends LinguistDumper {
     public void newProperties(PropertySheet ps) throws PropertyException {
         super.newProperties(ps);
         verticalLayout = ps.getBoolean(
-                PROP_VERTICAL_LAYOUT, PROP_VERTICAL_LAYOUT_DEFAULT);
-        skipHMMs = ps.getBoolean(PROP_SKIP_HMMS,
-                PROP_SKIP_HMMS_DEFAULT);
+                PROP_VERTICAL_LAYOUT);
+        skipHMMs = ps.getBoolean(PROP_SKIP_HMMS
+        );
         dumpArcLabels = ps.getBoolean(
-                PROP_DUMP_ARC_LABELS, PROP_DUMP_ARC_LABELS_DEFAULT);
+                PROP_DUMP_ARC_LABELS);
         setDepthFirst(false); // breadth first traversal
-        logMath = (LogMath) ps.getComponent(PROP_LOG_MATH, LogMath.class);
+        logMath = (LogMath) ps.getComponent(PROP_LOG_MATH);
     }
 
 

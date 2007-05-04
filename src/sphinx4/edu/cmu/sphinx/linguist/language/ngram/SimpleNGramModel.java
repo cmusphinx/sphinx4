@@ -113,14 +113,14 @@ public class SimpleNGramModel implements LanguageModel {
                     "Can't change properties after allocation");
         }
         logger = ps.getLogger();
-        format = ps.getString(PROP_FORMAT, PROP_FORMAT_DEFAULT);
+        format = ps.getString(PROP_FORMAT);
         urlLocation = ps.getResource(PROP_LOCATION);
-        unigramWeight = ps.getFloat(PROP_UNIGRAM_WEIGHT,
-                PROP_UNIGRAM_WEIGHT_DEFAULT);
-        logMath = (LogMath) ps.getComponent(PROP_LOG_MATH, LogMath.class);
-        desiredMaxDepth = ps.getInt(PROP_MAX_DEPTH, PROP_MAX_DEPTH_DEFAULT);
-        dictionary = (Dictionary) ps.getComponent(PROP_DICTIONARY,
-                Dictionary.class);
+        unigramWeight = ps.getFloat(PROP_UNIGRAM_WEIGHT
+        );
+        logMath = (LogMath) ps.getComponent(PROP_LOG_MATH);
+        desiredMaxDepth = ps.getInt(PROP_MAX_DEPTH);
+        dictionary = (Dictionary) ps.getComponent(PROP_DICTIONARY
+        );
         map = new HashMap<WordSequence, Probability>();
         vocabulary = new HashSet<String>();
     }

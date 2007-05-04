@@ -113,7 +113,7 @@ public class RejectionTracker implements
     */
     public void newProperties(PropertySheet ps) throws PropertyException {
         Recognizer newRecognizer = (Recognizer)
-                ps.getComponent(PROP_RECOGNIZER, Recognizer.class);
+                ps.getComponent(PROP_RECOGNIZER);
 
         if (recognizer == null) {
             recognizer = newRecognizer;
@@ -127,10 +127,10 @@ public class RejectionTracker implements
             recognizer.addStateListener(this);
         }
 
-        showSummary = ps.getBoolean(PROP_SHOW_SUMMARY,
-                PROP_SHOW_SUMMARY_DEFAULT);
-        showDetails = ps.getBoolean(PROP_SHOW_DETAILS,
-                PROP_SHOW_DETAILS_DEFAULT);
+        showSummary = ps.getBoolean(PROP_SHOW_SUMMARY
+        );
+        showDetails = ps.getBoolean(PROP_SHOW_DETAILS
+        );
     }
 
 

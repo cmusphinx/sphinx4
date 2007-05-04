@@ -80,8 +80,8 @@ public class SimpleAcousticScorer implements AcousticScorer {
     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
     */
     public void newProperties(PropertySheet ps) throws PropertyException {
-        frontEnd = (FrontEnd) ps.getComponent(PROP_FRONTEND, FrontEnd.class);
-        normalizeScores = ps.getBoolean(PROP_NORMALIZE_SCORES, PROP_NORMALIZE_SCORES_DEFAULT);
+        frontEnd = (FrontEnd) ps.getComponent(PROP_FRONTEND);
+        normalizeScores = ps.getBoolean(PROP_NORMALIZE_SCORES);
     }
 
 

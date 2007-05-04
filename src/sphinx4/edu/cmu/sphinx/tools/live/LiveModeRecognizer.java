@@ -137,19 +137,19 @@ public class LiveModeRecognizer implements Configurable {
     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
     */
     public void newProperties(PropertySheet ps) throws PropertyException {
-        skip = ps.getInt(PROP_SKIP, PROP_SKIP_DEFAULT);
-        recognizer = (Recognizer) ps.getComponent(PROP_RECOGNIZER,
-                Recognizer.class);
-        dataSource = (ConcatFileDataSource) ps.getComponent(PROP_INPUT_SOURCE,
-                ConcatFileDataSource.class);
-        showGapInsertions = ps.getBoolean(PROP_SHOW_GAP_INSERTIONS,
-                PROP_SHOW_GAP_INSERTIONS_DEFAULT);
+        skip = ps.getInt(PROP_SKIP);
+        recognizer = (Recognizer) ps.getComponent(PROP_RECOGNIZER
+        );
+        dataSource = (ConcatFileDataSource) ps.getComponent(PROP_INPUT_SOURCE
+        );
+        showGapInsertions = ps.getBoolean(PROP_SHOW_GAP_INSERTIONS
+        );
 
-        hypothesisFile = ps.getString(PROP_HYPOTHESIS_TRANSCRIPT,
-                PROP_HYPOTHESIS_TRANSCRIPT_DEFAULT);
+        hypothesisFile = ps.getString(PROP_HYPOTHESIS_TRANSCRIPT
+        );
 
-        alignInterval = ps.getInt(PROP_ALIGN_INTERVAL,
-                PROP_ALIGN_INTERVAL_DEFAULT);
+        alignInterval = ps.getInt(PROP_ALIGN_INTERVAL
+        );
 
         referenceSource = dataSource;
     }

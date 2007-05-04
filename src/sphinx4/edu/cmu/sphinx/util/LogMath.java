@@ -107,9 +107,9 @@ public final class LogMath implements Configurable {
     */
     public void newProperties(PropertySheet ps) throws PropertyException {
         logger = ps.getLogger();
-        logBase = ps.getFloat(PROP_LOG_BASE, PROP_LOG_BASE_DEFAULT);
-        useAddTable = ps.getBoolean(PROP_USE_ADD_TABLE,
-                PROP_USE_ADD_TABLE_DEFAULT);
+        logBase = ps.getFloat(PROP_LOG_BASE);
+        useAddTable = ps.getBoolean(PROP_USE_ADD_TABLE
+        );
         init();
     }
 

@@ -123,7 +123,7 @@ public class NonSpeechDataFilter extends BaseDataProcessor {
     public void newProperties(PropertySheet ps) throws PropertyException {
         super.newProperties(ps);
         this.mergeSpeechSegments = ps.getBoolean
-                (PROP_MERGE_SPEECH_SEGMENTS, PROP_MERGE_SPEECH_SEGMENTS_DEFAULT);
+                (PROP_MERGE_SPEECH_SEGMENTS);
     }
 
 

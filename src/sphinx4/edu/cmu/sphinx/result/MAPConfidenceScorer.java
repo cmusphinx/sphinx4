@@ -89,12 +89,12 @@ public class MAPConfidenceScorer implements ConfidenceScorer, Configurable {
      * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
      */
     public void newProperties(PropertySheet ps) throws PropertyException {
-        languageWeight = ps.getFloat(PROP_LANGUAGE_WEIGHT,
-                PROP_LANGUAGE_WEIGHT_DEFAULT);
-        dumpLattice = ps.getBoolean(PROP_DUMP_LATTICE,
-                PROP_DUMP_LATTICE_DEFAULT);
-        dumpSausage = ps.getBoolean(PROP_DUMP_SAUSAGE,
-                PROP_DUMP_SAUSAGE_DEFAULT);
+        languageWeight = ps.getFloat(PROP_LANGUAGE_WEIGHT
+        );
+        dumpLattice = ps.getBoolean(PROP_DUMP_LATTICE
+        );
+        dumpSausage = ps.getBoolean(PROP_DUMP_SAUSAGE
+        );
     }
 
 

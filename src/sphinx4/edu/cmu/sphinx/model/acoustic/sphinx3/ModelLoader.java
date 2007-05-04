@@ -292,30 +292,30 @@ public class ModelLoader implements Loader {
     public void newProperties(PropertySheet ps) throws PropertyException {
         logger = ps.getLogger();
         propsFile =
-                ps.getString(PROP_PROPERTIES_FILE, PROP_PROPERTIES_FILE_DEFAULT);
+                ps.getString(PROP_PROPERTIES_FILE);
         logMath =
-                (LogMath) ps.getComponent(PROP_LOG_MATH, LogMath.class);
+                (LogMath) ps.getComponent(PROP_LOG_MATH);
         unitManager =
-                (UnitManager) ps.getComponent(PROP_UNIT_MANAGER,
-                        UnitManager.class);
+                (UnitManager) ps.getComponent(PROP_UNIT_MANAGER
+                );
         binary =
-                ps.getBoolean(PROP_IS_BINARY, getIsBinaryDefault());
+                ps.getBoolean(PROP_IS_BINARY);
         sparseForm =
-                ps.getBoolean(PROP_SPARSE_FORM, getSparseFormDefault());
+                ps.getBoolean(PROP_SPARSE_FORM);
         vectorLength =
-                ps.getInt(PROP_VECTOR_LENGTH, getVectorLengthDefault());
+                ps.getInt(PROP_VECTOR_LENGTH);
         model =
-                ps.getString(PROP_MODEL, getModelDefault());
+                ps.getString(PROP_MODEL);
         dataDir =
-                ps.getString(PROP_DATA_LOCATION, getDataLocationDefault()) + "/";
+                ps.getString(PROP_DATA_LOCATION) + "/";
         distFloor =
-                ps.getFloat(PROP_MC_FLOOR, PROP_MC_FLOOR_DEFAULT);
+                ps.getFloat(PROP_MC_FLOOR);
         mixtureWeightFloor =
-                ps.getFloat(PROP_MW_FLOOR, PROP_MW_FLOOR_DEFAULT);
+                ps.getFloat(PROP_MW_FLOOR);
         varianceFloor =
-                ps.getFloat(PROP_VARIANCE_FLOOR, PROP_VARIANCE_FLOOR_DEFAULT);
+                ps.getFloat(PROP_VARIANCE_FLOOR);
         useCDUnits =
-                ps.getBoolean(PROP_USE_CD_UNITS, PROP_USE_CD_UNITS_DEFAULT);
+                ps.getBoolean(PROP_USE_CD_UNITS);
     }
 
 

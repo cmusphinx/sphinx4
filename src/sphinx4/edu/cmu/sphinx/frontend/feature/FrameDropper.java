@@ -88,8 +88,8 @@ public class FrameDropper extends BaseDataProcessor {
     public void newProperties(PropertySheet ps) throws PropertyException {
         super.newProperties(ps);
         dropEveryNthFrame = ps.getInt
-                (PROP_DROP_EVERY_NTH_FRAME,
-                        PROP_DROP_EVERY_NTH_FRAME_DEFAULT);
+                (PROP_DROP_EVERY_NTH_FRAME
+                );
 
         if (dropEveryNthFrame <= 1) {
             throw new PropertyException(this, PROP_DROP_EVERY_NTH_FRAME,
@@ -97,8 +97,8 @@ public class FrameDropper extends BaseDataProcessor {
         }
 
         replaceNthWithPrevious = ps.getBoolean
-                (PROP_REPLACE_NTH_WITH_PREVIOUS,
-                        PROP_REPLACE_NTH_WITH_PREVIOUS_DEFAULT);
+                (PROP_REPLACE_NTH_WITH_PREVIOUS
+                );
     }
 
 

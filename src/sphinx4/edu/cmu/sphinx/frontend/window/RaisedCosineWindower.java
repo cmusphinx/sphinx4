@@ -120,11 +120,11 @@ public class RaisedCosineWindower extends BaseDataProcessor {
     */
     public void newProperties(PropertySheet ps) throws PropertyException {
         super.newProperties(ps);
-        alpha = ps.getDouble(PROP_ALPHA, PROP_ALPHA_DEFAULT);
-        windowSizeInMs = ps.getFloat(PROP_WINDOW_SIZE_MS,
-                PROP_WINDOW_SIZE_MS_DEFAULT);
-        windowShiftInMs = ps.getFloat(PROP_WINDOW_SHIFT_MS,
-                PROP_WINDOW_SHIFT_MS_DEFAULT);
+        alpha = ps.getDouble(PROP_ALPHA);
+        windowSizeInMs = ps.getFloat(PROP_WINDOW_SIZE_MS
+        );
+        windowShiftInMs = ps.getFloat(PROP_WINDOW_SHIFT_MS
+        );
     }
 
 

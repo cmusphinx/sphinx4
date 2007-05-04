@@ -89,7 +89,7 @@ public class RecognizerMonitor implements StateListener, Monitor {
     */
     public void newProperties(PropertySheet ps) throws PropertyException {
         Recognizer newRecognizer = (Recognizer) ps.getComponent(
-                PROP_RECOGNIZER, Recognizer.class);
+                PROP_RECOGNIZER);
         if (recognizer == null) {
             recognizer = newRecognizer;
             recognizer.addStateListener(this);
@@ -98,10 +98,10 @@ public class RecognizerMonitor implements StateListener, Monitor {
             recognizer = newRecognizer;
             recognizer.addStateListener(this);
         }
-        allocatedMonitors = ps.getComponentList(PROP_ALLOCATED_MONITORS,
-                Runnable.class);
-        deallocatedMonitors = ps.getComponentList(PROP_DEALLOCATED_MONITORS,
-                Runnable.class);
+        allocatedMonitors = ps.getComponentList(PROP_ALLOCATED_MONITORS
+        );
+        deallocatedMonitors = ps.getComponentList(PROP_DEALLOCATED_MONITORS
+        );
     }
 
 

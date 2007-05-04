@@ -69,7 +69,7 @@ public class LinguistDumper extends LinguistProcessor {
     */
     public void newProperties(PropertySheet ps) throws PropertyException {
         super.newProperties(ps);
-        filename = ps.getString(PROP_FILENAME, getDefaultName());
+        filename = ps.getString(PROP_FILENAME);
     }
 
 

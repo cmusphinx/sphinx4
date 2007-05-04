@@ -234,48 +234,48 @@ public class FlatLinguist implements Linguist, Configurable {
     public void newProperties(PropertySheet ps) throws PropertyException {
         // hookup to all of the components
         setupAcousticModel(ps);
-        logMath = (LogMath) ps.getComponent(PROP_LOG_MATH, LogMath.class);
-        grammar = (Grammar) ps.getComponent(PROP_GRAMMAR, Grammar.class);
-        unitManager = (UnitManager) ps.getComponent(PROP_UNIT_MANAGER,
-                UnitManager.class);
+        logMath = (LogMath) ps.getComponent(PROP_LOG_MATH);
+        grammar = (Grammar) ps.getComponent(PROP_GRAMMAR);
+        unitManager = (UnitManager) ps.getComponent(PROP_UNIT_MANAGER
+        );
 
         // get the rest of the configuration data
         logWordInsertionProbability = logMath.linearToLog(ps.getDouble(
-                PROP_WORD_INSERTION_PROBABILITY,
-                PROP_WORD_INSERTION_PROBABILITY_DEFAULT));
+                PROP_WORD_INSERTION_PROBABILITY
+        ));
         logSilenceInsertionProbability = logMath.linearToLog(ps.getDouble(
-                PROP_SILENCE_INSERTION_PROBABILITY,
-                PROP_SILENCE_INSERTION_PROBABILITY_DEFAULT));
+                PROP_SILENCE_INSERTION_PROBABILITY
+        ));
         logUnitInsertionProbability = logMath.linearToLog(ps.getDouble(
-                PROP_UNIT_INSERTION_PROBABILITY,
-                PROP_UNIT_INSERTION_PROBABILITY_DEFAULT));
-        languageWeight = ps.getFloat(Linguist.PROP_LANGUAGE_WEIGHT,
-                PROP_LANGUAGE_WEIGHT_DEFAULT);
-        showSentenceHMM = ps.getBoolean(Linguist.PROP_SHOW_SEARCH_SPACE,
-                PROP_SHOW_SEARCH_SPACE_DEFAULT);
-        dumpGStates = ps.getBoolean(PROP_DUMP_GSTATES,
-                PROP_DUMP_GSTATES_DEFAULT);
+                PROP_UNIT_INSERTION_PROBABILITY
+        ));
+        languageWeight = ps.getFloat(Linguist.PROP_LANGUAGE_WEIGHT
+        );
+        showSentenceHMM = ps.getBoolean(Linguist.PROP_SHOW_SEARCH_SPACE
+        );
+        dumpGStates = ps.getBoolean(PROP_DUMP_GSTATES
+        );
         showCompilationProgress = ps.getBoolean(
-                PROP_SHOW_COMPILATION_PROGRESS,
-                PROP_SHOW_COMPILATION_PROGRESS_DEFAULT);
+                PROP_SHOW_COMPILATION_PROGRESS
+        );
         spreadWordProbabilitiesAcrossPronunciations = ps.getBoolean(
-                PROP_SPREAD_WORD_PROBABILITIES_ACROSS_PRONUNCIATIONS,
-                PROP_SPREAD_WORD_PROBABILITIES_ACROSS_PRONUNCIATIONS_DEFAULT);
+                PROP_SPREAD_WORD_PROBABILITIES_ACROSS_PRONUNCIATIONS
+        );
 
         addOutOfGrammarBranch = ps.getBoolean
-                (PROP_ADD_OUT_OF_GRAMMAR_BRANCH,
-                        PROP_ADD_OUT_OF_GRAMMAR_BRANCH_DEFAULT);
+                (PROP_ADD_OUT_OF_GRAMMAR_BRANCH
+                );
 
         if (addOutOfGrammarBranch) {
             logOutOfGrammarBranchProbability = logMath.linearToLog
-                    (ps.getDouble(PROP_OUT_OF_GRAMMAR_PROBABILITY,
-                            PROP_OUT_OF_GRAMMAR_PROBABILITY_DEFAULT));
+                    (ps.getDouble(PROP_OUT_OF_GRAMMAR_PROBABILITY
+                    ));
             logPhoneInsertionProbability = logMath.linearToLog
-                    (ps.getDouble(PROP_PHONE_INSERTION_PROBABILITY,
-                            PROP_PHONE_INSERTION_PROBABILITY_DEFAULT));
+                    (ps.getDouble(PROP_PHONE_INSERTION_PROBABILITY
+                    ));
             phoneLoopAcousticModel = (AcousticModel)
-                    ps.getComponent(PROP_PHONE_LOOP_ACOUSTIC_MODEL,
-                            AcousticModel.class);
+                    ps.getComponent(PROP_PHONE_LOOP_ACOUSTIC_MODEL
+                    );
         }
     }
 
@@ -287,8 +287,8 @@ public class FlatLinguist implements Linguist, Configurable {
      */
     protected void setupAcousticModel(PropertySheet ps)
             throws PropertyException {
-        acousticModel = (AcousticModel) ps.getComponent(PROP_ACOUSTIC_MODEL,
-                AcousticModel.class);
+        acousticModel = (AcousticModel) ps.getComponent(PROP_ACOUSTIC_MODEL
+        );
     }
 
 

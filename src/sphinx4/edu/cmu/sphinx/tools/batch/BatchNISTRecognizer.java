@@ -141,19 +141,19 @@ public class BatchNISTRecognizer extends BatchModeRecognizer {
     public void newProperties(PropertySheet ps) throws PropertyException {
         logger = ps.getLogger();
         //cm = ps.getPropertyManager();
-        recognizer = (Recognizer) ps.getComponent(PROP_RECOGNIZER,
-                Recognizer.class);
+        recognizer = (Recognizer) ps.getComponent(PROP_RECOGNIZER
+        );
         inputDataProcessors = ps.getComponentList
-                (PROP_INPUT_DATA_PROCESSORS, DataProcessor.class);
-        dataDir = ps.getString(PROP_DATA_DIR, "<raw data directory not set>");
-        ctlFile = ps.getString(PROP_CTL_FILE, "<ctl file not set>");
-        refFile = ps.getString(PROP_REF_FILE, "<ref file not set>");
-        ctmFile = ps.getString(PROP_CTM_FILE, "<ctm file not set>");
+                (PROP_INPUT_DATA_PROCESSORS);
+        dataDir = ps.getString(PROP_DATA_DIR);
+        ctlFile = ps.getString(PROP_CTL_FILE);
+        refFile = ps.getString(PROP_REF_FILE);
+        ctmFile = ps.getString(PROP_CTM_FILE);
 
-        bitsPerSample = ps.getInt(PROP_BITS_PER_SAMPLE, 16);
-        channelCount = ps.getInt(PROP_CHANNEL_COUNT, 1);
-        samplesPerSecond = ps.getInt(PROP_SAMPLES_PER_SECOND, 16000);
-        framesPerSecond = ps.getInt(PROP_FRAMES_PER_SECOND, 100);
+        bitsPerSample = ps.getInt(PROP_BITS_PER_SAMPLE);
+        channelCount = ps.getInt(PROP_CHANNEL_COUNT);
+        samplesPerSecond = ps.getInt(PROP_SAMPLES_PER_SECOND);
+        framesPerSecond = ps.getInt(PROP_FRAMES_PER_SECOND);
 
         bytesPerFrame = ((bitsPerSample / 8) * channelCount * samplesPerSecond) / framesPerSecond;
 

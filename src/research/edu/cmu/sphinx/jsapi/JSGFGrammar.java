@@ -16,7 +16,6 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.List;
 import java.util.LinkedList;
 
@@ -40,7 +39,6 @@ import edu.cmu.sphinx.linguist.language.grammar.Grammar;
 import edu.cmu.sphinx.linguist.language.grammar.GrammarNode;
 import edu.cmu.sphinx.util.LogMath;
 import edu.cmu.sphinx.util.props.*;
-import edu.cmu.sphinx.decoder.search.SearchManager;
 
 /**
  * Defines a BNF-style grammar based on JSGF grammar rules in a file.
@@ -270,10 +268,10 @@ public class JSGFGrammar extends Grammar {
     public void newProperties(PropertySheet ps) throws PropertyException {
         super.newProperties(ps);
         baseURL = ps.getResource(PROP_BASE_GRAMMAR_URL);
-        logMath = (LogMath) ps.getComponent(PROP_LOG_MATH, LogMath.class);
+        logMath = (LogMath) ps.getComponent(PROP_LOG_MATH);
 
         grammarName = ps
-                .getString(PROP_GRAMMAR_NAME, PROP_GRAMMAR_NAME_DEFAULT);
+                .getString(PROP_GRAMMAR_NAME);
         loadGrammar = true;
     }
 

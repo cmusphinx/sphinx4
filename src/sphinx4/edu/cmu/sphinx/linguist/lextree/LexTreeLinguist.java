@@ -287,42 +287,42 @@ public class LexTreeLinguist implements Linguist {
     */
     public void newProperties(PropertySheet ps) throws PropertyException {
         logger = ps.getLogger();
-        acousticModel = (AcousticModel) ps.getComponent(PROP_ACOUSTIC_MODEL,
-                AcousticModel.class);
-        logMath = (LogMath) ps.getComponent(PROP_LOG_MATH, LogMath.class);
-        unitManager = (UnitManager) ps.getComponent(PROP_UNIT_MANAGER,
-                UnitManager.class);
-        languageModel = (LanguageModel) ps.getComponent(PROP_LANGUAGE_MODEL,
-                LanguageModel.class);
-        dictionary = (Dictionary) ps.getComponent(PROP_DICTIONARY,
-                Dictionary.class);
+        acousticModel = (AcousticModel) ps.getComponent(PROP_ACOUSTIC_MODEL
+        );
+        logMath = (LogMath) ps.getComponent(PROP_LOG_MATH);
+        unitManager = (UnitManager) ps.getComponent(PROP_UNIT_MANAGER
+        );
+        languageModel = (LanguageModel) ps.getComponent(PROP_LANGUAGE_MODEL
+        );
+        dictionary = (Dictionary) ps.getComponent(PROP_DICTIONARY
+        );
 
-        fullWordHistories = ps.getBoolean(PROP_FULL_WORD_HISTORIES,
-                PROP_FULL_WORD_HISTORIES_DEFAULT);
-        wantUnigramSmear = ps.getBoolean(PROP_WANT_UNIGRAM_SMEAR,
-                PROP_WANT_UNIGRAM_SMEAR_DEFAULT);
+        fullWordHistories = ps.getBoolean(PROP_FULL_WORD_HISTORIES
+        );
+        wantUnigramSmear = ps.getBoolean(PROP_WANT_UNIGRAM_SMEAR
+        );
         logWordInsertionProbability = logMath.linearToLog(ps.getDouble(
-                PROP_WORD_INSERTION_PROBABILITY,
-                PROP_WORD_INSERTION_PROBABILITY_DEFAULT));
+                PROP_WORD_INSERTION_PROBABILITY
+        ));
         logSilenceInsertionProbability = logMath.linearToLog(ps.getDouble(
-                PROP_SILENCE_INSERTION_PROBABILITY,
-                PROP_SILENCE_INSERTION_PROBABILITY_DEFAULT));
+                PROP_SILENCE_INSERTION_PROBABILITY
+        ));
         logFillerInsertionProbability = logMath.linearToLog(ps.getDouble(
-                PROP_FILLER_INSERTION_PROBABILITY,
-                PROP_FILLER_INSERTION_PROBABILITY_DEFAULT));
+                PROP_FILLER_INSERTION_PROBABILITY
+        ));
         logUnitInsertionProbability = logMath.linearToLog(ps.getDouble(
-                PROP_UNIT_INSERTION_PROBABILITY,
-                PROP_UNIT_INSERTION_PROBABILITY_DEFAULT));
-        languageWeight = ps.getFloat(PROP_LANGUAGE_WEIGHT,
-                PROP_LANGUAGE_WEIGHT_DEFAULT);
-        addFillerWords = (ps.getBoolean(PROP_ADD_FILLER_WORDS,
-                PROP_ADD_FILLER_WORDS_DEFAULT));
-        generateUnitStates = (ps.getBoolean(PROP_GENERATE_UNIT_STATES,
-                PROP_GENERATE_UNIT_STATES_DEFAULT));
-        unigramSmearWeight = ps.getFloat(PROP_UNIGRAM_SMEAR_WEIGHT,
-                PROP_UNIGRAM_SMEAR_WEIGHT_DEFAULT);
-        int newMaxArcCacheSize = ps.getInt(PROP_CACHE_SIZE,
-                PROP_CACHE_SIZE_DEFAULT);
+                PROP_UNIT_INSERTION_PROBABILITY
+        ));
+        languageWeight = ps.getFloat(PROP_LANGUAGE_WEIGHT
+        );
+        addFillerWords = (ps.getBoolean(PROP_ADD_FILLER_WORDS
+        ));
+        generateUnitStates = (ps.getBoolean(PROP_GENERATE_UNIT_STATES
+        ));
+        unigramSmearWeight = ps.getFloat(PROP_UNIGRAM_SMEAR_WEIGHT
+        );
+        int newMaxArcCacheSize = ps.getInt(PROP_CACHE_SIZE
+        );
 
         // if the new size of the arc cache is less than before
         // just clear out the cache, since we can easily grow it

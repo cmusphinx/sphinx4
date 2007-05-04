@@ -1,63 +1,27 @@
-/*
- * 
- * Copyright 1999-2004 Carnegie Mellon University.  
- * Portions Copyright 2004 Sun Microsystems, Inc.  
- * Portions Copyright 2004 Mitsubishi Electric Research Laboratories.
- * All Rights Reserved.  Use is subject to license terms.
- * 
- * See the file "license.terms" for information on usage and
- * redistribution of this file, and for a DISCLAIMER OF ALL 
- * WARRANTIES.
- *
- */
 package edu.cmu.sphinx.util.props;
 
-import edu.cmu.sphinx.util.SphinxLogFormatter;
-
-import java.io.*;
+import java.io.IOException;
 import java.net.URL;
 import java.util.*;
-import java.util.logging.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-/**
- * Manages the configuration for the system. The configuration manager provides the following services:
- * <p/>
- * <ul> <li>Loads configuration data from an XML-based configuration file. <li>Manages the component life-cycle for
- * Configurable objects <li>Allows discovery of components via name or type. </ul>
- * <p/>
- * For an overview of how to use this configuration management system to create and configure components please see:
- * <b><a href="doc-files/ConfigurationManagement.html"> Sphinx-4 Configuration Management </a> </b>
- * <p/>
- * For a description of how to create your own configurable components see: <b> {@link
- * edu.cmu.sphinx.util.props.Configurable}</b>
- */
+
+/** A configuration manager which enables xml-based system configuration.  ...to be continued! */
 public class ConfigurationManager {
 
-    /** Sphinx Property that defines whether or not the configuration manager will trace object creations */
-
-    public final static String PROP_SHOW_CREATIONS = "showCreations";
-    /** The default value for PROP_SHOW_CREATIONS */
-    public final static boolean PROP_SHOW_CREATIONS_DEFAULT = false;
-
-    /**
-     * A common property (used by all components) that sets the log level for the component.
-     *
-     * @see java.util.logging.Level
-     */
+    /** A common property (used by all components) that sets the log level for the component. */
     public final static String PROP_COMMON_LOG_LEVEL = "logLevel";
 
-    /** A common property (used by all components) that sets the tersness of the log output */
-    public final static String PROP_COMMON_LOG_TERSE = "logTerse";
+    private List<ConfigurationChangeListener> changeListeners = new ArrayList<ConfigurationChangeListener>();
 
-    private Map<String, Symbol> symbolTable = new LinkedHashMap<String, Symbol>();
-    private Map<String, RawPropertyData> rawPropertyMap;
+    private Map<String, PropertySheet> symbolTable = new LinkedHashMap<String, PropertySheet>();
+    private Map<String, RawPropertyData> rawPropertyMap = new HashMap<String, RawPropertyData>();
     private Map<String, String> globalProperties = new LinkedHashMap<String, String>();
+
     private boolean showCreations;
 
-    // this pattern matches strings of the form '${word}'
-    private static Pattern globalSymbolPattern = Pattern.compile("\\$\\{(\\w+)\\}");
+
+    public ConfigurationManager() {
+    }
 
 
     /**
@@ -65,18 +29,18 @@ public class ConfigurationManager {
      * of 'context' around anymore we will just pass around this property manager.
      *
      * @param url place to load initial properties from
-     * @throws IOException if an error occurs while loading properties from the URL
+     * @throws java.io.IOException if an error occurs while loading properties from the URL
      */
     public ConfigurationManager(URL url) throws IOException, PropertyException {
+        SaxLoader saxLoader = new SaxLoader(url, globalProperties);
+        rawPropertyMap = saxLoader.load();
 
-        rawPropertyMap = loader(url);
         applySystemProperties(rawPropertyMap, globalProperties);
-        configureLogger();
+        ConfigurationManagerUtils.configureLogger(this);
 
         // we can't config the configuration manager with itself so we
         // do some of these config items manually.
-
-        showCreations = "true".equals(getGlobalProperty(PROP_SHOW_CREATIONS));
+        showCreations = "true".equals(globalProperties.get("showCreations"));
     }
 
 
@@ -87,28 +51,30 @@ public class ConfigurationManager {
      * @return the property sheet for the object.
      */
     public PropertySheet getPropertySheet(String instanceName) {
-        PropertySheet propertySheet = null;
-        Symbol symbol = symbolTable.get(instanceName);
-        if (symbol != null) {
-            propertySheet = symbol.getPropertySheet();
-        }
-        return propertySheet;
-    }
+        if (!symbolTable.containsKey(instanceName)) {
+            // if it is not in the symbol table, so construct
+            // it based upon our raw property data
+            RawPropertyData rpd = rawPropertyMap.get(instanceName);
+            if (rpd != null) {
+                String className = rpd.getClassName();
+                try {
+                    Class cls = Class.forName(className);
 
+                    // now load the property-sheet by using the class annotation
+//                    PropertySheet propertySheet = new PropertySheet(cls, this, rpd.flatten(globalProperties));
+                    PropertySheet propertySheet = new PropertySheet(cls, this, rpd);
 
-    /**
-     * Returns the registry for the given object instance
-     *
-     * @param instanceName the instance name of the object
-     * @return the property sheet for the object.
-     */
-    public Registry getRegistry(String instanceName) {
-        Registry registry = null;
-        Symbol symbol = symbolTable.get(instanceName);
-        if (symbol != null) {
-            registry = symbol.getRegistry();
+                    symbolTable.put(instanceName, propertySheet);
+
+                } catch (ClassNotFoundException e) {
+                    System.err.println("class not found !" + e.toString());
+                } catch (ClassCastException e) {
+                    System.err.println("can not cast class !" + e.toString());
+                }
+            }
         }
-        return registry;
+
+        return symbolTable.get(instanceName);
     }
 
 
@@ -118,68 +84,87 @@ public class ConfigurationManager {
      * @param type the desired type of instance
      * @return the set of all instances
      */
-    public String[] getInstanceNames(Class type) {
-        List<String> list = new ArrayList<String>();
-        for (Symbol symbol : symbolTable.values()) {
-            if (type.isInstance(symbol.getObject())) {
-                list.add(symbol.getName());
-            }
-        }
-        return list.toArray(new String[list.size()]);
+    public String[] getInstanceNames(Class<? extends Object> type) {
+        return symbolTable.keySet().toArray(new String[]{});
+    }
+
+
+    /**
+     * Returns all names of configurables registered to this instance. The resulting set includes instantiated and
+     * noninstantiated components.
+     *
+     * @return all component named registered to this instance of <code>ConfigurationManager</code>
+     */
+    public List<String> getComponentNames() {
+        return Arrays.asList(rawPropertyMap.keySet().toArray(new String[]{}));
     }
 
 
     /**
      * Looks up a configurable component by name. Creates it if necessary
      *
-     * @param name the name of the component
+     * @param instanceName the name of the component
      * @return the compnent, or null if a component was not found.
      * @throws InstantiationException if the requested object could not be properly created, or is not a configurable
      *                                object.
-     * @throws PropertyException      if an error occurs while setting a property
+     * @throws edu.cmu.sphinx.util.props.PropertyException
+     *                                if an error occurs while setting a property
      */
-    public Configurable lookup(String name) throws InstantiationException,
-            PropertyException {
-        Symbol symbol = symbolTable.get(name);
-        if (symbol == null) {
-            if (showCreations) {
-                System.out.println("Creating: " + name);
-            }
-            // it is not in the symbol table, so construct
-            // it based upon our raw property data
-            RawPropertyData rpd = rawPropertyMap.get(name);
-            if (rpd != null) {
-                String className = rpd.getClassName();
-                try {
-                    Class cls = Class.forName(className);
-                    Configurable configurable = (Configurable) cls
-                            .newInstance();
-                    Registry registry = new Registry(configurable);
-                    registerCommonProperties(registry);
-                    configurable.register(name, registry);
-                    ValidatingPropertySheet propertySheet = new ValidatingPropertySheet(
-                            this, registry, rpd);
-                    symbol = new Symbol(name, propertySheet, registry,
-                            configurable);
-                    symbolTable.put(name, symbol);
-                    configurable.newProperties(propertySheet);
+    public Configurable lookup(String instanceName) throws InstantiationException, PropertyException {
+        // apply all new propeties to the model
+        instanceName = getStrippedComponentName(instanceName);
 
-                    return symbol.getObject();
-                } catch (ClassNotFoundException e) {
-                    throw new InstantiationException("Can't find class "
-                            + className + " object:" + name);
-                } catch (IllegalAccessException e) {
-                    throw new InstantiationException("Can't access class "
-                            + className + " object:" + name);
-                } catch (ClassCastException e) {
-                    throw new InstantiationException("Not configurable class "
-                            + className + " object:" + name);
-                }
-            }
-        } else {
-            return symbol.getObject();
-        }
-        return null;
+        PropertySheet ps = getPropertySheet(instanceName);
+        if (ps == null)
+            return null;
+
+        if (showCreations)
+            System.out.println("Creating: " + instanceName);
+
+        Configurable instance = ps.getOwner();
+        instance.newProperties(ps);
+
+        //todo registerCommonProperties -> register logLevel
+        return instance;
+
+    }
+
+
+    /**
+     * Adds a new configurable to this configuration manager.
+     *
+     * @param confClass The class of the configurable to be instantiated and to be added to this configuration manager
+     *                  instance.
+     * @param name      The desired  lookup-name of the configurable
+     * @param props     The properties to be used for component configuration
+     * @throws IllegalArgumentException if the there's already a component with the same <code>name</code> registered to
+     *                                  this configuration manager instance.
+     */
+    public void addConfigurable(Class<? extends Configurable> confClass, String name, Map<String, Object> props) {
+        if (name == null)
+            name = confClass.getName();
+        if (symbolTable.containsKey(name))
+            throw new IllegalArgumentException("tried to override existing component name");
+
+        PropertySheet ps = getPropSheetInstanceFromClass(confClass, props);
+        symbolTable.put(name, ps);
+        rawPropertyMap.put(name, new RawPropertyData(name, confClass.getName()));
+
+        informListeners(name);
+    }
+
+
+    /**
+     * Adds a new configurable to this configuration manager.
+     *
+     * @param confClass The class of the configurable to be instantiated and to be added to this configuration manager
+     *                  instance.
+     * @param name      The desired  lookup-name of the configurable
+     * @throws IllegalArgumentException if the there's already a component with the same <code>name</code> registered to
+     *                                  this configuration manager instance.
+     */
+    public void addConfigurable(Class<? extends Configurable> confClass, String name) {
+        addConfigurable(confClass, name, new HashMap<String, Object>());
     }
 
 
@@ -187,31 +172,28 @@ public class ConfigurationManager {
      * Sets the property of the given component to the given value. Component must be an existing, instantiated
      * component
      *
-     * @param component an existing component
-     * @param prop      the property name
-     * @param value     the new value.
+     * @param instanceName an existing component
+     * @param prop         the property name
+     * @param value        the new value.
      */
-    public void setProperty(String component, String prop, String value)
-            throws PropertyException {
-        Symbol symbol = symbolTable.get(component);
-        if (symbol != null) {
-            PropertySheet ps = symbol.getPropertySheet();
-            Configurable c = symbol.getObject();
-            Object old = ps.getRawNoReplacement(prop);
-            ps.setRaw(prop, value);
+    public void setProperty(String instanceName, String prop, String value) throws PropertyException {
+        PropertySheet ps = symbolTable.get(instanceName);
+        if (ps != null) {
+            Configurable c = null;
             try {
-                c.newProperties(ps);
-            } catch (PropertyException pe) {
-                // if the newProperties throws an objection
-                // then we need to restore the previous value
-                // roll back the old value if we can
-                ps.setRaw(prop, old);
-                c.newProperties(ps);
-                throw pe;
+                c = ps.getOwner();
+            } catch (InstantiationException e) {
+                e.printStackTrace();
             }
+
+            ps.setRaw(prop, value);
+
+            assert c != null;
+            c.newProperties(ps);
+
+            informListeners(instanceName);
         } else {
-            throw new PropertyException(null, prop,
-                    "Can't find component " + component);
+            throw new PropertyException(null, prop, "Can't find component " + instanceName);
         }
     }
 
@@ -220,138 +202,21 @@ public class ConfigurationManager {
      * Gets the given property for the given component.  Returns either the string representation of the value or a list
      * of strings
      *
-     * @param component    the component containing the property to lookup
+     * @param instanceName the component containing the property to lookup
      * @param propertyName the name of the property to lookup
      * @return the string representation of the property or a list of such strings
      */
-    public Object getProperty(String component, String propertyName)
-            throws PropertyException {
+    public Object getProperty(String instanceName, String propertyName) throws PropertyException {
         Object obj;
-        Symbol symbol = symbolTable.get(component);
-        if (symbol != null) {
-            PropertySheet ps = symbol.getPropertySheet();
+
+        PropertySheet ps = symbolTable.get(instanceName);
+
+        if (ps != null) {
             obj = ps.getRawNoReplacement(propertyName);
         } else {
-            throw new PropertyException(null, propertyName,
-                    "Can't find component " + component);
+            throw new PropertyException(null, propertyName, "Can't find component " + instanceName);
         }
         return obj;
-    }
-
-
-    /**
-     * Saves the current configuration to the given file
-     *
-     * @param file place to save the configuration
-     * @throws IOException if an error occurs while writing to the file
-     */
-    public void save(File file) throws IOException {
-        FileOutputStream fos = new FileOutputStream(file);
-        PrintWriter writer = new PrintWriter(fos);
-
-        writer.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-        writer.println();
-        outputHeader(0, writer, "Sphinx-4 Configuration File");
-        writer.println();
-
-        writer.println("<config>");
-
-        // save global symbols
-
-        outputHeader(2, writer, "Global Properties");
-        for (String globalProperty : globalProperties.keySet()) {
-            String value = getGlobalProperty(globalProperty);
-            value = encodeValue(value);
-            writer.println("        <property name=\"" +
-                    stripGlobalSymbol(globalProperty) + "\" value=\"" + value + "\"/>");
-        }
-        writer.println();
-
-        outputHeader(2, writer, "Components");
-
-        String[] allNames = getInstanceNames(Object.class);
-        for (String componentName : allNames) {
-            Symbol symbol = symbolTable.get(componentName);
-            PropertySheet ps = symbol.getPropertySheet();
-            String[] names = ps.getNames();
-
-            outputHeader(4, writer, symbol.getName());
-
-            writer.println("    <component name=\"" + symbol.getName() + "\"" +
-                    "\n          type=\"" + symbol.getObject().getClass().getName()
-                    + "\">");
-            for (String propertyName : names) {
-                Object obj = ps.getRawNoReplacement(propertyName);
-                if (obj instanceof String) {
-                    String value = (String) obj;
-                    value = encodeValue(value);
-                    String pad = (value.length() > 25) ? "\n        " : "";
-                    writer.println("        <property name=\"" + propertyName
-                            + "\"" + pad + " value=\"" + value + "\"/>");
-                } else if (obj instanceof List) {
-                    List list = (List) obj;
-                    writer.println("        <propertylist name=\"" + propertyName
-                            + "\">");
-                    for (Object listElement : list) {
-                        writer.println("            <item>" +
-                                encodeValue(listElement.toString()) + "</item>");
-                    }
-                    writer.println("        </propertylist>");
-                } else {
-                    throw new IOException("Ill-formed xml");
-                }
-            }
-            writer.println("    </component>");
-            writer.println();
-        }
-        writer.println("</config>");
-        writer.println("<!-- Generated on " + new Date() + "-->");
-        writer.close();
-    }
-
-
-    /**
-     * Outputs the pretty header for a component
-     *
-     * @param indent the indentation level
-     * @param writer where to write the header
-     * @param name   the component name
-     */
-    private void outputHeader(int indent, PrintWriter writer, String name)
-            throws
-            IOException {
-        writer.println(pad(' ', indent) + "<!-- " + pad('*', 50) + " -->");
-        writer.println(pad(' ', indent) + "<!-- " + name + pad(' ', 50 -
-                name.length()) + " -->");
-        writer.println(pad(' ', indent) + "<!-- " + pad('*', 50) + " -->");
-        writer.println();
-    }
-
-
-    /**
-     * Encodes a value so that it is suitable for an xml property
-     *
-     * @param value the value to be encoded
-     * @return the encoded value
-     */
-    private String encodeValue(String value) {
-        value = value.replaceAll("<", "&lt;");
-        value = value.replaceAll(">", "&gt;");
-        return value;
-    }
-
-
-    /**
-     * Loads the configuration data from the given url and adds the info to the symbol table. Throws an IOexception if
-     * there is a problem loading the table. Note that this only performs a partial populating of the symbol table
-     * entry
-     *
-     * @param url the url to load from
-     * @throws IOException if an error occurs while loading the symbol table
-     */
-    private Map<String, RawPropertyData> loader(URL url) throws IOException {
-        SaxLoader saxLoader = new SaxLoader(url, globalProperties);
-        return saxLoader.load();
     }
 
 
@@ -363,7 +228,8 @@ public class ConfigurationManager {
      *
      * @param rawMap the map of raw property values
      * @param global global properies
-     * @throws PropertyException if an attempt is made to set a parameter for an unknown component.
+     * @throws edu.cmu.sphinx.util.props.PropertyException
+     *          if an attempt is made to set a parameter for an unknown component.
      */
     private void applySystemProperties(Map<String, RawPropertyData> rawMap, Map<String, String> global)
             throws PropertyException {
@@ -403,462 +269,159 @@ public class ConfigurationManager {
 
 
     /**
-     * lookup the global symbol with the given name
-     *
-     * @param key the symbol name to lookup
-     * @return the symbol value
-     */
-    String globalLookup(String key) {
-        return globalProperties.get(key);
-    }
-
-
-    /**
-     * Lookup a global symbol with a given name (and resolves
-     *
-     * @param key the name of the property
-     * @return the property value or null if it doesn't exist.
-     */
-    public String getGlobalProperty(String key) {
-        if (!key.startsWith("${"))
-            key = "${" + key + "}";
-
-        while (true) {
-            key = globalProperties.get(key);
-            if (key == null || !key.startsWith("${"))
-                return key;
-        }
-    }
-
-
-    /**
      * Registers the properties commont to all components
      *
      * @param registry a component registry
-     * @throws PropertyException if an error occurs while registering the properties.
+     * @throws edu.cmu.sphinx.util.props.PropertyException
+     *          if an error occurs while registering the properties.
      */
-    private void registerCommonProperties(Registry registry)
-            throws PropertyException {
+    private void registerCommonProperties(Registry registry) throws PropertyException {
         registry.register(PROP_COMMON_LOG_LEVEL, PropertyType.STRING);
     }
 
 
-    /** Configure the logger */
-    private void configureLogger() {
-        LogManager logManager = LogManager.getLogManager();
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        Properties props = new Properties();
-        props.setProperty(".edu.cmu.sphinx.level", "FINEST");
-        props.setProperty("handlers", "java.util.logging.ConsoleHandler");
-        props.setProperty("java.util.logging.ConsoleHandler.level", "FINEST");
-        props.setProperty("java.util.logging.ConsoleHandler.formatter",
-                "edu.cmu.sphinx.util.SphinxLogFormatter");
-
-        try {
-            props.store(bos, "");
-            bos.close();
-            ByteArrayInputStream bis = new ByteArrayInputStream(bos
-                    .toByteArray());
-            logManager.readConfiguration(bis);
-            bis.close();
-        } catch (IOException ioe) {
-            System.err
-                    .println("Can't configure logger, using default configuration");
-        }
-        // Now we find the SphinxLogFormatter that the log manager created
-        // and configure it.
-        Logger rootLogger = LogManager.getLogManager().getLogger("");
-        Handler[] handlers = rootLogger.getHandlers();
-        for (Handler handler : handlers) {
-            if (handler instanceof ConsoleHandler) {
-                if (handler.getFormatter() instanceof SphinxLogFormatter) {
-                    SphinxLogFormatter slf = (SphinxLogFormatter) handler
-                            .getFormatter();
-                    slf.setTerse("true"
-                            .equals(getGlobalProperty(PROP_COMMON_LOG_TERSE)));
-                }
-            }
-        }
-    }
-
-
-    /** Shows the current configuration */
-    public void showConfig() {
-        System.out.println(" ============ config ============= ");
-        String[] allNames = getInstanceNames(Object.class);
-        for (String allName : allNames) {
-            showConfig(allName);
-        }
+    /** Returns a copy of the map of global properties set for this configuration manager. */
+    public Map<String, String> getGlobalProperties() {
+        return Collections.unmodifiableMap(globalProperties);
     }
 
 
     /**
-     * Show the configuration for the compnent with the given name
+     * Returns a global property.
      *
-     * @param name the component name
+     * @param propertyName The name of the global property
      */
-    public void showConfig(String name) {
-        Symbol symbol = symbolTable.get(name);
+    public String getGlobalProperty(String propertyName) {
+        propertyName = propertyName.startsWith("$") ? propertyName : "${" + propertyName + "}";
+        return globalProperties.get(propertyName);
+    }
 
-        if (symbol == null) {
-            System.out.println("No component: " + name);
+
+    public String getStrippedComponentName(String propertyName) {
+        assert propertyName != null;
+        
+        while (propertyName.startsWith("$")) {
+            propertyName = globalProperties.get(propertyName);
+        }
+
+        if (propertyName.startsWith("$"))
+            propertyName = ConfigurationManagerUtils.stripGlobalSymbol(propertyName);
+
+        return propertyName;
+    }
+
+
+    /** Adds a new listener for configuration change events. */
+    public void addConfigurationChangeListener(ConfigurationChangeListener l) {
+        if (l == null)
             return;
-        }
-        System.out.println(symbol.getName() + ":");
 
-        Registry registry = symbol.getRegistry();
-        Collection<String> propertyNames = registry.getRegisteredProperties();
-        PropertySheet properties = symbol.getPropertySheet();
-
-        for (String propertyName : propertyNames) {
-            System.out.print("    " + propertyName + " = ");
-            Object obj;
-            try {
-                obj = properties.getRaw(propertyName);
-            } catch (PropertyException e) {
-                // this exception can occcur if a global name
-                // can't be resolved ...
-                obj = "[Unresolved!]";
-            }
-            if (obj instanceof String) {
-                System.out.println(obj);
-            } else if (obj instanceof List) {
-                List l = (List) obj;
-                for (Iterator k = l.iterator(); k.hasNext();) {
-                    System.out.print(k.next());
-                    if (k.hasNext()) {
-                        System.out.print(", ");
-                    }
-                }
-                System.out.println();
-            } else {
-                System.out.println("[DEFAULT]");
-            }
-        }
+        changeListeners.add(l);
     }
 
 
-    public void editConfig(String name) {
-        Symbol symbol = symbolTable.get(name);
-        boolean done;
-
-        if (symbol == null) {
-            System.out.println("No component: " + name);
+    /** Removes a listener for configuration change events. */
+    public void removeConfigurationChangeListener(ConfigurationChangeListener l) {
+        if (l == null)
             return;
+
+        changeListeners.remove(l);
+    }
+
+
+    private void informListeners(String instanceName) {
+        for (ConfigurationChangeListener changeListeners : this.changeListeners)
+            changeListeners.configurationChanged(instanceName);
+    }
+
+
+    /**
+     * Test wether the given configuration manager instance equals this instance in terms of same configuration. This
+     * This equals implemenation does not care about instantiation of components.
+     */
+    public boolean equals(Object obj) {
+        if (!(obj instanceof ConfigurationManager))
+            return false;
+
+        ConfigurationManager cm = (ConfigurationManager) obj;
+
+        Collection<String> setA = new HashSet<String>(getComponentNames());
+        Collection<String> setB = new HashSet<String>(cm.getComponentNames());
+        if (!setA.equals(setB))
+            return false;
+
+        // make sure that all components are the same
+        for (String instanceName : getComponentNames()) {
+            PropertySheet myPropSheet = getPropertySheet(instanceName);
+            PropertySheet otherPropSheet = cm.getPropertySheet(instanceName);
+
+            if (!otherPropSheet.equals(myPropSheet))
+                return false;
         }
-        System.out.println(symbol.getName() + ":");
 
-        Registry registry = symbol.getRegistry();
-        Collection<String> propertyNames = registry.getRegisteredProperties();
-        PropertySheet properties = symbol.getPropertySheet();
-        BufferedReader br = new BufferedReader(new
-                InputStreamReader(System.in));
+        // make sure that both configuration managers have the same set of global properties
+        if (!cm.getGlobalProperties().equals(getGlobalProperties()))
+            return false;
 
-        for (String propertyName : propertyNames) {
-            try {
-                Object value = properties.getRaw(propertyName);
-                String svalue;
-
-                if (value instanceof List) {
-                    continue;
-                } else if (value instanceof String) {
-                    svalue = (String) value;
-                } else {
-                    svalue = "DEFAULT";
-                }
-                done = false;
-
-                while (!done) {
-                    System.out.print("  " + propertyName + " [" + svalue + "]: ");
-                    String in = br.readLine();
-                    if (in.length() == 0) {
-                        done = true;
-                    } else if (in.equals(".")) {
-                        return;
-                    } else {
-                        try {
-                            setProperty(name, propertyName, in);
-                            done = true;
-                        } catch (PropertyException pe) {
-                            System.out.println("error setting value " + pe);
-                            svalue = in;
-                        }
-                    }
-                }
-            } catch (PropertyException pe) {
-                System.out.println("error getting values " + pe);
-            } catch (IOException ioe) {
-                System.out.println("Trouble reading input");
-                return;
-            }
-        }
-    }
-
-    // TODO: some experimental dumping functions, dump the config
-    // as HTML and as GDL. These should probably be moved out to
-    // the config monitor.
-
-    // TODO this dumping code is not done yet.
-
-
-    /**
-     * Dumps the config as a set of HTML tables
-     *
-     * @param path where to output the HTML
-     * @throws IOException if an error occurs
-     */
-    public void showConfigAsHTML(String path) throws IOException {
-        PrintStream out = new PrintStream(new FileOutputStream(path));
-        dumpHeader(out);
-        String[] allNames = getInstanceNames(Object.class);
-        for (String componentName : allNames) {
-            dumpComponentAsHTML(out, componentName);
-        }
-        dumpFooter(out);
-        out.close();
+        return true;
     }
 
 
     /**
-     * Dumps the header for HTML output
-     *
-     * @param out the output stream
+     * Creates an instance of the given <code>Configurable</code> by using the default parameters as defined by the
+     * class annotations to parameterize the component.
      */
-    private void dumpHeader(PrintStream out) {
-        out.println("<html><head>");
-        out.println("    <title> Sphinx-4 Configuration</title");
-        out.println("</head>");
-        out.println("<body>");
+    public static Configurable getDefaultInstance(Class<? extends Configurable> targetClass) throws InstantiationException, PropertyException {
+        return getDefaultInstance(targetClass, new HashMap<String, Object>());
     }
 
 
     /**
-     * Retrieves the global log level
-     *
-     * @return the global log level
+     * Creates an instance of the given <code>Configurable</code> by using the default parameters as defined by the
+     * class annotations to parameterize the component. Default prarmeters will be overrided if a their names are
+     * containd in the given <code>props</code>-map
      */
-    String getGlobalLogLevel() {
-        String level = getGlobalProperty(ConfigurationManager.PROP_COMMON_LOG_LEVEL);
-        if (level == null) {
-            level = Level.WARNING.getName();
-        }
-        return level;
+    public static Configurable getDefaultInstance(Class<? extends Configurable> targetClass, Map<String, Object> props) throws InstantiationException, PropertyException {
+        PropertySheet ps = getPropSheetInstanceFromClass(targetClass, props);
+        Configurable configurable = ps.getOwner();
+        configurable.newProperties(ps);
+        return configurable;
     }
 
 
     /**
-     * Dumps the footer for HTML output
-     *
-     * @param out the output stream
+     * Instantiates the given <code>targetClass</code> and instruments it using default properties or the properties
+     * given by the <code>defaultProps</code>.
      */
-    private void dumpFooter(PrintStream out) {
-        out.println("</body>");
-        out.println("</html>");
-    }
-
-
-    /**
-     * Dumps the given component as HTML to the given stream
-     *
-     * @param out  where to dump the HTML
-     * @param name the name of the component to dump
-     */
-    private void dumpComponentAsHTML(PrintStream out, String name) {
-        Symbol symbol = symbolTable.get(name);
-        out.println("<table border=1>");
-        //        out.println("<table border=1 width=\"%80\">");
-        out.print("    <tr><th bgcolor=\"#CCCCFF\" colspan=2>");
-        //       out.print("<a href="")
-        out.print(name);
-        out.print("</a>");
-        out.println("</td></tr>");
-
-        out
-                .println("    <tr><th bgcolor=\"#CCCCFF\">Property</th><th bgcolor=\"#CCCCFF\"> Value</th></tr>");
-        Registry registry = symbol.getRegistry();
-        Collection<String> propertyNames = registry.getRegisteredProperties();
-        PropertySheet properties = symbol.getPropertySheet();
-
-        for (String propertyName : propertyNames) {
-            out.print("    <tr><th align=\"leftt\">" + propertyName + "</th>");
-            Object obj;
-            try {
-                obj = properties.getRaw(propertyName);
-            } catch (PropertyException e) {
-                // this exception can occcur if a global name
-                // can't be resolved ...
-                obj = "[Unresolved!]";
-                out.println("<td>" + obj + "</td></tr>");
-            }
-            if (obj instanceof String) {
-                out.println("<td>" + obj + "</td></tr>");
-            } else if (obj instanceof List) {
-                List l = (List) obj;
-                out.println("    <td><ul>");
-                for (Object listElement : l) {
-                    out.println("        <li>" + listElement + "</li>");
-                }
-                out.println("    </ul></td>");
-            } else {
-                out.println("<td>DEFAULT</td></tr>");
-            }
-        }
-        out.println("</table><br>");
-    }
-
-
-    /**
-     * Dumps the config as a GDL plot
-     *
-     * @param path where to output the GDL
-     * @throws IOException if an error occurs
-     */
-    public void showConfigAsGDL(String path) throws IOException {
-        PrintStream out = new PrintStream(new FileOutputStream(path));
-        dumpGDLHeader(out);
-        String[] allNames = getInstanceNames(Object.class);
-        for (String componentName : allNames) {
-            dumpComponentAsGDL(out, componentName);
-        }
-        dumpGDLFooter(out);
-        out.close();
-    }
-
-
-    /**
-     * Dumps the given component as GDL to the given stream
-     *
-     * @param out  where to dump the GDL
-     * @param name the name of the component to dump
-     */
-    private void dumpComponentAsGDL(PrintStream out, String name) {
-
-        out.println("node: {title: \"" + name + "\" color: " + getColor(name)
-                + "}");
-
-        Symbol symbol = symbolTable.get(name);
-        Registry registry = symbol.getRegistry();
-        Collection<String> propertyNames = registry.getRegisteredProperties();
-        PropertySheet properties = symbol.getPropertySheet();
-
-        for (String propertyName : propertyNames) {
-            PropertyType type = registry.lookup(propertyName);
-            try {
-                Object val = properties.getRaw(propertyName);
-                if (val != null) {
-                    if (type == PropertyType.COMPONENT) {
-                        out.println("edge: {source: \"" + name
-                                + "\" target: \"" + val + "\"}");
-                    } else if (type == PropertyType.COMPONENT_LIST) {
-                        List list = (List) val;
-                        for (Object listElement : list) {
-                            out.println("edge: {source: \"" + name
-                                    + "\" target: \"" + listElement + "\"}");
-                        }
-                    }
-                }
-            } catch (PropertyException e) {
-                // nothing to do , its up to you
-            }
-        }
-    }
-
-
-    /**
-     * Gets the color for the given component
-     *
-     * @param componentName the name of the component
-     * @return the color name for the component
-     */
-    private String getColor(String componentName) {
+    private static PropertySheet getPropSheetInstanceFromClass(Class<? extends Configurable> targetClass, Map<String, Object> defaultProps) {
         try {
-            Configurable c = lookup(componentName);
-            Class cls = c.getClass();
-            if (cls.getName().indexOf(".recognizer") > 1) {
-                return "cyan";
-            } else if (cls.getName().indexOf(".tools") > 1) {
-                return "darkcyan";
-            } else if (cls.getName().indexOf(".decoder") > 1) {
-                return "green";
-            } else if (cls.getName().indexOf(".frontend") > 1) {
-                return "orange";
-            } else if (cls.getName().indexOf(".acoustic") > 1) {
-                return "turquoise";
-            } else if (cls.getName().indexOf(".linguist") > 1) {
-                return "lightblue";
-            } else if (cls.getName().indexOf(".instrumentation") > 1) {
-                return "lightgrey";
-            } else if (cls.getName().indexOf(".util") > 1) {
-                return "lightgrey";
+            ConfigurationManager ConfigurationManager = new ConfigurationManager();
+            RawPropertyData rpd = new RawPropertyData(null, targetClass.getName());
+
+            for (String confName : defaultProps.keySet()) {
+                Object property = defaultProps.get(confName);
+
+//                if (property instanceof Configurable) {
+//                    RawPropertyData dummyRPD = new RawPropertyData(confName, property.getClass().getName());
+//                    ConfigurationManager.symbolTable.put(confName, new PropertySheet((Configurable) property, ConfigurationManager, dummyRPD));
+//                } else
+                if (property instanceof Class)
+                    property = ((Class) property).getName();
+
+                rpd.getProperties().put(confName, property);
             }
+
+
+            Configurable configurable = targetClass.newInstance();
+            return new PropertySheet(configurable, ConfigurationManager, rpd);
         } catch (InstantiationException e) {
-            return "black";
-        } catch (PropertyException e) {
-            return "black";
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
         }
-        return "darkgrey";
+
+        return null;
     }
 
-
-    /**
-     * Outputs the GDL header
-     *
-     * @param out the output stream
-     */
-    private void dumpGDLHeader(PrintStream out) {
-        out.println(" graph: {title: \"unix evolution\" ");
-        out.println("         layoutalgorithm: tree");
-        out.println("          scaling        : 2.0");
-        out.println("          colorentry 42  : 152 222 255");
-        out.println("     node.shape     : ellipse");
-        out.println("      node.color     : 42 ");
-        out.println("node.height    : 32  ");
-        out.println("node.fontname  : \"helvB08\"");
-        out.println("edge.color     : darkred");
-        out.println("edge.arrowsize :  6    ");
-        out.println("node.textcolor : darkblue ");
-        out.println("splines        : yes");
-    }
-
-
-    /**
-     * Dumps the footer for GDL output
-     *
-     * @param out the output stream
-     */
-    private void dumpGDLFooter(PrintStream out) {
-        out.println("}");
-    }
-
-
-    /**
-     * Strips the ${ and } off of a global symbol of the form ${symbol}.
-     *
-     * @param symbol the symbol to strip
-     * @return the stripped symbol
-     */
-    private String stripGlobalSymbol(String symbol) {
-        Matcher matcher = globalSymbolPattern.matcher(symbol);
-        if (matcher.matches()) {
-            return matcher.group(1);
-        } else {
-            return symbol;
-        }
-    }
-
-
-    /**
-     * Generate a string of the given character
-     *
-     * @param c     the character
-     * @param count the length of the string
-     * @return the padded string
-     */
-    private String pad(char c, int count) {
-        StringBuffer sb = new StringBuffer();
-        for (int i = 0; i < count; i++) {
-            sb.append(c);
-        }
-        return sb.toString();
-    }
 }
+

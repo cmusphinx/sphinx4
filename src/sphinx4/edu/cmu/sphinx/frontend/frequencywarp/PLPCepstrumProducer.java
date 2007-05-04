@@ -104,9 +104,9 @@ public class PLPCepstrumProducer extends BaseDataProcessor {
     */
     public void newProperties(PropertySheet ps) throws PropertyException {
         super.newProperties(ps);
-        numberPLPFilters = ps.getInt(PROP_NUMBER_FILTERS, PROP_NUMBER_FILTERS_DEFAULT);
-        cepstrumSize = ps.getInt(PROP_CEPSTRUM_LENGTH, PROP_CEPSTRUM_LENGTH_DEFAULT);
-        LPCOrder = ps.getInt(PROP_LPC_ORDER, PROP_LPC_ORDER_DEFAULT);
+        numberPLPFilters = ps.getInt(PROP_NUMBER_FILTERS);
+        cepstrumSize = ps.getInt(PROP_CEPSTRUM_LENGTH);
+        LPCOrder = ps.getInt(PROP_LPC_ORDER);
     }
 
 

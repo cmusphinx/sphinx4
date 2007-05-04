@@ -119,21 +119,21 @@ public class ModelLoader implements Loader {
     public final static String PROP_UNIT_MANAGER = "unitManager";
 
     /** Specifies whether the model to be loaded is in ASCII or binary format */
-    @S4Boolean(defaultValue = true)
+    @S4Boolean(defaultValue = true, isNotDefined = true)
     public final static String PROP_IS_BINARY = "isBinary";
 
     /** The default value of PROP_IS_BINARY */
     public final static boolean PROP_IS_BINARY_DEFAULT = true;
 
     /** The name of the model definition file (contains the HMM data) */
-    @S4String(defaultValue = "model.mdef")
+    @S4String
     public final static String PROP_MODEL = "modelDefinition";
 
     /** The default value of PROP_MODEL_DEFAULT. */
     public final static String PROP_MODEL_DEFAULT = "model.mdef";
 
     /** Subdirectory where the acoustic model can be found */
-    @S4String(defaultValue = "data")
+    @S4String
     public final static String PROP_DATA_LOCATION = "dataLocation";
 
     /** The default value of PROP_DATA_LOCATION. */
@@ -147,7 +147,7 @@ public class ModelLoader implements Loader {
     public final static String PROP_PROPERTIES_FILE_DEFAULT = "model.props";
 
     /** The SphinxProperty for the length of feature vectors. */
-    @S4Integer(defaultValue = 39)
+    @S4Integer(defaultValue = -1)
     public final static String PROP_VECTOR_LENGTH = "vectorLength";
 
     /** The default value of PROP_VECTOR_LENGTH. */
@@ -157,7 +157,7 @@ public class ModelLoader implements Loader {
      * The SphinxProperty specifying whether the transition matrices of the acoustic model is in sparse form, i.e.,
      * omitting the zeros of the non-transitioning states.
      */
-    @S4Boolean(defaultValue = true)
+    @S4Boolean(defaultValue = true, isNotDefined = true)
     public final static String PROP_SPARSE_FORM = "sparseForm";
 
     /** The default value of PROP_SPARSE_FORM. */
@@ -294,31 +294,29 @@ public class ModelLoader implements Loader {
     */
     public void newProperties(PropertySheet ps) throws PropertyException {
         logger = ps.getLogger();
-        propsFile =
-                ps.getString(PROP_PROPERTIES_FILE, PROP_PROPERTIES_FILE_DEFAULT);
-        logMath =
-                (LogMath) ps.getComponent(PROP_LOG_MATH, LogMath.class);
-        unitManager =
-                (UnitManager) ps.getComponent(PROP_UNIT_MANAGER,
-                        UnitManager.class);
-        binary =
-                ps.getBoolean(PROP_IS_BINARY, getIsBinaryDefault());
-        sparseForm =
-                ps.getBoolean(PROP_SPARSE_FORM, getSparseFormDefault());
-        vectorLength =
-                ps.getInt(PROP_VECTOR_LENGTH, getVectorLengthDefault());
-        model =
-                ps.getString(PROP_MODEL, getModelDefault());
-        dataDir =
-                ps.getString(PROP_DATA_LOCATION, getDataLocationDefault()) + "/";
-        distFloor =
-                ps.getFloat(PROP_MC_FLOOR, PROP_MC_FLOOR_DEFAULT);
-        mixtureWeightFloor =
-                ps.getFloat(PROP_MW_FLOOR, PROP_MW_FLOOR_DEFAULT);
-        varianceFloor =
-                ps.getFloat(PROP_VARIANCE_FLOOR, PROP_VARIANCE_FLOOR_DEFAULT);
-        useCDUnits =
-                ps.getBoolean(PROP_USE_CD_UNITS, PROP_USE_CD_UNITS_DEFAULT);
+        propsFile = ps.getString(PROP_PROPERTIES_FILE);
+        logMath = (LogMath) ps.getComponent(PROP_LOG_MATH);
+        unitManager = (UnitManager) ps.getComponent(PROP_UNIT_MANAGER);
+
+        Boolean isBinary = ps.getBoolean(PROP_IS_BINARY);
+        binary = isBinary != null ? isBinary : getIsBinaryDefault();
+
+        Boolean isSparse = ps.getBoolean(PROP_IS_BINARY);
+        sparseForm = isSparse != null ? isSparse : getSparseFormDefault();
+
+        vectorLength = ps.getInt(PROP_VECTOR_LENGTH);
+        vectorLength = vectorLength > 0 ? vectorLength : getVectorLengthDefault();
+
+        model = ps.getString(PROP_MODEL);
+        model = model == null ? getModelDefault() : model;
+
+        dataDir = ps.getString(PROP_DATA_LOCATION);
+        dataDir = (dataDir == null ? getDataLocationDefault() : dataDir) + "/";
+
+        distFloor = ps.getFloat(PROP_MC_FLOOR);
+        mixtureWeightFloor = ps.getFloat(PROP_MW_FLOOR);
+        varianceFloor = ps.getFloat(PROP_VARIANCE_FLOOR);
+        useCDUnits = ps.getBoolean(PROP_USE_CD_UNITS);
     }
 
 

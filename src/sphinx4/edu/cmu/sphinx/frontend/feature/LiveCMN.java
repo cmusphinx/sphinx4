@@ -117,9 +117,9 @@ public class LiveCMN extends BaseDataProcessor {
     */
     public void newProperties(PropertySheet ps) throws PropertyException {
         super.newProperties(ps);
-        initialMean = ps.getDouble(PROP_INITIAL_MEAN, PROP_INITIAL_MEAN_DEFAULT);
-        cmnWindow = ps.getInt(PROP_CMN_WINDOW, PROP_CMN_WINDOW_DEFAULT);
-        cmnShiftWindow = ps.getInt(PROP_CMN_SHIFT_WINDOW, PROP_CMN_SHIFT_WINDOW_DEFAULT);
+        initialMean = ps.getDouble(PROP_INITIAL_MEAN);
+        cmnWindow = ps.getInt(PROP_CMN_WINDOW);
+        cmnShiftWindow = ps.getInt(PROP_CMN_SHIFT_WINDOW);
     }
 
 

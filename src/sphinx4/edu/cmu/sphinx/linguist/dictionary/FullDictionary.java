@@ -126,16 +126,16 @@ public class FullDictionary implements Dictionary {
         wordDictionaryFile = ps.getResource(PROP_DICTIONARY);
         fillerDictionaryFile = ps.getResource(PROP_FILLER_DICTIONARY);
         addSilEndingPronunciation = ps.getBoolean(
-                PROP_ADD_SIL_ENDING_PRONUNCIATION,
-                PROP_ADD_SIL_ENDING_PRONUNCIATION_DEFAULT);
-        wordReplacement = ps.getString(Dictionary.PROP_WORD_REPLACEMENT,
-                PROP_WORD_REPLACEMENT_DEFAULT);
-        allowMissingWords = ps.getBoolean(Dictionary.PROP_ALLOW_MISSING_WORDS,
-                PROP_ALLOW_MISSING_WORDS_DEFAULT);
-        createMissingWords = ps.getBoolean(PROP_CREATE_MISSING_WORDS,
-                PROP_CREATE_MISSING_WORDS_DEFAULT);
-        unitManager = (UnitManager) ps.getComponent(PROP_UNIT_MANAGER,
-                UnitManager.class);
+                PROP_ADD_SIL_ENDING_PRONUNCIATION
+        );
+        wordReplacement = ps.getString(Dictionary.PROP_WORD_REPLACEMENT
+        );
+        allowMissingWords = ps.getBoolean(Dictionary.PROP_ALLOW_MISSING_WORDS
+        );
+        createMissingWords = ps.getBoolean(PROP_CREATE_MISSING_WORDS
+        );
+        unitManager = (UnitManager) ps.getComponent(PROP_UNIT_MANAGER
+        );
     }
 
 

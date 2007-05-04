@@ -85,7 +85,10 @@ public abstract class BaseDataProcessor implements DataProcessor {
      * @return the name of this DataProcessor
      */
     public String getName() {
-        return name;
+        if (name != null)
+            return name;
+        else
+            return this.getClass().getName();
     }
 
 

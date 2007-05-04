@@ -108,7 +108,7 @@ public class ExcessiveNonSpeechPruner extends BaseDataProcessor {
     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
     */
     public void newProperties(PropertySheet ps) throws PropertyException {
-        maxNonSpeechTime = ps.getInt(PROP_MAX_NON_SPEECH_TIME_MS, PROP_MAX_NON_SPEECH_TIME_DEFAULT);
+        maxNonSpeechTime = ps.getInt(PROP_MAX_NON_SPEECH_TIME_MS);
     }
 
 }

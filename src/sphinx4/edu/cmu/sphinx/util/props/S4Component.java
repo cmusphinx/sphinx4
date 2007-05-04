@@ -8,7 +8,7 @@ import java.lang.annotation.RetentionPolicy;
  * A component property.
  *
  * @author Holger Brandl
- * @see ConMan
+ * @see ConfigurationManager
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)

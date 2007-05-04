@@ -66,7 +66,7 @@ public class BatchForcedAlignerGrammar extends ForcedAlignerGrammar implements G
     public void newProperties(PropertySheet ps) throws PropertyException {
         super.newProperties(ps);
 
-        refFile = ps.getString(PROP_REF_FILE, "<refFile not set>");
+        refFile = ps.getString(PROP_REF_FILE);
         grammars = new Hashtable();
         currentGrammar = (Grammar) grammars.get(currentUttName);
     }

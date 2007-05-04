@@ -66,11 +66,11 @@ public class PartitionActiveListFactory implements ActiveListFactory {
     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
     */
     public void newProperties(PropertySheet ps) throws PropertyException {
-        absoluteBeamWidth = ps.getInt(PROP_ABSOLUTE_BEAM_WIDTH,
-                PROP_ABSOLUTE_BEAM_WIDTH_DEFAULT);
-        double relativeBeamWidth = ps.getDouble(PROP_RELATIVE_BEAM_WIDTH,
-                PROP_RELATIVE_BEAM_WIDTH_DEFAULT);
-        logMath = (LogMath) ps.getComponent(PROP_LOG_MATH, LogMath.class);
+        absoluteBeamWidth = ps.getInt(PROP_ABSOLUTE_BEAM_WIDTH
+        );
+        double relativeBeamWidth = ps.getDouble(PROP_RELATIVE_BEAM_WIDTH
+        );
+        logMath = (LogMath) ps.getComponent(PROP_LOG_MATH);
         logRelativeBeamWidth = logMath.linearToLog(relativeBeamWidth);
     }
 

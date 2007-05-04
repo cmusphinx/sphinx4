@@ -225,39 +225,39 @@ public class Microphone extends BaseDataProcessor {
         super.newProperties(ps);
         logger = ps.getLogger();
 
-        sampleRate = ps.getInt(PROP_SAMPLE_RATE, PROP_SAMPLE_RATE_DEFAULT);
+        sampleRate = ps.getInt(PROP_SAMPLE_RATE);
 
         int sampleSizeInBits = ps.getInt
-                (PROP_BITS_PER_SAMPLE, PROP_BITS_PER_SAMPLE_DEFAULT);
+                (PROP_BITS_PER_SAMPLE);
 
-        int channels = ps.getInt(PROP_CHANNELS, PROP_CHANNELS_DEFAULT);
+        int channels = ps.getInt(PROP_CHANNELS);
 
         boolean bigEndian =
-                ps.getBoolean(PROP_BIG_ENDIAN, PROP_BIG_ENDIAN_DEFAULT);
+                ps.getBoolean(PROP_BIG_ENDIAN);
 
-        signed = ps.getBoolean(PROP_SIGNED, PROP_SIGNED_DEFAULT);
+        signed = ps.getBoolean(PROP_SIGNED);
 
         desiredFormat = new AudioFormat
                 ((float) sampleRate, sampleSizeInBits, channels, signed, bigEndian);
 
         closeBetweenUtterances = ps.getBoolean
-                (PROP_CLOSE_BETWEEN_UTTERANCES,
-                        PROP_CLOSE_BETWEEN_UTTERANCES_DEFAULT);
+                (PROP_CLOSE_BETWEEN_UTTERANCES
+                );
 
-        msecPerRead = ps.getInt(PROP_MSEC_PER_READ,
-                PROP_MSEC_PER_READ_DEFAULT);
+        msecPerRead = ps.getInt(PROP_MSEC_PER_READ
+        );
 
         keepDataReference = ps.getBoolean
-                (PROP_KEEP_LAST_AUDIO, PROP_KEEP_LAST_AUDIO_DEFAULT);
+                (PROP_KEEP_LAST_AUDIO);
 
         stereoToMono = ps.getString
-                (PROP_STEREO_TO_MONO, PROP_STEREO_TO_MONO_DEFAULT);
+                (PROP_STEREO_TO_MONO);
 
         selectedChannel = ps.getInt
-                (PROP_SELECT_CHANNEL, PROP_SELECT_CHANNEL_DEFAULT);
+                (PROP_SELECT_CHANNEL);
 
         selectedMixerIndex = ps.getString
-                (PROP_SELECT_MIXER, PROP_SELECT_MIXER_DEFAULT);
+                (PROP_SELECT_MIXER);
     }
 
 

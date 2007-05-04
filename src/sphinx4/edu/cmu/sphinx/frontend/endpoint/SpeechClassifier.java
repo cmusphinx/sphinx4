@@ -136,12 +136,12 @@ public class SpeechClassifier extends BaseDataProcessor {
     public void newProperties(PropertySheet ps) throws PropertyException {
         super.newProperties(ps);
         int frameLengthMs = ps.getInt
-                (PROP_FRAME_LENGTH_MS, PROP_FRAME_LENGTH_MS_DEFAULT);
+                (PROP_FRAME_LENGTH_MS);
         frameLengthSec = ((float) frameLengthMs) / 1000.f;
-        adjustment = ps.getDouble(PROP_ADJUSTMENT, PROP_ADJUSTMENT_DEFAULT);
-        threshold = ps.getDouble(PROP_THRESHOLD, PROP_THRESHOLD_DEFAULT);
-        minSignal = ps.getDouble(PROP_MIN_SIGNAL, PROP_MIN_SIGNAL_DEFAULT);
-        debug = ps.getBoolean(PROP_DEBUG, PROP_DEBUG_DEFAULT);
+        adjustment = ps.getDouble(PROP_ADJUSTMENT);
+        threshold = ps.getDouble(PROP_THRESHOLD);
+        minSignal = ps.getDouble(PROP_MIN_SIGNAL);
+        debug = ps.getBoolean(PROP_DEBUG);
 
         initialize();
     }

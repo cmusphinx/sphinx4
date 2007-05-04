@@ -133,7 +133,7 @@ public class FrontEnd extends BaseDataProcessor {
     // ----------------------------
     // Confiugration data
     // -----------------------------
-    private List frontEndList;
+    private List<DataProcessor> frontEndList;
 
     private DataProcessor first;
     private DataProcessor last;
@@ -167,10 +167,11 @@ public class FrontEnd extends BaseDataProcessor {
      */
     public void newProperties(PropertySheet ps) throws PropertyException {
         super.newProperties(ps);
-        frontEndList = ps.getComponentList(PROP_PIPELINE, DataProcessor.class);
+        frontEndList = ps.getComponentList(PROP_PIPELINE);
 
         for (Iterator i = frontEndList.iterator(); i.hasNext();) {
             DataProcessor dp = (DataProcessor) i.next();
+            assert dp != null;
             dp.setPredecessor(last);
             if (first == null) {
                 first = dp;

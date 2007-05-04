@@ -13,7 +13,6 @@
 package edu.cmu.sphinx.recognizer;
 
 import edu.cmu.sphinx.decoder.Decoder;
-import edu.cmu.sphinx.instrumentation.Monitor;
 import edu.cmu.sphinx.result.Result;
 import edu.cmu.sphinx.result.ResultListener;
 import edu.cmu.sphinx.util.props.*;
@@ -97,8 +96,8 @@ public class Recognizer implements Configurable {
     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
     */
     public void newProperties(PropertySheet ps) throws PropertyException {
-        decoder = (Decoder) ps.getComponent(PROP_DECODER, Decoder.class);
-        monitors = ps.getComponentList(PROP_MONITORS, Monitor.class);
+        decoder = (Decoder) ps.getComponent(PROP_DECODER);
+        monitors = ps.getComponentList(PROP_MONITORS);
     }
 
 

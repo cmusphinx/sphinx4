@@ -553,8 +553,8 @@ public class AudioTool {
 
             PropertySheet ps = cm.getPropertySheet(WINDOWER);
             float windowShiftInMs = ps.getFloat
-                    (RaisedCosineWindower.PROP_WINDOW_SHIFT_MS,
-                            RaisedCosineWindower.PROP_WINDOW_SHIFT_MS_DEFAULT);
+                    (RaisedCosineWindower.PROP_WINDOW_SHIFT_MS
+                    );
 
             final JFrame jframe = new JFrame("AudioTool");
             fileChooser = new JFileChooser();

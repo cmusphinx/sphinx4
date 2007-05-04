@@ -67,7 +67,7 @@ public interface SimpleConfigurable {
      *
      * @param ps a property sheet holding the new data
      */
-    public void newProperties(PropSheet ps) throws PropertyException;
+    public void newProperties(PropertySheet ps) throws PropertyException;
 
 
     /**

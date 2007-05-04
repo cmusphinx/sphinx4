@@ -111,7 +111,7 @@ public class DiscreteFourierTransform extends BaseDataProcessor {
     public void newProperties(PropertySheet ps) throws PropertyException {
         super.newProperties(ps);
         logger = ps.getLogger();
-        numberFftPoints = ps.getInt(PROP_NUMBER_FFT_POINTS, -1);
+        numberFftPoints = ps.getInt(PROP_NUMBER_FFT_POINTS);
         isNumberFftPointsSet = (numberFftPoints != -1);
     }
 

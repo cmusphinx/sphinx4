@@ -108,7 +108,7 @@ public class AudioFileDataSource extends BaseDataProcessor {
     */
     public void newProperties(PropertySheet ps) throws PropertyException {
         super.newProperties(ps);
-        bytesPerRead = ps.getInt(PROP_BYTES_PER_READ, PROP_BYTES_PER_READ_DEFAULT);
+        bytesPerRead = ps.getInt(PROP_BYTES_PER_READ);
 
         initialize();
     }

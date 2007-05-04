@@ -129,11 +129,11 @@ public class TiedStateAcousticModel implements AcousticModel {
     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
     */
     public void newProperties(PropertySheet ps) throws PropertyException {
-        loader = (Loader) ps.getComponent(PROP_LOADER, Loader.class);
-        unitManager = (UnitManager) ps.getComponent(PROP_UNIT_MANAGER,
-                UnitManager.class);
+        loader = (Loader) ps.getComponent(PROP_LOADER);
+        unitManager = (UnitManager) ps.getComponent(PROP_UNIT_MANAGER
+        );
         useComposites =
-                ps.getBoolean(PROP_USE_COMPOSITES, PROP_USE_COMPOSITES_DEFAULT);
+                ps.getBoolean(PROP_USE_COMPOSITES);
         logger = ps.getLogger();
     }
 

@@ -1,6 +1,8 @@
 package edu.cmu.sphinx.util.props.newconman.test;
 
 import edu.cmu.sphinx.util.props.*;
+import edu.cmu.sphinx.util.props.newconman.test.DummyFrontEnd;
+import edu.cmu.sphinx.util.props.newconman.test.AnotherDummyFrontEnd;
 import junit.framework.Assert;
 import org.junit.Test;
 
@@ -11,7 +13,7 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 
-public class DummyComp implements SimpleConfigurable {
+public class DummyComp implements Configurable {
 
     /** doc of beamWidth. */
     @S4Integer(defaultValue = 4)
@@ -67,7 +69,7 @@ public class DummyComp implements SimpleConfigurable {
     }
 
 
-    public void newProperties(PropSheet ps) throws PropertyException {
+    public void newProperties(PropertySheet ps) throws PropertyException {
         frontEnd = (DummyFrontEnd) ps.getComponent(PROP_FRONTEND);
         beamWidth = ps.getInt(PROP_BEAM_WIDTH);
         bestAsr = ps.getString(PROP_BEST_ASR);
@@ -84,7 +86,7 @@ public class DummyComp implements SimpleConfigurable {
 
     @Test
     public void testGetDefaultInstance() throws PropertyException, InstantiationException {
-        DummyComp dc = (DummyComp) ConMan.getDefaultInstance(DummyComp.class);
+        DummyComp dc = (DummyComp) ConfigurationManager.getDefaultInstance(DummyComp.class);
 
         Assert.assertEquals(4, dc.getBeamWidth());
         Assert.assertEquals(1.3, dc.getAlpha(), 1E-10);
@@ -108,7 +110,7 @@ public class DummyComp implements SimpleConfigurable {
         Map<String, Object> defaultProps = new HashMap<String, Object>();
         defaultProps.put(DummyComp.PROP_FRONTEND, new DummyFrontEnd());
 
-        DummyComp dc = (DummyComp) ConMan.getDefaultInstance(DummyComp.class, defaultProps);
+        DummyComp dc = (DummyComp) ConfigurationManager.getDefaultInstance(DummyComp.class, defaultProps);
 
         Assert.assertEquals(4, dc.getBeamWidth());
         Assert.assertEquals(1.3, dc.getAlpha(), 1E-10);
@@ -125,7 +127,7 @@ public class DummyComp implements SimpleConfigurable {
         if (!configFile.exists())
             Assert.fail("can not find configuration file to be used for test");
 
-        ConMan cm = new ConMan(configFile.toURI().toURL());
+        ConfigurationManager cm = new ConfigurationManager(configFile.toURI().toURL());
 
         DummyComp dc = (DummyComp) cm.lookup("duco");
 

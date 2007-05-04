@@ -203,39 +203,39 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
         // hookup to all of the components
         logger = ps.getLogger();
         setupAcousticModel(ps);
-        logMath = (LogMath) ps.getComponent(PROP_LOG_MATH, LogMath.class);
-        grammar = (Grammar) ps.getComponent(PROP_GRAMMAR, Grammar.class);
-        unitManager = (UnitManager) ps.getComponent(PROP_UNIT_MANAGER,
-                UnitManager.class);
+        logMath = (LogMath) ps.getComponent(PROP_LOG_MATH);
+        grammar = (Grammar) ps.getComponent(PROP_GRAMMAR);
+        unitManager = (UnitManager) ps.getComponent(PROP_UNIT_MANAGER
+        );
 
         // get the rest of the configuration data
         logWordInsertionProbability = logMath.linearToLog(ps.getDouble(
-                PROP_WORD_INSERTION_PROBABILITY,
-                PROP_WORD_INSERTION_PROBABILITY_DEFAULT));
+                PROP_WORD_INSERTION_PROBABILITY
+        ));
         logSilenceInsertionProbability = logMath.linearToLog(ps.getDouble(
-                PROP_SILENCE_INSERTION_PROBABILITY,
-                PROP_SILENCE_INSERTION_PROBABILITY_DEFAULT));
+                PROP_SILENCE_INSERTION_PROBABILITY
+        ));
         logUnitInsertionProbability = logMath.linearToLog(ps.getDouble(
-                PROP_UNIT_INSERTION_PROBABILITY,
-                PROP_UNIT_INSERTION_PROBABILITY_DEFAULT));
+                PROP_UNIT_INSERTION_PROBABILITY
+        ));
         logFillerInsertionProbability = logMath.linearToLog(ps.getDouble(
-                PROP_FILLER_INSERTION_PROBABILITY,
-                PROP_FILLER_INSERTION_PROBABILITY_DEFAULT));
-        languageWeight = ps.getFloat(Linguist.PROP_LANGUAGE_WEIGHT,
-                PROP_LANGUAGE_WEIGHT_DEFAULT);
+                PROP_FILLER_INSERTION_PROBABILITY
+        ));
+        languageWeight = ps.getFloat(Linguist.PROP_LANGUAGE_WEIGHT
+        );
         addOutOfGrammarBranch = ps.getBoolean
-                (PROP_ADD_OUT_OF_GRAMMAR_BRANCH,
-                        PROP_ADD_OUT_OF_GRAMMAR_BRANCH_DEFAULT);
+                (PROP_ADD_OUT_OF_GRAMMAR_BRANCH
+                );
         logOutOfGrammarBranchProbability = logMath.linearToLog
-                (ps.getDouble(PROP_OUT_OF_GRAMMAR_PROBABILITY,
-                        PROP_OUT_OF_GRAMMAR_PROBABILITY_DEFAULT));
+                (ps.getDouble(PROP_OUT_OF_GRAMMAR_PROBABILITY
+                ));
         logPhoneInsertionProbability = logMath.linearToLog
-                (ps.getDouble(PROP_PHONE_INSERTION_PROBABILITY,
-                        PROP_PHONE_INSERTION_PROBABILITY_DEFAULT));
+                (ps.getDouble(PROP_PHONE_INSERTION_PROBABILITY
+                ));
         if (addOutOfGrammarBranch) {
             phoneLoopAcousticModel = (AcousticModel)
-                    ps.getComponent(PROP_PHONE_LOOP_ACOUSTIC_MODEL,
-                            AcousticModel.class);
+                    ps.getComponent(PROP_PHONE_LOOP_ACOUSTIC_MODEL
+                    );
         }
     }
 
@@ -257,8 +257,8 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
      */
     protected void setupAcousticModel(PropertySheet ps)
             throws PropertyException {
-        acousticModel = (AcousticModel) ps.getComponent(PROP_ACOUSTIC_MODEL,
-                AcousticModel.class);
+        acousticModel = (AcousticModel) ps.getComponent(PROP_ACOUSTIC_MODEL
+        );
     }
 
 

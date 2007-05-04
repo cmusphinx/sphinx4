@@ -60,7 +60,7 @@ public class LinguistProcessor implements Configurable, Runnable {
     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
     */
     public void newProperties(PropertySheet ps) throws PropertyException {
-        linguist = (Linguist) ps.getComponent(PROP_LINGUIST, Linguist.class);
+        linguist = (Linguist) ps.getComponent(PROP_LINGUIST);
 
     }
 

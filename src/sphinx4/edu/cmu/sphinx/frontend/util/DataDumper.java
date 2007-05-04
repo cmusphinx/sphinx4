@@ -86,12 +86,12 @@ public class DataDumper extends BaseDataProcessor {
     public void newProperties(PropertySheet ps) throws PropertyException {
         super.newProperties(ps);
         logger = ps.getLogger();
-        enable = ps.getBoolean(PROP_ENABLE, PROP_ENABLE_DEFAULT);
-        String format = ps.getString(PROP_OUTPUT_FORMAT,
-                PROP_OUTPUT_FORMAT_DEFAULT);
+        enable = ps.getBoolean(PROP_ENABLE);
+        String format = ps.getString(PROP_OUTPUT_FORMAT
+        );
         formatter = new DecimalFormat(format);
-        outputSignals = ps.getBoolean(PROP_OUTPUT_SIGNALS,
-                PROP_OUTPUT_SIGNALS_DEFAULT);
+        outputSignals = ps.getBoolean(PROP_OUTPUT_SIGNALS
+        );
     }
 
 

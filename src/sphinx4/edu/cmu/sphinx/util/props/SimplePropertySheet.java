@@ -14,7 +14,7 @@ import java.util.logging.Logger;
  *
  * @author Holger Brandl
  */
-public class SimplePropertySheet implements PropertySheet {
+public class SimplePropertySheet {
 
     private Map<String, Object> properties = new HashMap<String, Object>();
     private Logger logger;

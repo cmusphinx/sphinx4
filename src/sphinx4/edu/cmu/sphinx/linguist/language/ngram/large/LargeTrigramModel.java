@@ -237,34 +237,34 @@ public class LargeTrigramModel implements LanguageModel {
     */
     public void newProperties(PropertySheet ps) throws PropertyException {
         logger = ps.getLogger();
-        format = ps.getString(LanguageModel.PROP_FORMAT,
-                LanguageModel.PROP_FORMAT_DEFAULT);
-        location = new File(ps.getString(PROP_LOCATION, PROP_LOCATION_DEFAULT));
-        ngramLogFile = ps.getString(PROP_QUERY_LOG_FILE,
-                PROP_QUERY_LOG_FILE_DEFAULT);
-        maxTrigramCacheSize = ps.getInt(PROP_TRIGRAM_CACHE_SIZE,
-                PROP_TRIGRAM_CACHE_SIZE_DEFAULT);
-        maxBigramCacheSize = ps.getInt(PROP_BIGRAM_CACHE_SIZE,
-                PROP_BIGRAM_CACHE_SIZE_DEFAULT);
+        format = ps.getString(LanguageModel.PROP_FORMAT
+        );
+        location = new File(ps.getString(PROP_LOCATION));
+        ngramLogFile = ps.getString(PROP_QUERY_LOG_FILE
+        );
+        maxTrigramCacheSize = ps.getInt(PROP_TRIGRAM_CACHE_SIZE
+        );
+        maxBigramCacheSize = ps.getInt(PROP_BIGRAM_CACHE_SIZE
+        );
         clearCacheAfterUtterance = ps.getBoolean(
-                PROP_CLEAR_CACHES_AFTER_UTTERANCE,
-                PROP_CLEAR_CACHES_AFTER_UTTERANCE_DEFAULT);
-        maxDepth = ps.getInt(LanguageModel.PROP_MAX_DEPTH,
-                LanguageModel.PROP_MAX_DEPTH_DEFAULT);
-        logMath = (LogMath) ps.getComponent(PROP_LOG_MATH, LogMath.class);
-        dictionary = (Dictionary) ps.getComponent(PROP_DICTIONARY,
-                Dictionary.class);
+                PROP_CLEAR_CACHES_AFTER_UTTERANCE
+        );
+        maxDepth = ps.getInt(LanguageModel.PROP_MAX_DEPTH
+        );
+        logMath = (LogMath) ps.getComponent(PROP_LOG_MATH);
+        dictionary = (Dictionary) ps.getComponent(PROP_DICTIONARY
+        );
         applyLanguageWeightAndWip = ps.getBoolean(
-                PROP_APPLY_LANGUAGE_WEIGHT_AND_WIP,
-                PROP_APPLY_LANGUAGE_WEIGHT_AND_WIP_DEFAULT);
-        languageWeight = ps.getFloat(PROP_LANGUAGE_WEIGHT,
-                PROP_LANGUAGE_WEIGHT_DEFAULT);
-        wip = ps.getDouble(PROP_WORD_INSERTION_PROBABILITY,
-                PROP_WORD_INSERTION_PROBABILITY_DEFAULT);
-        unigramWeight = ps.getFloat(PROP_UNIGRAM_WEIGHT,
-                PROP_UNIGRAM_WEIGHT_DEFAULT);
+                PROP_APPLY_LANGUAGE_WEIGHT_AND_WIP
+        );
+        languageWeight = ps.getFloat(PROP_LANGUAGE_WEIGHT
+        );
+        wip = ps.getDouble(PROP_WORD_INSERTION_PROBABILITY
+        );
+        unigramWeight = ps.getFloat(PROP_UNIGRAM_WEIGHT
+        );
 
-        fullSmear = ps.getBoolean(PROP_FULL_SMEAR, PROP_FULL_SMEAR_DEFAULT);
+        fullSmear = ps.getBoolean(PROP_FULL_SMEAR);
     }
 
 

@@ -14,17 +14,12 @@
 package edu.cmu.sphinx.research.parallel;
 
 import edu.cmu.sphinx.decoder.search.ActiveList;
-import edu.cmu.sphinx.decoder.search.SearchManager;
 
 import edu.cmu.sphinx.frontend.FrontEnd;
 
 import edu.cmu.sphinx.linguist.acoustic.AcousticModel;
 
 import edu.cmu.sphinx.util.props.*;
-
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
 
 /**
  * Implements a feature stream used in parallel decoding.
@@ -97,10 +92,10 @@ public class FeatureStream implements Configurable {
      */
     public void newProperties(PropertySheet ps) throws PropertyException {
         model = (AcousticModel) ps.getComponent
-            (PROP_ACOUSTIC_MODEL, AcousticModel.class);
+            (PROP_ACOUSTIC_MODEL);
         name = model.getName();
-        frontEnd = (FrontEnd) ps.getComponent(PROP_FRONT_END, FrontEnd.class);
-        eta = ps.getFloat(PROP_ETA, PROP_ETA_DEFAULT);
+        frontEnd = (FrontEnd) ps.getComponent(PROP_FRONT_END);
+        eta = ps.getFloat(PROP_ETA);
     }
 
 

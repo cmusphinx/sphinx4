@@ -169,8 +169,7 @@ public interface Linguist extends Configurable {
 
     /** Property that controls whether filler words are automatically added to the vocabulary */
     @S4Boolean(defaultValue = false)
-    public final static String PROP_ADD_FILLER_WORDS =
-            "addFillerWords";
+    public final static String PROP_ADD_FILLER_WORDS = "addFillerWords";
 
 
     /** The default value for PROP_ADD_FILLER_WORDS. */
@@ -179,8 +178,7 @@ public interface Linguist extends Configurable {
 
     /** Property to control the the dumping of the search space */
     @S4Boolean(defaultValue = false)
-    public final static String PROP_SHOW_SEARCH_SPACE
-            = "showSearchSpace";
+    public final static String PROP_SHOW_SEARCH_SPACE = "showSearchSpace";
 
 
     /** The default value for PROP_SHOW_SEARCH_SPACE. */
@@ -188,12 +186,11 @@ public interface Linguist extends Configurable {
 
 
     /** Property to control the the validating of the search space */
-    public final static String PROP_VALIDATE_SEARCH_SPACE
-            = "validateSearchSpace";
+    @S4Boolean(defaultValue = false)
+    public final static String PROP_VALIDATE_SEARCH_SPACE = "validateSearchSpace";
 
 
     /** The default value for PROP_VALIDATE_SEARCH_SPACE. */
-    @S4Boolean(defaultValue = false)
     public final static boolean PROP_VALIDATE_SEARCH_SPACE_DEFAULT = false;
 
 
@@ -202,8 +199,7 @@ public interface Linguist extends Configurable {
      * displayed for every 1000 search states added to the search space
      */
     @S4Boolean(defaultValue = false)
-    public final static String PROP_SHOW_COMPILATION_PROGRESS
-            = "showCompilationProgress";
+    public final static String PROP_SHOW_COMPILATION_PROGRESS = "showCompilationProgress";
 
 
     /** The default value for PROP_SHOW_COMPILATION_PROGRESS. */
@@ -216,16 +212,14 @@ public interface Linguist extends Configurable {
      * more compact results.
      */
     @S4Boolean(defaultValue = false)
-    public final static String PROP_GENERATE_UNIT_STATES
-            = "generateUnitStates";
+    public final static String PROP_GENERATE_UNIT_STATES = "generateUnitStates";
 
     /** The default value for PROP_GENERATE_UNIT_STATES */
     public final static boolean PROP_GENERATE_UNIT_STATES_DEFAULT = false;
 
     /** A sphinx property that determines whether or not unigram probabilities are smeared through the lex tree */
     @S4Boolean(defaultValue = false)
-    public final static String PROP_WANT_UNIGRAM_SMEAR
-            = "wantUnigramSmear";
+    public final static String PROP_WANT_UNIGRAM_SMEAR = "wantUnigramSmear";
 
     /** The default value for PROP_WANT_UNIGRAM_SMEAR */
     public final static boolean PROP_WANT_UNIGRAM_SMEAR_DEFAULT = false;
@@ -233,8 +227,7 @@ public interface Linguist extends Configurable {
 
     /** A sphinx property that determines the weight of the smear */
     @S4Double(defaultValue = 1.0)
-    public final static String PROP_UNIGRAM_SMEAR_WEIGHT
-            = "unigramSmearWeight";
+    public final static String PROP_UNIGRAM_SMEAR_WEIGHT = "unigramSmearWeight";
 
     /** The default value for PROP_UNIGRAM_SMEAR_WEIGHT */
     public final static float PROP_UNIGRAM_SMEAR_WEIGHT_DEFAULT = 1.0f;

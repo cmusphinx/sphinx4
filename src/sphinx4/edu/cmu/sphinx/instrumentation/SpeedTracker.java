@@ -132,7 +132,7 @@ public class SpeedTracker
     */
     public void newProperties(PropertySheet ps) throws PropertyException {
         Recognizer newRecognizer = (Recognizer) ps.getComponent(
-                PROP_RECOGNIZER, Recognizer.class);
+                PROP_RECOGNIZER);
         if (recognizer == null) {
             recognizer = newRecognizer;
             recognizer.addResultListener(this);
@@ -146,8 +146,8 @@ public class SpeedTracker
         }
 
 
-        FrontEnd newFrontEnd = (FrontEnd) ps.getComponent(PROP_FRONTEND,
-                FrontEnd.class);
+        FrontEnd newFrontEnd = (FrontEnd) ps.getComponent(PROP_FRONTEND
+        );
         if (frontEnd == null) {
             frontEnd = newFrontEnd;
             frontEnd.addSignalListener(this);
@@ -156,13 +156,13 @@ public class SpeedTracker
             frontEnd = newFrontEnd;
             frontEnd.addSignalListener(this);
         }
-        showSummary = ps.getBoolean(PROP_SHOW_SUMMARY,
-                PROP_SHOW_SUMMARY_DEFAULT);
-        showDetails = ps.getBoolean(PROP_SHOW_DETAILS,
-                PROP_SHOW_DETAILS_DEFAULT);
-        showResponseTime = ps.getBoolean(PROP_SHOW_RESPONSE_TIME,
-                PROP_SHOW_RESPONSE_TIME_DEFAULT);
-        showTimers = ps.getBoolean(PROP_SHOW_TIMERS, PROP_SHOW_TIMERS_DEFAULT);
+        showSummary = ps.getBoolean(PROP_SHOW_SUMMARY
+        );
+        showDetails = ps.getBoolean(PROP_SHOW_DETAILS
+        );
+        showResponseTime = ps.getBoolean(PROP_SHOW_RESPONSE_TIME
+        );
+        showTimers = ps.getBoolean(PROP_SHOW_TIMERS);
     }
 
 

@@ -126,7 +126,7 @@ public class BeamFinder implements ResultListener,
     */
     public void newProperties(PropertySheet ps) throws PropertyException {
         Recognizer newRecognizer = (Recognizer) ps.getComponent(
-                PROP_RECOGNIZER, Recognizer.class);
+                PROP_RECOGNIZER);
 
         if (recognizer == null) {
             recognizer = newRecognizer;
@@ -140,13 +140,13 @@ public class BeamFinder implements ResultListener,
             recognizer.addStateListener(this);
         }
 
-        logMath = (LogMath) ps.getComponent(PROP_LOG_MATH, LogMath.class);
+        logMath = (LogMath) ps.getComponent(PROP_LOG_MATH);
 
-        showSummary = ps.getBoolean(PROP_SHOW_SUMMARY,
-                PROP_SHOW_SUMMARY_DEFAULT);
-        showDetails = ps.getBoolean(PROP_SHOW_DETAILS,
-                PROP_SHOW_DETAILS_DEFAULT);
-        enabled = ps.getBoolean(PROP_ENABLED, PROP_ENABLED_DEFAULT);
+        showSummary = ps.getBoolean(PROP_SHOW_SUMMARY
+        );
+        showDetails = ps.getBoolean(PROP_SHOW_DETAILS
+        );
+        enabled = ps.getBoolean(PROP_ENABLED);
     }
 
 

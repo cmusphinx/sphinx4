@@ -18,7 +18,6 @@ import edu.cmu.sphinx.recognizer.Recognizer;
 import edu.cmu.sphinx.result.Result;
 
 import edu.cmu.sphinx.util.props.*;
-import edu.cmu.sphinx.decoder.search.SearchManager;
 
 import java.io.IOException;
 import java.util.logging.Logger;
@@ -101,11 +100,11 @@ public class DialogManager implements Configurable {
     public void newProperties(PropertySheet ps) throws PropertyException {
         logger = ps.getLogger();
         grammar = 
-            (JSGFGrammar) ps.getComponent(PROP_JSGF_GRAMMAR, JSGFGrammar.class);
+            (JSGFGrammar) ps.getComponent(PROP_JSGF_GRAMMAR);
         microphone = 
-            (Microphone) ps.getComponent(PROP_MICROPHONE, Microphone.class);
+            (Microphone) ps.getComponent(PROP_MICROPHONE);
         recognizer = 
-            (Recognizer) ps.getComponent(PROP_RECOGNIZER, Recognizer.class);
+            (Recognizer) ps.getComponent(PROP_RECOGNIZER);
     }
 
 

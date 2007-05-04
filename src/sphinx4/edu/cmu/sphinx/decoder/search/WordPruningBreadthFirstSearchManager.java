@@ -242,32 +242,32 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
     */
     public void newProperties(PropertySheet ps) throws PropertyException {
-        logMath = (LogMath) ps.getComponent(PROP_LOG_MATH, LogMath.class);
+        logMath = (LogMath) ps.getComponent(PROP_LOG_MATH);
         logger = ps.getLogger();
-        linguist = (Linguist) ps.getComponent(PROP_LINGUIST, Linguist.class);
-        pruner = (Pruner) ps.getComponent(PROP_PRUNER, Pruner.class);
-        scorer = (AcousticScorer) ps.getComponent(PROP_SCORER,
-                AcousticScorer.class);
+        linguist = (Linguist) ps.getComponent(PROP_LINGUIST);
+        pruner = (Pruner) ps.getComponent(PROP_PRUNER);
+        scorer = (AcousticScorer) ps.getComponent(PROP_SCORER
+        );
         activeListManager = (ActiveListManager) ps.getComponent(
-                PROP_ACTIVE_LIST_MANAGER, ActiveListManager.class);
-        showTokenCount = ps.getBoolean(PROP_SHOW_TOKEN_COUNT,
-                PROP_SHOW_TOKEN_COUNT_DEFAULT);
-        growSkipInterval = ps.getInt(PROP_GROW_SKIP_INTERVAL,
-                PROP_GROW_SKIP_INTERVAL_DEFAULT);
+                PROP_ACTIVE_LIST_MANAGER);
+        showTokenCount = ps.getBoolean(PROP_SHOW_TOKEN_COUNT
+        );
+        growSkipInterval = ps.getInt(PROP_GROW_SKIP_INTERVAL
+        );
 
-        checkStateOrder = ps.getBoolean(PROP_CHECK_STATE_ORDER,
-                PROP_CHECK_STATE_ORDER_DEFAULT);
-        buildWordLattice = ps.getBoolean(PROP_BUILD_WORD_LATTICE,
-                PROP_BUILD_WORD_LATTICE_DEFAULT);
-        maxLatticeEdges = ps.getInt(PROP_MAX_LATTICE_EDGES,
-                PROP_MAX_LATTICE_EDGES_DEFAULT);
-        acousticLookaheadFrames = ps.getFloat(PROP_ACOUSTIC_LOOKAHEAD_FRAMES,
-                PROP_ACOUSTIC_LOOKAHEAD_FRAMES_DEFAULT);
-        keepAllTokens = ps.getBoolean(PROP_KEEP_ALL_TOKENS,
-                PROP_KEEP_ALL_TOKENS_DEFAULT);
+        checkStateOrder = ps.getBoolean(PROP_CHECK_STATE_ORDER
+        );
+        buildWordLattice = ps.getBoolean(PROP_BUILD_WORD_LATTICE
+        );
+        maxLatticeEdges = ps.getInt(PROP_MAX_LATTICE_EDGES
+        );
+        acousticLookaheadFrames = ps.getFloat(PROP_ACOUSTIC_LOOKAHEAD_FRAMES
+        );
+        keepAllTokens = ps.getBoolean(PROP_KEEP_ALL_TOKENS
+        );
 
-        double linearRelativeBeamWidth = ps.getDouble(PROP_RELATIVE_BEAM_WIDTH,
-                PROP_RELATIVE_BEAM_WIDTH_DEFAULT);
+        double linearRelativeBeamWidth = ps.getDouble(PROP_RELATIVE_BEAM_WIDTH
+        );
         this.relativeBeamWidth = logMath.linearToLog(linearRelativeBeamWidth);
     }
 

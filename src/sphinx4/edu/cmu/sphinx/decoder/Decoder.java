@@ -75,10 +75,10 @@ public class Decoder implements Configurable {
     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
     */
     public void newProperties(PropertySheet ps) throws PropertyException {
-        featureBlockSize = ps.getInt(PROP_FEATURE_BLOCK_SIZE,
-                PROP_FEATURE_BLOCK_SIZE_DEFAULT);
-        searchManager = (SearchManager) ps.getComponent(PROP_SEARCH_MANAGER,
-                SearchManager.class);
+        featureBlockSize = ps.getInt(PROP_FEATURE_BLOCK_SIZE
+        );
+        searchManager = (SearchManager) ps.getComponent(PROP_SEARCH_MANAGER
+        );
     }
 
 

@@ -124,18 +124,18 @@ public abstract class Grammar implements Configurable, GrammarInterface {
     */
     public void newProperties(PropertySheet ps) throws PropertyException {
         logger = ps.getLogger();
-        showGrammar = ps.getBoolean(PROP_SHOW_GRAMMAR,
-                PROP_SHOW_GRAMMAR_DEFAULT);
-        optimizeGrammar = ps.getBoolean(PROP_OPTIMIZE_GRAMMAR,
-                PROP_OPTIMIZE_GRAMMAR_DEFAULT);
+        showGrammar = ps.getBoolean(PROP_SHOW_GRAMMAR
+        );
+        optimizeGrammar = ps.getBoolean(PROP_OPTIMIZE_GRAMMAR
+        );
 
-        addSilenceWords = ps.getBoolean(PROP_ADD_SIL_WORDS,
-                PROP_ADD_SIL_WORDS_DEFAULT);
-        addFillerWords = ps.getBoolean(PROP_ADD_FILLER_WORDS,
-                PROP_ADD_FILLER_WORDS_DEFAULT);
+        addSilenceWords = ps.getBoolean(PROP_ADD_SIL_WORDS
+        );
+        addFillerWords = ps.getBoolean(PROP_ADD_FILLER_WORDS
+        );
 
-        dictionary = (Dictionary) ps.getComponent(PROP_DICTIONARY,
-                Dictionary.class);
+        dictionary = (Dictionary) ps.getComponent(PROP_DICTIONARY
+        );
     }
 
 

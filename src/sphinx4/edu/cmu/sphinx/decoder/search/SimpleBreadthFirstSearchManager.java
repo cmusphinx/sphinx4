@@ -188,22 +188,22 @@ public class SimpleBreadthFirstSearchManager implements SearchManager {
     */
     public void newProperties(PropertySheet ps) throws PropertyException {
         logger = ps.getLogger();
-        logMath = (LogMath) ps.getComponent(PROP_LOG_MATH, LogMath.class);
-        linguist = (Linguist) ps.getComponent(PROP_LINGUIST, Linguist.class);
-        pruner = (Pruner) ps.getComponent(PROP_PRUNER, Pruner.class);
-        scorer = (AcousticScorer) ps.getComponent(PROP_SCORER,
-                AcousticScorer.class);
+        logMath = (LogMath) ps.getComponent(PROP_LOG_MATH);
+        linguist = (Linguist) ps.getComponent(PROP_LINGUIST);
+        pruner = (Pruner) ps.getComponent(PROP_PRUNER);
+        scorer = (AcousticScorer) ps.getComponent(PROP_SCORER
+        );
         activeListFactory = (ActiveListFactory) ps.getComponent(
-                PROP_ACTIVE_LIST_FACTORY, ActiveListFactory.class);
-        showTokenCount = ps.getBoolean(PROP_SHOW_TOKEN_COUNT,
-                PROP_SHOW_TOKEN_COUNT_DEFAULT);
+                PROP_ACTIVE_LIST_FACTORY);
+        showTokenCount = ps.getBoolean(PROP_SHOW_TOKEN_COUNT
+        );
         double relativeWordBeamWidth = ps.getDouble(
-                PROP_RELATIVE_WORD_BEAM_WIDTH,
-                PROP_RELATIVE_WORD_BEAM_WIDTH_DEFAULT);
-        growSkipInterval = ps.getInt(PROP_GROW_SKIP_INTERVAL,
-                PROP_GROW_SKIP_INTERVAL_DEFAULT);
-        wantEntryPruning = ps.getBoolean(PROP_WANT_ENTRY_PRUNING,
-                PROP_WANT_ENTRY_PRUNING_DEFAULT);
+                PROP_RELATIVE_WORD_BEAM_WIDTH
+        );
+        growSkipInterval = ps.getInt(PROP_GROW_SKIP_INTERVAL
+        );
+        wantEntryPruning = ps.getBoolean(PROP_WANT_ENTRY_PRUNING
+        );
         logRelativeWordBeamWidth = logMath.linearToLog(relativeWordBeamWidth);
     }
 

@@ -181,16 +181,16 @@ public class WavWriter extends BaseDataProcessor {
     public void newProperties(PropertySheet ps) throws PropertyException {
         super.newProperties(ps);
 
-        outPattern = ps.getString(WavWriter.PROP_OUT_FILE_NAME_PATTERN, null);
+        outPattern = ps.getString(WavWriter.PROP_OUT_FILE_NAME_PATTERN);
 
-        bitsPerSample = ps.getInt(PROP_BITS_PER_SAMPLE, bitsPerSample);
+        bitsPerSample = ps.getInt(PROP_BITS_PER_SAMPLE);
         if (bitsPerSample % 8 != 0) {
             throw new Error("StreamDataSource: bits per sample must be a multiple of 8.");
         }
 
-        isBigEndian = ps.getBoolean(PROP_BIG_ENDIAN_DATA, isBigEndian);
-        isSigned = ps.getBoolean(PROP_SIGNED_DATA, isSigned);
-        captureUtts = ps.getBoolean(PROP_CAPTURE_UTTERANCES, captureUtts);
+        isBigEndian = ps.getBoolean(PROP_BIG_ENDIAN_DATA);
+        isSigned = ps.getBoolean(PROP_SIGNED_DATA);
+        captureUtts = ps.getBoolean(PROP_CAPTURE_UTTERANCES);
 
         initialize();
     }

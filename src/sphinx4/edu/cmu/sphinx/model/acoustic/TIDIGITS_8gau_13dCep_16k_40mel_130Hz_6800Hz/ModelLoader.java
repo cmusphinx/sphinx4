@@ -119,7 +119,7 @@ public class ModelLoader implements Loader {
     public final static String PROP_UNIT_MANAGER = "unitManager";
 
     /** Specifies whether the model to be loaded is in ASCII or binary format */
-    @S4Boolean(defaultValue = true)
+    @S4Boolean(defaultValue = true, isNotDefined = true)
     public final static String PROP_IS_BINARY = "isBinary";
 
     /** The default value of PROP_IS_BINARY */
@@ -157,7 +157,7 @@ public class ModelLoader implements Loader {
      * The SphinxProperty specifying whether the transition matrices of the acoustic model is in sparse form, i.e.,
      * omitting the zeros of the non-transitioning states.
      */
-    @S4Boolean(defaultValue = true)
+    @S4Boolean(defaultValue = true, isNotDefined = true)
     public final static String PROP_SPARSE_FORM = "sparseForm";
 
     /** The default value of PROP_SPARSE_FORM. */
@@ -295,30 +295,36 @@ public class ModelLoader implements Loader {
     public void newProperties(PropertySheet ps) throws PropertyException {
         logger = ps.getLogger();
         propsFile =
-                ps.getString(PROP_PROPERTIES_FILE, PROP_PROPERTIES_FILE_DEFAULT);
+                ps.getString(PROP_PROPERTIES_FILE);
         logMath =
-                (LogMath) ps.getComponent(PROP_LOG_MATH, LogMath.class);
+                (LogMath) ps.getComponent(PROP_LOG_MATH);
         unitManager =
-                (UnitManager) ps.getComponent(PROP_UNIT_MANAGER,
-                        UnitManager.class);
-        binary =
-                ps.getBoolean(PROP_IS_BINARY, getIsBinaryDefault());
-        sparseForm =
-                ps.getBoolean(PROP_SPARSE_FORM, getSparseFormDefault());
-        vectorLength =
-                ps.getInt(PROP_VECTOR_LENGTH, getVectorLengthDefault());
-        model =
-                ps.getString(PROP_MODEL, getModelDefault());
-        dataDir =
-                ps.getString(PROP_DATA_LOCATION, getDataLocationDefault()) + "/";
+                (UnitManager) ps.getComponent(PROP_UNIT_MANAGER
+                );
+
+        Boolean isBinary = ps.getBoolean(PROP_IS_BINARY);
+        binary = isBinary != null ? isBinary : getIsBinaryDefault();
+
+        Boolean isSparse = ps.getBoolean(PROP_IS_BINARY);
+        sparseForm = isSparse != null ? isSparse : getSparseFormDefault();
+
+        vectorLength = ps.getInt(PROP_VECTOR_LENGTH);
+        vectorLength = vectorLength > 0 ? vectorLength : getVectorLengthDefault();
+
+        model = ps.getString(PROP_MODEL);
+        model = model == null ? getModelDefault() : model;
+
+        dataDir = ps.getString(PROP_DATA_LOCATION);
+        dataDir = (dataDir == null ? getDataLocationDefault() : dataDir) + "/";
+
         distFloor =
-                ps.getFloat(PROP_MC_FLOOR, PROP_MC_FLOOR_DEFAULT);
+                ps.getFloat(PROP_MC_FLOOR);
         mixtureWeightFloor =
-                ps.getFloat(PROP_MW_FLOOR, PROP_MW_FLOOR_DEFAULT);
+                ps.getFloat(PROP_MW_FLOOR);
         varianceFloor =
-                ps.getFloat(PROP_VARIANCE_FLOOR, PROP_VARIANCE_FLOOR_DEFAULT);
+                ps.getFloat(PROP_VARIANCE_FLOOR);
         useCDUnits =
-                ps.getBoolean(PROP_USE_CD_UNITS, PROP_USE_CD_UNITS_DEFAULT);
+                ps.getBoolean(PROP_USE_CD_UNITS);
     }
 
 

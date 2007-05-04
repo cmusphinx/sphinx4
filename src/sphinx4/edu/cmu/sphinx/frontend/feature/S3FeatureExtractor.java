@@ -81,7 +81,7 @@ public class S3FeatureExtractor extends BaseDataProcessor {
     */
     public void newProperties(PropertySheet ps) throws PropertyException {
         super.newProperties(ps);
-        window = ps.getInt(PROP_FEATURE_WINDOW, PROP_FEATURE_WINDOW_DEFAULT);
+        window = ps.getInt(PROP_FEATURE_WINDOW);
     }
 
 

@@ -20,11 +20,9 @@ import edu.cmu.sphinx.decoder.search.Token;
 import edu.cmu.sphinx.decoder.pruner.Pruner;
 
 import edu.cmu.sphinx.util.LogMath;
-import edu.cmu.sphinx.util.SphinxProperties;
 
 import edu.cmu.sphinx.util.props.*;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -85,16 +83,16 @@ public abstract class TokenScorePruner implements Pruner {
      * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
      */
     public void newProperties(PropertySheet ps) throws PropertyException {
-        logMath = (LogMath) ps.getComponent(PROP_LOG_MATH, LogMath.class);
-        setAbsoluteBeamWidth(ps.getInt(PROP_ABSOLUTE_BEAM_WIDTH,
-                                       PROP_ABSOLUTE_BEAM_WIDTH_DEFAULT));
+        logMath = (LogMath) ps.getComponent(PROP_LOG_MATH);
+        setAbsoluteBeamWidth(ps.getInt(PROP_ABSOLUTE_BEAM_WIDTH
+        ));
         double linearRelativeBeamWidth =
-            ps.getDouble(PROP_RELATIVE_BEAM_WIDTH,
-                         PROP_RELATIVE_BEAM_WIDTH_DEFAULT);
+            ps.getDouble(PROP_RELATIVE_BEAM_WIDTH
+            );
         setRelativeBeamWidth
             ((float) logMath.linearToLog(linearRelativeBeamWidth));
         activeListFactory = (ActiveListFactory) ps.getComponent
-            (PROP_ACTIVE_LIST_FACTORY, ActiveListFactory.class);
+            (PROP_ACTIVE_LIST_FACTORY);
     }
     
 

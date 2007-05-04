@@ -84,8 +84,8 @@ public class Preemphasizer extends BaseDataProcessor {
     */
     public void newProperties(PropertySheet ps) throws PropertyException {
         super.newProperties(ps);
-        preemphasisFactor = ps.getDouble(PROP_PREEMPHASIS_FACTOR,
-                PROP_PREEMPHASIS_FACTOR_DEFAULT);
+        preemphasisFactor = ps.getDouble(PROP_PREEMPHASIS_FACTOR
+        );
     }
 
 

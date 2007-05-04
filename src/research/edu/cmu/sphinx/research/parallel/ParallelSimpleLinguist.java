@@ -90,9 +90,9 @@ public class ParallelSimpleLinguist extends FlatLinguist {
      */
     public void newProperties(PropertySheet ps) throws PropertyException {
         super.newProperties(ps);
-        tokenStackCapacity = ps.getInt(PROP_STACK_CAPACITY,
-                PROP_STACK_CAPACITY_DEFAULT);
-        tieLevel = ps.getString(PROP_TIE_LEVEL, PROP_TIE_LEVEL_DEFAULT);
+        tokenStackCapacity = ps.getInt(PROP_STACK_CAPACITY
+        );
+        tieLevel = ps.getString(PROP_TIE_LEVEL);
     }
 
 
@@ -104,7 +104,7 @@ public class ParallelSimpleLinguist extends FlatLinguist {
     protected void setupAcousticModel(PropertySheet ps)
             throws PropertyException {
         featureStreams = ps.getComponentList
-                (PROP_FEATURE_STREAMS, FeatureStream.class);
+                (PROP_FEATURE_STREAMS);
     }
 
 

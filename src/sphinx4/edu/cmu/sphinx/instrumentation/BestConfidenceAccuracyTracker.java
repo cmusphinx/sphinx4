@@ -69,8 +69,8 @@ public class BestConfidenceAccuracyTracker extends AccuracyTracker {
     public void newProperties(PropertySheet ps) throws PropertyException {
         super.newProperties(ps);
         confidenceScorer = (ConfidenceScorer) ps.getComponent(
-                PROP_CONFIDENCE_SCORER,
-                ConfidenceScorer.class);
+                PROP_CONFIDENCE_SCORER
+        );
     }
 
 
