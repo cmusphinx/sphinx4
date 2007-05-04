@@ -12,103 +12,67 @@
 
 package edu.cmu.sphinx.research.parallel;
 
-import edu.cmu.sphinx.linguist.acoustic.AcousticModel;
-
-import edu.cmu.sphinx.result.Result;
-
+import edu.cmu.sphinx.decoder.pruner.Pruner;
 import edu.cmu.sphinx.decoder.scorer.AcousticScorer;
 import edu.cmu.sphinx.decoder.scorer.Scoreable;
-
 import edu.cmu.sphinx.decoder.search.ActiveList;
 import edu.cmu.sphinx.decoder.search.ActiveListFactory;
 import edu.cmu.sphinx.decoder.search.SearchManager;
-
-import edu.cmu.sphinx.decoder.pruner.Pruner;
-
+import edu.cmu.sphinx.decoder.search.Token;
 import edu.cmu.sphinx.linguist.Linguist;
-import edu.cmu.sphinx.linguist.SearchGraph;
 import edu.cmu.sphinx.linguist.SearchState;
 import edu.cmu.sphinx.linguist.SearchStateArc;
 import edu.cmu.sphinx.linguist.flat.Color;
 import edu.cmu.sphinx.linguist.flat.SentenceHMMState;
 import edu.cmu.sphinx.linguist.flat.SentenceHMMStateArc;
-
-import edu.cmu.sphinx.decoder.search.Token;
-
+import edu.cmu.sphinx.result.Result;
 import edu.cmu.sphinx.util.LogMath;
-import edu.cmu.sphinx.util.SphinxProperties;
 import edu.cmu.sphinx.util.Timer;
-
-import edu.cmu.sphinx.util.props.Configurable;
-import edu.cmu.sphinx.util.props.PropertyException;
-import edu.cmu.sphinx.util.props.PropertySheet;
-import edu.cmu.sphinx.util.props.PropertyType;
-import edu.cmu.sphinx.util.props.Registry;
+import edu.cmu.sphinx.util.props.*;
 
 import java.io.IOException;
-
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.LinkedList;
-import java.util.Map;
+import java.util.*;
 
 
-/**
- * Performs recognition on parallel feature streams.
- */
+/** Performs recognition on parallel feature streams. */
 public class ParallelSearchManager implements SearchManager {
 
-    /**
-     * The sphinx property name for the active list type.
-     */
+    /** The sphinx property name for the active list type. */
+    @S4Component(type = ActiveListFactory.class)
     public static final String PROP_ACTIVE_LIST_FACTORY = "activeListFactory";
 
-    /**
-     * The sphinx property name for whether to do feature pruning.
-     */
+    /** The sphinx property name for whether to do feature pruning. */
+    @S4Boolean(defaultValue = false)
     public static final String PROP_DO_FEATURE_PRUNING = "doFeaturePruning";
 
-    /**
-     * The default value for whether to do feature pruning, which is false.
-     */
+    /** The default value for whether to do feature pruning, which is false. */
     public static final boolean PROP_DO_FEATURE_PRUNING_DEFAULT = false;
 
-    /**
-     * The sphinx property for the feature score pruner.
-     */
+    /** The sphinx property for the feature score pruner. */
+    @S4Component(type = FeatureScorePruner.class)
     public static final String PROP_FEATURE_SCORE_PRUNER = "featureScorePruner";
 
-    /**
-     * The sphinx property name for whether to do combine pruning.
-     */
+    /** The sphinx property name for whether to do combine pruning. */
+    @S4Boolean(defaultValue = false)
     public static final String PROP_DO_COMBINE_PRUNING = "doCombinePruning";
 
-    /**
-     * The default value for whether to do combine pruning, which is false.
-     */
+    /** The default value for whether to do combine pruning, which is false. */
     public static final boolean PROP_DO_COMBINE_PRUNING_DEFAULT = false;
 
-    /**
-     * The sphinx property for the combined score pruner.
-     */
-    public static final String PROP_COMBINED_SCORE_PRUNER = 
-        "combinedScorePruner";
+//    /** The sphinx property for the combined score pruner. */
+//    @S4Component(type = FeatureScoreCombiner.class)
+//    public static final String PROP_COMBINED_SCORE_PRUNER = "combinedScorePruner";
 
-    /**
-     * The sphinx property for scorer used.
-     */
+    /** The sphinx property for scorer used. */
+    @S4Component(type = AcousticScorer.class)
     public static final String PROP_SCORER = "scorer";
 
-    /**
-     * The sphinx property for linguist used.
-     */
+    /** The sphinx property for linguist used. */
+    @S4Component(type = Linguist.class)
     public static final String PROP_LINGUIST = "linguist";
 
-    /**
-     * The sphinx property for the log math used.
-     */
+    /** The sphinx property for the log math used. */
+    @S4Component(type = LogMath.class)
     public static final String PROP_LOG_MATH = "logMath";
 
 
@@ -117,7 +81,7 @@ public class ParallelSearchManager implements SearchManager {
     private AcousticScorer scorer;
     private Pruner featureScorePruner;
     private Pruner combinedScorePruner;
-    private ScoreCombiner featureScoreCombiner;
+//    private ScoreCombiner featureScoreCombiner;
     private LogMath logMath;
 
     private int currentFrameNumber;           // the current frame number
@@ -140,7 +104,7 @@ public class ParallelSearchManager implements SearchManager {
      * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String, edu.cmu.sphinx.util.props.Registry)
      */
     public void register(String name, Registry registry)
-        throws PropertyException {
+            throws PropertyException {
         this.name = name;
         registry.register(PROP_LINGUIST, PropertyType.COMPONENT);
         registry.register(PROP_SCORER, PropertyType.COMPONENT);
@@ -148,7 +112,7 @@ public class ParallelSearchManager implements SearchManager {
         registry.register(PROP_DO_FEATURE_PRUNING, PropertyType.BOOLEAN);
         registry.register(PROP_DO_COMBINE_PRUNING, PropertyType.BOOLEAN);
         registry.register(PROP_FEATURE_SCORE_PRUNER, PropertyType.COMPONENT);
-        registry.register(PROP_COMBINED_SCORE_PRUNER, PropertyType.COMPONENT);
+//        registry.register(PROP_COMBINED_SCORE_PRUNER, PropertyType.COMPONENT);
         registry.register(PROP_LOG_MATH, PropertyType.COMPONENT);
     }
 
@@ -163,35 +127,33 @@ public class ParallelSearchManager implements SearchManager {
         logMath = (LogMath) ps.getComponent(PROP_LOG_MATH, LogMath.class);
 
         linguist = (ParallelSimpleLinguist) ps.getComponent
-            (PROP_LINGUIST, ParallelSimpleLinguist.class);
+                (PROP_LINGUIST, ParallelSimpleLinguist.class);
 
         scorer = (AcousticScorer) ps.getComponent
-            (PROP_SCORER, AcousticScorer.class);
+                (PROP_SCORER, AcousticScorer.class);
 
-	activeListFactory = (ActiveListFactory) ps.getComponent
-            (PROP_ACTIVE_LIST_FACTORY, ActiveListFactory.class);
+        activeListFactory = (ActiveListFactory) ps.getComponent
+                (PROP_ACTIVE_LIST_FACTORY, ActiveListFactory.class);
 
-	this.doFeaturePruning = ps.getBoolean
-	    (PROP_DO_FEATURE_PRUNING, PROP_DO_FEATURE_PRUNING_DEFAULT);
+        this.doFeaturePruning = ps.getBoolean
+                (PROP_DO_FEATURE_PRUNING, PROP_DO_FEATURE_PRUNING_DEFAULT);
 
-	this.doCombinePruning = ps.getBoolean
-	    (PROP_DO_COMBINE_PRUNING, PROP_DO_COMBINE_PRUNING_DEFAULT);
+        this.doCombinePruning = ps.getBoolean
+                (PROP_DO_COMBINE_PRUNING, PROP_DO_COMBINE_PRUNING_DEFAULT);
 
-	if (doFeaturePruning) {
-	    featureScorePruner = (FeatureScorePruner) ps.getComponent
-                (PROP_FEATURE_SCORE_PRUNER, FeatureScorePruner.class);
+        if (doFeaturePruning) {
+            featureScorePruner = (FeatureScorePruner) ps.getComponent
+                    (PROP_FEATURE_SCORE_PRUNER, FeatureScorePruner.class);
         }
-	if (doCombinePruning) {
-	    combinedScorePruner = (CombinedScorePruner) ps.getComponent
-                (PROP_COMBINED_SCORE_PRUNER, CombinedScorePruner.class);
-	}
-	
-        featureScoreCombiner = new FeatureScoreCombiner();
+//        if (doCombinePruning) {
+//            combinedScorePruner = (CombinedScorePruner) ps.getComponent
+//                    (PROP_COMBINED_SCORE_PRUNER, CombinedScorePruner.class);
+//        }
 
         scoreTimer = Timer.getTimer("Score");
         pruneTimer = Timer.getTimer("Prune");
         growTimer = Timer.getTimer("Grow");
-        
+
     }
 
 
@@ -203,21 +165,21 @@ public class ParallelSearchManager implements SearchManager {
     public void allocate() throws IOException {
         bestTokenMap = new HashMap();
         linguist.allocate();
-	if (doFeaturePruning) {
-	    featureScorePruner.allocate();
-	}
-	if (doCombinePruning) {
-	    combinedScorePruner.allocate();
-	}
+        if (doFeaturePruning) {
+            featureScorePruner.allocate();
+        }
+        if (doCombinePruning) {
+            combinedScorePruner.allocate();
+        }
         scorer.allocate();
     }
-    
+
 
     /*
-     * (non-Javadoc)
-     *
-     * @see edu.cmu.sphinx.util.props.Configurable#getName()
-     */
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.util.props.Configurable#getName()
+    */
     public String getName() {
         return name;
     }
@@ -229,214 +191,200 @@ public class ParallelSearchManager implements SearchManager {
      * @param message the debug message to print
      */
     private void debugPrint(String message) {
-	if (false) {
-	    System.out.println(message);
-	}
+        if (false) {
+            System.out.println(message);
+        }
     }
 
 
     /**
-     * Prepares the SearchManager for recognition.  This method must
-     * be called before <code> recognize </code> is called.
+     * Prepares the SearchManager for recognition.  This method must be called before <code> recognize </code> is
+     * called.
      */
     public void startRecognition() {
-	currentFrameNumber = 0;
-	linguist.startRecognition();
+        currentFrameNumber = 0;
+        linguist.startRecognition();
         if (doFeaturePruning) {
             featureScorePruner.startRecognition();
-	}
-	if (doCombinePruning) {
+        }
+        if (doCombinePruning) {
             combinedScorePruner.startRecognition();
         }
-	scorer.startRecognition();
-	createInitialLists();
+        scorer.startRecognition();
+        createInitialLists();
     }
 
 
     /**
-     * Creates the ActiveLists used for decoding. There is one ActiveList
-     * created for each feature stream (or acoustic model), and also an
-     * ActiveList to do the overall pruning.
+     * Creates the ActiveLists used for decoding. There is one ActiveList created for each feature stream (or acoustic
+     * model), and also an ActiveList to do the overall pruning.
      */
     private void createInitialLists() {
-        
+
         combinedActiveList = activeListFactory.newInstance();
         delayedExpansionList = activeListFactory.newInstance();
-        
+
         SentenceHMMState firstState = (SentenceHMMState)
-            linguist.getSearchGraph().getInitialState();
-        
+                linguist.getSearchGraph().getInitialState();
+
         // create the first token and grow it, its first parameter
         // is null because it has no predecessor
         CombineToken firstToken = new CombineToken
-            (null, firstState, currentFrameNumber);
-        
+                (null, firstState, currentFrameNumber);
+
         setBestToken(firstState, firstToken);
-        
+
         for (Iterator i = linguist.getFeatureStreams(); i.hasNext();) {
             FeatureStream stream = (FeatureStream) i.next();
             stream.setActiveList(activeListFactory.newInstance());
-            
+
             // add the first ParallelTokens to the CombineToken
             ParallelToken token = new ParallelToken
-                (firstState, stream, currentFrameNumber);
+                    (firstState, stream, currentFrameNumber);
             token.setLastCombineTime(currentFrameNumber);
             firstToken.addParallelToken(stream, token);
         }
-        
+
         // grow the first CombineToken until we've reach emitting states
         resultList = new LinkedList();
-        
+
         calculateCombinedScore(firstToken);
-	
+
         growCombineToken(firstToken);
     }
 
 
     /**
-     * Performs recognition. Processes no more than the given number
-     * of frames before returning. This method returns a partial
-     * result after nFrames have been processed, or a final result if
-     * recognition completes while processing frames.  If a final
-     * result is returned, the actual number of frames processed can
-     * be retrieved from the result.  This method may block while
-     * waiting for frames to arrive.
+     * Performs recognition. Processes no more than the given number of frames before returning. This method returns a
+     * partial result after nFrames have been processed, or a final result if recognition completes while processing
+     * frames.  If a final result is returned, the actual number of frames processed can be retrieved from the result.
+     * This method may block while waiting for frames to arrive.
      *
-     * @param nFrames the maximum number of frames to process. A
-     * final result may be returned before all nFrames are processed.
-     *
-     * @return the recognition result. The result may be a partial or
-     * a final result.
+     * @param nFrames the maximum number of frames to process. A final result may be returned before all nFrames are
+     *                processed.
+     * @return the recognition result. The result may be a partial or a final result.
      */
     public Result recognize(int nFrames) {
-	boolean done = false;
-	Result result;
+        boolean done = false;
+        Result result;
 
         for (int i = 0; i < nFrames && !done; i++) {
-	    done = recognize();
-	}
-	result = new Result
-	    (combinedActiveList, resultList, currentFrameNumber, done, logMath);
+            done = recognize();
+        }
+        result = new Result
+                (combinedActiveList, resultList, currentFrameNumber, done, logMath);
 
-	return result;
+        return result;
     }
 
 
     /**
-     * Performs recognition for one frame. Returns true if recognition
-     * has been completed.
+     * Performs recognition for one frame. Returns true if recognition has been completed.
      *
      * @return <code>true</code> if recognition is completed.
      */
     private boolean recognize() {
         debugPrint("-----\nFrame: " + currentFrameNumber);
-	boolean moreTokens = score();
+        boolean moreTokens = score();
         if (moreTokens) {
-	    prune();
-	    grow();
-	    currentFrameNumber++;
-	}
+            prune();
+            grow();
+            currentFrameNumber++;
+        }
         debugPrint("-----");
-	return !moreTokens;
+        return !moreTokens;
     }
 
 
     /**
-     * Calculate the acoustic scores for the active lists for the
-     * acoustic models, which should contain only emitting tokens.
+     * Calculate the acoustic scores for the active lists for the acoustic models, which should contain only emitting
+     * tokens.
      *
      * @return true if there are more tokens, otherwise false
      */
     private boolean score() {
-	scoreTimer.start();
-	debugPrint("Scoring");
-	boolean moreFeatures = false;
-	for (Iterator i = linguist.getFeatureStreams(); i.hasNext();) {
+        scoreTimer.start();
+        debugPrint("Scoring");
+        boolean moreFeatures = false;
+        for (Iterator i = linguist.getFeatureStreams(); i.hasNext();) {
             FeatureStream stream = (FeatureStream) i.next();
-	    Scoreable scoreable = 
-		scorer.calculateScores(stream.getActiveList().getTokens());
-	    moreFeatures = (scoreable != null);    
-	}
-	debugPrint(" done Scoring");
-	scoreTimer.stop();
-	return moreFeatures;
+            Scoreable scoreable =
+                    scorer.calculateScores(stream.getActiveList().getTokens());
+            moreFeatures = (scoreable != null);
+        }
+        debugPrint(" done Scoring");
+        scoreTimer.stop();
+        return moreFeatures;
     }
 
 
-    /**
-     * Removes unpromising branches from the active list
-     *
-     */
+    /** Removes unpromising branches from the active list */
     private void prune() {
-	pruneTimer.start();
+        pruneTimer.start();
 
         debugPrint("Pruning");
 
-	if (doFeaturePruning) {
-	    for (Iterator i = linguist.getFeatureStreams(); i.hasNext();) {
-		FeatureStream stream = (FeatureStream) i.next();	
+        if (doFeaturePruning) {
+            for (Iterator i = linguist.getFeatureStreams(); i.hasNext();) {
+                FeatureStream stream = (FeatureStream) i.next();
                 stream.setActiveList
-                    (featureScorePruner.prune(stream.getActiveList()));
+                        (featureScorePruner.prune(stream.getActiveList()));
             }
-	}
+        }
 
-	debugPrint(" done Pruning");
+        debugPrint(" done Pruning");
         pruneTimer.stop();
     }
 
 
-    /**
-     * Prints all the active lists.
-     */
+    /** Prints all the active lists. */
     private void printActiveLists() {
         debugPrint(" CombinedActiveList: " + combinedActiveList.size());
         for (Iterator i = linguist.getFeatureStreams(); i.hasNext();) {
-            FeatureStream stream = (FeatureStream) i.next();	
+            FeatureStream stream = (FeatureStream) i.next();
             debugPrint(" ActiveList, " + stream.getName() + ": " +
-                       stream.getActiveList().size());
+                    stream.getActiveList().size());
         }
     }
 
 
     /**
-     * Goes through the active list of tokens and expands each
-     * token, finding the set of successor tokens until all the successor
-     * tokens are emitting tokens.
-     *
+     * Goes through the active list of tokens and expands each token, finding the set of successor tokens until all the
+     * successor tokens are emitting tokens.
      */
     private void grow() {
-	growTimer.start();
+        growTimer.start();
 
-	debugPrint("Growing");
+        debugPrint("Growing");
 
         resultList = new LinkedList();
         combinedActiveList = activeListFactory.newInstance();
-	delayedExpansionList = activeListFactory.newInstance();
+        delayedExpansionList = activeListFactory.newInstance();
 
         // grow the ActiveList of each feature stream
-	for (Iterator i = linguist.getFeatureStreams(); i.hasNext();) {
+        for (Iterator i = linguist.getFeatureStreams(); i.hasNext();) {
             FeatureStream stream = (FeatureStream) i.next();
 
             // create a new ActiveList for the next frame
             ActiveList oldActiveList = stream.getActiveList();
             stream.setActiveList(activeListFactory.newInstance());
-            
-	    growActiveList(oldActiveList);
-	}
+
+            growActiveList(oldActiveList);
+        }
 
         // now expand the delayedExpansionList, which contains the
         // CombineTokens created when transitioning from GREEN states
         // to RED states (i.e., feature stream states to shared states)
 
-	growDelayedExpansionList();
+        growDelayedExpansionList();
 
         // remove all pruned tokens from the active list of all streams
-	for (Iterator i = linguist.getFeatureStreams(); i.hasNext();) {
+        for (Iterator i = linguist.getFeatureStreams(); i.hasNext();) {
             FeatureStream stream = (FeatureStream) i.next();
 
             // remove all the pruned tokens
             ActiveList prunedActiveList = activeListFactory.newInstance();
-            for (Iterator t = stream.getActiveList().iterator(); 
+            for (Iterator t = stream.getActiveList().iterator();
                  t.hasNext();) {
                 ParallelToken token = (ParallelToken) t.next();
                 if (!token.isPruned()) {
@@ -446,33 +394,31 @@ public class ParallelSearchManager implements SearchManager {
             stream.setActiveList(prunedActiveList);
         }
 
-	debugPrint(" done Growing");
+        debugPrint(" done Growing");
 
-	growTimer.stop();
+        growTimer.stop();
     }
 
-    /**
-     * Grow the delayedExpansionList by first pruning it, and then
-     * grow it.
-     */
+
+    /** Grow the delayedExpansionList by first pruning it, and then grow it. */
     private void growDelayedExpansionList() {
 
-	Iterator iterator = delayedExpansionList.iterator();
+        Iterator iterator = delayedExpansionList.iterator();
 
         while (iterator.hasNext()) {
             CombineToken token = (CombineToken) iterator.next();
             calculateCombinedScore(token);
         }
 
-	if (doCombinePruning) {
-	    delayedExpansionList =
-		combinedScorePruner.prune(delayedExpansionList);
-	}
+        if (doCombinePruning) {
+            delayedExpansionList =
+                    combinedScorePruner.prune(delayedExpansionList);
+        }
 
-	iterator = delayedExpansionList.iterator();
-	
-	while (iterator.hasNext()) {
-	    CombineToken token = (CombineToken) iterator.next();
+        iterator = delayedExpansionList.iterator();
+
+        while (iterator.hasNext()) {
+            CombineToken token = (CombineToken) iterator.next();
             token.setLastCombineTime(currentFrameNumber);
             growCombineToken(token);
         }
@@ -480,36 +426,34 @@ public class ParallelSearchManager implements SearchManager {
 
 
     /**
-     * Calculates the combined score of all the ParallelTokens
-     * in the given CombineToken.
+     * Calculates the combined score of all the ParallelTokens in the given CombineToken.
      *
      * @param token the CombineToken to calculate the combined score of
      */
     private void calculateCombinedScore(CombineToken token) {
-	featureScoreCombiner.combineScore(token);
+        new FeatureScoreCombiner().combineScore(token);
     }
 
 
     /**
-     * Grows the Tokens in the given ActiveList. Returns a new ActiveList
-     * of successors.
+     * Grows the Tokens in the given ActiveList. Returns a new ActiveList of successors.
      *
      * @param activeList the ActiveList to grow
      */
     private void growActiveList(ActiveList activeList) {
-	
-	Iterator iterator = activeList.iterator();
-	
-	while (iterator.hasNext()) {
-	    ParallelToken token = (ParallelToken) iterator.next();
+
+        Iterator iterator = activeList.iterator();
+
+        while (iterator.hasNext()) {
+            ParallelToken token = (ParallelToken) iterator.next();
             growParallelToken(token);
-	}
+        }
     }
 
 
     /**
-     * Grows the given ParallelToken, put the successor Token(s) into the 
-     * given ActiveList, and any possible results in the given resultList.
+     * Grows the given ParallelToken, put the successor Token(s) into the given ActiveList, and any possible results in
+     * the given resultList.
      *
      * @param token the Token to grow
      */
@@ -520,38 +464,38 @@ public class ParallelSearchManager implements SearchManager {
                    token.getSearchState().toString());
         */
 
-	// If this is a final state, add it to the result list.
-	assert !token.isFinal();
+        // If this is a final state, add it to the result list.
+        assert !token.isFinal();
 
-	int nextFrameNumber = token.getFrameNumber();
+        int nextFrameNumber = token.getFrameNumber();
 
-	// If this is an emitting state, we increase the frame number
-	if (token.isEmitting()) {
-	    nextFrameNumber++;
-	}
+        // If this is an emitting state, we increase the frame number
+        if (token.isEmitting()) {
+            nextFrameNumber++;
+        }
 
-	SentenceHMMState state = (SentenceHMMState) token.getSearchState();
-	SearchStateArc[] arcs = state.getSuccessors();
+        SentenceHMMState state = (SentenceHMMState) token.getSearchState();
+        SearchStateArc[] arcs = state.getSuccessors();
 
-	// expand into each successor states
-	for (int i = 0; i < arcs.length; i++) {
+        // expand into each successor states
+        for (int i = 0; i < arcs.length; i++) {
 
-	    SearchStateArc arc = arcs[i];
-	    SentenceHMMState nextState = (SentenceHMMState) arc.getState();
+            SearchStateArc arc = arcs[i];
+            SentenceHMMState nextState = (SentenceHMMState) arc.getState();
 
-	    // debugPrint("  Entering " + nextState.toString());
+            // debugPrint("  Entering " + nextState.toString());
 
-	    float logEntryScore = token.getScore() + arc.getProbability();
+            float logEntryScore = token.getScore() + arc.getProbability();
             Token oldNextToken = getBestToken(nextState);
 
-	    boolean firstToken = oldNextToken == null ||
-                oldNextToken.getFrameNumber() != nextFrameNumber;
+            boolean firstToken = oldNextToken == null ||
+                    oldNextToken.getFrameNumber() != nextFrameNumber;
 
             // RED states are the unsplitted states, or the non-feature
             // stream states
             // GREEN states are the splitted states, or the feature stream
             // states
-            
+
             if (nextState.getColor() == Color.RED) {
 
                 // debugPrint(". RED state");
@@ -563,7 +507,7 @@ public class ParallelSearchManager implements SearchManager {
                     // create a CombineToken and set it as the best
                     // (and only) CombineToken of the state
                     nextToken = new CombineToken
-                        (token, nextState, nextFrameNumber);
+                            (token, nextState, nextFrameNumber);
                     setBestToken(nextState, nextToken);
                     delayedExpansionList.add(nextToken);
                 } else {
@@ -573,44 +517,44 @@ public class ParallelSearchManager implements SearchManager {
 
                 assert (nextToken.getFrameNumber() == nextFrameNumber);
 
-                ParallelToken oldParallelToken = 
-                    nextToken.getParallelToken(token.getFeatureStream());
+                ParallelToken oldParallelToken =
+                        nextToken.getParallelToken(token.getFeatureStream());
 
                 // if this is the first token, or if this score is
                 // greater than the old one in the next CombineToken
                 // add this token or replace the old one with this token
 
                 if (firstToken || oldParallelToken == null ||
-                    oldParallelToken.getScore() <= logEntryScore) {
+                        oldParallelToken.getScore() <= logEntryScore) {
 
                     ParallelToken newToken = new ParallelToken
-                        (token,
-                         nextState,
-                         logEntryScore,
-                         token.getCombinedScore(),
-                         nextFrameNumber,
-			 token.getLastCombineTime());
+                            (token,
+                                    nextState,
+                                    logEntryScore,
+                                    token.getCombinedScore(),
+                                    nextFrameNumber,
+                                    token.getLastCombineTime());
 
                     // add this ParallelToken to the CombineToken.
                     nextToken.addParallelToken(newToken.getFeatureStream(),
-					       newToken);
+                            newToken);
                 }
             } else if (nextState.getColor() == Color.GREEN) {
 
                 // debugPrint("  . GREEN state");
-                
-                if (firstToken || 
-                    getBestToken(nextState).getScore() <= logEntryScore) {
+
+                if (firstToken ||
+                        getBestToken(nextState).getScore() <= logEntryScore) {
 
                     // debugPrint("  . adding parallel token");
 
                     ParallelToken newToken = new ParallelToken
-                        (token,
-                         nextState,
-                         logEntryScore,
-                         token.getCombinedScore(), 
-                         nextFrameNumber,
-			 token.getLastCombineTime());
+                            (token,
+                                    nextState,
+                                    logEntryScore,
+                                    token.getCombinedScore(),
+                                    nextFrameNumber,
+                                    token.getLastCombineTime());
 
                     if (newToken.isEmitting()) {
                         // this is an emitting token (or an emitting state)
@@ -619,21 +563,21 @@ public class ParallelSearchManager implements SearchManager {
                     } else {
                         growParallelToken(newToken);
                     }
-		}
-	    } else {
-		throw new IllegalStateException
-		    ("Color of state " + nextState.getName() +
-		     " not RED or GREEN, its " + 
-		     nextState.getColor().toString() + "!");
-	    }
-	}
+                }
+            } else {
+                throw new IllegalStateException
+                        ("Color of state " + nextState.getName() +
+                                " not RED or GREEN, its " +
+                                nextState.getColor().toString() + "!");
+            }
+        }
     }
+
 
     /**
      * Returns the best Token for the given SearchState.
      *
      * @param state the SearchState to look for
-     *
      * @return the best Token for the given SearchState
      */
     private Token getBestToken(SearchState state) {
@@ -653,40 +597,39 @@ public class ParallelSearchManager implements SearchManager {
 
 
     /**
-     * Grows the given CombineToken and puts any results into the given
-     * list.
+     * Grows the given CombineToken and puts any results into the given list.
      *
      * @param token the CombineToken to grow
      */
     private void growCombineToken(CombineToken token) {
         // debugPrint("Entering growCombineToken");
-	// If this is a final state, add it to the result list.
-	if (token.isFinal()) {
-	    resultList.add(token);
-	    // debugPrint("FINAL RESULT found!");
-	}
+        // If this is a final state, add it to the result list.
+        if (token.isFinal()) {
+            resultList.add(token);
+            // debugPrint("FINAL RESULT found!");
+        }
 
         int nextFrameNumber = token.getFrameNumber();
 
-	// make sure that this state is non-emitting
-	assert !token.isEmitting();
+        // make sure that this state is non-emitting
+        assert !token.isEmitting();
 
-	SearchState state = (SearchState) token.getSearchState();
-	SearchStateArc[] arcs = (SearchStateArc[]) state.getSuccessors();
+        SearchState state = (SearchState) token.getSearchState();
+        SearchStateArc[] arcs = (SearchStateArc[]) state.getSuccessors();
 
-	// expand into each successor states
-	for (int a = 0; a < arcs.length; a++) {
+        // expand into each successor states
+        for (int a = 0; a < arcs.length; a++) {
 
-	    SentenceHMMStateArc arc = (SentenceHMMStateArc) arcs[a];
-	    SentenceHMMState nextState = (SentenceHMMState) arc.getState();
+            SentenceHMMStateArc arc = (SentenceHMMStateArc) arcs[a];
+            SentenceHMMState nextState = (SentenceHMMState) arc.getState();
 
-	    // debugPrint("Entering " + nextState.toString());
+            // debugPrint("Entering " + nextState.toString());
 
             Token oldNextToken = getBestToken(nextState);
 
-	    boolean firstToken = 
-                (oldNextToken == null ||
-                 oldNextToken.getFrameNumber() != nextFrameNumber);
+            boolean firstToken =
+                    (oldNextToken == null ||
+                            oldNextToken.getFrameNumber() != nextFrameNumber);
 
             // RED states are the unsplitted states, or the non-feature
             // stream states
@@ -694,14 +637,14 @@ public class ParallelSearchManager implements SearchManager {
             // states
 
             if (nextState.getColor() == Color.RED) {
-                
+
                 float logEntryScore = token.getScore() + arc.getProbability();
 
                 if (firstToken || oldNextToken.getScore() <= logEntryScore) {
-                    
+
                     // create the next CombineToken for a RED state
                     CombineToken nextToken = new CombineToken
-                        (token, nextState, nextFrameNumber);
+                            (token, nextState, nextFrameNumber);
 
                     // propagate the combined score unchanged
                     nextToken.setScore(logEntryScore);
@@ -709,8 +652,8 @@ public class ParallelSearchManager implements SearchManager {
                     // propagate the individual ParallelTokens, taking
                     // into account the new transition score
                     transitionParallelTokens
-                        (token, nextToken, arc.getProbability());
-                    
+                            (token, nextToken, arc.getProbability());
+
                     setBestToken(nextState, nextToken);
 
                     // finally grow the new CombineToken
@@ -719,55 +662,54 @@ public class ParallelSearchManager implements SearchManager {
             } else if (nextState.getColor() == Color.GREEN) {
 
                 ParallelState pState = (ParallelState) nextState;
-                
+
                 ParallelToken parallelToken = token.getParallelToken
-                    (pState.getFeatureStream());
+                        (pState.getFeatureStream());
 
                 // we continue into a GREEN/feature stream state only
                 // if there is a ParallelToken for that feature stream
 
-		if (parallelToken != null) {
-		    
-		    float logEntryScore = arc.getProbability() + 
-			parallelToken.getFeatureScore();
-		    ParallelToken oldToken = (ParallelToken)oldNextToken;
+                if (parallelToken != null) {
 
-		    if (firstToken || 
-                        oldToken.getFeatureScore() <= logEntryScore) {
-			
-			ParallelToken nextToken = new ParallelToken
-			    (parallelToken, 
-			     nextState,
-			     logEntryScore,
-                             parallelToken.getCombinedScore(),
-			     nextFrameNumber,
-			     parallelToken.getLastCombineTime());
+                    float logEntryScore = arc.getProbability() +
+                            parallelToken.getFeatureScore();
+                    ParallelToken oldToken = (ParallelToken) oldNextToken;
+
+                    if (firstToken ||
+                            oldToken.getFeatureScore() <= logEntryScore) {
+
+                        ParallelToken nextToken = new ParallelToken
+                                (parallelToken,
+                                        nextState,
+                                        logEntryScore,
+                                        parallelToken.getCombinedScore(),
+                                        nextFrameNumber,
+                                        parallelToken.getLastCombineTime());
 
                         // replace the oldBestToken with this new token
-			if (nextState.isEmitting()) {
-			    // call the replaceParallelToken method
-			    replaceParallelToken(nextState, nextToken);
-			    combinedActiveList.add(nextToken);
-			} else {
-			    growParallelToken(nextToken);
-			}
-		    }
-		}
-	    } else {
-		throw new IllegalStateException
-		    ("Color of state not RED or GREEN!");
-	    }
+                        if (nextState.isEmitting()) {
+                            // call the replaceParallelToken method
+                            replaceParallelToken(nextState, nextToken);
+                            combinedActiveList.add(nextToken);
+                        } else {
+                            growParallelToken(nextToken);
+                        }
+                    }
+                }
+            } else {
+                throw new IllegalStateException
+                        ("Color of state not RED or GREEN!");
+            }
         }
     }
 
 
     /**
-     * Propagates all the ParallelToken(s) within the given old CombineToken
-     * to the given new CombineToken. The new ParallelToken(s) in the
-     * new CombineToken will have the transition score incorporated.
+     * Propagates all the ParallelToken(s) within the given old CombineToken to the given new CombineToken. The new
+     * ParallelToken(s) in the new CombineToken will have the transition score incorporated.
      *
-     * @param oldToken the previous CombineToken
-     * @param newToken the new CombineToken
+     * @param oldToken        the previous CombineToken
+     * @param newToken        the new CombineToken
      * @param transitionScore the transition score from oldToken to newToken
      */
     private void transitionParallelTokens(CombineToken oldToken,
@@ -776,56 +718,52 @@ public class ParallelSearchManager implements SearchManager {
         // propagate the individual ParallelTokens, taking
         // into account the new transition scores
         for (Iterator i = oldToken.getTokenIterator(); i.hasNext();) {
-            
+
             ParallelToken pToken = (ParallelToken) i.next();
             ParallelToken newParallelToken = new ParallelToken
-                (pToken,
-                 (SentenceHMMState) newToken.getSearchState(),
-                 pToken.getFeatureScore() + transitionScore,
-                 pToken.getCombinedScore(),
-                 pToken.getFrameNumber(),
-		 pToken.getLastCombineTime());
-            
+                    (pToken,
+                            (SentenceHMMState) newToken.getSearchState(),
+                            pToken.getFeatureScore() + transitionScore,
+                            pToken.getCombinedScore(),
+                            pToken.getFrameNumber(),
+                            pToken.getLastCombineTime());
+
             newToken.addParallelToken(newParallelToken.getFeatureStream(),
-				      newParallelToken);
+                    newParallelToken);
         }
     }
 
 
     /**
-     * Replaces the token in the given SentenceHMMState with 
-     * the given newToken.
-     * This method will automatically find the correct ActiveList.
+     * Replaces the token in the given SentenceHMMState with the given newToken. This method will automatically find the
+     * correct ActiveList.
      *
-     * @param state the state of the current token
+     * @param state    the state of the current token
      * @param newToken the new Token
      */
     private void replaceParallelToken(SentenceHMMState state,
                                       ParallelToken newToken) {
         ParallelToken oldToken = (ParallelToken) setBestToken(state, newToken);
-        
+
         ActiveList activeList = newToken.getFeatureStream().getActiveList();
         activeList.add(newToken);
-                
+
         if (oldToken != null) {
             oldToken.setPruned(true);
         }
     }
 
 
-    /**
-     * Performs post-recognition cleanup. This method should be called
-     * after recognize returns a final result.
-     */
+    /** Performs post-recognition cleanup. This method should be called after recognize returns a final result. */
     public void stopRecognition() {
-	scorer.stopRecognition();
+        scorer.stopRecognition();
         if (doFeaturePruning) {
             featureScorePruner.stopRecognition();
-	}
-	if (doCombinePruning) {
+        }
+        if (doCombinePruning) {
             combinedScorePruner.stopRecognition();
         }
-	linguist.stopRecognition();
+        linguist.stopRecognition();
         bestTokenMap = new HashMap();
     }
 
@@ -837,41 +775,36 @@ public class ParallelSearchManager implements SearchManager {
      */
     public void deallocate() {
         scorer.deallocate();
-	if (doFeaturePruning) {
-	    featureScorePruner.deallocate();
-	}
-	if (doCombinePruning) {
-	    combinedScorePruner.deallocate();
-	}
+        if (doFeaturePruning) {
+            featureScorePruner.deallocate();
+        }
+        if (doCombinePruning) {
+            combinedScorePruner.deallocate();
+        }
         linguist.deallocate();
-    }    
+    }
 
-    /**
-      * @return the Linguist
-     */
+
+    /** @return the Linguist */
     public Linguist getLinguist() {
         return linguist;
     }
 
-    /**
-     *
-     * @return the feature or combined Pruner
-     */
+
+    /** @return the feature or combined Pruner */
     public Pruner getPruner() {
         // TODO is this right?
         if (doFeaturePruning) {
-	        return featureScorePruner;
-	    }
-	    if (doCombinePruning) {
-	        return combinedScorePruner;
-	    }
+            return featureScorePruner;
+        }
+        if (doCombinePruning) {
+            return combinedScorePruner;
+        }
         return null;
     }
 
-    /**
-     *
-     * @return the Scorer
-     */
+
+    /** @return the Scorer */
     public AcousticScorer getScorer() {
         return scorer;
     }

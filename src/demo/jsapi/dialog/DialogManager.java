@@ -17,12 +17,8 @@ import edu.cmu.sphinx.jsapi.JSGFGrammar;
 import edu.cmu.sphinx.recognizer.Recognizer;
 import edu.cmu.sphinx.result.Result;
 
-import edu.cmu.sphinx.util.props.Configurable;
-import edu.cmu.sphinx.util.props.ConfigurationManager;
-import edu.cmu.sphinx.util.props.PropertyException;
-import edu.cmu.sphinx.util.props.PropertySheet;
-import edu.cmu.sphinx.util.props.PropertyType;
-import edu.cmu.sphinx.util.props.Registry;
+import edu.cmu.sphinx.util.props.*;
+import edu.cmu.sphinx.decoder.search.SearchManager;
 
 import java.io.IOException;
 import java.util.logging.Logger;
@@ -51,18 +47,21 @@ public class DialogManager implements Configurable {
      * Sphinx property that defines the name of the grammar component 
      * to be used by this dialog manager
      */
+    @S4Component(type = JSGFGrammar.class)
     public final static String PROP_JSGF_GRAMMAR = "jsgfGrammar";
 
     /**
      * Sphinx property that defines the name of the microphone to be used 
      * by this dialog manager
      */
+    @S4Component(type = Microphone.class)
     public final static String PROP_MICROPHONE = "microphone";
 
     /**
      * Sphinx property that defines the name of the recognizer to be used by
      * this dialog manager
      */
+    @S4Component(type = Recognizer.class)
     public final static String PROP_RECOGNIZER = "recognizer";
 
     // ------------------------------------

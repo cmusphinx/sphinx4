@@ -39,10 +39,8 @@ import com.sun.speech.engine.recognition.BaseRecognizer;
 import edu.cmu.sphinx.linguist.language.grammar.Grammar;
 import edu.cmu.sphinx.linguist.language.grammar.GrammarNode;
 import edu.cmu.sphinx.util.LogMath;
-import edu.cmu.sphinx.util.props.PropertyException;
-import edu.cmu.sphinx.util.props.PropertySheet;
-import edu.cmu.sphinx.util.props.PropertyType;
-import edu.cmu.sphinx.util.props.Registry;
+import edu.cmu.sphinx.util.props.*;
+import edu.cmu.sphinx.decoder.search.SearchManager;
 
 /**
  * Defines a BNF-style grammar based on JSGF grammar rules in a file.
@@ -215,12 +213,14 @@ public class JSGFGrammar extends Grammar {
     /**
      * Sphinx property that defines the location of the JSGF grammar file.
      */
+    @S4String
     public final static String PROP_BASE_GRAMMAR_URL = "grammarLocation";
 
 
     /**
      * Sphinx property that defines the location of the JSGF grammar file.
      */
+    @S4String(defaultValue = "default.gram")
     public final static String PROP_GRAMMAR_NAME = "grammarName";
 
     /**
@@ -231,7 +231,7 @@ public class JSGFGrammar extends Grammar {
     /**
      * Sphinx property that defines the logMath component. 
      */
-    
+    @S4Component(type = LogMath.class)
     public final static String PROP_LOG_MATH = "logMath";
     
 

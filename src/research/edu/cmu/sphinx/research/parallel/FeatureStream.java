@@ -14,16 +14,13 @@
 package edu.cmu.sphinx.research.parallel;
 
 import edu.cmu.sphinx.decoder.search.ActiveList;
+import edu.cmu.sphinx.decoder.search.SearchManager;
 
 import edu.cmu.sphinx.frontend.FrontEnd;
 
 import edu.cmu.sphinx.linguist.acoustic.AcousticModel;
 
-import edu.cmu.sphinx.util.props.Configurable;
-import edu.cmu.sphinx.util.props.PropertyException;
-import edu.cmu.sphinx.util.props.PropertySheet;
-import edu.cmu.sphinx.util.props.PropertyType;
-import edu.cmu.sphinx.util.props.Registry;
+import edu.cmu.sphinx.util.props.*;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -50,16 +47,19 @@ public class FeatureStream implements Configurable {
     /**
      * Property for the acoustic model of this feature stream.
      */
+    @S4Component(type = AcousticModel.class)
     public static final String PROP_ACOUSTIC_MODEL = "acousticModel";
 
     /**
      * Property for the front end of this feature stream.
      */
+    @S4Component(type = FrontEnd.class)
     public static final String PROP_FRONT_END = "frontEnd";
 
     /**
      * Property for the eta value of this feature stream.
      */
+    @S4Double(defaultValue = 1.0)
     public static final String PROP_ETA = "eta";
 
     /**

@@ -39,7 +39,8 @@ import edu.cmu.sphinx.linguist.dictionary.Word;
 import edu.cmu.sphinx.linguist.language.ngram.LanguageModel;
 import edu.cmu.sphinx.util.LogMath;
 import edu.cmu.sphinx.util.SphinxProperties;
-
+import edu.cmu.sphinx.util.props.S4Double;
+import edu.cmu.sphinx.util.props.S4Boolean;
 
 
 /**
@@ -61,6 +62,7 @@ public class BushderbySearchManager extends SimpleBreadthFirstSearchManager {
     /**
      * The sphinx property for the Bushderby eta value.
      */
+    @S4Double(defaultValue = 1E99)
     public final static String PROP_BUSHDERBY_ETA =
 	PROP_PREFIX + "bushderbyEta";
 
@@ -73,6 +75,7 @@ public class BushderbySearchManager extends SimpleBreadthFirstSearchManager {
      * The sphinx property that defines whether to filter successor
      * states during the search.
      */
+    @S4Boolean(defaultValue = false)
     public final static String PROP_FILTER_SUCCESSORS =
 	PROP_PREFIX + "filterSuccessors";
 

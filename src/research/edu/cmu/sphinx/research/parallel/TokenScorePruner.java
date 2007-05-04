@@ -22,11 +22,7 @@ import edu.cmu.sphinx.decoder.pruner.Pruner;
 import edu.cmu.sphinx.util.LogMath;
 import edu.cmu.sphinx.util.SphinxProperties;
 
-import edu.cmu.sphinx.util.props.Configurable;
-import edu.cmu.sphinx.util.props.PropertyException;
-import edu.cmu.sphinx.util.props.PropertySheet;
-import edu.cmu.sphinx.util.props.PropertyType;
-import edu.cmu.sphinx.util.props.Registry;
+import edu.cmu.sphinx.util.props.*;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -39,10 +35,12 @@ import java.util.List;
  */
 public abstract class TokenScorePruner implements Pruner {
 
+    @S4Integer(defaultValue = 2000)
     public static final String PROP_ABSOLUTE_BEAM_WIDTH = "absoluteBeamWidth";
     
     public static final int PROP_ABSOLUTE_BEAM_WIDTH_DEFAULT = 2000;
 
+    @S4Integer(defaultValue = 0)
     public static final String PROP_RELATIVE_BEAM_WIDTH = "relativeBeamWidth";
 
     public static final double PROP_RELATIVE_BEAM_WIDTH_DEFAULT = 0;
@@ -51,6 +49,7 @@ public abstract class TokenScorePruner implements Pruner {
      * Sphinx property that defines the name of the logmath to be used by this
      * search manager.
      */
+    @S4Component(type = LogMath.class)
     public final static String PROP_LOG_MATH = "logMath";
 
     /**

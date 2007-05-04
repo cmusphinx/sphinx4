@@ -36,11 +36,7 @@
         <property name="grammar" value="jsgfGrammar"/>
         <property name="useVoice" value="false"/>
         <property name="numberOfCards" value="6"/>
-        <propertylist name="imageFiles">
-        	<item>./willie.gif</item>
-        	<item>./paul.gif</item>
-        	<item>./philip.gif</item>
-        </propertylist>
+        <property name="imageFiles" value="./willie.gif;./paul.gif;./philip.gif">
     </component>
   
     

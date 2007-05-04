@@ -22,10 +22,7 @@ import edu.cmu.sphinx.linguist.flat.SentenceHMMState;
 import edu.cmu.sphinx.linguist.flat.UnitState;
 import edu.cmu.sphinx.linguist.language.grammar.GrammarNode;
 import edu.cmu.sphinx.util.LogMath;
-import edu.cmu.sphinx.util.props.PropertyException;
-import edu.cmu.sphinx.util.props.PropertySheet;
-import edu.cmu.sphinx.util.props.PropertyType;
-import edu.cmu.sphinx.util.props.Registry;
+import edu.cmu.sphinx.util.props.*;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -44,18 +41,21 @@ import java.util.Map;
 public class ParallelSimpleLinguist extends FlatLinguist {
 
     /** The sphinx property that specifies the height of the token stacks. */
+    @S4Integer(defaultValue = 0)
     public static final String PROP_STACK_CAPACITY = "tokenStackCapacity";
 
     /** The default value for the property PROP_STACK_CAPACITY, which is 0. */
     public static final int PROP_STACK_CAPACITY_DEFAULT = 0;
 
     /** The sphinx property that specifies the level at which the parallel states tie. Values can be "unit" or "state". */
+    @S4String(defaultValue = "unit")
     public static final String PROP_TIE_LEVEL = "tieLevel";
 
     /** The default value for the property PROP_TIE_LEVEL, which is "unit". */
     public static final String PROP_TIE_LEVEL_DEFAULT = "unit";
 
     /** Property that specifies the feature streams. */
+    @S4ComponentList(type = FeatureStream.class)
     public static final String PROP_FEATURE_STREAMS = "featureStreams";
 
 
