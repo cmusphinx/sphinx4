@@ -1,9 +1,5 @@
 package edu.cmu.sphinx.util.props;
 
-import edu.cmu.sphinx.util.props.ConfigurationChangeListener;
-import edu.cmu.sphinx.util.props.ConfigurationManagerUtils;
-import edu.cmu.sphinx.util.props.SimpleConfigurable;
-
 import java.io.IOException;
 import java.net.URL;
 import java.util.*;

@@ -12,8 +12,8 @@
 
 package edu.cmu.sphinx.result;
 
-import edu.cmu.sphinx.decoder.search.Token;
 import edu.cmu.sphinx.decoder.search.AlternateHypothesisManager;
+import edu.cmu.sphinx.decoder.search.Token;
 import edu.cmu.sphinx.linguist.HMMSearchState;
 import edu.cmu.sphinx.linguist.SearchState;
 import edu.cmu.sphinx.linguist.UnitSearchState;
@@ -21,17 +21,11 @@ import edu.cmu.sphinx.linguist.WordSearchState;
 
 import java.io.FileWriter;
 import java.io.IOException;
-
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
- * Dumps out the GDL graph of all the result token chains in a Result,
- * as well as all the alternate hypotheses along those chains.
+ * Dumps out the GDL graph of all the result token chains in a Result, as well as all the alternate hypotheses along
+ * those chains.
  */
 public class TokenGraphDumper {
 
@@ -40,6 +34,7 @@ public class TokenGraphDumper {
     private Map<Token, Integer> tokenIDMap;
     private Set<Token> dumpedTokens;
     private int ID = 0;
+
 
     /**
      * Constructs a TokenGraphDumper from the given result.
@@ -53,10 +48,11 @@ public class TokenGraphDumper {
         dumpedTokens = new HashSet<Token>();
     }
 
+
     /**
      * Dumps the GDL output of the search space to the given file.
      *
-     * @param title the title of the GDL graph
+     * @param title    the title of the GDL graph
      * @param fileName
      */
     public void dumpGDL(String title, String fileName) {
@@ -70,11 +66,11 @@ public class TokenGraphDumper {
         }
     }
 
+
     /**
      * Dumps the GDL output.
      *
      * @param title the title of the GDL graph
-     *
      * @return the GDL output string
      */
     public String dumpGDL(String title) {
@@ -91,34 +87,33 @@ public class TokenGraphDumper {
         return gdl;
     }
 
+
     /**
-     * Dumps the GDL output for a token, and any of its predecessors
-     * or alternate hypotheses.
+     * Dumps the GDL output for a token, and any of its predecessors or alternate hypotheses.
      *
      * @param token the token to dump
-     *
      * @return the GDL output string
      */
     private String dumpTokenGDL(Token token) {
-        
+
         if (dumpedTokens.contains(token)) {
             return "";
         } else {
             String label = ("[" + token.getAcousticScore() + "," +
-                            token.getLanguageScore() + "]");
+                    token.getLanguageScore() + "]");
             if (token.isWord()) {
                 label = token.getWord().getSpelling() + label;
             }
-            
+
             String color = null;
 
             if (token.getSearchState() != null) {
                 color = getColor(token.getSearchState());
             }
 
-            String gdl = 
-                ("node: { title: \"" + getTokenID(token).intValue() +
-                 "\" label: \"" + label + "\" color: ");
+            String gdl =
+                    ("node: { title: \"" + getTokenID(token).intValue() +
+                            "\" label: \"" + label + "\" color: ");
             if (color != null) {
                 gdl += (color + " }");
             } else {
@@ -127,16 +122,16 @@ public class TokenGraphDumper {
             gdl += "\n";
 
             dumpedTokens.add(token);
-            
+
             if (token.getPredecessor() != null) {
                 gdl +=
-                    ("edge: { sourcename: \"" + getTokenID(token) +
-                     "\" targetname: \"" + getTokenID(token.getPredecessor()) 
-                     + "\" }");
+                        ("edge: { sourcename: \"" + getTokenID(token) +
+                                "\" targetname: \"" + getTokenID(token.getPredecessor())
+                                + "\" }");
                 gdl += "\n";
                 gdl += dumpTokenGDL(token.getPredecessor());
             }
-            
+
             if (loserManager != null) {
                 List<Token> list = loserManager.getAlternatePredecessors(token);
                 if (list != null) {
@@ -144,7 +139,7 @@ public class TokenGraphDumper {
                         Token loser = i.next();
                         gdl += ("edge: { sourcename: \"" + getTokenID(token)
                                 + "\" targetname: \"" + getTokenID(loser) +
-                                "\" }"); 
+                                "\" }");
                         gdl += "\n";
                         gdl += dumpTokenGDL(loser);
                     }
@@ -154,11 +149,11 @@ public class TokenGraphDumper {
         }
     }
 
+
     /**
      * Gets the color for a particular state
      *
      * @param state the state
-     *
      * @return its color
      */
     private String getColor(SearchState state) {
@@ -175,11 +170,11 @@ public class TokenGraphDumper {
         return color;
     }
 
+
     /**
      * Returns the next available token ID.
      *
      * @param token the token for which we want an ID
-     *
      * @return the next available token ID
      */
     private Integer getTokenID(Token token) {

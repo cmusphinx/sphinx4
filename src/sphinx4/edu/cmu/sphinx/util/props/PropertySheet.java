@@ -11,110 +11,101 @@
  *
  */
 package edu.cmu.sphinx.util.props;
-import java.util.List;
-import java.util.logging.Logger;
+
 import java.io.PrintStream;
 import java.net.URL;
-/**
- * A property sheet defines a collection of properties for a single component
- * in the system.
- */
+import java.util.List;
+import java.util.logging.Logger;
+
+/** A property sheet defines a collection of properties for a single component in the system. */
 public interface PropertySheet {
+
     /**
      * Sets the given property to the given name
-     * 
-     * @param name
-     *            the simple property name
-     * @param value
-     *            the value for the property
-     * 
-     *  
+     *
+     * @param name  the simple property name
+     * @param value the value for the property
      */
     void setString(String name, String value) throws PropertyException;
+
+
     /**
      * Sets the given property to the given name
-     * 
-     * @param name
-     *            the simple property name
-     * @param value
-     *            the value for the property
+     *
+     * @param name  the simple property name
+     * @param value the value for the property
      */
     void setInt(String name, int value) throws PropertyException;
+
+
     /**
      * Sets the given property to the given name
-     * 
-     * @param name
-     *            the simple property name
-     * @param value
-     *            the value for the property
+     *
+     * @param name  the simple property name
+     * @param value the value for the property
      */
     void setFloat(String name, float value) throws PropertyException;
+
+
     /**
      * Gets the value associated with this name
-     * 
-     * @param name
-     *            the name
-     * @param defaultValue
-     *            the default value for the property
+     *
+     * @param name         the name
+     * @param defaultValue the default value for the property
      * @return the value
      */
     String getString(String name, String defaultValue) throws PropertyException;
 
+
     /**
      * Sets the raw property to the given name
-     * 
-     * @param key
-     *            the simple property name
-     * @param val
-     *            the value for the property
+     *
+     * @param key the simple property name
+     * @param val the value for the property
      */
-    public void setRaw(String key, Object val) throws PropertyException ;
+    public void setRaw(String key, Object val) throws PropertyException;
+
+
     /**
      * Gets the value associated with this name
-     * 
-     * @param name
-     *            the name
-     * @param defaultValue
-     *            the default value for the property
+     *
+     * @param name         the name
+     * @param defaultValue the default value for the property
      * @return the value
-     * @throws PropertyException
-     *             if the named property is not of this type
+     * @throws PropertyException if the named property is not of this type
      */
     int getInt(String name, int defaultValue) throws PropertyException;
+
+
     /**
      * Gets the value associated with this name
-     * 
-     * @param name
-     *            the name
-     * @param defaultValue
-     *            the default value
+     *
+     * @param name         the name
+     * @param defaultValue the default value
      * @return the value
-     * @throws PropertyException
-     *             if the named property is not of this type
+     * @throws PropertyException if the named property is not of this type
      */
     float getFloat(String name, float defaultValue) throws PropertyException;
+
+
     /**
      * Gets the value associated with this name
-     * 
-     * @param name
-     *            the name
-     * @param defaultValue
-     *            the default value
+     *
+     * @param name         the name
+     * @param defaultValue the default value
      * @return the value
-     * @throws PropertyException
-     *             if the named property is not of this type
+     * @throws PropertyException if the named property is not of this type
      */
     double getDouble(String name, double defaultValue) throws PropertyException;
+
+
     /**
      * Gets the value associated with this name
-     * 
-     * @param name
-     *            the name
-     * @param defaultValue
-     *            the default value
+     *
+     * @param name         the name
+     * @param defaultValue the default value
      * @return the value
-     * @throws PropertyException
-     *             if the named property is not of this type
+     * @throws PropertyException if the named property is not of this type
      */
     boolean getBoolean(String name, boolean defaultValue)
             throws PropertyException;
@@ -124,95 +115,88 @@ public interface PropertySheet {
      * Gets a resource associated with the given parameter name
      *
      * @param name the parameter name
-     * @return the resource associated with the name or NULL if it
-     * doesn't exist.
-     * @throws PropertyException
-     *             if the resource cannot be found
+     * @return the resource associated with the name or NULL if it doesn't exist.
+     * @throws PropertyException if the resource cannot be found
      */
     URL getResource(String name) throws PropertyException;
 
+
     /**
      * Gets a component associated with the given parameter name
-     * 
-     * @param name
-     *            the parameter name
-     * @param type
-     *            the desired component type
+     *
+     * @param name the parameter name
+     * @param type the desired component type
      * @return the component associated with the name
-     * @throws PropertyException
-     *             if the component does not exist or is of the wrong type.
-     *  
+     * @throws PropertyException if the component does not exist or is of the wrong type.
      */
     Configurable getComponent(String name, Class type) throws PropertyException;
+
+
     /**
      * Gets a list of components associated with the given parameter name
-     * 
-     * @param name
-     *            the parameter name
-     * @param type
-     *            the desired component type
+     *
+     * @param name the parameter name
+     * @param type the desired component type
      * @return the component associated with the name
-     * @throws PropertyException
-     *             if the component does not exist or is of the wrong type.
-     *  
+     * @throws PropertyException if the component does not exist or is of the wrong type.
      */
     List getComponentList(String name, Class type) throws PropertyException;
+
+
     /**
      * Gets the list of strings associated with this name
-     * 
-     * @param name
-     *            the name
-     * 
+     *
+     * @param name the name
      * @return an array (possibly empty) of configurable strings
-     * @throws PropertyException
-     *             if the named property is not of this type
+     * @throws PropertyException if the named property is not of this type
      */
     List getStrings(String name) throws PropertyException;
+
+
     /**
-     * Retrieves the names of all the properties currently defined for this
-     * property sheet
-     * 
+     * Retrieves the names of all the properties currently defined for this property sheet
+     *
      * @return the array of names
      */
     String[] getNames();
+
+
     /**
      * Gets the raw value associated with this name
-     * 
-     * @param name
-     *            the name
-     * @return the value as an object (it could be a String or a String[]
-     *         depending upon the property type)
+     *
+     * @param name the name
+     * @return the value as an object (it could be a String or a String[] depending upon the property type)
      */
     Object getRaw(String name) throws PropertyException;
 
+
     /**
-     * Gets the raw value associated with this name, no global symbol
-     * replacement is performed.
-     * 
-     * @param name
-     *            the name
-     * @return the value as an object (it could be a String or a String[]
-     *         depending upon the property type)
+     * Gets the raw value associated with this name, no global symbol replacement is performed.
+     *
+     * @param name the name
+     * @return the value as an object (it could be a String or a String[] depending upon the property type)
      */
     public Object getRawNoReplacement(String name);
 
+
     /**
      * Gets the owning property manager
-     * 
+     *
      * @return the property manager
      */
     ConfigurationManager getPropertyManager() throws PropertyException;
-    
-    
+
+
     /**
-     * Returns a logger to use for this configurable component.
-     * The logger can be configured with the property: 'logLevel' -
-     * The default logLevel value is define by the global property 
-     * 'defaultLogLevel' (which defaults to WARNING).
+     * Returns a logger to use for this configurable component. The logger can be configured with the property:
+     * 'logLevel' - The default logLevel value is define by the global property 'defaultLogLevel' (which defaults to
+     * WARNING).
+     *
      * @return the logger for this component
      * @throws PropertyException if an error occurs
      */
     Logger getLogger() throws PropertyException;
+
 
     /**
      * Dumps this sheet to the given stream

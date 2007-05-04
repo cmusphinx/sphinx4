@@ -22,57 +22,42 @@ import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.*;
-import java.awt.image.*;
+import java.awt.image.BufferedImage;
+import java.awt.image.FilteredImageSource;
+import java.awt.image.ImageFilter;
+import java.awt.image.ReplicateScaleFilter;
 import java.util.ArrayList;
 
-/**
- * Converts a set of log magnitude Spectrum data into a graphical
- * representation.
- */
+/** Converts a set of log magnitude Spectrum data into a graphical representation. */
 public class SpectrogramPanel extends JPanel {
-    /**
-     * Where the spectrogram will live.
-     */
+
+    /** Where the spectrogram will live. */
     protected BufferedImage spectrogram = null;
 
-    /**
-     * A scaled version of the spectrogram image.
-     */
+    /** A scaled version of the spectrogram image. */
     protected Image scaledSpectrogram = null;
 
-    /**
-     * The zooming factor.
-     */
+    /** The zooming factor. */
     protected float zoom = 1.0f;
 
-    /**
-     * Offset factor - what will be subtracted from the image to
-     * adjust for noise level.
-     */
+    /** Offset factor - what will be subtracted from the image to adjust for noise level. */
     protected double offsetFactor;
 
-    /**
-     * The audio data.
-     */
+    /** The audio data. */
     protected AudioData audio;
 
 
-    /**
-     * The frontEnd (the source of features
-     */
+    /** The frontEnd (the source of features */
     protected FrontEnd frontEnd;
 
-    /**
-     * The source of audio (the first stage of the frontend)
-     */
+    /** The source of audio (the first stage of the frontend) */
     protected StreamDataSource dataSource;
 
-    /**
-     * Creates a new <code>JPanel</code> with a double buffer
-     * and a flow layout.
-     */
+
+    /** Creates a new <code>JPanel</code> with a double buffer and a flow layout. */
     public SpectrogramPanel() {
     }
+
 
     /**
      * Creates a new SpectrogramPanel for the given AudioData.
@@ -93,9 +78,8 @@ public class SpectrogramPanel extends JPanel {
         });
     }
 
-    /**
-     * Actually creates the Spectrogram image.
-     */
+
+    /** Actually creates the Spectrogram image. */
     protected void computeSpectrogram() {
         try {
             AudioDataInputStream is = new AudioDataInputStream(audio);
@@ -182,23 +166,21 @@ public class SpectrogramPanel extends JPanel {
         }
     }
 
+
     /**
-     * Updates the offset factor used to calculate the greyscale
-     * values from the intensities.  This also calculates and
+     * Updates the offset factor used to calculate the greyscale values from the intensities.  This also calculates and
      * populates all the greyscale values in the image.
      *
-     * @param offsetFactor the offset factor used to calculate the
-     *                     greyscale values from the intensities; this is used to adjust
-     *                     the level of background noise that shows up in the image
+     * @param offsetFactor the offset factor used to calculate the greyscale values from the intensities; this is used
+     *                     to adjust the level of background noise that shows up in the image
      */
     public void setOffsetFactor(double offsetFactor) {
         this.offsetFactor = offsetFactor;
         computeSpectrogram();
     }
 
-    /**
-     * Zoom the image, preparing for new display.
-     */
+
+    /** Zoom the image, preparing for new display. */
     protected void zoomSet(float zoom) {
         this.zoom = zoom;
         if (spectrogram != null) {
@@ -213,6 +195,7 @@ public class SpectrogramPanel extends JPanel {
             repaint();
         }
     }
+
 
     /**
      * Paint the component.  This will be called by AWT/Swing.

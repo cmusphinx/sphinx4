@@ -11,37 +11,36 @@
  *
  */
 package edu.cmu.sphinx.util.props;
+
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Collections;
 
-/**
- * Used to register properties
- */
+/** Used to register properties */
 public class Registry {
+
     // map holds the registered properties
     private Map<String, PropertyType> map = new HashMap<String, PropertyType>();
     private Configurable configurable;
 
+
     /**
      * Creates a new registry for an object
-     * 
-     * @param obj
-     *            the configurable object for this registry
+     *
+     * @param obj the configurable object for this registry
      */
     Registry(Configurable obj) {
         this.configurable = obj;
     }
+
+
     /**
      * Registers a property with this registry
-     * 
-     * @param propertyName
-     *            the name of the property
-     * @param myType
-     *            the type of the property.
-     * @throws PropertyException
-     *             if a problem with a property is detected.
+     *
+     * @param propertyName the name of the property
+     * @param myType       the type of the property.
+     * @throws PropertyException if a problem with a property is detected.
      */
     public void register(String propertyName, PropertyType myType)
             throws PropertyException {
@@ -52,39 +51,40 @@ public class Registry {
             map.put(propertyName, myType);
         }
     }
+
+
     /**
      * Lookup a property in the registry
-     * 
-     * @param propertyName
-     *            the property name
-     * @return the type of the property (or null if the property is not
-     *         registered)
+     *
+     * @param propertyName the property name
+     * @return the type of the property (or null if the property is not registered)
      */
     PropertyType lookup(String propertyName) {
         return map.get(propertyName);
     }
-    
+
+
     /**
      * Gets the owner for this registry
-     * 
+     *
      * @return the owner
      */
     Configurable getOwner() {
         return configurable;
     }
-    
-    
+
+
     /**
      * Returns the list of registered properties
+     *
      * @return the list of property names
      */
     Collection<String> getRegisteredProperties() {
         return map.keySet();
     }
 
-    /**
-     * @return a unmodifiable copy of the all properties and their types.
-     */
+
+    /** @return a unmodifiable copy of the all properties and their types. */
     Map<String, PropertyType> getAllPropertiesMap() {
         return Collections.unmodifiableMap(map);
     }

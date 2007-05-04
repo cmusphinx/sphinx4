@@ -11,16 +11,6 @@
  */
 package edu.cmu.sphinx.tools.live;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.net.URL;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
 import edu.cmu.sphinx.frontend.util.ConcatFileDataSource;
 import edu.cmu.sphinx.recognizer.Recognizer;
 import edu.cmu.sphinx.result.Result;
@@ -28,65 +18,53 @@ import edu.cmu.sphinx.util.GapInsertionDetector;
 import edu.cmu.sphinx.util.NISTAlign;
 import edu.cmu.sphinx.util.ReferenceSource;
 import edu.cmu.sphinx.util.Timer;
-import edu.cmu.sphinx.util.props.Configurable;
-import edu.cmu.sphinx.util.props.ConfigurationManager;
-import edu.cmu.sphinx.util.props.PropertyException;
-import edu.cmu.sphinx.util.props.PropertySheet;
-import edu.cmu.sphinx.util.props.PropertyType;
-import edu.cmu.sphinx.util.props.Registry;
+import edu.cmu.sphinx.util.props.*;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.net.URL;
+import java.util.*;
 
 /**
- * Decodes a batch file containing a list of files to decode. The files can be
- * either audio files or cepstral files, but defaults to audio files.
+ * Decodes a batch file containing a list of files to decode. The files can be either audio files or cepstral files, but
+ * defaults to audio files.
  */
 public class LiveModeRecognizer implements Configurable {
-    /**
-     * The SphinxProperty name for how many files to skip for every decode.
-     */
+
+    /** The SphinxProperty name for how many files to skip for every decode. */
+    @S4Integer(defaultValue = 0)
     public final static String PROP_SKIP = "skip";
-    /**
-     * The default value for the property PROP_SKIP.
-     */
+    /** The default value for the property PROP_SKIP. */
     public final static int PROP_SKIP_DEFAULT = 0;
 
-    /**
-     * The Sphinx property that specifies the recognizer to use
-     */
+    /** The Sphinx property that specifies the recognizer to use */
+    @S4Component(type = Recognizer.class)
     public final static String PROP_RECOGNIZER = "recognizer";
 
-    /**
-     * The Sphinx property that specifies the source of the transcript
-     */
+    /** The Sphinx property that specifies the source of the transcript */
+    @S4Component(type = ConcatFileDataSource.class)
     public final static String PROP_INPUT_SOURCE = "inputSource";
-    /**
-     * SphinxProperty specifying whether to print out the gap insertion errors.
-     */
+
+    /** SphinxProperty specifying whether to print out the gap insertion errors. */
+    @S4Boolean(defaultValue = false)
     public static final String PROP_SHOW_GAP_INSERTIONS = "showGapInsertions";
 
-    /**
-     * Default value for PROP_SHOW_GAP_INSERTIONS.
-     */
+    /** Default value for PROP_SHOW_GAP_INSERTIONS. */
     public static final boolean PROP_SHOW_GAP_INSERTIONS_DEFAULT = false;
 
-    /**
-     * SphinxProperty specifying the transcript file.
-     */
+    /** SphinxProperty specifying the transcript file. */
+    @S4String(defaultValue = "hypothesis.txt")
     public final static String PROP_HYPOTHESIS_TRANSCRIPT = "hypothesisTranscript";
 
-    /**
-     * The default value of PROP_TRANSCRIPT.
-     */
+    /** The default value of PROP_TRANSCRIPT. */
     public final static String PROP_HYPOTHESIS_TRANSCRIPT_DEFAULT = "hypothesis.txt";
 
-    /**
-     * SphinxProperty specifying the number of files to decode before alignment
-     * is performed.
-     */
+    /** SphinxProperty specifying the number of files to decode before alignment is performed. */
+    @S4Integer(defaultValue = -1)
     public final static String PROP_ALIGN_INTERVAL = "alignInterval";
 
-    /**
-     * The default value of PROP_ALIGN_INTERVAL.
-     */
+    /** The default value of PROP_ALIGN_INTERVAL. */
     public final static int PROP_ALIGN_INTERVAL_DEFAULT = -1;
 
     // TODO - the instrumentation in here that is looking for gap insertions
@@ -115,30 +93,32 @@ public class LiveModeRecognizer implements Configurable {
     private GapInsertionDetector gapInsertionDetector;
     private NISTAlign aligner = new NISTAlign(true, true);
 
+
     /*
-     * (non-Javadoc)
-     * 
-     * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
-     */
-    public static Map getConfigurationInfo(){
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
+    */
+    public static Map getConfigurationInfo() {
         Map info = new HashMap();
-        info.put(new String("PROP_SKIP_TYPE"),new String("INTEGER"));
-        info.put(new String("PROP_RECOGNIZER_TYPE"),new String("COMPONENT")); 
-        info.put(new String("PROP_RECOGNIZER_CLASSTYPE"),new String("edu.cmu.sphinx.recognizer.Recognizer"));
-        info.put(new String("PROP_INPUT_SOURCE_TYPE"),new String("COMPONENT")); 
-        info.put(new String("PROP_INPUT_SOURCE_CLASSTYPE"),new String("edu.cmu.sphinx.frontend.util.ConcatFileDataSource"));
-        info.put(new String("PROP_SHOW_GAP_INSERTIONS_TYPE"),new String("BOOLEAN"));
-        info.put(new String("PROP_ALIGN_INTERVAL_TYPE"),new String("INTEGER"));
-        info.put(new String("PROP_HYPOTHESIS_TRANSCRIPT_TYPE"),new String("STRING"));
+        info.put(new String("PROP_SKIP_TYPE"), new String("INTEGER"));
+        info.put(new String("PROP_RECOGNIZER_TYPE"), new String("COMPONENT"));
+        info.put(new String("PROP_RECOGNIZER_CLASSTYPE"), new String("edu.cmu.sphinx.recognizer.Recognizer"));
+        info.put(new String("PROP_INPUT_SOURCE_TYPE"), new String("COMPONENT"));
+        info.put(new String("PROP_INPUT_SOURCE_CLASSTYPE"), new String("edu.cmu.sphinx.frontend.util.ConcatFileDataSource"));
+        info.put(new String("PROP_SHOW_GAP_INSERTIONS_TYPE"), new String("BOOLEAN"));
+        info.put(new String("PROP_ALIGN_INTERVAL_TYPE"), new String("INTEGER"));
+        info.put(new String("PROP_HYPOTHESIS_TRANSCRIPT_TYPE"), new String("STRING"));
         return info;
     }
-    
+
+
     /*
-     * (non-Javadoc)
-     * 
-     * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
-     *      edu.cmu.sphinx.util.props.Registry)
-     */
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
+    *      edu.cmu.sphinx.util.props.Registry)
+    */
     public void register(String name, Registry registry)
             throws PropertyException {
         this.name = name;
@@ -150,11 +130,12 @@ public class LiveModeRecognizer implements Configurable {
         registry.register(PROP_HYPOTHESIS_TRANSCRIPT, PropertyType.STRING);
     }
 
+
     /*
-     * (non-Javadoc)
-     * 
-     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
-     */
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
+    */
     public void newProperties(PropertySheet ps) throws PropertyException {
         skip = ps.getInt(PROP_SKIP, PROP_SKIP_DEFAULT);
         recognizer = (Recognizer) ps.getComponent(PROP_RECOGNIZER,
@@ -173,18 +154,18 @@ public class LiveModeRecognizer implements Configurable {
         referenceSource = dataSource;
     }
 
+
     /*
-     * (non-Javadoc)
-     * 
-     * @see edu.cmu.sphinx.util.props.Configurable#getName()
-     */
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.util.props.Configurable#getName()
+    */
     public String getName() {
         return name;
     }
 
-    /**
-     * Decodes the batch of audio files
-     */
+
+    /** Decodes the batch of audio files */
     public void decode() throws IOException {
         List<String> resultList = new LinkedList<String>();
         Result result = null;
@@ -231,23 +212,21 @@ public class LiveModeRecognizer implements Configurable {
         System.out.println();
     }
 
-    /**
-     * Shows the test statistics that relates to live mode decoding.
-     * 
-     */
+
+    /** Shows the test statistics that relates to live mode decoding. */
     private void showLiveSummary() throws IOException {
         int actualUtterances = referenceSource.getReferences().size();
         int gapInsertions = detectGapInsertionErrors();
-        
+
         System.out.println
-            ("   Utterances:  Actual: " + actualUtterances + 
-             "  Found: " + numUtterances);
+                ("   Utterances:  Actual: " + actualUtterances +
+                        "  Found: " + numUtterances);
         System.out.println
-            ("   Gap Insertions: " + gapInsertions);
+                ("   Gap Insertions: " + gapInsertions);
     }
-    /**
-     * Detect gap insertion errors.
-     */
+
+
+    /** Detect gap insertion errors. */
     private int detectGapInsertionErrors() throws IOException {
         Timer gapTimer = Timer.getTimer("GapInsertionDetector");
         gapTimer.start();
@@ -258,14 +237,13 @@ public class LiveModeRecognizer implements Configurable {
         return gapInsertions;
     }
 
+
     /**
-     * Align the list of results with reference text. This method figures out
-     * how many words and sentences match, and the different types of errors.
-     * 
-     * @param hypothesisList
-     *                the list of hypotheses
-     * @param referenceList
-     *                the list of references
+     * Align the list of results with reference text. This method figures out how many words and sentences match, and
+     * the different types of errors.
+     *
+     * @param hypothesisList the list of hypotheses
+     * @param referenceList  the list of references
      */
     private void alignResults(List<String> hypothesisList, List<String> referenceList) {
         System.out.println();
@@ -285,14 +263,12 @@ public class LiveModeRecognizer implements Configurable {
         System.out.println();
     }
 
+
     /**
-     * Saves the aligned hypothesis and reference text to the aligned text
-     * file.
-     * 
-     * @param hypothesis
-     *                the aligned hypothesis text
-     * @param reference
-     *                the aligned reference text
+     * Saves the aligned hypothesis and reference text to the aligned text file.
+     *
+     * @param hypothesis the aligned hypothesis text
+     * @param reference  the aligned reference text
      */
     private void saveAlignedText(String hypothesis, String reference) {
         try {
@@ -306,15 +282,12 @@ public class LiveModeRecognizer implements Configurable {
         }
     }
 
+
     /**
-     * Converts the given list of strings into one string, putting a space
-     * character in between the strings.
-     * 
-     * @param resultList
-     *                the list of strings
-     * 
-     * @return a string which is a concatenation of the strings in the list,
-     *         separated by a space character
+     * Converts the given list of strings into one string, putting a space character in between the strings.
+     *
+     * @param resultList the list of strings
+     * @return a string which is a concatenation of the strings in the list, separated by a space character
      */
     private String listToString(List<String> resultList) {
         StringBuffer sb = new StringBuffer();
@@ -325,26 +298,23 @@ public class LiveModeRecognizer implements Configurable {
         return sb.toString();
     }
 
-    /**
-     * Return the timer for alignment.
-     */
+
+    /** Return the timer for alignment. */
     private Timer getAlignTimer() {
         return Timer.getTimer("Align");
     }
 
-    /**
-     * Do clean up
-     */
+
+    /** Do clean up */
     public void close() throws IOException {
         hypothesisTranscript.close();
     }
 
+
     /**
      * Main method of this BatchDecoder.
-     * 
-     * @param argv
-     *                argv[0] : config file argv[1] : a file listing
-     *                all the audio files to decode
+     *
+     * @param argv argv[0] : config file argv[1] : a file listing all the audio files to decode
      */
     public static void main(String[] argv) {
         if (argv.length != 1) {

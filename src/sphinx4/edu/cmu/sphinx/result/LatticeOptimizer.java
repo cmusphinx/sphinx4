@@ -15,14 +15,14 @@ import java.util.Iterator;
 import java.util.Vector;
 
 /**
- * Class used to collapse all equivalent paths in a Lattice.  Results in a
- * Lattices that is deterministic (no Node has Edges to two or more
- * equivalent Nodes), and minimal (no Node has Edge from two or more
- * equivalent Nodes).
+ * Class used to collapse all equivalent paths in a Lattice.  Results in a Lattices that is deterministic (no Node has
+ * Edges to two or more equivalent Nodes), and minimal (no Node has Edge from two or more equivalent Nodes).
  */
 
 public class LatticeOptimizer {
+
     protected Lattice lattice;
+
 
     /**
      * Create a new Lattice optimizer
@@ -33,17 +33,15 @@ public class LatticeOptimizer {
         this.lattice = lattice;
     }
 
+
     /**
-     * Code for optimizing Lattices.  An optimal lattice has all the same
-     * paths as the original, but with fewer nodes and edges
-     *
-     * Note that these methods are all in Lattice so that it is easy to
-     * change the definition of "equivalent" nodes and edges.  For example,
-     * an equivalent node might have the same word, but start or end at a
-     * different time.
-     *
-     * To experiment with other definitions of equivalent, just create a
-     * superclass of Lattice.
+     * Code for optimizing Lattices.  An optimal lattice has all the same paths as the original, but with fewer nodes
+     * and edges
+     * <p/>
+     * Note that these methods are all in Lattice so that it is easy to change the definition of "equivalent" nodes and
+     * edges.  For example, an equivalent node might have the same word, but start or end at a different time.
+     * <p/>
+     * To experiment with other definitions of equivalent, just create a superclass of Lattice.
      */
     public void optimize() {
         //System.err.println("***");
@@ -64,36 +62,28 @@ public class LatticeOptimizer {
 
     }
 
+
     /**
-     * Make the Lattice deterministic, so that no node
-     * has multiple outgoing edges to equivalent nodes.
-     *
-     * Given two edges from the same node to two equivalent nodes,
-     * replace with one edge to one node with outgoing edges
+     * Make the Lattice deterministic, so that no node has multiple outgoing edges to equivalent nodes.
+     * <p/>
+     * Given two edges from the same node to two equivalent nodes, replace with one edge to one node with outgoing edges
      * that are a union of the outgoing edges of the old two nodes.
-     *
-     *  A --> B --> C
-     *   \--> B' --> Y
-     *
-     *  where B and B' are equivalent.
-     *
-     *  is replaced with
-     *
-     *  A --> B" --> C
-     *         \--> Y
-     *
-     *  where B" is the merge of B and B'
-     *
-     *  Note that equivalent nodes must have the same incomming edges.
-     *  For example
-     *
-     *  A --> B
-     *    \
-     *     \
-     *  X --> B'
-     *
-     *  B and B' would not be equivalent because the incomming edges
-     *  are different
+     * <p/>
+     * A --> B --> C \--> B' --> Y
+     * <p/>
+     * where B and B' are equivalent.
+     * <p/>
+     * is replaced with
+     * <p/>
+     * A --> B" --> C \--> Y
+     * <p/>
+     * where B" is the merge of B and B'
+     * <p/>
+     * Note that equivalent nodes must have the same incomming edges. For example
+     * <p/>
+     * A --> B \ \ X --> B'
+     * <p/>
+     * B and B' would not be equivalent because the incomming edges are different
      */
     protected void optimizeForward() {
         //System.err.println("*** Optimizing forward ***");
@@ -118,12 +108,11 @@ public class LatticeOptimizer {
 
 
     /**
-     * Look for 2 "to" edges to equivalent nodes.  Replace the edges
-     * with one edge to one node that is a merge of the equivalent nodes
-     *
-     * nodes are equivalent if they have equivalent from edges, and the
-     * same label
-     *
+     * Look for 2 "to" edges to equivalent nodes.  Replace the edges with one edge to one node that is a merge of the
+     * equivalent nodes
+     * <p/>
+     * nodes are equivalent if they have equivalent from edges, and the same label
+     * <p/>
      * merged nodes have a union of "from" and "to" edges
      *
      * @param n
@@ -155,9 +144,10 @@ public class LatticeOptimizer {
         return false;
     }
 
+
     /**
-     * nodes are equivalent forward if they have "from" edges from the same
-     * nodes, and have equivalent labels (Token, start/end times)
+     * nodes are equivalent forward if they have "from" edges from the same nodes, and have equivalent labels (Token,
+     * start/end times)
      *
      * @param n1
      * @param n2
@@ -177,14 +167,13 @@ public class LatticeOptimizer {
         return n1.hasEquivalentEnteringEdges(n2);
     }
 
+
     /**
      * given edges e1 and e2 from node n to nodes n1 and n2
-     *
-     * merge e1 and e2, that is, merge the scores of e1 and e2
-     * create n' that is a merge of n1 and n2
-     * add n'
-     * add edge e' from n to n'
-     *
+     * <p/>
+     * merge e1 and e2, that is, merge the scores of e1 and e2 create n' that is a merge of n1 and n2 add n' add edge e'
+     * from n to n'
+     * <p/>
      * remove n1 and n2 and all associated edges
      *
      * @param n
@@ -207,25 +196,25 @@ public class LatticeOptimizer {
 
         // merge the scores of e1 and e2 into e1
         e1.setAcousticScore(mergeAcousticScores
-                            (e1.getAcousticScore(), e2.getAcousticScore()));
+                (e1.getAcousticScore(), e2.getAcousticScore()));
         e1.setLMScore(mergeLanguageScores(e1.getLMScore(),
-                                          e2.getLMScore()));
+                e2.getLMScore()));
 
         // add n2's edges to n1
         for (Iterator i = n2.getLeavingEdges().iterator(); i.hasNext();) {
             Edge e = (Edge) i.next();
-            e2 = n1.getEdgeToNode( e.getToNode() );
-            if ( e2 == null ) {
+            e2 = n1.getEdgeToNode(e.getToNode());
+            if (e2 == null) {
                 lattice.addEdge(n1, e.getToNode(),
-                                e.getAcousticScore(), e.getLMScore());
+                        e.getAcousticScore(), e.getLMScore());
             } else {
                 // if we got here then n1 and n2 had edges to the same node
                 // choose the edge with best score
                 e2.setAcousticScore
-                    (mergeAcousticScores
-                     (e.getAcousticScore(), e2.getAcousticScore()));
-                e2.setLMScore(mergeLanguageScores(e.getLMScore(), 
-                                                  e2.getLMScore())) ;
+                        (mergeAcousticScores
+                                (e.getAcousticScore(), e2.getAcousticScore()));
+                e2.setLMScore(mergeLanguageScores(e.getLMScore(),
+                        e2.getLMScore()));
             }
         }
 
@@ -235,36 +224,26 @@ public class LatticeOptimizer {
 
 
     /**
-     * Minimize the Lattice deterministic, so that no node
-     * has multiple incomming edges from equivalent nodes.
-     *
-     * Given two edges from equivalent nodes to a single nodes,
-     * replace with one edge from one node with incomming edges
+     * Minimize the Lattice deterministic, so that no node has multiple incomming edges from equivalent nodes.
+     * <p/>
+     * Given two edges from equivalent nodes to a single nodes, replace with one edge from one node with incomming edges
      * that are a union of the incomming edges of the old two nodes.
-     *
-     *  A --> B --> C
-     *  X --> B' --/
-     *
-     *  where B and B' are equivalent.
-     *
-     *  is replaced with
-     *
-     *  A --> B" --> C
-     *  X --/
-     *
-     *  where B" is the merge of B and B'
-     *
-     *  Note that equivalent nodes must have the same outgoing edges.
-     *  For example
-     *
-     *  A --> X
-     *    \
-     *     \
-     *      \
-     *  A' --> B
-     *
-     *  A and A' would not be equivalent because the outgoing edges
-     *  are different
+     * <p/>
+     * A --> B --> C X --> B' --/
+     * <p/>
+     * where B and B' are equivalent.
+     * <p/>
+     * is replaced with
+     * <p/>
+     * A --> B" --> C X --/
+     * <p/>
+     * where B" is the merge of B and B'
+     * <p/>
+     * Note that equivalent nodes must have the same outgoing edges. For example
+     * <p/>
+     * A --> X \ \ \ A' --> B
+     * <p/>
+     * A and A' would not be equivalent because the outgoing edges are different
      */
     protected void optimizeBackward() {
         //System.err.println("*** Optimizing backward ***");
@@ -287,11 +266,11 @@ public class LatticeOptimizer {
         }
     }
 
+
     /**
-     * Look for 2 entering edges from equivalent nodes.  Replace the edges
-     * with one edge to one new node that is a merge of the equivalent nodes
-     * Nodes are equivalent if they have equivalent to edges, and the same 
-     * label. Merged nodes have a union of entering and leaving edges
+     * Look for 2 entering edges from equivalent nodes.  Replace the edges with one edge to one new node that is a merge
+     * of the equivalent nodes Nodes are equivalent if they have equivalent to edges, and the same label. Merged nodes
+     * have a union of entering and leaving edges
      *
      * @param n
      * @return true if Node n required opimizing backwards
@@ -309,7 +288,7 @@ public class LatticeOptimizer {
                  */
                 assert e != e2;
                 if (equivalentNodesBackward(e.getFromNode(),
-                                            e2.getFromNode())) {
+                        e2.getFromNode())) {
                     mergeNodesAndEdgesBackward(n, e, e2);
                     return true;
                 }
@@ -321,9 +300,10 @@ public class LatticeOptimizer {
         return false;
     }
 
+
     /**
-     * nodes are equivalent backward if they have "to" edges to the same nodes,
-     * and have equivalent labels (Token, start/end times)
+     * nodes are equivalent backward if they have "to" edges to the same nodes, and have equivalent labels (Token,
+     * start/end times)
      *
      * @param n1
      * @param n2
@@ -342,6 +322,7 @@ public class LatticeOptimizer {
         return n1.hasEquivalentLeavingEdges(n2);
     }
 
+
     /**
      * Is the contents of these Node equivalent?
      *
@@ -352,17 +333,16 @@ public class LatticeOptimizer {
     protected boolean equivalentNodeLabels(Node n1, Node n2) {
         return (n1.getWord().equals(n2.getWord()) &&
                 (n1.getBeginTime() == n2.getBeginTime() &&
-                 n1.getEndTime() == n2.getEndTime()));
+                        n1.getEndTime() == n2.getEndTime()));
     }
+
 
     /**
      * given edges e1 and e2 to node n from nodes n1 and n2
-     *
-     * merge e1 and e2, that is, merge the scores of e1 and e2
-     * create n' that is a merge of n1 and n2
-     * add n'
-     * add edge e' from n' to n
-     *
+     * <p/>
+     * merge e1 and e2, that is, merge the scores of e1 and e2 create n' that is a merge of n1 and n2 add n' add edge e'
+     * from n' to n
+     * <p/>
      * remove n1 and n2 and all associated edges
      *
      * @param n
@@ -385,25 +365,25 @@ public class LatticeOptimizer {
 
         // merge the scores of e1 and e2 into e1
         e1.setAcousticScore(mergeAcousticScores(e1.getAcousticScore(),
-                                                e2.getAcousticScore()));
+                e2.getAcousticScore()));
         e1.setLMScore(mergeLanguageScores(e1.getLMScore(),
-                                          e2.getLMScore()));
+                e2.getLMScore()));
 
         // add n2's "from" edges to n1
         for (Iterator i = n2.getEnteringEdges().iterator(); i.hasNext();) {
             Edge e = (Edge) i.next();
-            e2 = n1.getEdgeFromNode( e.getFromNode() );
-            if ( e2 == null ) {
+            e2 = n1.getEdgeFromNode(e.getFromNode());
+            if (e2 == null) {
                 lattice.addEdge(e.getFromNode(), n1,
-                                e.getAcousticScore(), e.getLMScore());
+                        e.getAcousticScore(), e.getLMScore());
             } else {
                 // if we got here then n1 and n2 had edges from the same node
                 // choose the edge with best score
                 e2.setAcousticScore
-                    (mergeAcousticScores(e.getAcousticScore(),
-                                         e2.getAcousticScore()));
+                        (mergeAcousticScores(e.getAcousticScore(),
+                                e2.getAcousticScore()));
                 e2.setLMScore(mergeLanguageScores(e.getLMScore(),
-                                                  e2.getLMScore()));
+                        e2.getLMScore()));
             }
         }
 
@@ -411,9 +391,8 @@ public class LatticeOptimizer {
         lattice.removeNodeAndEdges(n2);
     }
 
-    /**
-     * Remove all Nodes that have no Edges to them (but not <s>)
-     */
+
+    /** Remove all Nodes that have no Edges to them (but not <s>) */
     protected void removeHangingNodes() {
         for (Iterator i = lattice.getCopyOfNodes().iterator(); i.hasNext();) {
             Node n = (Node) i.next();
@@ -424,7 +403,7 @@ public class LatticeOptimizer {
 
                 } else {
                     if (n.getLeavingEdges().size() == 0
-                        || n.getEnteringEdges().size() == 0) {
+                            || n.getEnteringEdges().size() == 0) {
                         lattice.removeNodeAndEdges(n);
                         removeHangingNodes();
                         return;
@@ -434,13 +413,13 @@ public class LatticeOptimizer {
         }
     }
 
+
     /**
-     * Provides a single method to merge acoustic scores, so that changes
-     * to how acoustic score are merged can be made at one point only.
+     * Provides a single method to merge acoustic scores, so that changes to how acoustic score are merged can be made
+     * at one point only.
      *
      * @param score1 the first acoustic score
      * @param score2 the second acoustic score
-     *
      * @return the merged acoustic score
      */
     private double mergeAcousticScores(double score1, double score2) {
@@ -448,19 +427,20 @@ public class LatticeOptimizer {
         return Math.max(score1, score2);
     }
 
+
     /**
-     * Provides a single method to merge language scores, so that changes
-     * to how language score are merged can be made at one point only.
+     * Provides a single method to merge language scores, so that changes to how language score are merged can be made
+     * at one point only.
      *
      * @param score1 the first language score
      * @param score2 the second language score
-     *
      * @return the merged language score
      */
     private double mergeLanguageScores(double score1, double score2) {
         // return lattice.getLogMath().addAsLinear(score1, score2);
         return Math.max(score1, score2);
     }
+
 
     /**
      * Self test for LatticeOptimizer

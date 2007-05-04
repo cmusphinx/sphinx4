@@ -12,52 +12,33 @@
 package edu.cmu.sphinx.result;
 
 import edu.cmu.sphinx.linguist.dictionary.Word;
-
-import edu.cmu.sphinx.result.Lattice;
-import edu.cmu.sphinx.result.Edge;
 import edu.cmu.sphinx.util.LogMath;
 
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
-import java.util.StringTokenizer;
-import java.util.Iterator;
-import java.util.Vector;
-import java.util.Collection;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.*;
 
 /**
- * <p>
- * A node is part of Lattices, representing the theory that a word was spoken
- * over a given period of time. A node also has a set of entering and leaving
- * {@link edu.cmu.sphinx.result.Edge edges}, connecting it to other nodes.
- * One can get and set the beginning and end frames of the word via the
- * getBeginTime and getEndTime methods. When setting these times, the beginning
- * time must be earlier or equal to the end time, otherwise an error will
- * be thrown.
- * </p>
- *
- * <p>
- * The posterior probability of any word in a word lattice is the probability
- * that the node representing that word occurs on any path through the 
- * lattice. It is usually computed as the ratio of the total likelihood scores
- * of all paths through the lattice that pass through the node,
- * to the total likelihood score of all paths through the lattice.
- * Path scores are usually computed using the acoustic likelihoods of the
- * nodes, although language scores can also be incorporated. The posterior
- * probabilities of an entire lattice is usually computed efficiently
- * using the Forward-Backward Algorithm. Refer to the 
- * {@link edu.cmu.sphinx.result.Lattice#computeNodePosteriors
- * computeNodePosteriors} method in the Lattice class for details.
- * </p>
+ * <p/>
+ * A node is part of Lattices, representing the theory that a word was spoken over a given period of time. A node also
+ * has a set of entering and leaving {@link edu.cmu.sphinx.result.Edge edges}, connecting it to other nodes. One can get
+ * and set the beginning and end frames of the word via the getBeginTime and getEndTime methods. When setting these
+ * times, the beginning time must be earlier or equal to the end time, otherwise an error will be thrown. </p>
+ * <p/>
+ * <p/>
+ * The posterior probability of any word in a word lattice is the probability that the node representing that word
+ * occurs on any path through the lattice. It is usually computed as the ratio of the total likelihood scores of all
+ * paths through the lattice that pass through the node, to the total likelihood score of all paths through the lattice.
+ * Path scores are usually computed using the acoustic likelihoods of the nodes, although language scores can also be
+ * incorporated. The posterior probabilities of an entire lattice is usually computed efficiently using the
+ * Forward-Backward Algorithm. Refer to the {@link edu.cmu.sphinx.result.Lattice#computeNodePosteriors
+ * computeNodePosteriors} method in the Lattice class for details. </p>
  */
 public class Node {
 
     // used to generate unique IDs for new Nodes.
-    private static int nodeCount = 0; 
+    private static int nodeCount = 0;
 
     private String id;
     private Word word;
@@ -71,27 +52,29 @@ public class Node {
     private Node bestPredecessor;
     private double viterbiScore;
     private Set descendants;
-    
+
+
     {
         enteringEdges = new Vector();
         leavingEdges = new Vector();
         nodeCount++;
     }
 
+
     /**
      * Create a new Node
      *
-     * @param word the word of this node
+     * @param word      the word of this node
      * @param beginTime the start time of the word
-     * @param endTime the end time of the word
+     * @param endTime   the end time of the word
      */
     protected Node(Word word, int beginTime, int endTime) {
         this(getNextNodeId(), word, beginTime, endTime);
     }
 
+
     /**
-     * Create a new Node with given ID.
-     * Used when creating a Lattice from a .LAT file
+     * Create a new Node with given ID. Used when creating a Lattice from a .LAT file
      *
      * @param id
      * @param word
@@ -106,7 +89,7 @@ public class Node {
         if (endTime != -1) {
             if (beginTime > endTime) {
                 throw new Error("Begin time (" + beginTime +
-                                ") later than end time (" + endTime +")");
+                        ") later than end time (" + endTime + ")");
             }
         }
         this.forwardScore = LogMath.getLogZero();
@@ -114,9 +97,9 @@ public class Node {
         this.posterior = LogMath.getLogZero();
     }
 
+
     /**
-     * Get a unique ID for a new Node.
-     * Used when creating a Lattice from a .LAT file
+     * Get a unique ID for a new Node. Used when creating a Lattice from a .LAT file
      *
      * @return the unique ID for a new node
      */
@@ -124,8 +107,10 @@ public class Node {
         return Integer.toString(nodeCount);
     }
 
+
     /**
      * Test if a node has an Edge to a Node
+     *
      * @param n
      * @return unique Node ID
      */
@@ -133,13 +118,12 @@ public class Node {
         return getEdgeToNode(n) != null;
     }
 
+
     /**
      * given a node find the edge to that node
      *
      * @param n the node of interest
-     *
-     * @return the edge to that node or <code> null</code>  if no edge
-     * could be found.
+     * @return the edge to that node or <code> null</code>  if no edge could be found.
      */
     public Edge getEdgeToNode(Node n) {
         for (Iterator j = leavingEdges.iterator(); j.hasNext();) {
@@ -151,6 +135,7 @@ public class Node {
         return null;
     }
 
+
     /**
      * Test is a Node has an Edge from a Node
      *
@@ -161,13 +146,12 @@ public class Node {
         return getEdgeFromNode(n) != null;
     }
 
+
     /**
      * given a node find the edge from that node
      *
      * @param n the node of interest
-     *
-     * @return the edge from that node or <code> null</code>  if no edge
-     * could be found.
+     * @return the edge from that node or <code> null</code>  if no edge could be found.
      */
     public Edge getEdgeFromNode(Node n) {
         for (Iterator j = enteringEdges.iterator(); j.hasNext();) {
@@ -178,6 +162,7 @@ public class Node {
         }
         return null;
     }
+
 
     /**
      * Test if a Node has all Edges from the same Nodes and another Node.
@@ -199,6 +184,7 @@ public class Node {
         return true;
     }
 
+
     /**
      * Test if a Node has all Edges to the same Nodes and another Node.
      *
@@ -219,6 +205,7 @@ public class Node {
         return true;
     }
 
+
     /**
      * Get the Edges to this Node
      *
@@ -227,6 +214,7 @@ public class Node {
     public Collection getEnteringEdges() {
         return enteringEdges;
     }
+
 
     /**
      * Get the Edges from this Node
@@ -237,15 +225,16 @@ public class Node {
         return leavingEdges;
     }
 
+
     /**
-     * Returns a copy of the Edges from this Node, so that the underlying
-     * data structure will not be modified.
+     * Returns a copy of the Edges from this Node, so that the underlying data structure will not be modified.
      *
      * @return a copy of the edges from this node
      */
     public Collection getCopyOfLeavingEdges() {
         return new Vector(leavingEdges);
     }
+
 
     /**
      * Add an Edge from this Node
@@ -256,6 +245,7 @@ public class Node {
         enteringEdges.add(e);
     }
 
+
     /**
      * Add an Edge to this Node
      *
@@ -264,6 +254,7 @@ public class Node {
     protected void addLeavingEdge(Edge e) {
         leavingEdges.add(e);
     }
+
 
     /**
      * Remove an Edge from this Node
@@ -274,6 +265,7 @@ public class Node {
         enteringEdges.remove(e);
     }
 
+
     /**
      * Remove an Edge to this Node
      *
@@ -282,6 +274,7 @@ public class Node {
     public void removeLeavingEdge(Edge e) {
         leavingEdges.remove(e);
     }
+
 
     /**
      * Get the ID associated with this Node
@@ -292,6 +285,7 @@ public class Node {
         return id;
     }
 
+
     /**
      * Get the word associated with this Node
      *
@@ -300,6 +294,7 @@ public class Node {
     public Word getWord() {
         return word;
     }
+
 
     /**
      * Get the frame number when the word began
@@ -313,21 +308,22 @@ public class Node {
         return beginTime;
     }
 
+
     /**
-     * Sets the frame number when the word began. The begin time must be
-     * not be later than the time returned by the getEndTime() method,
-     * otherwise an error will be thrown.
+     * Sets the frame number when the word began. The begin time must be not be later than the time returned by the
+     * getEndTime() method, otherwise an error will be thrown.
      *
      * @param beginTime the frame number when the word began
      */
     public void setBeginTime(int beginTime) {
         if (beginTime > getEndTime()) {
             throw new Error("Attempting to set a begin time (" + beginTime +
-                            ") that is later than the end time (" +
-                            getEndTime() + ").");
+                    ") that is later than the end time (" +
+                    getEndTime() + ").");
         }
         this.beginTime = beginTime;
     }
+
 
     /**
      * Get the frame number when the word ends
@@ -338,32 +334,33 @@ public class Node {
         return endTime;
     }
 
+
     /**
-     * Sets the frame number when the words ended. The end time must not be
-     * earlier than the time returned by the getEndTime() method, otherwise
-     * an error will be thrown.
+     * Sets the frame number when the words ended. The end time must not be earlier than the time returned by the
+     * getEndTime() method, otherwise an error will be thrown.
      *
      * @param endTime the frame number when the word ended
      */
     public void setEndTime(int endTime) {
         if (getBeginTime() > endTime) {
             throw new Error("Attempting to set an end time (" + endTime +
-                            ") that is earlier than the start time (" +
-                            getBeginTime() + ").");
+                    ") that is earlier than the start time (" +
+                    getBeginTime() + ").");
         }
         this.endTime = endTime;
     }
 
+
     /**
-     * Returns a description of this Node that contains the word, the
-     * start time, and the end time.
+     * Returns a description of this Node that contains the word, the start time, and the end time.
      *
      * @return a description of this Node
      */
     public String toString() {
-        return ("Node(" + word.getSpelling() + "," + getBeginTime() + "|" + 
-		getEndTime() + ")");
+        return ("Node(" + word.getSpelling() + "," + getBeginTime() + "|" +
+                getEndTime() + ")");
     }
+
 
     /**
      * Internal routine when dumping Lattices as AiSee files
@@ -377,23 +374,27 @@ public class Node {
             posterior = "log zero";
         }
         f.write("node: { title: \"" + id + "\" label: \""
-                + getWord() + "[" + getBeginTime() + "," + getEndTime() + 
+                + getWord() + "[" + getBeginTime() + "," + getEndTime() +
                 " p:" + posterior + "]\" }\n");
     }
 
+
     /**
      * Internal routine used when dumping Lattices as .LAT files
+     *
      * @param f
      * @throws IOException
      */
     void dump(PrintWriter f) throws IOException {
-        f.println("node: " + id + " " + word.getSpelling() + 
+        f.println("node: " + id + " " + word.getSpelling() +
                 //" a:" + getForwardProb() + " b:" + getBackwardProb()
                 " p:" + getPosterior());
     }
 
+
     /**
      * Internal routine used when loading Lattices from .LAT files
+     *
      * @param lattice
      * @param tokens
      */
@@ -405,15 +406,16 @@ public class Node {
         lattice.addNode(id, label, 0, 0);
     }
 
+
     /**
-     * Returns the backward score, which is calculated during the computation
-     * of the posterior score for this node.
+     * Returns the backward score, which is calculated during the computation of the posterior score for this node.
      *
      * @return Returns the backwardScore.
      */
     public double getBackwardScore() {
         return backwardScore;
     }
+
 
     /**
      * Sets the backward score for this node.
@@ -424,15 +426,16 @@ public class Node {
         this.backwardScore = backwardScore;
     }
 
+
     /**
-     * Returns the forward score, which is calculated during the computation
-     * of the posterior score for this node.
+     * Returns the forward score, which is calculated during the computation of the posterior score for this node.
      *
      * @return Returns the forwardScore.
      */
     public double getForwardScore() {
         return forwardScore;
     }
+
 
     /**
      * Sets the backward score for this node.
@@ -443,9 +446,9 @@ public class Node {
         this.forwardScore = forwardScore;
     }
 
+
     /**
-     * Returns the posterior probability of this node.
-     * Refer to the javadocs for this class for a description of
+     * Returns the posterior probability of this node. Refer to the javadocs for this class for a description of
      * posterior probabilities.
      *
      * @return Returns the posterior probability of this node.
@@ -454,9 +457,9 @@ public class Node {
         return posterior;
     }
 
+
     /**
-     * Sets the posterior probability of this node.
-     * Refer to the javadocs for this class for a description of posterior
+     * Sets the posterior probability of this node. Refer to the javadocs for this class for a description of posterior
      * probabilities.
      *
      * @param posterior The node posterior probability to set.
@@ -464,77 +467,80 @@ public class Node {
     public void setPosterior(double posterior) {
         this.posterior = posterior;
     }
-    
-    /**
-     * @see java.lang.Object#hashCode()
-     */
+
+
+    /** @see java.lang.Object#hashCode() */
     public int hashCode() {
         return id.hashCode();
     }
-    
-    
+
+
     /**
      * Assumes ids are unique node identifiers
-     * 
+     *
      * @see java.lang.Object#equals(java.lang.Object)
      */
     public boolean equals(Object obj) {
-        return id.equals(((Node)obj).getId());
+        return id.equals(((Node) obj).getId());
     }
 
+
     /**
-     * Calculates the begin time of this node, in the event that the
-     * begin time was not specified. The begin time is the latest of the
-     * end times of its predecessor nodes.
+     * Calculates the begin time of this node, in the event that the begin time was not specified. The begin time is the
+     * latest of the end times of its predecessor nodes.
      */
     private void calculateBeginTime() {
         beginTime = 0;
         Iterator e = enteringEdges.iterator();
         while (e.hasNext()) {
-            Edge edge = (Edge)e.next();
+            Edge edge = (Edge) e.next();
             if (edge.getFromNode().getEndTime() > beginTime) {
                 beginTime = edge.getFromNode().getEndTime();
             }
         }
     }
-        
+
+
     /**
      * Get the nodes at the other ends of outgoing edges of this node.
-     * 
+     *
      * @return a list of child nodes
      */
     public List getChildNodes() {
         LinkedList childNodes = new LinkedList();
         Iterator e = leavingEdges.iterator();
         while (e.hasNext()) {
-            Edge edge = (Edge)e.next();
+            Edge edge = (Edge) e.next();
             childNodes.add(edge.getToNode());
         }
         return childNodes;
     }
-    
+
+
     protected void cacheDescendants() {
         descendants = new HashSet();
         Set seenNodes = new HashSet();
         cacheDescendantsHelper(this);
     }
-    
+
+
     protected void cacheDescendantsHelper(Node n) {
         Iterator i = n.getChildNodes().iterator();
         while (i.hasNext()) {
-            Node child = (Node)i.next();
+            Node child = (Node) i.next();
             if (descendants.contains(child)) {
                 continue;
             }
             descendants.add(child);
             cacheDescendantsHelper(child);
-        }        
+        }
     }
-    
+
+
     protected boolean isAncestorHelper(List children, Node node, Set seenNodes) {
         Iterator i = children.iterator();
-        while(i.hasNext()) {
-            Node n = (Node)i.next();
+        while (i.hasNext()) {
+            Node n = (Node) i.next();
             if (seenNodes.contains(n)) {
                 continue;
             }
@@ -542,16 +548,17 @@ public class Node {
             if (n.equals(node)) {
                 return true;
             }
-            if (isAncestorHelper(n.getChildNodes(),node, seenNodes)) {
+            if (isAncestorHelper(n.getChildNodes(), node, seenNodes)) {
                 return true;
             }
         }
         return false;
     }
-        
+
+
     /**
      * Check whether this node is an ancestor of another node.
-     * 
+     *
      * @param node the Node to check
      * @return whether this node is an ancestor of the passed in node.
      */
@@ -564,13 +571,14 @@ public class Node {
         }
         Set seenNodes = new HashSet();
         seenNodes.add(this);
-        return isAncestorHelper(this.getChildNodes(),node, seenNodes);
+        return isAncestorHelper(this.getChildNodes(), node, seenNodes);
     }
-    
+
+
     /**
-     * Check whether this node has an ancestral relationship with another node
-     * (i.e. either this node is an ancestor of the other node, or vice versa)
-     * 
+     * Check whether this node has an ancestral relationship with another node (i.e. either this node is an ancestor of
+     * the other node, or vice versa)
+     *
      * @param node the Node to check for a relationship
      * @return whether a relationship exists
      */
@@ -578,35 +586,33 @@ public class Node {
         return this.isAncestorOf(node) || node.isAncestorOf(this);
     }
 
+
     /**
-     * Returns true if the given node is equivalent to this node.
-     * Two nodes are equivalent only if they have the same word,
-     * the same number of entering and leaving edges,
-     * and that their begin and end times are the same.
+     * Returns true if the given node is equivalent to this node. Two nodes are equivalent only if they have the same
+     * word, the same number of entering and leaving edges, and that their begin and end times are the same.
      *
      * @param other the Node we're comparing to
-     *
      * @return true if the Node is equivalent; false otherwise
      */
     public boolean isEquivalent(Node other) {
         return
-            ((word.getSpelling().equals(other.getWord().getSpelling()) &&
-              (getEnteringEdges().size() == other.getEnteringEdges().size() &&
-               getLeavingEdges().size() == other.getLeavingEdges().size())) &&
-             (beginTime == other.getBeginTime() &&
-              endTime == other.getEndTime()));
+                ((word.getSpelling().equals(other.getWord().getSpelling()) &&
+                        (getEnteringEdges().size() == other.getEnteringEdges().size() &&
+                                getLeavingEdges().size() == other.getLeavingEdges().size())) &&
+                        (beginTime == other.getBeginTime() &&
+                                endTime == other.getEndTime()));
     }
 
+
     /**
-     * Returns a leaving edge that is equivalent to the given edge.
-     * Two edges are eqivalent if Edge.isEquivalent() returns true.
+     * Returns a leaving edge that is equivalent to the given edge. Two edges are eqivalent if Edge.isEquivalent()
+     * returns true.
      *
      * @param edge the Edge to compare the leaving edges of this node against
-     *
      * @return an equivalent edge, if any; or null if no equivalent edge
      */
     public Edge findEquivalentLeavingEdge(Edge edge) {
-        for (Iterator i = leavingEdges.iterator(); i.hasNext(); ) {
+        for (Iterator i = leavingEdges.iterator(); i.hasNext();) {
             Edge e = (Edge) i.next();
             if (e.isEquivalent(edge)) {
                 return e;
@@ -614,7 +620,8 @@ public class Node {
         }
         return null;
     }
-    
+
+
     /**
      * Returns the best predecessor for this node.
      *
@@ -623,6 +630,7 @@ public class Node {
     public Node getBestPredecessor() {
         return bestPredecessor;
     }
+
 
     /**
      * Sets the best predecessor of this node.
@@ -633,9 +641,10 @@ public class Node {
         this.bestPredecessor = bestPredecessor;
     }
 
+
     /**
-     * Returns the Viterbi score for this node. The Viterbi score is usually
-     * computed during the speech recognition process.
+     * Returns the Viterbi score for this node. The Viterbi score is usually computed during the speech recognition
+     * process.
      *
      * @return Returns the viterbiScore.
      */
@@ -643,9 +652,10 @@ public class Node {
         return viterbiScore;
     }
 
+
     /**
-     * Sets the Viterbi score for this node. The Viterbi score is usually
-     * computed during the speech recognition process.
+     * Sets the Viterbi score for this node. The Viterbi score is usually computed during the speech recognition
+     * process.
      *
      * @param viterbiScore The viterbiScore to set.
      */

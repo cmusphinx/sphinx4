@@ -11,6 +11,7 @@
  */
 package edu.cmu.sphinx.tools.batch;
 
+import edu.cmu.sphinx.frontend.BaseDataProcessor;
 import edu.cmu.sphinx.frontend.DataProcessor;
 import edu.cmu.sphinx.frontend.util.StreamCepstrumSource;
 import edu.cmu.sphinx.frontend.util.StreamDataSource;
@@ -27,107 +28,81 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.HashMap;
 import java.util.logging.Logger;
 
 /**
- * Decodes a batch file containing a list of files to decode. The files can be
- * either audio files or cepstral files, but defaults to audio files.
- * The audio data should be 16-bit, 16kHz, PCM-linear data.
- * Since this classes makes use of Java Sound, it supports all the audio file 
- * formats that are supported by Java Sound. If the audio file does not
- * correspond to a format supported by Java Sound, it is treated as a raw
- * audio file (i.e., one without a header). Audio file formats differ
- * in the endian order of the audio data. Therefore, it is important to
- * specify it correctly in the configuration of the
- * <a href="../../frontend/util/StreamDataSource.html">StreamDataSource</a>.
- * Note that in the ideal situation, the audio format of the data should
- * be passed into the StreamDataSource, so that no extra configuration is
+ * Decodes a batch file containing a list of files to decode. The files can be either audio files or cepstral files, but
+ * defaults to audio files. The audio data should be 16-bit, 16kHz, PCM-linear data. Since this classes makes use of
+ * Java Sound, it supports all the audio file formats that are supported by Java Sound. If the audio file does not
+ * correspond to a format supported by Java Sound, it is treated as a raw audio file (i.e., one without a header). Audio
+ * file formats differ in the endian order of the audio data. Therefore, it is important to specify it correctly in the
+ * configuration of the <a href="../../frontend/util/StreamDataSource.html">StreamDataSource</a>. Note that in the ideal
+ * situation, the audio format of the data should be passed into the StreamDataSource, so that no extra configuration is
  * needed. This will be fixed in future releases.
  * <p/>
  * To run this BatchModeRecognizer:
  * <pre>
  * java BatchModeRecognizer &lt;xmlConfigFile&gt; &lt;batchFile&gt;
  * </pre>
- * where <code>xmlConfigFile</code> is an XML-based configuration file and
- * <code>batchFile</code> is a file listing all the files to decode and
- * transcript of those files. For information about the configuration
- * file, refer to the document 
- * <a href="../../util/props/doc-files/ConfigurationManagement.html">
- * Sphinx-4 Configuration Management</a>. For information about the
- * batch file, refer to the <a href="../../../../../../index.html#batch_files">
- * batch file description</a>.
+ * where <code>xmlConfigFile</code> is an XML-based configuration file and <code>batchFile</code> is a file listing all
+ * the files to decode and transcript of those files. For information about the configuration file, refer to the
+ * document <a href="../../util/props/doc-files/ConfigurationManagement.html"> Sphinx-4 Configuration Management</a>.
+ * For information about the batch file, refer to the <a href="../../../../../../index.html#batch_files"> batch file
+ * description</a>.
  * <p/>
- * This class will send recognition results to the logger if the log level is
- * set to INFO.
+ * This class will send recognition results to the logger if the log level is set to INFO.
  */
 public class BatchModeRecognizer implements Configurable {
 
-    /**
-     * The SphinxProperty name for how many files to skip for every decode.
-     */
+    /** The SphinxProperty name for how many files to skip for every decode. */
+    @S4Integer(defaultValue = 0)
     public final static String PROP_SKIP = "skip";
 
-    /**
-     * The default value for the property PROP_SKIP.
-     */
+    /** The default value for the property PROP_SKIP. */
     public final static int PROP_SKIP_DEFAULT = 0;
-    
-    /**
-     * The SphinxProperty name for how many utterances to process
-     */
+
+    /** The SphinxProperty name for how many utterances to process */
+    @S4Integer(defaultValue = 1000000)
     public final static String PROP_COUNT = "count";
-    /**
-     * The default value for the property PROP_COUNT.
-     */
+    /** The default value for the property PROP_COUNT. */
     public final static int PROP_COUNT_DEFAULT = 1000000;
 
-    /**
-     * The SphinxProperty that specified which batch job is to be run.
-     */
+    /** The SphinxProperty that specified which batch job is to be run. */
+    @S4Integer(defaultValue = 0)
     public final static String PROP_WHICH_BATCH = "whichBatch";
 
-    /**
-     * The default value for the property PROP_WHICH_BATCH.
-     */
+    /** The default value for the property PROP_WHICH_BATCH. */
     public final static int PROP_WHICH_BATCH_DEFAULT = 0;
 
     /**
-     * The SphinxProperty for the total number of batch jobs the decoding run
-     * is being divided into.
+     * The SphinxProperty for the total number of batch jobs the decoding run is being divided into.
      * <p/>
-     * The BatchDecoder supports running a subset of a batch. This allows a
-     * test to be distributed among several machines.
+     * The BatchDecoder supports running a subset of a batch. This allows a test to be distributed among several
+     * machines.
      */
+    @S4Integer(defaultValue = 1)
     public final static String PROP_TOTAL_BATCHES = "totalBatches";
 
-    /**
-     * The default value for the property PROP_TOTAL_BATCHES.
-     */
+    /** The default value for the property PROP_TOTAL_BATCHES. */
     public final static int PROP_TOTAL_BATCHES_DEFAULT = 1;
 
-    /**
-     * The SphinxProperty that defines whether or not the decoder should use
-     * the pooled batch manager
-     */
+    /** The SphinxProperty that defines whether or not the decoder should use the pooled batch manager */
+    @S4Boolean(defaultValue = false)
     public final static String PROP_USE_POOLED_BATCH_MANAGER = "usePooledBatchManager";
 
-    /**
-     * The default value for the property PROP_USE_POOLED_BATCH_MANAGER.
-     */
+    /** The default value for the property PROP_USE_POOLED_BATCH_MANAGER. */
     public final static boolean PROP_USE_POOLED_BATCH_MANAGER_DEFAULT = false;
 
-    /**
-     * The Sphinx property that specifies the recognizer to use
-     */
+    /** The Sphinx property that specifies the recognizer to use */
+    @S4Component(type = Recognizer.class)
     public final static String PROP_RECOGNIZER = "recognizer";
 
-    /**
-     * The sphinx property that specifies the input source
-     */
+    /** The sphinx property that specifies the input source */
+    @S4ComponentList(type = BaseDataProcessor.class)
     public final static String PROP_INPUT_DATA_PROCESSORS = "inputDataProcessors";
 
 
@@ -148,31 +123,33 @@ public class BatchModeRecognizer implements Configurable {
     protected BatchItem curBatchItem;
     protected ConfigurationManager cm;
 
+
     /*
-     * (non-Javadoc)
-     * 
-     * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
-     */
-    public static Map getConfigurationInfo(){
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
+    */
+    public static Map getConfigurationInfo() {
         Map info = new HashMap();
-        info.put(new String("PROP_SKIP_TYPE"),new String("INTEGER"));
-        info.put(new String("PROP_COUNT_TYPE"),new String("INTEGER"));
-        info.put(new String("PROP_WHICH_BATCH_TYPE"),new String("INTEGER"));
-        info.put(new String("PROP_TOTAL_BATCHES_TYPE"),new String("INTEGER"));
-        info.put(new String("PROP_USE_POOLED_BATCH_MANAGER_TYPE"),new String("BOOLEAN"));
-        info.put(new String("PROP_RECOGNIZER_TYPE"),new String("COMPONENT")); 
-        info.put(new String("PROP_RECOGNIZER_CLASSTYPE"),new String("edu.cmu.sphinx.recognizer.Recognizer"));
-        info.put(new String("PROP_INPUT_DATA_PROCESSORS_TYPE"),new String("COMPONENT_LIST"));
-        info.put(new String("PROP_INPUT_DATA_PROCESSORS_CLASSTYPE"),new String("edu.cmu.sphinx.frontend.DataProcessor"));
+        info.put(new String("PROP_SKIP_TYPE"), new String("INTEGER"));
+        info.put(new String("PROP_COUNT_TYPE"), new String("INTEGER"));
+        info.put(new String("PROP_WHICH_BATCH_TYPE"), new String("INTEGER"));
+        info.put(new String("PROP_TOTAL_BATCHES_TYPE"), new String("INTEGER"));
+        info.put(new String("PROP_USE_POOLED_BATCH_MANAGER_TYPE"), new String("BOOLEAN"));
+        info.put(new String("PROP_RECOGNIZER_TYPE"), new String("COMPONENT"));
+        info.put(new String("PROP_RECOGNIZER_CLASSTYPE"), new String("edu.cmu.sphinx.recognizer.Recognizer"));
+        info.put(new String("PROP_INPUT_DATA_PROCESSORS_TYPE"), new String("COMPONENT_LIST"));
+        info.put(new String("PROP_INPUT_DATA_PROCESSORS_CLASSTYPE"), new String("edu.cmu.sphinx.frontend.DataProcessor"));
         return info;
     }
-    
+
+
     /*
-     * (non-Javadoc)
-     * 
-     * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
-     *      edu.cmu.sphinx.util.props.Registry)
-     */
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
+    *      edu.cmu.sphinx.util.props.Registry)
+    */
     public void register(String name, Registry registry)
             throws PropertyException {
         this.name = name;
@@ -182,15 +159,16 @@ public class BatchModeRecognizer implements Configurable {
         registry.register(PROP_TOTAL_BATCHES, PropertyType.INT);
         registry.register(PROP_USE_POOLED_BATCH_MANAGER, PropertyType.BOOLEAN);
         registry.register(PROP_RECOGNIZER, PropertyType.COMPONENT);
-        registry.register(PROP_INPUT_DATA_PROCESSORS, 
-                          PropertyType.COMPONENT_LIST);
+        registry.register(PROP_INPUT_DATA_PROCESSORS,
+                PropertyType.COMPONENT_LIST);
     }
 
+
     /*
-     * (non-Javadoc)
-     * 
-     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
-     */
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
+    */
     public void newProperties(PropertySheet ps) throws PropertyException {
         logger = ps.getLogger();
         cm = ps.getPropertyManager();
@@ -207,21 +185,23 @@ public class BatchModeRecognizer implements Configurable {
         recognizer = (Recognizer) ps.getComponent(PROP_RECOGNIZER,
                 Recognizer.class);
         inputDataProcessors = ps.getComponentList
-            (PROP_INPUT_DATA_PROCESSORS, DataProcessor.class);
+                (PROP_INPUT_DATA_PROCESSORS, DataProcessor.class);
     }
 
+
     /*
-     * (non-Javadoc)
-     * 
-     * @see edu.cmu.sphinx.util.props.Configurable#getName()
-     */
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.util.props.Configurable#getName()
+    */
     public String getName() {
         return name;
     }
 
+
     /**
      * Sets the batch file to use for this recogition
-     * 
+     *
      * @param batchFile the name of the batch file
      * @throws IOException if the file could not be opened or read.
      */
@@ -234,9 +214,8 @@ public class BatchModeRecognizer implements Configurable {
         }
     }
 
-    /**
-     * Decodes the batch of audio files
-     */
+
+    /** Decodes the batch of audio files */
     public void decode(String batchFile) {
         BatchItem batchItem;
         int count = 0;
@@ -247,9 +226,9 @@ public class BatchModeRecognizer implements Configurable {
             batchManager.start();
             logger.info("BatchDecoder: decoding files in "
                     + batchManager.getFilename());
-        
+
             while (count < utteranceId &&
-                        (batchItem = batchManager.getNextItem()) != null) {
+                    (batchItem = batchManager.getNextItem()) != null) {
                 setInputStream(batchItem.getFilename());
                 Result result = recognizer.recognize(batchItem.getTranscript());
                 logger.info("File  : " + batchItem.getFilename());
@@ -263,8 +242,8 @@ public class BatchModeRecognizer implements Configurable {
         }
         logger.info("BatchDecoder: " + count + " files decoded");
     }
-    
-    
+
+
     /**
      * Sets the input stream to the given filename
      *
@@ -272,26 +251,26 @@ public class BatchModeRecognizer implements Configurable {
      * @throws IOException if an error occurs
      */
     void setInputStream(String filename) throws IOException {
-        for (Iterator i = inputDataProcessors.iterator(); i.hasNext(); ) {
+        for (Iterator i = inputDataProcessors.iterator(); i.hasNext();) {
             DataProcessor dataSource = (DataProcessor) i.next();
             InputStream is = null;
             try {
                 File file = new File(filename);
                 logger.info
-                    (AudioSystem.getAudioFileFormat(file).toString());
+                        (AudioSystem.getAudioFileFormat(file).toString());
                 is = AudioSystem.getAudioInputStream(file);
             } catch (UnsupportedAudioFileException uafe) {
                 logger.info
-                    ("Reading " + filename + " as raw audio file.");
+                        ("Reading " + filename + " as raw audio file.");
                 is = new FileInputStream(filename);
             }
             if (dataSource instanceof StreamDataSource) {
                 ((StreamDataSource) dataSource).setInputStream(is, filename);
             } else if (dataSource instanceof StreamCepstrumSource) {
                 boolean isBigEndian = Utilities
-                    .isCepstraFileBigEndian(filename);
+                        .isCepstraFileBigEndian(filename);
                 StreamCepstrumSource cepstrumSource =
-                    (StreamCepstrumSource) dataSource;
+                        (StreamCepstrumSource) dataSource;
                 cepstrumSource.setInputStream(is, isBigEndian);
             }
         }
@@ -304,77 +283,81 @@ public class BatchModeRecognizer implements Configurable {
      * @param ci the interpreter
      */
     void addCommands(CommandInterpreter ci) {
-	ci.add("ls", new CommandInterface() {
-	     public String execute(CommandInterpreter ci, String[] args) {
-                 if (args.length != 1) {
+        ci.add("ls", new CommandInterface() {
+            public String execute(CommandInterpreter ci, String[] args) {
+                if (args.length != 1) {
                     ci.putResponse("Usage: ls");
-                 } else {
-                     String[] names = cm.getInstanceNames(Configurable.class);
-                     for (int i = 0; i < names.length; i++) {
-                         ci.putResponse(names[i]);
-                     }
+                } else {
+                    String[] names = cm.getInstanceNames(Configurable.class);
+                    for (int i = 0; i < names.length; i++) {
+                        ci.putResponse(names[i]);
+                    }
                 }
                 return "";
-           }
+            }
+
 
             public String getHelp() {
                 return "list active components";
             }
         });
-	ci.add("show", new CommandInterface() {
-	     public String execute(CommandInterpreter ci, String[] args) {
-                 if (args.length < 2) {
+        ci.add("show", new CommandInterface() {
+            public String execute(CommandInterpreter ci, String[] args) {
+                if (args.length < 2) {
                     cm.showConfig();
-                 } else {
-                     for (int i = 1; i < args.length; i++) {
+                } else {
+                    for (int i = 1; i < args.length; i++) {
                         String name = args[i];
                         cm.showConfig(name);
-                     }
+                    }
                 }
                 return "";
-           }
+            }
+
 
             public String getHelp() {
                 return "show component configuration";
             }
         });
-	ci.add("edit", new CommandInterface() {
-	     public String execute(CommandInterpreter ci, String[] args) {
-                 if (args.length != 2) {
+        ci.add("edit", new CommandInterface() {
+            public String execute(CommandInterpreter ci, String[] args) {
+                if (args.length != 2) {
                     ci.putResponse("Usage: edit component");
-                 } else {
+                } else {
                     cm.editConfig(args[1]);
                 }
                 return "";
-           }
+            }
+
 
             public String getHelp() {
                 return "edit a  component's configuration";
             }
         });
-	ci.add("save", new CommandInterface() {
-	     public String execute(CommandInterpreter ci, String[] args) {
-                 if (args.length != 2) {
+        ci.add("save", new CommandInterface() {
+            public String execute(CommandInterpreter ci, String[] args) {
+                if (args.length != 2) {
                     ci.putResponse("Usage: save filename.xml");
-                 } else {
+                } else {
                     try {
-                         cm.save(new File(args[1]));
+                        cm.save(new File(args[1]));
                     } catch (IOException ioe) {
                         ci.putResponse("Can't save, " + ioe);
                     }
                 }
                 return "";
-           }
+            }
+
 
             public String getHelp() {
                 return "save configuration to a file";
             }
         });
-	ci.add("set", new CommandInterface() {
-	     public String execute(CommandInterpreter ci, String[] args) {
-                 if (args.length != 4) {
+        ci.add("set", new CommandInterface() {
+            public String execute(CommandInterpreter ci, String[] args) {
+                if (args.length != 4) {
                     ci.putResponse("Usage: set component property value");
-                 } else {
+                } else {
                     try {
                         cm.setProperty(args[1], args[2], args[3]);
                     } catch (PropertyException pe) {
@@ -382,20 +365,21 @@ public class BatchModeRecognizer implements Configurable {
                     }
                 }
                 return "";
-           }
+            }
+
 
             public String getHelp() {
                 return "set component property to a given value";
             }
         });
-	ci.add("recognize", new CommandInterface() {
-	     public String execute(CommandInterpreter ci, String[] args) {
-                 if (args.length < 2) {
+        ci.add("recognize", new CommandInterface() {
+            public String execute(CommandInterpreter ci, String[] args) {
+                if (args.length < 2) {
                     ci.putResponse("Usage: recognize audio [transcript]");
-                 } else {
+                } else {
                     String audioFile = args[1];
                     String transcript = null;
-                    if (args.length > 2)  {
+                    if (args.length > 2) {
                         transcript = args[2];
                     }
                     try {
@@ -403,11 +387,12 @@ public class BatchModeRecognizer implements Configurable {
                         Result result = recognizer.recognize(transcript);
                     } catch (IOException io) {
                         ci.putResponse("I/O error during decoding: " +
-                            io.getMessage());
+                                io.getMessage());
                     }
                 }
                 return "";
-           }
+            }
+
 
             public String getHelp() {
                 return "perform recognition on the given audio";
@@ -415,26 +400,27 @@ public class BatchModeRecognizer implements Configurable {
         });
         ci.addAlias("recognize", "rec");
 
-	ci.add("statsReset", new CommandInterface() {
-	     public String execute(CommandInterpreter ci, String[] args) {
-                 if (args.length != 1) {
+        ci.add("statsReset", new CommandInterface() {
+            public String execute(CommandInterpreter ci, String[] args) {
+                if (args.length != 1) {
                     ci.putResponse("Usage: statsReset");
-                 } else {
+                } else {
                     recognizer.resetMonitors();
                 }
                 return "";
-           }
+            }
+
 
             public String getHelp() {
                 return "resets gathered statistics";
             }
         });
 
-	ci.add("batchRecognize", new CommandInterface() {
-	     public String execute(CommandInterpreter ci, String[] args) {
-                 if (args.length != 1) {
+        ci.add("batchRecognize", new CommandInterface() {
+            public String execute(CommandInterpreter ci, String[] args) {
+                if (args.length != 1) {
                     ci.putResponse("Usage: batchRecognize");
-                 } else {
+                } else {
                     try {
                         if (curBatchItem == null) {
                             batchManager.start();
@@ -446,11 +432,12 @@ public class BatchModeRecognizer implements Configurable {
                         Result result = recognizer.recognize(transcript);
                     } catch (IOException io) {
                         ci.putResponse("I/O error during decoding: " +
-                            io.getMessage());
+                                io.getMessage());
                     }
                 }
                 return "";
-           }
+            }
+
 
             public String getHelp() {
                 return "perform recognition on the current batch item";
@@ -458,11 +445,11 @@ public class BatchModeRecognizer implements Configurable {
         });
         ci.addAlias("batchRecognize", "br");
 
-	ci.add("batchNext", new CommandInterface() {
-	     public String execute(CommandInterpreter ci, String[] args) {
-                 if (args.length != 1 && args.length != 2) {
+        ci.add("batchNext", new CommandInterface() {
+            public String execute(CommandInterpreter ci, String[] args) {
+                if (args.length != 1 && args.length != 2) {
                     ci.putResponse("Usage: batchNext [norec]");
-                 } else {
+                } else {
                     try {
 
                         // if we don't have a batch item, start (or
@@ -491,11 +478,12 @@ public class BatchModeRecognizer implements Configurable {
                         }
                     } catch (IOException io) {
                         ci.putResponse("I/O error during decoding: " +
-                            io.getMessage());
+                                io.getMessage());
                     }
                 }
                 return "";
-           }
+            }
+
 
             public String getHelp() {
                 return "advance the batch and perform recognition";
@@ -503,11 +491,11 @@ public class BatchModeRecognizer implements Configurable {
         });
         ci.addAlias("batchNext", "bn");
 
-	ci.add("batchAll", new CommandInterface() {
-	     public String execute(CommandInterpreter ci, String[] args) {
-                 if (args.length != 1) {
+        ci.add("batchAll", new CommandInterface() {
+            public String execute(CommandInterpreter ci, String[] args) {
+                if (args.length != 1) {
                     ci.putResponse("Usage: batchAll");
-                 } else {
+                } else {
                     try {
                         if (curBatchItem == null) {
                             batchManager.start();
@@ -527,22 +515,23 @@ public class BatchModeRecognizer implements Configurable {
                         }
                     } catch (IOException io) {
                         ci.putResponse("I/O error during decoding: " +
-                            io.getMessage());
+                                io.getMessage());
                     }
                 }
                 return "";
-           }
+            }
+
 
             public String getHelp() {
                 return "recognize all of the remaining batch items";
             }
         });
 
-	ci.add("batchReset", new CommandInterface() {
-	     public String execute(CommandInterpreter ci, String[] args) {
-                 if (args.length != 1) {
+        ci.add("batchReset", new CommandInterface() {
+            public String execute(CommandInterpreter ci, String[] args) {
+                if (args.length != 1) {
                     ci.putResponse("Usage: batchReset");
-                 } else {
+                } else {
                     try {
                         batchManager.start();
                     } catch (IOException ioe) {
@@ -550,17 +539,18 @@ public class BatchModeRecognizer implements Configurable {
                     }
                 }
                 return "";
-           }
+            }
 
-           public String getHelp() {
-               return "reset the batch to the beginning";
-           }
+
+            public String getHelp() {
+                return "reset the batch to the beginning";
+            }
         });
-	ci.add("batchLoad", new CommandInterface() {
-	     public String execute(CommandInterpreter ci, String[] args) {
-                 if (args.length != 2) {
+        ci.add("batchLoad", new CommandInterface() {
+            public String execute(CommandInterpreter ci, String[] args) {
+                if (args.length != 2) {
                     ci.putResponse("Usage: batchReset batchfile");
-                 } else {
+                } else {
                     try {
                         setBatchFile(args[1]);
                     } catch (IOException ioe) {
@@ -568,18 +558,20 @@ public class BatchModeRecognizer implements Configurable {
                     }
                 }
                 return "";
-           }
+            }
 
-           public String getHelp() {
-               return "reset the batch to the beginning";
-           }
+
+            public String getHelp() {
+                return "reset the batch to the beginning";
+            }
         });
     }
+
 
     public void shell(String batchfile) {
         try {
             CommandInterpreter ci = new CommandInterpreter();
-            ci.setPrompt("s4> "); 
+            ci.setPrompt("s4> ");
             addCommands(ci);
             setBatchFile(batchfile);
             recognizer.allocate();
@@ -593,11 +585,11 @@ public class BatchModeRecognizer implements Configurable {
         }
     }
 
+
     /**
      * Main method of this BatchDecoder.
-     * 
-     * @param argv argv[0] : config.xml argv[1] : a file listing
-     *                all the audio files to decode
+     *
+     * @param argv argv[0] : config.xml argv[1] : a file listing all the audio files to decode
      */
     public static void main(String[] argv) {
         if (argv.length < 2) {
@@ -639,7 +631,9 @@ public class BatchModeRecognizer implements Configurable {
         }
     }
 
+
     int count;
+
 
     public void start(String batchFile) throws IOException {
         recognizer.allocate();
@@ -650,10 +644,12 @@ public class BatchModeRecognizer implements Configurable {
         count = 0;
     }
 
+
     public void stop() throws IOException {
         batchManager.stop();
         recognizer.deallocate();
     }
+
 
     public Result recognize() throws IOException {
         Result result = null;

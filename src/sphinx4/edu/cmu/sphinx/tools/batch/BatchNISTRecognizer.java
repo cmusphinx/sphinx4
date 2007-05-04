@@ -13,56 +13,44 @@ import edu.cmu.sphinx.util.props.*;
 
 import java.io.*;
 import java.net.URL;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 /**
- * Copyright 1999-2002 Carnegie Mellon University.
- * Portions Copyright 2002 Sun Microsystems, Inc.
- * Portions Copyright 2002 Mitsubishi Electric Research Laboratories.
- * All Rights Reserved.  Use is subject to license terms.
- *
- * See the file "license.terms" for information on usage and
- * redistribution of this file, and for a DISCLAIMER OF ALL
+ * Copyright 1999-2002 Carnegie Mellon University. Portions Copyright 2002 Sun Microsystems, Inc. Portions Copyright
+ * 2002 Mitsubishi Electric Research Laboratories. All Rights Reserved.  Use is subject to license terms.
+ * <p/>
+ * See the file "license.terms" for information on usage and redistribution of this file, and for a DISCLAIMER OF ALL
  * WARRANTIES.
- *
- * User: Peter Wolf
- * Date: Nov 10, 2005
- * Time: 2:42:06 PM
- * Copyright 2005, Peter Wolf
- *
- * Runs a NIST corpus as used by the GALE project.  The inputs are
- * a CTL file, and a REF file.  The output is a CTM file.
- *
+ * <p/>
+ * User: Peter Wolf Date: Nov 10, 2005 Time: 2:42:06 PM Copyright 2005, Peter Wolf
+ * <p/>
+ * Runs a NIST corpus as used by the GALE project.  The inputs are a CTL file, and a REF file.  The output is a CTM
+ * file.
+ * <p/>
  * A CTL file contains a list of utterances to decode. The format is
- *
+ * <p/>
  * <utterance file> <start offset> <end offset> <utterance name>
- *
- * The <utterance file> is a base to which the property "dataDirectory" is
- * prepended, and ".raw" is appended.  The utterance file should be raw
- * PCM that agrees with the "bitsPerSample", "channelCount", "samplesPerSecond",
- * and "framesPerSecond" properties.
- *
+ * <p/>
+ * The <utterance file> is a base to which the property "dataDirectory" is prepended, and ".raw" is appended.  The
+ * utterance file should be raw PCM that agrees with the "bitsPerSample", "channelCount", "samplesPerSecond", and
+ * "framesPerSecond" properties.
+ * <p/>
  * The <start offset> and <end offset> are specified in frames, where
- *
+ * <p/>
  * bytesPerFrame = (bitsPerSample/8)*channelCount*samplesPerSecond/framesPerSecond
- *
- * The <utterance name> should be a unique string.  For example
- * "<utterance file>_<start offset>_<end offset>".
- *
- * A REF file contains the correct transcripts of the utterances specified in
- * the CTL file.  Each line should be of the form
- *
+ * <p/>
+ * The <utterance name> should be a unique string.  For example "<utterance file>_<start offset>_<end offset>".
+ * <p/>
+ * A REF file contains the correct transcripts of the utterances specified in the CTL file.  Each line should be of the
+ * form
+ * <p/>
  * <ASCII transcript> (<utterance name>)
- *
- * The output is a "processed" CTM file.  It is used by the NIST tools
- * to compute the performance on the copus.  The format is not documented
- * because it is currently a hack to get the Dry Run going.  We need
- * to think more about it.  If you want to use this tool talk to Peter Wolf,
- * or Arthur Chan.
- *
+ * <p/>
+ * The output is a "processed" CTM file.  It is used by the NIST tools to compute the performance on the copus.  The
+ * format is not documented because it is currently a hack to get the Dry Run going.  We need to think more about it.
+ * If you want to use this tool talk to Peter Wolf, or Arthur Chan.
  */
 public class BatchNISTRecognizer extends BatchModeRecognizer {
 
@@ -76,63 +64,63 @@ public class BatchNISTRecognizer extends BatchModeRecognizer {
     protected int channelCount;
     protected int bytesPerFrame;
 
-    /**
-     * The sphinx property that specifies the file containing the corpus utterance audio
-     */
+    /** The sphinx property that specifies the file containing the corpus utterance audio */
+    @S4String(defaultValue = "<raw data directory not set>")
     public final static String PROP_DATA_DIR = "dataDirectory";
 
-    /**
-     * The sphinx property that specifies the file containing the corpus utterance audio
-     */
+    /** The sphinx property that specifies the file containing the corpus utterance audio */
+    @S4String(defaultValue = "<ctl file not set>")
     public final static String PROP_CTL_FILE = "ctlFile";
 
-    /**
-     * The sphinx property that specifies the file containing the transcripts of the corpus
-     */
+    /** The sphinx property that specifies the file containing the transcripts of the corpus */
+    @S4String(defaultValue = "<ref file not set>")
     public final static String PROP_REF_FILE = "refFile";
 
-    /**
-     * The sphinx property that specifies the the directory where the output XXX files should be placed
-     */
+    /** The sphinx property that specifies the the directory where the output XXX files should be placed */
+    @S4String(defaultValue = "<ctm file not set>")
     public final static String PROP_CTM_FILE = "ctmFile";
 
-    /**
-     * The sphinx properties that specify the format of the PCM audio in the data file
-     */
+    /** The sphinx properties that specify the format of the PCM audio in the data file */
+    @S4Integer(defaultValue = 16)
     public final static String PROP_BITS_PER_SAMPLE = "bitsPerSample";
+    @S4Integer(defaultValue = 1)
     public final static String PROP_CHANNEL_COUNT = "channelCount";
+    @S4Integer(defaultValue = 16000)
     public final static String PROP_SAMPLES_PER_SECOND = "samplesPerSecond";
+    @S4Integer(defaultValue = 100)
     public final static String PROP_FRAMES_PER_SECOND = "framesPerSecond";
 
+
     /*
-     * (non-Javadoc)
-     * 
-     * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
-     */
-    public static Map getConfigurationInfo(){
-        Map info = new HashMap();       
-        
-        info.put(new String("PROP_DATA_DIR_TYPE"),new String("STRING"));
-        info.put(new String("PROP_CTL_FILE_TYPE"),new String("STRING"));
-        info.put(new String("PROP_REF_FILE_TYPE"),new String("STRING"));
-        info.put(new String("PROP_CTM_FILE_TYPE"),new String("STRING"));
-        info.put(new String("PROP_BITS_PER_SAMPLE_TYPE"),new String("INTEGER"));
-        info.put(new String("PROP_CHANNEL_COUNT_TYPE"),new String("INTEGER"));
-        info.put(new String("PROP_SAMPLES_PER_SECOND_TYPE"),new String("INTEGER"));
-        info.put(new String("PROP_FRAMES_PER_SECOND_TYPE"),new String("INTEGER"));
-        
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
+    */
+    public static Map getConfigurationInfo() {
+        Map info = new HashMap();
+
+        info.put(new String("PROP_DATA_DIR_TYPE"), new String("STRING"));
+        info.put(new String("PROP_CTL_FILE_TYPE"), new String("STRING"));
+        info.put(new String("PROP_REF_FILE_TYPE"), new String("STRING"));
+        info.put(new String("PROP_CTM_FILE_TYPE"), new String("STRING"));
+        info.put(new String("PROP_BITS_PER_SAMPLE_TYPE"), new String("INTEGER"));
+        info.put(new String("PROP_CHANNEL_COUNT_TYPE"), new String("INTEGER"));
+        info.put(new String("PROP_SAMPLES_PER_SECOND_TYPE"), new String("INTEGER"));
+        info.put(new String("PROP_FRAMES_PER_SECOND_TYPE"), new String("INTEGER"));
+
         return info;
     }
-    
+
+
     /*
-     * (non-Javadoc)
-     *
-     * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
-     *      edu.cmu.sphinx.util.props.Registry)
-     */
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
+    *      edu.cmu.sphinx.util.props.Registry)
+    */
     public void register(String name, Registry registry)
             throws PropertyException {
-        super.register(name,registry);
+        super.register(name, registry);
         this.name = name;
         registry.register(PROP_DATA_DIR, PropertyType.STRING);
         registry.register(PROP_CTL_FILE, PropertyType.STRING);
@@ -144,11 +132,12 @@ public class BatchNISTRecognizer extends BatchModeRecognizer {
         registry.register(PROP_FRAMES_PER_SECOND, PropertyType.INT);
     }
 
+
     /*
-     * (non-Javadoc)
-     *
-     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
-     */
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
+    */
     public void newProperties(PropertySheet ps) throws PropertyException {
         logger = ps.getLogger();
         //cm = ps.getPropertyManager();
@@ -178,24 +167,30 @@ public class BatchNISTRecognizer extends BatchModeRecognizer {
                         "  framesPerSecond=" + framesPerSecond + "\n");
     }
 
+
     protected class CTLException extends Exception {
+
         CTLException(String msg) {
             super(msg);
         }
     }
 
     public class CTLUtterance {
+
         int startOffset;
         int endOffset;
         String name;
         byte[] data;
         String ref;
 
+
         public String getFile() {
             return file;
         }
 
+
         String file;
+
 
         CTLUtterance(String ctl, String ref) throws CTLException {
             /*
@@ -211,8 +206,8 @@ public class BatchNISTRecognizer extends BatchModeRecognizer {
             data = new byte[(endOffset - startOffset) * bytesPerFrame];
             int i = fields[0].indexOf('.');
             file = fields[0];
-            if( i >= 0 ) {
-                file = file.substring(0,i);
+            if (i >= 0) {
+                file = file.substring(0, i);
             }
             file = dataDir + "/" + file + ".raw";
             try {
@@ -227,21 +222,26 @@ public class BatchNISTRecognizer extends BatchModeRecognizer {
             }
         }
 
+
         public InputStream getInputStream() {
             return new ByteArrayInputStream(data);
         }
+
 
         public String getName() {
             return name;
         }
 
+
         public String getRef() {
             return ref;
         }
 
+
         public int getStartOffset() {
             return startOffset;
         }
+
 
         public int getEndOffset() {
             return endOffset;
@@ -254,11 +254,13 @@ public class BatchNISTRecognizer extends BatchModeRecognizer {
         LineNumberReader ctlReader;
         LineNumberReader refReader;
 
+
         public CTLIterator() throws IOException {
             ctlReader = new LineNumberReader(new FileReader(ctlFile));
             refReader = new LineNumberReader(new FileReader(refFile));
             utterance = nextUtterance();
         }
+
 
         private CTLUtterance nextUtterance() {
             try {
@@ -273,9 +275,11 @@ public class BatchNISTRecognizer extends BatchModeRecognizer {
             }
         }
 
+
         public boolean hasNext() {
             return utterance != null;
         }
+
 
         public Object next() {
             CTLUtterance u = utterance;
@@ -283,10 +287,12 @@ public class BatchNISTRecognizer extends BatchModeRecognizer {
             return u;
         }
 
+
         public void remove() {
             throw new Error("Not implemented");
         }
     }
+
 
     protected void setInputStream(CTLUtterance utt) throws IOException {
         for (Iterator i = inputDataProcessors.iterator(); i.hasNext();) {
@@ -303,6 +309,7 @@ public class BatchNISTRecognizer extends BatchModeRecognizer {
             }
         }
     }
+
 
     public void decode() {
 
@@ -331,9 +338,11 @@ public class BatchNISTRecognizer extends BatchModeRecognizer {
         logger.info("BatchCTLDecoder: " + utteranceId + " utterances decoded");
     }
 
+
     protected void handleResult(DataOutputStream out, CTLUtterance utt, Result result) throws IOException {
         dumpBestPath(out, utt, result.getBestFinalToken());
     }
+
 
     private int dumpBestPath(DataOutputStream out, CTLUtterance utt, Token token) throws IOException {
 
@@ -349,7 +358,7 @@ public class BatchNISTRecognizer extends BatchModeRecognizer {
             Word word = wordState.getPronunciation().getWord();
             String spelling = word.getSpelling();
             if (!spelling.startsWith("<")) {
-                String [] names = utt.name.split("_");
+                String[] names = utt.name.split("_");
                 String id = names[0] + "_" + names[1] + "_" + names[2];
                 out.write((id + " 1 " + (utt.startOffset + startFrame) / 100.0 + " " + (endFrame - startFrame) / 100.0 + " ").getBytes());
                 out.write(hex2Binary(spelling));
@@ -360,8 +369,9 @@ public class BatchNISTRecognizer extends BatchModeRecognizer {
         return startFrame;
     }
 
+
     static public byte[] hex2Binary(String spelling) {
-        byte [] bin = new byte[ spelling.length() / 2];
+        byte[] bin = new byte[spelling.length() / 2];
         for (int i = 0; i < spelling.length(); i += 2) {
             int i0 = hexToByte(spelling.charAt(i));
             int i1 = hexToByte(spelling.charAt(i + 1));
@@ -370,45 +380,47 @@ public class BatchNISTRecognizer extends BatchModeRecognizer {
         return bin;
     }
 
+
     static private int hexToByte(char c) {
         switch (c) {
-            case '0':
+            case'0':
                 return 0;
-            case '1':
+            case'1':
                 return 1;
-            case '2':
+            case'2':
                 return 2;
-            case '3':
+            case'3':
                 return 3;
-            case '4':
+            case'4':
                 return 4;
-            case '5':
+            case'5':
                 return 5;
-            case '6':
+            case'6':
                 return 6;
-            case '7':
+            case'7':
                 return 7;
-            case '8':
+            case'8':
                 return 8;
-            case '9':
+            case'9':
                 return 9;
-            case 'a':
+            case'a':
                 return 10;
-            case 'b':
+            case'b':
                 return 11;
-            case 'c':
+            case'c':
                 return 12;
-            case 'd':
+            case'd':
                 return 13;
-            case 'e':
+            case'e':
                 return 14;
-            case 'f':
+            case'f':
                 return 15;
             default:
                 throw new Error("Bad hex char " + c);
         }
 
     }
+
 
     public static void main(String[] argv) {
 

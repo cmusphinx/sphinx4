@@ -11,7 +11,7 @@
  *
  * Created on Aug 31, 2004
  */
- 
+
 package edu.cmu.sphinx.result;
 
 import edu.cmu.sphinx.frontend.Data;
@@ -20,43 +20,45 @@ import edu.cmu.sphinx.linguist.dictionary.Word;
 import edu.cmu.sphinx.util.LogMath;
 
 /**
- * Represents a single word result with associated scoring and 
- * timing information.
- * 
+ * Represents a single word result with associated scoring and timing information.
+ *
  * @author pgorniak
  */
 public class SimpleWordResult implements WordResult {
+
     Word word;
     int startFrame;
     int endFrame;
     double score;
     double confidence;
     LogMath logMath;
-    
+
+
     /**
-     * Construct a word result from a string and a confidence score.
-     * Note that
-     * @param w the word
+     * Construct a word result from a string and a confidence score. Note that
+     *
+     * @param w          the word
      * @param confidence the confidence for this word
      */
     public SimpleWordResult(String w, double confidence, LogMath logMath) {
-        Pronunciation[] pros = { Pronunciation.UNKNOWN };
-        this.word = new Word(w,pros,false);
+        Pronunciation[] pros = {Pronunciation.UNKNOWN};
+        this.word = new Word(w, pros, false);
         this.confidence = confidence;
         this.score = LogMath.getLogZero();
         this.logMath = logMath;
     }
-    
+
+
     /**
      * Construct a word result with full information.
-     * 
-     * @param w the word object to store
-     * @param sf word start time
-     * @param ef word end time
-     * @param score score of the word
+     *
+     * @param w          the word object to store
+     * @param sf         word start time
+     * @param ef         word end time
+     * @param score      score of the word
      * @param confidence confidence (posterior) of the word
      */
-    public SimpleWordResult(Word w, int sf, int ef, double score, 
+    public SimpleWordResult(Word w, int sf, int ef, double score,
                             double confidence, LogMath logMath) {
         this.word = w;
         this.startFrame = sf;
@@ -65,31 +67,28 @@ public class SimpleWordResult implements WordResult {
         this.confidence = confidence;
         this.logMath = logMath;
     }
-    
+
+
     /**
-     * Construct a WordResult using a Node object and a confidence (posterior).
-     * This does not use the posterior stored in the Node object, just its word,
-     * start and end.
-     * TODO: score is currently set to zero
-     * 
-     * @param node the node to extract information from
+     * Construct a WordResult using a Node object and a confidence (posterior). This does not use the posterior stored
+     * in the Node object, just its word, start and end. TODO: score is currently set to zero
+     *
+     * @param node       the node to extract information from
      * @param confidence the confidence (posterior) to assign
      */
     public SimpleWordResult(Node node, double confidence, LogMath logMath) {
-        this(node.getWord(), node.getBeginTime(), node.getEndTime(), 
-             LogMath.getLogZero(), confidence, logMath);
+        this(node.getWord(), node.getBeginTime(), node.getEndTime(),
+                LogMath.getLogZero(), confidence, logMath);
     }
-    
-    /**
-     * @see edu.cmu.sphinx.result.WordResult#getScore()
-     */
+
+
+    /** @see edu.cmu.sphinx.result.WordResult#getScore() */
     public double getScore() {
         return score;
     }
 
-    /**
-     * @see edu.cmu.sphinx.result.WordResult#getConfidence()
-     */
+
+    /** @see edu.cmu.sphinx.result.WordResult#getConfidence() */
     public double getConfidence() {
         if (confidence > LogMath.getLogOne()) {
             return LogMath.getLogOne();
@@ -98,54 +97,49 @@ public class SimpleWordResult implements WordResult {
         }
     }
 
-    /**
-     * @see edu.cmu.sphinx.result.WordResult#getLogMath()
-     */
+
+    /** @see edu.cmu.sphinx.result.WordResult#getLogMath() */
     public LogMath getLogMath() {
         return logMath;
     }
 
-    /**
-     * @see edu.cmu.sphinx.result.WordResult#getPronunciation()
-     */
+
+    /** @see edu.cmu.sphinx.result.WordResult#getPronunciation() */
     public Pronunciation getPronunciation() {
         return word.getMostLikelyPronunciation();
     }
 
-    /**
-     * @see edu.cmu.sphinx.result.WordResult#getStartFrame()
-     */
+
+    /** @see edu.cmu.sphinx.result.WordResult#getStartFrame() */
     public int getStartFrame() {
         return startFrame;
     }
 
-    /**
-     * @see edu.cmu.sphinx.result.WordResult#getEndFrame()
-     */
+
+    /** @see edu.cmu.sphinx.result.WordResult#getEndFrame() */
     public int getEndFrame() {
         return endFrame;
     }
 
+
     /**
      * Return this WordResult as a string.
+     *
      * @return the word stored here as a string
      */
     public String toString() {
         return word.toString();
     }
-    
-    /**
-     * @see edu.cmu.sphinx.result.WordResult#getDataFrames()
-     */
+
+
+    /** @see edu.cmu.sphinx.result.WordResult#getDataFrames() */
     public Data[] getDataFrames() {
         // TODO not yet implemented
         return null;
     }
 
-    
-    /**
-     * @see edu.cmu.sphinx.result.WordResult#isFiller()
-     */
+
+    /** @see edu.cmu.sphinx.result.WordResult#isFiller() */
     public boolean isFiller() {
         return word.isFiller() || word.toString().equals("<noop>");
     }

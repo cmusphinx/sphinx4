@@ -13,13 +13,9 @@ package edu.cmu.sphinx.util;
 
 import java.util.List;
 
-/**
- * A source of reference texts.
- */
+/** A source of reference texts. */
 public interface ReferenceSource {
 
-    /**
-     * Returns a list of reference text.
-     */
+    /** Returns a list of reference text. */
     public List<String> getReferences();
 }

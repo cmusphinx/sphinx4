@@ -12,12 +12,12 @@
 
 package edu.cmu.sphinx.util;
 
-/**
- *  This class provides information on Sphinx-4 and how to use it
- */
+/** This class provides information on Sphinx-4 and how to use it */
 
 public class SphinxHelp {
+
     private final static String VERSION = "1.0 beta";
+
 
     /**
      * The main entry point

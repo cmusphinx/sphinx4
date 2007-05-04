@@ -13,35 +13,37 @@
  */
 
 package edu.cmu.sphinx.tools.gui;
+
 import edu.cmu.sphinx.tools.gui.util.ConfigurableUtilException;
 
 /**
- * This interface represents the super class of the GUI panels,
- * It is used for synchronizing the GUI panel data and data in the model
+ * This interface represents the super class of the GUI panels, It is used for synchronizing the GUI panel data and data
+ * in the model
  *
  * @author Ariani
  */
 public interface GUIFileActionListener {
+
     /**
-     * update GUI with new data 
-     * 
+     * update GUI with new data
+     *
      * @param cp <code>ConfigProperties</code> with new data
      */
-    public void update (ConfigProperties cp);
-    
+    public void update(ConfigProperties cp);
+
+
     /**
-     * save the data from GUI 
+     * save the data from GUI
+     *
      * @param cp the holder of new data
      */
     public void saveData(ConfigProperties cp) throws GUIOperationException;
-    
-    /** 
-     * clear all data in the GUI
-     */
+
+
+    /** clear all data in the GUI */
     public void clearAll();
-    
-    /**
-     * model has just been reloaded
-     */
+
+
+    /** model has just been reloaded */
     public void modelRefresh() throws ConfigurableUtilException;
 }

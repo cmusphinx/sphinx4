@@ -12,59 +12,38 @@
 package edu.cmu.sphinx.result;
 
 import edu.cmu.sphinx.decoder.search.Token;
+import edu.cmu.sphinx.util.props.*;
 
-import edu.cmu.sphinx.util.props.Configurable;
-import edu.cmu.sphinx.util.props.PropertyException;
-import edu.cmu.sphinx.util.props.PropertySheet;
-import edu.cmu.sphinx.util.props.PropertyType;
-import edu.cmu.sphinx.util.props.Registry;
-
-import java.util.Iterator;
-import java.util.List;
-import java.util.LinkedList;
-import java.util.Map;
-import java.util.HashMap;
+import java.util.*;
 
 /**
- * Computes confidences for the highest scoring path in a Result.
- * The highest scoring path refers to the path with the maximum
- * a posteriori (MAP) probability, which is why this class is so named.
- * Note that this MAPConfidenceScorer creates a
- * {@link edu.cmu.sphinx.result.Lattice} from the result first, which means
- * that you should only use this confidence scorer if the result is created
- * from the {@link edu.cmu.sphinx.linguist.lextree.LexTreeLinguist} and the
+ * Computes confidences for the highest scoring path in a Result. The highest scoring path refers to the path with the
+ * maximum a posteriori (MAP) probability, which is why this class is so named. Note that this MAPConfidenceScorer
+ * creates a {@link edu.cmu.sphinx.result.Lattice} from the result first, which means that you should only use this
+ * confidence scorer if the result is created from the {@link edu.cmu.sphinx.linguist.lextree.LexTreeLinguist} and the
  * {@link edu.cmu.sphinx.decoder.search.WordPruningBreadthFirstSearchManager}.
  */
 public class MAPConfidenceScorer implements ConfidenceScorer, Configurable {
 
-    /**
-     * Sphinx property that defines the language model weight.
-     */
+    /** Sphinx property that defines the language model weight. */
+    @S4Double(defaultValue = 1.0)
     public final static String PROP_LANGUAGE_WEIGHT = "languageWeight";
 
-    /**
-     * The default value for the PROP_LANGUAGE_WEIGHT property
-     */
-    public final static float PROP_LANGUAGE_WEIGHT_DEFAULT  = 1.0f;
-    
-    /**
-     * Sphinx property that specifies whether to dump the lattice.
-     */
+    /** The default value for the PROP_LANGUAGE_WEIGHT property */
+    public final static float PROP_LANGUAGE_WEIGHT_DEFAULT = 1.0f;
+
+    /** Sphinx property that specifies whether to dump the lattice. */
+    @S4Boolean(defaultValue = false)
     public final static String PROP_DUMP_LATTICE = "dumpLattice";
 
-    /**
-     * The default value of PROP_DUMP_LATTICE.
-     */
+    /** The default value of PROP_DUMP_LATTICE. */
     public final static boolean PROP_DUMP_LATTICE_DEFAULT = false;
 
-    /**
-     * Sphinx property that specifies whether to dump the sausage.
-     */
+    /** Sphinx property that specifies whether to dump the sausage. */
+    @S4Boolean(defaultValue = false)
     public final static String PROP_DUMP_SAUSAGE = "dumpSausage";
 
-    /**
-     * The default value of PROP_DUMP_SAUSAGE.
-     */
+    /** The default value of PROP_DUMP_SAUSAGE. */
     public final static boolean PROP_DUMP_SAUSAGE_DEFAULT = false;
 
 
@@ -73,27 +52,30 @@ public class MAPConfidenceScorer implements ConfidenceScorer, Configurable {
     private boolean dumpLattice;
     private boolean dumpSausage;
 
+
     /*
-     * (non-Javadoc)
-     * 
-     * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
-     */
-    public static Map getConfigurationInfo(){
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
+    */
+    public static Map getConfigurationInfo() {
         Map info = new HashMap();
-        info.put(new String("PROP_LANGUAGE_WEIGHT_TYPE"),new String("FLOAT"));
-        info.put(new String("PROP_DUMP_LATTICE_TYPE"),new String("BOOLEAN"));
-        info.put(new String("PROP_DUMP_SAUSAGE_TYPE"),new String("BOOLEAN"));
+        info.put(new String("PROP_LANGUAGE_WEIGHT_TYPE"), new String("FLOAT"));
+        info.put(new String("PROP_DUMP_LATTICE_TYPE"), new String("BOOLEAN"));
+        info.put(new String("PROP_DUMP_SAUSAGE_TYPE"), new String("BOOLEAN"));
 
         return info;
     }
+
+
     /*
-     * (non-Javadoc)
-     *
-     * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
-     *      edu.cmu.sphinx.util.props.Registry)
-     */
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
+    *      edu.cmu.sphinx.util.props.Registry)
+    */
     public void register(String name, Registry registry)
-        throws PropertyException {
+            throws PropertyException {
         this.name = name;
         registry.register(PROP_LANGUAGE_WEIGHT, PropertyType.FLOAT);
         registry.register(PROP_DUMP_LATTICE, PropertyType.BOOLEAN);
@@ -108,11 +90,11 @@ public class MAPConfidenceScorer implements ConfidenceScorer, Configurable {
      */
     public void newProperties(PropertySheet ps) throws PropertyException {
         languageWeight = ps.getFloat(PROP_LANGUAGE_WEIGHT,
-                                     PROP_LANGUAGE_WEIGHT_DEFAULT);
+                PROP_LANGUAGE_WEIGHT_DEFAULT);
         dumpLattice = ps.getBoolean(PROP_DUMP_LATTICE,
-                                    PROP_DUMP_LATTICE_DEFAULT);
+                PROP_DUMP_LATTICE_DEFAULT);
         dumpSausage = ps.getBoolean(PROP_DUMP_SAUSAGE,
-                                    PROP_DUMP_SAUSAGE_DEFAULT);
+                PROP_DUMP_SAUSAGE_DEFAULT);
     }
 
 
@@ -127,9 +109,8 @@ public class MAPConfidenceScorer implements ConfidenceScorer, Configurable {
 
 
     /**
-     * Computes confidences for a Result and returns a ConfidenceResult,
-     * a compact representation of all the hypothesis contained in the
-     * result together with their per-word and per-path confidences.
+     * Computes confidences for a Result and returns a ConfidenceResult, a compact representation of all the hypothesis
+     * contained in the result together with their per-word and per-path confidences.
      *
      * @param result the result to compute confidences for
      * @return a confidence result
@@ -163,7 +144,7 @@ public class MAPConfidenceScorer implements ConfidenceScorer, Configurable {
             String word = token.getWord().getSpelling();
             WordResult wr = null;
             ConfusionSet cs = null;
-            
+
             /* track through all the slots to find the word */
             while (slot < sausage.size() && wr == null) {
                 cs = sausage.getConfusionSet(slot);
@@ -177,8 +158,8 @@ public class MAPConfidenceScorer implements ConfidenceScorer, Configurable {
             } else {
                 cs.dump("Slot " + slot);
                 throw new Error
-                    ("Can't find WordResult in ConfidenceResult slot " +
-                     slot + " for word " + word);
+                        ("Can't find WordResult in ConfidenceResult slot " +
+                                slot + " for word " + word);
             }
             slot++;
         }
@@ -186,11 +167,11 @@ public class MAPConfidenceScorer implements ConfidenceScorer, Configurable {
         return (new MAPConfidenceResult(sausage, mapPath));
     }
 
+
     /**
      * Returns all the word tokens ending at the given token as a List.
      *
      * @param lastToken the last token in the token chain
-     *
      * @return a list of word tokens in order of appearance
      */
     private List<Token> getWordTokens(Token lastToken) {
@@ -205,13 +186,13 @@ public class MAPConfidenceScorer implements ConfidenceScorer, Configurable {
         return wordTokens;
     }
 
-    /**
-     * The confidence result for the highest scoring path.
-     */
+
+    /** The confidence result for the highest scoring path. */
     class MAPConfidenceResult implements ConfidenceResult {
 
         private ConfidenceResult sausage;
         private Path mapPath;
+
 
         /**
          * Constructs a MAPConfidenceResult.
@@ -224,14 +205,15 @@ public class MAPConfidenceScorer implements ConfidenceScorer, Configurable {
             this.mapPath = mapPath;
         }
 
+
         /**
-         * Returns the path with the maximum posterior probability path.
-         * This path should be the same as that returned by 
-         * Result.getBestToken().
+         * Returns the path with the maximum posterior probability path. This path should be the same as that returned
+         * by Result.getBestToken().
          */
         public Path getBestHypothesis() {
             return mapPath;
         }
+
 
         /**
          * Get the number of word slots contained in this result
@@ -242,6 +224,7 @@ public class MAPConfidenceScorer implements ConfidenceScorer, Configurable {
             return sausage.size();
         }
 
+
         /**
          * Iterator through the confusion sets in this result.
          *
@@ -250,6 +233,7 @@ public class MAPConfidenceScorer implements ConfidenceScorer, Configurable {
         public Iterator confusionSetIterator() {
             return sausage.confusionSetIterator();
         }
+
 
         /**
          * Get the nth confusion set in this result

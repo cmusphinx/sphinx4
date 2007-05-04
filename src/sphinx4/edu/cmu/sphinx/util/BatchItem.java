@@ -13,26 +13,24 @@
 package edu.cmu.sphinx.util;
 
 
-/**
- * Provides a standard interface to for a single decode in a batch of
- * decodes
- *
- */
+/** Provides a standard interface to for a single decode in a batch of decodes */
 public class BatchItem {
 
     private String filename;
     private String transcript;
 
+
     /**
-     * Creates a batch item 
+     * Creates a batch item
      *
-     * @param filename the filename
+     * @param filename   the filename
      * @param transcript the transcript
      */
     public BatchItem(String filename, String transcript) {
         this.filename = filename;
         this.transcript = transcript;
     }
+
 
     /**
      * Gets the filename for this batch

@@ -14,9 +14,8 @@ package edu.cmu.sphinx.result;
 import java.util.Iterator;
 
 /**
- * <p>
- * Shows the confidence information about a Result.
- * </p>
+ * <p/>
+ * Shows the confidence information about a Result. </p>
  */
 public interface ConfidenceResult {
 
@@ -27,12 +26,14 @@ public interface ConfidenceResult {
      */
     public Path getBestHypothesis();
 
+
     /**
      * Get the number of word slots contained in this result
      *
      * @return length of the result
      */
     public int size();
+
 
     /**
      * Iterator through the confusion sets in this result.
@@ -41,11 +42,12 @@ public interface ConfidenceResult {
      */
     public Iterator confusionSetIterator();
 
+
     /**
      * Get the nth confusion set in this result
      *
      * @param i the index of the confusion set to get
      * @return the requested confusion set
      */
-    public ConfusionSet getConfusionSet(int i); 
+    public ConfusionSet getConfusionSet(int i);
 }

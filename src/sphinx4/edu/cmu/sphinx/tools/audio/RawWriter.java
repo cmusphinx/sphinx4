@@ -12,27 +12,25 @@
 
 package edu.cmu.sphinx.tools.audio;
 
+import javax.sound.sampled.AudioFormat;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import javax.sound.sampled.AudioFormat;
 
-
-/**
- * Writes raw audio to a file, handling sample size, endian format,
- * and signed/unsigned data.
- */
+/** Writes raw audio to a file, handling sample size, endian format, and signed/unsigned data. */
 public class RawWriter {
+
     private OutputStream outputStream;
     private int bytesPerSample;
     private boolean signedData;
     private boolean bigEndian;
 
+
     /**
      */
     public RawWriter(OutputStream outputStream,
                      AudioFormat audioFormat) {
-        AudioFormat.Encoding encoding = audioFormat.getEncoding();        
+        AudioFormat.Encoding encoding = audioFormat.getEncoding();
         this.outputStream = outputStream;
         this.bytesPerSample = audioFormat.getSampleSizeInBits() / 8;
         if (encoding == AudioFormat.Encoding.PCM_SIGNED) {
@@ -46,6 +44,7 @@ public class RawWriter {
         this.bigEndian = audioFormat.isBigEndian();
     }
 
+
     /**
      * Writes the sample to the output stream.
      *
@@ -55,7 +54,7 @@ public class RawWriter {
         /* First byte contains the big endian byte that carries the sign.
          */
         if (signedData) {
-            outputStream.write(sample >> ((bytesPerSample - 1) * 8)); 
+            outputStream.write(sample >> ((bytesPerSample - 1) * 8));
         } else {
             outputStream.write((sample >> ((bytesPerSample - 1) * 8)) & 0xff);
         }

@@ -12,28 +12,19 @@
 
 package edu.cmu.sphinx.tools.audio;
 
-import java.awt.Color;
-import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Rectangle;
+import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JViewport;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
+/** Provides an interface to view and play back various forms of an audio signal. */
+public class AudioPanel extends JPanel
+        implements MouseMotionListener, MouseListener {
 
-/**
- * Provides an interface to view and play back various forms
- * of an audio signal.
- */
-public class AudioPanel extends JPanel 
-    implements MouseMotionListener, MouseListener {
-    private AudioData audio;    
+    private AudioData audio;
     private float[] labelTimes;
     private String[] labels;
     private float xScale;
@@ -44,15 +35,15 @@ public class AudioPanel extends JPanel
     protected int selectionStart = -1;
     protected int selectionEnd = -1;
 
+
     /**
-     * Creates a new AudioPanel.  The scale factors represent how
-     * much to scale the audio.  A scaleX factor of 1.0f means one pixel
-     * per sample, and a scaleY factor of 1.0f means one pixel per resolution
-     * of the sample (e.g., a scale of 1.0f would take 2**16 pixels).
+     * Creates a new AudioPanel.  The scale factors represent how much to scale the audio.  A scaleX factor of 1.0f
+     * means one pixel per sample, and a scaleY factor of 1.0f means one pixel per resolution of the sample (e.g., a
+     * scale of 1.0f would take 2**16 pixels).
      *
      * @param audioData the AudioData to draw
-     * @param scaleX how much to scale the width of the audio
-     * @param scaleY how much to scale the height
+     * @param scaleX    how much to scale the width of the audio
+     * @param scaleY    how much to scale the height
      */
     public AudioPanel(AudioData audioData,
                       float scaleX,
@@ -62,62 +53,60 @@ public class AudioPanel extends JPanel
         labels = new String[0];
         this.xScale = scaleX;
         this.yScale = scaleY;
-	this.originalXScale = this.xScale;
-        
-	int width = (int) (audio.getAudioData().length * xScale);
-	int height = (int) ((1 << 16) * yScale);
+        this.originalXScale = this.xScale;
+
+        int width = (int) (audio.getAudioData().length * xScale);
+        int height = (int) ((1 << 16) * yScale);
 
         setPreferredSize(new Dimension(width, height));
         setBackground(Color.white);
 
-	audio.addChangeListener(new ChangeListener() {
-		public void stateChanged(ChangeEvent event) {
-		    int width = (int)(audio.getAudioData().length * xScale);
-		    int height = (int) ((1 << 16) * yScale);
+        audio.addChangeListener(new ChangeListener() {
+            public void stateChanged(ChangeEvent event) {
+                int width = (int) (audio.getAudioData().length * xScale);
+                int height = (int) ((1 << 16) * yScale);
 
-                    labelTimes = new float[0];
-                    labels = new String[0];
+                labelTimes = new float[0];
+                labels = new String[0];
 
-                    setSelectionStart(-1);
-                    setSelectionEnd(-1);
-                    
-                    setPreferredSize(new Dimension(width, height));
-		    Dimension sz = getSize();
+                setSelectionStart(-1);
+                setSelectionEnd(-1);
 
-                    revalidate();
-		    repaint(0, 0, 0, sz.width, sz.height);
-		}
-	    });
+                setPreferredSize(new Dimension(width, height));
+                Dimension sz = getSize();
+
+                revalidate();
+                repaint(0, 0, 0, sz.width, sz.height);
+            }
+        });
 
         addMouseMotionListener(this);
-	addMouseListener(this);
+        addMouseListener(this);
         setFocusable(true);
         requestFocus();
     }
 
-    /**
-     * Sets the labels to be used when drawing this panel.
-     */
+
+    /** Sets the labels to be used when drawing this panel. */
     public void setLabels(float[] labelTimes, String[] labels) {
         this.labelTimes = labelTimes;
         this.labels = labels;
         repaint();
     }
 
-    /**
-     * Sets the zoom, adjusting the scroll bar in the process.
-     */
+
+    /** Sets the zoom, adjusting the scroll bar in the process. */
     protected void zoomSet(float zoom) {
-	xScale = originalXScale * zoom;
-	int width = (int) (audio.getAudioData().length * xScale);
-	int height = (int) ((1 << 16) * yScale);
+        xScale = originalXScale * zoom;
+        int width = (int) (audio.getAudioData().length * xScale);
+        int height = (int) ((1 << 16) * yScale);
 
         setPreferredSize(new Dimension(width, height));
-	revalidate();
-	repaint();
+        revalidate();
+        repaint();
     }
 
-    
+
     /**
      * Repaints the component with the given Graphics.
      *
@@ -125,31 +114,31 @@ public class AudioPanel extends JPanel
      */
     public void paintComponent(Graphics g) {
         int pos, index;
-	int length;
+        int length;
 
         super.paintComponent(g);
-        
-	Dimension sz = getSize();
+
+        Dimension sz = getSize();
         int gZero = sz.height / 2;
         short[] audioData = audio.getAudioData();
 
-	/**
-	 * Only draw what is in the viewport.
-	 */
-	JViewport viewport = getViewport();
-	if (viewport != null) {
-	    Rectangle r = viewport.getViewRect();
-	    pos = (int) r.getX();
-	    length = (int) r.getWidth();
-	} else {
-	    pos = 0;
-	    length = (int) (audioData.length * xScale);
-	}
+        /**
+         * Only draw what is in the viewport.
+         */
+        JViewport viewport = getViewport();
+        if (viewport != null) {
+            Rectangle r = viewport.getViewRect();
+            pos = (int) r.getX();
+            length = (int) r.getWidth();
+        } else {
+            pos = 0;
+            length = (int) (audioData.length * xScale);
+        }
 
         /**
          * Fill in the whole image with white.
          */
-	g.setColor(Color.WHITE);
+        g.setColor(Color.WHITE);
         g.fillRect(pos, 0, length, sz.height - 1);
 
         /**
@@ -162,62 +151,61 @@ public class AudioPanel extends JPanel
             index = audioData.length - 1;
         }
         int end = (int) (index * xScale);
-	g.setColor(Color.LIGHT_GRAY);
+        g.setColor(Color.LIGHT_GRAY);
         g.fillRect(start, 0,
-                   end - start, sz.height - 1);
+                end - start, sz.height - 1);
 
         /* Now scale the audio data and draw it.
          */
         int[] x = new int[length];
         int[] y = new int[length];
-	for (int i = 0; i < length; i++) {
+        for (int i = 0; i < length; i++) {
             x[i] = pos;
-	    index = (int) (pos / xScale);
-	    if (index < audioData.length) {
-		y[i] = gZero - (int) (audioData[index] * yScale);
-	    } else {
-		break;
-	    }
-	    pos++;
+            index = (int) (pos / xScale);
+            if (index < audioData.length) {
+                y[i] = gZero - (int) (audioData[index] * yScale);
+            } else {
+                break;
+            }
+            pos++;
         }
-	g.setColor(Color.RED);
+        g.setColor(Color.RED);
         g.drawPolyline(x, y, length);
 
         /**
          * Now draw the labels.
          */
         for (int i = 0; i < labelTimes.length; i++) {
-            pos = (int) (xScale 
-                         * labelTimes[i]
-                         * audio.getAudioFormat().getSampleRate());
+            pos = (int) (xScale
+                    * labelTimes[i]
+                    * audio.getAudioFormat().getSampleRate());
             g.drawLine(pos, 0, pos, sz.height - 1);
             g.drawString(labels[i], pos + 5, sz.height - 5);
-        }                
+        }
     }
 
-    /**
-     * Finds the JViewport enclosing this component.
-     */
+
+    /** Finds the JViewport enclosing this component. */
     private JViewport getViewport() {
-	Container p = getParent();
-	if (p instanceof JViewport) {
-	    Container gp = p.getParent();
-	    if (gp instanceof JScrollPane) {
-		JScrollPane scroller = (JScrollPane) gp;
-		JViewport viewport = scroller.getViewport();
-		if (viewport == null || viewport.getView() != this) {
-		    return null;
-		} else {
-		    return viewport;
-		}
-	    }
-	}
-	return null;
+        Container p = getParent();
+        if (p instanceof JViewport) {
+            Container gp = p.getParent();
+            if (gp instanceof JScrollPane) {
+                JScrollPane scroller = (JScrollPane) gp;
+                JViewport viewport = scroller.getViewport();
+                if (viewport == null || viewport.getView() != this) {
+                    return null;
+                } else {
+                    return viewport;
+                }
+            }
+        }
+        return null;
     }
 
+
     /**
-     * Returns the index of the sample representing the start of the
-     * selection.  -1 means the very beginning.
+     * Returns the index of the sample representing the start of the selection.  -1 means the very beginning.
      *
      * @return the start of the selection
      * @see #crop
@@ -226,10 +214,10 @@ public class AudioPanel extends JPanel
     public int getSelectionStart() {
         return selectionStart;
     }
-    
+
+
     /**
-     * Sets the index of the sample of representing the start of the
-     * selection.  -1 means the very beginning.
+     * Sets the index of the sample of representing the start of the selection.  -1 means the very beginning.
      *
      * @param newStart the new selection start
      * @see #crop
@@ -243,10 +231,10 @@ public class AudioPanel extends JPanel
             }
         }
     }
-    
+
+
     /**
-     * Returns the index of the sample representing the end of the
-     * selection.  -1 means the very end.
+     * Returns the index of the sample representing the end of the selection.  -1 means the very end.
      *
      * @return the end of the selection
      * @see #crop
@@ -255,10 +243,10 @@ public class AudioPanel extends JPanel
     public int getSelectionEnd() {
         return selectionEnd;
     }
-    
+
+
     /**
-     * Sets the index of the sample of representing the end of the
-     * selection.  -1 means the very end.
+     * Sets the index of the sample of representing the end of the selection.  -1 means the very end.
      *
      * @param newEnd the new selection end
      * @see #crop
@@ -273,11 +261,10 @@ public class AudioPanel extends JPanel
         }
     }
 
+
     /**
-     * Crops the audio data between the start and end selections.
-     * All audio data outside the region will be permanently lost.
-     * The selection will be reset to the very beginning and very
-     * end of the cropped clip.
+     * Crops the audio data between the start and end selections. All audio data outside the region will be permanently
+     * lost. The selection will be reset to the very beginning and very end of the cropped clip.
      *
      * @see #getSelectionStart
      * @see #getSelectionEnd
@@ -298,36 +285,35 @@ public class AudioPanel extends JPanel
         setSelectionEnd(-1);
     }
 
-    /**
-     * Clears the current selection.
-     */
+
+    /** Clears the current selection. */
     public void selectAll() {
         setSelectionStart(-1);
         setSelectionEnd(-1);
         repaint();
     }
-    
+
+
     /**
-     * When the mouse is pressed, we update the selection in the
-     * audio.
+     * When the mouse is pressed, we update the selection in the audio.
      *
      * @param evt the mouse pressed event
      */
     public void mousePressed(MouseEvent evt) {
-	xDragStart = Math.max(0, evt.getX());
+        xDragStart = Math.max(0, evt.getX());
         setSelectionStart((int) (xDragStart / xScale));
         setSelectionEnd((int) (xDragStart / xScale));
         repaint();
     }
 
+
     /**
-     * When the mouse is dragged, we update the selection in the
-     * audio.
+     * When the mouse is dragged, we update the selection in the audio.
      *
      * @param evt the mouse dragged event
      */
     public void mouseDragged(MouseEvent evt) {
-	xDragEnd = evt.getX();
+        xDragEnd = evt.getX();
         if (xDragEnd < (int) (getSelectionStart() * xScale)) {
             setSelectionStart((int) (xDragEnd / xScale));
         } else {
@@ -336,9 +322,23 @@ public class AudioPanel extends JPanel
         repaint();
     }
 
-    public void mouseReleased(MouseEvent evt) {}
-    public void mouseMoved(MouseEvent evt) {}
-    public void mouseEntered(MouseEvent evt) {}
-    public void mouseExited(MouseEvent evt) {}
-    public void mouseClicked(MouseEvent evt) {}
+
+    public void mouseReleased(MouseEvent evt) {
+    }
+
+
+    public void mouseMoved(MouseEvent evt) {
+    }
+
+
+    public void mouseEntered(MouseEvent evt) {
+    }
+
+
+    public void mouseExited(MouseEvent evt) {
+    }
+
+
+    public void mouseClicked(MouseEvent evt) {
+    }
 }

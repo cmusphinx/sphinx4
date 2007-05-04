@@ -13,19 +13,15 @@
 
 package edu.cmu.sphinx.util;
 
-/**
- * An ID generator that gives out positive integer IDs and
- * checks for overflow.
- */ 
+/** An ID generator that gives out positive integer IDs and checks for overflow. */
 public class IDGenerator {
 
-    /**
-     * Indicates a non-ID value, which is -1.
-     */
+    /** Indicates a non-ID value, which is -1. */
     public final static int NON_ID = -1;
 
     private int id = 0;
-    
+
+
     /**
      * Returns the next valid ID, checks for integer overflow.
      *
@@ -39,9 +35,8 @@ public class IDGenerator {
         }
     }
 
-    /**
-     * Resets the ID to zero.
-     */
+
+    /** Resets the ID to zero. */
     public void reset() {
         id = 0;
     }

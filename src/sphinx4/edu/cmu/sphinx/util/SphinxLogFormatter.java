@@ -12,21 +12,19 @@
 
 package edu.cmu.sphinx.util;
 
-import java.util.logging.Formatter;
-import java.util.logging.LogRecord;
-import java.util.logging.Level;
-import java.util.Date;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.logging.Formatter;
+import java.util.logging.Level;
+import java.util.logging.LogRecord;
 
 /**
- * Provides a log formatter for use with sphinx. This formatter generates nicer
- * looking console messages than the default formatter. To use the formatter,
- * set the property
- * 
- * java.util.logging.ConsoleHandler.formatter to
- * edu.cmu.sphinx.util.SphinxLogFormatter
- * 
+ * Provides a log formatter for use with sphinx. This formatter generates nicer looking console messages than the
+ * default formatter. To use the formatter, set the property
+ * <p/>
+ * java.util.logging.ConsoleHandler.formatter to edu.cmu.sphinx.util.SphinxLogFormatter
+ * <p/>
  * This is typically done in a custom loger.properties file
  */
 public class SphinxLogFormatter extends Formatter {
@@ -34,30 +32,31 @@ public class SphinxLogFormatter extends Formatter {
     private static DateFormat DATE_FORMATTER = new SimpleDateFormat("hh:mm.SSS");
     private boolean terse;
 
+
     /**
      * Sets the level of output
-     * 
+     *
      * @param terse if true, the output level should be terse
      */
     public void setTerse(boolean terse) {
         this.terse = terse;
     }
 
+
     /**
      * Retrieves the level of output
-     * 
+     *
      * @return the level of output
      */
     public boolean getTerse() {
         return terse;
     }
 
+
     /**
      * Formats the given log record and return the formatted string.
-     * 
-     * @param record
-     *                the record to format
-     * 
+     *
+     * @param record the record to format
      * @return the formatted string
      */
     public String format(LogRecord record) {

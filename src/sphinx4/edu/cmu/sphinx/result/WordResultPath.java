@@ -11,27 +11,27 @@
  *
  * Created on Aug 31, 2004
  */
- 
+
 package edu.cmu.sphinx.result;
+
+import edu.cmu.sphinx.util.LogMath;
 
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
-import edu.cmu.sphinx.util.LogMath;
-
 /**
  * An implementation of a result Path that computes scores and confidences on the fly.
- * 
+ *
  * @author pgorniak
  */
 public class WordResultPath implements Path {
 
     private Vector<WordResult> path = new Vector<WordResult>();
 
+
     /**
-     * Constructs a WordResultPath with the given list of WordResults
-     * and LogMath.
+     * Constructs a WordResultPath with the given list of WordResults and LogMath.
      *
      * @param wordResults the list of WordResults
      */
@@ -39,36 +39,35 @@ public class WordResultPath implements Path {
         path.addAll(wordResults);
     }
 
-    /**
-     * Constructs an empty WordResultPath.
-     */
-    WordResultPath() {}
-    
-    /**
-     * @see edu.cmu.sphinx.result.Path#getScore()
-     */
+
+    /** Constructs an empty WordResultPath. */
+    WordResultPath() {
+    }
+
+
+    /** @see edu.cmu.sphinx.result.Path#getScore() */
     public double getScore() {
         double score = LogMath.getLogOne();
         Iterator i = path.iterator();
         while (i.hasNext()) {
-            WordResult wr = (WordResult)i.next();
+            WordResult wr = (WordResult) i.next();
             score += wr.getScore();
         }
         return score;
     }
 
-    /**
-     * @see edu.cmu.sphinx.result.Path#getConfidence()
-     */
+
+    /** @see edu.cmu.sphinx.result.Path#getConfidence() */
     public double getConfidence() {
         double confidence = LogMath.getLogOne();
         Iterator i = path.iterator();
         while (i.hasNext()) {
-            WordResult wr = (WordResult)i.next();
+            WordResult wr = (WordResult) i.next();
             confidence += wr.getConfidence();
         }
         return confidence;
     }
+
 
     /**
      * Returns the LogMath of the scores.
@@ -85,21 +84,19 @@ public class WordResultPath implements Path {
         }
     }
 
-    /**
-     * @see edu.cmu.sphinx.result.Path#getWords()
-     */
+
+    /** @see edu.cmu.sphinx.result.Path#getWords() */
     public WordResult[] getWords() {
         return path.toArray(new WordResult[0]);
     }
 
-    /**
-     * @see edu.cmu.sphinx.result.Path#getTranscription()
-     */
+
+    /** @see edu.cmu.sphinx.result.Path#getTranscription() */
     public String getTranscription() {
         StringBuffer sb = new StringBuffer();
         Iterator i = path.iterator();
         while (i.hasNext()) {
-            WordResult wr = (WordResult)i.next();
+            WordResult wr = (WordResult) i.next();
             sb.append(wr.toString());
             if (i.hasNext()) {
                 sb.append(" ");
@@ -107,6 +104,7 @@ public class WordResultPath implements Path {
         }
         return sb.toString();
     }
+
 
     public void add(WordResult wr) {
         path.add(wr);

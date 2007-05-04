@@ -12,6 +12,11 @@
  */
 package edu.cmu.sphinx.tools.gui;
 
+import org.xml.sax.*;
+import org.xml.sax.helpers.DefaultHandler;
+
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParserFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -19,40 +24,32 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParserFactory;
-import org.xml.sax.Attributes;
-import org.xml.sax.InputSource;
-import org.xml.sax.Locator;
-import org.xml.sax.SAXException;
-import org.xml.sax.SAXParseException;
-import org.xml.sax.XMLReader;
-import org.xml.sax.helpers.DefaultHandler;
-/**
- * Loads configuration from an XML file
- */
+
+/** Loads configuration from an XML file */
 public class SaxLoader {
+
     private URL url;
     private Map rpdMap;
     private Map globalProperties;
+
+
     /**
      * Creates a loader that will load from the given location
-     * 
-     * @param url
-     *            the location to load
-     * @param globalProperties
-     *             the map of global properties
+     *
+     * @param url              the location to load
+     * @param globalProperties the map of global properties
      */
     public SaxLoader(URL url, Map globalProperties) {
         this.url = url;
         this.globalProperties = globalProperties;
     }
+
+
     /**
      * Loads a set of configuration data from the location
-     * 
+     *
      * @return a map keyed by component name containing RawPropertyData objects
-     * @throws IOException
-     *             if an I/O or parse error occurs
+     * @throws IOException if an I/O or parse error occurs
      */
     public Map load() throws IOException {
         rpdMap = new HashMap();
@@ -76,25 +73,23 @@ public class SaxLoader {
         }
         return rpdMap;
     }
-    
-    /**
-     * A SAX XML Handler implementation that builds up the map of raw property
-     * data objects
-     *  
-     */
+
+
+    /** A SAX XML Handler implementation that builds up the map of raw property data objects */
     class ConfigHandler extends DefaultHandler {
+
         RawPropertyData rpd = null;
         Locator locator;
         List itemList = null;
         String itemListName = null;
         StringBuffer curItem;
-        
-        
+
+
         /* (non-Javadoc)
-         * @see org.xml.sax.ContentHandler#startElement(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes)
-         */
+        * @see org.xml.sax.ContentHandler#startElement(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes)
+        */
         public void startElement(String uri, String localName, String qName,
-                Attributes attributes) throws SAXException {
+                                 Attributes attributes) throws SAXException {
             if (qName.equals("config")) {
                 // nothing to do
             } else if (qName.equals("component")) {
@@ -102,7 +97,7 @@ public class SaxLoader {
                 String curType = attributes.getValue("type");
                 if (rpdMap.get(curComponent) != null) {
                     throw new SAXParseException(
-                        "duplicate definition for " + curComponent, locator);
+                            "duplicate definition for " + curComponent, locator);
                 }
                 rpd = new RawPropertyData(curComponent, curType);
             } else if (qName.equals("property")) {
@@ -142,19 +137,22 @@ public class SaxLoader {
                         locator);
             }
         }
+
+
         /* (non-Javadoc)
-         * @see org.xml.sax.ContentHandler#characters(char[], int, int)
-         */
+        * @see org.xml.sax.ContentHandler#characters(char[], int, int)
+        */
         public void characters(char ch[], int start, int length)
                 throws SAXParseException {
             if (curItem != null) {
                 curItem.append(ch, start, length);
-            } 
+            }
         }
-        
+
+
         /* (non-Javadoc)
-         * @see org.xml.sax.ContentHandler#endElement(java.lang.String, java.lang.String, java.lang.String)
-         */
+        * @see org.xml.sax.ContentHandler#endElement(java.lang.String, java.lang.String, java.lang.String)
+        */
         public void endElement(String uri, String localName, String qName)
                 throws SAXParseException {
             if (qName.equals("component")) {
@@ -175,9 +173,11 @@ public class SaxLoader {
                 curItem = null;
             }
         }
+
+
         /* (non-Javadoc)
-         * @see org.xml.sax.ContentHandler#setDocumentLocator(org.xml.sax.Locator)
-         */
+        * @see org.xml.sax.ContentHandler#setDocumentLocator(org.xml.sax.Locator)
+        */
         public void setDocumentLocator(Locator locator) {
             this.locator = locator;
         }

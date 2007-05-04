@@ -1,7 +1,5 @@
 package edu.cmu.sphinx.util.props;
 
-import edu.cmu.sphinx.util.props.SimpleConfigurable;
-
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -17,10 +15,10 @@ import java.lang.annotation.RetentionPolicy;
 @S4Property
 public @interface S4Component {
 
-    Class<? extends SimpleConfigurable> type();
+    Class<? extends Configurable> type();
 
 
-    Class<? extends SimpleConfigurable> defaultClass() default SimpleConfigurable.class;
+    Class<? extends Configurable> defaultClass() default Configurable.class;
 
 
     boolean mandatory() default false;

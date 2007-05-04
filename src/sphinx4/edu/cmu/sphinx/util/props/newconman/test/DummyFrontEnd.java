@@ -1,10 +1,6 @@
 package edu.cmu.sphinx.util.props.newconman.test;
 
-import edu.cmu.sphinx.util.props.PropertyException;
-import edu.cmu.sphinx.util.props.S4Boolean;
-import edu.cmu.sphinx.util.props.S4ComponentList;
-import edu.cmu.sphinx.util.props.PropSheet;
-import edu.cmu.sphinx.util.props.SimpleConfigurable;
+import edu.cmu.sphinx.util.props.*;
 
 import java.util.List;
 

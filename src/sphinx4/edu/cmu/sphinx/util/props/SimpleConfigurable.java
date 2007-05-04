@@ -1,9 +1,5 @@
 package edu.cmu.sphinx.util.props;
 
-import edu.cmu.sphinx.util.props.PropertyException;
-import edu.cmu.sphinx.util.props.PropSheet;
-
-
 /**
  * Defines the interface that must be implemented by any configurable component in Sphinx-4.  The life cycle of a
  * component is as follows:

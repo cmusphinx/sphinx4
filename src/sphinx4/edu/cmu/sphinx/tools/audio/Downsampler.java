@@ -13,17 +13,15 @@
 package edu.cmu.sphinx.tools.audio;
 
 
-/**
- * Downsamples an audio clip.
- */
+/** Downsamples an audio clip. */
 public class Downsampler {
+
     /**
-     * Downsamples the given audio clip from the given input sample
-     * rate to the given output sample rate.
+     * Downsamples the given audio clip from the given input sample rate to the given output sample rate.
      *
      * @param inSamples the clip to down sample - one sample per element
-     * @param srIn the sample rate of the given clip
-     * @param srOut the sample to downsample to
+     * @param srIn      the sample rate of the given clip
+     * @param srOut     the sample to downsample to
      * @return an array of downsampled samples
      */
     public static short[] downsample(short[] inSamples,

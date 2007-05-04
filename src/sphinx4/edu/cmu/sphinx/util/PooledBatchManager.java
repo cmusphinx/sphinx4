@@ -12,22 +12,14 @@
 
 package edu.cmu.sphinx.util;
 
-import java.io.File;
-import java.io.FileFilter;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.PrintStream;
-import java.io.RandomAccessFile;
+import java.io.*;
 import java.net.InetAddress;
 import java.nio.channels.FileLock;
 import java.util.List;
 
-/**
- * A simple implementation of the batch manager suitable for single
- * threaded batch processing
- *
- */
+/** A simple implementation of the batch manager suitable for single threaded batch processing */
 public class PooledBatchManager implements BatchManager {
+
     private String batchFile;
     private int skip;
     private File processingFile;
@@ -38,7 +30,7 @@ public class PooledBatchManager implements BatchManager {
     private final static File completedDir = new File(topDir, "Completed");
     private final static File resultsDir = new File(topDir, "Results");
     private final static File lockFile = new File(".lock");
-    private  FileLock lock;
+    private FileLock lock;
     private PrintStream oldOut;
     private FileFilter testFileFilter = new TestFileFilter();
 
@@ -47,17 +39,16 @@ public class PooledBatchManager implements BatchManager {
      * Creates a pooled batch manager
      *
      * @param filename the name of the batch file
-     * @param skip items to skip between runs
+     * @param skip     items to skip between runs
      */
 
     public PooledBatchManager(String filename, int skip) {
         this.batchFile = filename;
         this.skip = skip;
     }
-    /**
-     * Starts processing the batch
-     *
-     */
+
+
+    /** Starts processing the batch */
     public void start() throws IOException {
 
         // redirect standard out to a file
@@ -70,14 +61,12 @@ public class PooledBatchManager implements BatchManager {
         }
     }
 
+
     /**
-     * Gets the next available batch item or null if no more are
-     * available
+     * Gets the next available batch item or null if no more are available
      *
      * @return the next available batch item
-     *
-     * @throws IOException if an I/O error occurs while reading the
-     * next item from the batch file.
+     * @throws IOException if an I/O error occurs while reading the next item from the batch file.
      */
     public BatchItem getNextItem() throws IOException {
         lock();
@@ -104,11 +93,11 @@ public class PooledBatchManager implements BatchManager {
         }
     }
 
-    /**
-     * Stops processing the batch
-     */
+
+    /** Stops processing the batch */
     public void stop() throws IOException {
     }
+
 
     /**
      * Returns the name of the file
@@ -120,9 +109,7 @@ public class PooledBatchManager implements BatchManager {
     }
 
 
-    /**
-     * Creates the test directiories as necessary
-     */
+    /** Creates the test directiories as necessary */
     private void createDirectories() throws IOException {
         if (!topDir.isDirectory()) {
             topDir.mkdir();
@@ -134,9 +121,7 @@ public class PooledBatchManager implements BatchManager {
     }
 
 
-    /**
-     * Creates the input directory
-     */
+    /** Creates the input directory */
     private void createInputDirectory() throws IOException {
         inputDir.mkdir();
         // read in the batch file
@@ -153,12 +138,12 @@ public class PooledBatchManager implements BatchManager {
     /**
      * Creates the individual batch files
      *
-     * @param dir the directory to place the input file in
+     * @param dir  the directory to place the input file in
      * @param name the name of the file
      * @param line the contents of the file
      */
     private void createInputFile(File dir, String name, String line)
-        throws IOException {
+            throws IOException {
 
         File path = new File(dir, name);
         FileOutputStream fos = new FileOutputStream(path);
@@ -167,13 +152,11 @@ public class PooledBatchManager implements BatchManager {
         ps.close();
     }
 
-    /**
-     * Redirects standard out to a file in the results directory with
-     * a name 'Results_xxx.out'
-     */
+
+    /** Redirects standard out to a file in the results directory with a name 'Results_xxx.out' */
     private void redirectStdout() throws IOException {
         String myName = getMyName();
-        File resultFile = File.createTempFile(myName,  ".out", resultsDir);
+        File resultFile = File.createTempFile(myName, ".out", resultsDir);
 
         FileOutputStream fos = new FileOutputStream(resultFile);
         PrintStream ps = new PrintStream(fos);
@@ -182,6 +165,7 @@ public class PooledBatchManager implements BatchManager {
 
         System.out.println("# These results collected on " + getMyName());
     }
+
 
     /**
      * Gets my network name
@@ -192,59 +176,52 @@ public class PooledBatchManager implements BatchManager {
         return InetAddress.getLocalHost().getHostName();
     }
 
-    /**
-     * Close the redirected stdout and restore it to what it was
-     * before we redirected it.
-     */
+
+    /** Close the redirected stdout and restore it to what it was before we redirected it. */
     private void closeStdout() throws IOException {
         System.out.close();
         System.setOut(oldOut);
     }
 
-    /**
-     * Lock the test suite so we can manipulate the set of tests
-     */
+
+    /** Lock the test suite so we can manipulate the set of tests */
     private void lock() throws IOException {
         RandomAccessFile raf = new RandomAccessFile(lockFile, "rw");
         lock = raf.getChannel().lock();
     }
 
-    /**
-     * unlock the test suite so we can manipulate the set of tests
-     */
+
+    /** unlock the test suite so we can manipulate the set of tests */
     private void unlock() throws IOException {
         lock.release();
         lock = null;
 
     }
 
+
     /**
-     * Given an 'in process' file, generate the corresonding completed
-     * file.
+     * Given an 'in process' file, generate the corresonding completed file.
      *
      * @param file the in process file
-     *
      * @return the completed file
      */
     private File getCompletedFile(File file) {
         return new File(completedDir, file.getName());
     }
 
+
     /**
-     * Given an 'input' file, generate the corresonding inProcess
-     * file.
+     * Given an 'input' file, generate the corresonding inProcess file.
      *
      * @param file the in process file
-     *
      * @return the completed file
      */
     private File getProcessingFile(File file) {
         return new File(inProcessDir, file.getName());
     }
 
-    /**
-     * returns the next batch item file in the input directory
-     */
+
+    /** returns the next batch item file in the input directory */
     private File getNextFile() throws IOException {
         File[] match = inputDir.listFiles(testFileFilter);
 
@@ -254,12 +231,12 @@ public class PooledBatchManager implements BatchManager {
         return null;
     }
 
+
     /**
      * Given a file parse the contents of the file into a BatchItem
      *
      * @param file the file to parse
      * @return the contents in the form of a batch item
-     *
      */
     private BatchItem getBatchItem(File file) throws IOException {
         List<String> list = BatchFile.getLines(file.getPath());
@@ -268,13 +245,11 @@ public class PooledBatchManager implements BatchManager {
         }
         String line = list.get(0);
         return new BatchItem(BatchFile.getFilename(line),
-                        BatchFile.getReference(line));
+                BatchFile.getReference(line));
     }
 }
 
-/**
- * Filter that only yields filenames that are integer numbers
- */
+/** Filter that only yields filenames that are integer numbers */
 class TestFileFilter implements FileFilter {
 
     public boolean accept(File pathname) {

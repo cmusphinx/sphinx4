@@ -13,8 +13,8 @@ package edu.cmu.sphinx.util;
 
 import edu.cmu.sphinx.util.props.*;
 
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Logger;
 
 /**
@@ -24,6 +24,7 @@ import java.util.logging.Logger;
 public final class LogMath implements Configurable {
 
     /** Sphinx property to get the Log base */
+    @S4Double(defaultValue = Math.E)
     public final static String PROP_LOG_BASE = "logBase";
     /** Default value for the Log base */
     public final static float PROP_LOG_BASE_DEFAULT = (float) Math.E;
@@ -31,6 +32,7 @@ public final class LogMath implements Configurable {
      * Sphinx property that controls whether we use the old, slow (but correct) method of performing the LogMath.add by
      * doing the actual computation.
      */
+    @S4Boolean(defaultValue = true)
     public final static String PROP_USE_ADD_TABLE = "useAddTable";
     /**
      * Default value for whether we use the old, slow (but correct) method of performing the LogMath.add by doing the
@@ -46,7 +48,7 @@ public final class LogMath implements Configurable {
     private float logBase;
     private boolean useAddTable;
     private String name;
-    
+
     private transient Logger logger;
 
     private transient float naturalLogBase;
@@ -70,24 +72,26 @@ public final class LogMath implements Configurable {
         init();
     }
 
+
     /*
-     * (non-Javadoc)
-     * 
-     * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
-     */
-    public static Map getConfigurationInfo(){
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
+    */
+    public static Map getConfigurationInfo() {
         Map info = new HashMap();
-        info.put(new String("PROP_LOG_BASE_TYPE"),new String("FLOAT"));
-        info.put(new String("PROP_USE_ADD_TABLE_TYPE"),new String("BOOLEAN"));       
+        info.put(new String("PROP_LOG_BASE_TYPE"), new String("FLOAT"));
+        info.put(new String("PROP_USE_ADD_TABLE_TYPE"), new String("BOOLEAN"));
         return info;
     }
-    
+
+
     /*
-     * (non-Javadoc)
-     * 
-     * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
-     *      edu.cmu.sphinx.util.props.Registry)
-     */
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
+    *      edu.cmu.sphinx.util.props.Registry)
+    */
     public void register(String name, Registry registry)
             throws PropertyException {
         this.name = name;

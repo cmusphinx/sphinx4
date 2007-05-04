@@ -12,11 +12,6 @@
 
 package edu.cmu.sphinx.result;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-
 import edu.cmu.sphinx.decoder.search.ActiveList;
 import edu.cmu.sphinx.decoder.search.AlternateHypothesisManager;
 import edu.cmu.sphinx.decoder.search.Token;
@@ -25,16 +20,19 @@ import edu.cmu.sphinx.frontend.FloatData;
 import edu.cmu.sphinx.linguist.dictionary.Word;
 import edu.cmu.sphinx.util.LogMath;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+
 /**
- * Provides recognition results. Results can be partial or final. A
- * result should not be modified before it is a final result. Note
- * that a result may not contain all possible information.
- *
- *  The following methods are not yet defined but should be:
+ * Provides recognition results. Results can be partial or final. A result should not be modified before it is a final
+ * result. Note that a result may not contain all possible information.
+ * <p/>
+ * The following methods are not yet defined but should be:
  * <pre>
- public Result getDAG(int compressionLevel);
- </pre>
- *
+ * public Result getDAG(int compressionLevel);
+ * </pre>
  */
 public class Result {
 
@@ -46,13 +44,14 @@ public class Result {
     private String reference;
     private LogMath logMath;
 
+
     /**
      * Creates a result
      *
-     * @param activeList the active list associated with this result
-     * @param resultList the result list associated with this result
+     * @param activeList  the active list associated with this result
+     * @param resultList  the result list associated with this result
      * @param frameNumber the frame number for this result.
-     * @param isFinal if true, the result is a final result
+     * @param isFinal     if true, the result is a final result
      */
     public Result(AlternateHypothesisManager alternateHypothesisManager,
                   ActiveList activeList, List resultList, int frameNumber,
@@ -61,13 +60,14 @@ public class Result {
         this.alternateHypothesisManager = alternateHypothesisManager;
     }
 
+
     /**
      * Creates a result
      *
-     * @param activeList the active list associated with this result
-     * @param resultList the result list associated with this result
+     * @param activeList  the active list associated with this result
+     * @param resultList  the result list associated with this result
      * @param frameNumber the frame number for this result.
-     * @param isFinal if true, the result is a final result
+     * @param isFinal     if true, the result is a final result
      */
     public Result(ActiveList activeList, List resultList, int frameNumber,
                   boolean isFinal, LogMath logMath) {
@@ -78,17 +78,18 @@ public class Result {
         this.logMath = logMath;
     }
 
+
     /**
-     * Determines if the result is a final result.  A final result is
-     * guaranteed to no longer be modified by the SearchManager that
-     * generated it. Non-final results can be modifed by a
-     * <code>SearchManager.recognize</code> calls.
+     * Determines if the result is a final result.  A final result is guaranteed to no longer be modified by the
+     * SearchManager that generated it. Non-final results can be modifed by a <code>SearchManager.recognize</code>
+     * calls.
      *
      * @return true if the result is a final result
      */
     public boolean isFinal() {
         return isFinal;
     }
+
 
     /**
      * Returns the log math used for this Result.
@@ -99,51 +100,41 @@ public class Result {
         return logMath;
     }
 
+
     /**
-     * Returns a list of active tokens for this result. The list
-     * contains zero or active <code>Token</code> objects that
-     * represents the leaf nodes of all active branches in the result
-     * (sometimes referred to as the 'lattice').
-     *
-     * The lattice is live and may be modified by a
-     * SearchManager during a recognition.  Once the Result is final,
-     * the lattice is fixed and will no longer be modified by the
-     * SearchManager. Applications can modify the lattice (to prepare
-     * for a re-recognition, for example) only after
-     * <code>isFinal</code> returns <code>true</code>
+     * Returns a list of active tokens for this result. The list contains zero or active <code>Token</code> objects that
+     * represents the leaf nodes of all active branches in the result (sometimes referred to as the 'lattice').
+     * <p/>
+     * The lattice is live and may be modified by a SearchManager during a recognition.  Once the Result is final, the
+     * lattice is fixed and will no longer be modified by the SearchManager. Applications can modify the lattice (to
+     * prepare for a re-recognition, for example) only after <code>isFinal</code> returns <code>true</code>
      *
      * @return a list containing the active tokens for this result
-     *
      * @see Token
      */
     public ActiveList getActiveTokens() {
         return activeList;
     }
 
+
     /**
-     * Returns a list of result tokens for this result. The list
-     * contains zero or more result <code>Token</code> objects that
-     * represents the leaf nodes of all final branches in the result
-     * (sometimes referred to as the 'lattice').
-     *
-     * The lattice is live and may be modified by a
-     * SearchManager during a recognition.  Once the Result is final,
-     * the lattice is fixed and will no longer be modified by the
-     * SearchManager. Applications can modify the lattice (to prepare
-     * for a re-recognition, for example) only after
-     * <code>isFinal</code> returns <code>true</code>
+     * Returns a list of result tokens for this result. The list contains zero or more result <code>Token</code> objects
+     * that represents the leaf nodes of all final branches in the result (sometimes referred to as the 'lattice').
+     * <p/>
+     * The lattice is live and may be modified by a SearchManager during a recognition.  Once the Result is final, the
+     * lattice is fixed and will no longer be modified by the SearchManager. Applications can modify the lattice (to
+     * prepare for a re-recognition, for example) only after <code>isFinal</code> returns <code>true</code>
      *
      * @return a list containing the final result tokens for this result
-     *
      * @see Token
      */
     public List getResultTokens() {
         return resultList;
     }
 
+
     /**
-     * Returns the AlternateHypothesisManager
-     * Used to construct a Lattice
+     * Returns the AlternateHypothesisManager Used to construct a Lattice
      *
      * @return the AlternateHypothesisManager
      */
@@ -161,10 +152,10 @@ public class Result {
         return currentFrameNumber;
     }
 
+
     /**
-     * Returns the best scoring final token in the result. A final
-     * token is a token that has reached a final state in the current
-     * frame.
+     * Returns the best scoring final token in the result. A final token is a token that has reached a final state in
+     * the current frame.
      *
      * @return the best scoring final token or null
      */
@@ -179,11 +170,11 @@ public class Result {
         return bestToken;
     }
 
+
     /**
-     * Returns the best scoring token in the result. First, the best
-     * final token is retrieved. A final token is one that has reached the
-     * final state in the search space. If no final tokens can be found, then
-     * the best, non-final token is returned.
+     * Returns the best scoring token in the result. First, the best final token is retrieved. A final token is one that
+     * has reached the final state in the search space. If no final tokens can be found, then the best, non-final token
+     * is returned.
      *
      * @return the best scoring token or null
      */
@@ -197,6 +188,7 @@ public class Result {
         return bestToken;
     }
 
+
     /**
      * Returns the best scoring token in the active set
      *
@@ -204,20 +196,20 @@ public class Result {
      */
     public Token getBestActiveToken() {
         Token bestToken = null;
-		if( activeList != null ) {
-        for (Iterator i = activeList.iterator(); i.hasNext();) {
-            Token token = (Token) i.next();
-            if (bestToken == null || token.getScore() > bestToken.getScore()) {
-                bestToken = token;
+        if (activeList != null) {
+            for (Iterator i = activeList.iterator(); i.hasNext();) {
+                Token token = (Token) i.next();
+                if (bestToken == null || token.getScore() > bestToken.getScore()) {
+                    bestToken = token;
+                }
             }
         }
-		}
         return bestToken;
     }
 
+
     /**
-     * Searches through the n-best list to find the
-     * the branch that matches the given string
+     * Searches through the n-best list to find the the branch that matches the given string
      *
      * @param text the string to search for
      * @return the token at the head of the branch or null
@@ -233,9 +225,9 @@ public class Result {
         return null;
     }
 
+
     /**
-     * Searches through the n-best list to find the
-     * the branch that matches the beginning of the given  string
+     * Searches through the n-best list to find the the branch that matches the beginning of the given  string
      *
      * @param text the string to search for
      * @return the list token at the head of the branch
@@ -252,9 +244,9 @@ public class Result {
         return list;
     }
 
+
     /**
-     * Returns the best scoring token that matches the beginning of
-     * the given text.
+     * Returns the best scoring token that matches the beginning of the given text.
      *
      * @param text the text to match
      */
@@ -274,17 +266,17 @@ public class Result {
     /**
      * Returns detailed frame statistics for this result
      *
-     * @return frame statistics for this result as an array, with one
-     * element per frame or <code>null</code> if no frame statistics
-     * are available.
+     * @return frame statistics for this result as an array, with one element per frame or <code>null</code> if no frame
+     *         statistics are available.
      */
     public FrameStatistics[] getFrameStatistics() {
-        return null;	// [[[ TBD:  write me ]]]
+        return null;    // [[[ TBD:  write me ]]]
     }
 
+
     /**
-     * Gets the starting frame number for the result. Note that this
-     * method is currently not implemented, and always returns zero.
+     * Gets the starting frame number for the result. Note that this method is currently not implemented, and always
+     * returns zero.
      *
      * @return the starting frame number for the result
      */
@@ -292,22 +284,22 @@ public class Result {
         return 0;
     }
 
+
     /**
-     * Gets the ending frame number for the result. Note that this
-     * method is currently not implemented, and always returns zero.
+     * Gets the ending frame number for the result. Note that this method is currently not implemented, and always
+     * returns zero.
      *
      * @return the ending frame number for the result
      */
     public int getEndFrame() {
-        return 0;	// [[[ TBD: write me ]]]
+        return 0;    // [[[ TBD: write me ]]]
     }
+
 
     /**
      * Gets the feature frames associated with this result
      *
-     * @return the set of feature frames associated with this result,
-     *    or null if
-     * the frames are not available.
+     * @return the set of feature frames associated with this result, or null if the frames are not available.
      */
     public Data[] getDataFrames() {
         Data[] features = null;
@@ -328,15 +320,13 @@ public class Result {
         return features;
     }
 
+
     /**
-     * Returns the string of the best result, removing any filler words.
-     * This method first attempts to return the best final result, that is,
-     * the result that has reached the final state of the search space. 
-     * If there are no best final results, then the best non-final result,
-     * that is, the one that did not reach the final state, is returned.
+     * Returns the string of the best result, removing any filler words. This method first attempts to return the best
+     * final result, that is, the result that has reached the final state of the search space. If there are no best
+     * final results, then the best non-final result, that is, the one that did not reach the final state, is returned.
      *
-     * @return the string of the best result, removing any filler
-     * words
+     * @return the string of the best result, removing any filler words
      */
     public String getBestResultNoFiller() {
         Token token = getBestToken();
@@ -347,14 +337,13 @@ public class Result {
         }
     }
 
+
     /**
-     * Returns the string of the best final result, removing any filler words.
-     * A final result is a path that has reached the final state.
-     * A Result object can also contain paths that did not reach the
-     * final state, and those paths are not returned by this method.
+     * Returns the string of the best final result, removing any filler words. A final result is a path that has reached
+     * the final state. A Result object can also contain paths that did not reach the final state, and those paths are
+     * not returned by this method.
      *
-     * @return the string of the best result, removing any filler
-     * words, or null if there are no best results
+     * @return the string of the best result, removing any filler words, or null if there are no best results
      */
     public String getBestFinalResultNoFiller() {
         Token token = getBestFinalToken();
@@ -367,28 +356,26 @@ public class Result {
 
 
     /**
-     * The method is used when the application wants the phonemes
-     * on the best final path.  Note that words may have more than one
-     * pronunciation, so this is not equivalent to the word path
-     * e.g. one[HH,W,AH,N] to[T,UW] three[TH,R,IY]
+     * The method is used when the application wants the phonemes on the best final path.  Note that words may have more
+     * than one pronunciation, so this is not equivalent to the word path e.g. one[HH,W,AH,N] to[T,UW] three[TH,R,IY]
+     *
      * @return the String of words and associated phonemes on the best path
      */
     public String getBestPronunciationResult() {
-         Token token = getBestFinalToken();
+        Token token = getBestFinalToken();
         if (token == null) {
             return "";
         } else {
-            return token.getWordPath(false,true);
+            return token.getWordPath(false, true);
         }
     }
+
 
     /**
      * Returns the string of words (with timestamp) for this token.
      *
-     * @param wantFiller true if we want filler words included, false otherwise
-     * @param wordTokenFirst true if the word tokens come before other types
-     *     of tokens
-     *
+     * @param wantFiller     true if we want filler words included, false otherwise
+     * @param wordTokenFirst true if the word tokens come before other types of tokens
      * @return the string of words
      */
     public String getTimedBestResult(boolean wantFiller,
@@ -405,13 +392,12 @@ public class Result {
         }
     }
 
+
     /**
-     * Returns the string of words (with timestamp) for this token.
-     * This method assumes that the word tokens come before other types
-     * of token.
+     * Returns the string of words (with timestamp) for this token. This method assumes that the word tokens come before
+     * other types of token.
      *
      * @param wantFiller true if we want filler words, false otherwise
-     *
      * @return the string of words
      */
     private String getTimedWordPath(Token token, boolean wantFiller) {
@@ -431,7 +417,7 @@ public class Result {
                 if (token.isWord()) {
                     Word word = token.getWord();
                     if (wantFiller || !word.isFiller()) {
-                        addWord(sb, word, 
+                        addWord(sb, word,
                                 (FloatData) lastFeature,
                                 (FloatData) lastWordFirstFeature);
                     }
@@ -449,9 +435,8 @@ public class Result {
 
 
     /**
-     * Returns the string of words for this token, each with the starting
-     * sample number as the timestamp. This method assumes that the word
-     * tokens come after the unit and hmm tokens.
+     * Returns the string of words for this token, each with the starting sample number as the timestamp. This method
+     * assumes that the word tokens come after the unit and hmm tokens.
      *
      * @return the string of words, each with the starting sample number
      */
@@ -486,32 +471,30 @@ public class Result {
         return sb.toString();
     }
 
+
     /**
-     * Adds the given word into the given string buffer with the start and
-     * end times from the given features.
+     * Adds the given word into the given string buffer with the start and end times from the given features.
      *
-     * @param sb the StringBuffer into which the word is added
-     * @param word the word to add
+     * @param sb           the StringBuffer into which the word is added
+     * @param word         the word to add
      * @param startFeature the starting feature
-     * @param endFeature tne ending feature
+     * @param endFeature   tne ending feature
      */
     private void addWord(StringBuffer sb, Word word,
                          FloatData startFeature, FloatData endFeature) {
-        float startTime = startFeature==null ? -1 :((float) startFeature.getFirstSampleNumber()/
-			   startFeature.getSampleRate());
-        float endTime = endFeature==null ? -1 : ((float) endFeature.getFirstSampleNumber()/
-			 endFeature.getSampleRate());
+        float startTime = startFeature == null ? -1 : ((float) startFeature.getFirstSampleNumber() /
+                startFeature.getSampleRate());
+        float endTime = endFeature == null ? -1 : ((float) endFeature.getFirstSampleNumber() /
+                endFeature.getSampleRate());
         if (sb.length() > 0) {
             sb.insert(0, " ");
         }
-        sb.insert(0, (word.getSpelling() + "(" + startTime + "," + 
-                      endTime + ")"));
+        sb.insert(0, (word.getSpelling() + "(" + startTime + "," +
+                endTime + ")"));
     }
 
 
-    /**
-     * Returns a string representation of this object
-     */
+    /** Returns a string representation of this object */
     public String toString() {
         Token token = getBestToken();
         if (token == null) {
@@ -533,11 +516,9 @@ public class Result {
 
 
     /**
-     * Determines if the Result is valid. This is used for testing and
-     * debugging
+     * Determines if the Result is valid. This is used for testing and debugging
      *
      * @return true if the result is properly formed.
-     *
      */
     public boolean validate() {
         boolean valid = true;
@@ -550,20 +531,21 @@ public class Result {
         }
         return valid;
     }
-    
+
+
     /**
      * Sets the reference text
+     *
      * @param ref the reference text
      */
     public void setReferenceText(String ref) {
         reference = ref;
     }
-    
-    
+
+
     /**
-     * Retrieves the reference text. The reference text is a transcript of
-     * the text that was spoken.
-     * 
+     * Retrieves the reference text. The reference text is a transcript of the text that was spoken.
+     *
      * @return the reference text or null if no reference text exists.
      */
     public String getReferenceText() {

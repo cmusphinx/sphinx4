@@ -21,19 +21,15 @@ import java.util.StringTokenizer;
 
 
 /**
- * A program that takes in a reference transcript and a hypothesis transcript
- * and figures out how many gap insertion errors are there.
- * The hypothesis transcript file should contain timestamps for when
- * each word was entered and exited.
- * <p>The gap insertion detection algorithm works as follows. It takes each
- * hypothesized word individually and see whether it falls into a non-speech
- * region in the reference transcript. If it does, that hypothesized word
- * is counted as a gap insertion.
+ * A program that takes in a reference transcript and a hypothesis transcript and figures out how many gap insertion
+ * errors are there. The hypothesis transcript file should contain timestamps for when each word was entered and exited.
+ * <p>The gap insertion detection algorithm works as follows. It takes each hypothesized word individually and see
+ * whether it falls into a non-speech region in the reference transcript. If it does, that hypothesized word is counted
+ * as a gap insertion.
  */
 public class GapInsertionDetector {
 
 
-    
     private ReferenceFile referenceFile;
     private HypothesisFile hypothesisFile;
     private int totalGapInsertions;
@@ -41,19 +37,19 @@ public class GapInsertionDetector {
 
 
     /**
-     * Create a gap insertion detector to detect gap insertions using
-     * the given reference file and hypothesis file.
+     * Create a gap insertion detector to detect gap insertions using the given reference file and hypothesis file.
      *
-     * @param referenceFile the file of references
-     * @param hypothesisFile the file of hypotheses
+     * @param referenceFile     the file of references
+     * @param hypothesisFile    the file of hypotheses
      * @param showGapInsertions if true show gap insertions.
      */
     public GapInsertionDetector(String referenceFile, String hypothesisFile,
-             boolean showGapInsertions)
-        throws IOException {
+                                boolean showGapInsertions)
+            throws IOException {
         this.referenceFile = new ReferenceFile(referenceFile);
         this.hypothesisFile = new HypothesisFile(hypothesisFile);
     }
+
 
     /**
      * Detect the gap insertion errors.
@@ -72,10 +68,10 @@ public class GapInsertionDetector {
 
                 // go to the relevant reference utterance
                 while (reference != null &&
-                       reference.getEndTime() < word.getStartTime()) {
+                        reference.getEndTime() < word.getStartTime()) {
                     reference = referenceFile.nextUtterance();
                 }
-                
+
                 // 'reference' should be the relevant one now
                 if (reference != null) {
                     if (reference.isSilenceGap()) {
@@ -84,7 +80,7 @@ public class GapInsertionDetector {
                         while (reference.getEndTime() < word.getEndTime()) {
                             reference = referenceFile.nextUtterance();
                             if (reference == null ||
-                                reference.isSilenceGap()) {
+                                    reference.isSilenceGap()) {
                                 hasGapError = true;
                                 break;
                             }
@@ -98,14 +94,14 @@ public class GapInsertionDetector {
                 if (hasGapError) {
                     gaps++;
                     if (showGapInsertions) {
-                        log += "GapInsError: Utterance: " + 
-                            hypothesisFile.getUtteranceCount() + 
-                            " Word: " + word.getText() + " (" + 
-                            word.getStartTime() + "," + word.getEndTime() +
-                            "). ";
+                        log += "GapInsError: Utterance: " +
+                                hypothesisFile.getUtteranceCount() +
+                                " Word: " + word.getText() + " (" +
+                                word.getStartTime() + "," + word.getEndTime() +
+                                "). ";
                         if (reference != null) {
                             assert reference.isSilenceGap();
-                            log += ("Reference: <sil> (" + 
+                            log += ("Reference: <sil> (" +
                                     reference.getStartTime() + "," +
                                     reference.getEndTime() + ")");
                         }
@@ -125,29 +121,23 @@ public class GapInsertionDetector {
 
 
     /**
-     * A command line program for detecting gap insertion errors.
-     * To run this program, type:
-     * <code>
-     * java GapInsertionDetector {propsFile} {referenceFile} {hypothesisFile}
-     * </code>
-     * The propsFile need to have only one property:
-     * <code>
-     * edu.cmu.sphinx.util.GapInsertionDetector.showGapInsertions=true/false
-     * </code>
+     * A command line program for detecting gap insertion errors. To run this program, type: <code> java
+     * GapInsertionDetector {propsFile} {referenceFile} {hypothesisFile} </code> The propsFile need to have only one
+     * property: <code> edu.cmu.sphinx.util.GapInsertionDetector.showGapInsertions=true/false </code>
      */
     public static void main(String[] argv) {
 
         if (argv.length < 2) {
             System.out.println("Usage: java GapInsertionDetector " +
-                               "<referenceFile> <hypothesisFile>");
-        } 
+                    "<referenceFile> <hypothesisFile>");
+        }
         try {
             String context = "gid";
             String referenceFile = argv[0];
             String hypothesisFile = argv[1];
 
             GapInsertionDetector gid = new GapInsertionDetector
-                (referenceFile, hypothesisFile, true);
+                    (referenceFile, hypothesisFile, true);
             System.out.println("# of gap insertions: " + gid.detect());
         } catch (Exception e) {
             e.printStackTrace();
@@ -155,12 +145,11 @@ public class GapInsertionDetector {
     }
 }
 
-/**
- * Creates a ReferenceFile.
- */
+/** Creates a ReferenceFile. */
 class ReferenceFile {
 
     private BufferedReader reader;
+
 
     /**
      * Creates a ReferenceFile, given the name of the reference file.
@@ -171,12 +160,11 @@ class ReferenceFile {
         reader = new BufferedReader(new FileReader(fileName));
     }
 
+
     /**
-     * Returns the next available ReferenceUtterance. This method
-     * skips all the silence gaps.
+     * Returns the next available ReferenceUtterance. This method skips all the silence gaps.
      *
-     * @return the next available ReferenceUtterance, or null if the
-     *    end of file has been reached.
+     * @return the next available ReferenceUtterance, or null if the end of file has been reached.
      */
     ReferenceUtterance nextUtterance() throws IOException {
         String line = reader.readLine();
@@ -188,9 +176,7 @@ class ReferenceFile {
     }
 }
 
-/**
- * Converts a line in the HUB-4 .stm reference file into an object.
- */
+/** Converts a line in the HUB-4 .stm reference file into an object. */
 class ReferenceUtterance {
 
     private boolean isSilenceGap;
@@ -198,12 +184,12 @@ class ReferenceUtterance {
     private float endTime;
     private String[] words;
 
+
     /**
      * Creates a ReferenceUtterance from the given line of reference.
      *
-     * @param line the line of reference, in the format:
-     *   [test_name] [category] [speaker_name|"inter_segment_gap"]
-     *   [start_time] [end_time] [<params>] [reference_text]
+     * @param line the line of reference, in the format: [test_name] [category] [speaker_name|"inter_segment_gap"]
+     *             [start_time] [end_time] [<params>] [reference_text]
      */
     ReferenceUtterance(String line) {
         StringTokenizer st = new StringTokenizer(line);
@@ -222,6 +208,7 @@ class ReferenceUtterance {
         }
     }
 
+
     /**
      * Returns true if this is a silence gap.
      *
@@ -230,6 +217,7 @@ class ReferenceUtterance {
     boolean isSilenceGap() {
         return isSilenceGap;
     }
+
 
     /**
      * Returns the starting time (in seconds) of this utterance.
@@ -240,6 +228,7 @@ class ReferenceUtterance {
         return startTime;
     }
 
+
     /**
      * Returns the ending time (in seconds) of this utterance.
      *
@@ -248,6 +237,7 @@ class ReferenceUtterance {
     float getEndTime() {
         return endTime;
     }
+
 
     /**
      * Returns the text of this utterance.
@@ -260,10 +250,11 @@ class ReferenceUtterance {
 }
 
 class HypothesisFile {
-    
+
     private BufferedReader reader;
     private Iterator<HypothesisWord> iterator;
     private int utteranceCount = 0;
+
 
     /**
      * Creates a HypothesisFile from the given file.
@@ -273,6 +264,7 @@ class HypothesisFile {
     HypothesisFile(String fileName) throws IOException {
         reader = new BufferedReader(new FileReader(fileName));
     }
+
 
     /**
      * Returns the next hypothesized word in the hypothesis file.
@@ -295,11 +287,11 @@ class HypothesisFile {
         }
     }
 
+
     /**
      * Returns the next available hypothesis utterance.
      *
-     * @return the next available hypothesis utterance, or null if 
-     *    the end of file has been reached
+     * @return the next available hypothesis utterance, or null if the end of file has been reached
      */
     private HypothesisUtterance nextUtterance() throws IOException {
         String line = reader.readLine();
@@ -316,6 +308,7 @@ class HypothesisFile {
         }
     }
 
+
     /**
      * Returns the utterance count.
      *
@@ -326,19 +319,15 @@ class HypothesisFile {
     }
 }
 
-/**
- * A hypothesis utterance, which will give you a list of hypothesis words.
- */
+/** A hypothesis utterance, which will give you a list of hypothesis words. */
 class HypothesisUtterance {
 
     private List<HypothesisWord> words;
     private float startTime;
     private float endTime;
 
-    /**
-     * Creates a hypothesis utterance from a line of input describing
-     * the hypothesis.
-     */
+
+    /** Creates a hypothesis utterance from a line of input describing the hypothesis. */
     HypothesisUtterance(String line) {
         words = new LinkedList<HypothesisWord>();
         StringTokenizer st = new StringTokenizer(line, " \t\n\r\f(),");
@@ -348,7 +337,7 @@ class HypothesisUtterance {
                 float myStartTime = Float.parseFloat(st.nextToken());
                 float myEndTime = Float.parseFloat(st.nextToken());
                 HypothesisWord word = new HypothesisWord
-                    (text, myStartTime, myEndTime);
+                        (text, myStartTime, myEndTime);
                 words.add(word);
             } catch (NumberFormatException nfe) {
                 System.out.println("NumberFormatException at line: " + line);
@@ -359,10 +348,11 @@ class HypothesisUtterance {
             HypothesisWord firstWord = words.get(0);
             startTime = firstWord.getStartTime();
             HypothesisWord lastWord =
-                    words.get(words.size()-1);
+                    words.get(words.size() - 1);
             endTime = lastWord.getEndTime();
         }
     }
+
 
     /**
      * Returns the number of words in this hypothesis.
@@ -372,6 +362,7 @@ class HypothesisUtterance {
     int getWordCount() {
         return words.size();
     }
+
 
     /**
      * Returns a list of the words in this hypothesis.
@@ -384,6 +375,7 @@ class HypothesisUtterance {
         return newList;
     }
 
+
     /**
      * Returns the start time of this hypothesis.
      *
@@ -392,6 +384,7 @@ class HypothesisUtterance {
     float getStartTime() {
         return startTime;
     }
+
 
     /**
      * Returns the end time of this hypothesis.
@@ -403,28 +396,27 @@ class HypothesisUtterance {
     }
 }
 
-/**
- * A word in the hypothesis, containing information about when the
- * word started and ended.
- */
+/** A word in the hypothesis, containing information about when the word started and ended. */
 class HypothesisWord {
 
     private String text;
     private float startTime;
     private float endTime;
 
+
     /**
      * Constructs a hypothesis word with the given start and end times.
      *
-     * @param text the text of the hypothesized word
+     * @param text      the text of the hypothesized word
      * @param startTime the starting time of the word
-     * @param endTime the ending time of the word
+     * @param endTime   the ending time of the word
      */
     HypothesisWord(String text, float startTime, float endTime) {
         this.text = text;
         this.startTime = startTime;
         this.endTime = endTime;
     }
+
 
     /**
      * Returns the text of the word.
@@ -435,6 +427,7 @@ class HypothesisWord {
         return text;
     }
 
+
     /**
      * Returns the starting time of the word.
      *
@@ -443,6 +436,7 @@ class HypothesisWord {
     float getStartTime() {
         return startTime;
     }
+
 
     /**
      * Returns the ending time of the word.

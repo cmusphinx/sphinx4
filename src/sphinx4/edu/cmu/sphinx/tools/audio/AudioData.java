@@ -12,57 +12,53 @@
 
 package edu.cmu.sphinx.tools.audio;
 
-import java.io.IOException;
-import java.util.Vector;
-
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import java.io.IOException;
+import java.util.Vector;
 
-/**
- * Represents a 16bit, SIGNED_PCM, big endian audio clip with a
- * sample rate specified by AudioFormat.
- */
+/** Represents a 16bit, SIGNED_PCM, big endian audio clip with a sample rate specified by AudioFormat. */
 public class AudioData {
+
     protected AudioFormat format;
     protected short[] shorts;
     protected Vector<ChangeListener> listeners = new Vector<ChangeListener>();
     protected int selectionStart = -1;
     protected int selectionEnd = -1;
-    
-    /**
-     * No-arg constructor.  Creates an empty clip at 16kHz sample rate.
-     */
+
+
+    /** No-arg constructor.  Creates an empty clip at 16kHz sample rate. */
     public AudioData() {
-	this.format = new AudioFormat(16000f,
-				      16,    // sample size in bits
-				      1,     // mono
-				      true,  // signed
-				      true); // big endian
+        this.format = new AudioFormat(16000f,
+                16,    // sample size in bits
+                1,     // mono
+                true,  // signed
+                true); // big endian
         shorts = new short[0];
     }
-    
+
+
     /**
-     * Creates a new AudioData with the given data and sample rate.
-     * Expects the data to be 16bit, big endian, SIGNED_PCM.
+     * Creates a new AudioData with the given data and sample rate. Expects the data to be 16bit, big endian,
+     * SIGNED_PCM.
      *
-     * @param data the audio samples; one sample per element in the
-     * array
+     * @param data       the audio samples; one sample per element in the array
      * @param sampleRate the sample rate in Hz
      */
     public AudioData(short[] data, float sampleRate) {
         this.shorts = data;
-	this.format = new AudioFormat(sampleRate,
-				      16,    // sample size in bits
-				      1,     // mono
-				      true,  // signed
-				      true); // big endian
+        this.format = new AudioFormat(sampleRate,
+                16,    // sample size in bits
+                1,     // mono
+                true,  // signed
+                true); // big endian
     }
 
+
     /**
-     * Creates a new AudioData from the given AudioInputStream,
-     * converting the data to 16bit, big endian, SIGNED_PCM if
+     * Creates a new AudioData from the given AudioInputStream, converting the data to 16bit, big endian, SIGNED_PCM if
      * needed.
      *
      * @param ais the AudioInputStream
@@ -70,23 +66,24 @@ public class AudioData {
      */
     public AudioData(AudioInputStream ais) throws IOException {
         this.shorts = Utils.toSignedPCM(ais);
-	this.format = new AudioFormat(ais.getFormat().getSampleRate(),
-				      16,    // sample size in bits
-				      1,     // mono
-				      true,  // signed
-				      true); // big endian
+        this.format = new AudioFormat(ais.getFormat().getSampleRate(),
+                16,    // sample size in bits
+                1,     // mono
+                true,  // signed
+                true); // big endian
     }
 
+
     /**
-     * Gets the SIGNED_PCM 16 bit big endian audio data.  NOTE:  this
-     * the actual array held by this object, so only use it as a
-     * reference (i.e., don't modify the contents).
+     * Gets the SIGNED_PCM 16 bit big endian audio data.  NOTE:  this the actual array held by this object, so only use
+     * it as a reference (i.e., don't modify the contents).
      *
      * @return the SIGNED_PCM 16 bit big endian samples
      */
     public short[] getAudioData() {
-	return shorts;
+        return shorts;
     }
+
 
     /**
      * Sets the audio data and notifies all ChangeListeners.
@@ -97,15 +94,17 @@ public class AudioData {
         this.shorts = data;
         fireStateChanged();
     }
-    
+
+
     /**
      * Gets the audio format.
      *
      * @return the AudioFormat for the data managed by this object
      */
     public AudioFormat getAudioFormat() {
-	return format;
+        return format;
     }
+
 
     /**
      * Add a ChangeListener.
@@ -113,8 +112,9 @@ public class AudioData {
      * @param listener the listener to add
      */
     public void addChangeListener(ChangeListener listener) {
-	listeners.add(listener);
+        listeners.add(listener);
     }
+
 
     /**
      * Remove a ChangeListener.
@@ -122,18 +122,17 @@ public class AudioData {
      * @param listener the listener to remove
      */
     public void removeChangeListener(ChangeListener listener) {
-	listeners.remove(listener);
+        listeners.remove(listener);
     }
-    
-    /**
-     * Notify all ChangeListeners of a change.
-     */
+
+
+    /** Notify all ChangeListeners of a change. */
     protected void fireStateChanged() {
         ChangeListener listener;
-	ChangeEvent event = new ChangeEvent(this);
-	for (int i = 0; i < listeners.size(); i++) {
-	    listener = listeners.elementAt(i);
-	    listener.stateChanged(event);
-	}
+        ChangeEvent event = new ChangeEvent(this);
+        for (int i = 0; i < listeners.size(); i++) {
+            listener = listeners.elementAt(i);
+            listener.stateChanged(event);
+        }
     }
 }

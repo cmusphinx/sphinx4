@@ -1,8 +1,5 @@
 package edu.cmu.sphinx.util.props;
 
-import edu.cmu.sphinx.util.props.ConMan;
-import edu.cmu.sphinx.util.props.SimpleConfigurable;
-
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -103,8 +100,11 @@ public class PropSheet {
         S4PropWrapper s4PropWrapper = getProperty(name, S4String.class);
         S4String s4String = ((S4String) s4PropWrapper.getAnnotation());
 
-        if (propValues.get(name) == null)
-            propValues.put(name, s4String.defaultValue());
+        if (propValues.get(name) == null) {
+            String defValue = s4String.defaultValue();
+            defValue = defValue.equals("nullnullnull") ? null : defValue;
+            propValues.put(name, defValue);
+        }
 
         String propValue = (String) propValues.get(name);
 

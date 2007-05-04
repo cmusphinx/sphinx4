@@ -12,91 +12,61 @@
 
 package edu.cmu.sphinx.tools.audio;
 
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.URL;
-import java.util.StringTokenizer;
-import java.util.prefs.Preferences;
-
-import javax.sound.sampled.AudioFormat;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.DataLine;
-import javax.sound.sampled.Line;
-import javax.sound.sampled.Mixer;
-import javax.sound.sampled.Clip;
-import javax.sound.sampled.Port;
-import javax.sound.sampled.SourceDataLine;
-import javax.sound.sampled.TargetDataLine;
-
-import javax.swing.Action;
-import javax.swing.JButton;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.KeyStroke;
-
 import edu.cmu.sphinx.frontend.Data;
 import edu.cmu.sphinx.frontend.DoubleData;
 import edu.cmu.sphinx.frontend.FrontEnd;
 import edu.cmu.sphinx.frontend.util.Microphone;
 import edu.cmu.sphinx.frontend.util.StreamDataSource;
 import edu.cmu.sphinx.frontend.window.RaisedCosineWindower;
-import edu.cmu.sphinx.tools.audio.AudioData;
-import edu.cmu.sphinx.tools.audio.AudioPanel;
-import edu.cmu.sphinx.tools.audio.AudioPlayer;
-import edu.cmu.sphinx.tools.audio.SpectrogramPanel;
-import edu.cmu.sphinx.tools.audio.Utils;
 import edu.cmu.sphinx.util.props.ConfigurationManager;
 import edu.cmu.sphinx.util.props.PropertySheet;
 
+import javax.sound.sampled.*;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.*;
+import java.net.URL;
+import java.util.StringTokenizer;
+import java.util.prefs.Preferences;
+
 
 /**
- * Records and displays the waveform and spectrogram of an audio
- * signal.  See
- * <a href="doc-files/HowToRunAudioTool.html">How to Run AudioTool</a>
- * for information on how to run AudioTool.
+ * Records and displays the waveform and spectrogram of an audio signal.  See <a href="doc-files/HowToRunAudioTool.html">How
+ * to Run AudioTool</a> for information on how to run AudioTool.
  */
 public class AudioTool {
+
     static final String CONTEXT = "AudioTool";
     static final String PREFS_CONTEXT = "/edu/cmu/sphinx/tools/audio/"
-                                        + CONTEXT;
+            + CONTEXT;
     static final String FILENAME_PREFERENCE = "filename";
-    
+
     // -------------------------------
     // Component names
     // -----------------------------------
     // These names should match the correspondong names in the
     // spectrogram.config.xml
-    
+
     static final String MICROPHONE = "microphone";
     static final String FRONT_END = "frontEnd";
     static final String DATA_SOURCE = "streamDataSource";
     static final String WINDOWER = "windower";
-    
+
     static AudioData audio;
     static JFrame jframe;
     static AudioPanel audioPanel;
     static SpectrogramPanel spectrogramPanel;
     static JFileChooser fileChooser;
-    static String filename; 
+    static String filename;
     static File file = null;
     static AudioPlayer player;
     static Microphone recorder;
     static boolean recording = false;
     static Preferences prefs;
     static float zoom = 1.0f;
-    
+
     private static JMenuItem saveMenuItem;
 
     private static JButton playButton;
@@ -106,25 +76,24 @@ public class AudioTool {
     private static JButton zoomResetButton;
 
     private static ActionListener recordListener;
-    
-    /**
-     * Dumps the information about a line.
-     */
+
+
+    /** Dumps the information about a line. */
     private static void dumpLineInfo(String indent,
                                      Line.Info[] lineInfo) {
         int numDumped = 0;
-        
+
         if (lineInfo != null) {
             for (int i = 0; i < lineInfo.length; i++) {
                 if (lineInfo[i] instanceof DataLine.Info) {
                     AudioFormat[] formats =
-                        ((DataLine.Info) lineInfo[i]).getFormats();
+                            ((DataLine.Info) lineInfo[i]).getFormats();
                     for (int j = 0; j < formats.length; j++) {
                         System.out.println(indent + formats[j]);
                     }
                     numDumped++;
                 } else if (lineInfo[i] instanceof Port.Info) {
-		    System.out.println(indent + lineInfo[i]);
+                    System.out.println(indent + lineInfo[i]);
                     numDumped++;
                 }
             }
@@ -134,34 +103,32 @@ public class AudioTool {
             System.out.println(indent + "none");
         }
     }
-    
-    /**
-     * Lists all the available audio devices.
-     */
+
+
+    /** Lists all the available audio devices. */
     private static void dumpMixers() {
         Mixer.Info[] mixerInfo = AudioSystem.getMixerInfo();
-        
+
         for (int i = 0; i < mixerInfo.length; i++) {
             Mixer mixer = AudioSystem.getMixer(mixerInfo[i]);
             System.out.println("Mixer[" + i + "]: \""
-                               + mixerInfo[i].getName() + "\"");
+                    + mixerInfo[i].getName() + "\"");
             System.out.println("    Description: "
-                               + mixerInfo[i].getDescription());
+                    + mixerInfo[i].getDescription());
 
             System.out.println("    SourceLineInfo (e.g., speakers):");
             dumpLineInfo("        ", mixer.getSourceLineInfo());
-            
+
             System.out.println("    TargetLineInfo (e.g., microphones):");
             dumpLineInfo("        ", mixer.getTargetLineInfo());
         }
     }
 
-    /**
-     * Gets a filename.
-     */
+
+    /** Gets a filename. */
     static public void getFilename(String title, int type) {
         int returnVal;
-        
+
         fileChooser.setDialogTitle(title);
         fileChooser.setCurrentDirectory(file);
         fileChooser.setDialogType(type);
@@ -175,8 +142,9 @@ public class AudioTool {
             file = fileChooser.getSelectedFile();
             filename = file.getAbsolutePath();
             prefs.put(FILENAME_PREFERENCE, filename);
-        } 
+        }
     }
+
 
     /**
      */
@@ -186,20 +154,21 @@ public class AudioTool {
             if (newAudio == null) {
                 newAudio = Utils.readRawFile(filename);
             }
-	    zoomReset();
+            zoomReset();
             audio.setAudioData(newAudio.getAudioData());
-	    /* 
-	     * Play only if user requests. Auto play is annoying if
-	     * the audio is too long
-	     *
-	     * player.play(audioPanel.getSelectionStart(),
-	     * audioPanel.getSelectionEnd());
-	    */
+            /*
+            * Play only if user requests. Auto play is annoying if
+            * the audio is too long
+            *
+            * player.play(audioPanel.getSelectionStart(),
+            * audioPanel.getSelectionEnd());
+           */
         } catch (IOException e) {
             /* just ignore bad files. */
         }
     }
-    
+
+
     /**
      */
     static public void getAudioFromFile(String filename) throws IOException {
@@ -217,33 +186,31 @@ public class AudioTool {
          */
         if (filename.endsWith(".align")) {
             BufferedReader reader = new BufferedReader(
-                new InputStreamReader(new FileInputStream(filename)));
+                    new InputStreamReader(new FileInputStream(filename)));
 
             populateAudio(reader.readLine());
-            
+
             int numPoints = Integer.parseInt(reader.readLine());
             float[] times = new float[numPoints];
             String[] labels = new String[numPoints];
             for (int i = 0; i < numPoints; i++) {
                 StringTokenizer tokenizer = new StringTokenizer(
-                    reader.readLine());
+                        reader.readLine());
                 while (tokenizer.hasMoreTokens()) {
                     times[i] = Float.parseFloat(tokenizer.nextToken());
                     labels[i] = tokenizer.nextToken();
                 }
             }
             audioPanel.setLabels(times, labels);
-            
+
             reader.close();
         } else {
             populateAudio(filename);
         }
     }
-    
-    /**
-     * Gets the audio that's in the recorder.  This should only
-     * be called after recorder.stopRecording is called.
-     */
+
+
+    /** Gets the audio that's in the recorder.  This should only be called after recorder.stopRecording is called. */
     static private short[] getRecordedAudio(Microphone recorder) {
         short[] shorts = new short[0];
         int sampleRate = 16000;
@@ -256,16 +223,16 @@ public class AudioTool {
                 Data data = recorder.getData();
                 if (data instanceof DoubleData) {
                     sampleRate =
-                        ((DoubleData) data).getSampleRate();
+                            ((DoubleData) data).getSampleRate();
                     double[] values =
-                        ((DoubleData) data).getValues();
+                            ((DoubleData) data).getValues();
                     short[] newShorts =
-                        new short[shorts.length
-                                  + values.length];
+                            new short[shorts.length
+                                    + values.length];
                     System.arraycopy(shorts, 0, newShorts, 0, shorts.length);
                     for (int i = 0; i < values.length; i++) {
                         newShorts[shorts.length + i] =
-                            (short) values[i];
+                                (short) values[i];
                     }
                     shorts = newShorts;
                 }
@@ -273,226 +240,214 @@ public class AudioTool {
                 e.printStackTrace();
             }
         }
-        
+
         if (sampleRate > 16000) {
             System.out.println("Downsampling from " +
-                               sampleRate + " to 16000.");
+                    sampleRate + " to 16000.");
             shorts = Downsampler.downsample(
-                shorts,
-                sampleRate / 1000,
-                16);
+                    shorts,
+                    sampleRate / 1000,
+                    16);
         }
 
         return shorts;
     }
-    
-    /**
-     * Zoom the panels according to the zoom scale.
-     */
+
+
+    /** Zoom the panels according to the zoom scale. */
     private static void zoomPanels() {
-	if (audioPanel != null) {
-	    audioPanel.zoomSet(zoom);
-	}
-	if (spectrogramPanel != null) {
-	    spectrogramPanel.zoomSet(zoom);
-	}
+        if (audioPanel != null) {
+            audioPanel.zoomSet(zoom);
+        }
+        if (spectrogramPanel != null) {
+            spectrogramPanel.zoomSet(zoom);
+        }
     }
 
-    /**
-     * Zoom in.
-     */
+
+    /** Zoom in. */
     private static void zoomIn() {
-	zoom *= 2.0f;
-	zoomPanels();
+        zoom *= 2.0f;
+        zoomPanels();
     }
 
-    /**
-     * Zoom out.
-     */
+
+    /** Zoom out. */
     private static void zoomOut() {
-	zoom /= 2.0f;
-	zoomPanels();
+        zoom /= 2.0f;
+        zoomPanels();
     }
 
-    /**
-     * Reset zoom size.
-     */
+
+    /** Reset zoom size. */
     private static void zoomReset() {
-	zoom = 1.0f;
-	zoomPanels();
+        zoom = 1.0f;
+        zoomPanels();
     }
 
 
-    /**
-     * Creates the menu bar.
-     */
+    /** Creates the menu bar. */
     private static void createMenuBar(JFrame jframe) {
         JMenuBar menuBar = new JMenuBar();
         jframe.setJMenuBar(menuBar);
 
         JMenu menu = new JMenu("File");
         menuBar.add(menu);
-        
+
         JMenuItem menuItem = new JMenuItem("Open...");
         menuItem.setAccelerator(KeyStroke.getKeyStroke("control O"));
         menuItem.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent evt) {
-                    getFilename("Open...", JFileChooser.OPEN_DIALOG);
-                    if ((filename == null) || (filename.length() == 0)) {
-                        return;
-                    }
-                    try {
-                        getAudioFromFile(filename);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+            public void actionPerformed(ActionEvent evt) {
+                getFilename("Open...", JFileChooser.OPEN_DIALOG);
+                if ((filename == null) || (filename.length() == 0)) {
+                    return;
                 }
-            });
+                try {
+                    getAudioFromFile(filename);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
         menu.add(menuItem);
-        
+
         saveMenuItem = new JMenuItem("Save");
         saveMenuItem.setAccelerator(KeyStroke.getKeyStroke("control S"));
-	saveMenuItem.setEnabled(false);
+        saveMenuItem.setEnabled(false);
         saveMenuItem.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent evt) {
-                    if ((filename != null) && (filename.length() > 0)) {
-                        try {
-                            Utils.writeRawFile(audio, filename);
-			    saveMenuItem.setEnabled(false);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-            });
-        menu.add(saveMenuItem);
-        
-        menuItem = new JMenuItem("Save As...");
-        menuItem.setAccelerator(KeyStroke.getKeyStroke("control V"));
-        menuItem.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent evt) {
-                    getFilename("Save As...", JFileChooser.SAVE_DIALOG);
-                    if ((filename == null) || (filename.length() == 0)) {
-                        return;
-                    }
+            public void actionPerformed(ActionEvent evt) {
+                if ((filename != null) && (filename.length() > 0)) {
                     try {
                         Utils.writeRawFile(audio, filename);
-			saveMenuItem.setEnabled(false);
+                        saveMenuItem.setEnabled(false);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
                 }
-            });
+            }
+        });
+        menu.add(saveMenuItem);
+
+        menuItem = new JMenuItem("Save As...");
+        menuItem.setAccelerator(KeyStroke.getKeyStroke("control V"));
+        menuItem.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                getFilename("Save As...", JFileChooser.SAVE_DIALOG);
+                if ((filename == null) || (filename.length() == 0)) {
+                    return;
+                }
+                try {
+                    Utils.writeRawFile(audio, filename);
+                    saveMenuItem.setEnabled(false);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
         menu.add(menuItem);
-        
+
         menuItem = new JMenuItem("Quit");
         menuItem.setAccelerator(KeyStroke.getKeyStroke("control Q"));
         menuItem.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent evt) {
-                    System.exit(0);
-                }
-            });
+            public void actionPerformed(ActionEvent evt) {
+                System.exit(0);
+            }
+        });
         menu.add(menuItem);
 
 
-
-        
         menu = new JMenu("Edit");
         menuBar.add(menu);
-        
+
         menuItem = new JMenuItem("Select All");
         menuItem.setAccelerator(KeyStroke.getKeyStroke("control A"));
         menuItem.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent evt) {
-                    audioPanel.selectAll();
-                }
-            });
+            public void actionPerformed(ActionEvent evt) {
+                audioPanel.selectAll();
+            }
+        });
         menu.add(menuItem);
-        
+
         menuItem = new JMenuItem("Crop");
         menuItem.setAccelerator(KeyStroke.getKeyStroke("control X"));
         menuItem.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent evt) {
-                    audioPanel.crop();
-                }
-            });
+            public void actionPerformed(ActionEvent evt) {
+                audioPanel.crop();
+            }
+        });
         menu.add(menuItem);
-        
-
 
 
         menu = new JMenu("View");
         menuBar.add(menu);
-        
+
         menuItem = new JMenuItem("Zoom In");
         menuItem.setAccelerator(KeyStroke.getKeyStroke('>'));
         menuItem.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent evt) {
-                    zoomIn();
-                }
-            });
+            public void actionPerformed(ActionEvent evt) {
+                zoomIn();
+            }
+        });
         menu.add(menuItem);
-        
+
         menuItem = new JMenuItem("Zoom Out");
         menuItem.setAccelerator(KeyStroke.getKeyStroke('<'));
         menuItem.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent evt) {
-                    zoomOut();
-                }
-            });
+            public void actionPerformed(ActionEvent evt) {
+                zoomOut();
+            }
+        });
         menu.add(menuItem);
 
         menuItem = new JMenuItem("Original Size");
         menuItem.setAccelerator(KeyStroke.getKeyStroke('!'));
         menuItem.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent evt) {
-                    zoomReset();
-                }
-            });
+            public void actionPerformed(ActionEvent evt) {
+                zoomReset();
+            }
+        });
         menu.add(menuItem);
-
-
-
 
 
         menu = new JMenu("Audio");
         menuBar.add(menu);
-        
+
         menuItem = new JMenuItem("Play");
         menuItem.setAccelerator(KeyStroke.getKeyStroke("control P"));
         menuItem.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent evt) {
-                    player.play(audioPanel.getSelectionStart(),
-                                audioPanel.getSelectionEnd());
-                }
-            });
+            public void actionPerformed(ActionEvent evt) {
+                player.play(audioPanel.getSelectionStart(),
+                        audioPanel.getSelectionEnd());
+            }
+        });
         menu.add(menuItem);
 
         recordListener = new ActionListener() {
-                public void actionPerformed(ActionEvent evt) {
-                    if (!recording) {
-                        recording = true;
-                        recorder.startRecording();
-                        recordButton.setText("Stop");
-			saveMenuItem.setEnabled(true);
-                    } else {
-                        recording = false;
-                        recorder.stopRecording();
-                        audio.setAudioData(getRecordedAudio(recorder));
-                        recordButton.setText("Record");
-                        player.play(audioPanel.getSelectionStart(),
-                                    audioPanel.getSelectionEnd());
-                    }
+            public void actionPerformed(ActionEvent evt) {
+                if (!recording) {
+                    recording = true;
+                    recorder.startRecording();
+                    recordButton.setText("Stop");
+                    saveMenuItem.setEnabled(true);
+                } else {
+                    recording = false;
+                    recorder.stopRecording();
+                    audio.setAudioData(getRecordedAudio(recorder));
+                    recordButton.setText("Record");
+                    player.play(audioPanel.getSelectionStart(),
+                            audioPanel.getSelectionEnd());
                 }
-            };
+            }
+        };
 
-        
+
         menuItem = new JMenuItem("Record Start/Stop");
         menuItem.setAccelerator(KeyStroke.getKeyStroke("control R"));
         menuItem.addActionListener(recordListener);
-        menu.add(menuItem);        
+        menu.add(menuItem);
     }
-    
+
+
     /**
      * Create the Panel where all the buttons are.
      *
@@ -500,53 +455,53 @@ public class AudioTool {
      */
     private static JPanel createButtonPanel() {
         JPanel buttonPanel = new JPanel();
-	FlowLayout layout = new FlowLayout();
-	layout.setAlignment(FlowLayout.LEFT);
+        FlowLayout layout = new FlowLayout();
+        layout.setAlignment(FlowLayout.LEFT);
         buttonPanel.setLayout(layout);
 
         playButton = new JButton("Play");
         playButton.setEnabled(true);
         playButton.addActionListener(new ActionListener() {
-		public void actionPerformed(ActionEvent e) {
-                    player.play(audioPanel.getSelectionStart(),
-                                audioPanel.getSelectionEnd());
-		}
-	    });
+            public void actionPerformed(ActionEvent e) {
+                player.play(audioPanel.getSelectionStart(),
+                        audioPanel.getSelectionEnd());
+            }
+        });
 
         recordButton = new JButton("Record");
         recordButton.setEnabled(true);
         recordButton.addActionListener(recordListener);
-        
+
         zoomInButton = new JButton("Zoom In");
         zoomInButton.setEnabled(true);
         zoomInButton.addActionListener(new ActionListener() {
-		public void actionPerformed(ActionEvent e) {
-                    zoomIn();
-		}
-	    });
+            public void actionPerformed(ActionEvent e) {
+                zoomIn();
+            }
+        });
 
         zoomOutButton = new JButton("Zoom Out");
         zoomOutButton.setEnabled(true);
         zoomOutButton.addActionListener(new ActionListener() {
-		public void actionPerformed(ActionEvent e) {
-                    zoomOut();
-		}
-	    });
+            public void actionPerformed(ActionEvent e) {
+                zoomOut();
+            }
+        });
 
         zoomResetButton = new JButton("Reset Size");
         zoomResetButton.setEnabled(true);
         zoomResetButton.addActionListener(new ActionListener() {
-		public void actionPerformed(ActionEvent e) {
-                    zoomReset();
-		}
-	    });
+            public void actionPerformed(ActionEvent e) {
+                zoomReset();
+            }
+        });
 
         JButton exitButton = new JButton("Exit");
         exitButton.addActionListener(new ActionListener() {
-		public void actionPerformed(ActionEvent e) {
-		    System.exit(0);
-		}
-	    });
+            public void actionPerformed(ActionEvent e) {
+                System.exit(0);
+            }
+        });
 
         buttonPanel.add(recordButton);
         buttonPanel.add(playButton);
@@ -562,13 +517,12 @@ public class AudioTool {
     /**
      * Main method.
      *
-     * @param args argv[0] : The name of an audio file
-     *             argv[1] : SphinxProperties file
+     * @param args argv[0] : The name of an audio file argv[1] : SphinxProperties file
      */
     static public void main(String[] args) {
         FrontEnd frontEnd;
         StreamDataSource dataSource;
-        
+
         prefs = Preferences.userRoot().node(PREFS_CONTEXT);
         filename = prefs.get(FILENAME_PREFERENCE, "untitled.raw");
         file = new File(filename);
@@ -577,7 +531,7 @@ public class AudioTool {
             dumpMixers();
             System.exit(0);
         }
-        
+
         try {
             URL url;
             if (args.length > 0) {
@@ -593,51 +547,51 @@ public class AudioTool {
             recorder = (Microphone) cm.lookup(MICROPHONE);
             recorder.initialize();
             audio = new AudioData();
-            
+
             frontEnd = (FrontEnd) cm.lookup(FRONT_END);
             dataSource = (StreamDataSource) cm.lookup(DATA_SOURCE);
-            
+
             PropertySheet ps = cm.getPropertySheet(WINDOWER);
             float windowShiftInMs = ps.getFloat
-                (RaisedCosineWindower.PROP_WINDOW_SHIFT_MS,
-             RaisedCosineWindower.PROP_WINDOW_SHIFT_MS_DEFAULT);
+                    (RaisedCosineWindower.PROP_WINDOW_SHIFT_MS,
+                            RaisedCosineWindower.PROP_WINDOW_SHIFT_MS_DEFAULT);
 
-	    final JFrame jframe = new JFrame("AudioTool");
+            final JFrame jframe = new JFrame("AudioTool");
             fileChooser = new JFileChooser();
             createMenuBar(jframe);
-            
+
             /* Scale the width according to the size of the
-             * spectrogram.
-             */
+            * spectrogram.
+            */
             float windowShiftInSamples = windowShiftInMs
-                * audio.getAudioFormat().getSampleRate() / 1000.0f;
+                    * audio.getAudioFormat().getSampleRate() / 1000.0f;
             audioPanel = new AudioPanel(audio,
-                                        1.0f / windowShiftInSamples,
-                                        0.004f);
+                    1.0f / windowShiftInSamples,
+                    0.004f);
             spectrogramPanel = new SpectrogramPanel(frontEnd, dataSource, audio);
 
             JPanel panel = new JPanel(new BorderLayout());
             panel.add(audioPanel, BorderLayout.CENTER);
-	    panel.add(spectrogramPanel, BorderLayout.SOUTH);
-            
-	    JScrollPane scroller = new JScrollPane(panel);
+            panel.add(spectrogramPanel, BorderLayout.SOUTH);
 
-	    JPanel outerPanel = new JPanel(new BorderLayout());
-	    outerPanel.add(createButtonPanel(), BorderLayout.NORTH);
-	    outerPanel.add(scroller);
+            JScrollPane scroller = new JScrollPane(panel);
+
+            JPanel outerPanel = new JPanel(new BorderLayout());
+            outerPanel.add(createButtonPanel(), BorderLayout.NORTH);
+            outerPanel.add(scroller);
 
             player = new AudioPlayer(audio);
             player.start();
-            
+
             getAudioFromFile(filename);
-            
+
             jframe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-	    jframe.setContentPane(outerPanel);
+            jframe.setContentPane(outerPanel);
             jframe.pack();
-            jframe.setSize(640,540);
+            jframe.setSize(640, 540);
             jframe.setVisible(true);
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }       
+    }
 }

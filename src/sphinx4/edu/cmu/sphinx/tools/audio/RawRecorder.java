@@ -12,26 +12,21 @@
 
 package edu.cmu.sphinx.tools.audio;
 
+import javax.sound.sampled.*;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-import javax.sound.sampled.AudioFormat;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.DataLine;
-import javax.sound.sampled.LineUnavailableException;
-import javax.sound.sampled.TargetDataLine;
-
-/**
- * Grabs audio from the microphone and returns an array of samples.
- */ 
+/** Grabs audio from the microphone and returns an array of samples. */
 public class RawRecorder {
+
     Object lock = new Object();
     RecordThread recorder = null;
     AudioFormat inFormat;
     AudioFormat outFormat;
     TargetDataLine microphone = null;
     boolean downsample = false;
+
 
     /**
      * Create a new RawRecorder.
@@ -40,7 +35,7 @@ public class RawRecorder {
      * @throws LineUnavailableException if the audioFormat is not supported
      */
     public RawRecorder(AudioFormat audioFormat)
-        throws LineUnavailableException {
+            throws LineUnavailableException {
 
         inFormat = audioFormat;
         outFormat = audioFormat;
@@ -53,26 +48,27 @@ public class RawRecorder {
          * is not supported.
          */
         DataLine.Info info = new DataLine.Info(TargetDataLine.class,
-                                               inFormat);
-        
+                inFormat);
+
         if (!AudioSystem.isLineSupported(info)) {
             downsample = true;
             inFormat = new AudioFormat(44100.0f, // sample rate
-                                       16,       // sample size
-                                       1,        // channels (1 == mono)
-                                       true,     // signed
-                                       true);    // big endian
-            info =  new DataLine.Info(TargetDataLine.class,
-                                      inFormat);
+                    16,       // sample size
+                    1,        // channels (1 == mono)
+                    true,     // signed
+                    true);    // big endian
+            info = new DataLine.Info(TargetDataLine.class,
+                    inFormat);
             if (!AudioSystem.isLineSupported(info)) {
                 throw new LineUnavailableException(
-                    "Unsupported format: " + audioFormat);
+                        "Unsupported format: " + audioFormat);
             }
         }
 
         microphone = (TargetDataLine) AudioSystem.getLine(info);
         microphone.open(audioFormat, microphone.getBufferSize());
     }
+
 
     /**
      * Start recording.  The stop method will give us the clip.
@@ -89,11 +85,11 @@ public class RawRecorder {
         }
     }
 
+
     /**
      * Stop recording and give us the clip.
      *
-     * @return the clip that was recorded since the last time start
-     * was called
+     * @return the clip that was recorded since the last time start was called
      * @see #start
      */
     public short[] stop() {
@@ -107,12 +103,12 @@ public class RawRecorder {
             byte audioBytes[] = out.toByteArray();
             ByteArrayInputStream in = new ByteArrayInputStream(audioBytes);
             try {
-                short[] samples = RawReader.readAudioData(in, inFormat); 
+                short[] samples = RawReader.readAudioData(in, inFormat);
                 if (downsample) {
                     samples = Downsampler.downsample(
-                        samples,
-                        (int) (inFormat.getSampleRate() / 1000.0f),
-                        (int) (outFormat.getSampleRate() / 1000.0f));
+                            samples,
+                            (int) (inFormat.getSampleRate() / 1000.0f),
+                            (int) (outFormat.getSampleRate() / 1000.0f));
                 }
                 return samples;
             } catch (IOException e) {
@@ -121,12 +117,15 @@ public class RawRecorder {
             }
         }
     }
-    
+
+
     class RecordThread extends Thread {
+
         boolean done = false;
         Object lock = new Object();
         ByteArrayOutputStream out;
-        
+
+
         public ByteArrayOutputStream stopRecording() {
             try {
                 synchronized (lock) {
@@ -137,7 +136,8 @@ public class RawRecorder {
             }
             return out;
         }
-        
+
+
         public void run() {
             byte[] data = new byte[microphone.getBufferSize()];
             out = new ByteArrayOutputStream();
@@ -147,13 +147,13 @@ public class RawRecorder {
                 microphone.start();
                 while (!done) {
                     int numBytesRead = microphone.read(data, 0, data.length);
-                    if(numBytesRead != -1) {
+                    if (numBytesRead != -1) {
                         out.write(data, 0, numBytesRead);
                     } else {
                         break;
                     }
                 }
-                microphone.stop();        
+                microphone.stop();
                 out.flush();
             } catch (IOException e) {
                 e.printStackTrace();
@@ -161,6 +161,6 @@ public class RawRecorder {
             synchronized (lock) {
                 lock.notify();
             }
-        }       
+        }
     }
 }

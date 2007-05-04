@@ -23,66 +23,42 @@ import java.util.*;
 
 /**
  * <p/>
- * Provides recognition lattice results. Lattices are created from
- * {@link edu.cmu.sphinx.result.Result Results}
- * which can be partial or final.
- * </p>
+ * Provides recognition lattice results. Lattices are created from {@link edu.cmu.sphinx.result.Result Results} which
+ * can be partial or final. </p>
  * <p/>
- * Lattices describe all theories considered by the Recognizer that have not
- * been pruned out.  Lattices are a directed graph containing
- * {@link edu.cmu.sphinx.result.Node Nodes} and
- * {@link edu.cmu.sphinx.result.Edge Edges}.
- * A Node that correponds to a theory that a word was spoken over a particular
- * period of time.  An Edge that corresponds to the score of one word following
- * another.  The usual result transcript is the sequence of Nodes though the
- * Lattice with the best scoring path. Lattices are a useful tool for
- * analyzing "alternate results".
- * </p>
+ * Lattices describe all theories considered by the Recognizer that have not been pruned out.  Lattices are a directed
+ * graph containing {@link edu.cmu.sphinx.result.Node Nodes} and {@link edu.cmu.sphinx.result.Edge Edges}. A Node that
+ * correponds to a theory that a word was spoken over a particular period of time.  An Edge that corresponds to the
+ * score of one word following another.  The usual result transcript is the sequence of Nodes though the Lattice with
+ * the best scoring path. Lattices are a useful tool for analyzing "alternate results". </p>
  * <p/>
- * A Lattice can be created from a Result that has a full token tree
- * (with its corresponding AlternativeHypothesisManager).
- * Currently, only the
- * {@link edu.cmu.sphinx.decoder.search.WordPruningBreadthFirstSearchManager}
- * has an AlternativeHypothesisManager. Furthermore, the lattice
- * construction code currently only works for linguists where the
- * {@link edu.cmu.sphinx.linguist.WordSearchState} returns false on the
- * <code>isWordStart</code> method, i.e., where the word states appear
- * at the end of the word in the linguist. <i>Therefore, lattices should
- * only be created from Result from the
- * {@link edu.cmu.sphinx.linguist.lextree.LexTreeLinguist} and the
- * {@link edu.cmu.sphinx.decoder.search.WordPruningBreadthFirstSearchManager}.
- * </i>
- * </p>
+ * A Lattice can be created from a Result that has a full token tree (with its corresponding
+ * AlternativeHypothesisManager). Currently, only the {@link edu.cmu.sphinx.decoder.search.WordPruningBreadthFirstSearchManager}
+ * has an AlternativeHypothesisManager. Furthermore, the lattice construction code currently only works for linguists
+ * where the {@link edu.cmu.sphinx.linguist.WordSearchState} returns false on the <code>isWordStart</code> method, i.e.,
+ * where the word states appear at the end of the word in the linguist. <i>Therefore, lattices should only be created
+ * from Result from the {@link edu.cmu.sphinx.linguist.lextree.LexTreeLinguist} and the {@link
+ * edu.cmu.sphinx.decoder.search.WordPruningBreadthFirstSearchManager}. </i> </p>
  * <p/>
- * Lattices can also be created from a collapsed
- * {@link edu.cmu.sphinx.decoder.search.Token} tree and its
- * AlternativeHypothesisManager. This is what 'collapsed' means.
- * Normally, between two word tokens is a series of tokens for other types
- * of states, such as unit or HMM states. Using 'W' for word tokens,
- * 'U' for unit tokens, 'H' for HMM tokens, a token chain can look like:
- * </p>
+ * Lattices can also be created from a collapsed {@link edu.cmu.sphinx.decoder.search.Token} tree and its
+ * AlternativeHypothesisManager. This is what 'collapsed' means. Normally, between two word tokens is a series of tokens
+ * for other types of states, such as unit or HMM states. Using 'W' for word tokens, 'U' for unit tokens, 'H' for HMM
+ * tokens, a token chain can look like: </p>
  * <pre>
  * W - U - H - H - H - H - U - H - H - H - H - W
  * </pre>
  * <p/>
- * Usually, HMM tokens contains acoustic scores, and word tokens contains
- * language scores. If we want to know the total acoustic and language
- * scores between any two words, it is unnecessary to keep around the
- * unit and HMM tokens. Therefore, all their acoustic and language scores
- * are 'collapsed' into one token, so that it will look like:
- * </p>
+ * Usually, HMM tokens contains acoustic scores, and word tokens contains language scores. If we want to know the total
+ * acoustic and language scores between any two words, it is unnecessary to keep around the unit and HMM tokens.
+ * Therefore, all their acoustic and language scores are 'collapsed' into one token, so that it will look like: </p>
  * <pre>
  * W - P - W
  * </pre>
  * <p/>
- * where 'P' is a token that represents the path between the two words,
- * and P contains the acoustic and language scores between the two words.
- * It is this type of collapsed token tree that the Lattice class is
- * expecting. Normally, the task of collapsing the token tree is done
- * by the
- * {@link edu.cmu.sphinx.decoder.search.WordPruningBreadthFirstSearchManager}.
- * A collapsed token tree can look like:
- * </p>
+ * where 'P' is a token that represents the path between the two words, and P contains the acoustic and language scores
+ * between the two words. It is this type of collapsed token tree that the Lattice class is expecting. Normally, the
+ * task of collapsing the token tree is done by the {@link edu.cmu.sphinx.decoder.search.WordPruningBreadthFirstSearchManager}.
+ * A collapsed token tree can look like: </p>
  * <pre>
  *                             "cat" - P - &lt;/s&gt;
  *                            /
@@ -95,9 +71,8 @@ import java.util.*;
  *                             "dog" - P - &lt;/s&gt;
  * </pre>
  * <p/>
- * When a Lattice is constructed from a Result, the above collapsed token tree
- * together with the alternate hypothesis of "all" instead of "a",
- * will be converted into a Lattice that looks like the following:
+ * When a Lattice is constructed from a Result, the above collapsed token tree together with the alternate hypothesis of
+ * "all" instead of "a", will be converted into a Lattice that looks like the following:
  * <pre>
  *       "a"           "cat"
  *     /     \        /     \
@@ -106,10 +81,8 @@ import java.util.*;
  *      "all"          "dog"
  * </pre>
  * <p/>
- * Initially, a lattice can have redundant nodes, i.e., nodes referring to
- * the same word and that originate from the same parent node. These
- * nodes can be collapsed using the {@link LatticeOptimizer}.
- * </p>
+ * Initially, a lattice can have redundant nodes, i.e., nodes referring to the same word and that originate from the
+ * same parent node. These nodes can be collapsed using the {@link LatticeOptimizer}. </p>
  */
 public class Lattice {
 
@@ -122,27 +95,26 @@ public class Lattice {
     private Set<Token> visitedWordTokens;
     private AlternateHypothesisManager loserManager;
 
-    /**
-     * Create an empty Lattice.
-     */
+
+    /** Create an empty Lattice. */
     protected Lattice() {
         edges = new HashSet<Edge>();
         nodes = new HashMap<String, Node>();
     }
 
-    /**
-     * Create an empty Lattice.
-     */
+
+    /** Create an empty Lattice. */
     public Lattice(LogMath logMath) {
         this();
         this.logMath = logMath;
     }
 
+
     /**
      * Create a Lattice from a Result.
      * <p/>
-     * The Lattice is created from the Token tree referenced by the Result.
-     * The Lattice is then optimized to all collapse equivalent paths.
+     * The Lattice is created from the Token tree referenced by the Result. The Lattice is then optimized to all
+     * collapse equivalent paths.
      *
      * @param result the result to convert into a lattice
      */
@@ -154,11 +126,11 @@ public class Lattice {
             loserManager.purge();
         }
 
-	Iterator tokenIter;
+        Iterator tokenIter;
         if (result.getBestFinalToken() != null) {
-        	tokenIter = result.getResultTokens().iterator();
+            tokenIter = result.getResultTokens().iterator();
         } else {
-        	tokenIter = result.getActiveTokens().iterator();
+            tokenIter = result.getActiveTokens().iterator();
         }
         while (tokenIter.hasNext()) {
             Token token = (Token) tokenIter.next();
@@ -209,9 +181,8 @@ public class Lattice {
 
 
     /**
-     * Collapse the given word-ending token. This means collapsing all
-     * the unit and HMM tokens that correspond to the word represented
-     * by this token into an edge of the lattice.
+     * Collapse the given word-ending token. This means collapsing all the unit and HMM tokens that correspond to the
+     * word represented by this token into an edge of the lattice.
      *
      * @param token the word-ending token to collapse
      */
@@ -235,14 +206,12 @@ public class Lattice {
         }
     }
 
+
     /**
      * @param parentWordNode the 'toNode' of the returned edge
-     * @param token          the predecessor token of the token represented by
-     *                       the parentWordNode
-     * @param acousticScore  the acoustic score until and including the
-     *                       parent of token
-     * @param languageScore  the language score until and including the
-     *                       parent of token
+     * @param token          the predecessor token of the token represented by the parentWordNode
+     * @param acousticScore  the acoustic score until and including the parent of token
+     * @param languageScore  the language score until and including the parent of token
      */
     private void collapseWordPath(Node parentWordNode, Token token,
                                   float acousticScore, float languageScore) {
@@ -288,6 +257,7 @@ public class Lattice {
         }
     }
 
+
     /**
      * Returns an ID for the Node associated with the given token.
      *
@@ -298,9 +268,9 @@ public class Lattice {
         return Integer.toString(token.hashCode());
     }
 
+
     /**
-     * Create a Lattice from a LAT file.  LAT files are created by
-     * the method Lattice.dump()
+     * Create a Lattice from a LAT file.  LAT files are created by the method Lattice.dump()
      *
      * @param fileName
      */
@@ -338,9 +308,9 @@ public class Lattice {
         }
     }
 
+
     /**
-     * Add an edge from fromNode to toNode.  This method creates the Edge
-     * object and does all the connecting
+     * Add an edge from fromNode to toNode.  This method creates the Edge object and does all the connecting
      *
      * @param fromNode
      * @param toNode
@@ -357,9 +327,9 @@ public class Lattice {
         return e;
     }
 
+
     /**
-     * Add a Node that represents the theory that a given word was spoken
-     * over a given period of time.
+     * Add a Node that represents the theory that a given word was spoken over a given period of time.
      *
      * @param word
      * @param beginTime
@@ -372,9 +342,9 @@ public class Lattice {
         return n;
     }
 
+
     /**
-     * Add a Node that represents the theory that a given word was spoken
-     * over a given period of time.
+     * Add a Node that represents the theory that a given word was spoken over a given period of time.
      *
      * @param word
      * @param beginTime
@@ -386,9 +356,9 @@ public class Lattice {
         return addNode(w, beginTime, endTime);
     }
 
+
     /**
-     * Add a Node with a given ID that represents the theory that a
-     * given word was spoken over a given period of time.
+     * Add a Node with a given ID that represents the theory that a given word was spoken over a given period of time.
      * This method is used when loading Lattices from .LAT files.
      *
      * @param word
@@ -402,9 +372,9 @@ public class Lattice {
         return n;
     }
 
+
     /**
-     * Add a Node with a given ID that represents the theory that a
-     * given word was spoken over a given period of time.
+     * Add a Node with a given ID that represents the theory that a given word was spoken over a given period of time.
      * This method is used when loading Lattices from .LAT files.
      *
      * @param word
@@ -417,21 +387,22 @@ public class Lattice {
         return addNode(id, w, beginTime, endTime);
     }
 
+
     /**
-     * Add a Node corresponding to a Token from the result Token tree.
-     * Usually, the Token should reference a search state that is a
-     * WordSearchState, although other Tokens may be used for debugging.
+     * Add a Node corresponding to a Token from the result Token tree. Usually, the Token should reference a search
+     * state that is a WordSearchState, although other Tokens may be used for debugging.
      *
      * @param token
      * @return the new Node
      */
     protected Node addNode(Token token, int beginTime, int endTime) {
-        assert(token.getSearchState() instanceof WordSearchState);
+        assert (token.getSearchState() instanceof WordSearchState);
         Word word = ((WordSearchState) (token.getSearchState()))
                 .getPronunciation().getWord();
         return addNode(Integer.toString(token.hashCode()),
                 word, beginTime, endTime);
     }
+
 
     /**
      * Test to see if the Lattice contains a Node
@@ -443,6 +414,7 @@ public class Lattice {
         return nodes.containsValue(node);
     }
 
+
     /**
      * Test to see if the Lattice contains an Edge
      *
@@ -453,9 +425,9 @@ public class Lattice {
         return edges.contains(edge);
     }
 
+
     /**
-     * Test to see if the Lattice already contains a Node corresponding
-     * to a given Token.
+     * Test to see if the Lattice already contains a Node corresponding to a given Token.
      *
      * @param ID the ID of the Node to find
      * @return true if yes
@@ -464,15 +436,17 @@ public class Lattice {
         return nodes.containsKey(ID);
     }
 
+
     /**
      * Add a Node to the set of all Nodes
      *
      * @param n
      */
     protected void addNode(Node n) {
-        assert!hasNode(n.getId());
+        assert !hasNode(n.getId());
         nodes.put(n.getId(), n);
     }
+
 
     /**
      * Remove a Node from the set of all Nodes
@@ -484,6 +458,7 @@ public class Lattice {
         nodes.remove(n.getId());
     }
 
+
     /**
      * Get the Node associated with an ID
      *
@@ -494,16 +469,17 @@ public class Lattice {
         return (nodes.get(id));
     }
 
+
     /**
-     * Get a copy of the Collection of all Nodes.
-     * Used by LatticeOptimizer to avoid Concurrent modification of the
-     * nodes list.
+     * Get a copy of the Collection of all Nodes. Used by LatticeOptimizer to avoid Concurrent modification of the nodes
+     * list.
      *
      * @return a copy of the collection of Nodes
      */
     protected Collection<Node> getCopyOfNodes() {
         return new Vector<Node>(nodes.values());
     }
+
 
     /**
      * Get the Collection of all Nodes.
@@ -514,6 +490,7 @@ public class Lattice {
         return nodes.values();
     }
 
+
     /**
      * Remove an Edge from the set of all Edges.
      *
@@ -522,6 +499,7 @@ public class Lattice {
     protected void removeEdge(Edge e) {
         edges.remove(e);
     }
+
 
     /**
      * Get the set of all Edges.
@@ -532,9 +510,9 @@ public class Lattice {
         return edges;
     }
 
+
     /**
-     * Dump the Lattice in the form understood by AiSee
-     * (a graph visualization tool).  See http://www.AbsInt.com
+     * Dump the Lattice in the form understood by AiSee (a graph visualization tool).  See http://www.AbsInt.com
      *
      * @param fileName
      * @param title
@@ -597,9 +575,9 @@ public class Lattice {
         out.flush();
     }
 
+
     /**
-     * Dump the Lattice as a .LAT file.  Used to save Lattices as
-     * ASCII files for testing and experimentation.
+     * Dump the Lattice as a .LAT file.  Used to save Lattices as ASCII files for testing and experimentation.
      *
      * @param file
      */
@@ -611,9 +589,9 @@ public class Lattice {
         }
     }
 
+
     /**
-     * Remove a Node and all Edges connected to it.  Also remove those
-     * Edges from all connected Nodes.
+     * Remove a Node and all Edges connected to it.  Also remove those Edges from all connected Nodes.
      *
      * @param n
      */
@@ -638,18 +616,17 @@ public class Lattice {
         assert checkConsistency();
     }
 
+
     /**
      * Remove a Node and cross connect all Nodes with Edges to it.
      * <p/>
      * For example given
      * <p/>
-     * Nodes A, B, X, M, N
-     * Edges A-->X, B-->X, X-->M, X-->N
+     * Nodes A, B, X, M, N Edges A-->X, B-->X, X-->M, X-->N
      * <p/>
      * Removing and cross connecting X would result in
      * <p/>
-     * Nodes A, B, M, N
-     * Edges A-->M, A-->N, B-->M, B-->N
+     * Nodes A, B, M, N Edges A-->M, A-->N, B-->M, B-->N
      *
      * @param n
      */
@@ -668,9 +645,9 @@ public class Lattice {
         assert checkConsistency();
     }
 
+
     /**
-     * Get the initialNode for this Lattice.  This corresponds usually to
-     * the <s> symbol
+     * Get the initialNode for this Lattice.  This corresponds usually to the <s> symbol
      *
      * @return the initial Node
      */
@@ -678,9 +655,9 @@ public class Lattice {
         return initialNode;
     }
 
+
     /**
-     * Set the initialNode for this Lattice.  This corresponds usually to
-     * the <s> symbol
+     * Set the initialNode for this Lattice.  This corresponds usually to the <s> symbol
      *
      * @param p_initialNode
      */
@@ -688,9 +665,9 @@ public class Lattice {
         initialNode = p_initialNode;
     }
 
+
     /**
-     * Get the terminalNode for this Lattice.  This corresponds usually to
-     * the </s> symbol
+     * Get the terminalNode for this Lattice.  This corresponds usually to the </s> symbol
      *
      * @return the initial Node
      */
@@ -698,15 +675,16 @@ public class Lattice {
         return terminalNode;
     }
 
+
     /**
-     * Set the terminalNode for this Lattice.  This corresponds usually to
-     * the </s> symbol
+     * Set the terminalNode for this Lattice.  This corresponds usually to the </s> symbol
      *
      * @param p_terminalNode
      */
     public void setTerminalNode(Node p_terminalNode) {
         terminalNode = p_terminalNode;
     }
+
 
     /**
      * Edge scores are usually log-likelyhood.  Get the log base.
@@ -717,12 +695,12 @@ public class Lattice {
         return logMath.getLogBase();
     }
 
-    /**
-     * @return Returns the logMath object used in this lattice.
-     */
+
+    /** @return Returns the logMath object used in this lattice. */
     public LogMath getLogMath() {
         return logMath;
     }
+
 
     /**
      * Sets the LogMath to use.
@@ -733,14 +711,14 @@ public class Lattice {
         this.logMath = logMath;
     }
 
-    /**
-     * Dump all paths through this Lattice.  Used for debugging.
-     */
+
+    /** Dump all paths through this Lattice.  Used for debugging. */
     public void dumpAllPaths() {
         for (Iterator<String> i = allPaths().iterator(); i.hasNext();) {
             System.out.println(i.next());
         }
     }
+
 
     /**
      * Generate a List of all paths through this Lattice.
@@ -750,6 +728,7 @@ public class Lattice {
     public List<String> allPaths() {
         return allPathsFrom("", initialNode);
     }
+
 
     /**
      * Internal routine used to generate all paths starting at a given node.
@@ -771,6 +750,7 @@ public class Lattice {
         }
         return l;
     }
+
 
     boolean checkConsistency() {
         for (Iterator<Node> i = nodes.values().iterator(); i.hasNext();) {
@@ -809,6 +789,7 @@ public class Lattice {
         return true;
     }
 
+
     protected void sortHelper(Node n, List<Node> sorted, Set<Node> visited) {
         if (visited.contains(n)) {
             return;
@@ -824,6 +805,7 @@ public class Lattice {
         sorted.add(n);
     }
 
+
     /**
      * Topologically sort the nodes in this lattice.
      *
@@ -838,16 +820,13 @@ public class Lattice {
 
 
     /**
-     * Compute the utterance-level posterior for every node in the lattice,
-     * i.e. the probability that this node occurs on any path through the
-     * lattice. Uses a forward-backward algorithm specific to the nature of
-     * non-looping left-to-right lattice structures.
+     * Compute the utterance-level posterior for every node in the lattice, i.e. the probability that this node occurs
+     * on any path through the lattice. Uses a forward-backward algorithm specific to the nature of non-looping
+     * left-to-right lattice structures.
      * <p/>
-     * Node posteriors can be retrieved by calling getPosterior() on Node
-     * objects.
+     * Node posteriors can be retrieved by calling getPosterior() on Node objects.
      *
-     * @param languageModelWeight the language model weight that was used
-     *                            in generating the scores in the lattice
+     * @param languageModelWeight the language model weight that was used in generating the scores in the lattice
      */
     public void computeNodePosteriors(float languageModelWeight) {
         computeNodePosteriors(languageModelWeight, false);
@@ -855,18 +834,15 @@ public class Lattice {
 
 
     /**
-     * Compute the utterance-level posterior for every node in the lattice,
-     * i.e. the probability that this node occurs on any path through the
-     * lattice. Uses a forward-backward algorithm specific to the nature of
-     * non-looping left-to-right lattice structures.
+     * Compute the utterance-level posterior for every node in the lattice, i.e. the probability that this node occurs
+     * on any path through the lattice. Uses a forward-backward algorithm specific to the nature of non-looping
+     * left-to-right lattice structures.
      * <p/>
-     * Node posteriors can be retrieved by calling getPosterior() on Node
-     * objects.
+     * Node posteriors can be retrieved by calling getPosterior() on Node objects.
      *
-     * @param languageModelWeight   the language model weight that was used
-     *                              in generating the scores in the lattice
-     * @param useAcousticScoresOnly use only the acoustic scores to compute
-     *                              the posteriors, ignore the language weight and scores
+     * @param languageModelWeight   the language model weight that was used in generating the scores in the lattice
+     * @param useAcousticScoresOnly use only the acoustic scores to compute the posteriors, ignore the language weight
+     *                              and scores
      */
     public void computeNodePosteriors(float languageModelWeight,
                                       boolean useAcousticScoresOnly) {
@@ -926,9 +902,9 @@ public class Lattice {
         }
     }
 
+
     /**
-     * Retrieves the MAP path from this lattice. Only works once
-     * computeNodePosteriors has been called.
+     * Retrieves the MAP path from this lattice. Only works once computeNodePosteriors has been called.
      *
      * @return a list of nodes representing the MAP path.
      */
@@ -942,6 +918,7 @@ public class Lattice {
         path.addFirst(initialNode);
         return path;
     }
+
 
     /**
      * Computes the score of an edge.
@@ -961,9 +938,8 @@ public class Lattice {
 
 
     /**
-     * Returns true if the given Lattice is equivalent to this Lattice.
-     * Two lattices are equivalent if all their nodes and edges are
-     * equivalent.
+     * Returns true if the given Lattice is equivalent to this Lattice. Two lattices are equivalent if all their nodes
+     * and edges are equivalent.
      *
      * @param other the Lattice to compare this Lattice against
      * @return true if the Lattices are equivalent; false otherwise
@@ -974,9 +950,8 @@ public class Lattice {
 
 
     /**
-     * Returns true if the two lattices starting at the given two nodes
-     * are equivalent. It recursively checks all the child nodes until
-     * these two nodes until there are no more child nodes.
+     * Returns true if the two lattices starting at the given two nodes are equivalent. It recursively checks all the
+     * child nodes until these two nodes until there are no more child nodes.
      *
      * @param n1 starting node of the first lattice
      * @param n2 starting node of the second lattice
@@ -1033,8 +1008,7 @@ public class Lattice {
 
 
     /**
-     * Self test for Lattices.  Test loading, saving, dynamically creating
-     * and optimizing Lattices
+     * Self test for Lattices.  Test loading, saving, dynamically creating and optimizing Lattices
      *
      * @param args
      */

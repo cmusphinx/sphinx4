@@ -14,16 +14,14 @@ package edu.cmu.sphinx.util;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-
-import java.util.List;
 import java.util.LinkedList;
+import java.util.List;
 
-/**
- * A source of reference texts.
- */
+/** A source of reference texts. */
 public class FileReferenceSource implements ReferenceSource {
 
     private List<String> references;
+
 
     /**
      * Constructs a ReferenceSource from a reference file.
@@ -56,6 +54,7 @@ public class FileReferenceSource implements ReferenceSource {
             }
         }
     }
+
 
     /**
      * Returns a list of reference text.

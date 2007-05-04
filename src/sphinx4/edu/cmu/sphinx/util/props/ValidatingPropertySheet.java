@@ -11,44 +11,34 @@
  *
  */
 package edu.cmu.sphinx.util.props;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Map;
-import java.util.Set;
-import java.util.logging.Level;
-import java.util.regex.Pattern;
-import java.util.regex.Matcher;
-import java.util.logging.Logger;
-import java.io.PrintStream;
-import java.net.URL;
-import java.net.MalformedURLException;
 
-/**
- * An implementation of the property sheet that validates the properties
- * against a registry.
- *  
- */
+import java.io.PrintStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+/** An implementation of the property sheet that validates the properties against a registry. */
 class ValidatingPropertySheet implements PropertySheet {
+
     private ConfigurationManager cm;
     private Map properties = new HashMap();
     private Registry registry;
     private final static List EMPTY = new ArrayList();
+
+
     /**
      * Creates a buildable property sheet
-     * 
-     * @param cm
-     *            the configuration manager
-     * 
-     * @param registry
-     *            controls what properties are allowed in this property sheet.
-     * @throws PropertyException
-     *             if there is a problem with any of the properties.
+     *
+     * @param cm       the configuration manager
+     * @param registry controls what properties are allowed in this property sheet.
+     * @throws PropertyException if there is a problem with any of the properties.
      */
     ValidatingPropertySheet(ConfigurationManager cm, Registry registry,
-            RawPropertyData rpd) throws PropertyException {
+                            RawPropertyData rpd) throws PropertyException {
         this.cm = cm;
         this.registry = registry;
         // for each property in the raw property data, check that it
@@ -60,69 +50,61 @@ class ValidatingPropertySheet implements PropertySheet {
             setRaw(key, val);
         }
     }
+
+
     /**
      * Adds a new property to the set of properties
-     * 
-     * @param name
-     *            the name of the property
-     * @param value
-     *            the value of the proberty
-     * @throws PropertyException
-     *             if the property is not a registered property or the value is
-     *             not of the proper type.
+     *
+     * @param name  the name of the property
+     * @param value the value of the proberty
+     * @throws PropertyException if the property is not a registered property or the value is not of the proper type.
      */
     @SuppressWarnings({"unchecked"})
     void addProperty(String name, String value) {
         properties.put(name, value);
     }
+
+
     /**
      * Sets the given property to the given name
-     * 
-     * @param name
-     *            the simple property name
-     * @param value
-     *            the value for the property
-     * 
-     *  
+     *
+     * @param name  the simple property name
+     * @param value the value for the property
      */
     public void setString(String name, String value) {
         throw new UnsupportedOperationException();
     }
+
+
     /**
      * Sets the given property to the given name
-     * 
-     * @param name
-     *            the simple property name
-     * @param value
-     *            the value for the property
+     *
+     * @param name  the simple property name
+     * @param value the value for the property
      */
     public void setInt(String name, int value) {
         throw new UnsupportedOperationException();
     }
+
+
     /**
      * Sets the given property to the given name
-     * 
-     * @param name
-     *            the simple property name
-     * @param value
-     *            the value for the property
-     * @throws PropertyException
-     *             if the property is not a registered property or the value is
-     *             not of the proper type.
+     *
+     * @param name  the simple property name
+     * @param value the value for the property
+     * @throws PropertyException if the property is not a registered property or the value is not of the proper type.
      */
     public void setFloat(String name, float value) {
         throw new UnsupportedOperationException();
     }
+
+
     /**
      * Sets the property
-     * 
-     * @param key
-     *            the property name
-     * @param val
-     *            the property (either a String or a String[])
-     * @throws PropertyException
-     *             if the property is not a registered property or the value is
-     *             not of the proper type.
+     *
+     * @param key the property name
+     * @param val the property (either a String or a String[])
+     * @throws PropertyException if the property is not a registered property or the value is not of the proper type.
      */
     @SuppressWarnings({"unchecked"})
     public void setRaw(String key, Object val) throws PropertyException {
@@ -132,31 +114,32 @@ class ValidatingPropertySheet implements PropertySheet {
                     "Attempt to set unregistered property");
         } else if (val instanceof String) {
             String sval = (String) val;
-            
+
             if (!isGlobalVariable(sval) && !type.isValid(val)) {
-                throw new PropertyException(registry.getOwner(), key, 
+                throw new PropertyException(registry.getOwner(), key,
                         "value (" + sval + ")" + " is not a valid " + type);
             } else {
                 properties.put(key, val);
             }
-        }  else if (!type.isValid(val)) {
+        } else if (!type.isValid(val)) {
             throw new PropertyException(registry.getOwner(), key, val
                     + " is not a valid " + type);
         } else {
             properties.put(key, val);
         }
     }
+
+
     /**
      * Gets a property by name from the property map
-     * 
-     * @param name
-     *            the name of the property
+     *
+     * @param name the name of the property
      * @return the return value
      */
     @SuppressWarnings({"unchecked"})
     public Object getRaw(String name) throws PropertyException {
         Object value = getRawNoReplacement(name);
-        
+
         if (value == null) {
             return null;
         } else if (value instanceof String) {
@@ -170,7 +153,7 @@ class ValidatingPropertySheet implements PropertySheet {
             }
         } else if (value instanceof List) {
             List lval = (List) value;
-            for (ListIterator i = lval.listIterator(); i.hasNext(); ) {
+            for (ListIterator i = lval.listIterator(); i.hasNext();) {
                 String sval = (String) i.next();
                 if (sval.startsWith("${")) {
                     String itemVal = cm.getGlobalProperty(sval);
@@ -186,26 +169,23 @@ class ValidatingPropertySheet implements PropertySheet {
         return value;
     }
 
+
     /**
-     * Gets a property by name from the property map, no global symbol
-     * replacement is done
-     * 
-     * @param name
-     *            the name of the property
+     * Gets a property by name from the property map, no global symbol replacement is done
+     *
+     * @param name the name of the property
      * @return the return value
      */
     public Object getRawNoReplacement(String name) {
         return properties.get(name);
     }
 
+
     /**
-     * Gets the value associated with this name. Note that is considered legal
-     * to get a string version of any property
-     * 
-     * @param name
-     *            the name
-     * @param defaultValue
-     *            the default value for the property
+     * Gets the value associated with this name. Note that is considered legal to get a string version of any property
+     *
+     * @param name         the name
+     * @param defaultValue the default value for the property
      * @return the value
      */
     public String getString(String name, String defaultValue)
@@ -217,17 +197,15 @@ class ValidatingPropertySheet implements PropertySheet {
         }
         return value;
     }
+
+
     /**
      * Gets the value associated with this name
-     * 
-     * @param name
-     *            the name
-     * @param defaultValue
-     *            the default value for the property
+     *
+     * @param name         the name
+     * @param defaultValue the default value for the property
      * @return the value
-     * @throws PropertyException
-     *             if the property is not a registered property or the value is
-     *             not of the proper type.
+     * @throws PropertyException if the property is not a registered property or the value is not of the proper type.
      */
     public int getInt(String name, int defaultValue) throws PropertyException {
         checkType(name, PropertyType.INT);
@@ -243,13 +221,13 @@ class ValidatingPropertySheet implements PropertySheet {
                     "bad integer format");
         }
     }
+
+
     /**
      * Gets the value associated with this name
-     * 
-     * @param name
-     *            the name
-     * @param defaultValue
-     *            the default value
+     *
+     * @param name         the name
+     * @param defaultValue the default value
      * @return the value
      */
     public float getFloat(String name, float defaultValue)
@@ -267,14 +245,13 @@ class ValidatingPropertySheet implements PropertySheet {
                     "bad float format");
         }
     }
-    
+
+
     /**
      * Gets the value associated with this name
-     * 
-     * @param name
-     *            the name
-     * @param defaultValue
-     *            the default value
+     *
+     * @param name         the name
+     * @param defaultValue the default value
      * @return the value
      */
     public double getDouble(String name, double defaultValue)
@@ -292,14 +269,13 @@ class ValidatingPropertySheet implements PropertySheet {
                     "bad double format");
         }
     }
-    
+
+
     /**
      * Gets the value associated with this name
-     * 
-     * @param name
-     *            the name
-     * @param defaultValue
-     *            the default value
+     *
+     * @param name         the name
+     * @param defaultValue the default value
      * @return the value
      */
     public boolean getBoolean(String name, boolean defaultValue)
@@ -316,22 +292,24 @@ class ValidatingPropertySheet implements PropertySheet {
 
     /**
      * a regular expression that matches our own resource 'protocol'.
-     *
+     * <p/>
      * This matches urls of the form:   resource:/package.a.class!/resource/location
      */
     private static Pattern jarPattern =
             Pattern.compile("resource:/([.\\w]+?)!(.*)",
                     Pattern.CASE_INSENSITIVE);
+
+
     /* (non-Javadoc)
-     * @see edu.cmu.sphinx.util.props.PropertySheet#getResource(java.lang.String)
-     */
+    * @see edu.cmu.sphinx.util.props.PropertySheet#getResource(java.lang.String)
+    */
     public URL getResource(String name) throws PropertyException {
         URL url;
         checkType(name, PropertyType.RESOURCE);
         String location = (String) getRaw(name);
         if (location == null) {
-            throw new PropertyException(registry.getOwner(), name, 
-              "Required resource property '" + name + "' not set");
+            throw new PropertyException(registry.getOwner(), name,
+                    "Required resource property '" + name + "' not set");
         }
 
         Matcher jarMatcher = jarPattern.matcher(location);
@@ -358,7 +336,7 @@ class ValidatingPropertySheet implements PropertySheet {
                         try {
                             url = new URL(urlString);
                         } catch (MalformedURLException mfe) {
-                            throw new PropertyException(registry.getOwner(), 
+                            throw new PropertyException(registry.getOwner(),
                                     name, "Bad URL " + urlString + mfe.getMessage());
                         }
                     }
@@ -371,7 +349,7 @@ class ValidatingPropertySheet implements PropertySheet {
                 }
             } catch (ClassNotFoundException cnfe) {
                 throw new PropertyException(registry.getOwner(),
-                    name, "Can't locate resource:/" + className);
+                        name, "Can't locate resource:/" + className);
             }
         } else {
             if (location.indexOf(":") == -1) {
@@ -381,52 +359,51 @@ class ValidatingPropertySheet implements PropertySheet {
             try {
                 url = new URL(location);
             } catch (MalformedURLException e) {
-                throw new PropertyException(registry.getOwner(), 
+                throw new PropertyException(registry.getOwner(),
                         name, "Bad URL " + location + e.getMessage());
             }
-        } 
+        }
         return url;
     }
-    
+
+
     /* (non-Javadoc)
-     * @see edu.cmu.sphinx.util.props.PropertySheet#getComponent(java.lang.String, java.lang.Class)
-     */
+    * @see edu.cmu.sphinx.util.props.PropertySheet#getComponent(java.lang.String, java.lang.Class)
+    */
     public Configurable getComponent(String name, Class type) throws PropertyException {
         checkType(name, PropertyType.COMPONENT);
         String val = (String) getRaw(name);
-        
+
         if (val == null) {
-            throw new PropertyException(registry.getOwner(), name, 
-              "Required component property '" + name + "' not set");
+            throw new PropertyException(registry.getOwner(), name,
+                    "Required component property '" + name + "' not set");
         }
         Configurable c;
         try {
             c = cm.lookup(val);
-            if (c == null){
+            if (c == null) {
                 throw new PropertyException(registry.getOwner(), name,
-                        "Can't find component: " + val);    
+                        "Can't find component: " + val);
             }
             if (!type.isInstance(c)) {
                 throw new PropertyException(registry.getOwner(), name,
                         "type mismatch. Expected type: " + type.getName() +
-                        " found component of type: " + c.getClass().getName());
+                                " found component of type: " + c.getClass().getName());
             }
         } catch (InstantiationException e) {
             throw new PropertyException(registry.getOwner(), name,
                     "Can't instantiate: " + val + " " + e.getMessage());
-        } 
+        }
         return c;
     }
+
+
     /**
      * Gets the list of strings associated with this name
-     * 
-     * @param name
-     *            the name
-     * 
+     *
+     * @param name the name
      * @return an array (possibly empty) of configurable strings
-     * @throws PropertyException
-     *             if the property is not a registered property or the value is
-     *             not of the proper type.
+     * @throws PropertyException if the property is not a registered property or the value is not of the proper type.
      */
     public List getStrings(String name) throws PropertyException {
         checkType(name, PropertyType.STRING_LIST);
@@ -438,72 +415,72 @@ class ValidatingPropertySheet implements PropertySheet {
         }
         throw new PropertyException(registry.getOwner(), name, "internal error");
     }
-    
+
+
     /* (non-Javadoc)
-     * @see edu.cmu.sphinx.util.props.PropertySheet#getComponentList(java.lang.String, java.lang.Class)
-     */
+    * @see edu.cmu.sphinx.util.props.PropertySheet#getComponentList(java.lang.String, java.lang.Class)
+    */
     public List getComponentList(String name, Class type) throws PropertyException {
         checkType(name, PropertyType.COMPONENT_LIST);
         List list = (List) getRaw(name);
         if (list == null) {
             return EMPTY;
-        } 
-        
+        }
+
         List<Object> objectList = new ArrayList<Object>();
-        
-        for (Iterator i = list.iterator(); i.hasNext(); ) {
+
+        for (Iterator i = list.iterator(); i.hasNext();) {
             String compName = (String) i.next();
             Configurable c;
             try {
                 c = cm.lookup(compName);
-                if (c == null){
+                if (c == null) {
                     throw new PropertyException(registry.getOwner(), name,
-                            "Can't find component: " + compName);    
+                            "Can't find component: " + compName);
                 }
                 if (!type.isInstance(c)) {
                     throw new PropertyException(registry.getOwner(), name,
                             "type mismatch. Expected type: " + type.getName() +
-                            " found component of type: " + c.getClass().getName());
+                                    " found component of type: " + c.getClass().getName());
                 }
                 objectList.add(c);
             } catch (InstantiationException e) {
                 throw new PropertyException(registry.getOwner(), name,
                         "Can't instantiate: " + compName);
-            } 
+            }
         }
         return objectList;
     }
-    
+
+
     /**
-     * Retrieves the names of all the properties currently defined for this
-     * property sheet
-     * 
+     * Retrieves the names of all the properties currently defined for this property sheet
+     *
      * @return the array of names
      */
-     @SuppressWarnings({"unchecked"})
-     public String[] getNames() {
+    @SuppressWarnings({"unchecked"})
+    public String[] getNames() {
         Set keys = properties.keySet();
         return (String[]) keys.toArray(new String[keys.size()]);
     }
+
+
     /**
      * Gets the owning property manager
-     * 
+     *
      * @return the property manager
      */
     public ConfigurationManager getPropertyManager() {
         return cm;
     }
+
+
     /**
-     * Checks to make sure that the given registered type for the given
-     * property is what we expect.
-     * 
-     * @param name
-     *            the name of the property
-     * @param expectedType
-     *            the expected type of the property
-     * @throws PropertyException
-     *             if the expected type does not match the
-     *  
+     * Checks to make sure that the given registered type for the given property is what we expect.
+     *
+     * @param name         the name of the property
+     * @param expectedType the expected type of the property
+     * @throws PropertyException if the expected type does not match the
      */
     private void checkType(String name, PropertyType expectedType)
             throws PropertyException {
@@ -517,11 +494,13 @@ class ValidatingPropertySheet implements PropertySheet {
                             + " registered type:" + registeredType);
         }
     }
+
+
     /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Object#toString()
-     */
+    * (non-Javadoc)
+    *
+    * @see java.lang.Object#toString()
+    */
     public String toString() {
         StringBuffer sb = new StringBuffer();
         String[] names = getNames();
@@ -555,11 +534,12 @@ class ValidatingPropertySheet implements PropertySheet {
         return sb.toString();
     }
 
+
     /*
-     * Dumps the property sheet to the given stream
-     * 
-     * @param out the stream
-     */
+    * Dumps the property sheet to the given stream
+    *
+    * @param out the stream
+    */
     public void dump(PrintStream out) {
         String[] names = getNames();
         for (int j = 0; j < names.length; j++) {
@@ -573,7 +553,7 @@ class ValidatingPropertySheet implements PropertySheet {
                 out.println("  " + names[j] + ": " + obj);
             } else if (obj instanceof List) {
                 List values = (List) obj;
-                out.print("  " + names[j] + ": " );
+                out.print("  " + names[j] + ": ");
                 for (int k = 0; k < values.size(); k++) {
                     out.println("        " + values.get(k));
                 }
@@ -581,47 +561,49 @@ class ValidatingPropertySheet implements PropertySheet {
             }
         }
     }
-    
+
+
     /**
      * determines if the string is a valid format for a global variable
-     * 
+     *
      * @param val the string to check
      * @return true if the string is a valid format for a global variable
-     * 
      */
     private boolean isGlobalVariable(String val) {
         return val.startsWith("${");
     }
 
+
     /**
      * Gets the log level for this component
+     *
      * @return the log level
      */
-    private Level getLogLevel()  throws PropertyException {
+    private Level getLogLevel() throws PropertyException {
         Level level;
-        
+
         String levelName = getString(ConfigurationManager.PROP_COMMON_LOG_LEVEL,
                 cm.getGlobalLogLevel());
-                
+
 
         if (levelName == null) {
-            level  = Level.WARNING;
+            level = Level.WARNING;
         } else {
             try {
                 level = Level.parse(levelName);
             } catch (IllegalArgumentException e) {
-                throw new PropertyException(registry.getOwner(), 
-                    ConfigurationManager.PROP_COMMON_LOG_LEVEL,
-                    "Bad 'level' specifier " + levelName);
+                throw new PropertyException(registry.getOwner(),
+                        ConfigurationManager.PROP_COMMON_LOG_LEVEL,
+                        "Bad 'level' specifier " + levelName);
             }
         }
         return level;
     }
-    
-   
+
+
     /* (non-Javadoc)
-     * @see edu.cmu.sphinx.util.props.PropertySheet#getLogger()
-     */
+    * @see edu.cmu.sphinx.util.props.PropertySheet#getLogger()
+    */
     public Logger getLogger() throws PropertyException {
 //        Logger logger = Logger.getLogger(className + "."
 //             + registry.getOwner().getName());

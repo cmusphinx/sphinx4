@@ -12,35 +12,24 @@
 
 package edu.cmu.sphinx.tools.feature;
 
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.PrintStream;
+import edu.cmu.sphinx.frontend.*;
+import edu.cmu.sphinx.frontend.util.StreamDataSource;
+import edu.cmu.sphinx.util.props.ConfigurationManager;
+import edu.cmu.sphinx.util.props.PropertyException;
+
+import java.io.*;
 import java.net.URL;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Logger;
 
-import edu.cmu.sphinx.frontend.Data;
-import edu.cmu.sphinx.frontend.DataEndSignal;
-import edu.cmu.sphinx.frontend.DoubleData;
-import edu.cmu.sphinx.frontend.FloatData;
-import edu.cmu.sphinx.frontend.FrontEnd;
-import edu.cmu.sphinx.frontend.util.StreamDataSource;
-import edu.cmu.sphinx.util.props.ConfigurationManager;
-import edu.cmu.sphinx.util.props.PropertyException;
-
 /**
- * This program takes in an audio file, does frontend signal processing to it,
- * and then dumps the resulting Feature into a separate file.
- * 
- * This program takes three arguments: 1. propsFile - the Sphinx properties
- * file 2. audioFile - the name of the audio file 3. outputFile - the name of
- * the output file
+ * This program takes in an audio file, does frontend signal processing to it, and then dumps the resulting Feature into
+ * a separate file.
+ * <p/>
+ * This program takes three arguments: 1. propsFile - the Sphinx properties file 2. audioFile - the name of the audio
+ * file 3. outputFile - the name of the output file
  */
 public class FeatureFileDumper {
 
@@ -49,22 +38,19 @@ public class FeatureFileDumper {
     // Initialize this to an invalid number
     private int featureLength = -1;
 
-    /**
-     * The logger for this class
-     */
+    /** The logger for this class */
     private static Logger logger = Logger
             .getLogger("edu.cmu.sphinx.tools.feature.FeatureFileDumper");
 
+
     /**
      * Constructs a FeatureFileDumper.
-     * 
-     * @param cm
-     *                the Sphinx configuration manager
-     * @param inputAudioFile
-     *                the input audio file
+     *
+     * @param cm             the Sphinx configuration manager
+     * @param inputAudioFile the input audio file
      */
     public FeatureFileDumper(ConfigurationManager cm, String frontEndName,
-            String inputAudioFile)
+                             String inputAudioFile)
             throws FileNotFoundException, IOException {
         try {
 
@@ -81,16 +67,14 @@ public class FeatureFileDumper {
         }
     }
 
-    /**
-     * Retrieve all Features from the frontend, and cache all those with actual
-     * feature data.
-     */
+
+    /** Retrieve all Features from the frontend, and cache all those with actual feature data. */
     private void getAllFeatures() {
         /*
          * Run through all the data and produce feature.
          */
         try {
-            assert(allFeatures != null);
+            assert (allFeatures != null);
             Data feature = frontEnd.getData();
             while (!(feature instanceof DataEndSignal)) {
                 if (feature instanceof DoubleData) {
@@ -115,21 +99,21 @@ public class FeatureFileDumper {
         }
     }
 
+
     /**
-     * Returns the total number of data points that should be written to the
-     * output file.
-     * 
+     * Returns the total number of data points that should be written to the output file.
+     *
      * @return the total number of data points that should be written
      */
     private int getNumberDataPoints() {
         return (allFeatures.size() * featureLength);
     }
 
+
     /**
      * Dumps the feature to the given binary output.
-     * 
-     * @param outputFile
-     *                the binary output file
+     *
+     * @param outputFile the binary output file
      */
     public void dumpBinary(String outputFile) throws IOException {
         DataOutputStream outStream = new DataOutputStream(new FileOutputStream(
@@ -154,43 +138,43 @@ public class FeatureFileDumper {
         outStream.close();
     }
 
+
     /**
      * Dumps the feature to the given ascii output file.
-     * 
-     * @param outputFile
-     *                the ascii output file
+     *
+     * @param outputFile the ascii output file
      */
     public void dumpAscii(String outputFile) throws IOException {
-	PrintStream ps = new PrintStream(new FileOutputStream(outputFile), true);
-	ps.print(getNumberDataPoints());
-	ps.print(' ');
+        PrintStream ps = new PrintStream(new FileOutputStream(outputFile), true);
+        ps.print(getNumberDataPoints());
+        ps.print(' ');
 
-	for (Iterator i = allFeatures.iterator(); i.hasNext();) {
-	    Object data = i.next();
-	    if (data instanceof double[]) {
-		double[] feature = (double[]) data;
-		for (int d = 0; d < feature.length; d++) {
-		    ps.print(feature[d]);
-		    ps.print(' ');
-		}
-	    } else if (data instanceof float[]) {
-		float[] feature = (float[]) data;
-		for (int d = 0; d < feature.length; d++) {
-		    ps.print(feature[d]);
-		    ps.print(' ');
-		}
-	    }
-	}
+        for (Iterator i = allFeatures.iterator(); i.hasNext();) {
+            Object data = i.next();
+            if (data instanceof double[]) {
+                double[] feature = (double[]) data;
+                for (int d = 0; d < feature.length; d++) {
+                    ps.print(feature[d]);
+                    ps.print(' ');
+                }
+            } else if (data instanceof float[]) {
+                float[] feature = (float[]) data;
+                for (int d = 0; d < feature.length; d++) {
+                    ps.print(feature[d]);
+                    ps.print(' ');
+                }
+            }
+        }
 
-	ps.close();
+        ps.close();
     }
+
 
     /**
      * Main program for this dumper.
-     * 
-     * This program takes three arguments: 1. propsFile - the Sphinx properties
-     * file 2. audioFile - the name of the audio file 3. outputFile - the name
-     * of the binary output file
+     * <p/>
+     * This program takes three arguments: 1. propsFile - the Sphinx properties file 2. audioFile - the name of the
+     * audio file 3. outputFile - the name of the binary output file
      */
     public static void main(String[] argv) {
 

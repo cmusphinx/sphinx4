@@ -20,32 +20,31 @@ package edu.cmu.sphinx.tools.gui.writer;
  * @author Ariani
  */
 public class GUIWriterException extends java.lang.Exception {
-    
+
     public final static int EXCEPTION_OTHER = 1;
     public final static int EXCEPTION_IO = 2;
     public final static int EXCEPTION_NO_FILENAME = 3;
     public final static int EXCEPTION_INVALID_TYPE = 4;
-            
+
     private int _exceptionMode;
-    
-   
+
+
     /**
-     * Constructs an instance of <code>GUIWriterException</code> with the 
-     * specified detail message and mode as the type of error
+     * Constructs an instance of <code>GUIWriterException</code> with the specified detail message and mode as the type
+     * of error
      *
-     * @param msg the detail message.
+     * @param msg  the detail message.
      * @param mode Type of error
      */
     public GUIWriterException(String msg, int mode) {
         super(msg);
         _exceptionMode = mode;
-        
+
     }
-    
-    /**
-     * @return Mode of this exception, which explains the type of exception 
-     */
-    public int getErrorCode(){
+
+
+    /** @return Mode of this exception, which explains the type of exception */
+    public int getErrorCode() {
         return _exceptionMode;
     }
 }
