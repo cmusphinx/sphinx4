@@ -291,13 +291,9 @@ public class ModelLoader implements Loader {
     */
     public void newProperties(PropertySheet ps) throws PropertyException {
         logger = ps.getLogger();
-        propsFile =
-                ps.getString(PROP_PROPERTIES_FILE);
-        logMath =
-                (LogMath) ps.getComponent(PROP_LOG_MATH);
-        unitManager =
-                (UnitManager) ps.getComponent(PROP_UNIT_MANAGER
-                );
+        propsFile = ps.getString(PROP_PROPERTIES_FILE);
+        logMath = (LogMath) ps.getComponent(PROP_LOG_MATH);
+        unitManager = (UnitManager) ps.getComponent(PROP_UNIT_MANAGER);
 
         Boolean isBinary = ps.getBoolean(PROP_IS_BINARY);
         binary = isBinary != null ? isBinary : getIsBinaryDefault();
@@ -314,14 +310,10 @@ public class ModelLoader implements Loader {
         dataDir = ps.getString(PROP_DATA_LOCATION);
         dataDir = (dataDir == null ? getDataLocationDefault() : dataDir) + "/";
 
-        distFloor =
-                ps.getFloat(PROP_MC_FLOOR);
-        mixtureWeightFloor =
-                ps.getFloat(PROP_MW_FLOOR);
-        varianceFloor =
-                ps.getFloat(PROP_VARIANCE_FLOOR);
-        useCDUnits =
-                ps.getBoolean(PROP_USE_CD_UNITS);
+        distFloor = ps.getFloat(PROP_MC_FLOOR);
+        mixtureWeightFloor = ps.getFloat(PROP_MW_FLOOR);
+        varianceFloor = ps.getFloat(PROP_VARIANCE_FLOOR);
+        useCDUnits = ps.getBoolean(PROP_USE_CD_UNITS);
     }
 
 
