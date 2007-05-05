@@ -7,6 +7,7 @@ import java.lang.reflect.Proxy;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -628,10 +629,19 @@ public class PropertySheet {
      *          if an error occurs
      */
     public Logger getLogger() {
-        if (instanceName != null)
-            return Logger.getLogger(ownerClass.getName() + "." + instanceName);
-        else
-            return Logger.getLogger(ownerClass.getName());
+        Logger logger;
+
+        if (instanceName != null) {
+            logger = Logger.getLogger(ownerClass.getName() + "." + instanceName);
+        } else
+            logger = Logger.getLogger(ownerClass.getName());
+
+        // if there's a logLevel set for component apply to the logger
+        if (rawProps.get("logLevel") != null)
+            logger.setLevel(Level.parse((String) rawProps.get("logLevel")));
+
+        return logger;
+
     }
 
 
