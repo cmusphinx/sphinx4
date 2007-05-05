@@ -125,14 +125,14 @@ public class Sphinx3Loader implements Loader {
     public final static boolean PROP_IS_BINARY_DEFAULT = true;
 
     /** The name of the model definition file (contains the HMM data) */
-    @S4String(defaultValue = "model.mdef")
+    @S4String
     public final static String PROP_MODEL = "modelDefinition";
 
     /** The default value of PROP_MODEL_DEFAULT. */
     public final static String PROP_MODEL_DEFAULT = "model.mdef";
 
     /** Subdirectory where the acoustic model can be found */
-    @S4String(defaultValue = "data")
+    @S4String
     public final static String PROP_DATA_LOCATION = "dataLocation";
 
     /** The default value of PROP_DATA_LOCATION. */
@@ -146,7 +146,7 @@ public class Sphinx3Loader implements Loader {
     public final static String PROP_PROPERTIES_FILE_DEFAULT = "model.props";
 
     /** The SphinxProperty for the length of feature vectors. */
-    @S4Integer(defaultValue = 39)
+    @S4Integer(defaultValue = -1)
     public final static String PROP_VECTOR_LENGTH = "vectorLength";
 
     /** The default value of PROP_VECTOR_LENGTH. */
