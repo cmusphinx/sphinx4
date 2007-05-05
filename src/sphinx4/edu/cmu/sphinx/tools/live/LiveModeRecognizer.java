@@ -97,43 +97,6 @@ public class LiveModeRecognizer implements Configurable {
     /*
     * (non-Javadoc)
     *
-    * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
-    */
-    public static Map getConfigurationInfo() {
-        Map info = new HashMap();
-        info.put(new String("PROP_SKIP_TYPE"), new String("INTEGER"));
-        info.put(new String("PROP_RECOGNIZER_TYPE"), new String("COMPONENT"));
-        info.put(new String("PROP_RECOGNIZER_CLASSTYPE"), new String("edu.cmu.sphinx.recognizer.Recognizer"));
-        info.put(new String("PROP_INPUT_SOURCE_TYPE"), new String("COMPONENT"));
-        info.put(new String("PROP_INPUT_SOURCE_CLASSTYPE"), new String("edu.cmu.sphinx.frontend.util.ConcatFileDataSource"));
-        info.put(new String("PROP_SHOW_GAP_INSERTIONS_TYPE"), new String("BOOLEAN"));
-        info.put(new String("PROP_ALIGN_INTERVAL_TYPE"), new String("INTEGER"));
-        info.put(new String("PROP_HYPOTHESIS_TRANSCRIPT_TYPE"), new String("STRING"));
-        return info;
-    }
-
-
-    /*
-    * (non-Javadoc)
-    *
-    * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
-    *      edu.cmu.sphinx.util.props.Registry)
-    */
-    public void register(String name, Registry registry)
-            throws PropertyException {
-        this.name = name;
-        registry.register(PROP_SKIP, PropertyType.INT);
-        registry.register(PROP_RECOGNIZER, PropertyType.COMPONENT);
-        registry.register(PROP_INPUT_SOURCE, PropertyType.COMPONENT);
-        registry.register(PROP_SHOW_GAP_INSERTIONS, PropertyType.BOOLEAN);
-        registry.register(PROP_ALIGN_INTERVAL, PropertyType.INT);
-        registry.register(PROP_HYPOTHESIS_TRANSCRIPT, PropertyType.STRING);
-    }
-
-
-    /*
-    * (non-Javadoc)
-    *
     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
     */
     public void newProperties(PropertySheet ps) throws PropertyException {

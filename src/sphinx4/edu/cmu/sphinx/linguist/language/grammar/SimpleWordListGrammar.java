@@ -72,38 +72,6 @@ public class SimpleWordListGrammar extends Grammar implements Configurable {
     /*
     * (non-Javadoc)
     *
-    * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
-    */
-    public static Map getConfigurationInfo() {
-        Map info = new HashMap();
-
-        info.put(new String("PROP_PATH_TYPE"), new String("STRING"));
-        info.put(new String("PROP_LOOP_TYPE"), new String("BOOLEAN"));
-        info.put(new String("PROP_LOG_MATH_TYPE"), new String("COMPONENT"));
-        info.put(new String("PROP_LOG_MATH_CLASSTYPE"), new String("edu.cmu.sphinx.util.LogMath"));
-
-        return info;
-    }
-
-
-    /*
-    * (non-Javadoc)
-    *
-    * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
-    *      edu.cmu.sphinx.util.props.Registry)
-    */
-    public void register(String name, Registry registry)
-            throws PropertyException {
-        super.register(name, registry);
-        registry.register(PROP_PATH, PropertyType.STRING);
-        registry.register(PROP_LOOP, PropertyType.BOOLEAN);
-        registry.register(PROP_LOG_MATH, PropertyType.COMPONENT);
-    }
-
-
-    /*
-    * (non-Javadoc)
-    *
     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
     */
     public void newProperties(PropertySheet ps) throws PropertyException {

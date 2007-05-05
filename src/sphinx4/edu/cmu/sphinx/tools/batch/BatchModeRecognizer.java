@@ -28,10 +28,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Logger;
 
 /**
@@ -122,46 +120,6 @@ public class BatchModeRecognizer implements Configurable {
 
     protected BatchItem curBatchItem;
     protected ConfigurationManager cm;
-
-
-    /*
-    * (non-Javadoc)
-    *
-    * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
-    */
-    public static Map getConfigurationInfo() {
-        Map info = new HashMap();
-        info.put(new String("PROP_SKIP_TYPE"), new String("INTEGER"));
-        info.put(new String("PROP_COUNT_TYPE"), new String("INTEGER"));
-        info.put(new String("PROP_WHICH_BATCH_TYPE"), new String("INTEGER"));
-        info.put(new String("PROP_TOTAL_BATCHES_TYPE"), new String("INTEGER"));
-        info.put(new String("PROP_USE_POOLED_BATCH_MANAGER_TYPE"), new String("BOOLEAN"));
-        info.put(new String("PROP_RECOGNIZER_TYPE"), new String("COMPONENT"));
-        info.put(new String("PROP_RECOGNIZER_CLASSTYPE"), new String("edu.cmu.sphinx.recognizer.Recognizer"));
-        info.put(new String("PROP_INPUT_DATA_PROCESSORS_TYPE"), new String("COMPONENT_LIST"));
-        info.put(new String("PROP_INPUT_DATA_PROCESSORS_CLASSTYPE"), new String("edu.cmu.sphinx.frontend.DataProcessor"));
-        return info;
-    }
-
-
-    /*
-    * (non-Javadoc)
-    *
-    * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
-    *      edu.cmu.sphinx.util.props.Registry)
-    */
-    public void register(String name, Registry registry)
-            throws PropertyException {
-        this.name = name;
-        registry.register(PROP_SKIP, PropertyType.INT);
-        registry.register(PROP_COUNT, PropertyType.INT);
-        registry.register(PROP_WHICH_BATCH, PropertyType.INT);
-        registry.register(PROP_TOTAL_BATCHES, PropertyType.INT);
-        registry.register(PROP_USE_POOLED_BATCH_MANAGER, PropertyType.BOOLEAN);
-        registry.register(PROP_RECOGNIZER, PropertyType.COMPONENT);
-        registry.register(PROP_INPUT_DATA_PROCESSORS,
-                PropertyType.COMPONENT_LIST);
-    }
 
 
     /*

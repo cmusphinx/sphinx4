@@ -73,21 +73,6 @@ public class FeatureStream implements Configurable {
     /*
      * (non-Javadoc)
      *
-     * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
-     *      edu.cmu.sphinx.util.props.Registry)
-     */
-    public void register(String name, Registry registry)
-        throws PropertyException {
-        this.name = name;
-        registry.register(PROP_ACOUSTIC_MODEL, PropertyType.COMPONENT);
-        registry.register(PROP_FRONT_END, PropertyType.COMPONENT);
-        registry.register(PROP_ETA, PropertyType.FLOAT);
-    }
-
-
-    /*
-     * (non-Javadoc)
-     *
      * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
      */
     public void newProperties(PropertySheet ps) throws PropertyException {

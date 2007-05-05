@@ -17,10 +17,8 @@ import edu.cmu.sphinx.frontend.*;
 import edu.cmu.sphinx.util.LogMath;
 import edu.cmu.sphinx.util.props.*;
 
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 
 /**
@@ -92,40 +90,6 @@ public class SpeechClassifier extends BaseDataProcessor {
     private double threshold;
     private float frameLengthSec;
     List<Data> outputQueue = new LinkedList<Data>();
-
-
-    /*
-    * (non-Javadoc)
-    *
-    * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
-    */
-    public static Map getConfigurationInfo() {
-        Map info = new HashMap();
-
-        info.put(new String("PROP_FRAME_LENGTH_MS_TYPE"), new String("INTEGER"));
-        info.put(new String("PROP_ADJUSTMENT_TYPE"), new String("DOUBLE"));
-        info.put(new String("PROP_THRESHOLD_TYPE"), new String("DOUBLE"));
-        info.put(new String("PROP_MIN_SIGNAL_TYPE"), new String("DOUBLE"));
-        info.put(new String("PROP_DEBUG_TYPE"), new String("BOOLEAN"));
-        return info;
-    }
-
-
-    /*
-    * (non-Javadoc)
-    *
-    * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
-    *      edu.cmu.sphinx.util.props.Registry)
-    */
-    public void register(String name, Registry registry)
-            throws PropertyException {
-        super.register(name, registry);
-        registry.register(PROP_FRAME_LENGTH_MS, PropertyType.INT);
-        registry.register(PROP_ADJUSTMENT, PropertyType.DOUBLE);
-        registry.register(PROP_THRESHOLD, PropertyType.DOUBLE);
-        registry.register(PROP_MIN_SIGNAL, PropertyType.DOUBLE);
-        registry.register(PROP_DEBUG, PropertyType.BOOLEAN);
-    }
 
 
     /*

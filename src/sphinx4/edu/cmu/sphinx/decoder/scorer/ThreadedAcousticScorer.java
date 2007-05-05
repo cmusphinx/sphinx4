@@ -17,10 +17,8 @@ import edu.cmu.sphinx.frontend.*;
 import edu.cmu.sphinx.util.props.*;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.Map;
 import java.util.logging.Logger;
 
 /**
@@ -133,43 +131,6 @@ public class ThreadedAcousticScorer implements AcousticScorer {
     */
     public void deallocate() {
 
-    }
-
-
-    /*
-    * (non-Javadoc)
-    *
-    * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
-    */
-    public static Map getConfigurationInfo() {
-        Map info = new HashMap();
-        info.put(new String("PROP_FRONTEND_TYPE"), new String("COMPONENT"));
-        info.put(new String("PROP_FRONTEND_CLASSTYPE"), new String("edu.cmu.sphinx.frontend.BaseDataProcessor"));
-        info.put(new String("PROP_IS_CPU_RELATIVE_TYPE"), new String("BOOLEAN"));
-        info.put(new String("PROP_SCOREABLES_KEEP_FEATURE_TYPE"), new String("BOOLEAN"));
-        info.put(new String("PROP_NUM_THREADS_TYPE"), new String("INTEGER"));
-        info.put(new String("PROP_MIN_SCOREABLES_PER_THREAD_TYPE"), new String("INTEGER"));
-        info.put(new String("PROP_ACOUSTIC_GAIN_TYPE"), new String("FLOAT"));
-
-        return info;
-    }
-
-
-    /*
-    * (non-Javadoc)
-    *
-    * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
-    *      edu.cmu.sphinx.util.props.Registry)
-    */
-    public void register(String name, Registry registry)
-            throws PropertyException {
-        this.name = name;
-        registry.register(PROP_FRONTEND, PropertyType.COMPONENT);
-        registry.register(PROP_IS_CPU_RELATIVE, PropertyType.BOOLEAN);
-        registry.register(PROP_NUM_THREADS, PropertyType.INT);
-        registry.register(PROP_MIN_SCOREABLES_PER_THREAD, PropertyType.INT);
-        registry.register(PROP_SCOREABLES_KEEP_FEATURE, PropertyType.BOOLEAN);
-        registry.register(PROP_ACOUSTIC_GAIN, PropertyType.FLOAT);
     }
 
 

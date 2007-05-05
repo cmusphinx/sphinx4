@@ -140,28 +140,6 @@ public class FrontEnd extends BaseDataProcessor {
     private Vector<SignalListener> signalListeners = new Vector<SignalListener>();
 
 
-    /*
-    * (non-Javadoc)
-    *
-    * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
-    */
-    public static Map getConfigurationInfo() {
-        Map info = new HashMap();
-        info.put(new String("PROP_PIPELINE_TYPE"), new String("COMPONENT_LIST"));
-        info.put(new String("PROP_PIPELINE_CLASSTYPE"), new String("edu.cmu.sphinx.frontend.DataProcessor"));
-        return info;
-    }
-
-
-    /* (non-Javadoc)
-    * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String, edu.cmu.sphinx.util.props.Registry)
-    */
-    public void register(String name, Registry registry) throws PropertyException {
-        super.register(name, registry);
-        registry.register(PROP_PIPELINE, PropertyType.COMPONENT_LIST);
-    }
-
-
     /* (non-Javadoc)
      * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
      */

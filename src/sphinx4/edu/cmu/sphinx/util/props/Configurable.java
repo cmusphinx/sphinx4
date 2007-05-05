@@ -12,7 +12,6 @@
  */
 package edu.cmu.sphinx.util.props;
 
-
 /**
  * Defines the interface that must be implemented by any configurable component in Sphinx-4.  The life cycle of a
  * component is as follows:
@@ -75,17 +74,6 @@ public interface Configurable {
 
 
     /**
-     * Register my properties.  This method is called once early in the time of the component, shortly after the
-     * component is constructed. This component should register any configuration properties that it needs to register.
-     * If this configurable extends another configurable, super.register should also be called
-     *
-     * @param name     the name of the component
-     * @param registry the registry for this component
-     */
-    public void register(String name, Registry registry) throws PropertyException;
-
-
-    /**
      * This method is called when this configurable component has new data.  The component should first validate the
      * data. If it is bad the component should return false.  If the data is good, the component should record the the
      * data internally and return true.
@@ -102,23 +90,4 @@ public interface Configurable {
      * @return the name
      */
     public String getName();
-
-    /**
-     * Static method to find out what Configurable classes are needed
-     * The information is formed by HashTable that consists of the name of property
-     * and the type / class restriction for this particular property 
-     * <p>
-     * So, the entries would be 
-     * <ul>
-     * <li>PROPERTY_NAME_TYPE => INTEGER/COMPONENT/FLOAT/DOUBLE/STRING/
-     * STRING_LIST/COMPONENT/COMPONENT_LIST/BOOLEAN
-     * <li>PROPERTY_NAME_CLASSTYPE => .class type that is needed for COMPONENT/COMPONENT_LIST type    
-     * <li>PROPERTY_NAME_MAX => maximum allowed value for this property
-     * <li>PROPERTY_NAME_MIN => minimum allowed value for this property
-     * <li>DESCRIPTION => description of this Configurable class (if needed)
-     * </ul>
-     * @return Map with all the info
-     * The method should be : public static Map getConfigurationInfo()
-     */
-
 }

@@ -185,60 +185,6 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
     /*
     * (non-Javadoc)
     *
-    * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
-    */
-    public static Map getConfigurationInfo() {
-        Map info = new HashMap();
-        info.put(new String("PROP_GROW_SKIP_INTERVAL_TYPE"), new String("INTEGER"));
-        info.put(new String("PROP_RELATIVE_BEAM_WIDTH_TYPE"), new String("DOUBLE"));
-        info.put(new String("PROP_LOG_MATH_TYPE"), new String("COMPONENT"));
-        info.put(new String("PROP_LOG_MATH_CLASSTYPE"), new String("edu.cmu.sphinx.util.LogMath"));
-        info.put(new String("PROP_SHOW_TOKEN_COUNT_TYPE"), new String("BOOLEAN"));
-        info.put(new String("PROP_CHECK_STATE_ORDER_TYPE"), new String("BOOLEAN"));
-        info.put(new String("PROP_BUILD_WORD_LATTICE_TYPE"), new String("BOOLEAN"));
-        info.put(new String("PROP_KEEP_ALL_TOKENS_TYPE"), new String("BOOLEAN"));
-        info.put(new String("PROP_MAX_LATTICE_EDGES_TYPE"), new String("INTEGER"));
-        info.put(new String("PROP_ACOUSTIC_LOOKAHEAD_FRAMES_TYPE"), new String("FLOAT"));
-        info.put(new String("PROP_LINGUIST_TYPE"), new String("COMPONENT"));
-        info.put(new String("PROP_LINGUIST_CLASSTYPE"), new String("edu.cmu.sphinx.linguist.Linguist"));
-        info.put(new String("PROP_PRUNER_TYPE"), new String("COMPONENT"));
-        info.put(new String("PROP_PRUNER_CLASSTYPE"), new String("edu.cmu.sphinx.decoder.pruner.Pruner"));
-        info.put(new String("PROP_SCORER_TYPE"), new String("COMPONENT"));
-        info.put(new String("PROP_SCORER_CLASSTYPE"), new String("edu.cmu.sphinx.decoder.scorer.AcousticScorer"));
-        info.put(new String("PROP_ACTIVE_LIST_MANAGER_TYPE"), new String("COMPONENT"));
-        info.put(new String("PROP_ACTIVE_LIST_MANAGER_CLASSTYPE"), new String("edu.cmu.sphinx.decoder.search.ActiveListManager"));
-        return info;
-    }
-
-
-    /*
-    * (non-Javadoc)
-    *
-    * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
-    *      edu.cmu.sphinx.util.props.Registry)
-    */
-    public void register(String name, Registry registry)
-            throws PropertyException {
-        this.name = name;
-        registry.register(PROP_LOG_MATH, PropertyType.COMPONENT);
-        registry.register(PROP_LINGUIST, PropertyType.COMPONENT);
-        registry.register(PROP_PRUNER, PropertyType.COMPONENT);
-        registry.register(PROP_SCORER, PropertyType.COMPONENT);
-        registry.register(PROP_ACTIVE_LIST_MANAGER, PropertyType.COMPONENT);
-        registry.register(PROP_SHOW_TOKEN_COUNT, PropertyType.BOOLEAN);
-        registry.register(PROP_GROW_SKIP_INTERVAL, PropertyType.INT);
-        registry.register(PROP_CHECK_STATE_ORDER, PropertyType.BOOLEAN);
-        registry.register(PROP_BUILD_WORD_LATTICE, PropertyType.BOOLEAN);
-        registry.register(PROP_MAX_LATTICE_EDGES, PropertyType.INT);
-        registry.register(PROP_ACOUSTIC_LOOKAHEAD_FRAMES, PropertyType.FLOAT);
-        registry.register(PROP_KEEP_ALL_TOKENS, PropertyType.BOOLEAN);
-        registry.register(PROP_RELATIVE_BEAM_WIDTH, PropertyType.DOUBLE);
-    }
-
-
-    /*
-    * (non-Javadoc)
-    *
     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
     */
     public void newProperties(PropertySheet ps) throws PropertyException {

@@ -2,9 +2,7 @@ package edu.cmu.sphinx.frontend;
 
 import edu.cmu.sphinx.util.props.*;
 
-import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.Map;
 
 /**
  * A <code>DataProcessor</code> which wraps incoming <code>DoubleData</code>-objects into equally size blocks of defined
@@ -91,24 +89,6 @@ public class DataBlocker extends BaseDataProcessor {
 
         curInBufferSize = inBuffer.isEmpty() ? 0 : inBuffer.get(0).getValues().length - curFirstSamplePos;
         return new DoubleData(newSampleBlock, sampleRate, collectTime, firstSample);
-    }
-
-
-    /*
-    * (non-Javadoc)
-    *
-    * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
-    */
-    public static Map getConfigurationInfo() {
-        Map info = new HashMap();
-        info.put(new String("PROP_BLOCK_SIZE_MS_TYPE"), new String("DOUBLE"));
-        return info;
-    }
-
-
-    public void register(String string, Registry registry) throws PropertyException {
-        super.register(string, registry);
-        registry.register(PROP_BLOCK_SIZE_MS, PropertyType.DOUBLE);
     }
 
 

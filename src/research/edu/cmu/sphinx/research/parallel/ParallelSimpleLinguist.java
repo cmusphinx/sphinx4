@@ -69,21 +69,6 @@ public class ParallelSimpleLinguist extends FlatLinguist {
 
 
     /*
-    * (non-Javadoc)
-    *
-    * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
-    *      edu.cmu.sphinx.util.props.Registry)
-    */
-    public void register(String name, Registry registry)
-            throws PropertyException {
-        super.register(name, registry);
-        registry.register(PROP_STACK_CAPACITY, PropertyType.INT);
-        registry.register(PROP_TIE_LEVEL, PropertyType.STRING);
-        registry.register(PROP_FEATURE_STREAMS, PropertyType.COMPONENT_LIST);
-    }
-
-
-    /*
      * (non-Javadoc)
      *
      * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)

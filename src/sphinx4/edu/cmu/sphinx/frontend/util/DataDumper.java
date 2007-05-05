@@ -15,8 +15,6 @@ import edu.cmu.sphinx.frontend.*;
 import edu.cmu.sphinx.util.props.*;
 
 import java.text.DecimalFormat;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.logging.Logger;
 
 
@@ -47,35 +45,6 @@ public class DataDumper extends BaseDataProcessor {
     private boolean outputSignals;
     private DecimalFormat formatter;
     private Logger logger;
-
-
-    /*
-    * (non-Javadoc)
-    *
-    * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
-    */
-    public static Map getConfigurationInfo() {
-        Map info = new HashMap();
-
-        info.put(new String("PROP_ENABLE_TYPE"), new String("BOOLEAN"));
-        info.put(new String("PROP_OUTPUT_SIGNALS_TYPE"), new String("BOOLEAN"));
-        info.put(new String("PROP_OUTPUT_FORMATS_TYPE"), new String("STRING"));
-        return info;
-    }
-
-
-    /*
-    * (non-Javadoc)
-    *
-    * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
-    *      edu.cmu.sphinx.util.props.Registry)
-    */
-    public void register(String name, Registry registry)
-            throws PropertyException {
-        registry.register(PROP_ENABLE, PropertyType.BOOLEAN);
-        registry.register(PROP_OUTPUT_FORMAT, PropertyType.STRING);
-        registry.register(PROP_OUTPUT_SIGNALS, PropertyType.BOOLEAN);
-    }
 
 
     /*

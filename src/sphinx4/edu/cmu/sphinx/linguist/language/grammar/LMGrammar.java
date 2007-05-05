@@ -39,33 +39,6 @@ public class LMGrammar extends Grammar {
     /*
     * (non-Javadoc)
     *
-    * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
-    */
-    public static Map getConfigurationInfo() {
-        Map info = new HashMap();
-
-        info.put(new String("PROP_LANGUAGE_MODEL_TYPE"), new String("COMPONENT"));
-        info.put(new String("PROP_LANGUAGE_MODEL_CLASSTYPE"), new String("edu.cmu.sphinx.linguist.language.ngram.LanguageModel"));
-        return info;
-    }
-
-
-    /*
-    * (non-Javadoc)
-    *
-    * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
-    *      edu.cmu.sphinx.util.props.Registry)
-    */
-    public void register(String name, Registry registry)
-            throws PropertyException {
-        super.register(name, registry);
-        registry.register(PROP_LANGUAGE_MODEL, PropertyType.COMPONENT);
-    }
-
-
-    /*
-    * (non-Javadoc)
-    *
     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
     */
     public void newProperties(PropertySheet ps) throws PropertyException {

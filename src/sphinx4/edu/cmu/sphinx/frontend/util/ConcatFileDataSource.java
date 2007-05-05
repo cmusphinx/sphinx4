@@ -179,46 +179,6 @@ public class ConcatFileDataSource extends StreamDataSource
     /*
     * (non-Javadoc)
     *
-    * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
-    */
-    public static Map getConfigurationInfo() {
-        Map info = new HashMap();
-
-        info.put(new String("PROP_ADD_RANDOM_SILENCE_TYPE"), new String("BOOLEAN"));
-        info.put(new String("PROP_MAX_SILENCE_TYPE"), new String("INTEGER"));
-        info.put(new String("PROP_SKIP_TYPE"), new String("INTEGER"));
-        info.put(new String("PROP_START_FILE_TYPE"), new String("INTEGER"));
-        info.put(new String("PROP_TOTAL_FILES_TYPE"), new String("INTEGER"));
-        info.put(new String("PROP_SILENCE_FILE_TYPE"), new String("STRING"));
-        info.put(new String("PROP_TRANSCRIPT_FILE_TYPE"), new String("STRING"));
-        info.put(new String("PROP_BATCH_FILE_TYPE"), new String("STRING"));
-        return info;
-    }
-
-
-    /*
-    * (non-Javadoc)
-    *
-    * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
-    *      edu.cmu.sphinx.util.props.Registry)
-    */
-    public void register(String name, Registry registry)
-            throws PropertyException {
-        super.register(name, registry);
-        registry.register(PROP_ADD_RANDOM_SILENCE, PropertyType.BOOLEAN);
-        registry.register(PROP_MAX_SILENCE, PropertyType.INT);
-        registry.register(PROP_SKIP, PropertyType.INT);
-        registry.register(PROP_SILENCE_FILE, PropertyType.STRING);
-        registry.register(PROP_START_FILE, PropertyType.INT);
-        registry.register(PROP_TOTAL_FILES, PropertyType.INT);
-        registry.register(PROP_TRANSCRIPT_FILE, PropertyType.STRING);
-        registry.register(PROP_BATCH_FILE, PropertyType.STRING);
-    }
-
-
-    /*
-    * (non-Javadoc)
-    *
     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
     */
     public void newProperties(PropertySheet ps) throws PropertyException {

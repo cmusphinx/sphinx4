@@ -17,9 +17,6 @@ import edu.cmu.sphinx.frontend.DataProcessingException;
 import edu.cmu.sphinx.frontend.DoubleData;
 import edu.cmu.sphinx.util.props.*;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * Applies a logarithm and then a Discrete Cosine Transform (DCT) to the input data. The input data is normally the mel
  * spectrum. It has been proven that, for a sequence of real numbers, the discrete cosine transform is equivalent to the
@@ -49,34 +46,6 @@ public class DiscreteCosineTransform extends BaseDataProcessor {
     private int cepstrumSize; // size of a Cepstrum
     private int numberMelFilters; // number of mel-filters
     private double[][] melcosine;
-
-
-    /*
-    * (non-Javadoc)
-    *
-    * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
-    */
-    public static Map getConfigurationInfo() {
-        Map info = new HashMap();
-
-        info.put(new String("PROP_NUMBER_FILTERS_TYPE"), new String("INTEGER"));
-        info.put(new String("PROP_CEPSTRUM_LENGTH_TYPE"), new String("INTEGER"));
-        return info;
-    }
-
-
-    /*
-    * (non-Javadoc)
-    *
-    * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
-    *      edu.cmu.sphinx.util.props.Registry)
-    */
-    public void register(String name, Registry registry)
-            throws PropertyException {
-        super.register(name, registry);
-        registry.register(PROP_NUMBER_FILTERS, PropertyType.INT);
-        registry.register(PROP_CEPSTRUM_LENGTH, PropertyType.INT);
-    }
 
 
     /*

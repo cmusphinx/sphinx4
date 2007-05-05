@@ -78,25 +78,12 @@ public class DialogManager implements Configurable {
     private Map nodeMap = new HashMap();
     private String name;
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
-     *      edu.cmu.sphinx.util.props.Registry)
-     */
-    public void register(String name, Registry registry)
-            throws PropertyException {
-        this.name = name;
-        registry.register(PROP_JSGF_GRAMMAR, PropertyType.COMPONENT);
-        registry.register(PROP_MICROPHONE, PropertyType.COMPONENT);
-        registry.register(PROP_RECOGNIZER, PropertyType.COMPONENT);
-    }
 
     /*
-     * (non-Javadoc)
-     * 
-     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
-     */
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
+    */
     public void newProperties(PropertySheet ps) throws PropertyException {
         logger = ps.getLogger();
         grammar = 

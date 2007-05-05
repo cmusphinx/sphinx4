@@ -62,7 +62,7 @@ public class ConfigurationManager {
 
                     // now load the property-sheet by using the class annotation
 //                    PropertySheet propertySheet = new PropertySheet(cls, this, rpd.flatten(globalProperties));
-                    PropertySheet propertySheet = new PropertySheet(cls, this, rpd);
+                    PropertySheet propertySheet = new PropertySheet(cls, instanceName, this, rpd);
 
                     symbolTable.put(instanceName, propertySheet);
 
@@ -409,7 +409,7 @@ public class ConfigurationManager {
 
 
             Configurable configurable = targetClass.newInstance();
-            return new PropertySheet(configurable, ConfigurationManager, rpd);
+            return new PropertySheet(configurable, null, rpd, ConfigurationManager);
         } catch (InstantiationException e) {
             e.printStackTrace();
         } catch (IllegalAccessException e) {

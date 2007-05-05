@@ -13,9 +13,7 @@ import edu.cmu.sphinx.util.props.*;
 
 import java.io.*;
 import java.net.URL;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
 
 /**
  * Copyright 1999-2002 Carnegie Mellon University. Portions Copyright 2002 Sun Microsystems, Inc. Portions Copyright
@@ -89,48 +87,6 @@ public class BatchNISTRecognizer extends BatchModeRecognizer {
     public final static String PROP_SAMPLES_PER_SECOND = "samplesPerSecond";
     @S4Integer(defaultValue = 100)
     public final static String PROP_FRAMES_PER_SECOND = "framesPerSecond";
-
-
-    /*
-    * (non-Javadoc)
-    *
-    * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
-    */
-    public static Map getConfigurationInfo() {
-        Map info = new HashMap();
-
-        info.put(new String("PROP_DATA_DIR_TYPE"), new String("STRING"));
-        info.put(new String("PROP_CTL_FILE_TYPE"), new String("STRING"));
-        info.put(new String("PROP_REF_FILE_TYPE"), new String("STRING"));
-        info.put(new String("PROP_CTM_FILE_TYPE"), new String("STRING"));
-        info.put(new String("PROP_BITS_PER_SAMPLE_TYPE"), new String("INTEGER"));
-        info.put(new String("PROP_CHANNEL_COUNT_TYPE"), new String("INTEGER"));
-        info.put(new String("PROP_SAMPLES_PER_SECOND_TYPE"), new String("INTEGER"));
-        info.put(new String("PROP_FRAMES_PER_SECOND_TYPE"), new String("INTEGER"));
-
-        return info;
-    }
-
-
-    /*
-    * (non-Javadoc)
-    *
-    * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
-    *      edu.cmu.sphinx.util.props.Registry)
-    */
-    public void register(String name, Registry registry)
-            throws PropertyException {
-        super.register(name, registry);
-        this.name = name;
-        registry.register(PROP_DATA_DIR, PropertyType.STRING);
-        registry.register(PROP_CTL_FILE, PropertyType.STRING);
-        registry.register(PROP_REF_FILE, PropertyType.STRING);
-        registry.register(PROP_CTM_FILE, PropertyType.STRING);
-        registry.register(PROP_BITS_PER_SAMPLE, PropertyType.INT);
-        registry.register(PROP_CHANNEL_COUNT, PropertyType.INT);
-        registry.register(PROP_SAMPLES_PER_SECOND, PropertyType.INT);
-        registry.register(PROP_FRAMES_PER_SECOND, PropertyType.INT);
-    }
 
 
     /*

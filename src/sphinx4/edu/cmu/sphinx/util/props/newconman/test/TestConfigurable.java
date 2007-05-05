@@ -28,10 +28,6 @@ public class TestConfigurable implements Configurable {
     private double gamma;
 
 
-    public void register(String name, Registry registry) throws PropertyException {
-    }
-
-
     public void newProperties(PropertySheet ps) throws PropertyException {
         dataProc = (DummyProcessor) ps.getComponent(PROP_DATA_PROC);
         myString = ps.getString(PROP_ASTRING);
@@ -90,7 +86,7 @@ public class TestConfigurable implements Configurable {
         TestConfigurable tc = (TestConfigurable) ConfigurationManager.getDefaultInstance(TestConfigurable.class, props);
 
         // now create a property sheet in order to modify the configurable
-        PropertySheet propSheet = new PropertySheet(tc, new ConfigurationManager(), new RawPropertyData("tt", tc.getClass().getName()));
+        PropertySheet propSheet = new PropertySheet(tc, null, new RawPropertyData("tt", tc.getClass().getName()), new ConfigurationManager());
         propSheet.setDouble(PROP_GAMMA, testDouble);
         propSheet.setComponent(PROP_DATA_PROC, "tt", new AnotherDummyProcessor() );
         tc.newProperties(propSheet);

@@ -27,10 +27,6 @@ public class DummyFrontEnd implements Configurable {
     boolean useMfccs;
 
 
-    public void register(String name, Registry registry) throws PropertyException {
-    }
-
-
     public void newProperties(PropertySheet ps) throws PropertyException {
         useMfccs = ps.getBoolean(PROP_USE_MFFCS);
         dataProcs = ps.getComponentList(DATA_PROCS);

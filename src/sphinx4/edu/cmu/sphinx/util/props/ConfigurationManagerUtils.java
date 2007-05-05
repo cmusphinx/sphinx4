@@ -4,7 +4,10 @@ import edu.cmu.sphinx.util.SphinxLogFormatter;
 
 import java.io.*;
 import java.util.*;
-import java.util.logging.*;
+import java.util.logging.Handler;
+import java.util.logging.Level;
+import java.util.logging.LogManager;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -291,7 +294,6 @@ public class ConfigurationManagerUtils {
 
     /** Configure the logger */
     public static void configureLogger(ConfigurationManager cm) {
-
         // apply theb log level (if defined) for the root logger (because we're using package based logging now
 
         String logLevelName = cm.getGlobalProperty("logLevel");
@@ -329,18 +331,22 @@ public class ConfigurationManagerUtils {
         String level = cm.getGlobalProperty("logLevel");
         if (level == null)
             level = Level.WARNING.getName();
+        rootLogger.setLevel(Level.parse(level));
 
         // Now we find the SphinxLogFormatter that the log manager created
         // and configure it.
         Handler[] handlers = rootLogger.getHandlers();
         for (Handler handler : handlers) {
-            if (handler instanceof ConsoleHandler) {
-                if (handler.getFormatter() instanceof SphinxLogFormatter) {
-                    SphinxLogFormatter slf = (SphinxLogFormatter) handler.getFormatter();
+            handler.setFormatter(new SphinxLogFormatter());
+//            if (handler instanceof ConsoleHandler) {
+//                if (handler.getFormatter() instanceof SphinxLogFormatter) {
+//                    SphinxLogFormatter slf = (SphinxLogFormatter) handler.getFormatter();
 //                    slf.setTerse("true".equals(level));
-                }
-            }
+//                }
+//            }
         }
+
+        System.out.println("test");
     }
 
 

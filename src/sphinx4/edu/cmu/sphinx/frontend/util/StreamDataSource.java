@@ -16,8 +16,6 @@ import edu.cmu.sphinx.util.props.*;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * A StreamDataSource converts data from an InputStream into Data objects. One would call {@link
@@ -63,41 +61,6 @@ public class StreamDataSource extends BaseDataProcessor {
     private boolean streamEndReached = false;
     private boolean utteranceEndSent = false;
     private boolean utteranceStarted = false;
-
-
-    /*
-    * (non-Javadoc)
-    *
-    * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
-    */
-    public static Map getConfigurationInfo() {
-        Map info = new HashMap();
-
-        info.put(new String("PROP_BIG_ENDIAN_DATA_TYPE"), new String("BOOLEAN"));
-        info.put(new String("PROP_SIGNED_DATA_TYPE"), new String("BOOLEAN"));
-        info.put(new String("PROP_SAMPLE_RATE_TYPE"), new String("INTEGER"));
-        info.put(new String("PROP_BITS_PER_SAMPLE_TYPE"), new String("INTEGER"));
-        info.put(new String("PROP_BYTES_PER_READ_TYPE"), new String("INTEGER"));
-
-        return info;
-    }
-
-
-    /*
-    * (non-Javadoc)
-    *
-    * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
-    *      edu.cmu.sphinx.util.props.Registry)
-    */
-    public void register(String name, Registry registry)
-            throws PropertyException {
-        super.register(name, registry);
-        registry.register(PROP_SAMPLE_RATE, PropertyType.INT);
-        registry.register(PROP_BYTES_PER_READ, PropertyType.INT);
-        registry.register(PROP_BITS_PER_SAMPLE, PropertyType.INT);
-        registry.register(PROP_BIG_ENDIAN_DATA, PropertyType.BOOLEAN);
-        registry.register(PROP_SIGNED_DATA, PropertyType.BOOLEAN);
-    }
 
 
     /*

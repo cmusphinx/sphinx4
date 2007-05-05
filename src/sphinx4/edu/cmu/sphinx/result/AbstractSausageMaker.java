@@ -149,28 +149,6 @@ public abstract class AbstractSausageMaker implements ConfidenceScorer, Configur
     protected Lattice lattice;
 
 
-    /*
-    * (non-Javadoc)
-    *
-    * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
-    */
-    public static Map getConfigurationInfo() {
-        Map info = new HashMap();
-
-        info.put(new String("PROP_LANGUAGE_WEIGHT_TYPE"), new String("FLOAT"));
-
-        return info;
-    }
-
-
-    /** @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,edu.cmu.sphinx.util.props.Registry) */
-    public void register(String name, Registry registry)
-            throws PropertyException {
-        this.name = name;
-        registry.register(PROP_LANGUAGE_WEIGHT, PropertyType.FLOAT);
-    }
-
-
     /** @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet) */
     public void newProperties(PropertySheet ps) throws PropertyException {
         languageWeight = ps.getFloat(PROP_LANGUAGE_WEIGHT

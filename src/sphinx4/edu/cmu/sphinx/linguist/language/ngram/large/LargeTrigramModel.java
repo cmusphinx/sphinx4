@@ -177,62 +177,6 @@ public class LargeTrigramModel implements LanguageModel {
     /*
     * (non-Javadoc)
     *
-    * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
-    */
-    public static Map getConfigurationInfo() {
-        Map info = new HashMap();
-        info.put(new String("PROP_FORMAT_TYPE"), new String("STRING"));
-        info.put(new String("PROP_LOCATION_TYPE"), new String("STRING"));
-        info.put(new String("PROP_QUERY_LOG_FILE_TYPE"), new String("STRING"));
-        info.put(new String("PROP_MAX_DEPTH_TYPE"), new String("INTEGER"));
-        info.put(new String("PROP_TRIGRAM_CACHE_SIZE_TYPE"), new String("INTEGER"));
-        info.put(new String("PROP_BIGRAM_CACHE_SIZE_TYPE"), new String("INTEGER"));
-        info.put(new String("PROP_LANGUAGE_WEIGHT_TYPE"), new String("FLOAT"));
-        info.put(new String("PROP_UNIGRAM_WEIGHT_TYPE"), new String("FLOAT"));
-        info.put(new String("PROP_CLEAR_CACHES_AFTER_UTTERANCE_TYPE"), new String("BOOLEAN"));
-        info.put(new String("PROP_APPLY_LANGUAGE_WEIGHT_AND_WIP_TYPE"), new String("BOOLEAN"));
-        info.put(new String("PROP_FULL_SMEAR_TYPE"), new String("BOOLEAN"));
-        info.put(new String("PROP_WORD_INSERTION_PROBABILITY_TYPE"), new String("DOUBLE"));
-        info.put(new String("PROP_LOG_MATH_TYPE"), new String("COMPONENT"));
-        info.put(new String("PROP_LOG_MATH_CLASSTYPE"), new String("edu.cmu.sphinx.util.LogMath"));
-        info.put(new String("PROP_DICTIONARY_TYPE"), new String("COMPONENT"));
-        info.put(new String("PROP_DICTIONARY_CLASSTYPE"), new String("edu.cmu.sphinx.linguist.dictionary.Dictionary"));
-
-        return info;
-    }
-
-
-    /*
-    * (non-Javadoc)
-    *
-    * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
-    *      edu.cmu.sphinx.util.props.Registry)
-    */
-    public void register(String name, Registry registry)
-            throws PropertyException {
-        this.name = name;
-        registry.register(PROP_FORMAT, PropertyType.STRING);
-        registry.register(PROP_LOCATION, PropertyType.STRING);
-        registry.register(PROP_QUERY_LOG_FILE, PropertyType.STRING);
-        registry.register(PROP_TRIGRAM_CACHE_SIZE, PropertyType.INT);
-        registry.register(PROP_BIGRAM_CACHE_SIZE, PropertyType.INT);
-        registry.register(PROP_CLEAR_CACHES_AFTER_UTTERANCE,
-                PropertyType.BOOLEAN);
-        registry.register(PROP_MAX_DEPTH, PropertyType.INT);
-        registry.register(PROP_LOG_MATH, PropertyType.COMPONENT);
-        registry.register(PROP_DICTIONARY, PropertyType.COMPONENT);
-        registry.register(PROP_APPLY_LANGUAGE_WEIGHT_AND_WIP,
-                PropertyType.BOOLEAN);
-        registry.register(PROP_LANGUAGE_WEIGHT, PropertyType.FLOAT);
-        registry.register(PROP_WORD_INSERTION_PROBABILITY, PropertyType.DOUBLE);
-        registry.register(PROP_UNIGRAM_WEIGHT, PropertyType.FLOAT);
-        registry.register(PROP_FULL_SMEAR, PropertyType.BOOLEAN);
-    }
-
-
-    /*
-    * (non-Javadoc)
-    *
     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
     */
     public void newProperties(PropertySheet ps) throws PropertyException {

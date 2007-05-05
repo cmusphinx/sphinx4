@@ -64,11 +64,6 @@ public class DummyComp implements Configurable {
     }
 
 
-    public void register(String name, Registry registry) throws PropertyException {
-        // :-) we do not need this one anymore
-    }
-
-
     public void newProperties(PropertySheet ps) throws PropertyException {
         frontEnd = (DummyFrontEnd) ps.getComponent(PROP_FRONTEND);
         beamWidth = ps.getInt(PROP_BEAM_WIDTH);

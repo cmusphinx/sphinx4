@@ -3,9 +3,6 @@ package edu.cmu.sphinx.frontend.endpoint;
 import edu.cmu.sphinx.frontend.*;
 import edu.cmu.sphinx.util.props.*;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * Removes excessive non-speech-segments from a speech stream. Compared with <code>NonSpeechDatatFilter</code> this
  * component does not remove all non-speech frames. It just reduces the non-speech parts to a user defined length.
@@ -74,31 +71,6 @@ public class ExcessiveNonSpeechPruner extends BaseDataProcessor {
 
         assert false;
         return -1;
-    }
-
-
-    /*
-    * (non-Javadoc)
-    *
-    * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
-    */
-    public static Map getConfigurationInfo() {
-        Map info = new HashMap();
-
-        info.put(new String("PROP_MAX_NON_SPEECH_TIME_MS_TYPE"), new String("INTEGER"));
-        return info;
-    }
-
-
-    /*
-    * (non-Javadoc)
-    *
-    * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
-    *      edu.cmu.sphinx.util.props.Registry)
-    */
-    public void register(String name, Registry registry) throws PropertyException {
-        super.register(name, registry);
-        registry.register(PROP_MAX_NON_SPEECH_TIME_MS, PropertyType.INT);
     }
 
 

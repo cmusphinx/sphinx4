@@ -67,19 +67,6 @@ public abstract class TokenScorePruner implements Pruner {
 
 
     /* (non-Javadoc)
-     * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String, edu.cmu.sphinx.util.props.Registry)
-     */
-    public void register(String name, Registry registry)
-        throws PropertyException {
-        this.name = name;
-        registry.register(PROP_ABSOLUTE_BEAM_WIDTH, PropertyType.INT);
-        registry.register(PROP_RELATIVE_BEAM_WIDTH, PropertyType.DOUBLE);
-        registry.register(PROP_LOG_MATH, PropertyType.COMPONENT);
-        registry.register(PROP_ACTIVE_LIST_FACTORY, PropertyType.COMPONENT);
-    }
-
-
-    /* (non-Javadoc)
      * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
      */
     public void newProperties(PropertySheet ps) throws PropertyException {

@@ -17,10 +17,8 @@ import edu.cmu.sphinx.recognizer.RecognizerState;
 import edu.cmu.sphinx.recognizer.StateListener;
 import edu.cmu.sphinx.util.props.*;
 
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Monitor the state transitions of a given recognizer. This monitor maintains lists of components that should be 'run'
@@ -46,40 +44,6 @@ public class RecognizerMonitor implements StateListener, Monitor {
     List allocatedMonitors;
     List deallocatedMonitors;
     String name;
-
-
-    /*
-    * (non-Javadoc)
-    *
-    * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
-    */
-    public static Map getConfigurationInfo() {
-        Map info = new HashMap();
-
-        info.put(new String("PROP_RECOGNIZER_TYPE"), new String("COMPONENT"));
-        info.put(new String("PROP_RECOGNIZER_CLASSTYPE"), new String("edu.cmu.sphinx.recognizer.Recognizer"));
-        info.put(new String("PROP_ALLOCATED_MONITORS_TYPE"), new String("COMPONENT_LIST"));
-        info.put(new String("PROP_ALLOCATED_MONITORS_CLASSTYPE"), new String("edu.cmu.sphinx.instrumentation.Monitor"));
-        info.put(new String("PROP_DEALLOCATED_MONITORS_TYPE"), new String("COMPONENT_LIST"));
-        info.put(new String("PROP_DEALLOCATED_MONITORS_CLASSTYPE"), new String("edu.cmu.sphinx.instrumentation.Monitor"));
-        return info;
-    }
-
-
-    /*
-    * (non-Javadoc)
-    *
-    * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
-    *      edu.cmu.sphinx.util.props.Registry)
-    */
-    public void register(String name, Registry registry)
-            throws PropertyException {
-        this.name = name;
-        registry.register(PROP_RECOGNIZER, PropertyType.COMPONENT);
-        registry.register(PROP_ALLOCATED_MONITORS, PropertyType.COMPONENT_LIST);
-        registry.register(PROP_DEALLOCATED_MONITORS,
-                PropertyType.COMPONENT_LIST);
-    }
 
 
     /*

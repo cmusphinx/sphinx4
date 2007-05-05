@@ -16,9 +16,6 @@ import edu.cmu.sphinx.decoder.search.Token;
 import edu.cmu.sphinx.result.Result;
 import edu.cmu.sphinx.util.props.*;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /** Tracks and reports recognition accuracy based upon the highest scoring path in a Result. */
 public class BestPathAccuracyTracker extends AccuracyTracker {
 
@@ -30,32 +27,6 @@ public class BestPathAccuracyTracker extends AccuracyTracker {
     public final static boolean PROP_SHOW_FULL_PATH_DEFAULT = false;
 
     private boolean showFullPath;
-
-
-    /*
-    * (non-Javadoc)
-    *
-    * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
-    */
-    public static Map getConfigurationInfo() {
-        Map info = new HashMap();
-
-        info.put(new String("PROP_SHOW_FULL_PATH_TYPE"), new String("BOOLEAN"));
-        return info;
-    }
-
-
-    /*
-    * (non-Javadoc)
-    *
-    * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
-    *      edu.cmu.sphinx.util.props.Registry)
-    */
-    public void register(String name, Registry registry)
-            throws PropertyException {
-        super.register(name, registry);
-        registry.register(PROP_SHOW_FULL_PATH, PropertyType.BOOLEAN);
-    }
 
 
     /*

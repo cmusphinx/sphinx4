@@ -17,8 +17,6 @@ import edu.cmu.sphinx.util.props.*;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.logging.Logger;
 
 /**
@@ -76,34 +74,6 @@ public class ConfigMonitor implements Configurable, Runnable, Monitor {
     private String htmlPath = "config.html";
     private String gdlPath = "config.gdl";
     private String xmlPath = "config.xml";
-
-
-    /*
-    * (non-Javadoc)
-    *
-    * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
-    */
-    public static Map getConfigurationInfo() {
-        Map info = new HashMap();
-        info.put(new String("PROP_SHOW_CONFIG_TYPE"), new String("BOOLEAN"));
-        info.put(new String("PROP_SHOW_CONFIG_AS_HTML_TYPE"), new String("BOOLEAN"));
-        info.put(new String("PROP_SHOW_CONFIG_AS_GDL_TYPE"), new String("BOOLEAN"));
-        info.put(new String("PROP_SAVE_CONFIG_AS_XML_TYPE"), new String("BOOLEAN"));
-        return info;
-    }
-
-
-    /* (non-Javadoc)
-    * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String, edu.cmu.sphinx.util.props.Registry)
-    */
-    public void register(String name, Registry registry)
-            throws PropertyException {
-        this.name = name;
-        registry.register(PROP_SHOW_CONFIG, PropertyType.BOOLEAN);
-        registry.register(PROP_SHOW_CONFIG_AS_HTML, PropertyType.BOOLEAN);
-        registry.register(PROP_SHOW_CONFIG_AS_GDL, PropertyType.BOOLEAN);
-        registry.register(PROP_SAVE_CONFIG_AS_XML, PropertyType.BOOLEAN);
-    }
 
 
     /* (non-Javadoc)

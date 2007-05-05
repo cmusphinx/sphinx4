@@ -100,23 +100,6 @@ public class ParallelSearchManager implements SearchManager {
     private boolean doCombinePruning;
 
 
-    /* (non-Javadoc)
-     * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String, edu.cmu.sphinx.util.props.Registry)
-     */
-    public void register(String name, Registry registry)
-            throws PropertyException {
-        this.name = name;
-        registry.register(PROP_LINGUIST, PropertyType.COMPONENT);
-        registry.register(PROP_SCORER, PropertyType.COMPONENT);
-        registry.register(PROP_ACTIVE_LIST_FACTORY, PropertyType.COMPONENT);
-        registry.register(PROP_DO_FEATURE_PRUNING, PropertyType.BOOLEAN);
-        registry.register(PROP_DO_COMBINE_PRUNING, PropertyType.BOOLEAN);
-        registry.register(PROP_FEATURE_SCORE_PRUNER, PropertyType.COMPONENT);
-//        registry.register(PROP_COMBINED_SCORE_PRUNER, PropertyType.COMPONENT);
-        registry.register(PROP_LOG_MATH, PropertyType.COMPONENT);
-    }
-
-
     /*
      * (non-Javadoc)
      *

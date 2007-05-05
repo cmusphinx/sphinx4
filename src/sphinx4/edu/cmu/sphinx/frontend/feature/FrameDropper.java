@@ -15,9 +15,6 @@ package edu.cmu.sphinx.frontend.feature;
 import edu.cmu.sphinx.frontend.*;
 import edu.cmu.sphinx.util.props.*;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * Drops certain feature frames, usually to speed up decoding. For example, if you 'dropEveryNthFrame' is set to 2, it
  * will drop every other feature frame. If you set 'replaceNthWithPrevious' to 3, then you replace with 3rd frame with
@@ -50,34 +47,6 @@ public class FrameDropper extends BaseDataProcessor {
     private boolean replaceNthWithPrevious;
     private int dropEveryNthFrame;
     private int id;   // first frame has ID "0", second "1", etc.
-
-
-    /*
-    * (non-Javadoc)
-    *
-    * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
-    */
-    public static Map getConfigurationInfo() {
-        Map info = new HashMap();
-
-        info.put(new String("PROP_DROP_EVERY_NTH_FRAME_TYPE"), new String("INTEGER"));
-        info.put(new String("PROP_REPLACE_NTH_WITH_PREVIOUS_TYPE"), new String("BOOLEAN"));
-        return info;
-    }
-
-
-    /*
-    * (non-Javadoc)
-    *
-    * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
-    *      edu.cmu.sphinx.util.props.Registry)
-    */
-    public void register(String name, Registry registry)
-            throws PropertyException {
-        super.register(name, registry);
-        registry.register(PROP_DROP_EVERY_NTH_FRAME, PropertyType.INT);
-        registry.register(PROP_REPLACE_NTH_WITH_PREVIOUS, PropertyType.BOOLEAN);
-    }
 
 
     /*

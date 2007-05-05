@@ -18,9 +18,6 @@ import edu.cmu.sphinx.frontend.DataProcessingException;
 import edu.cmu.sphinx.frontend.DoubleData;
 import edu.cmu.sphinx.util.props.*;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * Filters an input power spectrum through a PLP filterbank. The filters in the filterbank are placed in the frequency
  * axis so as to mimic the critical band, representing different perceptual effect at different frequency bands. The
@@ -73,36 +70,6 @@ public class PLPFrequencyFilterBank extends BaseDataProcessor {
     private double maxFreq;
     private PLPFilter[] criticalBandFilter;
     private double[] equalLoudnessScaling;
-
-
-    /*
-    * (non-Javadoc)
-    *
-    * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
-    */
-    public static Map getConfigurationInfo() {
-        Map info = new HashMap();
-
-        info.put(new String("PROP_NUMBER_FILTERS_TYPE"), new String("INTEGER"));
-        info.put(new String("PROP_MIN_FREQ_TYPE"), new String("DOUBLE"));
-        info.put(new String("PROP_MAX_FREQ_TYPE"), new String("DOUBLE"));
-        return info;
-    }
-
-
-    /*
-    * (non-Javadoc)
-    *
-    * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
-    *      edu.cmu.sphinx.util.props.Registry)
-    */
-    public void register(String name, Registry registry)
-            throws PropertyException {
-        super.register(name, registry);
-        registry.register(PROP_MIN_FREQ, PropertyType.DOUBLE);
-        registry.register(PROP_MAX_FREQ, PropertyType.DOUBLE);
-        registry.register(PROP_NUMBER_FILTERS, PropertyType.INT);
-    }
 
 
     /*

@@ -16,10 +16,8 @@ package edu.cmu.sphinx.frontend.endpoint;
 import edu.cmu.sphinx.frontend.*;
 import edu.cmu.sphinx.util.props.*;
 
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 
 /**
@@ -87,32 +85,6 @@ public class NonSpeechDataFilter extends BaseDataProcessor {
     /** The number of samples in a speech segment, used to calculate the duration of the speech segment. */
     private int numberSpeechSamples;
     private int sampleRate;
-
-
-    /*
-    * (non-Javadoc)
-    *
-    * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
-    */
-    public static Map getConfigurationInfo() {
-        Map info = new HashMap();
-        info.put(new String("PROP_MERGE_SPEECH_SEGMENTS_TYPE"), new String("BOOLEAN"));
-
-        return info;
-    }
-
-
-    /*
-    * (non-Javadoc)
-    *
-    * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
-    *      edu.cmu.sphinx.util.props.Registry)
-    */
-    public void register(String name, Registry registry)
-            throws PropertyException {
-        super.register(name, registry);
-        registry.register(PROP_MERGE_SPEECH_SEGMENTS, PropertyType.BOOLEAN);
-    }
 
 
     /*

@@ -16,10 +16,8 @@ import edu.cmu.sphinx.util.props.*;
 
 import javax.sound.sampled.*;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -168,52 +166,6 @@ public class Microphone extends BaseDataProcessor {
     private String selectedMixerIndex;
     private String stereoToMono;
     private int sampleRate;
-
-
-    /*
-    * (non-Javadoc)
-    *
-    * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
-    */
-    public static Map getConfigurationInfo() {
-        Map info = new HashMap();
-
-        info.put(new String("PROP_CLOSE_BETWEEN_UTTERANCES_TYPE"), new String("BOOLEAN"));
-        info.put(new String("PROP_BIG_ENDIAN_TYPE"), new String("BOOLEAN"));
-        info.put(new String("PROP_SIGNED_TYPE"), new String("BOOLEAN"));
-        info.put(new String("PROP_KEEP_LAST_AUDIO_TYPE"), new String("BOOLEAN"));
-        info.put(new String("PROP_SAMPLE_RATE_TYPE"), new String("INTEGER"));
-        info.put(new String("PROP_BITS_PER_SAMPLE_TYPE"), new String("INTEGER"));
-        info.put(new String("PROP_MSEC_PER_READ_TYPE"), new String("INTEGER"));
-        info.put(new String("PROP_CHANNELS_TYPE"), new String("INTEGER"));
-        info.put(new String("PROP_SELECT_CHANNEL_TYPE"), new String("INTEGER"));
-        info.put(new String("PROP_STEREO_TO_MONO_TYPE"), new String("STRING"));
-        info.put(new String("PROP_SELECT_MIXER_TYPE"), new String("STRING"));
-        return info;
-    }
-
-
-    /*
-    * (non-Javadoc)
-    *
-    * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
-    *      edu.cmu.sphinx.util.props.Registry)
-    */
-    public void register(String name, Registry registry)
-            throws PropertyException {
-        super.register(name, registry);
-        registry.register(PROP_SAMPLE_RATE, PropertyType.INT);
-        registry.register(PROP_CLOSE_BETWEEN_UTTERANCES, PropertyType.BOOLEAN);
-        registry.register(PROP_MSEC_PER_READ, PropertyType.INT);
-        registry.register(PROP_BITS_PER_SAMPLE, PropertyType.INT);
-        registry.register(PROP_CHANNELS, PropertyType.INT);
-        registry.register(PROP_BIG_ENDIAN, PropertyType.BOOLEAN);
-        registry.register(PROP_SIGNED, PropertyType.BOOLEAN);
-        registry.register(PROP_KEEP_LAST_AUDIO, PropertyType.BOOLEAN);
-        registry.register(PROP_STEREO_TO_MONO, PropertyType.STRING);
-        registry.register(PROP_SELECT_CHANNEL, PropertyType.INT);
-        registry.register(PROP_SELECT_MIXER, PropertyType.STRING);
-    }
 
 
     /*

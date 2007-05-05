@@ -3,9 +3,6 @@ package edu.cmu.sphinx.util.props.newconman.test;
 import edu.cmu.sphinx.util.props.*;
 import org.junit.Test;
 
-import java.util.Map;
-import java.util.HashMap;
-
 import junit.framework.Assert;
 
 /**
@@ -18,10 +15,6 @@ public class ComponentPropertyTest implements Configurable {
     @S4Component(type =  DummyProcessor.class, defaultClass = AnotherDummyProcessor.class)
     public static final String PROP_DATA_PROC = "dataProc";
     private DummyProcessor dataProc;
-
-
-    public void register(String name, Registry registry) throws PropertyException {
-    }
 
 
     public void newProperties(PropertySheet ps) throws PropertyException {

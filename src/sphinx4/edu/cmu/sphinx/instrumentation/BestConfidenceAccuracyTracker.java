@@ -15,9 +15,6 @@ import edu.cmu.sphinx.result.*;
 import edu.cmu.sphinx.util.NISTAlign;
 import edu.cmu.sphinx.util.props.*;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * Tracks and reports recognition accuracy using the "confidenceScorer" component specified in the ConfigurationManager.
  * The "confidenceScorer" component is typically configured to be edu.cmu.sphinx.result.SausageMaker.
@@ -32,33 +29,6 @@ public class BestConfidenceAccuracyTracker extends AccuracyTracker {
 
     /** The confidence scorer */
     protected ConfidenceScorer confidenceScorer;
-
-
-    /*
-    * (non-Javadoc)
-    *
-    * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
-    */
-    public static Map getConfigurationInfo() {
-        Map info = new HashMap();
-
-        info.put(new String("PROP_CONFIDENCE_SCORER_TYPE"), new String("COMPONENT"));
-        info.put(new String("PROP_CONFIDENCE_SCORER_CLASSTYPE"), new String("edu.cmu.sphinx.result.ConfidenceScorer"));
-        return info;
-    }
-
-
-    /*
-    * (non-Javadoc)
-    *
-    * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
-    *      edu.cmu.sphinx.util.props.Registry)
-    */
-    public void register(String name, Registry registry)
-            throws PropertyException {
-        super.register(name, registry);
-        registry.register(PROP_CONFIDENCE_SCORER, PropertyType.COMPONENT);
-    }
 
 
     /*

@@ -246,25 +246,12 @@ public class JSGFGrammar extends Grammar {
     private boolean loadGrammar = true;
     private GrammarNode firstNode = null;
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
-     *      edu.cmu.sphinx.util.props.Registry)
-     */
-    public void register(String name, Registry registry)
-            throws PropertyException {
-        super.register(name, registry);
-        registry.register(PROP_BASE_GRAMMAR_URL, PropertyType.RESOURCE);
-        registry.register(PROP_GRAMMAR_NAME, PropertyType.STRING);
-        registry.register(PROP_LOG_MATH, PropertyType.COMPONENT);
-    }
 
     /*
-     * (non-Javadoc)
-     * 
-     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
-     */
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
+    */
     public void newProperties(PropertySheet ps) throws PropertyException {
         super.newProperties(ps);
         baseURL = ps.getResource(PROP_BASE_GRAMMAR_URL);

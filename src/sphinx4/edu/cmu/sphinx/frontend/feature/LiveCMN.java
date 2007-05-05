@@ -16,9 +16,6 @@ package edu.cmu.sphinx.frontend.feature;
 import edu.cmu.sphinx.frontend.*;
 import edu.cmu.sphinx.util.props.*;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * Subtracts the mean of all the input so far from the Data objects. Unlike the {@link BatchCMN}, it does not read in
  * the entire stream of Data objects before it calculates the mean. It estimates the mean from already seen data and
@@ -78,36 +75,6 @@ public class LiveCMN extends BaseDataProcessor {
     private int numberFrame;        // total number of input Cepstrum
     private int cmnShiftWindow;     // # of Cepstrum to recalculate mean
     private int cmnWindow;
-
-
-    /*
-    * (non-Javadoc)
-    *
-    * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
-    */
-    public static Map getConfigurationInfo() {
-        Map<String, String> info = new HashMap<String, String>();
-
-        info.put("PROP_INITIAL_MEAN_TYPE", "DOUBLE");
-        info.put("PROP_CMN_WINDOW_TYPE", "INTEGER");
-        info.put("PROP_CMN_SHIFT_WINDOW_TYPE", "INTEGER");
-        return info;
-    }
-
-
-    /*
-    * (non-Javadoc)
-    *
-    * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
-    *      edu.cmu.sphinx.util.props.Registry)
-    */
-    public void register(String name, Registry registry)
-            throws PropertyException {
-        super.register(name, registry);
-        registry.register(PROP_INITIAL_MEAN, PropertyType.DOUBLE);
-        registry.register(PROP_CMN_WINDOW, PropertyType.INT);
-        registry.register(PROP_CMN_SHIFT_WINDOW, PropertyType.INT);
-    }
 
 
     /*

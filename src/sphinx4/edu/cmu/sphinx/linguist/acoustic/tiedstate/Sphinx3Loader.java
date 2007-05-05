@@ -17,7 +17,6 @@ import edu.cmu.sphinx.util.props.*;
 
 import java.io.*;
 import java.net.URL;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -234,56 +233,6 @@ public class Sphinx3Loader implements Loader {
     private float mixtureWeightFloor;
     private float varianceFloor;
     private boolean useCDUnits;
-
-
-    /*
-    * (non-Javadoc)
-    *
-    * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
-    */
-    public static Map getConfigurationInfo() {
-        Map info = new HashMap();
-
-        info.put(new String("PROP_IS_BINARY_TYPE"), new String("BOOLEAN"));
-        info.put(new String("PROP_SPARSE_FORM_TYPE"), new String("BOOLEAN"));
-        info.put(new String("PROP_USE_CD_UNITS_TYPE"), new String("BOOLEAN"));
-        info.put(new String("PROP_VECTOR_LENGTH_TYPE"), new String("INTEGER"));
-        info.put(new String("PROP_MODEL_TYPE"), new String("STRING"));
-        info.put(new String("PROP_DATA_LOCATION_TYPE"), new String("STRING"));
-        info.put(new String("PROP_PROPERTIES_FILE_TYPE"), new String("STRING"));
-        info.put(new String("PROP_MC_FLOOR_TYPE"), new String("FLOAT"));
-        info.put(new String("PROP_MW_FLOOR_TYPE"), new String("FLOAT"));
-        info.put(new String("PROP_VARIANCE_FLOOR_TYPE"), new String("FLOAT"));
-        info.put(new String("PROP_LOG_MATH_TYPE"), new String("COMPONENT"));
-        info.put(new String("PROP_LOG_MATH_CLASSTYPE"), new String("edu.cmu.sphinx.linguist.acoustic.tiedstate.Loader"));
-        info.put(new String("PROP_UNIT_MANAGER_TYPE"), new String("COMPONENT"));
-        info.put(new String("PROP_UNIT_MANAGER_CLASSTYPE"), new String("edu.cmu.sphinx.linguist.acoustic.UnitManager"));
-        return info;
-    }
-
-
-    /*
-    * (non-Javadoc)
-    *
-    * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
-    *      edu.cmu.sphinx.util.props.Registry)
-    */
-    public void register(String name, Registry registry)
-            throws PropertyException {
-        this.name = name;
-        registry.register(PROP_LOG_MATH, PropertyType.COMPONENT);
-        registry.register(PROP_UNIT_MANAGER, PropertyType.COMPONENT);
-        registry.register(PROP_IS_BINARY, PropertyType.BOOLEAN);
-        registry.register(PROP_SPARSE_FORM, PropertyType.BOOLEAN);
-        registry.register(PROP_VECTOR_LENGTH, PropertyType.INT);
-        registry.register(PROP_MODEL, PropertyType.STRING);
-        registry.register(PROP_DATA_LOCATION, PropertyType.STRING);
-        registry.register(PROP_PROPERTIES_FILE, PropertyType.STRING);
-        registry.register(PROP_MC_FLOOR, PropertyType.FLOAT);
-        registry.register(PROP_MW_FLOOR, PropertyType.FLOAT);
-        registry.register(PROP_VARIANCE_FLOOR, PropertyType.FLOAT);
-        registry.register(PROP_USE_CD_UNITS, PropertyType.BOOLEAN);
-    }
 
 
     /*

@@ -54,36 +54,6 @@ public class MAPConfidenceScorer implements ConfidenceScorer, Configurable {
 
 
     /*
-    * (non-Javadoc)
-    *
-    * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
-    */
-    public static Map getConfigurationInfo() {
-        Map info = new HashMap();
-        info.put(new String("PROP_LANGUAGE_WEIGHT_TYPE"), new String("FLOAT"));
-        info.put(new String("PROP_DUMP_LATTICE_TYPE"), new String("BOOLEAN"));
-        info.put(new String("PROP_DUMP_SAUSAGE_TYPE"), new String("BOOLEAN"));
-
-        return info;
-    }
-
-
-    /*
-    * (non-Javadoc)
-    *
-    * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
-    *      edu.cmu.sphinx.util.props.Registry)
-    */
-    public void register(String name, Registry registry)
-            throws PropertyException {
-        this.name = name;
-        registry.register(PROP_LANGUAGE_WEIGHT, PropertyType.FLOAT);
-        registry.register(PROP_DUMP_LATTICE, PropertyType.BOOLEAN);
-        registry.register(PROP_DUMP_SAUSAGE, PropertyType.BOOLEAN);
-    }
-
-
-    /*
      * (non-Javadoc)
      *
      * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)

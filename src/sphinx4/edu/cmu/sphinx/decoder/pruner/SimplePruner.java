@@ -15,33 +15,11 @@ package edu.cmu.sphinx.decoder.pruner;
 import edu.cmu.sphinx.decoder.search.ActiveList;
 import edu.cmu.sphinx.util.props.PropertyException;
 import edu.cmu.sphinx.util.props.PropertySheet;
-import edu.cmu.sphinx.util.props.Registry;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /** Performs the default pruning behavior which is to invoke the purge on the active list */
 public class SimplePruner implements Pruner {
 
     private String name;
-
-
-    /*
-    * (non-Javadoc)
-    *
-    * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
-    */
-    public static Map getConfigurationInfo() {
-        return new HashMap();
-    }
-
-
-    /* (non-Javadoc)
-    * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String, edu.cmu.sphinx.util.props.Registry)
-    */
-    public void register(String name, Registry registry) throws PropertyException {
-        this.name = name;
-    }
 
 
     /* (non-Javadoc)

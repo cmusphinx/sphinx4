@@ -19,9 +19,6 @@ import edu.cmu.sphinx.frontend.DataProcessingException;
 import edu.cmu.sphinx.frontend.DoubleData;
 import edu.cmu.sphinx.util.props.*;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * Computes the PLP cepstrum from a given PLP Spectrum. The power spectrum has the amplitude compressed by computing the
  * cubed root of the PLP spectrum.  This operation is an approximation to the power law of hearing and simulates the
@@ -65,36 +62,6 @@ public class PLPCepstrumProducer extends BaseDataProcessor {
     private int LPCOrder;           // LPC Order to compute cepstrum
     private int numberPLPFilters;   // number of PLP filters
     private double[][] cosine;
-
-
-    /*
-    * (non-Javadoc)
-    *
-    * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
-    */
-    public static Map getConfigurationInfo() {
-        Map info = new HashMap();
-
-        info.put(new String("PROP_NUMBER_FILTERS_TYPE"), new String("INTEGER"));
-        info.put(new String("PROP_CEPSTRUM_LENGTH_TYPE"), new String("INTEGER"));
-        info.put(new String("PROP_LPC_ORDER_TYPE"), new String("INTEGER"));
-        return info;
-    }
-
-
-    /*
-    * (non-Javadoc)
-    *
-    * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
-    *      edu.cmu.sphinx.util.props.Registry)
-    */
-    public void register(String name, Registry registry)
-            throws PropertyException {
-        super.register(name, registry);
-        registry.register(PROP_NUMBER_FILTERS, PropertyType.INT);
-        registry.register(PROP_CEPSTRUM_LENGTH, PropertyType.INT);
-        registry.register(PROP_LPC_ORDER, PropertyType.INT);
-    }
 
 
     /*

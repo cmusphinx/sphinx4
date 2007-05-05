@@ -17,7 +17,6 @@ import edu.cmu.sphinx.linguist.acoustic.*;
 import edu.cmu.sphinx.util.SphinxProperties;
 import edu.cmu.sphinx.util.props.PropertyException;
 import edu.cmu.sphinx.util.props.PropertySheet;
-import edu.cmu.sphinx.util.props.Registry;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -86,10 +85,6 @@ public class TrivialAcousticModel implements AcousticModel {
         for (int i = 0; i < unitNames.length; i++) {
             createTrivialHMM(unitNames[i]);
         }
-    }
-
-
-    public void register(String name, Registry registry) throws PropertyException {
     }
 
 

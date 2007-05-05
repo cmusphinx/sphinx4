@@ -55,36 +55,6 @@ public class SimpleActiveListManager implements ActiveListManager {
     /*
     * (non-Javadoc)
     *
-    * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
-    */
-    public static Map getConfigurationInfo() {
-        Map info = new HashMap();
-        info.put(new String("PROP_CHECK_PRIOR_LISTS_EMPTY_TYPE"), new String("BOOLEAN"));
-        info.put(new String("PROP_ACTIVE_LIST_FACTORIES_TYPE"), new String("COMPONENT_LIST"));
-        info.put(new String("PROP_ACTIVE_LIST_FACTORIES_CLASSTYPE"), new String("edu.cmu.sphinx.decoder.search.ActiveListFactory"));
-        return info;
-    }
-
-
-    /*
-    * (non-Javadoc)
-    *
-    * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
-    *      edu.cmu.sphinx.util.props.Registry)
-    */
-    public void register(String name, Registry registry)
-            throws PropertyException {
-        this.name = name;
-        registry.register(PROP_ACTIVE_LIST_FACTORIES,
-                PropertyType.COMPONENT_LIST);
-        registry.register(PROP_CHECK_PRIOR_LISTS_EMPTY, PropertyType.BOOLEAN);
-
-    }
-
-
-    /*
-    * (non-Javadoc)
-    *
     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
     */
     public void newProperties(PropertySheet ps) throws PropertyException {

@@ -34,19 +34,22 @@ public class PropertySheet {
     private Map<String, Object> rawProps = new HashMap<String, Object>();
 
     private ConfigurationManager cm;
-    private Configurable owner; //todo  use this one as owner for all PropertyExceptions as soon as the exception is refactored
+    private Configurable owner;
     private final Class<? extends Configurable> ownerClass;
 
+    private String instanceName;
 
-    public PropertySheet(Configurable configurable, ConfigurationManager ConfigurationManager, RawPropertyData rpd) {
-        this(configurable.getClass(), ConfigurationManager, rpd);
+
+    public PropertySheet(Configurable configurable, String name, RawPropertyData rpd, ConfigurationManager ConfigurationManager) {
+        this(configurable.getClass(), null, ConfigurationManager, rpd);
         owner = configurable;
     }
 
 
-    public PropertySheet(Class<? extends Configurable> confClass, ConfigurationManager cm, RawPropertyData rpd) {
+    public PropertySheet(Class<? extends Configurable> confClass, String name, ConfigurationManager cm, RawPropertyData rpd) {
         ownerClass = confClass;
         this.cm = cm;
+        this.instanceName = name;
 
         processAnnotations(this, confClass);
 
@@ -77,14 +80,14 @@ public class PropertySheet {
     /** Returns the property names <code>name</code> which is still wrapped into the annotation instance. */
     S4PropWrapper getProperty(String name, Class propertyClass) throws PropertyException {
         if (!propValues.containsKey(name))
-            throw new PropertyException(null, name, "Unknown property");
+            throw new PropertyException(owner, name, "Unknown property");
 
         S4PropWrapper s4PropWrapper = registeredProperties.get(name);
 
         try {
             propertyClass.cast(s4PropWrapper.getAnnotation());
         } catch (Exception e) {
-            throw new PropertyException(null, name, name + " is not a registered of type " + owner.getClass().getName());
+            throw new PropertyException(owner, name, name + " is not a registered of type " + owner.getClass().getName());
         }
 
         return s4PropWrapper;
@@ -112,7 +115,7 @@ public class PropertySheet {
         //check range
         List<String> range = Arrays.asList(s4String.range());
         if (!range.isEmpty() && !range.contains(propValue))
-            throw new PropertyException(null, name, " is not in range (" + range + ")");
+            throw new PropertyException(owner, name, " is not in range (" + range + ")");
 
         return propValue;
     }
@@ -138,10 +141,10 @@ public class PropertySheet {
 
         int[] range = s4Integer.range();
         if (range.length != 2)
-            throw new PropertyException(null, name, range + " is not of expected range type, which is {minValue, maxValue)");
+            throw new PropertyException(owner, name, range + " is not of expected range type, which is {minValue, maxValue)");
 
         if (propValue < range[0] || propValue > range[1])
-            throw new PropertyException(null, name, " is not in range (" + range + ")");
+            throw new PropertyException(owner, name, " is not in range (" + range + ")");
 
         return propValue;
     }
@@ -180,10 +183,10 @@ public class PropertySheet {
 
         double[] range = s4Double.range();
         if (range.length != 2)
-            throw new PropertyException(null, name, range + " is not of expected range type, which is {minValue, maxValue)");
+            throw new PropertyException(owner, name, range + " is not of expected range type, which is {minValue, maxValue)");
 
         if (propValue < range[0] || propValue > range[1])
-            throw new PropertyException(null, name, " is not in range (" + range + ")");
+            throw new PropertyException(owner, name, " is not in range (" + range + ")");
 
         return propValue;
     }
@@ -238,7 +241,7 @@ public class PropertySheet {
 //                    configurable = cm.lookup((String) propValues.get(name));
 
                 if (configurable != null && !expectedType.isInstance(configurable))
-                    throw new PropertyException(null, name, "mismatch between annoation and component type");
+                    throw new PropertyException(owner, name, "mismatch between annoation and component type");
 
 //            assert configurable != null;
                 // instead of assserting null we'll try instead to instantiate the default class if available
@@ -258,7 +261,7 @@ public class PropertySheet {
                 }
 
             } catch (InstantiationException e) {
-                throw new PropertyException(null, name, "can not instantiate class");
+                throw new PropertyException(owner, name, "can not instantiate class");
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();
             }
@@ -316,7 +319,7 @@ public class PropertySheet {
                     assert configurable != null;
                     list.add(configurable);
                 } catch (InstantiationException e) {
-                    throw new PropertyException(null, name, "instantiation of list element failed.");
+                    throw new PropertyException(owner, name, "instantiation of list element failed.");
                 }
 
             propValues.put(name, list);
@@ -384,7 +387,7 @@ public class PropertySheet {
         URL url;
         String location = getString(name);
         if (location == null) {
-            throw new PropertyException(null, name, "Required resource property '" + name + "' not set");
+            throw new PropertyException(owner, name, "Required resource property '" + name + "' not set");
         }
 
         Matcher jarMatcher = Pattern.compile("resource:/([.\\w]+?)!(.*)", Pattern.CASE_INSENSITIVE).matcher(location);
@@ -411,17 +414,17 @@ public class PropertySheet {
                         try {
                             url = new URL(urlString);
                         } catch (MalformedURLException mfe) {
-                            throw new PropertyException(null, name, "Bad URL " + urlString + mfe.getMessage());
+                            throw new PropertyException(owner, name, "Bad URL " + urlString + mfe.getMessage());
                         }
                     }
                 }
                 if (url == null) {
-                    throw new PropertyException(null, name, "Can't locate resource " + resourceName);
+                    throw new PropertyException(owner, name, "Can't locate resource " + resourceName);
                 } else {
                     // System.out.println("URL FOUND " + url);
                 }
             } catch (ClassNotFoundException cnfe) {
-                throw new PropertyException(null, name, "Can't locate resource:/" + className);
+                throw new PropertyException(owner, name, "Can't locate resource:/" + className);
             }
         } else {
             if (location.indexOf(":") == -1) {
@@ -431,7 +434,7 @@ public class PropertySheet {
             try {
                 url = new URL(location);
             } catch (MalformedURLException e) {
-                throw new PropertyException(null, name, "Bad URL " + location + e.getMessage());
+                throw new PropertyException(owner, name, "Bad URL " + location + e.getMessage());
             }
         }
         return url;
@@ -625,7 +628,10 @@ public class PropertySheet {
      *          if an error occurs
      */
     public Logger getLogger() {
-        return Logger.getLogger(ownerClass.getName());
+        if (instanceName != null)
+            return Logger.getLogger(ownerClass.getName() + "." + instanceName);
+        else
+            return Logger.getLogger(ownerClass.getName());
     }
 
 

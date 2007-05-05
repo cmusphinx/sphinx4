@@ -15,7 +15,6 @@ package edu.cmu.sphinx.frontend.feature;
 import edu.cmu.sphinx.frontend.*;
 import edu.cmu.sphinx.util.props.PropertyException;
 import edu.cmu.sphinx.util.props.PropertySheet;
-import edu.cmu.sphinx.util.props.Registry;
 
 import java.util.*;
 
@@ -47,26 +46,6 @@ public class BatchCMN extends BaseDataProcessor {
     private double[] sums;           // array of current sums
     private List<Data> cepstraList;
     private int numberDataCepstra;
-
-
-    /*
-    * (non-Javadoc)
-    *
-    * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
-    */
-    public static Map getConfigurationInfo() {
-        Map info = new HashMap();
-
-        return info;
-    }
-
-
-    /* (non-Javadoc)
-    * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String, edu.cmu.sphinx.util.props.Registry)
-    */
-    public void register(String name, Registry registry) throws PropertyException {
-        super.register(name, registry);
-    }
 
 
     /* (non-Javadoc)

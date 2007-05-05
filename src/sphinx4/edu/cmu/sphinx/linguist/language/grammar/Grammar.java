@@ -85,41 +85,6 @@ public abstract class Grammar implements Configurable, GrammarInterface {
     /*
     * (non-Javadoc)
     *
-    * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
-    */
-    public static Map getConfigurationInfo() {
-        Map info = new HashMap();
-        info.put(new String("PROP_SHOW_GRAMMAR_TYPE"), new String("BOOLEAN"));
-        info.put(new String("PROP_OPTIMIZE_GRAMMAR_TYPE"), new String("BOOLEAN"));
-        info.put(new String("PROP_ADD_SIL_WORDS_TYPE"), new String("BOOLEAN"));
-        info.put(new String("PROP_ADD_FILLER_WORDS_TYPE"), new String("BOOLEAN"));
-        info.put(new String("PROP_DICTIONARY_TYPE"), new String("COMPONENT"));
-        info.put(new String("PROP_DICTIONARY_CLASSTYPE"), new String("edu.cmu.sphinx.linguist.dictionary.Dictionary"));
-
-        return info;
-    }
-
-
-    /*
-    * (non-Javadoc)
-    *
-    * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
-    *      edu.cmu.sphinx.util.props.Registry)
-    */
-    public void register(String name, Registry registry)
-            throws PropertyException {
-        this.name = name;
-        registry.register(PROP_DICTIONARY, PropertyType.COMPONENT);
-        registry.register(PROP_SHOW_GRAMMAR, PropertyType.BOOLEAN);
-        registry.register(PROP_OPTIMIZE_GRAMMAR, PropertyType.BOOLEAN);
-        registry.register(PROP_ADD_SIL_WORDS, PropertyType.BOOLEAN);
-        registry.register(PROP_ADD_FILLER_WORDS, PropertyType.BOOLEAN);
-    }
-
-
-    /*
-    * (non-Javadoc)
-    *
     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
     */
     public void newProperties(PropertySheet ps) throws PropertyException {

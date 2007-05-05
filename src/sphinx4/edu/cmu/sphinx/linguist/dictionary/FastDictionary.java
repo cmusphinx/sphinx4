@@ -108,49 +108,6 @@ public class FastDictionary implements Dictionary {
     /*
     * (non-Javadoc)
     *
-    * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
-    */
-    public static Map getConfigurationInfo() {
-        Map info = new HashMap();
-
-        info.put(new String("PROP_DICTIONARY_TYPE"), new String("RESOURCE"));
-        info.put(new String("PROP_FILLER_DICTIONARY_TYPE"), new String("RESOURCE"));
-        info.put(new String("PROP_ADDENDA_TYPE"), new String("STRING_LIST"));
-        info.put(new String("PROP_WORD_REPLACEMENT_TYPE"), new String("STRING"));
-        info.put(new String("PROP_ADD_SIL_ENDING_PRONUNCIATION_TYPE"), new String("BOOLEAN"));
-        info.put(new String("PROP_ALLOW_MISSING_WORDS_TYPE"), new String("BOOLEAN"));
-        info.put(new String("PROP_CREATE_MISSING_WORDS_TYPE"), new String("BOOLEAN"));
-        info.put(new String("PROP_UNIT_MANAGER_TYPE"), new String("COMPONENT"));
-        info.put(new String("PROP_UNIT_MANAGER_CLASSTYPE"), new String("edu.cmu.sphinx.linguist.acoustic.UnitManager"));
-
-        return info;
-    }
-
-
-    /*
-    * (non-Javadoc)
-    *
-    * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
-    *      edu.cmu.sphinx.util.props.Registry)
-    */
-    public void register(String name, Registry registry)
-            throws PropertyException {
-        this.name = name;
-        registry.register(PROP_DICTIONARY, PropertyType.RESOURCE);
-        registry.register(PROP_FILLER_DICTIONARY, PropertyType.RESOURCE);
-        registry.register(PROP_ADD_SIL_ENDING_PRONUNCIATION,
-                PropertyType.BOOLEAN);
-        registry.register(PROP_WORD_REPLACEMENT, PropertyType.STRING);
-        registry.register(PROP_ALLOW_MISSING_WORDS, PropertyType.BOOLEAN);
-        registry.register(PROP_CREATE_MISSING_WORDS, PropertyType.BOOLEAN);
-        registry.register(PROP_UNIT_MANAGER, PropertyType.COMPONENT);
-        registry.register(PROP_ADDENDA, PropertyType.STRING_LIST);
-    }
-
-
-    /*
-    * (non-Javadoc)
-    *
     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
     */
     public void newProperties(PropertySheet ps) throws PropertyException {

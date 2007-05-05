@@ -15,7 +15,6 @@ package edu.cmu.sphinx.linguist.acoustic;
 import edu.cmu.sphinx.util.props.Configurable;
 import edu.cmu.sphinx.util.props.PropertyException;
 import edu.cmu.sphinx.util.props.PropertySheet;
-import edu.cmu.sphinx.util.props.Registry;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -38,30 +37,6 @@ public class UnitManager implements Configurable {
     private Map<String, Unit> ciMap = new HashMap<String, Unit>();
     private int nextID = SILENCE_ID + 1;
     private Logger logger;
-
-
-    /*
-    * (non-Javadoc)
-    *
-    * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
-    */
-    public static Map getConfigurationInfo() {
-
-        return new HashMap();
-    }
-
-
-    /*
-    * (non-Javadoc)
-    *
-    * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
-    *      edu.cmu.sphinx.util.props.Registry)
-    */
-    public void register(String name, Registry registry)
-            throws PropertyException {
-        this.name = name;
-        ciMap.put(SILENCE_NAME, SILENCE);
-    }
 
 
     /*

@@ -67,8 +67,12 @@ public class SphinxLogFormatter extends Formatter {
             StringBuffer sbuf = new StringBuffer();
             sbuf.append(date);
             sbuf.append(" ");
-            sbuf.append(Utilities.pad(record.getLevel().getName() + " "
-                    + record.getLoggerName(), 24));
+
+            String loggerName = record.getLoggerName();
+            String[] strings = loggerName.split("[.]");
+            String source = strings[strings.length - 1];
+
+            sbuf.append(Utilities.pad(record.getLevel().getName() + " " + source, 24));
             sbuf.append("  ");
             sbuf.append(record.getMessage());
             sbuf.append("\n");

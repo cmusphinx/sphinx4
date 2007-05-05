@@ -81,38 +81,6 @@ public class SpeechMarker extends BaseDataProcessor {
     /*
     * (non-Javadoc)
     *
-    * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
-    */
-    public static Map getConfigurationInfo() {
-        Map info = new HashMap();
-
-        info.put(new String("PROP_START_SPEECH_TYPE"), new String("INTEGER"));
-        info.put(new String("PROP_END_SILENCE_TYPE"), new String("INTEGER"));
-        info.put(new String("PROP_SPEECH_LEADER_TYPE"), new String("INTEGER"));
-        info.put(new String("PROP_SPEECH_TRAILER_TYPE"), new String("INTEGER"));
-        return info;
-    }
-
-
-    /*
-    * (non-Javadoc)
-    *
-    * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
-    *      edu.cmu.sphinx.util.props.Registry)
-    */
-    public void register(String name, Registry registry)
-            throws PropertyException {
-        super.register(name, registry);
-        registry.register(PROP_START_SPEECH, PropertyType.INT);
-        registry.register(PROP_END_SILENCE, PropertyType.INT);
-        registry.register(PROP_SPEECH_LEADER, PropertyType.INT);
-        registry.register(PROP_SPEECH_TRAILER, PropertyType.INT);
-    }
-
-
-    /*
-    * (non-Javadoc)
-    *
     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
     */
     public void newProperties(PropertySheet ps) throws PropertyException {

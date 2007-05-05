@@ -23,9 +23,7 @@ import edu.cmu.sphinx.util.props.*;
 
 import java.text.DecimalFormat;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Monitors the absolute and relative beam sizes required to achieve the optimum recognition results and reports this
@@ -81,42 +79,6 @@ public class BeamFinder implements ResultListener,
     private int totalUtterances;
 
     private final static DecimalFormat logFormatter = new DecimalFormat("0.#E0");
-
-
-    /*
-    * (non-Javadoc)
-    *
-    * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
-    */
-    public static Map getConfigurationInfo() {
-        Map info = new HashMap();
-        info.put(new String("PROP_SHOW_SUMMARY_TYPE"), new String("BOOLEAN"));
-        info.put(new String("PROP_SHOW_DETAILS_TYPE"), new String("BOOLEAN"));
-        info.put(new String("PROP_ENABLED_TYPE"), new String("BOOLEAN"));
-
-        info.put(new String("PROP_RECOGNIZER_TYPE"), new String("COMPONENT"));
-        info.put(new String("PROP_RECOGNIZER_CLASSTYPE"), new String("edu.cmu.sphinx.recognizer.Recognizer"));
-        info.put(new String("PROP_LOG_MATH_TYPE"), new String("COMPONENT"));
-        info.put(new String("PROP_LOG_MATH_CLASSTYPE"), new String("edu.cmu.sphinx.util.LogMath"));
-        return info;
-    }
-
-
-    /*
-    * (non-Javadoc)
-    *
-    * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
-    *      edu.cmu.sphinx.util.props.Registry)
-    */
-    public void register(String name, Registry registry)
-            throws PropertyException {
-        this.name = name;
-        registry.register(PROP_RECOGNIZER, PropertyType.COMPONENT);
-        registry.register(PROP_LOG_MATH, PropertyType.COMPONENT);
-        registry.register(PROP_SHOW_SUMMARY, PropertyType.BOOLEAN);
-        registry.register(PROP_SHOW_DETAILS, PropertyType.BOOLEAN);
-        registry.register(PROP_ENABLED, PropertyType.BOOLEAN);
-    }
 
 
     /*

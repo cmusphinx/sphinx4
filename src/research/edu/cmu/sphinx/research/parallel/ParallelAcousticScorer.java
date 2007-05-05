@@ -22,18 +22,11 @@ import edu.cmu.sphinx.frontend.Signal;
 import edu.cmu.sphinx.decoder.scorer.AcousticScorer;
 import edu.cmu.sphinx.decoder.scorer.Scoreable;
 
-import edu.cmu.sphinx.decoder.search.Token;
-
-import edu.cmu.sphinx.util.props.Configurable;
 import edu.cmu.sphinx.util.props.PropertyException;
 import edu.cmu.sphinx.util.props.PropertySheet;
-import edu.cmu.sphinx.util.props.PropertyType;
-import edu.cmu.sphinx.util.props.Registry;
 
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import java.io.IOException;
 
@@ -45,15 +38,6 @@ import java.io.IOException;
 public class ParallelAcousticScorer implements AcousticScorer {
 
     private String name;
-
-
-    /* (non-Javadoc)
-     * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String, edu.cmu.sphinx.util.props.Registry)
-     */
-    public void register(String name, Registry registry)
-        throws PropertyException {
-        this.name = name;
-    }
 
 
     /* (non-Javadoc)

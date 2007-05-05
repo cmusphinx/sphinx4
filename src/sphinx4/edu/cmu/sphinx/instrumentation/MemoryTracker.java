@@ -20,8 +20,6 @@ import edu.cmu.sphinx.result.ResultListener;
 import edu.cmu.sphinx.util.props.*;
 
 import java.text.DecimalFormat;
-import java.util.HashMap;
-import java.util.Map;
 
 /** Monitors a recognizer for memory usage */
 public class MemoryTracker
@@ -54,38 +52,6 @@ public class MemoryTracker
     private float maxMemoryUsed;
     private int numMemoryStats;
     private float avgMemoryUsed;
-
-
-    /*
-    * (non-Javadoc)
-    *
-    * @see edu.cmu.sphinx.util.props.Configurable#getConfigurationInfo()
-    */
-    public static Map getConfigurationInfo() {
-        Map info = new HashMap();
-        info.put(new String("PROP_SHOW_SUMMARY_TYPE"), new String("BOOLEAN"));
-        info.put(new String("PROP_SHOW_DETAILS_TYPE"), new String("BOOLEAN"));
-
-        info.put(new String("PROP_RECOGNIZER_TYPE"), new String("COMPONENT"));
-        info.put(new String("PROP_RECOGNIZER_CLASSTYPE"), new String("edu.cmu.sphinx.recognizer.Recognizer"));
-
-        return info;
-    }
-
-
-    /*
-    * (non-Javadoc)
-    *
-    * @see edu.cmu.sphinx.util.props.Configurable#register(java.lang.String,
-    *      edu.cmu.sphinx.util.props.Registry)
-    */
-    public void register(String name, Registry registry)
-            throws PropertyException {
-        this.name = name;
-        registry.register(PROP_RECOGNIZER, PropertyType.COMPONENT);
-        registry.register(PROP_SHOW_SUMMARY, PropertyType.BOOLEAN);
-        registry.register(PROP_SHOW_DETAILS, PropertyType.BOOLEAN);
-    }
 
 
     /*
