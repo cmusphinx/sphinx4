@@ -181,7 +181,7 @@ public class ConfigurationManagerUtils {
      * @param symbol the symbol to strip
      * @return the stripped symbol
      */
-    public static  String stripGlobalSymbol(String symbol) {
+    public static String stripGlobalSymbol(String symbol) {
         Matcher matcher = globalSymbolPattern.matcher(symbol);
         if (matcher.matches()) {
             return matcher.group(1);
@@ -195,7 +195,7 @@ public class ConfigurationManagerUtils {
      * Gets the color for the given component
      *
      * @param ConfigurationManager
-     * @param componentName the name of the component @return the color name for the component
+     * @param componentName        the name of the component @return the color name for the component
      */
     private static String getColor(ConfigurationManager ConfigurationManager, String componentName) {
         try {
@@ -290,9 +290,24 @@ public class ConfigurationManagerUtils {
 
 
     /** Configure the logger */
-    public static void configureLogger(ConfigurationManager ConfigurationManager) {
+    public static void configureLogger(ConfigurationManager cm) {
+
+        // apply theb log level (if defined) for the root logger (because we're using package based logging now
+
+        String logLevelName = cm.getGlobalProperty("logLevel");
+        Level logLevel;
+        if (logLevelName != null)
+            logLevel = Level.parse(logLevelName);
+        else
+            logLevel = Level.WARNING;
+
+
+        Logger rootLogger = Logger.getLogger("");
+        rootLogger.setLevel(logLevel);
+
         LogManager logManager = LogManager.getLogManager();
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
+
         Properties props = new Properties();
         props.setProperty(".edu.cmu.sphinx.level", "FINEST");
         props.setProperty("handlers", "java.util.logging.ConsoleHandler");
@@ -303,29 +318,26 @@ public class ConfigurationManagerUtils {
         try {
             props.store(bos, "");
             bos.close();
-            ByteArrayInputStream bis = new ByteArrayInputStream(bos
-                    .toByteArray());
+            ByteArrayInputStream bis = new ByteArrayInputStream(bos.toByteArray());
             logManager.readConfiguration(bis);
             bis.close();
         } catch (IOException ioe) {
             System.err
                     .println("Can't configure logger, using default configuration");
         }
+
+        String level = cm.getGlobalProperty("logLevel");
+        if (level == null)
+            level = Level.WARNING.getName();
+
         // Now we find the SphinxLogFormatter that the log manager created
         // and configure it.
-        Logger rootLogger = LogManager.getLogManager().getLogger("");
         Handler[] handlers = rootLogger.getHandlers();
         for (Handler handler : handlers) {
             if (handler instanceof ConsoleHandler) {
                 if (handler.getFormatter() instanceof SphinxLogFormatter) {
                     SphinxLogFormatter slf = (SphinxLogFormatter) handler.getFormatter();
-
-                    String level = ConfigurationManager.getGlobalProperties().get("logLevel");
-                    if (level == null) {
-                        level = Level.WARNING.getName();
-                    }
-
-                    slf.setTerse("true".equals(level));
+//                    slf.setTerse("true".equals(level));
                 }
             }
         }
@@ -407,7 +419,6 @@ public class ConfigurationManagerUtils {
     }
 
 
-
     /** Shows the current configuration */
     public static void showConfig(ConfigurationManager cm) {
         System.out.println(" ============ config ============= ");
@@ -417,7 +428,8 @@ public class ConfigurationManagerUtils {
         }
     }
 
-     /**
+
+    /**
      * Show the configuration for the compnent with the given name
      *
      * @param name the component name

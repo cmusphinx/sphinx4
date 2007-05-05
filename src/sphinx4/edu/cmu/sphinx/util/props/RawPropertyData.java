@@ -91,15 +91,17 @@ public class RawPropertyData {
 
 
     /** Returns a copy of this property data instance with all ${}-fields resolved. */
-    public RawPropertyData flatten(Map<String, String> globalProperties) {
+    public RawPropertyData flatten(ConfigurationManager cm) {
         RawPropertyData copyRPD = new RawPropertyData(name, className);
 
         for (String propName : properties.keySet()) {
             Object propVal = properties.get(propName);
-            if (propVal instanceof String)
-                copyRPD.properties.put(propName, getGlobalProperty((String) propVal, globalProperties));
-            else
-                copyRPD.properties.put(propName, properties.get(propName));
+            if (propVal instanceof String) {
+                if (((String) propVal).startsWith("${"))
+                    propVal = cm.getGlobalProperty(ConfigurationManagerUtils.stripGlobalSymbol((String) propVal));
+            }
+
+            copyRPD.properties.put(propName, propVal);
         }
 
         return copyRPD;

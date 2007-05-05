@@ -7,7 +7,6 @@ import java.lang.reflect.Proxy;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -45,14 +44,14 @@ public class PropertySheet {
     }
 
 
-    public PropertySheet(Class<? extends Configurable> confClass, ConfigurationManager ConfigurationManager, RawPropertyData rpd) {
+    public PropertySheet(Class<? extends Configurable> confClass, ConfigurationManager cm, RawPropertyData rpd) {
         ownerClass = confClass;
-        this.cm = ConfigurationManager;
+        this.cm = cm;
 
         processAnnotations(this, confClass);
 
         // now apply all xml properties
-        Map<String, Object> flatProps = rpd.flatten(ConfigurationManager.getGlobalProperties()).getProperties();
+        Map<String, Object> flatProps = rpd.flatten(cm).getProperties();
         rawProps = new HashMap<String, Object>(rpd.getProperties());
 
         for (String propName : rawProps.keySet())
@@ -335,7 +334,7 @@ public class PropertySheet {
     public synchronized Configurable getOwner() throws InstantiationException {
         try {
 
-            if (owner == null){
+            if (owner == null) {
                 owner = ownerClass.newInstance();
                 owner.newProperties(this);
             }
@@ -616,23 +615,17 @@ public class PropertySheet {
 
     /**
      * Returns a logger to use for this configurable component. The logger can be configured with the property:
-     * 'logLevel' - The default logLevel value is define by the global property 'defaultLogLevel' (which defaults to
-     * WARNING).
+     * 'logLevel' - The default logLevel value is defined (within the xml configuration file by the global property
+     * 'defaultLogLevel' (which defaults to WARNING).
+     * <p/>
+     * implementation note: the logger became configured within the constructor of the parenting configuration manager.
      *
      * @return the logger for this component
      * @throws edu.cmu.sphinx.util.props.PropertyException
      *          if an error occurs
      */
     public Logger getLogger() {
-        Logger logger = null;
-        try {
-            logger = Logger.getLogger(getOwner().getClass().getName());
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        }
-//        Level level = getLogLevel();
-        logger.setLevel(Level.FINE);
-        return logger;
+        return Logger.getLogger(ownerClass.getName());
     }
 
 

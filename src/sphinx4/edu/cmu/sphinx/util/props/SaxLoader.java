@@ -112,7 +112,8 @@ public class SaxLoader {
                 if (rpd == null) {
                     // we are not in a component so add this to the global
                     // set of symbols
-                    String symbolName = "${" + name + "}";
+//                    String symbolName = "${" + name + "}"; // why should we warp the global props here
+                    String symbolName = name;
                     globalProperties.put(symbolName, value);
                 } else if (rpd.contains(name)) {
                     throw new SAXParseException("Duplicate property: " + name,

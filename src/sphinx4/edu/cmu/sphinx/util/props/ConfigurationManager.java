@@ -292,20 +292,16 @@ public class ConfigurationManager {
      * @param propertyName The name of the global property
      */
     public String getGlobalProperty(String propertyName) {
-        propertyName = propertyName.startsWith("$") ? propertyName : "${" + propertyName + "}";
+//        propertyName = propertyName.startsWith("$") ? propertyName : "${" + propertyName + "}";
         return globalProperties.get(propertyName);
     }
 
 
     public String getStrippedComponentName(String propertyName) {
         assert propertyName != null;
-        
-        while (propertyName.startsWith("$")) {
-            propertyName = globalProperties.get(propertyName);
-        }
 
-        if (propertyName.startsWith("$"))
-            propertyName = ConfigurationManagerUtils.stripGlobalSymbol(propertyName);
+        while (propertyName.startsWith("$"))
+            propertyName = globalProperties.get(ConfigurationManagerUtils.stripGlobalSymbol(propertyName));
 
         return propertyName;
     }
