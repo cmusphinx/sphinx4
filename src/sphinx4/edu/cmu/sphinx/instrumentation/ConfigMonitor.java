@@ -26,6 +26,7 @@ import java.util.logging.Logger;
 public class ConfigMonitor implements Configurable, Runnable, Monitor {
 
     /** Sphinx property that is used to indicate whether or not this monitor should show the current configuration. */
+    @S4Boolean(defaultValue = false)
     public final static String PROP_SHOW_CONFIG = "showConfig";
 
     /** The default value for PROP_SHOW_CONFIG */

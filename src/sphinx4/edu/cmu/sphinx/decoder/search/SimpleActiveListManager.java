@@ -12,9 +12,14 @@
 
 package edu.cmu.sphinx.decoder.search;
 
-import edu.cmu.sphinx.util.props.*;
+import edu.cmu.sphinx.util.props.PropertyException;
+import edu.cmu.sphinx.util.props.PropertySheet;
+import edu.cmu.sphinx.util.props.S4Boolean;
+import edu.cmu.sphinx.util.props.S4ComponentList;
 
-import java.util.*;
+import java.util.Iterator;
+import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.logging.Logger;
 
 /**
@@ -36,9 +41,8 @@ public class SimpleActiveListManager implements ActiveListManager {
     public static final boolean PROP_CHECK_PRIOR_LISTS_EMPTY_DEFAULT = false;
 
     /** Sphinx property that defines the name of the active list factory to be used by this search manager. */
-    @S4Component(type = ActiveListFactory.class)
-    public final static String PROP_ACTIVE_LIST_FACTORIES =
-            "activeListFactories";
+    @S4ComponentList(type = ActiveListFactory.class)
+    public final static String PROP_ACTIVE_LIST_FACTORIES = "activeListFactories";
 
     // --------------------------------------
     // Configuration data
@@ -59,10 +63,9 @@ public class SimpleActiveListManager implements ActiveListManager {
     */
     public void newProperties(PropertySheet ps) throws PropertyException {
         logger = ps.getLogger();
-        activeListFactories = ps.getComponentList(PROP_ACTIVE_LIST_FACTORIES
-        );
-        checkPriorLists = ps.getBoolean(PROP_CHECK_PRIOR_LISTS_EMPTY
-        );
+
+        activeListFactories = ps.getComponentList(PROP_ACTIVE_LIST_FACTORIES);
+        checkPriorLists = ps.getBoolean(PROP_CHECK_PRIOR_LISTS_EMPTY);
     }
 
 

@@ -12,7 +12,8 @@
 package edu.cmu.sphinx.linguist.language.ngram;
 
 import edu.cmu.sphinx.linguist.WordSequence;
-import edu.cmu.sphinx.util.props.Configurable;
+import edu.cmu.sphinx.linguist.dictionary.Dictionary;
+import edu.cmu.sphinx.util.props.*;
 
 import java.io.IOException;
 import java.util.Set;
@@ -26,14 +27,20 @@ import java.util.logging.Logger;
 public interface LanguageModel extends Configurable {
 
     /** The SphinxProperty specifying the format of the language model. */
+    @S4String(defaultValue = "arpa")
     public final static String PROP_FORMAT = "format";
+
     /** The default value of PROP_FORMAT. */
     public final static String PROP_FORMAT_DEFAULT = "arpa";
+
     /** The Sphinx Property specifying the location of the language model. */
+    @S4String(defaultValue = ".")
     public final static String PROP_LOCATION = "location";
     /** The default value of PROP_LOCATION. */
     public final static String PROP_LOCATION_DEFAULT = ".";
+
     /** The Sphinx Property specifying the unigram weight */
+    @S4Double(defaultValue = 1.0)
     public final static String PROP_UNIGRAM_WEIGHT = "unigramWeight";
     /** The default value for PROP_UNIGRAM_WEIGHT */
     public final static float PROP_UNIGRAM_WEIGHT_DEFAULT = 1.0f;
@@ -44,12 +51,14 @@ public interface LanguageModel extends Configurable {
      * bigram model by setting this property to 2. Note if this property is set to a value greater than the implicit
      * depth, the implicit depth is used. Legal values for this property are 1..N and -1.
      */
+    @S4Integer(defaultValue = -1)
     public final static String PROP_MAX_DEPTH = "maxDepth";
     /** The default value for PROP_MAX_DEPTH. */
     public final static int PROP_MAX_DEPTH_DEFAULT = -1;
 
 
     /** The Sphinx Property specifying the dictionary to use */
+    @S4Component(type = Dictionary.class)
     public final static String PROP_DICTIONARY = "dictionary";
 
 

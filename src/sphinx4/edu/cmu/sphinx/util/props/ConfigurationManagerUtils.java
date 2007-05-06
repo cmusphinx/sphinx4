@@ -345,8 +345,6 @@ public class ConfigurationManagerUtils {
 //                }
 //            }
         }
-
-        System.out.println("test");
     }
 
 

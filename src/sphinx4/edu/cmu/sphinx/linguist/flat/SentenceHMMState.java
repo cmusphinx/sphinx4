@@ -650,7 +650,7 @@ public abstract class SentenceHMMState implements Serializable, SearchState {
      * @param start the state to start the search from
      * @return the set of collected state
      */
-    static public Set collectStates(SentenceHMMState start) {
+    public static Set collectStates(SentenceHMMState start) {
         Set visitedStates = new HashSet();
         List queue = new LinkedList();
 

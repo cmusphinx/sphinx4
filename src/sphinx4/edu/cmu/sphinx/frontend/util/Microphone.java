@@ -179,37 +179,21 @@ public class Microphone extends BaseDataProcessor {
 
         sampleRate = ps.getInt(PROP_SAMPLE_RATE);
 
-        int sampleSizeInBits = ps.getInt
-                (PROP_BITS_PER_SAMPLE);
+        int sampleSizeInBits = ps.getInt(PROP_BITS_PER_SAMPLE);
 
         int channels = ps.getInt(PROP_CHANNELS);
-
-        boolean bigEndian =
-                ps.getBoolean(PROP_BIG_ENDIAN);
-
+        boolean bigEndian = ps.getBoolean(PROP_BIG_ENDIAN);
         signed = ps.getBoolean(PROP_SIGNED);
 
         desiredFormat = new AudioFormat
                 ((float) sampleRate, sampleSizeInBits, channels, signed, bigEndian);
 
-        closeBetweenUtterances = ps.getBoolean
-                (PROP_CLOSE_BETWEEN_UTTERANCES
-                );
-
-        msecPerRead = ps.getInt(PROP_MSEC_PER_READ
-        );
-
-        keepDataReference = ps.getBoolean
-                (PROP_KEEP_LAST_AUDIO);
-
-        stereoToMono = ps.getString
-                (PROP_STEREO_TO_MONO);
-
-        selectedChannel = ps.getInt
-                (PROP_SELECT_CHANNEL);
-
-        selectedMixerIndex = ps.getString
-                (PROP_SELECT_MIXER);
+        closeBetweenUtterances = ps.getBoolean(PROP_CLOSE_BETWEEN_UTTERANCES);
+        msecPerRead = ps.getInt(PROP_MSEC_PER_READ);
+        keepDataReference = ps.getBoolean(PROP_KEEP_LAST_AUDIO);
+        stereoToMono = ps.getString(PROP_STEREO_TO_MONO);
+        selectedChannel = ps.getInt(PROP_SELECT_CHANNEL);
+        selectedMixerIndex = ps.getString(PROP_SELECT_MIXER);
     }
 
 
@@ -671,7 +655,6 @@ public class Microphone extends BaseDataProcessor {
      * @throws DataProcessingException if there is a data processing error
      */
     public Data getData() throws DataProcessingException {
-
         getTimer().start();
 
         Data output = null;

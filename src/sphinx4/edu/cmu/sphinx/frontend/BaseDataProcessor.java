@@ -34,6 +34,7 @@ public abstract class BaseDataProcessor implements DataProcessor {
     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
     */
     public void newProperties(PropertySheet ps) throws PropertyException {
+        name = ps.getInstanceName();
     }
 
 

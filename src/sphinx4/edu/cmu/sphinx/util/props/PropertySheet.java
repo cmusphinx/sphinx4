@@ -79,16 +79,17 @@ public class PropertySheet {
 
 
     /** Returns the property names <code>name</code> which is still wrapped into the annotation instance. */
-    S4PropWrapper getProperty(String name, Class propertyClass) throws PropertyException {
+    public S4PropWrapper getProperty(String name, Class propertyClass) throws PropertyException {
         if (!propValues.containsKey(name))
-            throw new PropertyException(owner, name, "Unknown property");
+            throw new PropertyException(owner, name,
+                    "Unknown property '" + name + "' ! Make sure that you've annotated it.");
 
         S4PropWrapper s4PropWrapper = registeredProperties.get(name);
 
         try {
             propertyClass.cast(s4PropWrapper.getAnnotation());
         } catch (Exception e) {
-            throw new PropertyException(owner, name, name + " is not a registered of type " + owner.getClass().getName());
+            throw new PropertyException(owner, name, name + " is not an annotated sphinx property of '" + owner.getClass().getName() + "' !");
         }
 
         return s4PropWrapper;
@@ -328,6 +329,11 @@ public class PropertySheet {
         }
 
         return (List) propValues.get(name);
+    }
+
+
+    public String getInstanceName() {
+        return instanceName;
     }
 
 
@@ -686,9 +692,9 @@ public class PropertySheet {
                 for (Annotation superAnnotation : superAnnotations) {
                     if (superAnnotation instanceof S4Property) {
                         int fieldModifiers = field.getModifiers();
-                        assert Modifier.isStatic(fieldModifiers);
-                        assert Modifier.isPublic(fieldModifiers);
-                        assert field.getType().equals(String.class);
+                        assert Modifier.isStatic(fieldModifiers) : "property fields are assumed to be static";
+                        assert Modifier.isPublic(fieldModifiers) : "property fields are assumed to be public";
+                        assert field.getType().equals(String.class) : "properties fields are assumed to be instances of java.lang.String";
 
                         try {
                             String propertyName = (String) field.get(null);
