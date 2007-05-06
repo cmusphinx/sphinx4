@@ -61,7 +61,7 @@ public class ConcatAudioFileDataSource extends AudioFileDataSource implements Re
 
 
     public void setBatchFile(File batchFile) {
-        assert batchFile.isFile();
+        assert batchFile.isFile() : "given batch file is not a file";
 
         setBatchUrls(readDriver(batchFile.getAbsolutePath()));
     }
