@@ -1,0 +1,84 @@
+set exptname = SPHINX3
+
+# Set name of base directory. It tries to find the base dir relative to
+# the working dir, so we have to add "/net/machine", but be careful to
+# not add it when the working dir already has it.
+set base_dir = `pwd | sed -e 's+/tmp_mnt++' -e 's+^/.automount+/net+' -e 's+root/usr+usr+' | sed -e 's+/SPHINX3/+/SPHINX3@/+' | awk -F@ '{print $1}'`
+echo $base_dir
+set hostn = `hostname | awk -F. '{print $1}'`
+echo $base_dir | grep -q '/net/'
+if ($status != 0) set base_dir = "/net/$hostn/$base_dir"
+echo $base_dir
+# If the above fails, you can set the name of the base dir by uncommenting
+# the line at the end of this block of comments.
+# ENTER THE FULL PATH TO THE SPHINX3 DIRECTORY HERE : FOR EXAMPLE
+# if this file is in /net/alf27/usr2/xxxx/lab6/SPHINX3/c_scripts
+# then enter /net/alf27/usr2/xxxx/lab6/SPHINX3 in the dotted space below
+# set base_dir = ...
+
+set mach = `$base_dir/util/machine_type.csh`
+set bindir = $base_dir/s3trainer/bin.${mach}
+
+# Define the following variable according to the
+# queueing mechanism you're using. For LSF (currently, the
+# alphas) use simply "bsub" (or the full path if bsub is not
+# on your path. For pbs (linux) use the perl script in the
+# util directory
+#set QSUB = bsub
+#set QDEL = bkill
+set QSUB = $base_dir/util/qsub.pl
+set QDEL = /usr/local/PBS/bin/qdel
+
+# dummy file to make sure jobs are still alive when creating dependencies
+set JobSubmitted = JobsSubmitted
+
+# Input to the trainer.
+set listoffiles    = $base_dir/lists/RM.1600.ctl
+set transcriptfile = $base_dir/lists/RM.1600.trans
+set dictionary     = $base_dir/lists/RM.merged.dict
+set fillerdict     = $base_dir/lists/filler.dict
+set phonefile      = $base_dir/lists/RM.phonelist
+
+
+# Preprocessing
+set featfiles_dir = $base_dir/feature_files
+set featfile_extension = mfc
+set vector_length = 13
+
+
+#HMM definition
+set statesperhmm = 3
+set gaussiansperstate = 8
+set feature = 1s_c_d_dd
+set type = .cont.
+set skipstate = no
+set n_tied_states = 1000
+
+
+# Input to the decoder
+#set ctlfn     = $base_dir/decoding/rmtest.ctl
+#set testref   = $base_dir/decoding/RM.test.sents
+set ctlfn     = $base_dir/decoding/rmtest.ctl.random600
+set testref   = $base_dir/decoding/RM.test.sents.random600
+set cepdir    = $base_dir/feature_files
+set lmfile    = $base_dir/decoding/RM.bigram.arpabo.Z.DMP
+set dictfn    = $base_dir/lists/RM.merged.dict
+set fdictfn   = $base_dir/lists/filler.dict
+
+#Queue definitions
+set npart = 10
+set npart_untied = 10
+set qtype = normal 
+
+
+#Training 
+set agc = none
+set cmn = current
+set varnorm = no
+set convergence_ratio = 0.02
+set maxiter = 15
+
+
+#Decoding
+set langwt = 9.5
+
