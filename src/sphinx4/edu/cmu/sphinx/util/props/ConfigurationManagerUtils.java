@@ -33,8 +33,7 @@ public class ConfigurationManagerUtils {
     public static void showConfigAsHTML(ConfigurationManager ConfigurationManager, String path) throws IOException {
         PrintStream out = new PrintStream(new FileOutputStream(path));
         dumpHeader(out);
-        String[] allNames = ConfigurationManager.getInstanceNames(Object.class);
-        for (String componentName : allNames) {
+        for (String componentName : ConfigurationManager.getInstanceNames(Object.class)) {
             dumpComponentAsHTML(out, componentName, ConfigurationManager.getPropertySheet(componentName));
         }
         dumpFooter(out);
@@ -148,8 +147,7 @@ public class ConfigurationManagerUtils {
     public static void showConfigAsGDL(ConfigurationManager ConfigurationManager, String path) throws IOException {
         PrintStream out = new PrintStream(new FileOutputStream(path));
         dumpGDLHeader(out);
-        String[] allNames = ConfigurationManager.getInstanceNames(Object.class);
-        for (String componentName : allNames) {
+        for (String componentName : ConfigurationManager.getInstanceNames(Object.class)) {
             dumpComponentAsGDL(ConfigurationManager, out, componentName);
         }
         dumpGDLFooter(out);
@@ -372,7 +370,7 @@ public class ConfigurationManagerUtils {
             sb.append("\n\t<property name=\"" + propName + "\" value=\"" + propVal + "\"/>");
         }
 
-        List<String> allInstances = cm.getComponentNames();
+        Collection<String> allInstances = cm.getComponentNames();
         for (String instanceName : allInstances)
             sb.append("\n\n").append(propSheet2XML(instanceName, cm.getPropertySheet(instanceName)));
 
@@ -426,8 +424,7 @@ public class ConfigurationManagerUtils {
     /** Shows the current configuration */
     public static void showConfig(ConfigurationManager cm) {
         System.out.println(" ============ config ============= ");
-        String[] allNames = cm.getInstanceNames(Object.class);
-        for (String allName : allNames) {
+        for (String allName : cm.getInstanceNames(Object.class)) {
             showConfig(cm, allName);
         }
     }
@@ -441,7 +438,7 @@ public class ConfigurationManagerUtils {
     public static void showConfig(ConfigurationManager cm, String name) {
 //        Symbol symbol = cm.getsymbolTable.get(name);
 
-        if (!Arrays.asList(cm.getComponentNames()).contains(name)) {
+        if (!cm.getComponentNames().contains(name)) {
             System.out.println("No component: " + name);
             return;
         }

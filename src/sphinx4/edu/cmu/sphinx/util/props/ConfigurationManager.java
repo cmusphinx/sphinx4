@@ -84,8 +84,8 @@ public class ConfigurationManager {
      * @param type the desired type of instance
      * @return the set of all instances
      */
-    public String[] getInstanceNames(Class<? extends Object> type) {
-        return symbolTable.keySet().toArray(new String[]{});
+    public Collection<String> getInstanceNames(Class<? extends Object> type) {
+        return symbolTable.keySet();
     }
 
 
@@ -95,7 +95,7 @@ public class ConfigurationManager {
      *
      * @return all component named registered to this instance of <code>ConfigurationManager</code>
      */
-    public List<String> getComponentNames() {
+    public Collection<String> getComponentNames() {
         return Arrays.asList(rawPropertyMap.keySet().toArray(new String[]{}));
     }
 

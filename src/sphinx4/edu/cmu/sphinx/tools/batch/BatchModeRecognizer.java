@@ -246,10 +246,8 @@ public class BatchModeRecognizer implements Configurable {
                 if (args.length != 1) {
                     ci.putResponse("Usage: ls");
                 } else {
-                    String[] names = cm.getInstanceNames(Configurable.class);
-                    for (int i = 0; i < names.length; i++) {
-                        ci.putResponse(names[i]);
-                    }
+                    for (String name : cm.getInstanceNames(Configurable.class))
+                        ci.putResponse(name);
                 }
                 return "";
             }
