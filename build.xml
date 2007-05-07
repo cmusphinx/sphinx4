@@ -46,6 +46,9 @@
               value="TIDIGITS_8gau_13dCep_16k_40mel_130Hz_6800Hz"/>
     <property name="tidigits_data_dir" value="models/acoustic/tidigits"/>
 
+    <property name="rm1_name" value="RM1_8gau_13dCep_16k_40mel_130Hz_6800Hz"/>
+    <property name="rm1_data_dir" value="models/acoustic/rm1"/>
+
 
     <!-- ********************************************************** -->
     <!-- *                                                        * -->
@@ -397,6 +400,9 @@
         <antcall target="create_my_model_classes">
             <param name="my_model_name" value="${tidigits_name}"/>
         </antcall>
+        <antcall target="create_my_model_classes">
+            <param name="my_model_name" value="${rm1_name}"/>
+        </antcall>
     </target>
 
     <target name="delete_all_model_classes"
@@ -409,6 +415,9 @@
         </antcall>
         <antcall target="delete_my_model_classes">
             <param name="my_model_name" value="${tidigits_name}"/>
+        </antcall>
+        <antcall target="delete_my_model_classes">
+            <param name="my_model_name" value="${rm1_name}"/>
         </antcall>
     </target>
 
@@ -494,6 +503,10 @@ import edu.cmu.sphinx.linguist.acoustic.tiedstate.*;
         <antcall target="create_my_model">
             <param name="my_model_data_dir" value="${tidigits_data_dir}"/>
             <param name="my_model_name" value="${tidigits_name}"/>
+        </antcall>
+        <antcall target="create_my_model">
+            <param name="my_model_data_dir" value="${rm1_data_dir}"/>
+            <param name="my_model_name" value="${rm1_name}"/>
         </antcall>
     </target>
 
