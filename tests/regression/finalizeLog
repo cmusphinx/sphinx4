@@ -1,7 +1,7 @@
 #!/bin/sh
-# Copyright 1999-2002 Carnegie Mellon University.  
-# Portions Copyright 2002 Sun Microsystems, Inc.  
-# Portions Copyright 2002 Mitsubishi ElectricResearch Laboratories.
+# Copyright 1999-2007 Carnegie Mellon University.  
+# Portions Copyright 2002-2007 Sun Microsystems, Inc.  
+# Portions Copyright 2002-2007 Mitsubishi ElectricResearch Laboratories.
 # All Rights Reserved.  Use is subject to license terms.
 # 
 # See the file "license.terms" for information on usage and
@@ -12,9 +12,11 @@
 # back into source control
 
 
-logBase=sphinx4/tests/regression/regression.log
+logBase=regressionResults/regression.log
 interimLog=interim.log
 
 scvs checkout $logBase
 cat $interimLog >> $logBase
 scvs commit -m "regression_test" $logBase
+sscp $logBase
+sshh /home/groups/c/cm/cmusphinx/cgi-bin/mysql_update_table.pl `basename $logBase`

@@ -22,7 +22,7 @@
 # Usage: updateLog < text
 
 
-logBase=sphinx4/tests/regression/regression.log
+logBase=regressionResults/regression.log
 interimLog=interim.log
 
 cat >> $interimLog
