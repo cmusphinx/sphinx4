@@ -16,7 +16,10 @@ import edu.cmu.sphinx.util.ReferenceSource;
 import edu.cmu.sphinx.util.props.*;
 
 import java.io.*;
-import java.util.*;
+import java.util.Enumeration;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Random;
 
 
 /**
@@ -110,6 +113,7 @@ public class ConcatFileDataSource extends StreamDataSource
     public static final String PROP_SILENCE_FILE_DEFAULT = null;
 
     /** The SphinxProperty that specifies whether to add random silence. */
+    @S4Boolean(defaultValue = false)
     public static final String PROP_ADD_RANDOM_SILENCE = "addRandomSilence";
 
     /** The default value for PROP_ADD_RANDOM_SILENCE. */
