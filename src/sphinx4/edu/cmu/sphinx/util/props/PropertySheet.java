@@ -24,8 +24,8 @@ public class PropertySheet {
         INT, DOUBLE, BOOL, COMP, STRING, COMPLIST
     }
 
-    Map<String, S4PropWrapper> registeredProperties = new HashMap<String, S4PropWrapper>();
-    Map<String, Object> propValues = new HashMap<String, Object>();
+    private Map<String, S4PropWrapper> registeredProperties = new HashMap<String, S4PropWrapper>();
+    private Map<String, Object> propValues = new HashMap<String, Object>();
 
     /**
      * Maps the names of the component properties to their (possibly unresolved) values.
@@ -69,7 +69,7 @@ public class PropertySheet {
      * @param propName The name of the property to be registered.
      * @param property The property annoation masked by a proxy.
      */
-    public void registerProperty(String propName, S4PropWrapper property) {
+    private void registerProperty(String propName, S4PropWrapper property) {
         assert property != null && propName != null;
 
         registeredProperties.put(propName, property);
@@ -240,13 +240,10 @@ public class PropertySheet {
                     if (ps != null)
                         configurable = ps.getOwner();
                 }
-//                    configurable = cm.lookup((String) propValues.get(name));
 
                 if (configurable != null && !expectedType.isInstance(configurable))
                     throw new PropertyException(owner, name, "mismatch between annoation and component type");
 
-//            assert configurable != null;
-                // instead of assserting null we'll try instead to instantiate the default class if available
                 if (configurable == null) {
                     Class<? extends Configurable> defClass;
 
@@ -315,8 +312,6 @@ public class PropertySheet {
 
             for (Object componentName : components)
                 try {
-                    // resolve the component name
-
                     Configurable configurable = cm.lookup((String) componentName);
                     assert configurable != null;
                     list.add(configurable);
@@ -325,7 +320,6 @@ public class PropertySheet {
                 }
 
             propValues.put(name, list);
-//                propValues.put(name, new ArrayList<Configurable>());
         }
 
         return (List) propValues.get(name);
@@ -368,30 +362,6 @@ public class PropertySheet {
     public Class getConfigurableClass() {
         return ownerClass;
     }
-
-//    /**
-//     * Gets a resource associated with the given parameter name
-//     *
-//     * @param name the parameter name
-//     * @return the resource associated with the name or NULL if it doesn't exist.
-//     * @throws edu.cmu.sphinx.util.props.PropertyException
-//     *          if the resource cannot be found
-//     */
-//    public URL getResource(String name) {
-//        try {
-//            return new URL(getString(name));
-//        } catch (MalformedURLException e) {
-//            e.printStackTrace();
-//        } catch (PropertyException e) {
-//            e.printStackTrace();
-//        }
-//
-//        return null;
-//    }
-
-    /* (non-Javadoc)
-    * @see edu.cmu.sphinx.util.props.PropertySheet#getResource(java.lang.String)
-    */
 
 
     public URL getResource(String name) throws PropertyException {
@@ -684,6 +654,32 @@ public class PropertySheet {
 
         // maybe we could test a little bit more here. suggestions?
         return true;
+    }
+
+
+    /** PropertySheet.setter-methods should be used instead. */
+    @Deprecated
+    public static void setProperty(String componentName, String propName, String propValue, ConfigurationManager cm) {
+
+        PropertySheet ps = cm.getPropertySheet(componentName);
+        try {
+            Proxy wrapper = ps.getProperty(propName, Object.class).getAnnotation();
+            if (wrapper instanceof S4Component) {
+                ps.setComponent(propName, propValue, cm.lookup(propValue));
+            } else if (wrapper instanceof S4Boolean)
+                ps.setBoolean(propName, Boolean.valueOf(propValue));
+            else if (wrapper instanceof S4Integer)
+                ps.setInt(propName, Integer.valueOf(propValue));
+            else if (wrapper instanceof S4Double)
+                ps.setDouble(propName, Double.valueOf(propValue));
+            else if (wrapper instanceof S4ComponentList)
+                throw new RuntimeException("to set component lists please use PS.setComponentList()");
+//                   ps.setComponentList(propName, null, cm.lookup(propValue));
+        } catch (PropertyException e) {
+            e.printStackTrace();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        }
     }
 
 

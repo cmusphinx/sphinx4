@@ -35,7 +35,7 @@ public class ConfigurationManager {
         SaxLoader saxLoader = new SaxLoader(url, globalProperties);
         rawPropertyMap = saxLoader.load();
 
-        applySystemProperties(rawPropertyMap, globalProperties);
+        ConfigurationManagerUtils.applySystemProperties(rawPropertyMap, globalProperties);
         ConfigurationManagerUtils.configureLogger(this);
 
         // we can't config the configuration manager with itself so we
@@ -190,84 +190,6 @@ public class ConfigurationManager {
     }
 
 
-    /**
-     * Sets the property of the given component to the given value. Component must be an existing, instantiated
-     * component
-     *
-     * @param instanceName an existing component
-     * @param prop         the property name
-     * @param value        the new value.
-     */
-    public void setProperty(String instanceName, String prop, String value) throws PropertyException {
-        PropertySheet ps = symbolTable.get(instanceName);
-        if (ps != null) {
-            Configurable c = null;
-            try {
-                c = ps.getOwner();
-            } catch (InstantiationException e) {
-                e.printStackTrace();
-            }
-
-            ps.setRaw(prop, value);
-
-            assert c != null;
-            c.newProperties(ps);
-
-            informListeners(instanceName);
-        } else {
-            throw new PropertyException(null, prop, "Can't find component " + instanceName);
-        }
-    }
-
-
-    /**
-     * Applies the system properties to the raw property map. System properties should be of the form
-     * compName[paramName]=paramValue
-     * <p/>
-     * List types cannot currently be set from system properties.
-     *
-     * @param rawMap the map of raw property values
-     * @param global global properies
-     * @throws edu.cmu.sphinx.util.props.PropertyException
-     *          if an attempt is made to set a parameter for an unknown component.
-     */
-    private void applySystemProperties(Map<String, RawPropertyData> rawMap, Map<String, String> global)
-            throws PropertyException {
-        Properties props = System.getProperties();
-        for (Enumeration e = props.keys(); e.hasMoreElements();) {
-            String param = (String) e.nextElement();
-            String value = props.getProperty(param);
-
-            // search for params of the form component[param]=value
-            // thise go in the property sheet for the component
-            int lb = param.indexOf('[');
-            int rb = param.indexOf(']');
-
-            if (lb > 0 && rb > lb) {
-                String compName = param.substring(0, lb);
-                String paramName = param.substring(lb + 1, rb);
-                RawPropertyData rpd = rawMap.get(compName);
-                if (rpd != null) {
-                    rpd.add(paramName, value);
-                } else {
-                    throw new PropertyException(null, param,
-                            "System property attempting to set parameter "
-                                    + " for unknown component " + compName
-                                    + " (" + param + ")");
-                }
-            }
-
-            // look for params of the form foo=fum
-            // these go in the global map
-
-            else if (param.indexOf('.') == -1) {
-                String symbolName = "${" + param + "}";
-                global.put(symbolName, value);
-            }
-        }
-    }
-
-
     /** Returns a copy of the map of global properties set for this configuration manager. */
     public Map<String, String> getGlobalProperties() {
         return Collections.unmodifiableMap(globalProperties);
@@ -395,17 +317,12 @@ public class ConfigurationManager {
         for (String confName : defaultProps.keySet()) {
             Object property = defaultProps.get(confName);
 
-//                if (property instanceof Configurable) {
-//                    RawPropertyData dummyRPD = new RawPropertyData(confName, property.getClass().getName());
-//                    cm.symbolTable.put(confName, new PropertySheet((Configurable) property, cm, dummyRPD));
-//                } else
             if (property instanceof Class)
                 property = ((Class) property).getName();
 
             rpd.getProperties().put(confName, property);
         }
 
-//            Configurable configurable = targetClass.newInstance();
         return new PropertySheet(targetClass, componentName, cm, rpd);
     }
 }

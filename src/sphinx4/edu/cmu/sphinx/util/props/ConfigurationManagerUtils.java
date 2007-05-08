@@ -40,8 +40,9 @@ public class ConfigurationManagerUtils {
         }
     }
 
-    public static void editConfig(ConfigurationManager ConfigurationManager, String name) {
-        PropertySheet ps = ConfigurationManager.getPropertySheet(name);
+
+    public static void editConfig(ConfigurationManager cm, String name) {
+        PropertySheet ps = cm.getPropertySheet(name);
         boolean done;
 
         if (ps == null) {
@@ -75,13 +76,9 @@ public class ConfigurationManagerUtils {
                     } else if (in.equals(".")) {
                         return;
                     } else {
-                        try {
-                            ConfigurationManager.setProperty(name, propertyName, in);
-                            done = true;
-                        } catch (PropertyException pe) {
-                            System.out.println("error setting value " + pe);
-                            svalue = in;
-                        }
+
+                        cm.getPropertySheet(name).setRaw(propertyName, in);
+                        done = true;
                     }
                 }
             } catch (IOException ioe) {
@@ -272,7 +269,7 @@ public class ConfigurationManagerUtils {
 
     public static boolean isImplementingInterface(Class aClass, Class interfaceClass) {
         Class<?> superClass = aClass.getSuperclass();
-        if(superClass != null && isImplementingInterface(superClass, interfaceClass))
+        if (superClass != null && isImplementingInterface(superClass, interfaceClass))
             return true;
 
         for (Class curInterface : aClass.getInterfaces()) {
@@ -281,5 +278,52 @@ public class ConfigurationManagerUtils {
         }
 
         return false;
+    }
+
+
+    /**
+     * Applies the system properties to the raw property map. System properties should be of the form
+     * compName[paramName]=paramValue
+     * <p/>
+     * List types cannot currently be set from system properties.
+     *
+     * @param rawMap the map of raw property values
+     * @param global global properies
+     * @throws PropertyException if an attempt is made to set a parameter for an unknown component.
+     */
+    static void applySystemProperties(Map<String, RawPropertyData> rawMap, Map<String, String> global)
+            throws PropertyException {
+        Properties props = System.getProperties();
+        for (Enumeration e = props.keys(); e.hasMoreElements();) {
+            String param = (String) e.nextElement();
+            String value = props.getProperty(param);
+
+            // search for params of the form component[param]=value
+            // thise go in the property sheet for the component
+            int lb = param.indexOf('[');
+            int rb = param.indexOf(']');
+
+            if (lb > 0 && rb > lb) {
+                String compName = param.substring(0, lb);
+                String paramName = param.substring(lb + 1, rb);
+                RawPropertyData rpd = rawMap.get(compName);
+                if (rpd != null) {
+                    rpd.add(paramName, value);
+                } else {
+                    throw new PropertyException(null, param,
+                            "System property attempting to set parameter "
+                                    + " for unknown component " + compName
+                                    + " (" + param + ")");
+                }
+            }
+
+            // look for params of the form foo=fum
+            // these go in the global map
+
+            else if (param.indexOf('.') == -1) {
+                String symbolName = "${" + param + "}";
+                global.put(symbolName, value);
+            }
+        }
     }
 }
