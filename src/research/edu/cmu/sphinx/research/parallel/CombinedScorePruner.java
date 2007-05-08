@@ -15,15 +15,6 @@ package edu.cmu.sphinx.research.parallel;
 
 import edu.cmu.sphinx.decoder.search.Token;
 
-import edu.cmu.sphinx.util.LogMath;
-import edu.cmu.sphinx.util.SphinxProperties;
-
-import edu.cmu.sphinx.util.props.Configurable;
-import edu.cmu.sphinx.util.props.PropertyException;
-import edu.cmu.sphinx.util.props.PropertySheet;
-import edu.cmu.sphinx.util.props.PropertyType;
-import edu.cmu.sphinx.util.props.Registry;
-
 import java.util.Comparator;
 
 /**

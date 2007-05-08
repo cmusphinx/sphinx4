@@ -12,7 +12,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * DOCUMENT ME!
+ * Some static utitity methods which ease the handling of system configurations.
  *
  * @author Holger Brandl
  */
@@ -20,160 +20,9 @@ public class ConfigurationManagerUtils {
 
     // this pattern matches strings of the form '${word}'
     private static Pattern globalSymbolPattern = Pattern.compile("\\$\\{(\\w+)\\}");
+
     /** A common property (used by all components) that sets the tersness of the log output */
     public final static String PROP_COMMON_LOG_TERSE = "logTerse";
-
-
-    /**
-     * Dumps the config as a set of HTML tables
-     *
-     * @param path where to output the HTML
-     * @throws java.io.IOException if an error occurs
-     */
-    public static void showConfigAsHTML(ConfigurationManager ConfigurationManager, String path) throws IOException {
-        PrintStream out = new PrintStream(new FileOutputStream(path));
-        dumpHeader(out);
-        for (String componentName : ConfigurationManager.getInstanceNames(Object.class)) {
-            dumpComponentAsHTML(out, componentName, ConfigurationManager.getPropertySheet(componentName));
-        }
-        dumpFooter(out);
-        out.close();
-    }
-
-
-    /**
-     * Dumps the footer for HTML output
-     *
-     * @param out the output stream
-     */
-    private static void dumpFooter(PrintStream out) {
-        out.println("</body>");
-        out.println("</html>");
-    }
-
-
-    /**
-     * Dumps the header for HTML output
-     *
-     * @param out the output stream
-     */
-    private static void dumpHeader(PrintStream out) {
-        out.println("<html><head>");
-        out.println("    <title> Sphinx-4 Configuration</title");
-        out.println("</head>");
-        out.println("<body>");
-    }
-
-
-    /**
-     * Dumps the given component as HTML to the given stream
-     *
-     * @param out  where to dump the HTML
-     * @param name the name of the component to dump
-     */
-    public static void dumpComponentAsHTML(PrintStream out, String name, PropertySheet properties) {
-        out.println("<table border=1>");
-        //        out.println("<table border=1 width=\"%80\">");
-        out.print("    <tr><th bgcolor=\"#CCCCFF\" colspan=2>");
-        //       out.print("<a href="")
-        out.print(name);
-        out.print("</a>");
-        out.println("</td></tr>");
-
-        out.println("    <tr><th bgcolor=\"#CCCCFF\">Property</th><th bgcolor=\"#CCCCFF\"> Value</th></tr>");
-        Collection<String> propertyNames = properties.getRegisteredProperties();
-
-        for (String propertyName : propertyNames) {
-            out.print("    <tr><th align=\"leftt\">" + propertyName + "</th>");
-            Object obj;
-            obj = properties.getRaw(propertyName);
-            if (obj instanceof String) {
-                out.println("<td>" + obj + "</td></tr>");
-            } else if (obj instanceof List) {
-                List l = (List) obj;
-                out.println("    <td><ul>");
-                for (Object listElement : l) {
-                    out.println("        <li>" + listElement + "</li>");
-                }
-                out.println("    </ul></td>");
-            } else {
-                out.println("<td>DEFAULT</td></tr>");
-            }
-        }
-        out.println("</table><br>");
-    }
-
-
-    /**
-     * Dumps the given component as GDL to the given stream
-     *
-     * @param out  where to dump the GDL
-     * @param name the name of the component to dump
-     */
-    public static void dumpComponentAsGDL(ConfigurationManager ConfigurationManager, PrintStream out, String name) {
-
-        out.println("node: {title: \"" + name + "\" color: " + getColor(ConfigurationManager, name)
-                + "}");
-
-        PropertySheet properties = ConfigurationManager.getPropertySheet(name);
-        Collection<String> propertyNames = properties.getRegisteredProperties();
-
-        for (String propertyName : propertyNames) {
-            PropertyType type = null; //todo fixme
-//            PropertyType type = registry.lookup(propertyName);
-            Object val = properties.getRaw(propertyName);
-            if (val != null) {
-                if (type == PropertyType.COMPONENT) {
-                    out.println("edge: {source: \"" + name
-                            + "\" target: \"" + val + "\"}");
-                } else if (type == PropertyType.COMPONENT_LIST) {
-                    List list = (List) val;
-                    for (Object listElement : list) {
-                        out.println("edge: {source: \"" + name
-                                + "\" target: \"" + listElement + "\"}");
-                    }
-                }
-            }
-        }
-    }
-
-
-    /**
-     * Dumps the config as a GDL plot
-     *
-     * @param path where to output the GDL
-     * @throws java.io.IOException if an error occurs
-     */
-    public static void showConfigAsGDL(ConfigurationManager ConfigurationManager, String path) throws IOException {
-        PrintStream out = new PrintStream(new FileOutputStream(path));
-        dumpGDLHeader(out);
-        for (String componentName : ConfigurationManager.getInstanceNames(Object.class)) {
-            dumpComponentAsGDL(ConfigurationManager, out, componentName);
-        }
-        dumpGDLFooter(out);
-        out.close();
-    }
-
-
-    /**
-     * Outputs the GDL header
-     *
-     * @param out the output stream
-     */
-    private static void dumpGDLHeader(PrintStream out) {
-        out.println(" graph: {title: \"unix evolution\" ");
-        out.println("         layoutalgorithm: tree");
-        out.println("          scaling        : 2.0");
-        out.println("          colorentry 42  : 152 222 255");
-        out.println("     node.shape     : ellipse");
-        out.println("      node.color     : 42 ");
-        out.println("node.height    : 32  ");
-        out.println("node.fontname  : \"helvB08\"");
-        out.println("edge.color     : darkred");
-        out.println("edge.arrowsize :  6    ");
-        out.println("node.textcolor : darkblue ");
-        out.println("splines        : yes");
-    }
 
 
     /**
@@ -190,53 +39,6 @@ public class ConfigurationManagerUtils {
             return symbol;
         }
     }
-
-
-    /**
-     * Gets the color for the given component
-     *
-     * @param ConfigurationManager
-     * @param componentName        the name of the component @return the color name for the component
-     */
-    private static String getColor(ConfigurationManager ConfigurationManager, String componentName) {
-        try {
-            Configurable c = ConfigurationManager.lookup(componentName);
-            Class cls = c.getClass();
-            if (cls.getName().indexOf(".recognizer") > 1) {
-                return "cyan";
-            } else if (cls.getName().indexOf(".tools") > 1) {
-                return "darkcyan";
-            } else if (cls.getName().indexOf(".decoder") > 1) {
-                return "green";
-            } else if (cls.getName().indexOf(".frontend") > 1) {
-                return "orange";
-            } else if (cls.getName().indexOf(".acoustic") > 1) {
-                return "turquoise";
-            } else if (cls.getName().indexOf(".linguist") > 1) {
-                return "lightblue";
-            } else if (cls.getName().indexOf(".instrumentation") > 1) {
-                return "lightgrey";
-            } else if (cls.getName().indexOf(".util") > 1) {
-                return "lightgrey";
-            }
-        } catch (InstantiationException e) {
-            return "black";
-        } catch (PropertyException e) {
-            return "black";
-        }
-        return "darkgrey";
-    }
-
-
-    /**
-     * Dumps the footer for GDL output
-     *
-     * @param out the output stream
-     */
-    private static void dumpGDLFooter(PrintStream out) {
-        out.println("}");
-    }
-
 
     public static void editConfig(ConfigurationManager ConfigurationManager, String name) {
         PropertySheet ps = ConfigurationManager.getPropertySheet(name);
@@ -424,7 +226,7 @@ public class ConfigurationManagerUtils {
     /** Shows the current configuration */
     public static void showConfig(ConfigurationManager cm) {
         System.out.println(" ============ config ============= ");
-        for (String allName : cm.getInstanceNames(Object.class)) {
+        for (String allName : cm.getInstanceNames(Configurable.class)) {
             showConfig(cm, allName);
         }
     }
@@ -465,5 +267,19 @@ public class ConfigurationManagerUtils {
                 System.out.println("[DEFAULT]");
             }
         }
+    }
+
+
+    public static boolean isImplementingInterface(Class aClass, Class interfaceClass) {
+        Class<?> superClass = aClass.getSuperclass();
+        if(superClass != null && isImplementingInterface(superClass, interfaceClass))
+            return true;
+
+        for (Class curInterface : aClass.getInterfaces()) {
+            if (curInterface.equals(interfaceClass) || isImplementingInterface(curInterface, interfaceClass))
+                return true;
+        }
+
+        return false;
     }
 }

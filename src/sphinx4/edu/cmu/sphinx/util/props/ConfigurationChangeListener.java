@@ -10,12 +10,24 @@ package edu.cmu.sphinx.util.props;
 public interface ConfigurationChangeListener {
 
     /**
-     * Called if a configurable with name <code>configurableName</code> was changed (which can be a creation, deletion
-     * or property change).
+     * Called if the configuration of a registered compoenent named <code>configurableName</code> was changed.
      *
      * @param configurableName The name of the changed configurable.
+     * @param cm The <code>ConfigurationManager</code>-instance this component is registered to
      */
-    public void configurationChanged(String configurableName);
+    public void configurationChanged(String configurableName, ConfigurationManager cm);
 
 
+    /**
+     * Called if a new compoenent named <code>configurableName</code> was registered to the ConfigurationManager
+     * <code>cm</code>.
+     */
+    public void componentAdded(String configurableName, ConfigurationManager cm);
+
+
+    /**
+     * Called if a compoenent named <code>configurableName</code> was unregistered (removed) from the
+     * ConfigurationManager <code>cm</code>.
+     */
+    public void componentRemoved(String configurableName, ConfigurationManager cm);
 }

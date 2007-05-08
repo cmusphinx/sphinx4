@@ -16,6 +16,7 @@ import edu.cmu.sphinx.decoder.Decoder;
 import edu.cmu.sphinx.result.Result;
 import edu.cmu.sphinx.result.ResultListener;
 import edu.cmu.sphinx.util.props.*;
+import edu.cmu.sphinx.instrumentation.Resetable;
 
 import java.io.IOException;
 import java.util.*;

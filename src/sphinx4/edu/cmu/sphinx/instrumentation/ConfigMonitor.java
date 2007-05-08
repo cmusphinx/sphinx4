@@ -14,6 +14,8 @@ package edu.cmu.sphinx.instrumentation;
 
 
 import edu.cmu.sphinx.util.props.*;
+import edu.cmu.sphinx.util.props.tools.GDLDumper;
+import edu.cmu.sphinx.util.props.tools.HTMLDumper;
 
 import java.io.File;
 import java.io.IOException;
@@ -112,7 +114,7 @@ public class ConfigMonitor implements Configurable, Runnable, Monitor {
 
         if (showHTML) {
             try {
-                ConfigurationManagerUtils.showConfigAsHTML(cm, "foo.html");
+                HTMLDumper.showConfigAsHTML(cm, "foo.html");
 //                cm.showConfigAsHTML("foo.html");
             } catch (IOException e) {
                 logger.warning("Can't open " + htmlPath + " " + e);
@@ -121,7 +123,7 @@ public class ConfigMonitor implements Configurable, Runnable, Monitor {
 
         if (showGDL) {
             try {
-                ConfigurationManagerUtils.showConfigAsGDL(cm, gdlPath);
+                GDLDumper.showConfigAsGDL(cm, gdlPath);
 //                cm.showConfigAsGDL(gdlPath);
             } catch (IOException e) {
                 logger.warning("Can't open " + gdlPath + " " + e);

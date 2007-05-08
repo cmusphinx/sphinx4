@@ -79,13 +79,23 @@ public class ConfigurationManager {
 
 
     /**
-     * Gets all instances that are of the given type or are assignable to that type. Object.class matches all.
+     * Gets all instances that are of the given type.
      *
      * @param type the desired type of instance
      * @return the set of all instances
      */
-    public Collection<String> getInstanceNames(Class<? extends Object> type) {
-        return symbolTable.keySet();
+    public Collection<String> getInstanceNames(Class<? extends Configurable> type) {
+        Collection<String> instanceNames = new ArrayList<String>();
+
+        for (PropertySheet ps : symbolTable.values()) {
+            if (!ps.isInstanciated())
+                continue;
+
+            if (ConfigurationManagerUtils.isImplementingInterface(ps.getClass(), type))
+                instanceNames.add(ps.getInstanceName());
+        }
+
+        return instanceNames;
     }
 
 
@@ -122,11 +132,10 @@ public class ConfigurationManager {
             System.out.println("Creating: " + instanceName);
 
         Configurable instance = ps.getOwner();
-        instance.newProperties(ps);
+//        instance.newProperties(ps);
 
         //todo registerCommonProperties -> register logLevel
         return instance;
-
     }
 
 
@@ -146,11 +155,12 @@ public class ConfigurationManager {
         if (symbolTable.containsKey(name))
             throw new IllegalArgumentException("tried to override existing component name");
 
-        PropertySheet ps = getPropSheetInstanceFromClass(confClass, props);
+        PropertySheet ps = getPropSheetInstanceFromClass(confClass, props, name, this);
         symbolTable.put(name, ps);
         rawPropertyMap.put(name, new RawPropertyData(name, confClass.getName()));
 
-        informListeners(name);
+        for (ConfigurationChangeListener changeListener : changeListeners)
+            changeListener.componentAdded(name, this);
     }
 
 
@@ -165,6 +175,18 @@ public class ConfigurationManager {
      */
     public void addConfigurable(Class<? extends Configurable> confClass, String name) {
         addConfigurable(confClass, name, new HashMap<String, Object>());
+    }
+
+
+    /** Removes a configurable from this configuration manager. */
+    public void removeConfigurable(String name) {
+        assert getComponentNames().contains(name);
+
+        symbolTable.remove(name);
+        rawPropertyMap.remove(name);
+
+        for (ConfigurationChangeListener changeListener : changeListeners)
+            changeListener.componentRemoved(name, this);
     }
 
 
@@ -195,28 +217,6 @@ public class ConfigurationManager {
         } else {
             throw new PropertyException(null, prop, "Can't find component " + instanceName);
         }
-    }
-
-
-    /**
-     * Gets the given property for the given component.  Returns either the string representation of the value or a list
-     * of strings
-     *
-     * @param instanceName the component containing the property to lookup
-     * @param propertyName the name of the property to lookup
-     * @return the string representation of the property or a list of such strings
-     */
-    public Object getProperty(String instanceName, String propertyName) throws PropertyException {
-        Object obj;
-
-        PropertySheet ps = symbolTable.get(instanceName);
-
-        if (ps != null) {
-            obj = ps.getRawNoReplacement(propertyName);
-        } else {
-            throw new PropertyException(null, propertyName, "Can't find component " + instanceName);
-        }
-        return obj;
     }
 
 
@@ -268,18 +268,6 @@ public class ConfigurationManager {
     }
 
 
-    /**
-     * Registers the properties commont to all components
-     *
-     * @param registry a component registry
-     * @throws edu.cmu.sphinx.util.props.PropertyException
-     *          if an error occurs while registering the properties.
-     */
-    private void registerCommonProperties(Registry registry) throws PropertyException {
-        registry.register(PROP_COMMON_LOG_LEVEL, PropertyType.STRING);
-    }
-
-
     /** Returns a copy of the map of global properties set for this configuration manager. */
     public Map<String, String> getGlobalProperties() {
         return Collections.unmodifiableMap(globalProperties);
@@ -327,7 +315,19 @@ public class ConfigurationManager {
 
     private void informListeners(String instanceName) {
         for (ConfigurationChangeListener changeListeners : this.changeListeners)
-            changeListeners.configurationChanged(instanceName);
+            changeListeners.configurationChanged(instanceName, this);
+    }
+
+
+    /**
+     * Informs all registered <code>ConfigurationChangeListener</code>s about a configuration changes the component
+     * named <code>configurableName</code>.
+     */
+    void fireConfChanged(String configurableName) {
+        assert getComponentNames().contains(configurableName);
+
+        for (ConfigurationChangeListener changeListener : changeListeners)
+            changeListener.configurationChanged(configurableName, this);
     }
 
 
@@ -378,7 +378,7 @@ public class ConfigurationManager {
      * containd in the given <code>props</code>-map
      */
     public static Configurable getDefaultInstance(Class<? extends Configurable> targetClass, Map<String, Object> props) throws InstantiationException, PropertyException {
-        PropertySheet ps = getPropSheetInstanceFromClass(targetClass, props);
+        PropertySheet ps = getPropSheetInstanceFromClass(targetClass, props, null, new ConfigurationManager());
         Configurable configurable = ps.getOwner();
         configurable.newProperties(ps);
         return configurable;
@@ -389,35 +389,24 @@ public class ConfigurationManager {
      * Instantiates the given <code>targetClass</code> and instruments it using default properties or the properties
      * given by the <code>defaultProps</code>.
      */
-    private static PropertySheet getPropSheetInstanceFromClass(Class<? extends Configurable> targetClass, Map<String, Object> defaultProps) {
-        try {
-            ConfigurationManager ConfigurationManager = new ConfigurationManager();
-            RawPropertyData rpd = new RawPropertyData(null, targetClass.getName());
+    private static PropertySheet getPropSheetInstanceFromClass(Class<? extends Configurable> targetClass, Map<String, Object> defaultProps, String componentName, ConfigurationManager cm) {
+        RawPropertyData rpd = new RawPropertyData(componentName, targetClass.getName());
 
-            for (String confName : defaultProps.keySet()) {
-                Object property = defaultProps.get(confName);
+        for (String confName : defaultProps.keySet()) {
+            Object property = defaultProps.get(confName);
 
 //                if (property instanceof Configurable) {
 //                    RawPropertyData dummyRPD = new RawPropertyData(confName, property.getClass().getName());
-//                    ConfigurationManager.symbolTable.put(confName, new PropertySheet((Configurable) property, ConfigurationManager, dummyRPD));
+//                    cm.symbolTable.put(confName, new PropertySheet((Configurable) property, cm, dummyRPD));
 //                } else
-                if (property instanceof Class)
-                    property = ((Class) property).getName();
+            if (property instanceof Class)
+                property = ((Class) property).getName();
 
-                rpd.getProperties().put(confName, property);
-            }
-
-
-            Configurable configurable = targetClass.newInstance();
-            return new PropertySheet(configurable, null, rpd, ConfigurationManager);
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
+            rpd.getProperties().put(confName, property);
         }
 
-        return null;
+//            Configurable configurable = targetClass.newInstance();
+        return new PropertySheet(targetClass, componentName, cm, rpd);
     }
-
 }
 

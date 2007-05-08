@@ -42,7 +42,7 @@ public class PropertySheet {
 
 
     public PropertySheet(Configurable configurable, String name, RawPropertyData rpd, ConfigurationManager ConfigurationManager) {
-        this(configurable.getClass(), null, ConfigurationManager, rpd);
+        this(configurable.getClass(), name, ConfigurationManager, rpd);
         owner = configurable;
     }
 
@@ -337,25 +337,29 @@ public class PropertySheet {
     }
 
 
+    /** Returns true if the owner of this property sheet is already instanciated. */
+    public boolean isInstanciated() {
+        return !(owner == null);
+    }
+
+
     /**
      * Returns the owner of this property sheet. In most cases this will be the configurable instance which was
      * instrumented by this property sheet.
      */
-    public synchronized Configurable getOwner() throws InstantiationException {
+    public synchronized Configurable getOwner() throws InstantiationException, PropertyException {
         try {
 
-            if (owner == null) {
+            if (!isInstanciated()) {
                 owner = ownerClass.newInstance();
                 owner.newProperties(this);
             }
-
         } catch (IllegalAccessException e) {
             throw new InstantiationException("Can't access class " + ownerClass);
         } catch (InstantiationException e) {
             throw new InstantiationException("Not configurable class " + ownerClass);
-        } catch (PropertyException e) {
-            e.printStackTrace();
         }
+
         return owner;
     }
 
@@ -453,15 +457,14 @@ public class PropertySheet {
      *
      * @param name the simple property name
      */
-    public void setString(String name, String value) {
+    public void setString(String name, String value) throws PropertyException {
         // ensure that there is such a property
         assert registeredProperties.keySet().contains(name) : "'" + name + "' is not a registered compontent";
 
         Proxy annotation = registeredProperties.get(name).getAnnotation();
         assert annotation instanceof S4String;
 
-        rawProps.put(name, value);
-        propValues.put(name, value);
+        applyConfigurationChange(name, name, value);
     }
 
 
@@ -471,15 +474,14 @@ public class PropertySheet {
      * @param name  the simple property name
      * @param value the value for the property
      */
-    public void setInt(String name, int value) {
+    public void setInt(String name, int value) throws PropertyException {
         // ensure that there is such a property
         assert registeredProperties.keySet().contains(name) : "'" + name + "' is not a registered compontent";
 
         Proxy annotation = registeredProperties.get(name).getAnnotation();
         assert annotation instanceof S4Integer;
 
-        rawProps.put(name, value);
-        propValues.put(name, value);
+        applyConfigurationChange(name, name, value);
     }
 
 
@@ -489,15 +491,14 @@ public class PropertySheet {
      * @param name  the simple property name
      * @param value the value for the property
      */
-    public void setDouble(String name, double value) {
+    public void setDouble(String name, double value) throws PropertyException {
         // ensure that there is such a property
         assert registeredProperties.keySet().contains(name) : "'" + name + "' is not a registered compontent";
 
         Proxy annotation = registeredProperties.get(name).getAnnotation();
         assert annotation instanceof S4Double;
 
-        rawProps.put(name, value);
-        propValues.put(name, value);
+        applyConfigurationChange(name, name, value);
     }
 
 
@@ -507,15 +508,14 @@ public class PropertySheet {
      * @param name  the simple property name
      * @param value the value for the property
      */
-    public void setBoolean(String name, boolean value) {
+    public void setBoolean(String name, boolean value) throws PropertyException {
         // ensure that there is such a property
         assert registeredProperties.keySet().contains(name) : "'" + name + "' is not a registered compontent";
 
         Proxy annotation = registeredProperties.get(name).getAnnotation();
         assert annotation instanceof S4Boolean;
 
-        rawProps.put(name, value);
-        propValues.put(name, value);
+        applyConfigurationChange(name, name, value);
     }
 
 
@@ -526,15 +526,14 @@ public class PropertySheet {
      * @param cmName the name of the configurable within the configuration manager (required for serialization only)
      * @param value  the value for the property
      */
-    public void setComponent(String name, String cmName, Configurable value) {
+    public void setComponent(String name, String cmName, Configurable value) throws PropertyException {
         // ensure that there is such a property
         assert registeredProperties.keySet().contains(name) : "'" + name + "' is not a registered compontent";
 
         Proxy annotation = registeredProperties.get(name).getAnnotation();
         assert annotation instanceof S4Component;
 
-        rawProps.put(name, cmName);
-        propValues.put(name, value);
+        applyConfigurationChange(name, cmName, value);
     }
 
 
@@ -546,7 +545,7 @@ public class PropertySheet {
      *                   serialization only)
      * @param value      the value for the property
      */
-    public void setComponentList(String name, List<String> valueNames, List<Configurable> value) {
+    public void setComponentList(String name, List<String> valueNames, List<Configurable> value) throws PropertyException {
         // ensure that there is such a property
         assert registeredProperties.keySet().contains(name) : "'" + name + "' is not a registered compontent";
 
@@ -557,6 +556,20 @@ public class PropertySheet {
 
         rawProps.put(name, valueNames);
         propValues.put(name, value);
+
+        applyConfigurationChange(name, valueNames, value);
+    }
+
+
+    private void applyConfigurationChange(String name, Object cmName, Object value) throws PropertyException {
+        rawProps.put(name, cmName);
+        propValues.put(name, value);
+
+        if (getInstanceName() != null)
+            cm.fireConfChanged(getInstanceName());
+
+        if (owner != null)
+            owner.newProperties(this);
     }
 
 
