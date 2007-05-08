@@ -37,7 +37,8 @@
 
 regressionDir=`pwd`
 
-testType=${1:-standard}
+errorLog=$1
+testType=${2:-standard}
 
 echo archiveTestResults $testType
 
@@ -65,3 +66,8 @@ find . -name '*.out' -mtime -7 -print | zip $archiveFile -@
 find . -name 'hs*.log' -print | zip $archiveFile -@
 find . -name 'gc.txt' -print | zip $archiveFile -@
 
+echo "Errors found (archived in $archiveFile):" > $errorLog
+
+find . -name '*.out' -mtime -7 -print | xargs egrep '(error|Exception)' >> $errorLog
+find . -name 'hs*.log' -print | xargs egrep '(error|Exception)' >> $errorLog
+find . -name 'gc.txt' -print | xargs egrep '(error|Exception)' >> $errorLog

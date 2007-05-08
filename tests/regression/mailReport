@@ -14,9 +14,10 @@
 # To receive email reports about regression tests, add your email
 # address to the list of recipients
 #
-# usage: mailReport
+# usage: mailReport <file with list of errors>
+
+errorLog=$1
 
 recipients="cmusphinx-results@lists.sourceforge.net"
-#recipients="Paul.Lamere@sun.com"
-./makeReport < regressionResults/regression.log | mailx -s "S4 regression test report" $recipients
+./makeReport < regressionResults/regression.log | cat - $errorLog | mailx -s "S4 regression test report" $recipients
 
