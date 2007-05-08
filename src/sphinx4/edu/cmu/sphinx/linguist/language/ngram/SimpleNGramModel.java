@@ -76,7 +76,7 @@ public class SimpleNGramModel implements LanguageModel {
         }
         logger = ps.getLogger();
         format = ps.getString(PROP_FORMAT);
-        urlLocation = ps.getResource(PROP_LOCATION);
+        urlLocation = ConfigurationManagerUtils.getResource(PROP_LOCATION, ps);
         unigramWeight = ps.getFloat(PROP_UNIGRAM_WEIGHT
         );
         logMath = (LogMath) ps.getComponent(PROP_LOG_MATH);

@@ -3,20 +3,20 @@
     <property name="anotherDataProc" value="processor"/>
 
 
-    <component name="duco" type="edu.cmu.sphinx.util.props.newconman.test.DummyComp">
+    <component name="duco" type="edu.cmu.sphinx.util.props.test.DummyComp">
         <property name="beamWidth" value="123"/>
         <property name="frontend" value="aDummyFrontEnd"/>
         <property name="alpha" value="${myalpha}"/>
         <!--<property name="bestAsrSystem" value="htk"/>-->
     </component>
 
-    <component name="aDummyFrontEnd" type="edu.cmu.sphinx.util.props.newconman.test.DummyFrontEnd">
+    <component name="aDummyFrontEnd" type="edu.cmu.sphinx.util.props.test.DummyFrontEnd">
         <propertylist name="dataProcs">
             <item>processor</item>
             <item>${anotherDataProc}</item>
         </propertylist>
     </component>
 
-    <component name="processor" type="edu.cmu.sphinx.util.props.newconman.test.DummyProcessor"/>
+    <component name="processor" type="edu.cmu.sphinx.util.props.test.DummyProcessor"/>
 
 </config>

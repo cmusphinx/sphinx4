@@ -113,8 +113,8 @@ public class FastDictionary implements Dictionary {
     public void newProperties(PropertySheet ps) throws PropertyException {
         logger = ps.getLogger();
 
-        wordDictionaryFile = ps.getResource(PROP_DICTIONARY);
-        fillerDictionaryFile = ps.getResource(PROP_FILLER_DICTIONARY);
+        wordDictionaryFile = ConfigurationManagerUtils.getResource(PROP_DICTIONARY, ps);
+        fillerDictionaryFile = ConfigurationManagerUtils.getResource(PROP_FILLER_DICTIONARY, ps);
         addendaUrlList = this.getResourceList(PROP_ADDENDA, ps);
 
         addSilEndingPronunciation = ps.getBoolean(

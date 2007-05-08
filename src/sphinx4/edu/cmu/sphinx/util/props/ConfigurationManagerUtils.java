@@ -10,6 +10,9 @@ import java.util.logging.LogManager;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.lang.reflect.Proxy;
+import java.net.URL;
+import java.net.MalformedURLException;
 
 /**
  * Some static utitity methods which ease the handling of system configurations.
@@ -325,5 +328,99 @@ public class ConfigurationManagerUtils {
                 global.put(symbolName, value);
             }
         }
+    }
+
+
+    /** PropertySheet.setter-methods should be used instead. */
+    @Deprecated
+    public static void setProperty(String componentName, String propName, String propValue, ConfigurationManager cm) {
+
+        PropertySheet ps = cm.getPropertySheet(componentName);
+        try {
+            Proxy wrapper = ps.getProperty(propName, Object.class).getAnnotation();
+            if (wrapper instanceof S4Component) {
+                ps.setComponent(propName, propValue, cm.lookup(propValue));
+            } else if (wrapper instanceof S4Boolean)
+                ps.setBoolean(propName, Boolean.valueOf(propValue));
+            else if (wrapper instanceof S4Integer)
+                ps.setInt(propName, Integer.valueOf(propValue));
+            else if (wrapper instanceof S4String)
+                ps.setString(propName, propValue);
+            else if (wrapper instanceof S4Double)
+                ps.setDouble(propName, Double.valueOf(propValue));
+            else if (wrapper instanceof S4ComponentList)
+                throw new RuntimeException("to set component lists please use PS.setComponentList()");
+//                   ps.setComponentList(propName, null, cm.lookup(propValue));
+        } catch (PropertyException e) {
+            e.printStackTrace();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    /**
+     * Gets a resource associated with the given parameter name given an property sheet.
+     *
+     * @param name the parameter name
+     * @param ps The property sheet which contains the property
+     * @return the resource associated with the name or NULL if it doesn't exist.
+     * @throws PropertyException if the resource cannot be found
+     */
+    public static URL getResource(String name, PropertySheet ps) throws PropertyException {
+        URL url;
+        String location = ps.getString(name);
+        if (location == null) {
+            throw new PropertyException(null, name, "Required resource property '" + name + "' not set");
+        }
+
+        Matcher jarMatcher = Pattern.compile("resource:/([.\\w]+?)!(.*)", Pattern.CASE_INSENSITIVE).matcher(location);
+        if (jarMatcher.matches()) {
+            String className = jarMatcher.group(1);
+            String resourceName = jarMatcher.group(2);
+
+            try {
+                Class cls = Class.forName(className);
+                url = cls.getResource(resourceName);
+                if (url == null) {
+                    // getResource doesn't usually find directories
+                    // If the resource is a directory and we
+                    // can't find it, we will instead try to  find the class
+                    // anchor and backup to the top level and try again
+                    String classPath = className.replaceAll("\\.", "/") + ".class";
+                    url = cls.getClassLoader().getResource(classPath);
+                    if (url != null) {
+                        // we should have something like this, so replace everything
+                        // jar:file:/foo.jar!/a/b/c/HelloWorld.class
+                        // after the ! with the resource name
+                        String urlString = url.toString();
+                        urlString = urlString.replaceAll("/" + classPath, resourceName);
+                        try {
+                            url = new URL(urlString);
+                        } catch (MalformedURLException mfe) {
+                            throw new PropertyException(null, name, "Bad URL " + urlString + mfe.getMessage());
+                        }
+                    }
+                }
+                if (url == null) {
+                    throw new PropertyException(null, name, "Can't locate resource " + resourceName);
+                } else {
+                    // System.out.println("URL FOUND " + url);
+                }
+            } catch (ClassNotFoundException cnfe) {
+                throw new PropertyException(null, name, "Can't locate resource:/" + className);
+            }
+        } else {
+            if (location.indexOf(":") == -1) {
+                location = "file:" + location;
+            }
+
+            try {
+                url = new URL(location);
+            } catch (MalformedURLException e) {
+                throw new PropertyException(null, name, "Bad URL " + location + e.getMessage());
+            }
+        }
+        return url;
     }
 }

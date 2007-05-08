@@ -312,8 +312,8 @@ public class BatchModeRecognizer implements Configurable {
                 if (args.length != 4) {
                     ci.putResponse("Usage: set component property value");
                 } else {
-                    // note: probably setRaw does not work any more (holger)
-                    PropertySheet.setProperty(args[1], args[3], args[2], BatchModeRecognizer.this.cm);
+//                    System.err.println("tried to configure the CM with " + args );
+                    ConfigurationManagerUtils.setProperty(args[1], args[3], args[2], BatchModeRecognizer.this.cm);
                 }
                 return "";
             }

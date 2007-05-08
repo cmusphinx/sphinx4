@@ -18,6 +18,7 @@ import edu.cmu.sphinx.util.ExtendedStreamTokenizer;
 import edu.cmu.sphinx.util.Timer;
 import edu.cmu.sphinx.util.props.PropertyException;
 import edu.cmu.sphinx.util.props.PropertySheet;
+import edu.cmu.sphinx.util.props.ConfigurationManagerUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -80,8 +81,8 @@ public class FullDictionary implements Dictionary {
     */
     public void newProperties(PropertySheet ps) throws PropertyException {
         logger = ps.getLogger();
-        wordDictionaryFile = ps.getResource(PROP_DICTIONARY);
-        fillerDictionaryFile = ps.getResource(PROP_FILLER_DICTIONARY);
+        wordDictionaryFile = ConfigurationManagerUtils.getResource(PROP_DICTIONARY, ps);
+        fillerDictionaryFile = ConfigurationManagerUtils.getResource(PROP_FILLER_DICTIONARY, ps);
         addSilEndingPronunciation = ps.getBoolean(
                 PROP_ADD_SIL_ENDING_PRONUNCIATION
         );

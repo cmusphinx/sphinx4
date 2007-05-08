@@ -207,6 +207,34 @@ public class ConfigurationManager {
     }
 
 
+    /**
+     * Returns a global property.
+     *
+     * @param propertyName The name of the global property.
+     * @param value        The new value of the global property. If the value is <code>null</code> the property becomes
+     *                     removed.
+     */
+    public void setGlobalProperty(String propertyName, String value) {
+        if(value == null)
+            globalProperties.remove(propertyName);
+        
+        globalProperties.put(propertyName, value);
+
+        // update all component configurations because they might be affected by the change
+        for (String instanceName : getInstanceNames(Configurable.class)) {
+            PropertySheet ps = getPropertySheet(instanceName);
+            if (ps.isInstanciated())
+                try {
+                    ps.getOwner().newProperties(ps);
+                } catch (PropertyException e) {
+                    e.printStackTrace();
+                } catch (InstantiationException e) {
+                    e.printStackTrace();
+                }
+        }
+    }
+
+
     public String getStrippedComponentName(String propertyName) {
         assert propertyName != null;
 
