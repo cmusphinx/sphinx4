@@ -248,6 +248,9 @@ public class PropertySheet {
                     else
                         defClass = s4Component.defaultClass();
 
+                    if(Modifier.isAbstract(defClass.getModifiers()))
+                        throw new PropertyException(owner,  name, defClass.getName() + " is abstract!");
+
                     // because we're forced to use the default type, assert that it is set
                     if (defClass.equals(Configurable.class))
                         throw new PropertyException(owner, name, owner.getName() + ": no default class defined for " + name);
@@ -266,6 +269,27 @@ public class PropertySheet {
         }
 
         return (Configurable) propValues.get(name);
+    }
+
+
+    /** Returns the class of of a registered component property without instantiating it. */
+    public Class<? extends Configurable> getComponentClass(String propName) {
+        Class<? extends Configurable> defClass = null;
+
+        if (propValues.get(propName) != null)
+            try {
+                defClass = (Class<? extends Configurable>) Class.forName((String) propValues.get(propName));
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+        else {
+            S4Component comAnno = (S4Component) registeredProperties.get(propName).getAnnotation();
+            defClass = comAnno.defaultClass();
+            if(comAnno.mandatory())
+                defClass = null;
+        }
+
+        return defClass;
     }
 
 
@@ -355,7 +379,7 @@ public class PropertySheet {
 
 
     /** Returns the class of the owner configurable of this property sheet. */
-    public Class getConfigurableClass() {
+    public Class<? extends Configurable> getConfigurableClass() {
         return ownerClass;
     }
 

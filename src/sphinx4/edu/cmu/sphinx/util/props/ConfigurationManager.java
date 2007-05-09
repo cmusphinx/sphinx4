@@ -215,10 +215,10 @@ public class ConfigurationManager {
      *                     removed.
      */
     public void setGlobalProperty(String propertyName, String value) {
-        if(value == null)
+        if (value == null)
             globalProperties.remove(propertyName);
-        
-        globalProperties.put(propertyName, value);
+        else
+            globalProperties.put(propertyName, value);
 
         // update all component configurations because they might be affected by the change
         for (String instanceName : getInstanceNames(Configurable.class)) {

@@ -176,7 +176,7 @@ public class ConfigurationManagerUtils {
         for (String instanceName : allInstances)
             sb.append("\n\n").append(propSheet2XML(instanceName, cm.getPropertySheet(instanceName)));
 
-        sb.append("</config>");
+        sb.append("\n</config>");
         return sb.toString();
     }
 
