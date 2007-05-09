@@ -158,7 +158,7 @@ echo "build|$date|$time|$machine|$who|make|$status|$totalBuildTime|$totalRunTime
 # All log updates are done so finalize the log
 #############################
 cd $regressionDir
-#./finalizeLog
+./finalizeLog
 
 #################################
 # archive the interesting files (.out, .log etc)
