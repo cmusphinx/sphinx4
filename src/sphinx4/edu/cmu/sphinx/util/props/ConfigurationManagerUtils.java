@@ -1,8 +1,17 @@
 package edu.cmu.sphinx.util.props;
 
+import edu.cmu.sphinx.frontend.DataProcessor;
+import edu.cmu.sphinx.frontend.FrontEnd;
+import edu.cmu.sphinx.instrumentation.AccuracyTracker;
+import edu.cmu.sphinx.instrumentation.BestPathAccuracyTracker;
 import edu.cmu.sphinx.util.SphinxLogFormatter;
+import junit.framework.Assert;
+import org.junit.Test;
 
 import java.io.*;
+import java.lang.reflect.Proxy;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.*;
 import java.util.logging.Handler;
 import java.util.logging.Level;
@@ -10,9 +19,6 @@ import java.util.logging.LogManager;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.lang.reflect.Proxy;
-import java.net.URL;
-import java.net.MalformedURLException;
 
 /**
  * Some static utitity methods which ease the handling of system configurations.
@@ -270,20 +276,6 @@ public class ConfigurationManagerUtils {
     }
 
 
-    public static boolean isImplementingInterface(Class aClass, Class interfaceClass) {
-        Class<?> superClass = aClass.getSuperclass();
-        if (superClass != null && isImplementingInterface(superClass, interfaceClass))
-            return true;
-
-        for (Class curInterface : aClass.getInterfaces()) {
-            if (curInterface.equals(interfaceClass) || isImplementingInterface(curInterface, interfaceClass))
-                return true;
-        }
-
-        return false;
-    }
-
-
     /**
      * Applies the system properties to the raw property map. System properties should be of the form
      * compName[paramName]=paramValue
@@ -363,7 +355,7 @@ public class ConfigurationManagerUtils {
      * Gets a resource associated with the given parameter name given an property sheet.
      *
      * @param name the parameter name
-     * @param ps The property sheet which contains the property
+     * @param ps   The property sheet which contains the property
      * @return the resource associated with the name or NULL if it doesn't exist.
      * @throws PropertyException if the resource cannot be found
      */
@@ -422,5 +414,58 @@ public class ConfigurationManagerUtils {
             }
         }
         return url;
+    }
+
+
+    public static boolean isImplementingInterface(Class aClass, Class interfaceClass) {
+        assert interfaceClass.isInterface();
+
+        Class<?> superClass = aClass.getSuperclass();
+        if (superClass != null && isImplementingInterface(superClass, interfaceClass))
+            return true;
+
+        for (Class curInterface : aClass.getInterfaces()) {
+            if (curInterface.equals(interfaceClass) || isImplementingInterface(curInterface, interfaceClass))
+                return true;
+        }
+
+        return false;
+    }
+
+
+    public static boolean isSubClass(Class aClass, Class possibleSuperclass) {
+        while (aClass != null && !aClass.equals(Object.class)) {
+            aClass = aClass.getSuperclass();
+
+            if (aClass != null && aClass.equals(possibleSuperclass))
+                return true;
+        }
+
+        return false;
+    }
+
+
+    @Test
+    public void testClassTesting() {
+        Assert.assertTrue(isImplementingInterface(FrontEnd.class, DataProcessor.class));
+        Assert.assertTrue(isImplementingInterface(DataProcessor.class, Configurable.class));
+        Assert.assertFalse(isImplementingInterface(Configurable.class, Configurable.class));
+
+        Assert.assertFalse(isSubClass(Configurable.class, Configurable.class));
+        Assert.assertTrue(isSubClass(Integer.class, Object.class));
+        Assert.assertFalse(isSubClass(Object.class, Object.class));
+
+        Assert.assertTrue(isSubClass(BestPathAccuracyTracker.class, AccuracyTracker.class));
+
+    }
+
+
+    /**
+     * Why do we need this method. The reason is, that we would like to avoid the getPropertyManager part of the
+     * <code>PropertySheet</code>-API. In some circumstances it is nevertheless required to get access to the managing
+     * <code>ConfigurationManager</code>.
+     */
+    public static ConfigurationManager getPropertyManager(PropertySheet ps) {
+        return ps.getPropertyManager();
     }
 }

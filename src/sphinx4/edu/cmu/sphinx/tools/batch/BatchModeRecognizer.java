@@ -129,7 +129,7 @@ public class BatchModeRecognizer implements Configurable {
     */
     public void newProperties(PropertySheet ps) throws PropertyException {
         logger = ps.getLogger();
-        cm = ps.getPropertyManager();
+        cm = ConfigurationManagerUtils.getPropertyManager(ps);
         skip = ps.getInt(PROP_SKIP);
         utteranceId = ps.getInt(PROP_COUNT);
         if (utteranceId <= 0) {

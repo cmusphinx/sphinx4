@@ -351,6 +351,11 @@ public class PropertySheet {
     }
 
 
+    public void setInstanceName(String instanceName) {
+        this.instanceName = instanceName;
+    }
+
+
     /** Returns true if the owner of this property sheet is already instanciated. */
     public boolean isInstanciated() {
         return !(owner == null);
@@ -396,7 +401,7 @@ public class PropertySheet {
         Proxy annotation = registeredProperties.get(name).getAnnotation();
         assert annotation instanceof S4String;
 
-        applyConfigurationChange(name, name, value);
+        applyConfigurationChange(name, value, value);
     }
 
 
@@ -413,7 +418,7 @@ public class PropertySheet {
         Proxy annotation = registeredProperties.get(name).getAnnotation();
         assert annotation instanceof S4Integer;
 
-        applyConfigurationChange(name, name, value);
+        applyConfigurationChange(name, value, value);
     }
 
 
@@ -430,7 +435,7 @@ public class PropertySheet {
         Proxy annotation = registeredProperties.get(name).getAnnotation();
         assert annotation instanceof S4Double;
 
-        applyConfigurationChange(name, name, value);
+        applyConfigurationChange(name, value, value);
     }
 
 
@@ -447,7 +452,7 @@ public class PropertySheet {
         Proxy annotation = registeredProperties.get(name).getAnnotation();
         assert annotation instanceof S4Boolean;
 
-        applyConfigurationChange(name, name, value);
+        applyConfigurationChange(name, value, value);
     }
 
 
@@ -484,7 +489,7 @@ public class PropertySheet {
         Proxy annotation = registeredProperties.get(name).getAnnotation();
         assert annotation instanceof S4ComponentList;
 
-        assert valueNames.size() == value.size();
+//        assert valueNames.size() == value.size();
 
         rawProps.put(name, valueNames);
         propValues.put(name, value);
@@ -563,7 +568,7 @@ public class PropertySheet {
      *
      * @return the property manager
      */
-    public ConfigurationManager getPropertyManager() {
+    ConfigurationManager getPropertyManager() {
         return cm;
     }
 

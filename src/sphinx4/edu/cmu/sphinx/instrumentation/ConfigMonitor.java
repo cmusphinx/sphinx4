@@ -84,7 +84,7 @@ public class ConfigMonitor implements Configurable, Runnable, Monitor {
     */
     public void newProperties(PropertySheet ps) throws PropertyException {
         logger = ps.getLogger();
-        cm = ps.getPropertyManager();
+        cm = ConfigurationManagerUtils.getPropertyManager(ps);
         showConfig = ps.getBoolean(PROP_SHOW_CONFIG);
         showHTML = ps.getBoolean(PROP_SHOW_CONFIG_AS_HTML
         );
