@@ -174,7 +174,7 @@ public class BatchModeRecognizer implements Configurable {
 
 
     /** Decodes the batch of audio files */
-    public void decode(String batchFile) {
+    public void decode(String batchFile) throws IOException {
         BatchItem batchItem;
         int count = 0;
         try {
@@ -197,6 +197,7 @@ public class BatchModeRecognizer implements Configurable {
             recognizer.deallocate();
         } catch (IOException io) {
             logger.severe("I/O error during decoding: " + io.getMessage());
+	    throw io;
         }
         logger.info("BatchDecoder: " + count + " files decoded");
     }
@@ -519,7 +520,7 @@ public class BatchModeRecognizer implements Configurable {
     }
 
 
-    public void shell(String batchfile) {
+    public void shell(String batchfile) throws IOException {
         try {
             CommandInterpreter ci = new CommandInterpreter();
             ci.setPrompt("s4> ");
@@ -533,6 +534,7 @@ public class BatchModeRecognizer implements Configurable {
             }
         } catch (IOException io) {
             logger.severe("I/O error during decoding: " + io.getMessage());
+	    throw io;
         }
     }
 
@@ -558,28 +560,29 @@ public class BatchModeRecognizer implements Configurable {
             URL url = new File(cmFile).toURI().toURL();
             cm = new ConfigurationManager(url);
             bmr = (BatchModeRecognizer) cm.lookup("batch");
+	    if (bmr == null) {
+		System.err.println("Can't find batchModeRecognizer in " + cmFile);
+	    }
+	    if (argv.length >= 3 && argv[2].equals("-shell")) {
+		bmr.shell(batchFile);
+	    } else {
+		bmr.decode(batchFile);
+	    }
+	    /*
         } catch (IOException ioe) {
-            System.err.println("I/O error during initialization: \n   " + ioe);
-            return;
+            System.err.println("I/O error: \n");
+	    ioe.printStackTrace();
         } catch (InstantiationException e) {
-            System.err.println("Error during initialization: \n  " + e);
-            return;
+            System.err.println("Error during initialization: \n");
+	    e.printStackTrace();
         } catch (PropertyException e) {
-            System.err.println("Error during initialization: \n  " + e);
-            return;
-        }
-
-        if (bmr == null) {
-            System.err.println("Can't find batchModeRecognizer in " + cmFile);
-            return;
-        }
-
-        if (argv.length >= 3 && argv[2].equals("-shell")) {
-            bmr.shell(batchFile);
-
-        } else {
-            bmr.decode(batchFile);
-        }
+            System.err.println("Error during initialization: \n");
+	    e.printStackTrace();
+	    */
+        } catch (Exception e) {
+            System.err.println("Error during decoding: \n  ");
+	    e.printStackTrace();
+	}
     }
 
 
