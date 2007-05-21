@@ -77,7 +77,7 @@ public class PropertySheet {
     /** Returns the property names <code>name</code> which is still wrapped into the annotation instance. */
     public S4PropWrapper getProperty(String name, Class propertyClass) throws PropertyException {
         if (!propValues.containsKey(name))
-            throw new PropertyException(owner, name,
+            throw new PropertyException(getInstanceName(), name,
                     "Unknown property '" + name + "' ! Make sure that you've annotated it.");
 
         S4PropWrapper s4PropWrapper = registeredProperties.get(name);
@@ -85,7 +85,7 @@ public class PropertySheet {
         try {
             propertyClass.cast(s4PropWrapper.getAnnotation());
         } catch (Exception e) {
-            throw new PropertyException(owner, name, name + " is not an annotated sphinx property of '" + owner.getClass().getName() + "' !");
+            throw new PropertyException(getInstanceName(), name, name + " is not an annotated sphinx property of '" + owner.getClass().getName() + "' !");
         }
 
         return s4PropWrapper;
@@ -113,7 +113,7 @@ public class PropertySheet {
         //check range
         List<String> range = Arrays.asList(s4String.range());
         if (!range.isEmpty() && !range.contains(propValue))
-            throw new PropertyException(owner, name, " is not in range (" + range + ")");
+            throw new PropertyException(getInstanceName(), name, " is not in range (" + range + ")");
 
         return propValue;
     }
@@ -139,10 +139,10 @@ public class PropertySheet {
 
         int[] range = s4Integer.range();
         if (range.length != 2)
-            throw new PropertyException(owner, name, range + " is not of expected range type, which is {minValue, maxValue)");
+            throw new PropertyException(getInstanceName(), name, range + " is not of expected range type, which is {minValue, maxValue)");
 
         if (propValue < range[0] || propValue > range[1])
-            throw new PropertyException(owner, name, " is not in range (" + range + ")");
+            throw new PropertyException(getInstanceName(), name, " is not in range (" + range + ")");
 
         return propValue;
     }
@@ -181,10 +181,10 @@ public class PropertySheet {
 
         double[] range = s4Double.range();
         if (range.length != 2)
-            throw new PropertyException(owner, name, range + " is not of expected range type, which is {minValue, maxValue)");
+            throw new PropertyException(getInstanceName(), name, range + " is not of expected range type, which is {minValue, maxValue)");
 
         if (propValue < range[0] || propValue > range[1])
-            throw new PropertyException(owner, name, " is not in range (" + range + ")");
+            throw new PropertyException(getInstanceName(), name, " is not in range (" + range + ")");
 
         return propValue;
     }
@@ -238,7 +238,7 @@ public class PropertySheet {
                 }
 
                 if (configurable != null && !expectedType.isInstance(configurable))
-                    throw new PropertyException(owner, name, "mismatch between annoation and component type");
+                    throw new PropertyException(getInstanceName(), name, "mismatch between annoation and component type");
 
                 if (configurable == null) {
                     Class<? extends Configurable> defClass;
@@ -248,18 +248,18 @@ public class PropertySheet {
                     else
                         defClass = s4Component.defaultClass();
 
-                    if(Modifier.isAbstract(defClass.getModifiers()))
-                        throw new PropertyException(owner,  name, defClass.getName() + " is abstract!");
+                    if (Modifier.isAbstract(defClass.getModifiers()))
+                        throw new PropertyException(getInstanceName(), name, defClass.getName() + " is abstract!");
 
                     // because we're forced to use the default type, assert that it is set
                     if (defClass.equals(Configurable.class))
-                        throw new PropertyException(owner, name, owner.getName() + ": no default class defined for " + name);
+                        throw new PropertyException(getInstanceName(), name, instanceName + ": no default class defined for " + name);
 
                     configurable = ConfigurationManager.getDefaultInstance(defClass);
                 }
 
             } catch (InstantiationException e) {
-                throw new PropertyException(owner, name, "can not instantiate class");
+                throw new PropertyException(getInstanceName(), name, "can not instantiate class");
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();
             }
@@ -285,7 +285,7 @@ public class PropertySheet {
         else {
             S4Component comAnno = (S4Component) registeredProperties.get(propName).getAnnotation();
             defClass = comAnno.defaultClass();
-            if(comAnno.mandatory())
+            if (comAnno.mandatory())
                 defClass = null;
         }
 
@@ -336,7 +336,7 @@ public class PropertySheet {
                     assert configurable != null;
                     list.add(configurable);
                 } catch (InstantiationException e) {
-                    throw new PropertyException(owner, name, "instantiation of list element failed.");
+                    throw new PropertyException(getInstanceName(), name, "instantiation of list element failed.");
                 }
 
             propValues.put(name, list);

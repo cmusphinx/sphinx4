@@ -13,7 +13,10 @@
 package edu.cmu.sphinx.frontend.feature;
 
 import edu.cmu.sphinx.frontend.*;
-import edu.cmu.sphinx.util.props.*;
+import edu.cmu.sphinx.util.props.PropertyException;
+import edu.cmu.sphinx.util.props.PropertySheet;
+import edu.cmu.sphinx.util.props.S4Boolean;
+import edu.cmu.sphinx.util.props.S4Integer;
 
 /**
  * Drops certain feature frames, usually to speed up decoding. For example, if you 'dropEveryNthFrame' is set to 2, it
@@ -61,13 +64,11 @@ public class FrameDropper extends BaseDataProcessor {
                 );
 
         if (dropEveryNthFrame <= 1) {
-            throw new PropertyException(this, PROP_DROP_EVERY_NTH_FRAME,
+            throw new IllegalArgumentException(PROP_DROP_EVERY_NTH_FRAME +
                     "must be greater than one");
         }
 
-        replaceNthWithPrevious = ps.getBoolean
-                (PROP_REPLACE_NTH_WITH_PREVIOUS
-                );
+        replaceNthWithPrevious = ps.getBoolean(PROP_REPLACE_NTH_WITH_PREVIOUS);
     }
 
 

@@ -16,7 +16,10 @@ import edu.cmu.sphinx.linguist.acoustic.Context;
 import edu.cmu.sphinx.linguist.acoustic.Unit;
 import edu.cmu.sphinx.linguist.acoustic.UnitManager;
 import edu.cmu.sphinx.util.Timer;
-import edu.cmu.sphinx.util.props.*;
+import edu.cmu.sphinx.util.props.ConfigurationManagerUtils;
+import edu.cmu.sphinx.util.props.PropertyException;
+import edu.cmu.sphinx.util.props.PropertySheet;
+import edu.cmu.sphinx.util.props.S4String;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -83,7 +86,6 @@ public class FastDictionary implements Dictionary {
     // -------------------------------
     // Configuration data
     // --------------------------------
-    private String name;
     protected Logger logger;
     private boolean addSilEndingPronunciation;
     private boolean allowMissingWords;
@@ -148,16 +150,6 @@ public class FastDictionary implements Dictionary {
      */
     public URL getFillerDictionaryFile() {
         return fillerDictionaryFile;
-    }
-
-
-    /*
-    * (non-Javadoc)
-    *
-    * @see edu.cmu.sphinx.util.props.Configurable#getName()
-    */
-    public String getName() {
-        return name;
     }
 
 
@@ -473,7 +465,7 @@ public class FastDictionary implements Dictionary {
                     URL addendaUrl = new URL(addendumPath);
                     resourceList.add(addendaUrl);
                 } catch (MalformedURLException mue) {
-                    throw new PropertyException(this, PROP_ADDENDA,
+                    throw new IllegalArgumentException(
                             "Addendum path: " + addendumPath + " is not a valid URL.");
                 }
             }

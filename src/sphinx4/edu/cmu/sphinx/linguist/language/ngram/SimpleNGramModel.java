@@ -15,7 +15,10 @@ import edu.cmu.sphinx.linguist.WordSequence;
 import edu.cmu.sphinx.linguist.dictionary.Dictionary;
 import edu.cmu.sphinx.linguist.dictionary.Word;
 import edu.cmu.sphinx.util.LogMath;
-import edu.cmu.sphinx.util.props.*;
+import edu.cmu.sphinx.util.props.ConfigurationManagerUtils;
+import edu.cmu.sphinx.util.props.PropertyException;
+import edu.cmu.sphinx.util.props.PropertySheet;
+import edu.cmu.sphinx.util.props.S4Component;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -71,9 +74,9 @@ public class SimpleNGramModel implements LanguageModel {
 
 
         if (allocated) {
-            throw new PropertyException(this, null,
-                    "Can't change properties after allocation");
+            throw new RuntimeException("Can't change properties after allocation");
         }
+
         logger = ps.getLogger();
         format = ps.getString(PROP_FORMAT);
         urlLocation = ConfigurationManagerUtils.getResource(PROP_LOCATION, ps);

@@ -18,6 +18,7 @@ public class ConfigurationManager {
     private Map<String, String> globalProperties = new LinkedHashMap<String, String>();
 
     private boolean showCreations;
+    private URL configURL;
 
 
     public ConfigurationManager() {
@@ -32,6 +33,7 @@ public class ConfigurationManager {
      * @throws java.io.IOException if an error occurs while loading properties from the URL
      */
     public ConfigurationManager(URL url) throws IOException, PropertyException {
+        configURL = url;
         SaxLoader saxLoader = new SaxLoader(url, globalProperties);
         rawPropertyMap = saxLoader.load();
 
@@ -204,6 +206,15 @@ public class ConfigurationManager {
     public String getGlobalProperty(String propertyName) {
 //        propertyName = propertyName.startsWith("$") ? propertyName : "${" + propertyName + "}";
         return globalProperties.get(propertyName);
+    }
+
+
+    /**
+     * Returns the url of the xml-configuration which defined this configuration or <code>null</code>  if it was created
+     * dynamically.
+     */
+    public URL getConfigURL() {
+        return configURL;
     }
 
 

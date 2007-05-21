@@ -15,7 +15,9 @@ package edu.cmu.sphinx.result;
 
 import edu.cmu.sphinx.linguist.dictionary.Word;
 import edu.cmu.sphinx.util.LogMath;
-import edu.cmu.sphinx.util.props.*;
+import edu.cmu.sphinx.util.props.Configurable;
+import edu.cmu.sphinx.util.props.PropertyException;
+import edu.cmu.sphinx.util.props.PropertySheet;
 
 import java.util.*;
 
@@ -143,7 +145,6 @@ public abstract class AbstractSausageMaker implements ConfidenceScorer, Configur
     /** The default value for the PROP_LANGUAGE_WEIGHT property */
     public final static float PROP_LANGUAGE_WEIGHT_DEFAULT = 1.0f;
 
-    private String name;
     protected float languageWeight;
 
     protected Lattice lattice;
@@ -151,14 +152,7 @@ public abstract class AbstractSausageMaker implements ConfidenceScorer, Configur
 
     /** @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet) */
     public void newProperties(PropertySheet ps) throws PropertyException {
-        languageWeight = ps.getFloat(PROP_LANGUAGE_WEIGHT
-        );
-    }
-
-
-    /** @see edu.cmu.sphinx.util.props.Configurable#getName() */
-    public String getName() {
-        return name;
+        languageWeight = ps.getFloat(PROP_LANGUAGE_WEIGHT);
     }
 
 

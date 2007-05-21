@@ -13,13 +13,16 @@
 package edu.cmu.sphinx.recognizer;
 
 import edu.cmu.sphinx.decoder.Decoder;
+import edu.cmu.sphinx.instrumentation.Resetable;
 import edu.cmu.sphinx.result.Result;
 import edu.cmu.sphinx.result.ResultListener;
 import edu.cmu.sphinx.util.props.*;
-import edu.cmu.sphinx.instrumentation.Resetable;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * The Sphinx-4 recognizer. This is the main entry point for Sphinx-4. Typical usage of a recognizer is like so:
@@ -74,6 +77,8 @@ public class Recognizer implements Configurable {
     public void newProperties(PropertySheet ps) throws PropertyException {
         decoder = (Decoder) ps.getComponent(PROP_DECODER);
         monitors = ps.getComponentList(PROP_MONITORS);
+
+        name = ps.getInstanceName();
     }
 
 
@@ -251,7 +256,7 @@ public class Recognizer implements Configurable {
     * @see java.lang.Object#toString()
     */
     public String toString() {
-        return "Recognizer: " + getName() + " State: " + currentState;
+        return "Recognizer: " + name + " State: " + currentState;
     }
 
 }
