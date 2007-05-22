@@ -316,8 +316,8 @@ public class ConfigurationManagerUtils {
             // these go in the global map
 
             else if (param.indexOf('.') == -1) {
-                String symbolName = "${" + param + "}";
-                global.put(symbolName, value);
+//                String symbolName = "${" + param + "}";
+                global.put(param, value);
             }
         }
     }
