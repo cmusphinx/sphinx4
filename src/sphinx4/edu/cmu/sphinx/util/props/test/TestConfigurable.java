@@ -69,10 +69,9 @@ public class TestConfigurable implements Configurable {
         HashMap<String, Object> props = new HashMap<String, Object>();
         props.put("dataProc", AnotherDummyProcessor.class);
 
-        TestConfigurable teco = (TestConfigurable) ConfigurationManager.getDefaultInstance(TestConfigurable.class, props);
+        TestConfigurable teco = (TestConfigurable) ConfigurationManager.getInstance(TestConfigurable.class, props);
         Assert.assertTrue(teco.myString == null);
     }
-
 
 
     @Test
@@ -83,17 +82,17 @@ public class TestConfigurable implements Configurable {
         Map<String, Object> props = new HashMap<String, Object>();
         props.put(PROP_ASTRING, testString);
         props.put(PROP_DATA_PROC, AnotherDummyProcessor.class);
-        TestConfigurable tc = (TestConfigurable) ConfigurationManager.getDefaultInstance(TestConfigurable.class, props);
+        TestConfigurable tc = (TestConfigurable) ConfigurationManager.getInstance(TestConfigurable.class, props);
 
         // now create a property sheet in order to modify the configurable
         PropertySheet propSheet = new PropertySheet(tc, null, new RawPropertyData("tt", tc.getClass().getName()), new ConfigurationManager());
-        propSheet.setComponent(PROP_DATA_PROC, "tt", new AnotherDummyProcessor() );
+        propSheet.setComponent(PROP_DATA_PROC, "tt", new AnotherDummyProcessor());
         tc.newProperties(propSheet);
 
         // test whether old props were preserved and new ones were applied
         // todo fixme: Its by design not possible to preserven the old properties without have a CM
         // probably we should remove the possiblitly to let the user create PropertySheet instances.
-        
+
 //        Assert.assertTrue(tc.myString.equals(testString));
 //        Assert.assertTrue(tc.gamma == testDouble);
         Assert.assertTrue(tc.dataProc != null && tc.dataProc instanceof AnotherDummyProcessor);

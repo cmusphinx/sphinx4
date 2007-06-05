@@ -1,8 +1,6 @@
 package edu.cmu.sphinx.util.props.test;
 
 import edu.cmu.sphinx.util.props.*;
-import edu.cmu.sphinx.util.props.test.DummyFrontEnd;
-import edu.cmu.sphinx.util.props.test.AnotherDummyFrontEnd;
 import junit.framework.Assert;
 import org.junit.Test;
 
@@ -105,7 +103,7 @@ public class DummyComp implements Configurable {
         Map<String, Object> defaultProps = new HashMap<String, Object>();
         defaultProps.put(DummyComp.PROP_FRONTEND, new DummyFrontEnd());
 
-        DummyComp dc = (DummyComp) ConfigurationManager.getDefaultInstance(DummyComp.class, defaultProps);
+        DummyComp dc = (DummyComp) ConfigurationManager.getInstance(DummyComp.class, defaultProps);
 
         Assert.assertEquals(4, dc.getBeamWidth());
         Assert.assertEquals(1.3, dc.getAlpha(), 1E-10);

@@ -417,6 +417,13 @@ public class ConfigurationManagerUtils {
     }
 
 
+    public static boolean isDerivedClass(Class aClass, Class possibleParent) {
+        return aClass.equals(possibleParent)
+                || (possibleParent.isInterface() && ConfigurationManagerUtils.isImplementingInterface(aClass, possibleParent))
+                || ConfigurationManagerUtils.isSubClass(aClass, possibleParent);
+    }
+
+
     public static boolean isImplementingInterface(Class aClass, Class interfaceClass) {
         assert interfaceClass.isInterface();
 

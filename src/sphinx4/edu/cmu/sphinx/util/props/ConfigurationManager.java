@@ -329,7 +329,7 @@ public class ConfigurationManager {
      * class annotations to parameterize the component.
      */
     public static Configurable getDefaultInstance(Class<? extends Configurable> targetClass) throws InstantiationException, PropertyException {
-        return getDefaultInstance(targetClass, new HashMap<String, Object>());
+        return getInstance(targetClass, new HashMap<String, Object>());
     }
 
 
@@ -338,7 +338,7 @@ public class ConfigurationManager {
      * class annotations to parameterize the component. Default prarmeters will be overrided if a their names are
      * containd in the given <code>props</code>-map
      */
-    public static Configurable getDefaultInstance(Class<? extends Configurable> targetClass, Map<String, Object> props) throws InstantiationException, PropertyException {
+    public static Configurable getInstance(Class<? extends Configurable> targetClass, Map<String, Object> props) throws InstantiationException, PropertyException {
         PropertySheet ps = getPropSheetInstanceFromClass(targetClass, props, null, new ConfigurationManager());
         Configurable configurable = ps.getOwner();
         configurable.newProperties(ps);
