@@ -281,7 +281,7 @@
     <component name="dataDumper"
                type="edu.cmu.sphinx.frontend.util.DataDumper"/>
     <component name="concatDataSource"
-               type="edu.cmu.sphinx.frontend.util.ConcatDataSource"/>
+               type="edu.cmu.sphinx.frontend.util.ConcatFileDataSource"/>
 
     <!-- ******************************************************* -->
     <!--  monitors                                               -->
