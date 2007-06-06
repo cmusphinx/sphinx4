@@ -556,7 +556,7 @@ file configures Sphinx-4 to recognize digits.<br>
     name="featureExtraction"<br> type="edu.cmu.sphinx.frontend.feature.DeltasFeatureExtractor"/&gt;<br><br> &lt;component
     name="streamDataSource"<br> type="edu.cmu.sphinx.frontend.util.StreamDataSource"&gt;<br> &lt;property
     name="sampleRate" value="16000"/&gt;<br> &lt;/component&gt;<br><br> &lt;component name="cepstrumSource"<br>
-    type="edu.cmu.sphinx.frontend.StreamCepstrumSource"&gt;<br> &lt;property name="sampleRate" value="16000"/&gt;<br>
+    type="edu.cmu.sphinx.frontend.util.StreamCepstrumSource"&gt;<br> &lt;property name="sampleRate" value="16000"/&gt;<br>
     &lt;/component&gt;<br><br> &lt;!-- ******************************************************* --&gt;<br> &lt;!--
     monitors --&gt;<br> &lt;!-- ******************************************************* --&gt;<br><br> &lt;component
     name="accuracyTracker"<br> type="edu.cmu.sphinx.instrumentation.BestPathAccuracyTracker"&gt;<br> &lt;property
