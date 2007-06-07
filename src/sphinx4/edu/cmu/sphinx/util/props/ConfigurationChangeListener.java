@@ -13,9 +13,10 @@ public interface ConfigurationChangeListener {
      * Called if the configuration of a registered compoenent named <code>configurableName</code> was changed.
      *
      * @param configurableName The name of the changed configurable.
+     * @param propertyName The name of the property which was changed
      * @param cm The <code>ConfigurationManager</code>-instance this component is registered to
      */
-    public void configurationChanged(String configurableName, ConfigurationManager cm);
+    public void configurationChanged(String configurableName, String propertyName, ConfigurationManager cm);
 
 
     /**

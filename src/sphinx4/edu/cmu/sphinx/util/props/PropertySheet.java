@@ -498,12 +498,12 @@ public class PropertySheet {
     }
 
 
-    private void applyConfigurationChange(String name, Object cmName, Object value) throws PropertyException {
-        rawProps.put(name, cmName);
-        propValues.put(name, value);
+    private void applyConfigurationChange(String propName, Object cmName, Object value) throws PropertyException {
+        rawProps.put(propName, cmName);
+        propValues.put(propName, value);
 
         if (getInstanceName() != null)
-            cm.fireConfChanged(getInstanceName());
+            cm.fireConfChanged(getInstanceName(), propName);
 
         if (owner != null)
             owner.newProperties(this);

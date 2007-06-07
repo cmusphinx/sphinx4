@@ -276,7 +276,7 @@ public class ConfigurationManager {
 
     private void informListeners(String instanceName) {
         for (ConfigurationChangeListener changeListeners : this.changeListeners)
-            changeListeners.configurationChanged(instanceName, this);
+            changeListeners.configurationChanged(instanceName, null, this);
     }
 
 
@@ -284,11 +284,11 @@ public class ConfigurationManager {
      * Informs all registered <code>ConfigurationChangeListener</code>s about a configuration changes the component
      * named <code>configurableName</code>.
      */
-    void fireConfChanged(String configurableName) {
+    void fireConfChanged(String configurableName, String propertyName) {
         assert getComponentNames().contains(configurableName);
 
         for (ConfigurationChangeListener changeListener : changeListeners)
-            changeListener.configurationChanged(configurableName, this);
+            changeListener.configurationChanged(configurableName, propertyName, this);
     }
 
 
