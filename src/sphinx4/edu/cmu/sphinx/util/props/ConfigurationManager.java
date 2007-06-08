@@ -162,21 +162,21 @@ public class ConfigurationManager {
         rawPropertyMap.put(name, new RawPropertyData(name, confClass.getName()));
 
         for (ConfigurationChangeListener changeListener : changeListeners)
-            changeListener.componentAdded(name, this);
+            changeListener.componentAdded(this, ps);
     }
 
 
     /**
      * Adds a new configurable to this configuration manager.
      *
-     * @param confClass The class of the configurable to be instantiated and to be added to this configuration manager
-     *                  instance.
-     * @param name      The desired  lookup-name of the configurable
-     * @throws IllegalArgumentException if the there's already a component with the same <code>name</code> registered to
-     *                                  this configuration manager instance.
+     * @param confClass    The class of the configurable to be instantiated and to be added to this configuration
+     *                     manager instance.
+     * @param instanceName The desired  lookup-instanceName of the configurable
+     * @throws IllegalArgumentException if the there's already a component with the same <code>instanceName</code>
+     *                                  registered to this configuration manager instance.
      */
-    public void addConfigurable(Class<? extends Configurable> confClass, String name) {
-        addConfigurable(confClass, name, new HashMap<String, Object>());
+    public void addConfigurable(Class<? extends Configurable> confClass, String instanceName) {
+        addConfigurable(confClass, instanceName, new HashMap<String, Object>());
     }
 
 
@@ -184,11 +184,11 @@ public class ConfigurationManager {
     public void removeConfigurable(String name) {
         assert getComponentNames().contains(name);
 
-        symbolTable.remove(name);
+        PropertySheet ps = symbolTable.remove(name);
         rawPropertyMap.remove(name);
 
         for (ConfigurationChangeListener changeListener : changeListeners)
-            changeListener.componentRemoved(name, this);
+            changeListener.componentRemoved(this, ps);
     }
 
 
