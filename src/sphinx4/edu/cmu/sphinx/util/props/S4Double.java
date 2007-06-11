@@ -15,8 +15,14 @@ import java.lang.annotation.RetentionPolicy;
 @S4Property
 public @interface S4Double {
 
-    double defaultValue();
+    public static final double NOT_DEFINED = -918273645.12345;
+
+
+    double defaultValue() default NOT_DEFINED;
 
 
     double[] range() default {-Double.MAX_VALUE, Double.MAX_VALUE};
+
+
+    boolean mandatory() default true;
 }

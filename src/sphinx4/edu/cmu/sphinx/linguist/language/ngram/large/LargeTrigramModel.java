@@ -39,7 +39,7 @@ public class LargeTrigramModel implements LanguageModel {
      * Sphinx property for the name of the file that logs all the queried N-grams. If this property is set to null, it
      * means that the queried N-grams are not logged.
      */
-    @S4String
+    @S4String(mandatory = false)
     public static final String PROP_QUERY_LOG_FILE = "queryLogFile";
 
     /** The default value for PROP_QUERY_LOG_FILE. */

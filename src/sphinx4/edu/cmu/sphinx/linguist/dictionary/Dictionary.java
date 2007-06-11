@@ -56,7 +56,7 @@ public interface Dictionary extends Configurable {
      * The name of the SphinxProperty that specifies the word to substitute when a lookup fails to find the word in the
      * dictionary. If this is not set, no substitute is performed.
      */
-    @S4String
+    @S4String(mandatory = false)
     public static final String PROP_WORD_REPLACEMENT = "wordReplacement";
     /** The default value of PROP_WORD_REPLACEMENT. */
     public static final String PROP_WORD_REPLACEMENT_DEFAULT = null;

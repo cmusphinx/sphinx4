@@ -78,7 +78,7 @@ public class FastDictionary implements Dictionary {
      *          ELEVEN   EH L EH V AH N
      * </pre>
      */
-    @S4String
+    @S4String(mandatory = false)
     public static final String PROP_ADDENDA = "addenda";
     /** The default value of PROP_ADDENDA. */
     public static final String PROP_ADDENDA_DEFAULT = null;

@@ -103,9 +103,16 @@ public class PropertySheet {
         S4String s4String = ((S4String) s4PropWrapper.getAnnotation());
 
         if (propValues.get(name) == null) {
-            String defValue = s4String.defaultValue();
-            defValue = defValue.equals("nullnullnull") ? null : defValue;
-            propValues.put(name, defValue);
+            boolean isDefDefined = !s4String.defaultValue().equals(S4String.NOT_DEFINED);
+
+            if (s4String.mandatory()) {
+                if (!isDefDefined)
+                    throw new PropertyException(getInstanceName(), name, "mandatory property is not set!");
+            }
+//            else if(!isDefDefined)
+//                throw new PropertyException(getInstanceName(), name, "no default value for non-mandatory property");
+
+            propValues.put(name, isDefDefined ? s4String.defaultValue() : null);
         }
 
         String propValue = (String) propValues.get(name);
@@ -131,8 +138,17 @@ public class PropertySheet {
         S4PropWrapper s4PropWrapper = getProperty(name, S4Integer.class);
         S4Integer s4Integer = (S4Integer) s4PropWrapper.getAnnotation();
 
-        if (propValues.get(name) == null)
+        if (propValues.get(name) == null) {
+            boolean isDefDefined = !(s4Integer.defaultValue() == S4Integer.NOT_DEFINED);
+
+            if (s4Integer.mandatory()) {
+                if (!isDefDefined)
+                    throw new PropertyException(getInstanceName(), name, "mandatory property is not set!");
+            } else if (!isDefDefined)
+                throw new PropertyException(getInstanceName(), name, "no default value for non-mandatory property");
+
             propValues.put(name, s4Integer.defaultValue());
+        }
 
         Object propObject = propValues.get(name);
         Integer propValue = propObject instanceof Integer ? (Integer) propObject : Integer.decode((String) propObject);
@@ -173,8 +189,17 @@ public class PropertySheet {
         S4PropWrapper s4PropWrapper = getProperty(name, S4Double.class);
         S4Double s4Double = (S4Double) s4PropWrapper.getAnnotation();
 
-        if (propValues.get(name) == null)
+        if (propValues.get(name) == null) {
+            boolean isDefDefined = !(s4Double.defaultValue() == S4Double.NOT_DEFINED);
+
+            if (s4Double.mandatory()) {
+                if (!isDefDefined)
+                    throw new PropertyException(getInstanceName(), name, "mandatory property is not set!");
+            } else if (!isDefDefined)
+                throw new PropertyException(getInstanceName(), name, "no default value for non-mandatory property");
+
             propValues.put(name, s4Double.defaultValue());
+        }
 
         Object propObject = propValues.get(name);
         Double propValue = propObject instanceof Double ? (Double) propObject : Double.valueOf((String) propObject);

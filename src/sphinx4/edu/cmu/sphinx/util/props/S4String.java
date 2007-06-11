@@ -15,8 +15,14 @@ import java.lang.annotation.RetentionPolicy;
 @S4Property
 public @interface S4String {
 
-    String defaultValue() default "nullnullnull"; // this default value will be mapped to zero by the configuration manager
+    public static final String NOT_DEFINED = "nullnullnull";
+
+
+    String defaultValue() default NOT_DEFINED; // this default value will be mapped to zero by the configuration manager
 
 
     String[] range() default {};
+
+
+    boolean mandatory() default true;
 }

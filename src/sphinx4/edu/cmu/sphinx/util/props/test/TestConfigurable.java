@@ -19,7 +19,7 @@ public class TestConfigurable implements Configurable {
     public static final String PROP_DATA_PROC = "dataProc";
     private DummyProcessor dataProc;
 
-    @S4String
+    @S4String(mandatory = false)
     public static final String PROP_ASTRING = "mystring";
     private String myString;
 

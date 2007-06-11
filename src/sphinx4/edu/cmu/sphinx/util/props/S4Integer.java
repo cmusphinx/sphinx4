@@ -15,8 +15,14 @@ import java.lang.annotation.RetentionPolicy;
 @S4Property
 public @interface S4Integer {
 
-    int defaultValue();
+    public static final int NOT_DEFINED = -918273645;
+
+
+    int defaultValue() default NOT_DEFINED;
 
 
     int[] range() default {-Integer.MAX_VALUE, Integer.MAX_VALUE};
+
+
+    boolean mandatory() default true;
 }
