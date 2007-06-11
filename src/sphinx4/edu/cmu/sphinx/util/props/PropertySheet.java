@@ -248,14 +248,20 @@ public class PropertySheet {
                     else
                         defClass = s4Component.defaultClass();
 
-                    if (Modifier.isAbstract(defClass.getModifiers()))
-                        throw new PropertyException(getInstanceName(), name, defClass.getName() + " is abstract!");
+                    if (defClass.equals(Configurable.class) && s4Component.mandatory()) {
+                        throw new PropertyException(getInstanceName(), name, "mandatory property is not set!");
 
-                    // because we're forced to use the default type, assert that it is set
-                    if (defClass.equals(Configurable.class))
-                        throw new PropertyException(getInstanceName(), name, instanceName + ": no default class defined for " + name);
+                    } else {
+                        if (Modifier.isAbstract(defClass.getModifiers()))
+                            throw new PropertyException(getInstanceName(), name, defClass.getName() + " is abstract!");
 
-                    configurable = ConfigurationManager.getDefaultInstance(defClass);
+                        // because we're forced to use the default type, assert that it is set
+                        if (defClass.equals(Configurable.class))
+                            throw new PropertyException(getInstanceName(), name, instanceName + ": no default class defined for " + name);
+
+                        configurable = ConfigurationManager.getDefaultInstance(defClass);
+                        assert configurable != null;
+                    }
                 }
 
             } catch (InstantiationException e) {
@@ -264,7 +270,6 @@ public class PropertySheet {
                 e.printStackTrace();
             }
 
-            assert configurable != null;
             propValues.put(name, configurable);
         }
 
@@ -313,6 +318,10 @@ public class PropertySheet {
         // therefore load the default list of components from the annoation
         if (components == null) {
             List<Class<? extends Configurable>> defClasses = Arrays.asList(annoation.defaultList());
+
+//            if (annoation.mandatory() && defClasses.isEmpty())
+//                throw new PropertyException(getInstanceName(), name, "mandatory property is not set!");
+
             components = new ArrayList();
 
             for (Class<? extends Configurable> defClass : defClasses) {

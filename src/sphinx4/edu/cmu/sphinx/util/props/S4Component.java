@@ -21,5 +21,5 @@ public @interface S4Component {
     Class<? extends Configurable> defaultClass() default Configurable.class;
 
 
-    boolean mandatory() default false;
+    boolean mandatory() default true;
 }

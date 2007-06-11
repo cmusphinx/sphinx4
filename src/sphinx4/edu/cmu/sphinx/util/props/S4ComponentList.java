@@ -23,7 +23,4 @@ public @interface S4ComponentList {
      * component list was defined (via xml or during runtime).
      */
     Class<? extends Configurable>[] defaultList() default {};
-
-
-    boolean mandatory() default false;
 }
