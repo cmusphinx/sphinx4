@@ -17,10 +17,8 @@ package edu.cmu.sphinx.tools.gui.writer;
 import edu.cmu.sphinx.tools.gui.ConfigProperties;
 import edu.cmu.sphinx.tools.gui.RawPropertyData;
 
-import java.io.PrintWriter;
 import java.util.Iterator;
-import java.util.List;
-import java.lang.StringBuffer;
+import java.util.Map;
 
 /**
  * This is a helper class to convert from ConfigProperties to String format that's ready to be written to .config.XML
@@ -82,50 +80,50 @@ public class ConfigConverter {
 
 
     // a helper method to write the information from a single RawPropertyData 
-    private void writeComponent(StringBuffer sb, RawPropertyData rpd){
-        String name = rpd.getName();
-        String classname = rpd.getClassName();
-        Map properties = rpd.getProperties();
-        if (name != null && classname != null) // if the rpd is valid
-        {
-            sb = sb.append(XML_COMPONENT+name+XML_QUOTE+XML_TYPE+classname+XML_CLOSE_TAG);
-            
-            for(Iterator it = properties.entrySet().iterator(); it.hasNext();)
-            {
-                Map.Entry entry = (Map.Entry) it.next();            
-                String propName = (String)entry.getKey();
-                List propList;
-                String propVal;
-
-                if (propName != null && (entry.getValue() != null)) {
-                    if (entry.getValue() instanceof String) {
-                        propVal = (String) entry.getValue();
-                        pw.print(XML_PROP + propName + XML_QUOTE + XML_VALUE + propVal + XML_CLOSE_ELEMENT);
-                    } else // value is a list
-                    {
-                        propVal = (String)entry.getValue();
-                        sb = sb.append(XML_PROP+propName+XML_QUOTE+XML_VALUE+propVal+XML_CLOSE_ELEMENT);
-                    }
-                    else // value is a list
-                    {
-                        sb = sb.append(XML_PROPLIST+propName+XML_CLOSE_TAG);
-                        propList = (List)entry.getValue();
-                        // iterate the propertyList
-                        for (Iterator it2 = propList.iterator(); it2.hasNext();) {
-                            String item = (String) it2.next();
-
-                            if(item != null && !(item.trim().equalsIgnoreCase("")))
-                            {
-                                sb = sb.append(XML_ITEM+item+XML_ITEM_CLOSE);                
-                            }
-
-                        }
-                        sb = sb.append(XML_PROPLIST_CLOSE);
-                    }
-                }
-            }
-            sb = sb.append(XML_COMPONENT_CLOSE);
-        }
+    private void writeComponent(StringBuffer sb, RawPropertyData rpd) {
+//        String name = rpd.getName();
+//        String classname = rpd.getClassName();
+//        Map properties = rpd.getProperties();
+//        if (name != null && classname != null) // if the rpd is valid
+//        {
+//            sb = sb.append(XML_COMPONENT+name+XML_QUOTE+XML_TYPE+classname+XML_CLOSE_TAG);
+//
+//            for(Iterator it = properties.entrySet().iterator(); it.hasNext();)
+//            {
+//                Map.Entry entry = (Map.Entry) it.next();
+//                String propName = (String)entry.getKey();
+//                List propList;
+//                String propVal;
+//
+//                if (propName != null && (entry.getValue() != null)) {
+//                    if (entry.getValue() instanceof String) {
+//                        propVal = (String) entry.getValue();
+//                        pw.print(XML_PROP + propName + XML_QUOTE + XML_VALUE + propVal + XML_CLOSE_ELEMENT);
+//                    } else // value is a list
+//                    {
+//                        propVal = (String)entry.getValue();
+//                        sb = sb.append(XML_PROP+propName+XML_QUOTE+XML_VALUE+propVal+XML_CLOSE_ELEMENT);
+//                    }
+//                    else // value is a list
+//                    {
+//                        sb = sb.append(XML_PROPLIST+propName+XML_CLOSE_TAG);
+//                        propList = (List)entry.getValue();
+//                        // iterate the propertyList
+//                        for (Iterator it2 = propList.iterator(); it2.hasNext();) {
+//                            String item = (String) it2.next();
+//
+//                            if(item != null && !(item.trim().equalsIgnoreCase("")))
+//                            {
+//                                sb = sb.append(XML_ITEM+item+XML_ITEM_CLOSE);
+//                            }
+//
+//                        }
+//                        sb = sb.append(XML_PROPLIST_CLOSE);
+//                    }
+//                }
+//            }
+//            sb = sb.append(XML_COMPONENT_CLOSE);
+//        }
     }
 
 
@@ -135,41 +133,37 @@ public class ConfigConverter {
      * @param cp <code>ConfigProperties</code> that keeps the property name-values
      * @param sb <code>StringBuffer</code> to write the output
      */
-    public StringBuffer writeOutput(ConfigProperties cp){
-        
+    public StringBuffer writeOutput(ConfigProperties cp) {
+
         StringBuffer sb = new StringBuffer();
         Map global = cp.getGlobal();
         Map property = cp.getProperty();
-        
+
         sb = sb.append(XML_HEADING + XML_SUBHEAD + XML_ROOT + '\n');
         sb = sb.append(XML_GLOBAL + '\n');
 
         // iterate the global properties
-        if( cp != null && sb != null)
-        {
+        if (cp != null && sb != null) {
             if (global != null) {
-                for (Iterator it= global.entrySet().iterator(); it.hasNext();)
-                {
-                    Map.Entry entry = (Map.Entry) it.next();            
-                    String name = (String)entry.getKey();
-                    if(name != null){                
-                        String value = (String)entry.getValue();
-                        sb = sb.append(XML_PROP+name+XML_QUOTE+XML_VALUE+value+XML_CLOSE_ELEMENT);                
+                for (Iterator it = global.entrySet().iterator(); it.hasNext();) {
+                    Map.Entry entry = (Map.Entry) it.next();
+                    String name = (String) entry.getKey();
+                    if (name != null) {
+                        String value = (String) entry.getValue();
+                        sb = sb.append(XML_PROP + name + XML_QUOTE + XML_VALUE + value + XML_CLOSE_ELEMENT);
                     }
 
                 }
             }
             sb = sb.append(XML_CONF);
-            
-            if( property != null){
-                for(Iterator it = property.entrySet().iterator(); it.hasNext();)
-                {
-                    Map.Entry entry = (Map.Entry)it.next();
-                    String name = (String)entry.getKey();
-                    RawPropertyData rpd = (RawPropertyData)entry.getValue();
-                    if(name != null && rpd != null)
-                    {
-                        writeComponent(sb,rpd);
+
+            if (property != null) {
+                for (Iterator it = property.entrySet().iterator(); it.hasNext();) {
+                    Map.Entry entry = (Map.Entry) it.next();
+                    String name = (String) entry.getKey();
+                    RawPropertyData rpd = (RawPropertyData) entry.getValue();
+                    if (name != null && rpd != null) {
+                        writeComponent(sb, rpd);
                     }
                 }
             }
