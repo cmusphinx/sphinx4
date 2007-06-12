@@ -65,9 +65,10 @@ public class XMLConfigWriter implements GUIWriter {
         } else /* start writing to config file */ {
 
             try {
-                PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(fFile)));
                 ConfigConverter cc = ConfigConverter.getInstance();
-                cc.writeOutput(configProp, pw);
+                StringBuffer sb = cc.writeOutput(configProp);
+                PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(fFile)));                
+                pw.print(sb.toString());
                 pw.flush();
                 pw.close();
                 return true;
@@ -78,5 +79,19 @@ public class XMLConfigWriter implements GUIWriter {
 
         }
     }
+    
+    /**
+       * This method is inherited from <code>GUIWriter</code> interface.
+       * Will return configuration values for output 
+       *
+       * @param configProp Holds the property name-values
+       * @return String configuration value as text
+       * @throws GUIWriterException writing error
+       */
+   public String getOutput(ConfigProperties configProp) throws GUIWriterException{
+        ConfigConverter cc = ConfigConverter.getInstance();
+        StringBuffer sb = cc.writeOutput(configProp);
+        return sb.toString();
+   }
     
 }

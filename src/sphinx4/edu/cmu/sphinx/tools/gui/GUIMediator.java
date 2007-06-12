@@ -41,7 +41,8 @@ public class GUIMediator {
     public static final String NEW = "new";
     public static final String SAVE = "save";
     public static final String REFRESH = "refresh_model";
-
+    public static final String SHOW_CONFIG = "show_config";
+        
     private MainJFrame _mainJF;
     private List _panelList;
     private XMLConfigReader _xmlReader;
@@ -122,12 +123,20 @@ public class GUIMediator {
         }
 
     }
-
-
-    /** read the GUI entries and save changes */
-    private void readList(File fFile) throws GUIReaderException, GUIWriterException {
-        int status;
-        ConfigProperties cp = new ConfigProperties();
+        
+    
+    private void saveToFile(File fFile) throws GUIReaderException, GUIWriterException
+    {
+        ConfigProperties cp = new ConfigProperties(); 
+        if( readList(cp) )
+            _xmlWriter.writeOutput(cp,fFile);
+    }
+    
+    /** read the GUI entries and save changes to ConfigProperties */
+    private boolean readList ( ConfigProperties cp) throws GUIReaderException, GUIWriterException
+    {  
+        
+       
         try {
             _mb.saveData(cp);
 
@@ -135,11 +144,12 @@ public class GUIMediator {
                 for (Iterator it = _panelList.iterator(); it.hasNext();) {
                     GUIFileActionListener listener = (GUIFileActionListener) it.next();
                     listener.saveData(cp);
-                }
-                _xmlWriter.writeOutput(cp, fFile);
+                }                
+               return true;
             }
-        } catch (GUIOperationException oe) {
-            return;
+            return true;
+        }catch(GUIOperationException oe){
+            return false;
         }
     }
 
@@ -176,11 +186,30 @@ public class GUIMediator {
         if (command.equalsIgnoreCase(OPEN))
             updateList(fFile);
         else if (command.equalsIgnoreCase(SAVE))
-            readList(fFile);
+            saveToFile(fFile);
     }
-
-
+    
     /**
+     * action that needs String return, with its specific command
+     *
+     * @param command Action to be performed
+     * @return String text
+     * @throws GUIReaderException, GUIWriterException
+     */
+    public void action(String command, javax.swing.JTextArea outputJTextArea) 
+        throws GUIWriterException, GUIReaderException
+    {
+       String output = new String();
+       
+       ConfigProperties cp = new ConfigProperties(); 
+        if( readList(cp) )
+        {
+            output = _xmlWriter.getOutput(cp);             
+            outputJTextArea.setText(output);
+        }
+    }
+    
+    /** 
      * action command that does not involve <code>File</code> operation
      *
      * @throws ConfigurableUtilException when there's error while reloading model

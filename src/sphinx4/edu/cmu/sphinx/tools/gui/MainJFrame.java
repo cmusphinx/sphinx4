@@ -51,6 +51,9 @@ class MainJFrame extends javax.swing.JFrame {
      */
     // <editor-fold defaultstate="collapsed" desc=" Generated Code ">//GEN-BEGIN:initComponents
     private void initComponents() {
+        jDialogOutput = new javax.swing.JDialog();
+        jScrollPane6 = new javax.swing.JScrollPane();
+        jTextAreaOutput = new javax.swing.JTextArea();
         TabPanelFrontEnd = new javax.swing.JTabbedPane();
         MenuBarFile = new javax.swing.JMenuBar();
         MenuFile = new javax.swing.JMenu();
@@ -60,6 +63,17 @@ class MainJFrame extends javax.swing.JFrame {
         MenuItemExit = new javax.swing.JMenuItem();
         MenuModel = new javax.swing.JMenu();
         MenuItemRefresh = new javax.swing.JMenuItem();
+        MenuConfig = new javax.swing.JMenu();
+        MenuItemShow = new javax.swing.JMenuItem();
+
+        jDialogOutput.setTitle("Current Configuration");
+        jDialogOutput.setAlwaysOnTop(true);
+        jDialogOutput.setModal(true);
+        jDialogOutput.setName("dialogSource");
+        jTextAreaOutput.setMargin(new java.awt.Insets(20, 20, 20, 20));
+        jScrollPane6.setViewportView(jTextAreaOutput);
+
+        jDialogOutput.getContentPane().add(jScrollPane6, java.awt.BorderLayout.CENTER);
 
         getContentPane().setLayout(new java.awt.GridLayout(1, 1));
 
@@ -122,6 +136,19 @@ class MainJFrame extends javax.swing.JFrame {
 
         MenuBarFile.add(MenuModel);
 
+        MenuConfig.setText("Configuration...");
+        MenuItemShow.setText("Show Configuration Text");
+        MenuItemShow.setActionCommand("Show-Configuration");
+        MenuItemShow.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                MenuItemActionPerformed(evt);
+            }
+        });
+
+        MenuConfig.add(MenuItemShow);
+
+        MenuBarFile.add(MenuConfig);
+
         setJMenuBar(MenuBarFile);
 
         pack();
@@ -135,8 +162,9 @@ class MainJFrame extends javax.swing.JFrame {
         String SAVE = "File-Save";
         String EXIT = "Exit";
         String REFRESH = "Model-Refresh";
-
-        String command = evt.getActionCommand();
+        String SHOW_CONFIG = "Show-Configuration";
+        
+        String command = evt.getActionCommand ();        
         ConfigFilter cf = new ConfigFilter();
         JFileChooser fc = new JFileChooser();
         fc.setCurrentDirectory(new File(".")); // Start in current directory
@@ -164,8 +192,15 @@ class MainJFrame extends javax.swing.JFrame {
                     deleteTabPanels();
                     _gm.action(GUIMediator.REFRESH);
                 }
-            } else if (command.equals(EXIT)) {
-                dispose();
+            } else if (command.equals(SHOW_CONFIG) ){ // show config output 
+
+                _gm.action(GUIMediator.SHOW_CONFIG,jTextAreaOutput);
+                
+                jDialogOutput.setSize(800,500);
+                jDialogOutput.setLocationRelativeTo(null);
+                jDialogOutput.setVisible(true);
+            } else if (command.equals (EXIT) ) {
+                dispose ();
             }
         } catch (GUIReaderException re) {
             displayError("Error occured while reading from file!");
@@ -336,14 +371,19 @@ class MainJFrame extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuBar MenuBarFile;
+    private javax.swing.JMenu MenuConfig;
     private javax.swing.JMenu MenuFile;
     private javax.swing.JMenuItem MenuItemExit;
     private javax.swing.JMenuItem MenuItemNew;
     private javax.swing.JMenuItem MenuItemOpen;
     private javax.swing.JMenuItem MenuItemRefresh;
     private javax.swing.JMenuItem MenuItemSave;
+    private javax.swing.JMenuItem MenuItemShow;
     private javax.swing.JMenu MenuModel;
     private javax.swing.JTabbedPane TabPanelFrontEnd;
+    private javax.swing.JDialog jDialogOutput;
+    private javax.swing.JScrollPane jScrollPane6;
+    private javax.swing.JTextArea jTextAreaOutput;
     // End of variables declaration//GEN-END:variables
     private GUIMediator _gm;
     private PanelGlobal _pGlobal;

@@ -427,14 +427,15 @@ public class ModelBuilder implements GUIFileActionListener {
             //FileInputStream in = new FileInputStream(CONFIG_PATH);
             Properties configuration = new Properties();
             configuration.load(in);   //load the properties from configuration file           
-            in.close();
-            _source_path = (String) configuration.get(SOURCE_PROP);
-            _classes_path = (String) configuration.get(CLASSES_PROP);
-
-        } catch (FileNotFoundException fe) {
-            throw new ConfigurableUtilException("Configuration file " + CONFIG_PATH +
-                    " not found", ConfigurableUtilException.UTIL_INIT);
-        } catch (IOException ie) {
+            in.close();               
+            _source_path = (String)configuration.get(SOURCE_PROP);    
+            System.out.println("source path: " + _source_path);            
+            _classes_path = (String)configuration.get(CLASSES_PROP);
+            
+        }catch(FileNotFoundException fe){
+            throw new ConfigurableUtilException("Configuration file "+CONFIG_PATH+
+                    " not found",ConfigurableUtilException.UTIL_INIT);
+        }catch(IOException ie){
             throw new ConfigurableUtilException("Configuration " +
                     "File I/O Error", ConfigurableUtilException.UTIL_INIT);
         } catch (java.lang.NullPointerException e) {

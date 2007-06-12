@@ -34,4 +34,13 @@ public interface GUIWriter {
      *          when there is error in the writing process
      */
     public boolean writeOutput(ConfigProperties configProp, File fFile) throws GUIWriterException;
+    
+    /**
+     * this method will return the configuration values as text
+     *
+     * @param configProp <code>ConfigProperties</code> that keeps the values
+     * @return String configuration values as text
+     * @throws <code>GUIWriterException</code> when there is error in the writing process 
+     */
+    public String getOutput(ConfigProperties configProp) throws GUIWriterException;
 }
