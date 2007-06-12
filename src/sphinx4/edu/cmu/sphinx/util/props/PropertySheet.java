@@ -284,7 +284,7 @@ public class PropertySheet {
                         if (defClass.equals(Configurable.class))
                             throw new PropertyException(getInstanceName(), name, instanceName + ": no default class defined for " + name);
 
-                        configurable = ConfigurationManager.getDefaultInstance(defClass);
+                        configurable = ConfigurationManager.getInstance(defClass);
                         assert configurable != null;
                     }
                 }
@@ -351,7 +351,7 @@ public class PropertySheet {
 
             for (Class<? extends Configurable> defClass : defClasses) {
                 try {
-                    components.add(ConfigurationManager.getDefaultInstance(defClass));
+                    components.add(ConfigurationManager.getInstance(defClass));
                 } catch (InstantiationException e) {
                     e.printStackTrace();
                 }

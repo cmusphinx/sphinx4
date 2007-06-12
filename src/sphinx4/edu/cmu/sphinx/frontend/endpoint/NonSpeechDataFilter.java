@@ -14,7 +14,9 @@
 package edu.cmu.sphinx.frontend.endpoint;
 
 import edu.cmu.sphinx.frontend.*;
-import edu.cmu.sphinx.util.props.*;
+import edu.cmu.sphinx.util.props.PropertyException;
+import edu.cmu.sphinx.util.props.PropertySheet;
+import edu.cmu.sphinx.util.props.S4Boolean;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -64,11 +66,7 @@ public class NonSpeechDataFilter extends BaseDataProcessor {
      * individual utterances (false).
      */
     @S4Boolean(defaultValue = false)
-    public static final String PROP_MERGE_SPEECH_SEGMENTS
-            = "mergeSpeechSegments";
-
-    /** The default value for PROP_MERGE_SPEECH_SEGMENTS. */
-    public static final boolean PROP_MERGE_SPEECH_SEGMENTS_DEFAULT = false;
+    public static final String PROP_MERGE_SPEECH_SEGMENTS = "mergeSpeechSegments";
 
 
     /**
@@ -94,8 +92,9 @@ public class NonSpeechDataFilter extends BaseDataProcessor {
     */
     public void newProperties(PropertySheet ps) throws PropertyException {
         super.newProperties(ps);
-        this.mergeSpeechSegments = ps.getBoolean
-                (PROP_MERGE_SPEECH_SEGMENTS);
+        this.mergeSpeechSegments = ps.getBoolean(PROP_MERGE_SPEECH_SEGMENTS);
+
+        initialize();
     }
 
 

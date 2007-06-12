@@ -79,7 +79,7 @@ public class DummyComp implements Configurable {
 
     @Test
     public void testGetDefaultInstance() throws PropertyException, InstantiationException {
-        DummyComp dc = (DummyComp) ConfigurationManager.getDefaultInstance(DummyComp.class);
+        DummyComp dc = (DummyComp) ConfigurationManager.getInstance(DummyComp.class);
 
         Assert.assertEquals(4, dc.getBeamWidth());
         Assert.assertEquals(1.3, dc.getAlpha(), 1E-10);

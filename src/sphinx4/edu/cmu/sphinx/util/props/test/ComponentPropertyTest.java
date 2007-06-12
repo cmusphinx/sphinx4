@@ -1,9 +1,8 @@
 package edu.cmu.sphinx.util.props.test;
 
 import edu.cmu.sphinx.util.props.*;
-import org.junit.Test;
-
 import junit.framework.Assert;
+import org.junit.Test;
 
 /**
  * DOCUMENT ME!
@@ -12,7 +11,7 @@ import junit.framework.Assert;
  */
 public class ComponentPropertyTest implements Configurable {
 
-    @S4Component(type =  DummyProcessor.class, defaultClass = AnotherDummyProcessor.class)
+    @S4Component(type = DummyProcessor.class, defaultClass = AnotherDummyProcessor.class)
     public static final String PROP_DATA_PROC = "dataProc";
     private DummyProcessor dataProc;
 
@@ -29,7 +28,7 @@ public class ComponentPropertyTest implements Configurable {
 
     @Test
     public void testDefInstance() throws PropertyException, InstantiationException {
-        ComponentPropertyTest cpt = (ComponentPropertyTest) ConfigurationManager.getDefaultInstance(ComponentPropertyTest.class);
+        ComponentPropertyTest cpt = (ComponentPropertyTest) ConfigurationManager.getInstance(ComponentPropertyTest.class);
 
         Assert.assertTrue(cpt != null);
         Assert.assertTrue(cpt.dataProc instanceof AnotherDummyProcessor);

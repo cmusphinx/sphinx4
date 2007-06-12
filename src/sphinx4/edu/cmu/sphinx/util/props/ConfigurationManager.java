@@ -328,7 +328,7 @@ public class ConfigurationManager {
      * Creates an instance of the given <code>Configurable</code> by using the default parameters as defined by the
      * class annotations to parameterize the component.
      */
-    public static Configurable getDefaultInstance(Class<? extends Configurable> targetClass) throws InstantiationException, PropertyException {
+    public static Configurable getInstance(Class<? extends Configurable> targetClass) throws InstantiationException, PropertyException {
         return getInstance(targetClass, new HashMap<String, Object>());
     }
 
