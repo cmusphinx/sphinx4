@@ -20,30 +20,30 @@ package edu.cmu.sphinx.tools.gui.reader;
  * @author Ariani
  */
 public class GUIReaderException extends java.lang.Exception {
-
+    
     public final static int EXCEPTION_OTHER = 1;
     public final static int EXCEPTION_IO = 2;
     public final static int EXCEPTION_NO_FILENAME = 3;
     public final static int EXCEPTION_FILE_NOT_FOUND = 4;
     public final static int EXCEPTION_INVALID_TYPE = 5;
-
+    
     private int _mode;
-
-
+    
     /**
      * Constructs an instance of <code>GUIReaderException</code> with the specified detail message.
      *
-     * @param msg  the detail message.
+     * @param msg the detail message.
      * @param mode the type of error that occurs
      */
     public GUIReaderException(String msg, int mode) {
         super(msg);
         _mode = mode;
     }
-
-
-    /** @return Mode of this exception, which explains the type of exception */
-    public int getErrorCode() {
+    
+    /**
+     * @return Mode of this exception, which explains the type of exception 
+     */
+    public int getErrorCode(){
         return _mode;
     }
 }

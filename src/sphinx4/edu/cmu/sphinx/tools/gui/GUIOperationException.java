@@ -20,26 +20,30 @@ package edu.cmu.sphinx.tools.gui;
  * @author Ariani
  */
 public class GUIOperationException extends java.lang.Exception {
-
+    
     public final static int EXCEPTION_GLOBAL = 1;
     public final static int EXCEPTION_DECODER = 2;
     public final static int EXCEPTION_LINGUIST = 3;
     public final static int EXCEPTION_FRONTEND = 4;
     public final static int EXCEPTION_MISC = 5;
-
-
+    
+    
     private int _mode;
-
-
-    /** Creates a new instance of <code>GUIOperationException</code> with detail message and mode as the type of error */
+    
+    
+    /**
+     * Creates a new instance of <code>GUIOperationException</code> with detail message
+     * and mode as the type of error
+     */
     public GUIOperationException(int mode, String msg) {
         super(msg);
         _mode = mode;
     }
-
-
-    /** @return Mode of this exception, which explains the type of exception */
-    public int getErrorCode() {
+    
+    /**
+     * @return Mode of this exception, which explains the type of exception 
+     */
+    public int getErrorCode(){
         return _mode;
     }
 }

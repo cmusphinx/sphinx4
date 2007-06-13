@@ -13,25 +13,24 @@
  */
 
 package edu.cmu.sphinx.tools.gui.writer;
-
 import edu.cmu.sphinx.tools.gui.ConfigProperties;
 
 import java.io.File;
 
 /**
- * This class is the general type of all type of GUI Writers. All types of writers should be a subclass of this type
+ * This class is the general type of all type of GUI Writers.
+ * All types of writers should be a subclass of this type
  *
  * @author Ariani
  */
 public interface GUIWriter {
-
+    
     /**
-     * this method will write the configuration values to the output
+     * this method will write the configuration values to the output 
      *
      * @param configProp <code>ConfigProperties</code> that keeps the values
-     * @param fFile      Output file
-     * @throws <code>GUIWriterException</code>
-     *          when there is error in the writing process
+     * @param fFile Output file
+     * @throws <code>GUIWriterException</code> when there is error in the writing process 
      */
     public boolean writeOutput(ConfigProperties configProp, File fFile) throws GUIWriterException;
     

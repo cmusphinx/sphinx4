@@ -14,14 +14,18 @@
 
 package edu.cmu.sphinx.tools.gui.util;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.lang.Exception;
 /**
- * This class is used to traverse the sphinx system; used to test if model built is correct
+ * This class is used to traverse the sphinx system; used to test if 
+ * model built is correct
  *
  * @author Ariani
  */
 public class ClassTraverseTester {
-
-
+    
+    
     /**
      * The main method
      *
@@ -29,7 +33,7 @@ public class ClassTraverseTester {
      */
     public static void main(String[] args) {
         try {
-
+            
             // specify the folder name of package root.
             // the folder must be reachable from one of the classpath
             // the package name will start from the folder specified 
@@ -43,7 +47,8 @@ public class ClassTraverseTester {
 //            for(Iterator it=myClasses.iterator();it.hasNext();){
 //                System.out.println(((Class)it.next()).getName());
 //            }
-
+               
+            
             // this one will test the ModelBuilder, ConfigurableComponent, 
             // and ConfigurableProperty
             ModelBuilder mb = ModelBuilder.getInstance();
@@ -51,10 +56,11 @@ public class ClassTraverseTester {
             //          "edu.cmu.sphinx.model.acoustic");
             mb.refresh(); // load the model
             mb.printModel(); // print the model out
-
-
-        } catch (Exception e) {
+            
+            
+        
+        }catch(Exception e){
             System.out.println(e.getMessage());
-        }
+        } 
     }
 }
