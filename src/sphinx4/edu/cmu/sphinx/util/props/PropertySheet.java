@@ -370,7 +370,9 @@ public class PropertySheet {
                     assert configurable != null;
                     list.add(configurable);
                 } catch (InstantiationException e) {
-                    throw new PropertyException(getInstanceName(), name, "instantiation of list element failed.");
+                    PropertyException pe = new PropertyException(getInstanceName(), name, "instantiation of list element failed.");
+                    pe.initCause(e);
+                    throw pe;
                 }
 
             propValues.put(name, list);
