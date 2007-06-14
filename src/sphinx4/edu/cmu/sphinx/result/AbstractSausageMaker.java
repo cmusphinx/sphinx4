@@ -18,6 +18,7 @@ import edu.cmu.sphinx.util.LogMath;
 import edu.cmu.sphinx.util.props.Configurable;
 import edu.cmu.sphinx.util.props.PropertyException;
 import edu.cmu.sphinx.util.props.PropertySheet;
+import edu.cmu.sphinx.util.props.S4Double;
 
 import java.util.*;
 
@@ -140,10 +141,8 @@ public abstract class AbstractSausageMaker implements ConfidenceScorer, Configur
     }
 
     /** Sphinx property that defines the language model weight. */
+    @S4Double(defaultValue = 1.0)
     public final static String PROP_LANGUAGE_WEIGHT = "languageWeight";
-
-    /** The default value for the PROP_LANGUAGE_WEIGHT property */
-    public final static float PROP_LANGUAGE_WEIGHT_DEFAULT = 1.0f;
 
     protected float languageWeight;
 
