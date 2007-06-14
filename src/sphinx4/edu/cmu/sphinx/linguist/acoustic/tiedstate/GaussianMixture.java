@@ -13,6 +13,7 @@
 package edu.cmu.sphinx.linguist.acoustic.tiedstate;
 
 import edu.cmu.sphinx.frontend.Data;
+import edu.cmu.sphinx.frontend.DoubleData;
 import edu.cmu.sphinx.frontend.FloatData;
 import edu.cmu.sphinx.util.LogMath;
 
@@ -142,6 +143,9 @@ public class GaussianMixture implements Senone, Cloneable {
      * @return the score, in logMath log base, for the feature
      */
     public float calculateScore(Data feature) {
+        if (feature instanceof DoubleData)
+            System.err.println("DoubleData conversion required on mixture level!");
+
         float[] featureVector = FloatData.toFloatData(feature).getValues();
 
         float logTotal = LogMath.getLogZero();
@@ -164,6 +168,9 @@ public class GaussianMixture implements Senone, Cloneable {
      * @return the LogMath log scores for the feature, one for each component
      */
     public float[] calculateComponentScore(Data feature) {
+        if (feature instanceof DoubleData)
+            System.err.println("DoubleData conversion required on mixture level!");
+
         float[] featureVector = FloatData.toFloatData(feature).getValues();
 
         float[] logComponentScore = new float[mixtureComponents.length];

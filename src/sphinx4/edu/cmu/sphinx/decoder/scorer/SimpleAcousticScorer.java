@@ -14,7 +14,11 @@ package edu.cmu.sphinx.decoder.scorer;
 
 import edu.cmu.sphinx.decoder.search.Token;
 import edu.cmu.sphinx.frontend.*;
-import edu.cmu.sphinx.util.props.*;
+import edu.cmu.sphinx.frontend.util.DataUtil;
+import edu.cmu.sphinx.util.props.PropertyException;
+import edu.cmu.sphinx.util.props.PropertySheet;
+import edu.cmu.sphinx.util.props.S4Boolean;
+import edu.cmu.sphinx.util.props.S4Component;
 
 import java.io.IOException;
 import java.util.Iterator;
@@ -30,7 +34,7 @@ public class SimpleAcousticScorer implements AcousticScorer {
 
 
     /** Property the defines the frontend to retrieve features from for scoring */
-    @S4Component(type = FrontEnd.class)
+    @S4Component(type = BaseDataProcessor.class)
     public final static String PROP_FRONTEND = "frontend";
 
 
@@ -88,26 +92,16 @@ public class SimpleAcousticScorer implements AcousticScorer {
 
         try {
             Data data = frontEnd.getData();
-            if (data == null) {
-                System.out.println("SimpleAcousticScorer: Data is null");
-                return best;
-            }
 
-            if (data instanceof DataStartSignal) {
+            while (data instanceof Signal) {
                 data = frontEnd.getData();
-                if (data == null) {
-                    System.out.println("SimpleAcousticScorer: Data is null");
-                    return best;
-                }
             }
 
-            if (data instanceof DataEndSignal) {
-                return best;
-            }
+            if (data == null)
+                return null;
 
-            if (data instanceof Signal) {
-                throw new Error("trying to score non-content data");
-            }
+            if (data instanceof DoubleData)
+                data = DataUtil.DoubleData2FloatData((DoubleData) data);
 
             best = scoreableList.get(0);
 

@@ -13,6 +13,7 @@ import edu.cmu.sphinx.util.props.PropertyException;
 import static junit.framework.Assert.assertTrue;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -76,19 +77,34 @@ public class NonSpeechDataFilterTest extends AbstractTestProcessor {
         input.addAll(createFeatVectors(1, sampleRate, 0, 10, 10));
         input.add(new SpeechEndSignal(-1));
         input.addAll(createFeatVectors(1, sampleRate, 0, 10, 10));
+        input.add(new SpeechStartSignal(-1));
+        input.addAll(createFeatVectors(1, sampleRate, 0, 10, 10));
         input.add(new SpeechEndSignal(-1));
         input.addAll(createFeatVectors(1, sampleRate, 0, 10, 10));
+
 
         input.add(new DataEndSignal(0));
 
         // false should make the processor to merge
-        List<Data> result = collectOutput(createDataFilter(true));
+        List<Data> result = new ArrayList<Data>();
 
-        assertTrue(result.size() == 204);
+        NonSpeechDataFilter nonSpeechDataFilter = createDataFilter(false);
+        result.addAll(collectOutput(nonSpeechDataFilter));
+        result.addAll(collectOutput(nonSpeechDataFilter));
+
+        assertTrue(result.size() == 208);
+
         assertTrue(result.get(0) instanceof DataStartSignal);
         assertTrue(result.get(1) instanceof SpeechStartSignal);
-        assertTrue(result.get(202) instanceof SpeechEndSignal);
-        assertTrue(result.get(203) instanceof DataEndSignal);
+
+        assertTrue(result.get(102) instanceof SpeechEndSignal);
+        assertTrue(result.get(103) instanceof DataEndSignal);
+
+        assertTrue(result.get(104) instanceof DataStartSignal);
+        assertTrue(result.get(105) instanceof SpeechStartSignal);
+
+        assertTrue(result.get(206) instanceof SpeechEndSignal);
+        assertTrue(result.get(207) instanceof DataEndSignal);
     }
 
 
@@ -103,23 +119,20 @@ public class NonSpeechDataFilterTest extends AbstractTestProcessor {
         input.addAll(createFeatVectors(1, sampleRate, 0, 10, 10));
         input.add(new SpeechEndSignal(-1));
         input.addAll(createFeatVectors(1, sampleRate, 0, 10, 10));
+        input.add(new SpeechStartSignal(-1));
+        input.addAll(createFeatVectors(1, sampleRate, 0, 10, 10));
         input.add(new SpeechEndSignal(-1));
         input.addAll(createFeatVectors(1, sampleRate, 0, 10, 10));
 
         input.add(new DataEndSignal(0));
 
-        List<Data> result = collectOutput(createDataFilter(false));
-        assertTrue(result.size() == 208);
+        List<Data> result = collectOutput(createDataFilter(true));
+        assertTrue(result.size() == 304);
 
         assertTrue(result.get(0) instanceof DataStartSignal);
         assertTrue(result.get(1) instanceof SpeechStartSignal);
 
-        assertTrue(result.get(102) instanceof SpeechEndSignal);
-        assertTrue(result.get(103) instanceof DataEndSignal);
-        assertTrue(result.get(104) instanceof DataStartSignal);
-        assertTrue(result.get(105) instanceof SpeechStartSignal);
-
-        assertTrue(result.get(206) instanceof SpeechEndSignal);
-        assertTrue(result.get(107) instanceof DataEndSignal);
+        assertTrue(result.get(302) instanceof SpeechEndSignal);
+        assertTrue(result.get(303) instanceof DataEndSignal);
     }
 }

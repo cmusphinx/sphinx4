@@ -43,20 +43,17 @@ import java.util.List;
  * non-speech regions between them) in an utterance should be merged into one big region, or whether the individual
  * speech regions should be converted into individual utterances. If <b>mergeSpeechSegments</b> is set to true, all the
  * Data from the first SpeechStartSignal to the last SpeechEndSignal will be considered as one Utterance, and enclosed
- * by a pair of DataStartSignal and DataEndSignal. All non-speech regions, as well as all SpeechStartSignals and
- * SpeechEndSignals, are removed from the stream. This gives:
+ * by a pair of SpeechEndSignal and SpeechEndSignal (which itself becomes enclosed by a pair of DataStartSignal and
+ * DataEndSignal). All non-speech regions are removed from the stream. This gives:
  * <p/>
  * <img src="doc-files/two-regions-merge.gif"> <br><i>Figure 4: A data stream with two speech regions after filtering,
- * when <b>mergeSpeechSegments</b> is set to <b>true</b>. Note that all SpeechStartSignals and SpeechEndSignals are
- * removed.</i>
+ * when <b>mergeSpeechSegments</b> is set to <b>true</b>.</i>
  * <p/>
  * On the other hand, if <b>mergeSpeechSegments</b> is set to false (the default), then each speech region will become
  * its own data stream. Pictorially, our data stream with two speech regions becomes: <p><img
  * src="doc-files/two-regions-nonmerge.gif"> <br><i>Figure 5: A data stream with two speech regions after filtering,
  * when <b>mergeSpeechSegments</b> is set to <b>false</b>.</i>
  * <p/>
- * That is, the SpeechStartSignal replaced by DataStartSignal, the SpeechEndSignal replaced by DataEndSignal, and the
- * non-speech regions are removed.
  */
 public class NonSpeechDataFilter extends BaseDataProcessor {
 
@@ -157,13 +154,13 @@ public class NonSpeechDataFilter extends BaseDataProcessor {
         Data next = audio;
 
         if (audio instanceof DataStartSignal) {
-
             // Read (and discard) all the Data from DataStartSignal until
             // we hit a SpeechStartSignal. The SpeechStartSignal is discarded.
             List<Data> audioList = readUntilSpeechStartOrDataEnd();
             Data last = audioList.get(audioList.size() - 1);
             if (last != null) {
-                if (last instanceof DataEndSignal) {
+                assert !(last instanceof DataEndSignal) : "data end while in speech";
+                if (last instanceof SpeechStartSignal) {
                     outputQueue.add(audio);
                     next = last;
                 }
@@ -173,21 +170,23 @@ public class NonSpeechDataFilter extends BaseDataProcessor {
             // until we hit a DataEndSignal
             List<Data> audioList = readUntilSpeechStartOrDataEnd();
             Data last = audioList.get(audioList.size() - 1);
-            if (last != null) {
-                if (last instanceof SpeechStartSignal) {
-                    // first remove the SpeechStartSignal, then add
-                    // all the Data to the inputBuffer
 
-                    audioList.remove(last);
-                    inputBuffer.addAll(audioList);
-                    next = readData();
+            assert last != null;
+            if (last instanceof SpeechStartSignal) {
+                // first remove the SpeechStartSignal, then add
+                // all the Data to the inputBuffer
 
-                } else if (last instanceof DataEndSignal) {
-                    // System.out.println("Last is DataEndSignal");
-                    next = last;
-                }
+                audioList.remove(last);
+                inputBuffer.addAll(audioList);
+                next = readData();
+
+            } else if (last instanceof DataEndSignal) {
+                // System.out.println("Last is DataEndSignal");
+                outputQueue.add(audio);
+                next = last;
             }
         }
+
         return next;
     }
 
@@ -198,60 +197,63 @@ public class NonSpeechDataFilter extends BaseDataProcessor {
      * @param audio the Data object to handle
      * @throws DataProcessingException if a data processor error occurs
      */
-    private Data handleNonMergingData(Data audio) throws
-            DataProcessingException {
+    private Data handleNonMergingData(Data audio) throws DataProcessingException {
         Data next = audio;
         if (audio != null) {
             if (audio instanceof SpeechStartSignal) {
 
                 numberSpeechSamples = 0;
 
-                if (inSpeech) {
-                    // Normally, we should not be encounter a SpeechStartSignal
-                    // if we are inSpeech. This is error-handling code.
-                    message("ALERT: getting a SpeechStartSignal while " +
-                            "in speech, removing it.");
-                    do {
-                        next = readData();
-                    } while (next != null &&
-                            next instanceof SpeechStartSignal);
-                    if (next != null) {
-                        next = handleNonMergingData(next);
-                    }
-                } else {
-                    // if we hit a SpeechStartSignal, we will stop discarding
-                    // Data, and return an DataStartSignal instead
-                    inSpeech = true;
-                    discardMode = false;
-                    next = new DataStartSignal(sampleRate, ((Signal) audio).getTime());
-                }
+                assert !inSpeech : "ALERT: getting a SpeechStartSignal while in speech";
+//                if (inSpeech) {
+//                    // Normally, we should not be encounter a SpeechStartSignal
+//                    // if we are inSpeech. This is error-handling code.
+//                    message("ALERT: getting a SpeechStartSignal while in speech, removing it.");
+//                    do {
+//                        next = readData();
+//                    } while (next != null && next instanceof SpeechStartSignal);
+//                    if (next != null) {
+//                        next = handleNonMergingData(next);
+//                    }
+//                } else {
+
+                // if we hit a SpeechStartSignal, we will stop discarding
+                // Data, and return an DataStartSignal instead
+                inSpeech = true;
+                discardMode = false;
+                outputQueue.add(new DataStartSignal(sampleRate, ((Signal) audio).getTime()));
+                next = audio;
+//                }
             } else if (audio instanceof SpeechEndSignal) {
-                if (!inSpeech) {
-                    // Normally, we should not get a SpeechEndSignal
-                    // if we are not inSpeech. This is error-handling code.
-                    message("ALERT: getting a SpeechEndSignal while " +
-                            "not in speech, removing it.");
-                    do {
-                        next = readData();
-                    } while (next != null &&
-                            next instanceof SpeechEndSignal);
-                    if (next != null) {
-                        next = handleNonMergingData(next);
-                    }
-                } else {
-                    // if we hit a SpeechEndSignal, we will start
-                    // discarding Data, and return a DataEndSignal instead
-                    inSpeech = false;
-                    discardMode = true;
-                    next = new DataEndSignal
-                            (getDuration(), ((Signal) audio).getTime());
-                }
+                assert inSpeech : "ALERT: getting a SpeechEndSignal while not in speech";
+
+//                if (!inSpeech) {
+//                    // Normally, we should not get a SpeechEndSignal
+//                    // if we are not inSpeech. This is error-handling code.
+//                    message("ALERT: getting a SpeechEndSignal while " +
+//                            "not in speech, removing it.");
+//                    do {
+//                        next = readData();
+//                    } while (next != null &&
+//                            next instanceof SpeechEndSignal);
+//                    if (next != null) {
+//                        next = handleNonMergingData(next);
+//                    }
+//                } else {
+
+                // if we hit a SpeechEndSignal, we will start
+                // discarding Data, and return a DataEndSignal instead
+                inSpeech = false;
+                discardMode = true;
+                outputQueue.add(audio);
+
+                next = new DataEndSignal(getDuration(), ((Signal) audio).getTime());
+//                }
             } else if (discardMode) {
-                while (next != null &&
-                        !(next instanceof SpeechStartSignal) &&
-                        !(next instanceof SpeechEndSignal)) {
+                while (next != null && !(next instanceof SpeechStartSignal)) {
                     next = readData();
                 }
+
                 next = handleNonMergingData(next);
             } else if (audio instanceof DoubleData) {
                 DoubleData realData = (DoubleData) audio;
@@ -269,8 +271,7 @@ public class NonSpeechDataFilter extends BaseDataProcessor {
      * @return the duration of the current speech segment
      */
     private long getDuration() {
-        return (long)
-                (((double) numberSpeechSamples / (double) sampleRate) * 1000.0);
+        return (long) (((double) numberSpeechSamples / (double) sampleRate) * 1000.0);
     }
 
 
@@ -281,7 +282,7 @@ public class NonSpeechDataFilter extends BaseDataProcessor {
      * @throws DataProcessingException if a data processor error occurs
      */
     private Data readData() throws DataProcessingException {
-        Data audio = null;
+        Data audio;
         if (inputBuffer.size() > 0) {
             audio = inputBuffer.remove(0);
         } else {
@@ -296,18 +297,17 @@ public class NonSpeechDataFilter extends BaseDataProcessor {
      *
      * @return a list of all the Data read, including the SpeechStartSignal or DataEndSignal
      */
-    private List<Data> readUntilSpeechStartOrDataEnd() throws
-            DataProcessingException {
+    private List<Data> readUntilSpeechStartOrDataEnd() throws DataProcessingException {
         List<Data> audioList = new LinkedList<Data>();
-        Data audio = null;
+        Data audio;
         do {
             audio = readData();
             if (audio != null) {
                 audioList.add(audio);
             }
-        } while (audio != null &&
-                !(audio instanceof SpeechStartSignal) &&
-                !(audio instanceof DataEndSignal));
+
+            assert !(audio instanceof SpeechEndSignal);
+        } while (!(audio instanceof SpeechStartSignal) && !(audio instanceof DataEndSignal));
         return audioList;
     }
 }

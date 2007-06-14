@@ -14,6 +14,7 @@ package edu.cmu.sphinx.decoder.scorer;
 
 import edu.cmu.sphinx.decoder.search.Token;
 import edu.cmu.sphinx.frontend.*;
+import edu.cmu.sphinx.frontend.util.DataUtil;
 import edu.cmu.sphinx.util.props.*;
 
 import java.io.IOException;
@@ -29,7 +30,7 @@ import java.util.logging.Logger;
 public class ThreadedAcousticScorer implements AcousticScorer {
 
     /** Property the defines the frontend to retrieve features from for scoring */
-    @S4Component(type = FrontEnd.class)
+    @S4Component(type = BaseDataProcessor.class)
     public final static String PROP_FRONTEND = "frontend";
 
     /**
@@ -190,24 +191,15 @@ public class ThreadedAcousticScorer implements AcousticScorer {
         try {
             Data data = frontEnd.getData();
 
-            if (data == null) {
-                return best;
-            }
-
-            if (data instanceof DataStartSignal) {
+            while (data instanceof Signal) {
                 data = frontEnd.getData();
-                if (data == null) {
-                    return best;
-                }
             }
 
-            if (data instanceof DataEndSignal) {
-                return best;
-            }
+            if (data == null)
+                return null;
 
-            if (data instanceof Signal) {
-                throw new Error("Can't score non-content feature");
-            }
+            if (data instanceof DoubleData)
+                data = DataUtil.DoubleData2FloatData((DoubleData) data);
 
             currentData = data;
 
