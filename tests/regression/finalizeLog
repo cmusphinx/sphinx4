@@ -19,4 +19,4 @@ scvs checkout $logBase
 cat $interimLog >> $logBase
 scvs commit -m "regression_test" $logBase
 sscp $logBase
-sshh /home/groups/c/cm/cmusphinx/cgi-bin/mysql_update_table.pl `basename $logBase`
+sshh '(cd /home/groups/c/cm/cmusphinx/cgi-bin/ && ./mysql_update_table.pl ~/'`basename $logBase`')'
