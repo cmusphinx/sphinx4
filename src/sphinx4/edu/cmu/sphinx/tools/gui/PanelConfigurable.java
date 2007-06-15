@@ -1,5 +1,5 @@
 /*
- * PanelDecoder.java
+ * PanelConfigurable.java
  *
  * Created on December 11, 2006, 3:01 PM
  * 
@@ -52,14 +52,14 @@ import javax.swing.ListSelectionModel;
  *
  * @author Ariani  
  */
-public class PanelDecoder extends javax.swing.JPanel {
+public class PanelConfigurable extends javax.swing.JPanel {
         
     private PanelMediator _pm;
     
     private static final int COMBO_NEUTRAL = 1;
     
-    /** Creates new form PanelDecoder */
-    public PanelDecoder(GUIMediator gm, String name, Set groupset) {         
+    /** Creates new form PanelConfigurable */
+    public PanelConfigurable(GUIMediator gm, String name, Set groupset) {         
         initComponents(); // create the GUI components
            
         _pm = new PanelMediator(name,groupset,gm,this);
@@ -929,13 +929,13 @@ public class PanelDecoder extends javax.swing.JPanel {
         private Map _ccmap ; // ConfigurableComponent map based on component classname
         private String _sectionName ;
         private GUIMediator _gmediator;
-        private PanelDecoder _panel;
+        private PanelConfigurable _panel;
         
         /** 
          * Creates a new instance of PanelMediator 
          */
         private PanelMediator(String name, Set grpset, GUIMediator gmediator,
-            PanelDecoder panel) {
+            PanelConfigurable panel) {
             _gmediator = gmediator;
             _panel = panel;
             _sectionName = name;            
@@ -1371,7 +1371,7 @@ public class PanelDecoder extends javax.swing.JPanel {
         }
     } // end inner exception class 
     
-}// end PanelDecoder class
+}// end PanelConfigurable class
 
 class ListItem {
       private final static Color NO_VALUE = Color.WHITE;

@@ -69,7 +69,7 @@ import java.util.Set;
         jDialogOutput = new javax.swing.JDialog();
         jScrollPane6 = new javax.swing.JScrollPane();
         jTextAreaOutput = new javax.swing.JTextArea();
-        TabPanelFrontEnd = new javax.swing.JTabbedPane();
+        TabPanel = new javax.swing.JTabbedPane();
         MenuBarFile = new javax.swing.JMenuBar();
         MenuFile = new javax.swing.JMenu();
         MenuItemNew = new javax.swing.JMenuItem();
@@ -94,7 +94,7 @@ import java.util.Set;
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setResizable(false);
-        getContentPane().add(TabPanelFrontEnd);
+        getContentPane().add(TabPanel);
 
         MenuFile.setText("F i l e.....");
         MenuItemNew.setText("New");
@@ -326,8 +326,8 @@ import java.util.Set;
     /* this private method is going to one more panel into the Main frame */
    private void addTabPanel(String title, Component comp,int tabindex){
        int c = (int)(tabindex + '1');
-       TabPanelFrontEnd.addTab(title, comp);
-       TabPanelFrontEnd.setMnemonicAt(tabindex, c);       
+       TabPanel.addTab(title, comp);
+       TabPanel.setMnemonicAt(tabindex, c);       
    }
    
    /* this private method create and add the Global Panel */
@@ -340,10 +340,10 @@ import java.util.Set;
     */
    private void deleteTabPanels(){
         // Remove the last tab
-       System.out.println("*** num of tabs :" + TabPanelFrontEnd.getTabCount());
-        while( TabPanelFrontEnd.getTabCount() > 1 )
+       System.out.println("*** num of tabs :" + TabPanel.getTabCount());
+        while( TabPanel.getTabCount() > 1 )
         {
-            TabPanelFrontEnd.remove(TabPanelFrontEnd.getTabCount()-1);
+            TabPanel.remove(TabPanel.getTabCount()-1);
         }  
    }
        
@@ -357,9 +357,9 @@ import java.util.Set;
             Map.Entry propentry = (Map.Entry)it.next();
             String grpname = (String)propentry.getKey();
             Set grp = (Set)propentry.getValue();              
-            _pDecoder = new PanelDecoder(_gm,grpname,grp);               
+            _pConfigurable = new PanelConfigurable(_gm,grpname,grp);               
             addTabPanel(grpname.substring(1+grpname.lastIndexOf('.')).toUpperCase(),
-                    _pDecoder,tempi++);       
+                    _pConfigurable,tempi++);       
         }
     }
     
@@ -402,12 +402,12 @@ import java.util.Set;
     private javax.swing.JMenuItem MenuItemSave;
     private javax.swing.JMenuItem MenuItemShow;
     private javax.swing.JMenu MenuModel;
-    private javax.swing.JTabbedPane TabPanelFrontEnd;
+    private javax.swing.JTabbedPane TabPanel;
     private javax.swing.JDialog jDialogOutput;
     private javax.swing.JScrollPane jScrollPane6;
     private javax.swing.JTextArea jTextAreaOutput;
     // End of variables declaration//GEN-END:variables
     private GUIMediator _gm;
     private PanelGlobal _pGlobal;
-    private PanelDecoder _pDecoder;
+    private PanelConfigurable _pConfigurable;
 }

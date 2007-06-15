@@ -135,7 +135,7 @@
     <Property name="rows" type="int" value="1"/>
   </Layout>
   <SubComponents>
-    <Container class="javax.swing.JTabbedPane" name="TabPanelFrontEnd">
+    <Container class="javax.swing.JTabbedPane" name="TabPanel">
 
       <Layout class="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout"/>
     </Container>
