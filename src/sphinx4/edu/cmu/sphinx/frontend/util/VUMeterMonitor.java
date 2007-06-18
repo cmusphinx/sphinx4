@@ -1,6 +1,13 @@
 package edu.cmu.sphinx.frontend.util;
 
 import edu.cmu.sphinx.frontend.*;
+import edu.cmu.sphinx.util.props.ConfigurationManager;
+import edu.cmu.sphinx.util.props.PropertyException;
+import edu.cmu.sphinx.util.props.PropertySheet;
+import edu.cmu.sphinx.util.props.RawPropertyData;
+
+import javax.swing.*;
+import java.awt.*;
 
 /**
  * A VU meter to be plugged into a front-end. Preferably this component should be plugged directly behind the
@@ -24,6 +31,14 @@ public class VUMeterMonitor extends BaseDataProcessor {
 
         vuMeterPanel.setVu(vumeter);
         vuMeterPanel.start();
+
+        JDialog vuMeterDialog = new JDialog();
+        vuMeterDialog.setBounds(100, 100, 100, 400);
+
+        vuMeterDialog.getContentPane().setLayout(new BorderLayout());
+        vuMeterDialog.getContentPane().add(vuMeterPanel);
+
+        vuMeterDialog.setVisible(true);
     }
 
 
@@ -38,5 +53,35 @@ public class VUMeterMonitor extends BaseDataProcessor {
             vumeter.calculateVULevels(d);
 
         return d;
+    }
+
+
+    /** A little test-function which plugs a microphone directly into the vu-meter. */
+    public static void main(String[] args) throws DataProcessingException {
+        Microphone mic = new Microphone();
+
+        PropertySheet propSheet = new PropertySheet(mic, null, new RawPropertyData("tt", mic.getClass().getName()), new ConfigurationManager());
+        try {
+            propSheet.setInt(Microphone.PROP_MSEC_PER_READ, Microphone.PROP_MSEC_PER_READ_DEFAULT);
+            propSheet.setInt(Microphone.PROP_SAMPLE_RATE, Microphone.PROP_SAMPLE_RATE_DEFAULT);
+            propSheet.setString(Microphone.PROP_STEREO_TO_MONO, "selectChannel");
+            propSheet.setInt(Microphone.PROP_SELECT_CHANNEL, 2);
+            propSheet.setBoolean(Microphone.PROP_BIG_ENDIAN, true);
+//            propSheet.setLogger(getLogger());
+
+            mic.newProperties(propSheet);
+            mic.initialize();
+        } catch (PropertyException e) {
+            e.printStackTrace();
+        }
+
+        mic.startRecording();
+
+        VUMeterMonitor monitor = new VUMeterMonitor();
+        monitor.setPredecessor(mic);
+
+        while (true) {
+            monitor.getData();
+        }
     }
 }

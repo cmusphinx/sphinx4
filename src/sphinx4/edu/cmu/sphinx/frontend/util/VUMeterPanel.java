@@ -1,5 +1,6 @@
 package edu.cmu.sphinx.frontend.util;
 
+import javax.swing.*;
 import java.awt.*;
 
 /**
@@ -10,7 +11,7 @@ import java.awt.*;
  * <p/>
  * User: Peter Wolf Date: Apr 30, 2006 Time: 9:10:44 AM
  */
-public class VUMeterPanel extends javax.swing.JPanel {
+public class VUMeterPanel extends JPanel {
 
     public void setVu(VUMeter vu) {
         this.vu = vu;
@@ -46,7 +47,7 @@ public class VUMeterPanel extends javax.swing.JPanel {
 
         public void run() {
             while (!quit) {
-                repaint();
+                repaint();  // probably this one should be replaced by a more appropriate method call in order to get rid of the annoying flickering
                 try {
                     Thread.sleep(10);
                 } catch (InterruptedException e) {
@@ -64,11 +65,12 @@ public class VUMeterPanel extends javax.swing.JPanel {
      *
      * @param g The <code>Graphics</code> to draw on.
      */
-    public void paint(Graphics g) {
+    public void paintComponent(Graphics g) {
+        super.paintComponent(g);
 
         if (vu != null) {
 
-            //System.out.println(level);
+            System.out.println(lastLevel);
 
             if (vu.getIsClipping()) {
                 paintClippingVUMeter(g);
@@ -108,7 +110,7 @@ public class VUMeterPanel extends javax.swing.JPanel {
         assert h > 2;
         assert w > 2;
 
-        g.setColor(Color.LIGHT_GRAY);
+        g.setColor(Color.BLACK);
         g.fillRect(0, 0, sz.width - 1, sz.height - 1);
 
         for (int i = 0; i < level; i++) {
