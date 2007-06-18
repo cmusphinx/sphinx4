@@ -72,11 +72,11 @@ public class VUMeterPanel extends JPanel {
 
             System.out.println(lastLevel);
 
-            if (vu.getIsClipping()) {
-                paintClippingVUMeter(g);
-            } else {
-                paintVUMeter(g);
-            }
+//            if (vu.getIsClipping()) {
+//                paintClippingVUMeter(g);
+//            } else {
+            paintVUMeter(g);
+//            }
         }
     }
 
@@ -93,31 +93,30 @@ public class VUMeterPanel extends JPanel {
 
 
     private void paintVUMeter(Graphics g) {
-
         int level = (int) ((vu.getRmsDB() / vu.getMaxDB()) * numberOfLights);
         int peak = (int) ((vu.getPeakDB() / vu.getMaxDB()) * numberOfLights);
 
         assert level >= 0;
         assert level < numberOfLights;
 
-        if (level == lastLevel) return;
+//        if (level == lastLevel) return;
         lastLevel = level;
-
+//
         Dimension sz = getSize();
         int w = sz.width;
         int h = (sz.height / numberOfLights);
-
-        assert h > 2;
-        assert w > 2;
+//
+//        assert h > 2;
+//        assert w > 2;
 
         g.setColor(Color.BLACK);
         g.fillRect(0, 0, sz.width - 1, sz.height - 1);
-
+//
         for (int i = 0; i < level; i++) {
             setLevelColor(i, g);
             g.fillRect(1, sz.height - (i * h) + 1, w - 2, h - 2);
         }
-
+//
         setLevelColor(peak, g);
         g.fillRect(1, sz.height - (peak * h) + 1, w - 2, h - 2);
 

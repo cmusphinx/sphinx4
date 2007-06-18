@@ -24,6 +24,7 @@ public class VUMeterMonitor extends BaseDataProcessor {
 
     VUMeter vumeter;
     VUMeterPanel vuMeterPanel = new VUMeterPanel();
+    JDialog vuMeterDialog;
 
 
     public VUMeterMonitor() {
@@ -32,7 +33,7 @@ public class VUMeterMonitor extends BaseDataProcessor {
         vuMeterPanel.setVu(vumeter);
         vuMeterPanel.start();
 
-        JDialog vuMeterDialog = new JDialog();
+        vuMeterDialog = new JDialog();
         vuMeterDialog.setBounds(100, 100, 100, 400);
 
         vuMeterDialog.getContentPane().setLayout(new BorderLayout());
@@ -53,6 +54,11 @@ public class VUMeterMonitor extends BaseDataProcessor {
             vumeter.calculateVULevels(d);
 
         return d;
+    }
+
+
+    public JDialog getVuMeterDialog() {
+        return vuMeterDialog;
     }
 
 
@@ -78,6 +84,7 @@ public class VUMeterMonitor extends BaseDataProcessor {
         mic.startRecording();
 
         VUMeterMonitor monitor = new VUMeterMonitor();
+        monitor.getVuMeterDialog().setModal(true);
         monitor.setPredecessor(mic);
 
         while (true) {
