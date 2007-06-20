@@ -70,7 +70,7 @@ public class VUMeterPanel extends JPanel {
 
         if (vu != null) {
 
-            System.out.println(lastLevel);
+//            System.out.println(lastLevel);
 
 //            if (vu.getIsClipping()) {
 //                paintClippingVUMeter(g);
