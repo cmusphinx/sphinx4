@@ -8,9 +8,6 @@ import java.util.*;
 /** A configuration manager which enables xml-based system configuration.  ...to be continued! */
 public class ConfigurationManager {
 
-    /** A common property (used by all components) that sets the log level for the component. */
-    public final static String PROP_COMMON_LOG_LEVEL = "logLevel";
-
     private List<ConfigurationChangeListener> changeListeners = new ArrayList<ConfigurationChangeListener>();
 
     private Map<String, PropertySheet> symbolTable = new LinkedHashMap<String, PropertySheet>();

@@ -33,6 +33,9 @@ public class ConfigurationManagerUtils {
     /** A common property (used by all components) that sets the tersness of the log output */
     public final static String PROP_COMMON_LOG_TERSE = "logTerse";
 
+    /** A common property (used by all components) that sets the log level for the component. */
+    public final static String GLOBAL_COMMON_LOGLEVEL = "logLevel";
+
 
     /**
      * Strips the ${ and } off of a global symbol of the form ${symbol}.
@@ -102,7 +105,7 @@ public class ConfigurationManagerUtils {
     public static void configureLogger(ConfigurationManager cm) {
         // apply theb log level (if defined) for the root logger (because we're using package based logging now
 
-        String logLevelName = cm.getGlobalProperty("logLevel");
+        String logLevelName = cm.getGlobalProperty(GLOBAL_COMMON_LOGLEVEL);
         Level logLevel;
         if (logLevelName != null)
             logLevel = Level.parse(logLevelName);
