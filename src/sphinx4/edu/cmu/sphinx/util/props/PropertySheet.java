@@ -331,7 +331,7 @@ public class PropertySheet {
      * @throws edu.cmu.sphinx.util.props.PropertyException
      *          if the component does not exist or is of the wrong type.
      */
-    public List getComponentList(String name) throws PropertyException {
+    public List<? extends Configurable> getComponentList(String name) throws PropertyException {
         getProperty(name, S4ComponentList.class);
 
         List components = (List) propValues.get(name);
@@ -378,7 +378,7 @@ public class PropertySheet {
             propValues.put(name, list);
         }
 
-        return (List) propValues.get(name);
+        return (List<? extends Configurable>) propValues.get(name);
     }
 
 

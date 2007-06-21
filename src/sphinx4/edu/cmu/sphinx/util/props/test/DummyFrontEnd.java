@@ -1,8 +1,6 @@
 package edu.cmu.sphinx.util.props.test;
 
 import edu.cmu.sphinx.util.props.*;
-import edu.cmu.sphinx.util.props.test.DummyProcessor;
-import edu.cmu.sphinx.util.props.test.AnotherDummyProcessor;
 
 import java.util.List;
 
@@ -29,7 +27,7 @@ public class DummyFrontEnd implements Configurable {
 
     public void newProperties(PropertySheet ps) throws PropertyException {
         useMfccs = ps.getBoolean(PROP_USE_MFFCS);
-        dataProcs = ps.getComponentList(DATA_PROCS);
+        dataProcs = (List<Configurable>) ps.getComponentList(DATA_PROCS);
     }
 
 

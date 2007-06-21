@@ -13,9 +13,13 @@
 
 package edu.cmu.sphinx.frontend;
 
-import edu.cmu.sphinx.util.props.*;
+import edu.cmu.sphinx.util.props.PropertyException;
+import edu.cmu.sphinx.util.props.PropertySheet;
+import edu.cmu.sphinx.util.props.S4ComponentList;
 
-import java.util.*;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Vector;
 
 /**
  * FrontEnd is a wrapper class for the chain of front end processors. It provides methods for manipulating and
@@ -145,7 +149,7 @@ public class FrontEnd extends BaseDataProcessor {
      */
     public void newProperties(PropertySheet ps) throws PropertyException {
         super.newProperties(ps);
-        frontEndList = ps.getComponentList(PROP_PIPELINE);
+        frontEndList = (List<DataProcessor>) ps.getComponentList(PROP_PIPELINE);
 
         for (Iterator i = frontEndList.iterator(); i.hasNext();) {
             DataProcessor dp = (DataProcessor) i.next();
