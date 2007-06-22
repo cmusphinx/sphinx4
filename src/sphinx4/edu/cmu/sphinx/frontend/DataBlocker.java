@@ -1,6 +1,8 @@
 package edu.cmu.sphinx.frontend;
 
-import edu.cmu.sphinx.util.props.*;
+import edu.cmu.sphinx.util.props.PropertyException;
+import edu.cmu.sphinx.util.props.PropertySheet;
+import edu.cmu.sphinx.util.props.S4Double;
 
 import java.util.LinkedList;
 
@@ -100,5 +102,10 @@ public class DataBlocker extends BaseDataProcessor {
 
     public String getName() {
         return this.getClass().getName();
+    }
+
+
+    public double getBlockSizeMs() {
+        return blockSizeMs;
     }
 }
