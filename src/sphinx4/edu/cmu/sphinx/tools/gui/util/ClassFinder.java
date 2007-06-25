@@ -45,9 +45,10 @@ public class ClassFinder {
     private static final String COMMON_SPHINX_PACKAGE = "edu";
     
     /**
-     * find a File 
+     * find a File, open it and return the content as BufferedReader
      * 
      * @param filename name of file to be found
+     * @return BufferedReader with file content
      */
     public static BufferedReader findFile(String filename) throws
             ClassNotFoundException, FileNotFoundException

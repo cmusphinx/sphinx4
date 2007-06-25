@@ -10,7 +10,7 @@
  * WARRANTIES.
  *
  */
-package edu.cmu.sphinx.tools.gui;
+package edu.cmu.sphinx.tools.gui.reader;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -28,6 +28,9 @@ import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
+
+import edu.cmu.sphinx.tools.gui.RawPropertyData;
+
 /**
  * Loads configuration from an XML file
  */
