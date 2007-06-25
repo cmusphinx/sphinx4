@@ -79,8 +79,8 @@ public class FrontEndUtils {
             }
         }
 
-        if (dp != null) {
-            return 0;
+        if (dp != null && dp instanceof DataBlocker) {
+            return (float) ((DataBlocker) dp).getBlockSizeMs();
         }
 
         throw new RuntimeException("Can not dermine the current shift-size of the given feature frontend.");
