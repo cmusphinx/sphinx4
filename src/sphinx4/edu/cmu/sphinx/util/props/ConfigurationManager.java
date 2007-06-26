@@ -183,13 +183,14 @@ public class ConfigurationManager {
             throw new RuntimeException("no configurable (to be renamed) named " + oldName + " is contained in the CM");
         }
 
+        ConfigurationManagerUtils.renameComponent(this, oldName, newName);
+
         symbolTable.remove(oldName);
         symbolTable.put(newName, ps);
 
-        RawPropertyData rpd = rawPropertyMap.get(oldName);
+        RawPropertyData rpd = rawPropertyMap.remove(oldName);
         rawPropertyMap.put(newName, new RawPropertyData(newName, rpd.getClassName(), rpd.getProperties()));
 
-        ConfigurationManagerUtils.renameComponent(this, oldName, newName);
         fireRenamedConfigurable(oldName, newName);
     }
 

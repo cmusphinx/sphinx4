@@ -359,7 +359,7 @@ public class ConfigurationManagerUtils {
      * registered to the CM. Renaming does not only affect the configurable itself but possibly global property values
      * and properties of other components.
      */
-    public static void renameComponent(ConfigurationManager cm, String oldName, String newName) {
+    static void renameComponent(ConfigurationManager cm, String oldName, String newName) {
         assert cm != null;
         assert oldName != null && newName != null;
         if (cm.getPropertySheet(oldName) == null) {
@@ -394,7 +394,7 @@ public class ConfigurationManagerUtils {
             }
         }
 
-        PropertySheet ps = cm.getPropertySheet(newName);
+        PropertySheet ps = cm.getPropertySheet(oldName);
         ps.setInstanceName(newName);
 
         // it might be possible that the component is the value of a global property
