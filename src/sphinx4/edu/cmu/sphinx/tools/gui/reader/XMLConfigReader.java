@@ -15,7 +15,6 @@
 package edu.cmu.sphinx.tools.gui.reader;
 
 import edu.cmu.sphinx.tools.gui.ConfigProperties;
-import edu.cmu.sphinx.tools.gui.reader.SaxLoader;
 
 import java.io.File;
 import java.io.BufferedReader;
