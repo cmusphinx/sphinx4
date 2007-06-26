@@ -355,6 +355,60 @@ public class ConfigurationManagerUtils {
 
 
     /**
+     * Renames a given <code>Configurable</code>. The configurable component named <code>oldName</code> is assumed to be
+     * registered to the CM. Renaming does not only affect the configurable itself but possibly global property values
+     * and properties of other components.
+     */
+    public static void renameComponent(ConfigurationManager cm, String oldName, String newName) {
+        assert cm != null;
+        assert oldName != null && newName != null;
+        if (cm.getPropertySheet(oldName) == null) {
+            throw new RuntimeException("no configurable (to be renamed) named " + oldName + " is contained in the CM");
+        }
+
+        // this iteration is a little hacky. It would be much better to maintain the links to a configurable in a special table
+        for (String instanceName : cm.getComponentNames()) {
+            PropertySheet propSheet = cm.getPropertySheet(instanceName);
+
+            for (String propName : propSheet.getRegisteredProperties()) {
+                if (propSheet.getRawNoReplacement(propName) == null)
+                    continue;  // if the property was net defined within the xml-file
+
+                switch (propSheet.getType(propName)) {
+
+                    case COMPLIST:
+                        List<String> compNames = (List<String>) propSheet.getRawNoReplacement(propName);
+                        for (int i = 0; i < compNames.size(); i++) {
+                            String compName = compNames.get(i);
+                            if (compName.equals(oldName)) {
+                                compNames.set(i, newName);
+                            }
+                        }
+
+                        break;
+                    case COMP:
+                        if (propSheet.getRawNoReplacement(propName).equals(oldName)) {
+                            propSheet.setRaw(propName, newName);
+                        }
+                }
+            }
+        }
+
+        PropertySheet ps = cm.getPropertySheet(newName);
+        ps.setInstanceName(newName);
+
+        // it might be possible that the component is the value of a global property
+        Map<String, String> globalProps = cm.getGlobalProperties();
+        for (String propName : globalProps.keySet()) {
+            String propVal = globalProps.get(propName);
+
+            if (propVal.equals(oldName))
+                cm.setGlobalProperty(propName, newName);
+        }
+    }
+
+
+    /**
      * Gets a resource associated with the given parameter name given an property sheet.
      *
      * @param name the parameter name

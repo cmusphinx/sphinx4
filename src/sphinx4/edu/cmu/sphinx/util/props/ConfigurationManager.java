@@ -176,6 +176,23 @@ public class ConfigurationManager {
         addConfigurable(confClass, instanceName, new HashMap<String, Object>());
     }
 
+    public void renameConfigurable(String oldName, String newName) {
+        PropertySheet ps = getPropertySheet(oldName);
+
+        if (ps == null) {
+            throw new RuntimeException("no configurable (to be renamed) named " + oldName + " is contained in the CM");
+        }
+
+        symbolTable.remove(oldName);
+        symbolTable.put(newName, ps);
+
+        RawPropertyData rpd = rawPropertyMap.get(oldName);
+        rawPropertyMap.put(newName, new RawPropertyData(newName, rpd.getClassName(), rpd.getProperties()));
+
+        ConfigurationManagerUtils.renameComponent(this, oldName, newName);
+        fireRenamedConfigurable(oldName, newName);
+    }
+
 
     /** Removes a configurable from this configuration manager. */
     public void removeConfigurable(String name) {
@@ -271,12 +288,6 @@ public class ConfigurationManager {
     }
 
 
-    private void informListeners(String instanceName) {
-        for (ConfigurationChangeListener changeListeners : this.changeListeners)
-            changeListeners.configurationChanged(instanceName, null, this);
-    }
-
-
     /**
      * Informs all registered <code>ConfigurationChangeListener</code>s about a configuration changes the component
      * named <code>configurableName</code>.
@@ -286,6 +297,19 @@ public class ConfigurationManager {
 
         for (ConfigurationChangeListener changeListener : changeListeners)
             changeListener.configurationChanged(configurableName, propertyName, this);
+    }
+
+
+    /**
+     * Informs all registered <code>ConfigurationChangeListener</code>s about the component previously namesd
+     * <code>oldName</code>
+     */
+    void fireRenamedConfigurable(String oldName, String newName) {
+        assert getComponentNames().contains(newName);
+
+        for (ConfigurationChangeListener changeListener : changeListeners) {
+            changeListener.componentRenamed(this, getPropertySheet(newName), oldName);
+        }
     }
 
 

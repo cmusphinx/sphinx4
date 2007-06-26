@@ -31,4 +31,10 @@ public interface ConfigurationChangeListener {
      * <code>cm</code>.
      */
     public void componentRemoved(ConfigurationManager cm, PropertySheet ps);
+
+
+    /**
+     * Called if a compoenent was renamed.
+     */
+    public void componentRenamed(ConfigurationManager cm, PropertySheet ps, String oldName);
 }

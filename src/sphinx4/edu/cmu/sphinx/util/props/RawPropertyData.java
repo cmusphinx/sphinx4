@@ -38,6 +38,14 @@ public class RawPropertyData {
     }
 
 
+    public RawPropertyData(String name, String className, Map<String, Object> properties) {
+
+        this.name = name;
+        this.className = className;
+        this.properties = properties;
+    }
+
+
     /**
      * Adds a new property
      *

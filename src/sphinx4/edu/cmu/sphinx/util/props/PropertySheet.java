@@ -387,8 +387,8 @@ public class PropertySheet {
     }
 
 
-    public void setInstanceName(String instanceName) {
-        this.instanceName = instanceName;
+    public void setInstanceName(String newInstanceName) {
+        this.instanceName = newInstanceName;
     }
 
 
