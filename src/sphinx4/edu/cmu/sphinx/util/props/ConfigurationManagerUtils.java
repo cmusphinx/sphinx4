@@ -105,16 +105,10 @@ public class ConfigurationManagerUtils {
     public static void configureLogger(ConfigurationManager cm) {
         // apply theb log level (if defined) for the root logger (because we're using package based logging now
 
-        String logLevelName = cm.getGlobalProperty(GLOBAL_COMMON_LOGLEVEL);
-        Level logLevel;
-        if (logLevelName != null)
-            logLevel = Level.parse(logLevelName);
-        else
-            logLevel = Level.WARNING;
-
-
         Logger rootLogger = Logger.getLogger("");
-        rootLogger.setLevel(logLevel);
+
+        // we need to determine the root-level here, beacuse the logManager will reset it
+        Level rootLevel = rootLogger.getLevel();
 
         LogManager logManager = LogManager.getLogManager();
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
@@ -133,14 +127,17 @@ public class ConfigurationManagerUtils {
             logManager.readConfiguration(bis);
             bis.close();
         } catch (IOException ioe) {
-            System.err
-                    .println("Can't configure logger, using default configuration");
+            System.err.println("Can't configure logger, using default configuration");
         }
 
-        String level = cm.getGlobalProperty("logLevel");
+        String level = cm.getGlobalProperty(GLOBAL_COMMON_LOGLEVEL);
         if (level == null)
             level = Level.WARNING.getName();
-        rootLogger.setLevel(Level.parse(level));
+
+        Level userLevel = Level.parse(level);
+        Level newLevel = userLevel.intValue() < rootLevel.intValue() ? userLevel : rootLevel;
+
+        rootLogger.setLevel(newLevel);
 
         // Now we find the SphinxLogFormatter that the log manager created
         // and configure it.
