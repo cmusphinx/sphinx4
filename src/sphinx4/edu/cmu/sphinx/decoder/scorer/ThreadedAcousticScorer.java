@@ -14,6 +14,7 @@ package edu.cmu.sphinx.decoder.scorer;
 
 import edu.cmu.sphinx.decoder.search.Token;
 import edu.cmu.sphinx.frontend.*;
+import edu.cmu.sphinx.frontend.endpoint.SpeechEndSignal;
 import edu.cmu.sphinx.frontend.util.DataUtil;
 import edu.cmu.sphinx.util.props.*;
 
@@ -192,6 +193,9 @@ public class ThreadedAcousticScorer implements AcousticScorer {
             Data data = frontEnd.getData();
 
             while (data instanceof Signal) {
+                if(data instanceof SpeechEndSignal)
+                    return null;
+                
                 data = frontEnd.getData();
             }
 
