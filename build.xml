@@ -458,10 +458,8 @@
         </replace>
         <replace file="${model_class_dir}/${my_model_name}/Model.java">
             <replacevalue>import edu.cmu.sphinx.linguist.acoustic.*;
-import edu.cmu.sphinx.linguist.acoustic.tiedstate.*;
-</replacevalue>
-            <replacetoken>import edu.cmu.sphinx.linguist.acoustic.*;
-</replacetoken>
+import edu.cmu.sphinx.linguist.acoustic.tiedstate.*;</replacevalue>
+            <replacetoken>import edu.cmu.sphinx.linguist.acoustic.*;</replacetoken>
         </replace>
 
         <mkdir dir="${model_class_dir}/${my_model_name}/"/>
@@ -477,10 +475,8 @@ import edu.cmu.sphinx.linguist.acoustic.tiedstate.*;
         </replace>
         <replace file="${model_class_dir}/${my_model_name}/ModelLoader.java">
             <replacevalue>import edu.cmu.sphinx.linguist.acoustic.*;
-import edu.cmu.sphinx.linguist.acoustic.tiedstate.*;
-</replacevalue>
-            <replacetoken>import edu.cmu.sphinx.linguist.acoustic.*;
-</replacetoken>
+import edu.cmu.sphinx.linguist.acoustic.tiedstate.*;</replacevalue>
+            <replacetoken>import edu.cmu.sphinx.linguist.acoustic.*;</replacetoken>
         </replace>
     </target>
 
