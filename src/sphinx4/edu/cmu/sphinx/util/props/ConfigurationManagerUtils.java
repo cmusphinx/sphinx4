@@ -155,6 +155,39 @@ public class ConfigurationManagerUtils {
 
 
     /**
+     * This method will automatically rename all components of <code>subCM</code> for which there is component named the
+     * same in the <code>baseCM</code> .
+     * <p/>
+     * Note: This is ie. required when merging two system configurations into one.
+     *
+     * @return A map which maps all renamed component names to their new names.
+     */
+    public static Map<String, String> fixDuplicateNames(ConfigurationManager baseCM, ConfigurationManager subCM) {
+        Map<String, String> renames = new HashMap<String, String>();
+
+        for (String compName : subCM.getComponentNames()) {
+            String uniqueName = compName;
+
+            if (baseCM.getComponentNames().contains(uniqueName)) {
+
+                int i = 1;
+                while (baseCM.getComponentNames().contains(uniqueName + i) ||
+                        subCM.getComponentNames().contains(uniqueName + i)) {
+                    i++;
+                }
+
+                uniqueName = uniqueName + i;
+
+                subCM.renameConfigurable(compName, uniqueName);
+                renames.put(compName, uniqueName);
+            }
+        }
+
+        return renames;
+    }
+
+
+    /**
      * converts a configuration manager instance into a xml-string .
      * <p/>
      * Note: This methods will not instantiate configurables.
