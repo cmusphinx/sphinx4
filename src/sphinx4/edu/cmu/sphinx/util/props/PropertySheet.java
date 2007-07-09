@@ -13,7 +13,7 @@ import java.util.logging.Logger;
  *
  * @author Holger Brandl
  */
-public class PropertySheet {
+public class PropertySheet implements Cloneable {
 
     public enum PropertyType {
 
@@ -657,6 +657,30 @@ public class PropertySheet {
 
         // maybe we could test a little bit more here. suggestions?
         return true;
+    }
+
+
+    protected Object clone() throws CloneNotSupportedException {
+        PropertySheet ps = (PropertySheet) super.clone();
+
+        ps.registeredProperties = new HashMap<String, S4PropWrapper>(this.registeredProperties);
+        ps.propValues = new HashMap<String, Object>(this.propValues);
+
+        ps.rawProps = new HashMap<String, Object>(this.rawProps);
+
+        // make deep copy of raw-lists
+        for (String regProp : ps.getRegisteredProperties()) {
+            if (getType(regProp).equals(PropertyType.COMPLIST)) {
+                ps.rawProps.put(regProp, new ArrayList<String>((Collection<? extends String>) rawProps.get(regProp)));
+                ps.propValues.put(regProp, null);
+            }
+        }
+
+        ps.cm = cm;
+        ps.owner = null;
+        ps.instanceName = this.instanceName;
+
+        return ps;
     }
 
 

@@ -168,19 +168,17 @@ public class ConfigurationManagerUtils {
         for (String compName : subCM.getComponentNames()) {
             String uniqueName = compName;
 
-            if (baseCM.getComponentNames().contains(uniqueName)) {
+            int i = 0;
 
-                int i = 1;
-                while (baseCM.getComponentNames().contains(uniqueName + i) ||
-                        subCM.getComponentNames().contains(uniqueName + i)) {
-                    i++;
-                }
+            while (baseCM.getComponentNames().contains(uniqueName) ||
+                    (subCM.getComponentNames().contains(uniqueName) && !uniqueName.equals(compName))) {
 
-                uniqueName = uniqueName + i;
-
-                subCM.renameConfigurable(compName, uniqueName);
-                renames.put(compName, uniqueName);
+                i++;
+                uniqueName = compName + i;
             }
+
+            subCM.renameConfigurable(compName, uniqueName);
+            renames.put(compName, uniqueName);
         }
 
         return renames;

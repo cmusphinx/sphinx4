@@ -6,7 +6,7 @@ import java.util.*;
 
 
 /** A configuration manager which enables xml-based system configuration.  ...to be continued! */
-public class ConfigurationManager {
+public class ConfigurationManager implements Cloneable {
 
     private List<ConfigurationChangeListener> changeListeners = new ArrayList<ConfigurationChangeListener>();
 
@@ -176,6 +176,7 @@ public class ConfigurationManager {
         addConfigurable(confClass, instanceName, new HashMap<String, Object>());
     }
 
+
     public void renameConfigurable(String oldName, String newName) {
         PropertySheet ps = getPropertySheet(oldName);
 
@@ -204,6 +205,27 @@ public class ConfigurationManager {
 
         for (ConfigurationChangeListener changeListener : changeListeners)
             changeListener.componentRemoved(this, ps);
+    }
+
+
+    public void addSubConfiguration(ConfigurationManager subCM) {
+        Collection<String> compNames = getComponentNames();
+
+        for (String addCompName : subCM.getComponentNames()) {
+            if (compNames.contains(addCompName)) {
+                throw new RuntimeException(addCompName + " is already registered to system configuration");
+            }
+        }
+
+        for (String globProp : subCM.globalProperties.keySet()) {
+            if (globalProperties.keySet().contains(globProp)) {
+                throw new IllegalArgumentException(globProp + " is already registered as global property");
+            }
+        }
+
+        globalProperties.putAll(subCM.globalProperties);
+        symbolTable.putAll(subCM.symbolTable);
+        rawPropertyMap.putAll(subCM.rawPropertyMap);
     }
 
 
@@ -339,10 +361,25 @@ public class ConfigurationManager {
         }
 
         // make sure that both configuration managers have the same set of global properties
-        if (!cm.getGlobalProperties().equals(getGlobalProperties()))
-            return false;
+        return cm.getGlobalProperties().equals(getGlobalProperties());
+    }
 
-        return true;
+
+    // This is not tested yet !!!
+    public Object clone() throws CloneNotSupportedException {
+        ConfigurationManager cloneCM = (ConfigurationManager) super.clone();
+
+        cloneCM.changeListeners = new ArrayList<ConfigurationChangeListener>();
+        cloneCM.symbolTable = new LinkedHashMap<String, PropertySheet>();
+        for (String compName : symbolTable.keySet()) {
+            cloneCM.symbolTable.put(compName, (PropertySheet) symbolTable.get(compName).clone());
+        }
+
+        cloneCM.globalProperties = new LinkedHashMap<String, String>(globalProperties);
+        cloneCM.rawPropertyMap = new HashMap<String, RawPropertyData>(rawPropertyMap);
+
+
+        return cloneCM;
     }
 
 
