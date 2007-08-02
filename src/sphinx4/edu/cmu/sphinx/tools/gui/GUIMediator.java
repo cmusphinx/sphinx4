@@ -105,7 +105,7 @@ public class GUIMediator {
      * Start the GUI -  after load operations is completed successfully
      */
     public void execute(){
-        _mainJF.setSize(750,700);
+        _mainJF.setSize(900,700);
         _mainJF.setLocationRelativeTo(null);
         _mainJF.setVisible(true);
         

@@ -109,7 +109,7 @@
         <Container class="javax.swing.JPanel" name="jRightPanel">
           <Properties>
             <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-              <Dimension value="[350, 32767]"/>
+              <Dimension value="[650, 32767]"/>
             </Property>
           </Properties>
           <Constraints>
@@ -123,7 +123,7 @@
             <Component class="javax.swing.JLabel" name="jLabelEmpty4">
               <Properties>
                 <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                  <Dimension value="[400, 10]"/>
+                  <Dimension value="[600, 10]"/>
                 </Property>
               </Properties>
             </Component>
@@ -132,21 +132,21 @@
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                   <Font name="Tahoma" size="12" style="1"/>
                 </Property>
-                <Property name="text" type="java.lang.String" value="      Class name :"/>
+                <Property name="text" type="java.lang.String" value="    Class name :"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JTextField" name="jTextClass">
               <Properties>
                 <Property name="editable" type="boolean" value="false"/>
                 <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                  <Dimension value="[200, 25]"/>
+                  <Dimension value="[300, 25]"/>
                 </Property>
               </Properties>
             </Component>
             <Component class="javax.swing.JLabel" name="jLabelEmpty1">
               <Properties>
                 <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                  <Dimension value="[400, 10]"/>
+                  <Dimension value="[600, 10]"/>
                 </Property>
               </Properties>
             </Component>
@@ -155,7 +155,7 @@
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                   <Font name="Tahoma" size="12" style="1"/>
                 </Property>
-                <Property name="text" type="java.lang.String" value="          Configuration set  :"/>
+                <Property name="text" type="java.lang.String" value="    Configuration set  :"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JComboBox" name="jComboName">
@@ -165,7 +165,7 @@
                 </Property>
                 <Property name="opaque" type="boolean" value="false"/>
                 <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                  <Dimension value="[175, 25]"/>
+                  <Dimension value="[200, 25]"/>
                 </Property>
               </Properties>
               <Events>
@@ -193,7 +193,7 @@
             <Component class="javax.swing.JSeparator" name="jSeparator">
               <Properties>
                 <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                  <Dimension value="[500, 20]"/>
+                  <Dimension value="[650, 20]"/>
                 </Property>
               </Properties>
             </Component>
@@ -212,7 +212,7 @@
                   <Dimension value="[350, 600]"/>
                 </Property>
                 <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                  <Dimension value="[450, 430]"/>
+                  <Dimension value="[600, 430]"/>
                 </Property>
               </Properties>
 
@@ -295,7 +295,7 @@
                 <Container class="javax.swing.JPanel" name="jPanelDetail">
                   <Properties>
                     <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                      <Dimension value="[200, 600]"/>
+                      <Dimension value="[600, 600]"/>
                     </Property>
                   </Properties>
                   <Constraints>
@@ -306,29 +306,22 @@
 
                   <Layout class="org.netbeans.modules.form.compat2.layouts.DesignFlowLayout"/>
                   <SubComponents>
-                    <Component class="javax.swing.JLabel" name="jLabelEmpty6">
-                      <Properties>
-                        <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                          <Dimension value="[400, 10]"/>
-                        </Property>
-                      </Properties>
-                    </Component>
                     <Component class="javax.swing.JLabel" name="jLabelPropName">
                       <Properties>
-                        <Property name="text" type="java.lang.String" value="Property Name"/>
+                        <Property name="text" type="java.lang.String" value="Property Name "/>
                       </Properties>
                     </Component>
                     <Component class="javax.swing.JTextField" name="jTextPropName">
                       <Properties>
                         <Property name="editable" type="boolean" value="false"/>
                         <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                          <Dimension value="[150, 25]"/>
+                          <Dimension value="[300, 25]"/>
                         </Property>
                       </Properties>
                     </Component>
                     <Component class="javax.swing.JLabel" name="jLabelPropType">
                       <Properties>
-                        <Property name="text" type="java.lang.String" value="Property Type"/>
+                        <Property name="text" type="java.lang.String" value="Property Type  "/>
                       </Properties>
                     </Component>
                     <Component class="javax.swing.JTextField" name="jTextPropType">
@@ -338,13 +331,29 @@
                           <Font name="Tahoma" size="11" style="1"/>
                         </Property>
                         <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                          <Dimension value="[150, 25]"/>
+                          <Dimension value="[300, 25]"/>
+                        </Property>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JLabel" name="jLabelClassType">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="      Class Type  "/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JTextField" name="jTextClassType">
+                      <Properties>
+                        <Property name="editable" type="boolean" value="false"/>
+                        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                          <Font name="Tahoma" size="11" style="1"/>
+                        </Property>
+                        <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                          <Dimension value="[300, 25]"/>
                         </Property>
                       </Properties>
                     </Component>
                     <Component class="javax.swing.JLabel" name="jLabelDefault">
                       <Properties>
-                        <Property name="text" type="java.lang.String" value="    Default value"/>
+                        <Property name="text" type="java.lang.String" value="     Default value"/>
                       </Properties>
                     </Component>
                     <Component class="javax.swing.JTextField" name="jTextDefault">
@@ -354,20 +363,20 @@
                           <Font name="Tahoma" size="11" style="1"/>
                         </Property>
                         <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                          <Dimension value="[150, 25]"/>
+                          <Dimension value="[300, 25]"/>
                         </Property>
                       </Properties>
                     </Component>
                     <Component class="javax.swing.JLabel" name="jLabelEmpty5">
                       <Properties>
                         <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                          <Dimension value="[400, 10]"/>
+                          <Dimension value="[600, 10]"/>
                         </Property>
                       </Properties>
                     </Component>
                     <Component class="javax.swing.JLabel" name="jLabelDesc">
                       <Properties>
-                        <Property name="text" type="java.lang.String" value="  Description"/>
+                        <Property name="text" type="java.lang.String" value="       Description        "/>
                       </Properties>
                     </Component>
                     <Container class="javax.swing.JScrollPane" name="jScrollPane3">
@@ -379,17 +388,24 @@
                       <SubComponents>
                         <Component class="javax.swing.JTextArea" name="jTextDesc">
                           <Properties>
-                            <Property name="columns" type="int" value="22"/>
+                            <Property name="columns" type="int" value="25"/>
                             <Property name="editable" type="boolean" value="false"/>
                             <Property name="lineWrap" type="boolean" value="true"/>
-                            <Property name="rows" type="int" value="3"/>
+                            <Property name="rows" type="int" value="4"/>
                           </Properties>
                         </Component>
                       </SubComponents>
                     </Container>
+                    <Component class="javax.swing.JLabel" name="jLabelEmpty6">
+                      <Properties>
+                        <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                          <Dimension value="[600, 10]"/>
+                        </Property>
+                      </Properties>
+                    </Component>
                     <Component class="javax.swing.JLabel" name="jLabelPropVal">
                       <Properties>
-                        <Property name="text" type="java.lang.String" value="Current value"/>
+                        <Property name="text" type="java.lang.String" value="   Current value                   "/>
                       </Properties>
                     </Component>
                     <Container class="javax.swing.JScrollPane" name="jScrollPane7">
@@ -419,13 +435,13 @@
                     </Container>
                     <Component class="javax.swing.JLabel" name="jLabelNewVal">
                       <Properties>
-                        <Property name="text" type="java.lang.String" value="New value"/>
+                        <Property name="text" type="java.lang.String" value="         New value  "/>
                       </Properties>
                     </Component>
                     <Component class="javax.swing.JTextField" name="jTextNewVal">
                       <Properties>
                         <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                          <Dimension value="[250, 25]"/>
+                          <Dimension value="[300, 25]"/>
                         </Property>
                       </Properties>
                     </Component>
@@ -438,14 +454,14 @@
                           <StringArray count="0"/>
                         </Property>
                         <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                          <Dimension value="[250, 22]"/>
+                          <Dimension value="[300, 25]"/>
                         </Property>
                       </Properties>
                     </Component>
-                    <Component class="javax.swing.JLabel" name="jLabelEmpty3">
+                    <Component class="javax.swing.JLabel" name="jLabelEmpty7">
                       <Properties>
                         <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                          <Dimension value="[200, 10]"/>
+                          <Dimension value="[600, 10]"/>
                         </Property>
                       </Properties>
                     </Component>
@@ -453,7 +469,7 @@
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Add"/>
                         <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                          <Dimension value="[100, 25]"/>
+                          <Dimension value="[200, 25]"/>
                         </Property>
                       </Properties>
                       <Events>
@@ -464,7 +480,7 @@
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Remove"/>
                         <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                          <Dimension value="[100, 25]"/>
+                          <Dimension value="[200, 25]"/>
                         </Property>
                       </Properties>
                       <Events>
@@ -476,9 +492,9 @@
                         <Property name="mnemonic" type="int" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
                           <Connection type="value" value="java.awt.event.KeyEvent.VK_C" valueType="int"/>
                         </Property>
-                        <Property name="text" type="java.lang.String" value="Replace"/>
+                        <Property name="text" type="java.lang.String" value="Change Value"/>
                         <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                          <Dimension value="[150, 25]"/>
+                          <Dimension value="[200, 25]"/>
                         </Property>
                       </Properties>
                       <Events>
@@ -489,7 +505,7 @@
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Refresh Property"/>
                         <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                          <Dimension value="[150, 23]"/>
+                          <Dimension value="[250, 23]"/>
                         </Property>
                       </Properties>
                       <Events>

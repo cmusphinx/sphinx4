@@ -14,6 +14,14 @@
 
 package edu.cmu.sphinx.tools.gui.util;
 
+import edu.cmu.sphinx.util.props.S4Property;
+import edu.cmu.sphinx.util.props.S4Boolean;
+import edu.cmu.sphinx.util.props.S4Component;
+import edu.cmu.sphinx.util.props.S4ComponentList;
+import edu.cmu.sphinx.util.props.S4Double;
+import edu.cmu.sphinx.util.props.S4Integer;
+import edu.cmu.sphinx.util.props.S4String;
+
 import edu.cmu.sphinx.tools.gui.ConfigProperties;
 import edu.cmu.sphinx.tools.gui.RawPropertyData;
 import edu.cmu.sphinx.tools.gui.GUIFileActionListener;
@@ -27,6 +35,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -62,8 +71,8 @@ public class ModelBuilder implements GUIFileActionListener{
     private String _folder_path = FOLDER_PROP;
     // this is the root package of all sphinx classes
     private String _package_path = PACKAGE_PROP;
-    private String _source_path;  // path separated by '/', and ends with '/'
-    private String _classes_path; // path separated by '/', and ends with '/'
+    private static String _source_path;  // path separated by '/', and ends with '/'
+    private static String _classes_path; // path separated by '/', and ends with '/'
     
     /** Creates a Singleton instance of ModelBuilder */
     private ModelBuilder() {
@@ -534,9 +543,7 @@ public class ModelBuilder implements GUIFileActionListener{
                 new ConfigurableComponent(new String(group),c,c.getName(),new String(""));
         System.out.println("***** create ConfigurableComponent " + 
             c.getName() + " for " + group );    
-        
-        Map classinfo = getMapConfigurationInfo(c); // get information set for class properties
-        
+   
         // check all the public fields
         // if any of them is with modifier 'public static final' and starts with 'PROP_'        
         Field[] publicFields = c.getFields();             
@@ -551,7 +558,7 @@ public class ModelBuilder implements GUIFileActionListener{
                      //create the configurable property
                     //System.out.println("***** create ConfigurableProperty " + 
                     //       (String)publicFields[i].get(null));
-                    ConfigurableProperty cp = createProperty(c,fieldname,propname,classinfo);                    
+                    ConfigurableProperty cp = createProperty(c,publicFields[i]);                        
                     cc.addProperty(cp);
                 }
             }                
@@ -570,170 +577,153 @@ public class ModelBuilder implements GUIFileActionListener{
      *          of this class
      * @return ConfigurableProperty
      */
-    private ConfigurableProperty createProperty(Class c,String fieldname,String propname,
-            Map classinfo) throws ConfigurableUtilException{
-           
-        ConfigurableProperty cp=null;
-        //javadoc comment of the property
-        String field_comment = JavadocExtractor.getJavadocComment(c.getName(), 
-                    _classes_path, _source_path, fieldname);
-        if (field_comment == null) // no comment
-            field_comment = new String("");
-
-        String default_value=null;
+    private ConfigurableProperty createProperty(Class c,Field field) throws ConfigurableUtilException
+    {                        
+        ConfigurableProperty cp=null;   
         try{
-            // default value if it exists
-            default_value = getDefaultValue(c,fieldname);
-            //System.out.println("*** with default =" + default_value + "=" );
+            cp = CreatePropertyHelper.createProperty(field,c,_source_path, _classes_path);
+            //    cp = CreatePropertyHelper.createProperty(field,c);
         }catch(IllegalAccessException e){
                         throw new ConfigurableUtilException
                            ("IllegalAccessException while creating configurable property",
                            ConfigurableUtilException.UTIL_BUILDER);
         }
-        if (default_value == null) // no default value
-            default_value = new String("");
-
-        PropertyType proptype = getPropType(classinfo,fieldname);        
-        if ( proptype !=null && 
-               ( proptype == PropertyType.COMPONENT || proptype == PropertyType.COMPONENT_LIST )){ 
-            // it's a class component type                    
-            String classtype = getInfo(classinfo,fieldname,"_CLASSTYPE");
-            cp = new ConfigurableProperty
-                 (propname,default_value, proptype, field_comment,fieldname,classtype);
-            // System.out.println("with type "+proptype+" and class type : " + classtype);
-        }else{ // it's a native java type                 
-            cp = new ConfigurableProperty
-                    (propname,default_value, proptype, field_comment,fieldname);            
-            // System.out.println("with type "+proptype);
-        }
         return cp;
     }
-    
-    /**
-     * private method to get more information about this property
-     *
-     * @param myinfo Map that holds additional information of all properties in the class
-     * @param fieldname Property name that we're interested in
-     * @return PropertyType of this property
-     */
-    private PropertyType getPropType(Map myinfo, String fieldname){
-        PropertyType myType = null;
-        String proptype = getInfo(myinfo,fieldname,new String("_TYPE"));                
-        
-        if ( proptype == null ){
-            return null;
-        }
-        else if (proptype.equals("COMPONENT")){            
-            myType= PropertyType.COMPONENT;
-        }            
-        else if (proptype.equals("INTEGER")){
-           myType= PropertyType.INT;
-        }            
-        else if (proptype.equals("BOOLEAN")){
-            myType= PropertyType.BOOLEAN;
-        }
-        else if (proptype.equals("STRING_LIST")){
-           myType=PropertyType.STRING_LIST;
-        }
-        else if (proptype.equals("DOUBLE")){
-            myType=PropertyType.DOUBLE;
-        }
-        else if (proptype.equals("COMPONENT_LIST")){
-            myType= PropertyType.COMPONENT_LIST;                
-        }
-        else if (proptype.equals("STRING")){
-            myType=PropertyType.STRING;
-        }
-        else if (proptype.equals("RESOURCE")){
-            myType=PropertyType.RESOURCE;
-        }
-        else if (proptype.equals("FLOAT")){
-            myType= PropertyType.FLOAT;
-        }       
-        else
-            return null;
-        return myType;
-    }
 
-    /**
-     * private method to get more information about this property
-     *
-     * @param myinfo Map that holds additional information of all properties in the class
-     * @param fieldname Property name that we're interested in
-     * @param infotype The information type needed
-     * @return String information of this property
-     */
-    private String getInfo(Map myinfo, String fieldname,String infotype){
+    
+/** 
+ * This is a static class that is used as a helper to get information about 
+ * a configurable property and to create a ConfigurableProperty instace
+ */
+private static class CreatePropertyHelper{                           
         
-        if (myinfo == null || !myinfo.containsKey(fieldname+infotype))
-            return null; 
-        else{                              
-            return (String)myinfo.get(fieldname+infotype);
-        }
-    }
-    
-    /** 
-     * private method to check if this property has default value
-     * and to retrieve the default value
-     *
-     * @param c Class to be checked
-     * @param fieldname Name of the property
-     * @return <code>null</code> if there is no default value, otherwise
-     *          String of default value
-     */
-    private String getDefaultValue(Class c, String fieldname)throws IllegalAccessException{
-        String default_value;
-        try {
-            Field tempField=c.getField(fieldname.trim()+ "_DEFAULT");     
-            if (tempField.get(null) != null){// with default value   
-                default_value = tempField.get(null).toString().trim();
-            }else{// no default value
-                 return null;
-            }                            
-        }catch (NoSuchFieldException e){
-            return null;// no default value
-        }
-        return default_value;
-    }
-    
-    /**
-     * private method to get Map containing information about all the 
-     * property PROP_ in this Configurable class
-     *
-     * @param c Configurable class
-     * @return Map containing information about the configurable property 
-     */
-    private Map getMapConfigurationInfo(Class c){
-        try{
-            Method infomethod = c.getMethod("getConfigurationInfo",(Class[])null);
-            try {                
-                Map myinfo = (Map)infomethod.invoke(null, (Object[]) null);  
-                // get the info from its super classes as well
-                Class superclass = c.getSuperclass();
-                if(superclass != null && !superclass.getName().equals("java.lang.Object")){
-                    myinfo.putAll(getMapConfigurationInfo(superclass));
+        //  create this private class to hold 
+        //  property type, class type and default value info that are retrieved 
+        //  from annotation of the property
+        //  in sphinx4 source code
+       
+        private static Class _class;
+        private static String _fieldname;
+        private static Field _field;
+        
+        private static PropertyType _type = null;
+        private static String _defval = null;
+        private static String _classtype = null; // component type for this property 
+                      
+//        private void setDefault(String defval){
+//            _defval = defval;
+//        }
+//        
+//        private void setType(PropertyType type){
+//            _type = type;
+//        }
+//        
+//        private void setClassType (String classtype){
+//            _classtype = classtype;
+//        }
+        
+        // will retrieve something 
+        private static void processAnnotation() throws IllegalAccessException{
+            
+            Annotation myannot;        
+
+            Annotation[] annotations = _field.getAnnotations();
+
+            // check each annotation belongs to this field
+            for (Annotation annotation : annotations) {
+                //search for the super common annotation of all s4 properties
+                Annotation[] superAnnotations = annotation.annotationType().getAnnotations();               
+                for (Annotation superAnnotation : superAnnotations) {
+
+                    // if this annotation belongs to a sphinx4 configurable property, 
+                    // then only we get its info
+                    if (superAnnotation instanceof S4Property) { 
+                        System.out.println("*** s4 property member");
+
+                        // get info from the s4 property annotation
+                        System.out.println(_field.getName() + " : *** " + annotation.annotationType().getName());
+                        if ( annotation instanceof S4Double) {
+                            _type = PropertyType.DOUBLE;                          
+                            _defval = Double.toString(((S4Double)annotation).defaultValue());
+                        }else if ( annotation instanceof S4Integer ){
+                            _type = PropertyType.INT;          
+                            _defval = Integer.toString(((S4Integer)annotation).defaultValue());
+                        }else if ( annotation instanceof S4Component ){
+                            _type = PropertyType.COMPONENT;
+                            _classtype = ((S4Component)annotation).type().getName();                            
+                        }else if ( annotation instanceof S4String){                           
+                            _type = PropertyType.STRING;
+                            _defval = ((S4String)annotation).defaultValue();
+                        }else if ( annotation instanceof S4Boolean){
+                            _type = PropertyType.BOOLEAN;
+                            _defval = String.valueOf(((S4Boolean)annotation).defaultValue());
+                        }else if ( annotation instanceof S4ComponentList){
+                            _type = PropertyType.COMPONENT_LIST;
+                            _classtype = ((S4ComponentList)annotation).type().getName();
+                        }                            
+//                        System.out.println(" *** Property type : " + _type);
+//                        System.out.println(" *** class type : " + _classtype );
+//                        System.out.println(" *** default value : " + _defval);
+                    }                    
                 }
-                return myinfo;
-            }catch ( IllegalAccessException e) {
-                System.err.println(e.getMessage());
-                return null;
-            }catch (IllegalArgumentException e) {
-                System.err.println(e.getMessage());
-                return null;
-            }catch (InvocationTargetException e) {
-                System.err.println(e.getMessage());
-                return null;
             }
-        }catch(NoSuchMethodException e){
-            System.err.println("NoSuchMethodException:"+e.getMessage());
-            return null;
-        }catch(NullPointerException e){
-            System.err.println("NullPointerException"+e.getMessage());
-            return null;            
-        }catch(SecurityException e){
-            System.err.println("SecurityException"+e.getMessage());
-            return null;
-        }
-    } // end getMapConfigurationInfo
-    
+
+            // if we find no annotation for the default field, 
+            // we try to look for a property with same name 
+            // that ends with '_DEFAULT'
+            if ( _defval == null){
+                try {
+                    Field tempField=_class.getField(_fieldname.trim()+ "_DEFAULT");     
+                    if (tempField.get(null) != null){// with default value   
+                        _defval = tempField.get(null).toString().trim();            
+                    }
+                }catch (NoSuchFieldException e){
+                        // do nothing
+                }
+            }        
+        } // end processAnnotation
+        
+        private static ConfigurableProperty createProperty
+                (Field f, Class c, String sourcepath, String classpath) throws IllegalAccessException
+        {
+            _class = c;
+            _field = f;
+            _fieldname = f.getName();
+            _type = null;            
+            _defval = null;
+            _classtype = null;
+            
+            ConfigurableProperty cp = null;                        
+            String propname = new String((String)_field.get(null)); //name of configurable property
+            
+            //javadoc comment of the property
+            String field_comment = JavadocExtractor.getJavadocComment(_class.getName(), 
+                            _classes_path, _source_path, _fieldname);
+            if (field_comment == null) // no comment
+                field_comment = new String("");
+            System.out.println(" Comment *** : " + field_comment);
+            
+            processAnnotation();
+            
+            if (_defval == null) 
+                _defval = new String("");
+            
+            if ( _type !=null && 
+                   ( _type == PropertyType.COMPONENT || _type == PropertyType.COMPONENT_LIST )){ 
+                // it's a class component type, 
+                // _classtype info should exist if it is specified in sphinx4 source code                                    
+                cp = new ConfigurableProperty
+                     (propname,_defval, _type, field_comment,_fieldname,_classtype);
+                // System.out.println("with type "+proptype+" and class type : " + classtype);
+                
+            }else{ // it's a native java type                 
+                cp = new ConfigurableProperty
+                        (propname,_defval, _type, field_comment,_fieldname);            
+                // System.out.println("with type "+proptype);
+            }
+            return cp;            
+        } // end createProperty
+    }// end static class CreatePropertyHelper
+   
 }//end ModelBuilder class

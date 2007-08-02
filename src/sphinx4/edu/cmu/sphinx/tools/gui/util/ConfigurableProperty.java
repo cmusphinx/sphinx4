@@ -48,6 +48,9 @@ public class ConfigurableProperty {
         _default = defaultval;      
         _original_name = original;
         _classtype = null;
+    
+        System.out.println(" ***** not component property " + name + "_" + defaultval + "_" + 
+                type + "_" + desc + "_" + original);
     }
     
     /** 
@@ -69,6 +72,9 @@ public class ConfigurableProperty {
         _default = defaultval;      
         _original_name = original;
         _classtype = class_type;
+        
+        System.out.println(" ***** component property " + name + "_" + defaultval + "_" + 
+                type + "_" + desc + "_" + original + "_" + class_type);
     }
     
     /**

@@ -41,7 +41,7 @@ This file is used to run the GUI.
     <target name="all"
             description="Compiles all the tests.">
 	    <javac debug="true"
-	           source="1.4"
+	           source="1.5"
 		   deprecation="true"
 		   destdir="${classes_dir}"
 		   classpath="${classes_dir}"

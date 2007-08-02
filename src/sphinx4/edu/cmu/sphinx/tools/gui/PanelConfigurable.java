@@ -167,6 +167,7 @@ public class PanelConfigurable extends javax.swing.JPanel {
     private void clearPanelDetail(){
         jTextPropName.setText("");
         jTextPropType.setText("");
+        jTextClassType.setText("");
         jTextDefault.setText("");
         jTextDesc.setText("");
         ((DefaultListModel)jListPropVal.getModel()).clear();    
@@ -335,24 +336,26 @@ public class PanelConfigurable extends javax.swing.JPanel {
         jListInner = new javax.swing.JList();
         jButtonRemoveProp = new javax.swing.JButton();
         jPanelDetail = new javax.swing.JPanel();
-        jLabelEmpty6 = new javax.swing.JLabel();
         jLabelPropName = new javax.swing.JLabel();
         jTextPropName = new javax.swing.JTextField();
         jLabelPropType = new javax.swing.JLabel();
         jTextPropType = new javax.swing.JTextField();
+        jLabelClassType = new javax.swing.JLabel();
+        jTextClassType = new javax.swing.JTextField();
         jLabelDefault = new javax.swing.JLabel();
         jTextDefault = new javax.swing.JTextField();
         jLabelEmpty5 = new javax.swing.JLabel();
         jLabelDesc = new javax.swing.JLabel();
         jScrollPane3 = new javax.swing.JScrollPane();
         jTextDesc = new javax.swing.JTextArea();
+        jLabelEmpty6 = new javax.swing.JLabel();
         jLabelPropVal = new javax.swing.JLabel();
         jScrollPane7 = new javax.swing.JScrollPane();
         jListPropVal = new javax.swing.JList();
         jLabelNewVal = new javax.swing.JLabel();
         jTextNewVal = new javax.swing.JTextField();
         jComboComponent = new javax.swing.JComboBox();
-        jLabelEmpty3 = new javax.swing.JLabel();
+        jLabelEmpty7 = new javax.swing.JLabel();
         jButtonAdd = new javax.swing.JButton();
         jButtonRemove = new javax.swing.JButton();
         jButtonChange = new javax.swing.JButton();
@@ -393,27 +396,27 @@ public class PanelConfigurable extends javax.swing.JPanel {
 
         jSplitPaneOuter.setLeftComponent(jLeftPanel);
 
-        jRightPanel.setMaximumSize(new java.awt.Dimension(350, 32767));
-        jLabelEmpty4.setPreferredSize(new java.awt.Dimension(400, 10));
+        jRightPanel.setMaximumSize(new java.awt.Dimension(650, 32767));
+        jLabelEmpty4.setPreferredSize(new java.awt.Dimension(600, 10));
         jRightPanel.add(jLabelEmpty4);
 
         jLabelClass.setFont(new java.awt.Font("Tahoma", 1, 12));
-        jLabelClass.setText("      Class name :");
+        jLabelClass.setText("    Class name :");
         jRightPanel.add(jLabelClass);
 
         jTextClass.setEditable(false);
-        jTextClass.setPreferredSize(new java.awt.Dimension(200, 25));
+        jTextClass.setPreferredSize(new java.awt.Dimension(300, 25));
         jRightPanel.add(jTextClass);
 
-        jLabelEmpty1.setPreferredSize(new java.awt.Dimension(400, 10));
+        jLabelEmpty1.setPreferredSize(new java.awt.Dimension(600, 10));
         jRightPanel.add(jLabelEmpty1);
 
         jLabelName.setFont(new java.awt.Font("Tahoma", 1, 12));
-        jLabelName.setText("          Configuration set  :");
+        jLabelName.setText("    Configuration set  :");
         jRightPanel.add(jLabelName);
 
         jComboName.setOpaque(false);
-        jComboName.setPreferredSize(new java.awt.Dimension(175, 25));
+        jComboName.setPreferredSize(new java.awt.Dimension(200, 25));
         jComboName.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 RightPanelTopActionPerformed(evt);
@@ -435,7 +438,7 @@ public class PanelConfigurable extends javax.swing.JPanel {
         jLabelEmpty2.setPreferredSize(new java.awt.Dimension(400, 10));
         jRightPanel.add(jLabelEmpty2);
 
-        jSeparator.setPreferredSize(new java.awt.Dimension(500, 20));
+        jSeparator.setPreferredSize(new java.awt.Dimension(650, 20));
         jRightPanel.add(jSeparator);
 
         jLabelName1.setFont(new java.awt.Font("Tahoma", 1, 10));
@@ -444,7 +447,7 @@ public class PanelConfigurable extends javax.swing.JPanel {
 
         jSplitPaneInner.setDividerLocation(150);
         jSplitPaneInner.setMaximumSize(new java.awt.Dimension(350, 600));
-        jSplitPaneInner.setPreferredSize(new java.awt.Dimension(450, 430));
+        jSplitPaneInner.setPreferredSize(new java.awt.Dimension(600, 430));
         jInnerLeftPanel.setLayout(new java.awt.BorderLayout());
 
         jTextInnerList.setColumns(10);
@@ -478,48 +481,56 @@ public class PanelConfigurable extends javax.swing.JPanel {
 
         jSplitPaneInner.setLeftComponent(jInnerLeftPanel);
 
-        jPanelDetail.setMaximumSize(new java.awt.Dimension(200, 600));
-        jLabelEmpty6.setPreferredSize(new java.awt.Dimension(400, 10));
-        jPanelDetail.add(jLabelEmpty6);
-
-        jLabelPropName.setText("Property Name");
+        jPanelDetail.setMaximumSize(new java.awt.Dimension(600, 600));
+        jLabelPropName.setText("Property Name ");
         jPanelDetail.add(jLabelPropName);
 
         jTextPropName.setEditable(false);
-        jTextPropName.setPreferredSize(new java.awt.Dimension(150, 25));
+        jTextPropName.setPreferredSize(new java.awt.Dimension(300, 25));
         jPanelDetail.add(jTextPropName);
 
-        jLabelPropType.setText("Property Type");
+        jLabelPropType.setText("Property Type  ");
         jPanelDetail.add(jLabelPropType);
 
         jTextPropType.setEditable(false);
         jTextPropType.setFont(new java.awt.Font("Tahoma", 1, 11));
-        jTextPropType.setPreferredSize(new java.awt.Dimension(150, 25));
+        jTextPropType.setPreferredSize(new java.awt.Dimension(300, 25));
         jPanelDetail.add(jTextPropType);
 
-        jLabelDefault.setText("    Default value");
+        jLabelClassType.setText("      Class Type  ");
+        jPanelDetail.add(jLabelClassType);
+
+        jTextClassType.setEditable(false);
+        jTextClassType.setFont(new java.awt.Font("Tahoma", 1, 11));
+        jTextClassType.setPreferredSize(new java.awt.Dimension(300, 25));
+        jPanelDetail.add(jTextClassType);
+
+        jLabelDefault.setText("     Default value");
         jPanelDetail.add(jLabelDefault);
 
         jTextDefault.setEditable(false);
         jTextDefault.setFont(new java.awt.Font("Tahoma", 1, 11));
-        jTextDefault.setPreferredSize(new java.awt.Dimension(150, 25));
+        jTextDefault.setPreferredSize(new java.awt.Dimension(300, 25));
         jPanelDetail.add(jTextDefault);
 
-        jLabelEmpty5.setPreferredSize(new java.awt.Dimension(400, 10));
+        jLabelEmpty5.setPreferredSize(new java.awt.Dimension(600, 10));
         jPanelDetail.add(jLabelEmpty5);
 
-        jLabelDesc.setText("  Description");
+        jLabelDesc.setText("       Description        ");
         jPanelDetail.add(jLabelDesc);
 
-        jTextDesc.setColumns(22);
+        jTextDesc.setColumns(25);
         jTextDesc.setEditable(false);
         jTextDesc.setLineWrap(true);
-        jTextDesc.setRows(3);
+        jTextDesc.setRows(4);
         jScrollPane3.setViewportView(jTextDesc);
 
         jPanelDetail.add(jScrollPane3);
 
-        jLabelPropVal.setText("Current value");
+        jLabelEmpty6.setPreferredSize(new java.awt.Dimension(600, 10));
+        jPanelDetail.add(jLabelEmpty6);
+
+        jLabelPropVal.setText("   Current value                   ");
         jPanelDetail.add(jLabelPropVal);
 
         jScrollPane7.setMinimumSize(new java.awt.Dimension(250, 23));
@@ -529,21 +540,21 @@ public class PanelConfigurable extends javax.swing.JPanel {
 
         jPanelDetail.add(jScrollPane7);
 
-        jLabelNewVal.setText("New value");
+        jLabelNewVal.setText("         New value  ");
         jPanelDetail.add(jLabelNewVal);
 
-        jTextNewVal.setPreferredSize(new java.awt.Dimension(250, 25));
+        jTextNewVal.setPreferredSize(new java.awt.Dimension(300, 25));
         jPanelDetail.add(jTextNewVal);
 
         jComboComponent.setFont(new java.awt.Font("Tahoma", 1, 10));
-        jComboComponent.setPreferredSize(new java.awt.Dimension(250, 22));
+        jComboComponent.setPreferredSize(new java.awt.Dimension(300, 25));
         jPanelDetail.add(jComboComponent);
 
-        jLabelEmpty3.setPreferredSize(new java.awt.Dimension(200, 10));
-        jPanelDetail.add(jLabelEmpty3);
+        jLabelEmpty7.setPreferredSize(new java.awt.Dimension(600, 10));
+        jPanelDetail.add(jLabelEmpty7);
 
         jButtonAdd.setText("Add");
-        jButtonAdd.setPreferredSize(new java.awt.Dimension(100, 25));
+        jButtonAdd.setPreferredSize(new java.awt.Dimension(200, 25));
         jButtonAdd.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonAddActionPerformed(evt);
@@ -553,7 +564,7 @@ public class PanelConfigurable extends javax.swing.JPanel {
         jPanelDetail.add(jButtonAdd);
 
         jButtonRemove.setText("Remove");
-        jButtonRemove.setPreferredSize(new java.awt.Dimension(100, 25));
+        jButtonRemove.setPreferredSize(new java.awt.Dimension(200, 25));
         jButtonRemove.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonRemoveActionPerformed(evt);
@@ -563,8 +574,8 @@ public class PanelConfigurable extends javax.swing.JPanel {
         jPanelDetail.add(jButtonRemove);
 
         jButtonChange.setMnemonic(java.awt.event.KeyEvent.VK_C);
-        jButtonChange.setText("Replace");
-        jButtonChange.setPreferredSize(new java.awt.Dimension(150, 25));
+        jButtonChange.setText("Change Value");
+        jButtonChange.setPreferredSize(new java.awt.Dimension(200, 25));
         jButtonChange.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonChangeActionPerformed(evt);
@@ -574,7 +585,7 @@ public class PanelConfigurable extends javax.swing.JPanel {
         jPanelDetail.add(jButtonChange);
 
         jButtonRefresh.setText("Refresh Property");
-        jButtonRefresh.setPreferredSize(new java.awt.Dimension(150, 23));
+        jButtonRefresh.setPreferredSize(new java.awt.Dimension(250, 23));
         jButtonRefresh.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonRefreshActionPerformed(evt);
@@ -738,8 +749,23 @@ public class PanelConfigurable extends javax.swing.JPanel {
             String  classname = (String)jListOuter.getSelectedValue();
             ConfigurableProperty cp = _pm.getProperty(classname, prop);
             if(cp != null){
-                jTextPropName.setText(cp.getName());               
-                jTextPropType.setText((cp.getType()==null)?null:cp.getType().toString());
+                jTextPropName.setText(cp.getName());     
+                
+                PropertyType mytype = cp.getType();
+                jTextPropType.setText((mytype==null)?null:mytype.toString());
+                
+                if(mytype.equals( PropertyType.COMPONENT )|| 
+                        mytype.equals(PropertyType.COMPONENT_LIST) )
+                {    
+                    jLabelClassType.setVisible(true);
+                    jTextClassType.setVisible(true);
+                    jTextClassType.setText(cp.getClassType());                    
+                } else {
+                    jLabelClassType.setVisible(false);
+                    jTextClassType.setVisible(false);
+                    jTextClassType.setText("");
+                }
+                
                 jTextDefault.setText(cp.getDefault());
                 jTextDesc.setText(cp.getDesc());
                 if( isConfigSetChosen() )
@@ -880,14 +906,15 @@ public class PanelConfigurable extends javax.swing.JPanel {
     private javax.swing.JDialog jDialogSource;
     private javax.swing.JPanel jInnerLeftPanel;
     private javax.swing.JLabel jLabelClass;
+    private javax.swing.JLabel jLabelClassType;
     private javax.swing.JLabel jLabelDefault;
     private javax.swing.JLabel jLabelDesc;
     private javax.swing.JLabel jLabelEmpty1;
     private javax.swing.JLabel jLabelEmpty2;
-    private javax.swing.JLabel jLabelEmpty3;
     private javax.swing.JLabel jLabelEmpty4;
     private javax.swing.JLabel jLabelEmpty5;
     private javax.swing.JLabel jLabelEmpty6;
+    private javax.swing.JLabel jLabelEmpty7;
     private javax.swing.JLabel jLabelName;
     private javax.swing.JLabel jLabelName1;
     private javax.swing.JLabel jLabelNewVal;
@@ -911,6 +938,7 @@ public class PanelConfigurable extends javax.swing.JPanel {
     private javax.swing.JSplitPane jSplitPaneOuter;
     private javax.swing.JTextArea jTextAreaSource;
     private javax.swing.JTextField jTextClass;
+    private javax.swing.JTextField jTextClassType;
     private javax.swing.JTextField jTextDefault;
     private javax.swing.JTextArea jTextDesc;
     private javax.swing.JTextArea jTextInnerList;
