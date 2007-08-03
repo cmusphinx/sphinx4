@@ -571,10 +571,7 @@ public class ModelBuilder implements GUIFileActionListener{
      * create a <code>ConfigurableProperty</code>
      * 
      * @param c Class that own this property
-     * @param fieldname Name of the attribute field
-     * @param propname Value of the attribute - which is the name of configurable property
-     * @param classinfo Map containing additional information about configurable properties
-     *          of this class
+     * @param field Field that we are want to create a Configurable Property from
      * @return ConfigurableProperty
      */
     private ConfigurableProperty createProperty(Class c,Field field) throws ConfigurableUtilException
