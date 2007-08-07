@@ -336,7 +336,7 @@ public class ConfigurationManagerUtils {
                 if (rpd != null) {
                     rpd.add(paramName, value);
                 } else {
-                    throw new PropertyException(compName, param,
+                    throw new InternalConfigurationException(compName, param,
                             "System property attempting to set parameter "
                                     + " for unknown component " + compName
                                     + " (" + param + ")");
@@ -448,7 +448,7 @@ public class ConfigurationManagerUtils {
         URL url;
         String location = ps.getString(name);
         if (location == null) {
-            throw new PropertyException(name, name, "Required resource property '" + name + "' not set");
+            throw new InternalConfigurationException(name, name, "Required resource property '" + name + "' not set");
         }
 
         Matcher jarMatcher = Pattern.compile("resource:/([.\\w]+?)!(.*)", Pattern.CASE_INSENSITIVE).matcher(location);
@@ -475,17 +475,17 @@ public class ConfigurationManagerUtils {
                         try {
                             url = new URL(urlString);
                         } catch (MalformedURLException mfe) {
-                            throw new PropertyException(name, name, "Bad URL " + urlString + mfe.getMessage());
+                            throw new InternalConfigurationException(mfe, name, name, "Bad URL " + urlString + mfe.getMessage());
                         }
                     }
                 }
                 if (url == null) {
-                    throw new PropertyException(name, name, "Can't locate resource " + resourceName);
+                    throw new InternalConfigurationException(name, name, "Can't locate resource " + resourceName);
                 } else {
                     // System.out.println("URL FOUND " + url);
                 }
             } catch (ClassNotFoundException cnfe) {
-                throw new PropertyException(name, name, "Can't locate resource:/" + className);
+                throw new InternalConfigurationException(cnfe, name, name, "Can't locate resource:/" + className);
             }
         } else {
             if (location.indexOf(":") == -1) {
@@ -495,7 +495,7 @@ public class ConfigurationManagerUtils {
             try {
                 url = new URL(location);
             } catch (MalformedURLException e) {
-                throw new PropertyException(name, name, "Bad URL " + location + e.getMessage());
+                throw new InternalConfigurationException(e, name, name, "Bad URL " + location + e.getMessage());
             }
         }
         return url;

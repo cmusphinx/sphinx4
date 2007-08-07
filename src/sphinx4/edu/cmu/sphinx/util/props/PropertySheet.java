@@ -77,15 +77,15 @@ public class PropertySheet implements Cloneable {
     /** Returns the property names <code>name</code> which is still wrapped into the annotation instance. */
     public S4PropWrapper getProperty(String name, Class propertyClass) throws PropertyException {
         if (!propValues.containsKey(name))
-            throw new PropertyException(getInstanceName(), name,
+            throw new InternalConfigurationException(getInstanceName(), name,
                     "Unknown property '" + name + "' ! Make sure that you've annotated it.");
 
         S4PropWrapper s4PropWrapper = registeredProperties.get(name);
 
         try {
             propertyClass.cast(s4PropWrapper.getAnnotation());
-        } catch (Exception e) {
-            throw new PropertyException(getInstanceName(), name, name + " is not an annotated sphinx property of '" + owner.getClass().getName() + "' !");
+        } catch (ClassCastException e) {
+            throw new InternalConfigurationException(e, getInstanceName(), name, name + " is not an annotated sphinx property of '" + owner.getClass().getName() + "' !");
         }
 
         return s4PropWrapper;
@@ -107,10 +107,10 @@ public class PropertySheet implements Cloneable {
 
             if (s4String.mandatory()) {
                 if (!isDefDefined)
-                    throw new PropertyException(getInstanceName(), name, "mandatory property is not set!");
+                    throw new InternalConfigurationException(getInstanceName(), name, "mandatory property is not set!");
             }
 //            else if(!isDefDefined)
-//                throw new PropertyException(getInstanceName(), name, "no default value for non-mandatory property");
+//                throw new InternalConfigurationException(getInstanceName(), name, "no default value for non-mandatory property");
 
             propValues.put(name, isDefDefined ? s4String.defaultValue() : null);
         }
@@ -120,7 +120,7 @@ public class PropertySheet implements Cloneable {
         //check range
         List<String> range = Arrays.asList(s4String.range());
         if (!range.isEmpty() && !range.contains(propValue))
-            throw new PropertyException(getInstanceName(), name, " is not in range (" + range + ")");
+            throw new InternalConfigurationException(getInstanceName(), name, " is not in range (" + range + ")");
 
         return propValue;
     }
@@ -143,9 +143,9 @@ public class PropertySheet implements Cloneable {
 
             if (s4Integer.mandatory()) {
                 if (!isDefDefined)
-                    throw new PropertyException(getInstanceName(), name, "mandatory property is not set!");
+                    throw new InternalConfigurationException(getInstanceName(), name, "mandatory property is not set!");
             } else if (!isDefDefined)
-                throw new PropertyException(getInstanceName(), name, "no default value for non-mandatory property");
+                throw new InternalConfigurationException(getInstanceName(), name, "no default value for non-mandatory property");
 
             propValues.put(name, s4Integer.defaultValue());
         }
@@ -155,10 +155,10 @@ public class PropertySheet implements Cloneable {
 
         int[] range = s4Integer.range();
         if (range.length != 2)
-            throw new PropertyException(getInstanceName(), name, range + " is not of expected range type, which is {minValue, maxValue)");
+            throw new InternalConfigurationException(getInstanceName(), name, range + " is not of expected range type, which is {minValue, maxValue)");
 
         if (propValue < range[0] || propValue > range[1])
-            throw new PropertyException(getInstanceName(), name, " is not in range (" + range + ")");
+            throw new InternalConfigurationException(getInstanceName(), name, " is not in range (" + range + ")");
 
         return propValue;
     }
@@ -194,9 +194,9 @@ public class PropertySheet implements Cloneable {
 
             if (s4Double.mandatory()) {
                 if (!isDefDefined)
-                    throw new PropertyException(getInstanceName(), name, "mandatory property is not set!");
+                    throw new InternalConfigurationException(getInstanceName(), name, "mandatory property is not set!");
             } else if (!isDefDefined)
-                throw new PropertyException(getInstanceName(), name, "no default value for non-mandatory property");
+                throw new InternalConfigurationException(getInstanceName(), name, "no default value for non-mandatory property");
 
             propValues.put(name, s4Double.defaultValue());
         }
@@ -206,10 +206,10 @@ public class PropertySheet implements Cloneable {
 
         double[] range = s4Double.range();
         if (range.length != 2)
-            throw new PropertyException(getInstanceName(), name, range + " is not of expected range type, which is {minValue, maxValue)");
+            throw new InternalConfigurationException(getInstanceName(), name, range + " is not of expected range type, which is {minValue, maxValue)");
 
         if (propValue < range[0] || propValue > range[1])
-            throw new PropertyException(getInstanceName(), name, " is not in range (" + range + ")");
+            throw new InternalConfigurationException(getInstanceName(), name, " is not in range (" + range + ")");
 
         return propValue;
     }
@@ -263,7 +263,7 @@ public class PropertySheet implements Cloneable {
                 }
 
                 if (configurable != null && !expectedType.isInstance(configurable))
-                    throw new PropertyException(getInstanceName(), name, "mismatch between annoation and component type");
+                    throw new InternalConfigurationException(getInstanceName(), name, "mismatch between annoation and component type");
 
                 if (configurable == null) {
                     Class<? extends Configurable> defClass;
@@ -274,15 +274,15 @@ public class PropertySheet implements Cloneable {
                         defClass = s4Component.defaultClass();
 
                     if (defClass.equals(Configurable.class) && s4Component.mandatory()) {
-                        throw new PropertyException(getInstanceName(), name, "mandatory property is not set!");
+                        throw new InternalConfigurationException(getInstanceName(), name, "mandatory property is not set!");
 
                     } else {
                         if (Modifier.isAbstract(defClass.getModifiers()))
-                            throw new PropertyException(getInstanceName(), name, defClass.getName() + " is abstract!");
+                            throw new InternalConfigurationException(getInstanceName(), name, defClass.getName() + " is abstract!");
 
                         // because we're forced to use the default type, assert that it is set
                         if (defClass.equals(Configurable.class))
-                            throw new PropertyException(getInstanceName(), name, instanceName + ": no default class defined for " + name);
+                            throw new InternalConfigurationException(getInstanceName(), name, instanceName + ": no default class defined for " + name);
 
                         configurable = ConfigurationManager.getInstance(defClass);
                         assert configurable != null;
@@ -290,7 +290,7 @@ public class PropertySheet implements Cloneable {
                 }
 
             } catch (InstantiationException e) {
-                throw new PropertyException(getInstanceName(), name, "can not instantiate class");
+                throw new InternalConfigurationException(e, getInstanceName(), name, "can not instantiate class");
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();
             }
@@ -345,7 +345,7 @@ public class PropertySheet implements Cloneable {
             List<Class<? extends Configurable>> defClasses = Arrays.asList(annoation.defaultList());
 
 //            if (annoation.mandatory() && defClasses.isEmpty())
-//                throw new PropertyException(getInstanceName(), name, "mandatory property is not set!");
+//                throw new InternalConfigurationException(getInstanceName(), name, "mandatory property is not set!");
 
             components = new ArrayList();
 
@@ -370,7 +370,7 @@ public class PropertySheet implements Cloneable {
                     assert configurable != null;
                     list.add(configurable);
                 } catch (InstantiationException e) {
-                    PropertyException pe = new PropertyException(getInstanceName(), name, "instantiation of list element failed.");
+                    PropertyException pe = new InternalConfigurationException(getInstanceName(), name, "instantiation of list element failed.");
                     pe.initCause(e);
                     throw pe;
                 }

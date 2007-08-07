@@ -21,13 +21,30 @@ public class PropertyException extends Exception {
 
 
     /**
-     * Creates a new property exception
+     * Creates a new property exception.
      *
-     * @param instanceName
-     * @param propertyName the name of the property with the problem.
+     * @param instanceName The component this exception is related to.  (or <code>null</code> if unknown)
+     * @param propertyName The name of the component-property which the problem is related. (or <code>null</code> if
+     *                     unknown)
      * @param msg          a description of the problem.
      */
-    PropertyException(String instanceName, String propertyName, String msg) {
+    public PropertyException(String instanceName, String propertyName, String msg) {
+        this(null, instanceName, propertyName, msg);
+    }
+
+
+    /**
+     * Creates a new property exception.
+     *
+     * @param cause        The cause of exception. (or <code>null</code> if unknown)
+     * @param instanceName The component this exception is related to.  (or <code>null</code> if unknown)
+     * @param propertyName The name of the component-property which the problem is related. (or <code>null</code> if
+     *                     unknown)
+     * @param msg          a description of the problem.
+     */
+    public PropertyException(Throwable cause, String instanceName, String propertyName, String msg) {
+        super(cause);
+
         this.instanceName = instanceName;
         this.propertyName = propertyName;
         this.msg = msg;
@@ -56,7 +73,6 @@ public class PropertyException extends Exception {
      * @return the string representation of the object.
      */
     public String toString() {
-        return "Property Exception component:'" + instanceName
-                + "' property:'" + propertyName + "' - " + msg;
+        return "Property Exception component:'" + instanceName + "' property:'" + propertyName + "' - " + msg;
     }
 }
