@@ -139,7 +139,7 @@ public class ConfigurationManager implements Cloneable {
 
 
     /**
-     * Adds a new configurable to this configuration manager.
+     * Registers a new configurable to this configuration manager.
      *
      * @param confClass The class of the configurable to be instantiated and to be added to this configuration manager
      *                  instance.
@@ -164,7 +164,7 @@ public class ConfigurationManager implements Cloneable {
 
 
     /**
-     * Adds a new configurable to this configuration manager.
+     * Registers a new configurable to this configuration manager.
      *
      * @param confClass    The class of the configurable to be instantiated and to be added to this configuration
      *                     manager instance.
@@ -224,6 +224,10 @@ public class ConfigurationManager implements Cloneable {
         }
 
         globalProperties.putAll(subCM.globalProperties);
+        for (PropertySheet ps : subCM.symbolTable.values()) {
+            ps.setCM(this);
+        }
+        
         symbolTable.putAll(subCM.symbolTable);
         rawPropertyMap.putAll(subCM.rawPropertyMap);
     }

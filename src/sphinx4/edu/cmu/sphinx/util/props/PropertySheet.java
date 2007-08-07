@@ -643,6 +643,11 @@ public class PropertySheet implements Cloneable {
     }
 
 
+    public void setCM(ConfigurationManager cm) {
+        this.cm = cm;
+    }
+
+
     /**
      * Returns true if two property sheet define the same object in terms of configuration. The owner (and the parent
      * configuration manager) are not expected to be the same.
