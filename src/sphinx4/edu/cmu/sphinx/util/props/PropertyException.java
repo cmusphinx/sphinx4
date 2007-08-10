@@ -51,6 +51,11 @@ public class PropertyException extends RuntimeException {
     }
 
 
+    public PropertyException(ClassNotFoundException e) {
+        super(e);
+    }
+
+
     /** @return Returns the msg. */
     public String getMsg() {
         return msg;
@@ -73,6 +78,7 @@ public class PropertyException extends RuntimeException {
      * @return the string representation of the object.
      */
     public String toString() {
-        return "Property Exception component:'" + instanceName + "' property:'" + propertyName + "' - " + msg;
+        return "Property Exception component:'" + instanceName + "' property:'" + propertyName + "' - " + msg + "\n"
+                + super.toString();
     }
 }

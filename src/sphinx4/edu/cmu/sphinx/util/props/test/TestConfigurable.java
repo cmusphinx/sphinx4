@@ -58,7 +58,6 @@ public class TestConfigurable implements Configurable {
             Assert.fail("add didn't fail without given default frontend");
         } catch (NullPointerException e) {
         } catch (PropertyException e) {
-        } catch (InstantiationException e) {
         }
     }
 

@@ -32,8 +32,6 @@ public class NonSpeechDataFilterTest extends AbstractTestProcessor {
             props.put(NonSpeechDataFilter.PROP_MERGE_SPEECH_SEGMENTS, mergeSpeechSegments);
 
             return (NonSpeechDataFilter) ConfigurationManager.getInstance(NonSpeechDataFilter.class, props);
-        } catch (InstantiationException e) {
-            e.printStackTrace();
         } catch (PropertyException e) {
             e.printStackTrace();
         }

@@ -289,10 +289,8 @@ public class PropertySheet implements Cloneable {
                     }
                 }
 
-            } catch (InstantiationException e) {
-                throw new InternalConfigurationException(e, getInstanceName(), name, "can not instantiate class");
             } catch (ClassNotFoundException e) {
-                e.printStackTrace();
+                throw new PropertyException(e);
             }
 
             propValues.put(name, configurable);
@@ -331,7 +329,7 @@ public class PropertySheet implements Cloneable {
      * @throws edu.cmu.sphinx.util.props.PropertyException
      *          if the component does not exist or is of the wrong type.
      */
-    public List<? extends Configurable> getComponentList(String name) throws PropertyException {
+    public List<? extends Configurable> getComponentList(String name) throws InternalConfigurationException {
         getProperty(name, S4ComponentList.class);
 
         List components = (List) propValues.get(name);
@@ -350,11 +348,7 @@ public class PropertySheet implements Cloneable {
             components = new ArrayList();
 
             for (Class<? extends Configurable> defClass : defClasses) {
-                try {
-                    components.add(ConfigurationManager.getInstance(defClass));
-                } catch (InstantiationException e) {
-                    e.printStackTrace();
-                }
+                components.add(ConfigurationManager.getInstance(defClass));
             }
 
             propValues.put(name, components);
@@ -364,16 +358,11 @@ public class PropertySheet implements Cloneable {
 
             List<Configurable> list = new ArrayList<Configurable>();
 
-            for (Object componentName : components)
-                try {
-                    Configurable configurable = cm.lookup((String) componentName);
-                    assert configurable != null;
-                    list.add(configurable);
-                } catch (InstantiationException e) {
-                    PropertyException pe = new InternalConfigurationException(getInstanceName(), name, "instantiation of list element failed.");
-                    pe.initCause(e);
-                    throw pe;
-                }
+            for (Object componentName : components) {
+                Configurable configurable = cm.lookup((String) componentName);
+                assert configurable != null;
+                list.add(configurable);
+            }
 
             propValues.put(name, list);
         }
@@ -402,7 +391,7 @@ public class PropertySheet implements Cloneable {
      * Returns the owner of this property sheet. In most cases this will be the configurable instance which was
      * instrumented by this property sheet.
      */
-    public synchronized Configurable getOwner() throws InstantiationException, PropertyException {
+    public synchronized Configurable getOwner() {
         try {
 
             if (!isInstanciated()) {
@@ -410,9 +399,9 @@ public class PropertySheet implements Cloneable {
                 owner.newProperties(this);
             }
         } catch (IllegalAccessException e) {
-            throw new InstantiationException("Can't access class " + ownerClass);
+            throw new InternalConfigurationException(e, getInstanceName(), null, "Can't access class " + ownerClass);
         } catch (InstantiationException e) {
-            throw new InstantiationException("Not configurable class " + ownerClass);
+            throw new InternalConfigurationException(e, getInstanceName(), null, "Can't instantiate class " + ownerClass);
         }
 
         return owner;

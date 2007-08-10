@@ -1,10 +1,13 @@
 package edu.cmu.sphinx.util.props.tools;
 
-import edu.cmu.sphinx.util.props.*;
+import edu.cmu.sphinx.util.props.Configurable;
+import edu.cmu.sphinx.util.props.ConfigurationManager;
+import edu.cmu.sphinx.util.props.PropertyException;
+import edu.cmu.sphinx.util.props.PropertySheet;
 
-import java.io.PrintStream;
-import java.io.IOException;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.PrintStream;
 import java.util.Collection;
 import java.util.List;
 
@@ -33,7 +36,7 @@ public class GDLDumper {
         for (String propertyName : propertyNames) {
             PropertySheet.PropertyType propType = ps.getType(propertyName);
             Object val = ps.getRaw(propertyName);
-            
+
             if (val != null) {
                 if (propType == PropertySheet.PropertyType.COMP) {
                     out.println("edge: {source: \"" + name
@@ -115,8 +118,6 @@ public class GDLDumper {
             } else if (cls.getName().indexOf(".util") > 1) {
                 return "lightgrey";
             }
-        } catch (InstantiationException e) {
-            return "black";
         } catch (PropertyException e) {
             return "black";
         }

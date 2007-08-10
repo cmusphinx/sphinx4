@@ -376,8 +376,6 @@ public class ConfigurationManagerUtils {
 //                   ps.setComponentList(propName, null, cm.lookup(propValue));
         } catch (PropertyException e) {
             e.printStackTrace();
-        } catch (InstantiationException e) {
-            e.printStackTrace();
         }
     }
 

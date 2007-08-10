@@ -114,12 +114,11 @@ public class ConfigurationManager implements Cloneable {
      *
      * @param instanceName the name of the component
      * @return the compnent, or null if a component was not found.
-     * @throws InstantiationException if the requested object could not be properly created, or is not a configurable
-     *                                object.
-     * @throws edu.cmu.sphinx.util.props.PropertyException
-     *                                if an error occurs while setting a property
+     * @throws InternalConfigurationException If the requested object could not be properly created, or is not a
+     *                                        configurable object, or if an error occured while setting a component
+     *                                        property.
      */
-    public Configurable lookup(String instanceName) throws InstantiationException, PropertyException {
+    public Configurable lookup(String instanceName) throws InternalConfigurationException {
         // apply all new propeties to the model
         instanceName = getStrippedComponentName(instanceName);
 
@@ -227,7 +226,7 @@ public class ConfigurationManager implements Cloneable {
         for (PropertySheet ps : subCM.symbolTable.values()) {
             ps.setCM(this);
         }
-        
+
         symbolTable.putAll(subCM.symbolTable);
         rawPropertyMap.putAll(subCM.rawPropertyMap);
     }
@@ -279,8 +278,6 @@ public class ConfigurationManager implements Cloneable {
                 try {
                     ps.getOwner().newProperties(ps);
                 } catch (PropertyException e) {
-                    e.printStackTrace();
-                } catch (InstantiationException e) {
                     e.printStackTrace();
                 }
         }
@@ -391,7 +388,7 @@ public class ConfigurationManager implements Cloneable {
      * Creates an instance of the given <code>Configurable</code> by using the default parameters as defined by the
      * class annotations to parameterize the component.
      */
-    public static Configurable getInstance(Class<? extends Configurable> targetClass) throws InstantiationException, PropertyException {
+    public static Configurable getInstance(Class<? extends Configurable> targetClass) throws PropertyException {
         return getInstance(targetClass, new HashMap<String, Object>());
     }
 
@@ -401,7 +398,7 @@ public class ConfigurationManager implements Cloneable {
      * class annotations to parameterize the component. Default prarmeters will be overrided if a their names are
      * containd in the given <code>props</code>-map
      */
-    public static Configurable getInstance(Class<? extends Configurable> targetClass, Map<String, Object> props) throws InstantiationException, PropertyException {
+    public static Configurable getInstance(Class<? extends Configurable> targetClass, Map<String, Object> props) throws PropertyException {
         PropertySheet ps = getPropSheetInstanceFromClass(targetClass, props, null, new ConfigurationManager());
         Configurable configurable = ps.getOwner();
         configurable.newProperties(ps);

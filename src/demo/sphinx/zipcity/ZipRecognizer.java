@@ -13,7 +13,6 @@
 package demo.sphinx.zipcity;
 
 
-
 import edu.cmu.sphinx.frontend.util.Microphone;
 import edu.cmu.sphinx.recognizer.Recognizer;
 import edu.cmu.sphinx.recognizer.RecognizerState;
@@ -21,25 +20,17 @@ import edu.cmu.sphinx.result.Result;
 import edu.cmu.sphinx.util.props.ConfigurationManager;
 import edu.cmu.sphinx.util.props.PropertyException;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.URL;
+import java.util.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.StringTokenizer;
-
-/**
- * Manages the speech recognition for zip city
- */
+/** Manages the speech recognition for zip city */
 public class ZipRecognizer implements Runnable {
+
     private Microphone microphone;
-    private Recognizer recognizer; 
+    private Recognizer recognizer;
     private List zipListeners = new ArrayList();
+
 
     /**
      * Creates the ZipRecognizer.
@@ -47,25 +38,22 @@ public class ZipRecognizer implements Runnable {
      * @throws IOException if an error occurs while loading resources
      */
     public ZipRecognizer() throws IOException {
-        try  {
+        try {
             URL url = this.getClass().getResource("zipcity.config.xml");
             if (url == null) {
                 throw new IOException("Can't find zipcity.config.xml");
-            } 
+            }
             ConfigurationManager cm = new ConfigurationManager(url);
             recognizer = (Recognizer) cm.lookup("recognizer");
             microphone = (Microphone) cm.lookup("microphone");
         } catch (PropertyException e) {
             throw new IOException("Problem configuring ZipRecognizer " + e);
-        } catch (InstantiationException e) {
-            throw new IOException("Problem creating ZipRecognizer " + e);
         }
     }
 
-    /**
-     * Turns on the microphone and starts recognition
-     */
-    public boolean  microphoneOn() {
+
+    /** Turns on the microphone and starts recognition */
+    public boolean microphoneOn() {
         if (microphone.getAudioFormat() == null) {
             return false;
         } else {
@@ -74,24 +62,20 @@ public class ZipRecognizer implements Runnable {
         }
     }
 
-    /**
-     * Turns off the microphone, ending the current recognition in
-     * progress
-     */
+
+    /** Turns off the microphone, ending the current recognition in progress */
     public void microphoneOff() {
         microphone.stopRecording();
     }
 
-    /**
-     * Allocates resources necessary for recognition.
-     */
+
+    /** Allocates resources necessary for recognition. */
     public void startup() throws IOException {
         recognizer.allocate();
     }
 
-    /**
-     * Releases recognition resources
-     */
+
+    /** Releases recognition resources */
     public void shutdown() {
         microphoneOff();
         if (recognizer.getState() == RecognizerState.ALLOCATED) {
@@ -99,9 +83,8 @@ public class ZipRecognizer implements Runnable {
         }
     }
 
-    /**
-     * Performs a single recognition
-     */
+
+    /** Performs a single recognition */
     public void run() {
         microphone.clear();
         microphone.startRecording();
@@ -118,12 +101,12 @@ public class ZipRecognizer implements Runnable {
         }
     }
 
+
     /**
-     * Converts a string of the form "one two three four five" to
-     * a string of the form "12345"
+     * Converts a string of the form "one two three four five" to a string of the form "12345"
      *
-     *  @param zipstring the zip string
-     *  @return the zip string in a digits form
+     * @param zipstring the zip string
+     * @return the zip string in a digits form
      */
     private String convertResultToZip(String zipstring) {
         StringBuffer sb = new StringBuffer();
@@ -139,25 +122,28 @@ public class ZipRecognizer implements Runnable {
         return sb.toString();
     }
 
+
     private static Map digitMap = new HashMap();
 
+
     static {
-        digitMap.put("oh",          "0");
-        digitMap.put("zero",        "0");
-        digitMap.put("one",         "1");
-        digitMap.put("two",         "2");
-        digitMap.put("three",       "3");
-        digitMap.put("four",        "4");
-        digitMap.put("five",        "5");
-        digitMap.put("six",         "6");
-        digitMap.put("seven",       "7");
-        digitMap.put("eight",       "8");
-        digitMap.put("nine",        "9");
+        digitMap.put("oh", "0");
+        digitMap.put("zero", "0");
+        digitMap.put("one", "1");
+        digitMap.put("two", "2");
+        digitMap.put("three", "3");
+        digitMap.put("four", "4");
+        digitMap.put("five", "5");
+        digitMap.put("six", "6");
+        digitMap.put("seven", "7");
+        digitMap.put("eight", "8");
+        digitMap.put("nine", "9");
     }
+
 
     /**
      * looks up the digit for a word
-     * 
+     *
      * @param word the digit word
      * @return digit the digit form of the word (or null)
      */
@@ -165,46 +151,45 @@ public class ZipRecognizer implements Runnable {
         return (String) digitMap.get(word);
     }
 
+
     /**
-     * Adds a listener that is called whenever a new zip code
-     * is recognized
+     * Adds a listener that is called whenever a new zip code is recognized
      *
      * @param zipListener the zip code listener
      */
-   public synchronized void addZipListener(ZipListener zipListener) {
-       zipListeners.add(zipListener);
-   }
+    public synchronized void addZipListener(ZipListener zipListener) {
+        zipListeners.add(zipListener);
+    }
+
 
     /**
      * Removes a previously added zip listener
      *
      * @param zipListener the zip code listener
      */
-   public synchronized void removeZipListener(ZipListener zipListener) {
-       zipListeners.remove(zipListener);
-   }
+    public synchronized void removeZipListener(ZipListener zipListener) {
+        zipListeners.remove(zipListener);
+    }
 
-   /**
-    * Invoke all added zip listeners
-    *
-    * @param zipcode the recognized zip code
-    */
-   private synchronized void fireListeners(String zipcode) {
-       for (Iterator i = zipListeners.iterator(); i.hasNext(); ) {
-           ZipListener zl = (ZipListener) i.next();
-           zl.notify(zipcode);
-       }
-   }
+
+    /**
+     * Invoke all added zip listeners
+     *
+     * @param zipcode the recognized zip code
+     */
+    private synchronized void fireListeners(String zipcode) {
+        for (Iterator i = zipListeners.iterator(); i.hasNext();) {
+            ZipListener zl = (ZipListener) i.next();
+            zl.notify(zipcode);
+        }
+    }
 }
 
 
-/**
- * An interface for zip listeners
- */
+/** An interface for zip listeners */
 interface ZipListener {
-    /**
-     * Invoked when a new zip code is recognized
-     */
+
+    /** Invoked when a new zip code is recognized */
     void notify(String zipcode);
 }
 

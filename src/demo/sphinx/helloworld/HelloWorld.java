@@ -85,9 +85,6 @@ public class HelloWorld {
         } catch (PropertyException e) {
             System.err.println("Problem configuring HelloWorld: " + e);
             e.printStackTrace();
-        } catch (InstantiationException e) {
-            System.err.println("Problem creating HelloWorld: " + e);
-            e.printStackTrace();
         }
     }
 }

@@ -47,8 +47,8 @@ import java.util.Iterator;
  * <ASCII transcript> (<utterance name>)
  * <p/>
  * The output is a "processed" CTM file.  It is used by the NIST tools to compute the performance on the copus.  The
- * format is not documented because it is currently a hack to get the Dry Run going.  We need to think more about it.
- * If you want to use this tool talk to Peter Wolf, or Arthur Chan.
+ * format is not documented because it is currently a hack to get the Dry Run going.  We need to think more about it. If
+ * you want to use this tool talk to Peter Wolf, or Arthur Chan.
  */
 public class BatchNISTRecognizer extends BatchModeRecognizer {
 
@@ -398,9 +398,6 @@ public class BatchNISTRecognizer extends BatchModeRecognizer {
             bmr = (BatchNISTRecognizer) cm.lookup("batchNIST");
         } catch (IOException ioe) {
             System.err.println("I/O error during initialization: \n   " + ioe);
-            return;
-        } catch (InstantiationException e) {
-            System.err.println("Error during initialization: \n  " + e);
             return;
         } catch (PropertyException e) {
             System.err.println("Error during initialization: \n  " + e);

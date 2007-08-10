@@ -24,7 +24,9 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URL;
-import java.util.*;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Decodes a batch file containing a list of files to decode. The files can be either audio files or cepstral files, but
@@ -294,9 +296,6 @@ public class LiveModeRecognizer implements Configurable {
             lmr = (LiveModeRecognizer) cm.lookup("live");
         } catch (IOException ioe) {
             System.err.println("I/O error during initialization: \n   " + ioe);
-            return;
-        } catch (InstantiationException e) {
-            System.err.println("Error during initialization: \n  " + e);
             return;
         } catch (PropertyException e) {
             System.err.println("Error during initialization: \n  " + e);

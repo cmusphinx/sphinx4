@@ -27,9 +27,9 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.StringTokenizer;
-import java.util.Arrays;
 
 /** A recording device. */
 public class CardMatch implements Recorder, Configurable {
@@ -283,8 +283,6 @@ public class CardMatch implements Recorder, Configurable {
             System.err.println("Problem when loading cardmatch: " + e);
         } catch (PropertyException e) {
             System.err.println("Problem configuring cardmatch: " + e);
-        } catch (InstantiationException e) {
-            System.err.println("Problem creating cardmatch: " + e);
         }
     }
 
