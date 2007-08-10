@@ -470,7 +470,7 @@ public class PropertySheet implements Cloneable {
      * @param name  the simple property name
      * @param value the value for the property
      */
-    public void setBoolean(String name, boolean value) throws PropertyException {
+    public void setBoolean(String name, Boolean value) throws PropertyException {
         // ensure that there is such a property
         assert registeredProperties.keySet().contains(name) : "'" + name + "' is not a registered compontent";
 
