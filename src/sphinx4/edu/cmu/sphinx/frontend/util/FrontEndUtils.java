@@ -83,6 +83,8 @@ public class FrontEndUtils {
             return (float) ((DataBlocker) dp).getBlockSizeMs();
         }
 
-        throw new RuntimeException("Can not dermine the current shift-size of the given feature frontend.");
+        System.err.println("Can not dermine the current shift-size of the given feature frontend. Using default (10ms) ...");
+        return 10;
+//        throw new RuntimeException("Can not dermine the current shift-size of the given feature frontend.");
     }
 }
