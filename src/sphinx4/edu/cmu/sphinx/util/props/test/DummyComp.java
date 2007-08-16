@@ -17,6 +17,12 @@ public class DummyComp implements Configurable {
     @S4Integer(defaultValue = 4)
     public static final String PROP_BEAM_WIDTH = "beamWidth";
 
+    @S4String(defaultValue = "salami&cheese")
+    public static final String PROP_BEST_PIZZA = "bestPizza";
+
+    @S4Boolean(defaultValue = true)
+    public static final String PROP_USE_FOOBAR = "useFooBar";
+
     /** doc of frontend. */
     @S4Component(type = DummyFrontEnd.class, defaultClass = AnotherDummyFrontEnd.class)
     public static final String PROP_FRONTEND = "frontend";
