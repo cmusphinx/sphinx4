@@ -85,7 +85,7 @@ public class PropertySheet implements Cloneable {
         try {
             propertyClass.cast(s4PropWrapper.getAnnotation());
         } catch (ClassCastException e) {
-            throw new InternalConfigurationException(e, getInstanceName(), name, name + " is not an annotated sphinx property of '" + owner.getClass().getName() + "' !");
+            throw new InternalConfigurationException(e, getInstanceName(), name, name + " is not an annotated sphinx property of '" + getConfigurableClass().getName() + "' !");
         }
 
         return s4PropWrapper;

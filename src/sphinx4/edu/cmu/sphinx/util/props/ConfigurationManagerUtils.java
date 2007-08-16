@@ -220,28 +220,28 @@ public class ConfigurationManagerUtils {
 
     private static String propSheet2XML(String instanceName, PropertySheet ps) {
         StringBuffer sb = new StringBuffer();
-        sb.append("<component name=\"" + instanceName + "\" type=\"" + ps.getConfigurableClass().getName() + "\">");
+        sb.append("\t<component name=\"" + instanceName + "\" type=\"" + ps.getConfigurableClass().getName() + "\">");
 
         for (String propName : ps.getRegisteredProperties()) {
-            String predec = "\n\t<property name=\"" + propName + "\" ";
+            String predec = "\n\t\t<property name=\"" + propName + "\" ";
             if (ps.getRawNoReplacement(propName) == null)
                 continue;  // if the property was net defined within the xml-file
 
             switch (ps.getType(propName)) {
 
                 case COMPLIST:
-                    sb.append("\n\t<propertylist name=\"" + propName + "\">");
+                    sb.append("\n\t\t<propertylist name=\"" + propName + "\">");
                     List<String> compNames = (List<String>) ps.getRawNoReplacement(propName);
                     for (String compName : compNames)
-                        sb.append("\n\t\t<item>" + compName + "</item>");
-                    sb.append("\n\t</propertylist>");
+                        sb.append("\n\t\t\t<item>" + compName + "</item>");
+                    sb.append("\n\t\t</propertylist>");
                     break;
                 default:
                     sb.append(predec + "value=\"" + ps.getRawNoReplacement(propName) + "\"/>");
             }
         }
 
-        sb.append("\n</component>\n\n");
+        sb.append("\n\t</component>\n\n");
         return sb.toString();
     }
 
