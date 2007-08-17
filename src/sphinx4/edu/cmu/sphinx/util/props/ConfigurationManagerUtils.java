@@ -36,6 +36,9 @@ public class ConfigurationManagerUtils {
     /** A common property (used by all components) that sets the log level for the component. */
     public final static String GLOBAL_COMMON_LOGLEVEL = "logLevel";
 
+    /** The default file suffix of configuration files. */
+    public static final String CM_FILE_SUFFIX = ".sxl";
+
 
     /**
      * Strips the ${ and } off of a global symbol of the form ${symbol}.
@@ -247,6 +250,9 @@ public class ConfigurationManagerUtils {
 
 
     public static void save(ConfigurationManager cm, File cmLocation) {
+        if (!cmLocation.getName().endsWith(CM_FILE_SUFFIX))
+            System.err.println("WARNING: Serialized s4-configuration should have the suffix '" + CM_FILE_SUFFIX + "'");
+
         assert cm != null;
         try {
             PrintWriter pw = new PrintWriter(new FileOutputStream(cmLocation));
