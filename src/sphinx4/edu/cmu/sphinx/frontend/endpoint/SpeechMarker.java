@@ -14,9 +14,13 @@
 package edu.cmu.sphinx.frontend.endpoint;
 
 import edu.cmu.sphinx.frontend.*;
-import edu.cmu.sphinx.util.props.*;
+import edu.cmu.sphinx.util.props.PropertyException;
+import edu.cmu.sphinx.util.props.PropertySheet;
+import edu.cmu.sphinx.util.props.S4Integer;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ListIterator;
 
 /**
  * Converts a stream of SpeechClassifiedData objects, marked as speech and non-speech, and mark out the regions that are
@@ -139,8 +143,7 @@ public class SpeechMarker extends BaseDataProcessor {
                             inSpeech = !(readEndFrames(data));
                         }
                     } else if (audio instanceof DataEndSignal) {
-                        sendToQueue(new SpeechStartSignal
-                                (((Signal) audio).getTime()));
+                        sendToQueue(new SpeechEndSignal(((Signal) audio).getTime()));
                         sendToQueue(audio);
                         inSpeech = false;
                     } else if (audio instanceof DataStartSignal) {

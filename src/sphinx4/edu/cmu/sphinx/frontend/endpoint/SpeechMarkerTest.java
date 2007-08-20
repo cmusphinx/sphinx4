@@ -1,15 +1,13 @@
-package edu.cmu.sphinx.frontend.endpoint.test;
+package edu.cmu.sphinx.frontend.endpoint;
 
 import edu.cmu.sphinx.frontend.*;
-import edu.cmu.sphinx.frontend.endpoint.SpeechEndSignal;
-import edu.cmu.sphinx.frontend.endpoint.SpeechMarker;
-import edu.cmu.sphinx.frontend.endpoint.SpeechStartSignal;
 import edu.cmu.sphinx.frontend.test.AbstractTestProcessor;
 import edu.cmu.sphinx.util.props.ConfigurationManager;
 import edu.cmu.sphinx.util.props.PropertyException;
 import static junit.framework.Assert.assertTrue;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -46,22 +44,35 @@ public class SpeechMarkerTest extends AbstractTestProcessor {
      * SpeechStartSignal. This is might occur if the microphone is stopped while someone is speaking.
      */
     @Test
-    public void testOneSpeechRegion() throws DataProcessingException {
+    public void testEndWithoutSilence() throws DataProcessingException {
         int sampleRate = 1000;
 
         input.add(new DataStartSignal(sampleRate));
 
-        input.addAll(createFeatVectors(1, sampleRate, 0, 10, 10)); // create one second of data sampled with 1kHz
-        input.add(new SpeechStartSignal(-1));
-        input.addAll(createFeatVectors(1, sampleRate, 0, 10, 10));
-        input.add(new DataEndSignal(-1));
+//        input.addAll(createFeatVectors(1, sampleRate, 0, 10, 10)); // create one second of data sampled with 1kHz
+//        input.addAll(createClassifiedSpeech(sampleRate, 1.0, false));
+//        input.add(new SpeechStartSignal(-1));
+        input.addAll(createClassifiedSpeech(sampleRate, 2.0, true));
+        input.add(new DataEndSignal(-2));
 
         List<Data> results = collectOutput(createDataFilter(false));
 
         assertTrue(results.size() == 104);
         assertTrue(results.get(0) instanceof DataStartSignal);
         assertTrue(results.get(1) instanceof SpeechStartSignal);
-        assertTrue(results.get(106) instanceof SpeechEndSignal);
-        assertTrue(results.get(107) instanceof DataEndSignal);
+        assertTrue(results.get(102) instanceof SpeechEndSignal);
+        assertTrue(results.get(103) instanceof DataEndSignal);
+    }
+
+
+    private List<SpeechClassifiedData> createClassifiedSpeech(int sampleRate, double lengthSec, boolean isSpeech) {
+        List<SpeechClassifiedData> datas = new ArrayList<SpeechClassifiedData>();
+
+        List<DoubleData> featVecs = createFeatVectors(1, sampleRate, 0, 10, 10);
+        for (DoubleData featVec : featVecs) {
+            datas.add(new SpeechClassifiedData(featVec, isSpeech));
+        }
+
+        return datas;
     }
 }
