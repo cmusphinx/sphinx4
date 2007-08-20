@@ -54,7 +54,7 @@ public abstract class AbstractTestProcessor extends BaseDataProcessor {
         long shiftSamples = ms2samples((int) shiftMs, sampleRate);
         for (int i = 0; i < numFrames; i++) {
             double[] values = createRandFeatureVector(featDim);
-            datas.add(new DoubleData(values, sampleRate, 0, curStartSample));
+            datas.add(new DoubleData(values, sampleRate, System.currentTimeMillis(), curStartSample));
 
             curStartSample += shiftSamples;
         }
