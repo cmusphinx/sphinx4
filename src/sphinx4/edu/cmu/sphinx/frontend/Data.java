@@ -13,6 +13,8 @@
 
 package edu.cmu.sphinx.frontend;
 
+import java.io.Serializable;
+
 /**
  * Implements the interface for all Data objects that passes between DataProcessors. Subclass of Data can contain the
  * actual data, or be a signal (e.g., data start, data end, speech start, speech end).
@@ -20,6 +22,6 @@ package edu.cmu.sphinx.frontend;
  * @see Data
  * @see FrontEnd
  */
-public interface Data {
+public interface Data extends Serializable {
 
 }
