@@ -90,6 +90,10 @@ public class DataBlocker extends BaseDataProcessor {
         }
 
         curInBufferSize = inBuffer.isEmpty() ? 0 : inBuffer.get(0).getValues().length - curFirstSamplePos;
+
+//        for (int i = 0; i < newSampleBlock.length; i++) {
+//            newSampleBlock[i] *= 10;
+//        }
         return new DoubleData(newSampleBlock, sampleRate, collectTime, firstSample);
     }
 
