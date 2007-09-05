@@ -98,7 +98,7 @@ public class MatrixUtils {
 
 
     /** Converts a vector from linear domain to logdomain using a given <code>LogMath</code>-instance for conversion. */
-    public static float[] linearToLog(double[] vector, LogMath logMath) {
+    public static float[] linearToLog(float[] vector, LogMath logMath) {
         float[] logMixtureWeights = new float[vector.length];
         int nbGaussians = vector.length;
         for (int i = 0; i < nbGaussians; i++) {
