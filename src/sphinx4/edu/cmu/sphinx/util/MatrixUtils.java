@@ -95,4 +95,15 @@ public class MatrixUtils {
 
         return doubArr;
     }
+
+
+    /** Converts a vector from linear domain to logdomain using a given <code>LogMath</code>-instance for conversion. */
+    public static float[] linearToLog(double[] vector, LogMath logMath) {
+        float[] logMixtureWeights = new float[vector.length];
+        int nbGaussians = vector.length;
+        for (int i = 0; i < nbGaussians; i++) {
+            logMixtureWeights[i] = logMath.linearToLog(vector[i]);
+        }
+        return logMixtureWeights;
+    }
 }
