@@ -217,6 +217,11 @@ public class GaussianMixture implements Senone, Cloneable {
     }
 
 
+    public LogMath getLogMath() {
+        return logMath;
+    }
+
+
     /** @return the (log-scaled) mixture weight of the component density <code>index</code> */
     public float getLogComponentWeight(int index) {
         return logMixtureWeights[index];
