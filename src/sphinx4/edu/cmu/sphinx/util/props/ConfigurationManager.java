@@ -138,6 +138,24 @@ public class ConfigurationManager implements Cloneable {
 
 
     /**
+     * Given a <code>Configurable</code>-class/interface, all property-sheets which are subclassing/implemting this
+     * class/interface are collected and returned.
+     * <p/>
+     * Note: No <code>Configurable</code> will be instantiated by this method.
+     */
+    public List<PropertySheet> lookup(Class<? extends Configurable> confClass) {
+        List<PropertySheet> psCol = new ArrayList<PropertySheet>();
+
+        for (PropertySheet ps : symbolTable.values()) {
+            if (ConfigurationManagerUtils.isDerivedClass(ps.getConfigurableClass(), confClass))
+                psCol.add(ps);
+        }
+
+        return psCol;
+    }
+
+
+    /**
      * Registers a new configurable to this configuration manager.
      *
      * @param confClass The class of the configurable to be instantiated and to be added to this configuration manager
