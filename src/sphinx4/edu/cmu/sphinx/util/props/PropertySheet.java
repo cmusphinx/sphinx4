@@ -277,12 +277,17 @@ public class PropertySheet implements Cloneable {
                         throw new InternalConfigurationException(getInstanceName(), name, "mandatory property is not set!");
 
                     } else {
-                        if (Modifier.isAbstract(defClass.getModifiers()))
+                        if (Modifier.isAbstract(defClass.getModifiers()) && s4Component.mandatory())
                             throw new InternalConfigurationException(getInstanceName(), name, defClass.getName() + " is abstract!");
 
                         // because we're forced to use the default type, assert that it is set
-                        if (defClass.equals(Configurable.class))
-                            throw new InternalConfigurationException(getInstanceName(), name, instanceName + ": no default class defined for " + name);
+                        if (defClass.equals(Configurable.class)) {
+                            if (s4Component.mandatory()) {
+                                throw new InternalConfigurationException(getInstanceName(), name, instanceName + ": no default class defined for " + name);
+                            } else {
+                                return null;
+                            }
+                        }
 
                         configurable = ConfigurationManager.getInstance(defClass);
                         assert configurable != null;
