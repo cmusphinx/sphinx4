@@ -31,18 +31,12 @@ public class ConfigMonitor implements Configurable, Runnable, Monitor {
     @S4Boolean(defaultValue = false)
     public final static String PROP_SHOW_CONFIG = "showConfig";
 
-    /** The default value for PROP_SHOW_CONFIG */
-    public final static boolean PROP_SHOW_CONFIG_DEFAULT = false;
-
     /**
      * Sphinx property that is used to indicate whether or not this monitor should dump the configuration in an HTML
      * document
      */
     @S4Boolean(defaultValue = false)
     public final static String PROP_SHOW_CONFIG_AS_HTML = "showConfigAsHTML";
-
-    /** The default value for PROP_SHOW_CONFIG_AS_HTML_DEFAULT */
-    public final static boolean PROP_SHOW_CONFIG_AS_HTML_DEFAULT = false;
 
     /**
      * Sphinx property that is used to indicate whether or not this monitor should dump the configuration in an GDL
@@ -51,9 +45,6 @@ public class ConfigMonitor implements Configurable, Runnable, Monitor {
     @S4Boolean(defaultValue = false)
     public final static String PROP_SHOW_CONFIG_AS_GDL = "showConfigAsGDL";
 
-    /** The default value for PROP_SHOW_CONFIG_AS_GDL_DEFAULT */
-    public final static boolean PROP_SHOW_CONFIG_AS_GDL_DEFAULT = false;
-
     /**
      * Sphinx property that is used to indicate whether or not this monitor should save the configuration in an XML
      * document
@@ -61,19 +52,21 @@ public class ConfigMonitor implements Configurable, Runnable, Monitor {
     @S4Boolean(defaultValue = false)
     public final static String PROP_SAVE_CONFIG_AS_XML = "saveConfigAsXML";
 
-    /** The default value for PROP_SAVE_CONFIG_AS_XML */
-    public final static boolean PROP_SAVE_CONFIG_AS_XML_DEFAULT = false;
+
+    @S4String(mandatory = false)
+    public static final String PROP_OUTFILE = "file";
 
     // -------------------------
     // Configuration data
     // -------------------------
-    private String name;
     private boolean showConfig;
     private boolean showHTML = true;
     private boolean saveXML = false;
     private boolean showGDL = true;
+
     private Logger logger;
     private ConfigurationManager cm;
+
     private String htmlPath = "config.html";
     private String gdlPath = "config.gdl";
     private String xmlPath = "config.xml";
@@ -85,21 +78,21 @@ public class ConfigMonitor implements Configurable, Runnable, Monitor {
     public void newProperties(PropertySheet ps) throws PropertyException {
         logger = ps.getLogger();
         cm = ConfigurationManagerUtils.getPropertyManager(ps);
+
         showConfig = ps.getBoolean(PROP_SHOW_CONFIG);
-        showHTML = ps.getBoolean(PROP_SHOW_CONFIG_AS_HTML
-        );
-        showGDL = ps.getBoolean(PROP_SHOW_CONFIG_AS_GDL
-        );
-        saveXML = ps.getBoolean(PROP_SAVE_CONFIG_AS_XML
-        );
-    }
+        showHTML = ps.getBoolean(PROP_SHOW_CONFIG_AS_HTML);
+        showGDL = ps.getBoolean(PROP_SHOW_CONFIG_AS_GDL);
+        saveXML = ps.getBoolean(PROP_SAVE_CONFIG_AS_XML);
 
+        if (ps.getString(PROP_OUTFILE) != null) {
+            File outFile = new File(ps.getString(PROP_OUTFILE));
 
-    /* (non-Javadoc)
-    * @see edu.cmu.sphinx.util.props.Configurable#getName()
-    */
-    public String getName() {
-        return name;
+            if (outFile.getParentFile().isDirectory()) {
+                htmlPath = outFile.getPath();
+                gdlPath = outFile.getPath();
+                xmlPath = outFile.getPath();
+            }
+        }
     }
 
 
@@ -109,13 +102,11 @@ public class ConfigMonitor implements Configurable, Runnable, Monitor {
     public void run() {
         if (showConfig) {
             ConfigurationManagerUtils.showConfig(cm);
-//            cm.showConfig();
         }
 
         if (showHTML) {
             try {
                 HTMLDumper.showConfigAsHTML(cm, "foo.html");
-//                cm.showConfigAsHTML("foo.html");
             } catch (IOException e) {
                 logger.warning("Can't open " + htmlPath + " " + e);
             }
@@ -124,7 +115,6 @@ public class ConfigMonitor implements Configurable, Runnable, Monitor {
         if (showGDL) {
             try {
                 GDLDumper.showConfigAsGDL(cm, gdlPath);
-//                cm.showConfigAsGDL(gdlPath);
             } catch (IOException e) {
                 logger.warning("Can't open " + gdlPath + " " + e);
             }
@@ -132,8 +122,6 @@ public class ConfigMonitor implements Configurable, Runnable, Monitor {
 
         if (saveXML) {
             ConfigurationManagerUtils.save(cm, new File(xmlPath));
-//                cm.save(new File(xmlPath));
         }
     }
-
 }

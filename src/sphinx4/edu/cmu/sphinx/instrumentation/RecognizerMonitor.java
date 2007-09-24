@@ -37,6 +37,8 @@ public class RecognizerMonitor implements StateListener, Monitor {
     /** The sphinx property that defines all of the monitors to call when the recognizer is deallocated */
     @S4ComponentList(type = Configurable.class)
     public final static String PROP_DEALLOCATED_MONITORS = "deallocatedMonitors";
+
+
     // --------------------------
     // Configuration data
     // --------------------------
@@ -52,8 +54,7 @@ public class RecognizerMonitor implements StateListener, Monitor {
     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
     */
     public void newProperties(PropertySheet ps) throws PropertyException {
-        Recognizer newRecognizer = (Recognizer) ps.getComponent(
-                PROP_RECOGNIZER);
+        Recognizer newRecognizer = (Recognizer) ps.getComponent(PROP_RECOGNIZER);
         if (recognizer == null) {
             recognizer = newRecognizer;
             recognizer.addStateListener(this);
@@ -62,20 +63,9 @@ public class RecognizerMonitor implements StateListener, Monitor {
             recognizer = newRecognizer;
             recognizer.addStateListener(this);
         }
-        allocatedMonitors = ps.getComponentList(PROP_ALLOCATED_MONITORS
-        );
-        deallocatedMonitors = ps.getComponentList(PROP_DEALLOCATED_MONITORS
-        );
-    }
 
-
-    /*
-    * (non-Javadoc)
-    *
-    * @see edu.cmu.sphinx.util.props.Configurable#getName()
-    */
-    public String getName() {
-        return name;
+        allocatedMonitors = ps.getComponentList(PROP_ALLOCATED_MONITORS);
+        deallocatedMonitors = ps.getComponentList(PROP_DEALLOCATED_MONITORS);
     }
 
 
@@ -91,6 +81,7 @@ public class RecognizerMonitor implements StateListener, Monitor {
         } else if (status == RecognizerState.DEALLOCATED) {
             runnableList = deallocatedMonitors;
         }
+
         if (runnableList != null) {
             for (Iterator i = runnableList.iterator(); i.hasNext();) {
                 Runnable r = (Runnable) i.next();
