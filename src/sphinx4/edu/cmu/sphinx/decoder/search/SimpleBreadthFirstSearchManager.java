@@ -33,7 +33,10 @@ import java.util.logging.Logger;
  * begins, and repeatedly call <code> recognize </code> until Result.isFinal() returns true. Once a final result has
  * been obtained, <code> terminate </code> should be called.
  * <p/>
+ * <p/>
  * All scores and probabilities are maintained in the log math log domain.
+ * <p/>
+ * For information about breadth first search please refer to "Spoken Language Processing", X. Huang, PTR
  */
 
 // TODO - need to add in timing code.
@@ -66,8 +69,6 @@ public class SimpleBreadthFirstSearchManager implements SearchManager {
     @S4Boolean(defaultValue = false)
     public final static String PROP_SHOW_TOKEN_COUNT = "showTokenCount";
 
-    /** The default value for the PROP_SHOW_TOKEN_COUNT property */
-    public final static boolean PROP_SHOW_TOKEN_COUNT_DEFAULT = false;
     /**
      * Property that sets the minimum score relative to the maximum score in the word list for pruning. Words with a
      * score less than relativeBeamWidth * maximumScore will be pruned from the list
@@ -75,18 +76,12 @@ public class SimpleBreadthFirstSearchManager implements SearchManager {
     @S4Double(defaultValue = 0.0)
     public final static String PROP_RELATIVE_WORD_BEAM_WIDTH = "relativeWordBeamWidth";
 
-    /** The default value for the PROP_RELATIVE_WORD_BEAM_WIDTH property */
-    public final static double PROP_RELATIVE_WORD_BEAM_WIDTH_DEFAULT = 0.0;
-
     /**
      * A sphinx property that controls whether or not relative beam pruning will be performed on the entry into a
      * state.
      */
     @S4Boolean(defaultValue = false)
     public final static String PROP_WANT_ENTRY_PRUNING = "wantEntryPruning";
-
-    /** The default value for the PROP_WANT_ENTRY_PRUNING property */
-    public final static boolean PROP_WANT_ENTRY_PRUNING_DEFAULT = false;
 
     /**
      * A sphinx property that controls the number of frames processed for every time the decode growth step is skipped.
@@ -97,8 +92,6 @@ public class SimpleBreadthFirstSearchManager implements SearchManager {
     @S4Integer(defaultValue = 0)
     public final static String PROP_GROW_SKIP_INTERVAL = "growSkipInterval";
 
-    /** The default value for the PROP_GROW_SKIP_INTERVAL property. */
-    public final static int PROP_GROW_SKIP_INTERVAL_DEFAULT = 0;
 
     private Linguist linguist; // Provides grammar/language info
     private Pruner pruner; // used to prune the active list
@@ -115,7 +108,6 @@ public class SimpleBreadthFirstSearchManager implements SearchManager {
     private Timer scoreTimer; // TODO move these timers out
     private Timer pruneTimer;
     private Timer growTimer;
-    private String name;
     private StatisticsVariable totalTokensScored;
     private StatisticsVariable tokensPerSecond;
     private StatisticsVariable curTokensScored;
@@ -143,21 +135,16 @@ public class SimpleBreadthFirstSearchManager implements SearchManager {
     public void newProperties(PropertySheet ps) throws PropertyException {
         logger = ps.getLogger();
         logMath = (LogMath) ps.getComponent(PROP_LOG_MATH);
+
         linguist = (Linguist) ps.getComponent(PROP_LINGUIST);
         pruner = (Pruner) ps.getComponent(PROP_PRUNER);
-        scorer = (AcousticScorer) ps.getComponent(PROP_SCORER
-        );
-        activeListFactory = (ActiveListFactory) ps.getComponent(
-                PROP_ACTIVE_LIST_FACTORY);
-        showTokenCount = ps.getBoolean(PROP_SHOW_TOKEN_COUNT
-        );
-        double relativeWordBeamWidth = ps.getDouble(
-                PROP_RELATIVE_WORD_BEAM_WIDTH
-        );
-        growSkipInterval = ps.getInt(PROP_GROW_SKIP_INTERVAL
-        );
-        wantEntryPruning = ps.getBoolean(PROP_WANT_ENTRY_PRUNING
-        );
+        scorer = (AcousticScorer) ps.getComponent(PROP_SCORER);
+        activeListFactory = (ActiveListFactory) ps.getComponent(PROP_ACTIVE_LIST_FACTORY);
+        showTokenCount = ps.getBoolean(PROP_SHOW_TOKEN_COUNT);
+
+        double relativeWordBeamWidth = ps.getDouble(PROP_RELATIVE_WORD_BEAM_WIDTH);
+        growSkipInterval = ps.getInt(PROP_GROW_SKIP_INTERVAL);
+        wantEntryPruning = ps.getBoolean(PROP_WANT_ENTRY_PRUNING);
         logRelativeWordBeamWidth = logMath.linearToLog(relativeWordBeamWidth);
     }
 
@@ -239,7 +226,6 @@ public class SimpleBreadthFirstSearchManager implements SearchManager {
         activeList = newActiveList;
 
         growBranches();
-
     }
 
 
@@ -567,16 +553,6 @@ public class SimpleBreadthFirstSearchManager implements SearchManager {
         scorer.deallocate();
         pruner.deallocate();
         linguist.deallocate();
-    }
-
-
-    /*
-    * (non-Javadoc)
-    *
-    * @see edu.cmu.sphinx.util.props.Configurable#getName()
-    */
-    public String getName() {
-        return name;
     }
 
 

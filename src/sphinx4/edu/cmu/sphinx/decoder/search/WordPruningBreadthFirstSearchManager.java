@@ -44,26 +44,26 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
     /** Sphinx property that defines the name of the linguist to be used by this search manager. */
     @S4Component(type = Linguist.class)
     public final static String PROP_LINGUIST = "linguist";
+
     /** Sphinx property that defines the name of the linguist to be used by this search manager. */
     @S4Component(type = Pruner.class)
     public final static String PROP_PRUNER = "pruner";
+
     /** Sphinx property that defines the name of the scorer to be used by this search manager. */
     @S4Component(type = AcousticScorer.class)
     public final static String PROP_SCORER = "scorer";
+
     /** Sphinx property that defines the name of the logmath to be used by this search manager. */
     @S4Component(type = LogMath.class)
     public final static String PROP_LOG_MATH = "logMath";
+
     /**
      * A sphinx property than, when set to <code>true</code> will cause the recognizer to count up all the tokens in the
      * active list after every frame.
      */
     @S4Boolean(defaultValue = false)
     public final static String PROP_SHOW_TOKEN_COUNT = "showTokenCount";
-    /** The default value for the PROP_SHOW_TOKEN_COUNT property */
-    public final static boolean PROP_SHOW_TOKEN_COUNT_DEFAULT = false;
 
-    /** The default value for the PROP_WANT_ENTRY_PRUNING property */
-    public final static boolean PROP_WANT_ENTRY_PRUNING_DEFAULT = false;
     /**
      * A sphinx property that controls the number of frames processed for every time the decode growth step is skipped.
      * Setting this property to zero disables grow skipping. Setting this number to a small integer will increase the
@@ -72,8 +72,6 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
      */
     @S4Integer(defaultValue = 0)
     public final static String PROP_GROW_SKIP_INTERVAL = "growSkipInterval";
-    /** The default value for the PROP_GROW_SKIP_INTERVAL property. */
-    public final static int PROP_GROW_SKIP_INTERVAL_DEFAULT = 0;
 
     /** Sphinx property that defines the type of active list to use */
     @S4Component(type = ActiveListManager.class)
@@ -83,22 +81,13 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
     @S4Boolean(defaultValue = false)
     public final static String PROP_CHECK_STATE_ORDER = "checkStateOrder";
 
-    /** The default value of the PROP_CHECK_STATE_ORDER property. */
-    public final static boolean PROP_CHECK_STATE_ORDER_DEFAULT = false;
-
     /** Sphinx property that specifies whether to build a word lattice. */
     @S4Boolean(defaultValue = true)
     public final static String PROP_BUILD_WORD_LATTICE = "buildWordLattice";
 
-    /** The default value of the PROP_BUILD_WORD_LATTICE property. */
-    public final static boolean PROP_BUILD_WORD_LATTICE_DEFAULT = true;
-
     /** Sphinx property that specifies the maximum lattice edges */
     @S4Integer(defaultValue = 100)
     public final static String PROP_MAX_LATTICE_EDGES = "maxLatticeEdges";
-
-    /** The default value of the PROP_MAX_LATTICE_EDGES property. */
-    public final static int PROP_MAX_LATTICE_EDGES_DEFAULT = 100;
 
     /**
      * A sphinx property that controls the amount of simple acoustic lookahead performed. Setting the property to zero
@@ -107,10 +96,6 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
     @S4Double(defaultValue = 0)
     public final static String PROP_ACOUSTIC_LOOKAHEAD_FRAMES = "acousticLookaheadFrames";
 
-    /** The default value for the PROP_ACOUSTIC_LOOKAHEAD_FRAMES property. */
-    public final static float PROP_ACOUSTIC_LOOKAHEAD_FRAMES_DEFAULT = 0F;
-
-
     /**
      * A sphinx property that controls whether or not we keep all tokens. If this is set to false, only word tokens are
      * retained, otherwise all tokens are retained.
@@ -118,15 +103,9 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
     @S4Boolean(defaultValue = false)
     public final static String PROP_KEEP_ALL_TOKENS = "keepAllTokens";
 
-    /** The default value for the PROP_ACOUSTIC_LOOKAHEAD_FRAMES property. */
-    public final static boolean PROP_KEEP_ALL_TOKENS_DEFAULT = false;
-
     /** Sphinx4 property that specifies the relative beam width */
     @S4Double(defaultValue = 0.0)
     public final static String PROP_RELATIVE_BEAM_WIDTH = "relativeBeamWidth";
-
-    /** Sphinx4 property that specifies the default value for the relative beam width */
-    public final static float PROP_RELATIVE_BEAM_WIDTH_DEFAULT = 0.0f;
 
     // TODO: since the token stacks are permanently disabled,
     // we may want to just remove all of the supporting code
@@ -144,7 +123,6 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
     // -----------------------------------
     // Configuration data
     // -----------------------------------
-    private String name;
     private Logger logger;
     private boolean showTokenCount;
     private boolean checkStateOrder;
@@ -190,41 +168,22 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
     public void newProperties(PropertySheet ps) throws PropertyException {
         logMath = (LogMath) ps.getComponent(PROP_LOG_MATH);
         logger = ps.getLogger();
+
         linguist = (Linguist) ps.getComponent(PROP_LINGUIST);
         pruner = (Pruner) ps.getComponent(PROP_PRUNER);
-        scorer = (AcousticScorer) ps.getComponent(PROP_SCORER
-        );
-        activeListManager = (ActiveListManager) ps.getComponent(
-                PROP_ACTIVE_LIST_MANAGER);
-        showTokenCount = ps.getBoolean(PROP_SHOW_TOKEN_COUNT
-        );
-        growSkipInterval = ps.getInt(PROP_GROW_SKIP_INTERVAL
-        );
+        scorer = (AcousticScorer) ps.getComponent(PROP_SCORER);
+        activeListManager = (ActiveListManager) ps.getComponent(PROP_ACTIVE_LIST_MANAGER);
+        showTokenCount = ps.getBoolean(PROP_SHOW_TOKEN_COUNT);
+        growSkipInterval = ps.getInt(PROP_GROW_SKIP_INTERVAL);
 
-        checkStateOrder = ps.getBoolean(PROP_CHECK_STATE_ORDER
-        );
-        buildWordLattice = ps.getBoolean(PROP_BUILD_WORD_LATTICE
-        );
-        maxLatticeEdges = ps.getInt(PROP_MAX_LATTICE_EDGES
-        );
-        acousticLookaheadFrames = ps.getFloat(PROP_ACOUSTIC_LOOKAHEAD_FRAMES
-        );
-        keepAllTokens = ps.getBoolean(PROP_KEEP_ALL_TOKENS
-        );
+        checkStateOrder = ps.getBoolean(PROP_CHECK_STATE_ORDER);
+        buildWordLattice = ps.getBoolean(PROP_BUILD_WORD_LATTICE);
+        maxLatticeEdges = ps.getInt(PROP_MAX_LATTICE_EDGES);
+        acousticLookaheadFrames = ps.getFloat(PROP_ACOUSTIC_LOOKAHEAD_FRAMES);
+        keepAllTokens = ps.getBoolean(PROP_KEEP_ALL_TOKENS);
 
-        double linearRelativeBeamWidth = ps.getDouble(PROP_RELATIVE_BEAM_WIDTH
-        );
+        double linearRelativeBeamWidth = ps.getDouble(PROP_RELATIVE_BEAM_WIDTH);
         this.relativeBeamWidth = logMath.linearToLog(linearRelativeBeamWidth);
-    }
-
-
-    /*
-    * (non-Javadoc)
-    *
-    * @see edu.cmu.sphinx.util.props.Configurable#getName()
-    */
-    public String getName() {
-        return name;
     }
 
 
@@ -241,12 +200,9 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
         pruneTimer = Timer.getTimer("Prune");
         growTimer = Timer.getTimer("Grow");
 
-        totalTokensScored = StatisticsVariable
-                .getStatisticsVariable("totalTokensScored");
-        curTokensScored = StatisticsVariable
-                .getStatisticsVariable("curTokensScored");
-        tokensCreated = StatisticsVariable
-                .getStatisticsVariable("tokensCreated");
+        totalTokensScored = StatisticsVariable                 .getStatisticsVariable("totalTokensScored");
+        curTokensScored = StatisticsVariable                .getStatisticsVariable("curTokensScored");
+        tokensCreated = StatisticsVariable                    .getStatisticsVariable("tokensCreated");
 
         linguist.allocate();
         pruner.allocate();
@@ -468,7 +424,7 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
      */
     protected boolean scoreTokens() {
         boolean moreTokens;
-        Token bestToken = null;
+        Token bestToken;
         scoreTimer.start();
         bestToken = (Token) scorer.calculateScores(activeList.getTokens());
         scoreTimer.stop();
