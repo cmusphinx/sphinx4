@@ -106,7 +106,7 @@ public class RawPropertyData {
             Object propVal = properties.get(propName);
             if (propVal instanceof String) {
                 if (((String) propVal).startsWith("${"))
-                    propVal = cm.getGlobalProperty(ConfigurationManagerUtils.stripGlobalSymbol((String) propVal));
+                    propVal = cm.getGloPropReference(ConfigurationManagerUtils.stripGlobalSymbol((String) propVal));
             }
 
             copyRPD.properties.put(propName, propVal);

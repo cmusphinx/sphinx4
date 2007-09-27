@@ -267,6 +267,11 @@ public class ConfigurationManager implements Cloneable {
     }
 
 
+    public GlobalProperty getGloPropReference(String propertyName) {
+        return globalProperties.get(propertyName);
+    }
+
+
     /**
      * Returns the url of the xml-configuration which defined this configuration or <code>null</code>  if it was created
      * dynamically.

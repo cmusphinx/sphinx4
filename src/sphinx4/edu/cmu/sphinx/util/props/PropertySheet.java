@@ -115,7 +115,7 @@ public class PropertySheet implements Cloneable {
             propValues.put(name, isDefDefined ? s4String.defaultValue() : null);
         }
 
-        String propValue = (String) propValues.get(name);
+        String propValue = flattenProp(name);
 
         //check range
         List<String> range = Arrays.asList(s4String.range());
@@ -123,6 +123,12 @@ public class PropertySheet implements Cloneable {
             throw new InternalConfigurationException(getInstanceName(), name, " is not in range (" + range + ")");
 
         return propValue;
+    }
+
+
+    private String flattenProp(String name) {
+        Object value = propValues.get(name);
+        return value instanceof String ? (String) value : (value instanceof GlobalProperty ? (String) ((GlobalProperty) value).getValue() : null);
     }
 
 
@@ -151,7 +157,7 @@ public class PropertySheet implements Cloneable {
         }
 
         Object propObject = propValues.get(name);
-        Integer propValue = propObject instanceof Integer ? (Integer) propObject : Integer.decode((String) propObject);
+        Integer propValue = propObject instanceof Integer ? (Integer) propObject : Integer.decode(flattenProp(name));
 
         int[] range = s4Integer.range();
         if (range.length != 2)
@@ -202,7 +208,7 @@ public class PropertySheet implements Cloneable {
         }
 
         Object propObject = propValues.get(name);
-        Double propValue = propObject instanceof Double ? (Double) propObject : Double.valueOf((String) propObject);
+        Double propValue = propObject instanceof Double ? (Double) propObject : Double.valueOf(flattenProp(name));
 
         double[] range = s4Double.range();
         if (range.length != 2)
@@ -252,12 +258,13 @@ public class PropertySheet implements Cloneable {
         S4Component s4Component = (S4Component) s4PropWrapper.getAnnotation();
         Class expectedType = s4Component.type();
 
-        if (propValues.get(name) == null || propValues.get(name) instanceof String) {
+        Object propVal = propValues.get(name);
+        if (propVal == null || propVal instanceof String || propVal instanceof GlobalProperty) {
             Configurable configurable = null;
 
             try {
                 if (propValues.get(name) != null) {
-                    PropertySheet ps = cm.getPropertySheet((String) propValues.get(name));
+                    PropertySheet ps = cm.getPropertySheet(flattenProp(name));
                     if (ps != null)
                         configurable = ps.getOwner();
                 }
