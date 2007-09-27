@@ -202,9 +202,9 @@ public class ConfigurationManagerUtils {
 
         Pattern pattern = Pattern.compile("\\$\\{(\\w+)\\}");
 
-        Map<String, String> globalProps = cm.getGlobalProperties();
+        GlobalProperties globalProps = cm.getGlobalProperties();
         for (String propName : globalProps.keySet()) {
-            String propVal = globalProps.get(propName);
+            String propVal = globalProps.get(propName).toString();
 
             Matcher matcher = pattern.matcher(propName);
             propName = matcher.matches() ? matcher.group(1) : propName;
@@ -323,7 +323,7 @@ public class ConfigurationManagerUtils {
      * @param global global properies
      * @throws PropertyException if an attempt is made to set a parameter for an unknown component.
      */
-    static void applySystemProperties(Map<String, RawPropertyData> rawMap, Map<String, String> global)
+    static void applySystemProperties(Map<String, RawPropertyData> rawMap, GlobalProperties global)
             throws PropertyException {
         Properties props = System.getProperties();
         for (Enumeration e = props.keys(); e.hasMoreElements();) {
@@ -354,7 +354,7 @@ public class ConfigurationManagerUtils {
 
             else if (param.indexOf('.') == -1) {
 //                String symbolName = "${" + param + "}";
-                global.put(param, value);
+                global.setValue(param, value);
             }
         }
     }
@@ -430,9 +430,9 @@ public class ConfigurationManagerUtils {
         ps.setInstanceName(newName);
 
         // it might be possible that the component is the value of a global property
-        Map<String, String> globalProps = cm.getGlobalProperties();
+        GlobalProperties globalProps = cm.getGlobalProperties();
         for (String propName : globalProps.keySet()) {
-            String propVal = globalProps.get(propName);
+            String propVal = globalProps.get(propName).toString();
 
             if (propVal.equals(oldName))
                 cm.setGlobalProperty(propName, newName);

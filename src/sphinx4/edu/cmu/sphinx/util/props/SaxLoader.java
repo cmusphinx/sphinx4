@@ -30,7 +30,7 @@ public class SaxLoader {
 
     private URL url;
     private Map<String, RawPropertyData> rpdMap;
-    private Map<String, String> globalProperties;
+    private GlobalProperties globalProperties;
 
 
     /**
@@ -39,7 +39,7 @@ public class SaxLoader {
      * @param url              the location to load
      * @param globalProperties the map of global properties
      */
-    public SaxLoader(URL url, Map<String, String> globalProperties) {
+    public SaxLoader(URL url, GlobalProperties globalProperties) {
         this.url = url;
         this.globalProperties = globalProperties;
     }
@@ -114,7 +114,7 @@ public class SaxLoader {
                     // set of symbols
 //                    String symbolName = "${" + name + "}"; // why should we warp the global props here
                     String symbolName = name;
-                    globalProperties.put(symbolName, value);
+                    globalProperties.setValue(symbolName, value);
                 } else if (rpd.contains(name)) {
                     throw new SAXParseException("Duplicate property: " + name,
                             locator);

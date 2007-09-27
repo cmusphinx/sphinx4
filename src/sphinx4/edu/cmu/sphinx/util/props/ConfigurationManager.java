@@ -12,7 +12,7 @@ public class ConfigurationManager implements Cloneable {
 
     private Map<String, PropertySheet> symbolTable = new LinkedHashMap<String, PropertySheet>();
     private Map<String, RawPropertyData> rawPropertyMap = new HashMap<String, RawPropertyData>();
-    private Map<String, String> globalProperties = new LinkedHashMap<String, String>();
+    private GlobalProperties globalProperties = new GlobalProperties();
 
     private boolean showCreations;
     private URL configURL;
@@ -251,8 +251,8 @@ public class ConfigurationManager implements Cloneable {
 
 
     /** Returns a copy of the map of global properties set for this configuration manager. */
-    public Map<String, String> getGlobalProperties() {
-        return Collections.unmodifiableMap(globalProperties);
+    public GlobalProperties getGlobalProperties() {
+        return (GlobalProperties) Collections.unmodifiableMap(globalProperties);
     }
 
 
@@ -263,7 +263,7 @@ public class ConfigurationManager implements Cloneable {
      */
     public String getGlobalProperty(String propertyName) {
 //        propertyName = propertyName.startsWith("$") ? propertyName : "${" + propertyName + "}";
-        return globalProperties.get(propertyName);
+        return globalProperties.get(propertyName).toString();
     }
 
 
@@ -287,7 +287,7 @@ public class ConfigurationManager implements Cloneable {
         if (value == null)
             globalProperties.remove(propertyName);
         else
-            globalProperties.put(propertyName, value);
+            globalProperties.setValue(propertyName, value);
 
         // update all component configurations because they might be affected by the change
         for (String instanceName : getInstanceNames(Configurable.class)) {
@@ -306,7 +306,7 @@ public class ConfigurationManager implements Cloneable {
         assert propertyName != null;
 
         while (propertyName.startsWith("$"))
-            propertyName = globalProperties.get(ConfigurationManagerUtils.stripGlobalSymbol(propertyName));
+            propertyName = globalProperties.get(ConfigurationManagerUtils.stripGlobalSymbol(propertyName)).toString();
 
         return propertyName;
     }
@@ -394,7 +394,7 @@ public class ConfigurationManager implements Cloneable {
             cloneCM.symbolTable.put(compName, (PropertySheet) symbolTable.get(compName).clone());
         }
 
-        cloneCM.globalProperties = new LinkedHashMap<String, String>(globalProperties);
+        cloneCM.globalProperties = new GlobalProperties(globalProperties);
         cloneCM.rawPropertyMap = new HashMap<String, RawPropertyData>(rawPropertyMap);
 
 
