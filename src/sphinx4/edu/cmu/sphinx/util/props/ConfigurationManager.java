@@ -252,7 +252,7 @@ public class ConfigurationManager implements Cloneable {
 
     /** Returns a copy of the map of global properties set for this configuration manager. */
     public GlobalProperties getGlobalProperties() {
-        return (GlobalProperties) Collections.unmodifiableMap(globalProperties);
+        return new GlobalProperties(globalProperties);
     }
 
 
