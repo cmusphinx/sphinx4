@@ -187,6 +187,12 @@ public class FrontEnd extends BaseDataProcessor {
     }
 
 
+    /** Returns the collection of <code>DataProcessor</code>s which setup this <code>FrontEnd</code>. */
+    public List<DataProcessor> getElements() {
+        return frontEndList;
+    }
+
+
     /**
      * Returns the processed Data output, basically calls <code>getData()</code> on the last processor.
      *
