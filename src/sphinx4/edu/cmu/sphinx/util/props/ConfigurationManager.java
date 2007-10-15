@@ -424,7 +424,6 @@ public class ConfigurationManager implements Cloneable {
     public static Configurable getInstance(Class<? extends Configurable> targetClass, Map<String, Object> props) throws PropertyException {
         PropertySheet ps = getPropSheetInstanceFromClass(targetClass, props, null, new ConfigurationManager());
         Configurable configurable = ps.getOwner();
-        configurable.newProperties(ps);
         return configurable;
     }
 
