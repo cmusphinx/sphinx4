@@ -29,4 +29,25 @@ public class GlobalProperties extends HashMap<String, GlobalProperty> {
             put(propertyName, new GlobalProperty(value));
         }
     }
+
+    // todo implement hashCode
+
+
+    public boolean equals(Object o) {
+        if (o != null && o instanceof GlobalProperties) {
+            GlobalProperties gp = (GlobalProperties) o;
+            if (!keySet().equals(gp.keySet()))
+                return false;
+
+            //compare all values
+            for (String key : gp.keySet()) {
+                if (!get(key).equals(gp.get(key)))
+                    return false;
+            }
+
+            return true;
+        }
+
+        return false;
+    }
 }

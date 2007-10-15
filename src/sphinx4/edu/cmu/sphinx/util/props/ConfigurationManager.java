@@ -259,11 +259,12 @@ public class ConfigurationManager implements Cloneable {
     /**
      * Returns a global property.
      *
-     * @param propertyName The name of the global property
+     * @param propertyName The name of the global property or <code>null</code> if no such property exists
      */
     public String getGlobalProperty(String propertyName) {
 //        propertyName = propertyName.startsWith("$") ? propertyName : "${" + propertyName + "}";
-        return globalProperties.get(propertyName).toString();
+        GlobalProperty globProp = globalProperties.get(propertyName);
+        return globProp != null ? globProp.toString() : null;
     }
 
 

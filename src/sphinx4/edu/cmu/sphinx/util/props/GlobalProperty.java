@@ -28,4 +28,22 @@ public class GlobalProperty {
     public String toString() {
         return value != null ? value.toString() : null;
     }
+
+
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof GlobalProperty)) return false;
+
+        GlobalProperty that = (GlobalProperty) o;
+
+//        if (value != null ? !value.equals(that.value) : that.value != null) return false;
+        // note: will be fixed as soon as we have typed global properties
+
+        return true;
+    }
+
+
+    public int hashCode() {
+        return (value != null ? value.hashCode() : 0);
+    }
 }
