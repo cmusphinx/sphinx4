@@ -139,11 +139,9 @@ public class ConfigurationManager implements Cloneable {
 
     /**
      * Given a <code>Configurable</code>-class/interface, all property-sheets which are subclassing/implemting this
-     * class/interface are collected and returned.
-     * <p/>
-     * Note: No <code>Configurable</code> will be instantiated by this method.
+     * class/interface are collected and returned.  No <code>Configurable</code> will be instantiated by this method.
      */
-    public List<PropertySheet> lookup(Class<? extends Configurable> confClass) {
+    public List<PropertySheet> getPropSheets(Class<? extends Configurable> confClass) {
         List<PropertySheet> psCol = new ArrayList<PropertySheet>();
 
         for (PropertySheet ps : symbolTable.values()) {
@@ -283,7 +281,7 @@ public class ConfigurationManager implements Cloneable {
 
 
     /**
-     * Returns a global property.
+     * Sets a global property.
      *
      * @param propertyName The name of the global property.
      * @param value        The new value of the global property. If the value is <code>null</code> the property becomes
