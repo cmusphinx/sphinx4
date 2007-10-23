@@ -5,7 +5,13 @@ import java.net.URL;
 import java.util.*;
 
 
-/** A configuration manager which enables xml-based system configuration.  ...to be continued! */
+/**
+ * Manages a set of <code>Configurable</code>s, their parametrization and the relationships between them. Configurations
+ * can be specified either by xml or on-the-fly during runtime.
+ *
+ * @see edu.cmu.sphinx.util.props.Configurable
+ * @see edu.cmu.sphinx.util.props.PropertySheet
+ */
 public class ConfigurationManager implements Cloneable {
 
     private List<ConfigurationChangeListener> changeListeners = new ArrayList<ConfigurationChangeListener>();
@@ -18,6 +24,10 @@ public class ConfigurationManager implements Cloneable {
     private URL configURL;
 
 
+    /**
+     * Creates a new empty configuration manager. This constructor is only of use in cases when a system configuration
+     * is created during runtime.
+     */
     public ConfigurationManager() {
     }
 
@@ -39,7 +49,9 @@ public class ConfigurationManager implements Cloneable {
 
         // we can't config the configuration manager with itself so we
         // do some of these config items manually.
-        showCreations = "true".equals(globalProperties.get("showCreations"));
+        GlobalProperty showCreations = globalProperties.get("showCreations");
+        if (showCreations != null)
+            this.showCreations = "true".equals(showCreations.getValue());
     }
 
 
@@ -388,6 +400,7 @@ public class ConfigurationManager implements Cloneable {
     }
 
 
+    /** Creates a deep copy of the given CM instance. */
     // This is not tested yet !!!
     public Object clone() throws CloneNotSupportedException {
         ConfigurationManager cloneCM = (ConfigurationManager) super.clone();
