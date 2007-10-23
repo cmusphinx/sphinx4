@@ -37,8 +37,6 @@ public class LiveModeRecognizer implements Configurable {
     /** The SphinxProperty name for how many files to skip for every decode. */
     @S4Integer(defaultValue = 0)
     public final static String PROP_SKIP = "skip";
-    /** The default value for the property PROP_SKIP. */
-    public final static int PROP_SKIP_DEFAULT = 0;
 
     /** The Sphinx property that specifies the recognizer to use */
     @S4Component(type = Recognizer.class)
@@ -52,22 +50,13 @@ public class LiveModeRecognizer implements Configurable {
     @S4Boolean(defaultValue = false)
     public static final String PROP_SHOW_GAP_INSERTIONS = "showGapInsertions";
 
-    /** Default value for PROP_SHOW_GAP_INSERTIONS. */
-    public static final boolean PROP_SHOW_GAP_INSERTIONS_DEFAULT = false;
-
     /** SphinxProperty specifying the transcript file. */
     @S4String(defaultValue = "hypothesis.txt")
     public final static String PROP_HYPOTHESIS_TRANSCRIPT = "hypothesisTranscript";
 
-    /** The default value of PROP_TRANSCRIPT. */
-    public final static String PROP_HYPOTHESIS_TRANSCRIPT_DEFAULT = "hypothesis.txt";
-
     /** SphinxProperty specifying the number of files to decode before alignment is performed. */
     @S4Integer(defaultValue = -1)
     public final static String PROP_ALIGN_INTERVAL = "alignInterval";
-
-    /** The default value of PROP_ALIGN_INTERVAL. */
-    public final static int PROP_ALIGN_INTERVAL_DEFAULT = -1;
 
     // TODO - the instrumentation in here that is looking for gap insertions
     // and performing the alignment and reporting of the live summary data
@@ -103,18 +92,13 @@ public class LiveModeRecognizer implements Configurable {
     */
     public void newProperties(PropertySheet ps) throws PropertyException {
         skip = ps.getInt(PROP_SKIP);
-        recognizer = (Recognizer) ps.getComponent(PROP_RECOGNIZER
-        );
-        dataSource = (ConcatFileDataSource) ps.getComponent(PROP_INPUT_SOURCE
-        );
-        showGapInsertions = ps.getBoolean(PROP_SHOW_GAP_INSERTIONS
-        );
+        recognizer = (Recognizer) ps.getComponent(PROP_RECOGNIZER);
+        dataSource = (ConcatFileDataSource) ps.getComponent(PROP_INPUT_SOURCE);
+        showGapInsertions = ps.getBoolean(PROP_SHOW_GAP_INSERTIONS);
 
-        hypothesisFile = ps.getString(PROP_HYPOTHESIS_TRANSCRIPT
-        );
+        hypothesisFile = ps.getString(PROP_HYPOTHESIS_TRANSCRIPT);
 
-        alignInterval = ps.getInt(PROP_ALIGN_INTERVAL
-        );
+        alignInterval = ps.getInt(PROP_ALIGN_INTERVAL);
 
         referenceSource = dataSource;
     }
@@ -315,4 +299,14 @@ public class LiveModeRecognizer implements Configurable {
                     .println("I/O error during decoding: " + ioe.getMessage());
         }
     }
+
+//
+//    @Test
+//    public void testUseConcatDataSource() {
+//        Map<String, Object> props = new HashMap<String, Object>();
+//        props.put("inputSource", new ConcatFileDataSource());
+//        props.put("recognizer", new Recognizer());
+//        LiveModeRecognizer liveRecognizer = (LiveModeRecognizer) ConfigurationManager.getInstance(LiveModeRecognizer.class, props);
+//
+//    }
 }
