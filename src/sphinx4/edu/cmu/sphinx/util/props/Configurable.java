@@ -74,11 +74,4 @@ public interface Configurable {
      * @throws PropertyException if there is a problem with the properties.
      */
     public void newProperties(PropertySheet ps) throws PropertyException;
-
-    /**
-     * Retrieves the name for this configurable component
-     *
-     * @return the name
-     */
-//    public String getName();
 }
