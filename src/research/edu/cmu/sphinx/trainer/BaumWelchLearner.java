@@ -12,23 +12,7 @@
 
 package edu.cmu.sphinx.trainer;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.logging.Logger;
-
-import edu.cmu.sphinx.frontend.Data;
-import edu.cmu.sphinx.frontend.DataEndSignal;
-import edu.cmu.sphinx.frontend.DataProcessingException;
-import edu.cmu.sphinx.frontend.DataProcessor;
-import edu.cmu.sphinx.frontend.DataStartSignal;
-import edu.cmu.sphinx.frontend.FrontEnd;
-import edu.cmu.sphinx.frontend.FrontEndFactory;
-import edu.cmu.sphinx.frontend.Signal;
+import edu.cmu.sphinx.frontend.*;
 import edu.cmu.sphinx.frontend.util.StreamCepstrumSource;
 import edu.cmu.sphinx.frontend.util.StreamDataSource;
 import edu.cmu.sphinx.linguist.acoustic.HMM;
@@ -39,48 +23,45 @@ import edu.cmu.sphinx.linguist.acoustic.tiedstate.trainer.TrainerScore;
 import edu.cmu.sphinx.util.LogMath;
 import edu.cmu.sphinx.util.SphinxProperties;
 import edu.cmu.sphinx.util.Utilities;
+import edu.cmu.sphinx.util.props.ConfigurationManager;
+
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Logger;
 
 
-/**
- * Provides mechanisms for computing statistics given a set of states
- * and input data.
- */
+/** Provides mechanisms for computing statistics given a set of states and input data. */
 public class BaumWelchLearner implements Learner {
 
 
-    private final static String PROP_PREFIX = 
-	"edu.cmu.sphinx.trainer.";
+    private final static String PROP_PREFIX =
+            "edu.cmu.sphinx.trainer.";
 
 
-    /**
-     * The SphinxProperty name for the input data type.
-     */
-    public final static String PROP_INPUT_TYPE = PROP_PREFIX+"inputDataType";
+    /** The SphinxProperty name for the input data type. */
+    public final static String PROP_INPUT_TYPE = PROP_PREFIX + "inputDataType";
 
 
-    /**
-     * The default value for the property PROP_INPUT_TYPE.
-     */
+    /** The default value for the property PROP_INPUT_TYPE. */
     public final static String PROP_INPUT_TYPE_DEFAULT = "cepstrum";
 
-    /**
-     * The sphinx property for the front end class.
-     */
+    /** The sphinx property for the front end class. */
     public final static String PROP_FRONT_END = PROP_PREFIX + "frontend";
 
 
-    /**
-     * The default value of PROP_FRONT_END.
-     */
+    /** The default value of PROP_FRONT_END. */
     public final static String PROP_FRONT_END_DEFAULT
-        = "edu.cmu.sphinx.frontend.SimpleFrontEnd";
+            = "edu.cmu.sphinx.frontend.SimpleFrontEnd";
 
 
     /*
      * The logger for this class
      */
     private static Logger logger =
-        Logger.getLogger("edu.cmu.sphinx.trainer.BaumWelch");
+            Logger.getLogger("edu.cmu.sphinx.trainer.BaumWelch");
 
     private FrontEnd frontEnd;
     private DataProcessor dataSource;
@@ -100,74 +81,75 @@ public class BaumWelchLearner implements Learner {
     private float[] probCurrentFrame;
     private float totalLogScore;
 
-    /**
-     * Constructor for this learner.
-     */
+
+    /** Constructor for this learner. */
     public BaumWelchLearner(SphinxProperties props)
-	throws IOException {
-	this.props = props;
-	context = props.getContext();
-	logMath = LogMath.getLogMath(context);
-	initialize();
+            throws IOException {
+        this.props = props;
+        context = props.getContext();
+        logMath = (LogMath) ConfigurationManager.getInstance(LogMath.class);
+        initialize();
     }
+
 
     /**
      * Initializes the Learner with the proper context and frontend.
      *
      * @throws IOException
      */
-    private void initialize() throws IOException  {
-	inputDataType = props.getString(PROP_INPUT_TYPE, 
-                                        PROP_INPUT_TYPE_DEFAULT);
-	if (inputDataType.equals("audio")) {
-	    dataSource = new StreamDataSource();
-	    dataSource.initialize("batchAudioSource", null, props, null);
-	} else if (inputDataType.equals("cepstrum")) {
-	    dataSource = new StreamCepstrumSource();
-	    dataSource.initialize("batchCepstrumSource", null, props, null);
-	} else {
-	    throw new Error("Unsupported data type: " + inputDataType + "\n" +
-			    "Only audio and cepstrum are supported\n");
-	}
+    private void initialize() throws IOException {
+        inputDataType = props.getString(PROP_INPUT_TYPE,
+                PROP_INPUT_TYPE_DEFAULT);
+        if (inputDataType.equals("audio")) {
+            dataSource = new StreamDataSource();
+            dataSource.initialize();
+//	    dataSource.initialize("batchAudioSource", null, props, null);
+        } else if (inputDataType.equals("cepstrum")) {
+            dataSource = new StreamCepstrumSource();
+            dataSource.initialize();
+//	    dataSource.initialize("batchCepstrumSource", null, props, null);
+        } else {
+            throw new Error("Unsupported data type: " + inputDataType + "\n" +
+                    "Only audio and cepstrum are supported\n");
+        }
 
-	frontEnd = getFrontEnd();
+        frontEnd = getFrontEnd();
     }
+
 
     // Cut and paste from e.c.s.d.Recognizer.java
-    /**
-     * Initialize and return the frontend based on the given sphinx
-     * properties.
-     */
+    /** Initialize and return the frontend based on the given sphinx properties. */
     protected FrontEnd getFrontEnd() {
-        String path = null;
-        try {
-	    FrontEnd fe = null;
-	    Collection names = FrontEndFactory.getNames(props);
-	    assert names.size() == 1;
-	    for (Iterator i = names.iterator(); i.hasNext();) {
-		String feName = (String) i.next();
-		fe = FrontEndFactory.getFrontEnd(props, feName);
-	    }
-	    return fe;
-        } catch (InstantiationException ie) {
-            throw new Error("IE: Can't create front end " + path, ie);
-	}
+//        String path = null;
+//        try {
+//	    FrontEnd fe = null;
+//	    Collection names = FrontEndFactory.getNames(props);
+//	    assert names.size() == 1;
+//	    for (Iterator i = names.iterator(); i.hasNext();) {
+//		String feName = (String) i.next();
+//		fe = FrontEndFactory.getFrontEnd(props, feName);
+//	    }
+//	    return fe;
+//        } catch (InstantiationException ie) {
+//            throw new Error("IE: Can't create front end " + path, ie);
+//    }
+        return null;
     }
+
 
     /**
      * Sets the learner to use a utterance.
      *
      * @param utterance the utterance
-     *
      * @throws IOException
      */
     public void setUtterance(Utterance utterance) throws IOException {
-	String file = utterance.toString();
+        String file = utterance.toString();
 
         InputStream is = new FileInputStream(file);
 
-	inputDataType = props.getString(PROP_INPUT_TYPE, 
-                                        PROP_INPUT_TYPE_DEFAULT);
+        inputDataType = props.getString(PROP_INPUT_TYPE,
+                PROP_INPUT_TYPE_DEFAULT);
 
         if (inputDataType.equals("audio")) {
             ((StreamDataSource) dataSource).setInputStream(is, file);
@@ -177,166 +159,166 @@ public class BaumWelchLearner implements Learner {
         }
     }
 
+
     /**
      * Returns a single frame of speech.
      *
      * @return a feature frame
-     *
      * @throws IOException
      */
     private boolean getFeature() {
-	try {
-	    curFeature = frontEnd.getData();
+        try {
+            curFeature = frontEnd.getData();
 
             if (curFeature == null) {
                 return false;
             }
 
-	    if (curFeature instanceof DataStartSignal) {
+            if (curFeature instanceof DataStartSignal) {
                 curFeature = frontEnd.getData();
                 if (curFeature == null) {
                     return false;
                 }
             }
 
-	    if (curFeature instanceof DataEndSignal) {
-		return false;
-	    }
+            if (curFeature instanceof DataEndSignal) {
+                return false;
+            }
 
             if (curFeature instanceof Signal) {
-		throw new Error("Can't score non-content feature");
+                throw new Error("Can't score non-content feature");
             }
-	} catch (DataProcessingException dpe) {
-	    System.out.println("DataProcessingException " + dpe);
-	    dpe.printStackTrace();
-	    return false;
-	}
-	return true;
+        } catch (DataProcessingException dpe) {
+            System.out.println("DataProcessingException " + dpe);
+            dpe.printStackTrace();
+            return false;
+        }
+        return true;
     }
 
-    /**
-     * Starts the Learner.
-     */
-    public void start(){
+
+    /** Starts the Learner. */
+    public void start() {
     }
 
-    /**
-     * Stops the Learner.
-     */
-    public void stop(){
+
+    /** Stops the Learner. */
+    public void stop() {
     }
+
 
     /**
      * Initializes computation for current utterance and utterance graph.
      *
      * @param utterance the current utterance
-     * @param graph the current utterance graph
-     *
+     * @param graph     the current utterance graph
      * @throws IOException
      */
-    public void initializeComputation(Utterance utterance, 
-		      UtteranceGraph graph)  throws IOException {
-	setUtterance(utterance);
-	setGraph(graph);
+    public void initializeComputation(Utterance utterance,
+                                      UtteranceGraph graph) throws IOException {
+        setUtterance(utterance);
+        setGraph(graph);
     }
 
+
     /**
-     * Implements the setGraph method. 
+     * Implements the setGraph method.
      *
      * @param graph the graph
      */
     public void setGraph(UtteranceGraph graph) {
-	this.graph = graph;
+        this.graph = graph;
     }
+
 
     /**
-     * Prepares the learner for returning scores, one at a time. To do
-     * so, it performs the full forward pass, but returns the scores
-     * for the backward pass one feature frame at a time.
+     * Prepares the learner for returning scores, one at a time. To do so, it performs the full forward pass, but
+     * returns the scores for the backward pass one feature frame at a time.
      */
     private Object[] prepareScore() {
-	// scoreList will contain a list of score, which in turn are a
-	// vector of TrainerScore elements.
-	List scoreList = new ArrayList();
-	int numStates = graph.size();
-	TrainerScore[] score = new TrainerScore[numStates];
-	alphas = new float[numStates];
-	betas = new float[numStates];
-	outputProbs = new float[numStates];
+        // scoreList will contain a list of score, which in turn are a
+        // vector of TrainerScore elements.
+        List scoreList = new ArrayList();
+        int numStates = graph.size();
+        TrainerScore[] score = new TrainerScore[numStates];
+        alphas = new float[numStates];
+        betas = new float[numStates];
+        outputProbs = new float[numStates];
 
-	// First we do the forward pass. We need this before we can
-	// return any probability. When we're doing the backward pass,
-	// we can finally return a score for each call of this method.
+        // First we do the forward pass. We need this before we can
+        // return any probability. When we're doing the backward pass,
+        // we can finally return a score for each call of this method.
 
-	probCurrentFrame = new float[numStates];
-	// Initialization of probCurrentFrame for the alpha computation
-	Node initialNode = graph.getInitialNode();
-	int indexInitialNode = graph.indexOf(initialNode);
-	for (int i = 0; i < numStates; i++) {
-	    probCurrentFrame[i] = LogMath.getLogZero();
-	}
-	// Overwrite in the right position
-	probCurrentFrame[indexInitialNode] = 0.0f;
+        probCurrentFrame = new float[numStates];
+        // Initialization of probCurrentFrame for the alpha computation
+        Node initialNode = graph.getInitialNode();
+        int indexInitialNode = graph.indexOf(initialNode);
+        for (int i = 0; i < numStates; i++) {
+            probCurrentFrame[i] = LogMath.getLogZero();
+        }
+        // Overwrite in the right position
+        probCurrentFrame[indexInitialNode] = 0.0f;
 
-	for (initialNode.startOutgoingEdgeIterator();
-	     initialNode.hasMoreOutgoingEdges(); ) {
-	    Edge edge = initialNode.nextOutgoingEdge();
-	    Node node = edge.getDestination();
-	    int index = graph.indexOf(node);
-	    if (!node.isType("STATE")) {
-		// Certainly non-emitting, if it's not in an HMM.
-		probCurrentFrame[index] = 0.0f;
-	    } else {
-		// See if it's the last state in the HMM, i.e., if
-		// it's non-emitting.
-		HMMState state = (HMMState) node.getObject();
-		HMM hmm = state.getHMM();
-		if (!state.isEmitting()) {
-		    probCurrentFrame[index] = 0.0f;
-		}
-	    assert false;
-	    }
-	}
+        for (initialNode.startOutgoingEdgeIterator();
+             initialNode.hasMoreOutgoingEdges();) {
+            Edge edge = initialNode.nextOutgoingEdge();
+            Node node = edge.getDestination();
+            int index = graph.indexOf(node);
+            if (!node.isType("STATE")) {
+                // Certainly non-emitting, if it's not in an HMM.
+                probCurrentFrame[index] = 0.0f;
+            } else {
+                // See if it's the last state in the HMM, i.e., if
+                // it's non-emitting.
+                HMMState state = (HMMState) node.getObject();
+                HMM hmm = state.getHMM();
+                if (!state.isEmitting()) {
+                    probCurrentFrame[index] = 0.0f;
+                }
+                assert false;
+            }
+        }
 
-	// If getFeature() is true, curFeature contains a valid
-	// Feature. If not, a problem or EOF was encountered.
-	lastFeatureIndex = 0;
-	while (getFeature()) {
-	    forwardPass(score);
-	    scoreList.add(score);
-	    lastFeatureIndex++;
-	}
-	logger.info("Feature frames read: " + lastFeatureIndex);
-	// Prepare for beta computation
-	for (int i = 0; i < probCurrentFrame.length; i++) {
-	    probCurrentFrame[i] = LogMath.getLogZero();
-	}
-	Node finalNode = graph.getFinalNode();
-	int indexFinalNode = graph.indexOf(finalNode);
-	// Overwrite in the right position
-	probCurrentFrame[indexFinalNode] = 0.0f;
-	for (finalNode.startIncomingEdgeIterator();
-	     finalNode.hasMoreIncomingEdges(); ) {
-	    Edge edge = finalNode.nextIncomingEdge();
-	    Node node = edge.getSource();
-	    int index = graph.indexOf(node);
-	    if (!node.isType("STATE")) {
-		// Certainly non-emitting, if it's not in an HMM.
-		probCurrentFrame[index] = 0.0f;
-	    assert false;
-	    } else {
-		// See if it's the last state in the HMM, i.e., if
-		// it's non-emitting.
-		HMMState state = (HMMState) node.getObject();
-		HMM hmm = state.getHMM();
-		if (!state.isEmitting()) {
-		    probCurrentFrame[index] = 0.0f;
-		}
-	    }
-	}
+        // If getFeature() is true, curFeature contains a valid
+        // Feature. If not, a problem or EOF was encountered.
+        lastFeatureIndex = 0;
+        while (getFeature()) {
+            forwardPass(score);
+            scoreList.add(score);
+            lastFeatureIndex++;
+        }
+        logger.info("Feature frames read: " + lastFeatureIndex);
+        // Prepare for beta computation
+        for (int i = 0; i < probCurrentFrame.length; i++) {
+            probCurrentFrame[i] = LogMath.getLogZero();
+        }
+        Node finalNode = graph.getFinalNode();
+        int indexFinalNode = graph.indexOf(finalNode);
+        // Overwrite in the right position
+        probCurrentFrame[indexFinalNode] = 0.0f;
+        for (finalNode.startIncomingEdgeIterator();
+             finalNode.hasMoreIncomingEdges();) {
+            Edge edge = finalNode.nextIncomingEdge();
+            Node node = edge.getSource();
+            int index = graph.indexOf(node);
+            if (!node.isType("STATE")) {
+                // Certainly non-emitting, if it's not in an HMM.
+                probCurrentFrame[index] = 0.0f;
+                assert false;
+            } else {
+                // See if it's the last state in the HMM, i.e., if
+                // it's non-emitting.
+                HMMState state = (HMMState) node.getObject();
+                HMM hmm = state.getHMM();
+                if (!state.isEmitting()) {
+                    probCurrentFrame[index] = 0.0f;
+                }
+            }
+        }
 
-	return scoreList.toArray();
+        return scoreList.toArray();
     }
+
 
     /**
      * Gets the TrainerScore for the next frame
@@ -344,67 +326,67 @@ public class BaumWelchLearner implements Learner {
      * @return the TrainerScore, or null if EOF was found
      */
     public TrainerScore[] getScore() {
-	TrainerScore[] score;
-	if (scoreArray == null) {
-	    // Do the forward pass, and create the necessary arrays
-	    scoreArray = prepareScore();
-	    currentFeatureIndex = lastFeatureIndex;
-	}
-	currentFeatureIndex--;
-	if (currentFeatureIndex >= 0) {
-	    float logScore = LogMath.getLogZero();
-	    score = (TrainerScore []) scoreArray[currentFeatureIndex];
-	    assert score.length == betas.length;
-	    backwardPass(score);
-	    for (int i = 0; i < betas.length; i++) {
-		score[i].setGamma();
-		logScore = logMath.addAsLinear(logScore, score[i].getGamma());
-	    }
-	    if (currentFeatureIndex == lastFeatureIndex - 1) {
-		TrainerScore.setLogLikelihood(logScore);
-		totalLogScore = logScore;
-	    } else {
-		if (Math.abs(totalLogScore - logScore) > 
-		    Math.abs(totalLogScore)) {
-		    System.out.println("WARNING: log probabilities differ: " +
-				       totalLogScore + " and " + logScore);
-		}
-	    }
-	    return score;
-	} else {
-	    // We need to clear this, so we start the next iteration
-	    // on a clean plate.
-	    scoreArray = null;
-	    return null;
-	}
+        TrainerScore[] score;
+        if (scoreArray == null) {
+            // Do the forward pass, and create the necessary arrays
+            scoreArray = prepareScore();
+            currentFeatureIndex = lastFeatureIndex;
+        }
+        currentFeatureIndex--;
+        if (currentFeatureIndex >= 0) {
+            float logScore = LogMath.getLogZero();
+            score = (TrainerScore[]) scoreArray[currentFeatureIndex];
+            assert score.length == betas.length;
+            backwardPass(score);
+            for (int i = 0; i < betas.length; i++) {
+                score[i].setGamma();
+                logScore = logMath.addAsLinear(logScore, score[i].getGamma());
+            }
+            if (currentFeatureIndex == lastFeatureIndex - 1) {
+                TrainerScore.setLogLikelihood(logScore);
+                totalLogScore = logScore;
+            } else {
+                if (Math.abs(totalLogScore - logScore) >
+                        Math.abs(totalLogScore)) {
+                    System.out.println("WARNING: log probabilities differ: " +
+                            totalLogScore + " and " + logScore);
+                }
+            }
+            return score;
+        } else {
+            // We need to clear this, so we start the next iteration
+            // on a clean plate.
+            scoreArray = null;
+            return null;
+        }
     }
 
+
     /**
-     * Computes the acoustic scores using the current Feature and a
-     * given node in the graph.
+     * Computes the acoustic scores using the current Feature and a given node in the graph.
      *
      * @param index the graph index
-     *
      * @return the overall acoustic score
      */
     private float calculateScores(int index) {
-	float logScore;
-	// Find the HMM state for this node
-	SenoneHMMState state = (SenoneHMMState) graph.getNode(index).getObject();
-	if ((state != null) && (state.isEmitting())) {
-	    // Compute the scores for each mixture component in this state
-	    componentScores = state.calculateComponentScore(curFeature);
-	    // Compute the overall score for this state
-	    logScore = state.getScore(curFeature);
-	    // For CI models, for now, we only try to use mixtures
-	    // with one component
-	    assert componentScores.length == 1;
-	} else {
-	    componentScores = null;
-	    logScore = 0.0f;
-	}
-	return logScore;
+        float logScore;
+        // Find the HMM state for this node
+        SenoneHMMState state = (SenoneHMMState) graph.getNode(index).getObject();
+        if ((state != null) && (state.isEmitting())) {
+            // Compute the scores for each mixture component in this state
+            componentScores = state.calculateComponentScore(curFeature);
+            // Compute the overall score for this state
+            logScore = state.getScore(curFeature);
+            // For CI models, for now, we only try to use mixtures
+            // with one component
+            assert componentScores.length == 1;
+        } else {
+            componentScores = null;
+            logScore = 0.0f;
+        }
+        return logScore;
     }
+
 
     /**
      * Does the forward pass, one frame at a time.
@@ -412,149 +394,149 @@ public class BaumWelchLearner implements Learner {
      * @param score the objects transferring info to the buffers
      */
     private void forwardPass(TrainerScore[] score) {
-	// Let's precompute the acoustic probabilities and create the
-	// score object, one for each state
-	for (int i = 0; i < graph.size(); i++) {
-	    outputProbs[i] = calculateScores(i);
-	    score[i] = new TrainerScore(curFeature,
-			outputProbs[i],
-			(HMMState) graph.getNode(i).getObject(),
-			componentScores);
-	    score[i].setAlpha(probCurrentFrame[i]);
-	}
+        // Let's precompute the acoustic probabilities and create the
+        // score object, one for each state
+        for (int i = 0; i < graph.size(); i++) {
+            outputProbs[i] = calculateScores(i);
+            score[i] = new TrainerScore(curFeature,
+                    outputProbs[i],
+                    (HMMState) graph.getNode(i).getObject(),
+                    componentScores);
+            score[i].setAlpha(probCurrentFrame[i]);
+        }
 
-	// Now, the forward pass.
-	float[] probPreviousFrame = probCurrentFrame;
-	probCurrentFrame = new float[graph.size()];
-	// First, the emitting states. We have to do this because the
-	// emitting states use probabilities from the previous
-	// frame. The non-emitting states, however, since they don't
-	// consume frames, use probabilities from the current frame
-	for (int indexNode = 0; indexNode < graph.size(); indexNode++) {
-	    Node node = graph.getNode(indexNode);
-	    // Treat dummy node (and initial and final nodes) the same
-	    // as non-emitting
-	    if (!node.isType("STATE")) {
-		continue;
-	    }
-	    SenoneHMMState state = (SenoneHMMState) node.getObject();
-	    SenoneHMM hmm = (SenoneHMM) state.getHMM();
-	    if (!state.isEmitting()) {
-		continue;
-	    }
-	    // Initialize the current frame probability with 0.0f, log scale
-	    probCurrentFrame[indexNode] = LogMath.getLogZero();
-	    for (node.startIncomingEdgeIterator();
-		 node.hasMoreIncomingEdges(); ) {
-		// Finds out what the previous node and previous state are
-		Node previousNode = node.nextIncomingEdge().getSource();
-		int indexPreviousNode = graph.indexOf(previousNode);
-		HMMState previousState = (HMMState) previousNode.getObject();
-		float logTransitionProbability;
-		// previous state could be have an associated hmm state...
-		if (previousState != null) {
-		    // Make sure that the transition happened from a state
-		    // that either is in the same model, or was a
-		    // non-emitting state
-		    assert ((!previousState.isEmitting()) || 
-			    (previousState.getHMM() == hmm));
-		    if (!previousState.isEmitting()) {
-			logTransitionProbability = 0.0f;
-		    } else {
-			logTransitionProbability = 
-			    hmm.getTransitionProbability(
-						 previousState.getState(),
-						 state.getState());
-		    }
-		} else {
-		    // Previous state is a dummy state or beginning of
-		    // utterance.
-		    logTransitionProbability = 0.0f;
-		}
-		// Adds the alpha and transition from the previous
-		// state into the current alpha
-		probCurrentFrame[indexNode] = 
-		    logMath.addAsLinear(probCurrentFrame[indexNode],
-					probPreviousFrame[indexPreviousNode] +
-					logTransitionProbability);
-		// System.out.println("State= " + indexNode + " curr "
-		// + probCurrentFrame[indexNode] + " prev " +
-		// probPreviousFrame[indexNode] + " trans " +
-		// logTransitionProbability);
-	    }
-	    // Finally, multiply by this state's output probability for the
-	    // current Feature (add in log scale)
-	    probCurrentFrame[indexNode] += outputProbs[indexNode];
-	    // System.out.println("State= " + indexNode + " alpha= " +
-	    // probCurrentFrame[indexNode]);
-	    score[indexNode].setAlpha(probCurrentFrame[indexNode]);
-	}
+        // Now, the forward pass.
+        float[] probPreviousFrame = probCurrentFrame;
+        probCurrentFrame = new float[graph.size()];
+        // First, the emitting states. We have to do this because the
+        // emitting states use probabilities from the previous
+        // frame. The non-emitting states, however, since they don't
+        // consume frames, use probabilities from the current frame
+        for (int indexNode = 0; indexNode < graph.size(); indexNode++) {
+            Node node = graph.getNode(indexNode);
+            // Treat dummy node (and initial and final nodes) the same
+            // as non-emitting
+            if (!node.isType("STATE")) {
+                continue;
+            }
+            SenoneHMMState state = (SenoneHMMState) node.getObject();
+            SenoneHMM hmm = (SenoneHMM) state.getHMM();
+            if (!state.isEmitting()) {
+                continue;
+            }
+            // Initialize the current frame probability with 0.0f, log scale
+            probCurrentFrame[indexNode] = LogMath.getLogZero();
+            for (node.startIncomingEdgeIterator();
+                 node.hasMoreIncomingEdges();) {
+                // Finds out what the previous node and previous state are
+                Node previousNode = node.nextIncomingEdge().getSource();
+                int indexPreviousNode = graph.indexOf(previousNode);
+                HMMState previousState = (HMMState) previousNode.getObject();
+                float logTransitionProbability;
+                // previous state could be have an associated hmm state...
+                if (previousState != null) {
+                    // Make sure that the transition happened from a state
+                    // that either is in the same model, or was a
+                    // non-emitting state
+                    assert ((!previousState.isEmitting()) ||
+                            (previousState.getHMM() == hmm));
+                    if (!previousState.isEmitting()) {
+                        logTransitionProbability = 0.0f;
+                    } else {
+                        logTransitionProbability =
+                                hmm.getTransitionProbability(
+                                        previousState.getState(),
+                                        state.getState());
+                    }
+                } else {
+                    // Previous state is a dummy state or beginning of
+                    // utterance.
+                    logTransitionProbability = 0.0f;
+                }
+                // Adds the alpha and transition from the previous
+                // state into the current alpha
+                probCurrentFrame[indexNode] =
+                        logMath.addAsLinear(probCurrentFrame[indexNode],
+                                probPreviousFrame[indexPreviousNode] +
+                                        logTransitionProbability);
+                // System.out.println("State= " + indexNode + " curr "
+                // + probCurrentFrame[indexNode] + " prev " +
+                // probPreviousFrame[indexNode] + " trans " +
+                // logTransitionProbability);
+            }
+            // Finally, multiply by this state's output probability for the
+            // current Feature (add in log scale)
+            probCurrentFrame[indexNode] += outputProbs[indexNode];
+            // System.out.println("State= " + indexNode + " alpha= " +
+            // probCurrentFrame[indexNode]);
+            score[indexNode].setAlpha(probCurrentFrame[indexNode]);
+        }
 
-	// Finally, the non-emitting states
-	for (int indexNode = 0; indexNode < graph.size(); indexNode++) {
-	    Node node = graph.getNode(indexNode);
-	    HMMState state = null;
-	    SenoneHMM hmm = null;
-	    if (node.isType("STATE")) {
-		state = (HMMState) node.getObject();
-		hmm = (SenoneHMM) state.getHMM();
-		if (state.isEmitting()) {
-		    continue;
-		}
-	    } else if (graph.isInitialNode(node)) {
-		score[indexNode].setAlpha(LogMath.getLogZero());
-		probCurrentFrame[indexNode] = LogMath.getLogZero();
-		continue;
-	    }
-	    // Initialize the current frame probability 0.0f, log scale
-	    probCurrentFrame[indexNode] = LogMath.getLogZero();
-	    for (node.startIncomingEdgeIterator();
-		 node.hasMoreIncomingEdges(); ) {
-		float logTransitionProbability;
-		// Finds out what the previous node and previous state are
-		Node previousNode = node.nextIncomingEdge().getSource();
-		int indexPreviousNode = graph.indexOf(previousNode);
-		if (previousNode.isType("STATE")) {
-		    HMMState previousState = 
-			(HMMState) previousNode.getObject();
-		    // Make sure that the transition happened from a
-		    // state that either is in the same model, or was
-		    // a non-emitting state
-		    assert ((!previousState.isEmitting()) || 
-			    (previousState.getHMM() == hmm));
-		    if (!previousState.isEmitting()) {
-			logTransitionProbability = 0.0f;
-		    } else {
-			// previousState == state
-			logTransitionProbability = 
-			    hmm.getTransitionProbability(
-						 previousState.getState(),
-						 state.getState());
-		    }
-		} else {
-		    logTransitionProbability = 0.0f;
-		}
-		// Adds the alpha and transition from the previous
-		// state into the current alpha
-		probCurrentFrame[indexNode] = 
-		    logMath.addAsLinear(probCurrentFrame[indexNode],
-					probCurrentFrame[indexPreviousNode] +
-					logTransitionProbability);
-		// System.out.println("State= " + indexNode + " curr "
-		// + probCurrentFrame[indexNode] + " prev " +
-		// probPreviousFrame[indexNode] + " trans " +
-		// logTransitionProbability);
-	    }
-	    // System.out.println("State= " + indexNode + " alpha= " +
-	    // probCurrentFrame[indexNode]);
+        // Finally, the non-emitting states
+        for (int indexNode = 0; indexNode < graph.size(); indexNode++) {
+            Node node = graph.getNode(indexNode);
+            HMMState state = null;
+            SenoneHMM hmm = null;
+            if (node.isType("STATE")) {
+                state = (HMMState) node.getObject();
+                hmm = (SenoneHMM) state.getHMM();
+                if (state.isEmitting()) {
+                    continue;
+                }
+            } else if (graph.isInitialNode(node)) {
+                score[indexNode].setAlpha(LogMath.getLogZero());
+                probCurrentFrame[indexNode] = LogMath.getLogZero();
+                continue;
+            }
+            // Initialize the current frame probability 0.0f, log scale
+            probCurrentFrame[indexNode] = LogMath.getLogZero();
+            for (node.startIncomingEdgeIterator();
+                 node.hasMoreIncomingEdges();) {
+                float logTransitionProbability;
+                // Finds out what the previous node and previous state are
+                Node previousNode = node.nextIncomingEdge().getSource();
+                int indexPreviousNode = graph.indexOf(previousNode);
+                if (previousNode.isType("STATE")) {
+                    HMMState previousState =
+                            (HMMState) previousNode.getObject();
+                    // Make sure that the transition happened from a
+                    // state that either is in the same model, or was
+                    // a non-emitting state
+                    assert ((!previousState.isEmitting()) ||
+                            (previousState.getHMM() == hmm));
+                    if (!previousState.isEmitting()) {
+                        logTransitionProbability = 0.0f;
+                    } else {
+                        // previousState == state
+                        logTransitionProbability =
+                                hmm.getTransitionProbability(
+                                        previousState.getState(),
+                                        state.getState());
+                    }
+                } else {
+                    logTransitionProbability = 0.0f;
+                }
+                // Adds the alpha and transition from the previous
+                // state into the current alpha
+                probCurrentFrame[indexNode] =
+                        logMath.addAsLinear(probCurrentFrame[indexNode],
+                                probCurrentFrame[indexPreviousNode] +
+                                        logTransitionProbability);
+                // System.out.println("State= " + indexNode + " curr "
+                // + probCurrentFrame[indexNode] + " prev " +
+                // probPreviousFrame[indexNode] + " trans " +
+                // logTransitionProbability);
+            }
+            // System.out.println("State= " + indexNode + " alpha= " +
+            // probCurrentFrame[indexNode]);
 
-
-	    // Non-emitting states have the equivalent of output
-	    // probability of 1.0. In log scale, this is the same as
-	    // adding 0.0f, or doing nothing.
-	    score[indexNode].setAlpha(probCurrentFrame[indexNode]);
-	}
+            // Non-emitting states have the equivalent of output
+            // probability of 1.0. In log scale, this is the same as
+            // adding 0.0f, or doing nothing.
+            score[indexNode].setAlpha(probCurrentFrame[indexNode]);
+        }
     }
+
 
     /**
      * Does the backward pass, one frame at a time.
@@ -562,126 +544,125 @@ public class BaumWelchLearner implements Learner {
      * @param score the feature to be used
      */
     private void backwardPass(TrainerScore[] score) {
-	// Now, the backward pass.
-	for (int i = 0; i < graph.size(); i++) {
-	    outputProbs[i] = score[i].getScore();
-	    score[i].setBeta(probCurrentFrame[i]);
-	}
-	float[] probNextFrame = probCurrentFrame;
-	probCurrentFrame = new float[graph.size()];
+        // Now, the backward pass.
+        for (int i = 0; i < graph.size(); i++) {
+            outputProbs[i] = score[i].getScore();
+            score[i].setBeta(probCurrentFrame[i]);
+        }
+        float[] probNextFrame = probCurrentFrame;
+        probCurrentFrame = new float[graph.size()];
 
-	// First, the emitting states
-	for (int indexNode = 0; indexNode < graph.size(); indexNode++) {
-	    Node node = graph.getNode(indexNode);
-	    // Treat dummy node (and initial and final nodes) the same
-	    // as non-emitting
-	    if (!node.isType("STATE")) {
-		continue;
-	    }
-	    HMMState state = (HMMState) node.getObject();
-	    SenoneHMM hmm = (SenoneHMM) state.getHMM();
-	    if (!state.isEmitting()) {
-		continue;
-	    }
-	    // Initialize the current frame probability with log
-	    // probability of log(0f)
-	    probCurrentFrame[indexNode] = LogMath.getLogZero();
-	    for (node.startOutgoingEdgeIterator();
-		 node.hasMoreOutgoingEdges(); ) {
-		float logTransitionProbability;
-		// Finds out what the next node and next state are
-		Node nextNode = node.nextOutgoingEdge().getDestination();
-		int indexNextNode = graph.indexOf(nextNode);
-		HMMState nextState = (HMMState) nextNode.getObject();
-		if (nextState != null) {
-		    // Make sure that the transition happened to a
-		    // non-emitting state, or to the same model
-		    assert ((!nextState.isEmitting()) || 
-			    (nextState.getHMM() == hmm));
-		    if (nextState.getHMM() != hmm) {
-			logTransitionProbability = 0.0f;
-		    } else {
-			logTransitionProbability = 
-			    hmm.getTransitionProbability(state.getState(),
-							 nextState.getState());
-		    }
-		} else {
-		    // Next state is a dummy state or beginning of
-		    // utterance.
-		    logTransitionProbability = 0.0f;
-		}
-		// Adds the beta, the output prob, and the transition
-		// from the next state into the current beta
-		probCurrentFrame[indexNode] = 
-		    logMath.addAsLinear(probCurrentFrame[indexNode],
-					probNextFrame[indexNextNode] +
-					logTransitionProbability +
-					outputProbs[indexNextNode]);
-	    }
-	    // System.out.println("State= " + indexNode + " beta= " + probCurrentFrame[indexNode]);
-	    score[indexNode].setBeta(probCurrentFrame[indexNode]);
-	}
+        // First, the emitting states
+        for (int indexNode = 0; indexNode < graph.size(); indexNode++) {
+            Node node = graph.getNode(indexNode);
+            // Treat dummy node (and initial and final nodes) the same
+            // as non-emitting
+            if (!node.isType("STATE")) {
+                continue;
+            }
+            HMMState state = (HMMState) node.getObject();
+            SenoneHMM hmm = (SenoneHMM) state.getHMM();
+            if (!state.isEmitting()) {
+                continue;
+            }
+            // Initialize the current frame probability with log
+            // probability of log(0f)
+            probCurrentFrame[indexNode] = LogMath.getLogZero();
+            for (node.startOutgoingEdgeIterator();
+                 node.hasMoreOutgoingEdges();) {
+                float logTransitionProbability;
+                // Finds out what the next node and next state are
+                Node nextNode = node.nextOutgoingEdge().getDestination();
+                int indexNextNode = graph.indexOf(nextNode);
+                HMMState nextState = (HMMState) nextNode.getObject();
+                if (nextState != null) {
+                    // Make sure that the transition happened to a
+                    // non-emitting state, or to the same model
+                    assert ((!nextState.isEmitting()) ||
+                            (nextState.getHMM() == hmm));
+                    if (nextState.getHMM() != hmm) {
+                        logTransitionProbability = 0.0f;
+                    } else {
+                        logTransitionProbability =
+                                hmm.getTransitionProbability(state.getState(),
+                                        nextState.getState());
+                    }
+                } else {
+                    // Next state is a dummy state or beginning of
+                    // utterance.
+                    logTransitionProbability = 0.0f;
+                }
+                // Adds the beta, the output prob, and the transition
+                // from the next state into the current beta
+                probCurrentFrame[indexNode] =
+                        logMath.addAsLinear(probCurrentFrame[indexNode],
+                                probNextFrame[indexNextNode] +
+                                        logTransitionProbability +
+                                        outputProbs[indexNextNode]);
+            }
+            // System.out.println("State= " + indexNode + " beta= " + probCurrentFrame[indexNode]);
+            score[indexNode].setBeta(probCurrentFrame[indexNode]);
+        }
 
-	// Now, the non-emitting states
+        // Now, the non-emitting states
 
-	// We have to go backwards because for non-emitting states we
-	// use the current frame probability, and we need to refer to
-	// states that are downstream in the graph
-	for (int indexNode = graph.size() - 1; indexNode >= 0; indexNode--) {
-	    Node node = graph.getNode(indexNode);
-	    HMMState state = null;
-	    HMM hmm = null;
-	    if (node.isType("STATE")) {
-		state = (HMMState) node.getObject();
-		hmm = state.getHMM();
-		if (state.isEmitting()) {
-		    continue;
-		}
-	    } else if (graph.isFinalNode(node)) {
-		score[indexNode].setBeta(LogMath.getLogZero());
-		probCurrentFrame[indexNode] = LogMath.getLogZero();
-		continue;
-	    }
-	    // Initialize the current frame probability with log(0f)
-	    probCurrentFrame[indexNode] = LogMath.getLogZero();
-	    for (node.startOutgoingEdgeIterator();
-		 node.hasMoreOutgoingEdges(); ) {
-		float logTransitionProbability;
-		// Finds out what the next node and next state are
-		Node nextNode = node.nextOutgoingEdge().getDestination();
-		int indexNextNode = graph.indexOf(nextNode);
-		if (nextNode.isType("STATE")) {
-		    HMMState nextState = (HMMState) nextNode.getObject();
-		    // Make sure that the transition happened to a
-		    // state that either is the same, or is emitting
-		    assert ((nextState.isEmitting()) || (nextState == state));
-		    // In any case, the transition (at this point) is
-		    // assumed to be 1.0f, or 0.0f in log scale.
-		    logTransitionProbability = 0.0f;
-		    /*
-		    if (!nextState.isEmitting()) {
-			logTransitionProbability = 0.0f;
-		    } else {
-			logTransitionProbability = 
-			    hmm.getTransitionProbability(state.getState(),
-							 nextState.getState());
-		    }
-		    */
-		} else {
-		    logTransitionProbability = 0.0f;
-		}
-		// Adds the beta, the transition, and the output prob
-		// from the next state into the current beta
-		probCurrentFrame[indexNode] = 
-		    logMath.addAsLinear(probCurrentFrame[indexNode],
-					probCurrentFrame[indexNextNode] +
-					logTransitionProbability);
-	    }
-	    // System.out.println("State= " + indexNode + " beta= " + probCurrentFrame[indexNode]);
-	    score[indexNode].setBeta(probCurrentFrame[indexNode]);
-	}
+        // We have to go backwards because for non-emitting states we
+        // use the current frame probability, and we need to refer to
+        // states that are downstream in the graph
+        for (int indexNode = graph.size() - 1; indexNode >= 0; indexNode--) {
+            Node node = graph.getNode(indexNode);
+            HMMState state = null;
+            HMM hmm = null;
+            if (node.isType("STATE")) {
+                state = (HMMState) node.getObject();
+                hmm = state.getHMM();
+                if (state.isEmitting()) {
+                    continue;
+                }
+            } else if (graph.isFinalNode(node)) {
+                score[indexNode].setBeta(LogMath.getLogZero());
+                probCurrentFrame[indexNode] = LogMath.getLogZero();
+                continue;
+            }
+            // Initialize the current frame probability with log(0f)
+            probCurrentFrame[indexNode] = LogMath.getLogZero();
+            for (node.startOutgoingEdgeIterator();
+                 node.hasMoreOutgoingEdges();) {
+                float logTransitionProbability;
+                // Finds out what the next node and next state are
+                Node nextNode = node.nextOutgoingEdge().getDestination();
+                int indexNextNode = graph.indexOf(nextNode);
+                if (nextNode.isType("STATE")) {
+                    HMMState nextState = (HMMState) nextNode.getObject();
+                    // Make sure that the transition happened to a
+                    // state that either is the same, or is emitting
+                    assert ((nextState.isEmitting()) || (nextState == state));
+                    // In any case, the transition (at this point) is
+                    // assumed to be 1.0f, or 0.0f in log scale.
+                    logTransitionProbability = 0.0f;
+                    /*
+                 if (!nextState.isEmitting()) {
+                 logTransitionProbability = 0.0f;
+                 } else {
+                 logTransitionProbability =
+                     hmm.getTransitionProbability(state.getState(),
+                                  nextState.getState());
+                 }
+                 */
+                } else {
+                    logTransitionProbability = 0.0f;
+                }
+                // Adds the beta, the transition, and the output prob
+                // from the next state into the current beta
+                probCurrentFrame[indexNode] =
+                        logMath.addAsLinear(probCurrentFrame[indexNode],
+                                probCurrentFrame[indexNextNode] +
+                                        logTransitionProbability);
+            }
+            // System.out.println("State= " + indexNode + " beta= " + probCurrentFrame[indexNode]);
+            score[indexNode].setBeta(probCurrentFrame[indexNode]);
+        }
     }
-
 
     /* Pseudo code:
     forward pass:

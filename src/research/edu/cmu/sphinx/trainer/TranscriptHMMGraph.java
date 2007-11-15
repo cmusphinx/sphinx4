@@ -14,22 +14,18 @@ package edu.cmu.sphinx.trainer;
 
 import edu.cmu.sphinx.linguist.acoustic.AcousticModel;
 
-/**
- * Defines the Transcript Graph
- */
+/** Defines the Transcript Graph */
 
 public class TranscriptHMMGraph extends Graph implements TranscriptGraph {
 
-    /**
-     * Constructor for class. Creates lists of edges and nodes.
-     */
+    /** Constructor for class. Creates lists of edges and nodes. */
     public TranscriptHMMGraph(String context, Transcript transcript,
-			      AcousticModel acousticModel) {
-	super();
-	BuildTranscriptHMM builder = 
-	    new BuildTranscriptHMM(context, transcript, acousticModel);
-	// Copies the graph created with BuildTranscriptHMM into this Graph.
-	copyGraph(builder.getGraph());
+                              AcousticModel acousticModel) {
+        super();
+        BuildTranscriptHMM builder =
+                new BuildTranscriptHMM(context, transcript, acousticModel);
+        // Copies the graph created with BuildTranscriptHMM into this Graph.
+        copyGraph(builder.getGraph());
     }
 
 }

@@ -14,48 +14,37 @@ package edu.cmu.sphinx.trainer;
 
 import edu.cmu.sphinx.linguist.dictionary.Dictionary;
 
-/**
- * Provides mechanisms for accessing an utterance's transcription.
- */
+/** Provides mechanisms for accessing an utterance's transcription. */
 public interface Transcript {
 
-    /**
-     * Prefix for trainer.Transcript SphinxProperties
-     */
+    /** Prefix for trainer.Transcript SphinxProperties */
     String PROP_PREFIX = "edu.cmu.sphinx.trainer.Transcript.";
 
-    /**
-     * Gets the transcript's text
-     */
+
+    /** Gets the transcript's text */
     public String getTranscriptText();
 
-    /**
-     * Gets the transcript's dictionary.
-     */
+
+    /** Gets the transcript's dictionary. */
     public Dictionary getDictionary();
 
-    /**
-     * Returns whether the transcript is exact.
-     */
+
+    /** Returns whether the transcript is exact. */
     public boolean isExact();
 
-    /**
-     * Get the number of words in the transcription.
-     */
+
+    /** Get the number of words in the transcription. */
     public int numberOfWords();
 
-    /**
-     * Start the iterator for the words in the transcription.
-     */
+
+    /** Start the iterator for the words in the transcription. */
     public void startWordIterator();
 
-    /**
-     * Return whether there are more words.
-     */
+
+    /** Return whether there are more words. */
     public boolean hasMoreWords();
 
-    /**
-     * Returns the next word.
-     */
+
+    /** Returns the next word. */
     public String nextWord();
 }

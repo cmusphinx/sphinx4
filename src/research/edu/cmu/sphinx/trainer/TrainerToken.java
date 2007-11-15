@@ -13,14 +13,13 @@
 package edu.cmu.sphinx.trainer;
 
 
-import java.util.Collection;
-
 import edu.cmu.sphinx.frontend.Data;
 
-/**
- * Provides mechanisms for handling tokens in the trainer.
- */
+import java.util.Collection;
+
+/** Provides mechanisms for handling tokens in the trainer. */
 public class TrainerToken /* extends Token */ {
+
     private Collection linkToParent;
     private Collection linkToChild;
     private float alpha;

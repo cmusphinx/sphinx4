@@ -13,84 +13,90 @@
 package edu.cmu.sphinx.trainer;
 
 
-import java.util.StringTokenizer;
-
 import edu.cmu.sphinx.linguist.dictionary.Dictionary;
 
-/**
- * Provides mechanisms for accessing a transcription.
- */
+import java.util.StringTokenizer;
+
+/** Provides mechanisms for accessing a transcription. */
 public class SimpleTranscript implements Transcript {
+
     private String transcript;              // the transcript
     private Dictionary dictionary;   // the dictionary
     boolean isExact;                        // is exact transcription?
     private boolean wasInitialized = false; // Has this object been initialized?
     private StringTokenizer words;          // string tokenizer for current transcription.
     private String wordSeparator;           // word separators
+
+
     /**
      * Constructor for the SimpleTranscript.
      *
      * @param transcript this transcript's text
      */
     public SimpleTranscript(String transcript) {
-	if (!wasInitialized) {
-	    initialize(null, false);
-	}
-	this.transcript = transcript;
+        if (!wasInitialized) {
+            initialize(null, false);
+        }
+        this.transcript = transcript;
     }
+
 
     /**
      * Constructor for the SimpleTranscript.
      *
      * @param dictionary this transcript's dictionary
-     * @param isExact whether the transcription is exact
+     * @param isExact    whether the transcription is exact
      */
     public SimpleTranscript(Dictionary dictionary, boolean isExact) {
-	initialize(dictionary, isExact);
+        initialize(dictionary, isExact);
     }
+
 
     /**
      * Constructor for the SimpleTranscript.
      *
-     * @param transcript this transcript's text
-     * @param dictionary this transcript's dictionary
-     * @param isExact whether the transcription is exact
+     * @param transcript    this transcript's text
+     * @param dictionary    this transcript's dictionary
+     * @param isExact       whether the transcription is exact
      * @param wordSeparator string containing the word separator characters.
      */
-    public SimpleTranscript(String transcript, Dictionary dictionary, 
-			    boolean isExact, String wordSeparator) {
-	this.transcript = transcript;
-	this.dictionary = dictionary;
-	this.isExact = isExact;
-	this.wordSeparator = wordSeparator;
+    public SimpleTranscript(String transcript, Dictionary dictionary,
+                            boolean isExact, String wordSeparator) {
+        this.transcript = transcript;
+        this.dictionary = dictionary;
+        this.isExact = isExact;
+        this.wordSeparator = wordSeparator;
     }
+
 
     /**
      * Constructor for the SimpleTranscript.
      *
      * @param transcript this transcript's text
      * @param dictionary this transcript's dictionary
-     * @param isExact whether the transcription is exact
+     * @param isExact    whether the transcription is exact
      */
-    public SimpleTranscript(String transcript, Dictionary dictionary, 
-			    boolean isExact) {
-	this.transcript = transcript;
-	this.dictionary = dictionary;
-	this.isExact = isExact;
-	this.wordSeparator = " \t\n\r\f"; // the white spaces
+    public SimpleTranscript(String transcript, Dictionary dictionary,
+                            boolean isExact) {
+        this.transcript = transcript;
+        this.dictionary = dictionary;
+        this.isExact = isExact;
+        this.wordSeparator = " \t\n\r\f"; // the white spaces
     }
+
 
     /**
      * Initializes the SimpleTranscript with dictionary and exact flag.
      *
      * @param dictionary this transcript's dictionary
-     * @param isExact whether the transcription is exact
+     * @param isExact    whether the transcription is exact
      */
     public void initialize(Dictionary dictionary, boolean isExact) {
-	this.dictionary = dictionary;
-	this.isExact = isExact;
-	wasInitialized = true;
+        this.dictionary = dictionary;
+        this.isExact = isExact;
+        wasInitialized = true;
     }
+
 
     /**
      * Gets the transcription.
@@ -98,8 +104,9 @@ public class SimpleTranscript implements Transcript {
      * @return current transcription string.
      */
     public String getTranscriptText() {
-	return transcript;
+        return transcript;
     }
+
 
     /**
      * Gets the transcript's dictionary.
@@ -107,32 +114,35 @@ public class SimpleTranscript implements Transcript {
      * @return current dictionary.
      */
     public Dictionary getDictionary() {
-	return dictionary;
+        return dictionary;
     }
+
 
     /**
      * Returns whether the transcript is exact.
      *
      * @return true is transcription is exact (has been forced aligned)
      */
-    public boolean isExact(){
+    public boolean isExact() {
         return isExact;
     }
+
 
     /**
      * Get the number of words in the transcription.
      *
      * @return number of words in the transcription.
      */
-    public int numberOfWords(){
-	return words.countTokens();
+    public int numberOfWords() {
+        return words.countTokens();
     }
-    /**
-     * Start the iterator for the words in the transcription.
-     */
-    public void startWordIterator(){
-	words = new StringTokenizer(transcript, wordSeparator);
+
+
+    /** Start the iterator for the words in the transcription. */
+    public void startWordIterator() {
+        words = new StringTokenizer(transcript, wordSeparator);
     }
+
 
     /**
      * Return whether there are more words.
@@ -140,8 +150,9 @@ public class SimpleTranscript implements Transcript {
      * @return whether there are more words.
      */
     public boolean hasMoreWords() {
-	return words.hasMoreTokens();
+        return words.hasMoreTokens();
     }
+
 
     /**
      * Returns the next word.
@@ -149,8 +160,9 @@ public class SimpleTranscript implements Transcript {
      * @return next word in the transcription.
      */
     public String nextWord() {
-	return (String) words.nextToken();
+        return (String) words.nextToken();
     }
+
 
     /**
      * Returns a string representation of this transcript.
@@ -158,15 +170,15 @@ public class SimpleTranscript implements Transcript {
      * @return the string representation
      */
     public String toString() {
-	String result = "";
+        String result = "";
 
-	result = "Dict: " + dictionary + " : transcript ";
-	if (isExact) {
-	    result += "IS exact: ";
-	} else {
-	    result += "is NOT exact: ";
-	}
-	result += transcript;
-	return result;
+        result = "Dict: " + dictionary + " : transcript ";
+        if (isExact) {
+            result += "IS exact: ";
+        } else {
+            result += "is NOT exact: ";
+        }
+        result += transcript;
+        return result;
     }
 }

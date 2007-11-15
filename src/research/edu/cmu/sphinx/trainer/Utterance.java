@@ -14,40 +14,34 @@ package edu.cmu.sphinx.trainer;
 
 import edu.cmu.sphinx.linguist.dictionary.Dictionary;
 
-/**
- * Provides mechanisms for accessing an utterance.
- */
+/** Provides mechanisms for accessing an utterance. */
 public interface Utterance {
 
-    /**
-     * Prefix for trainer.Utterance SphinxProperties
-     */
+    /** Prefix for trainer.Utterance SphinxProperties */
     String PROP_PREFIX = "edu.cmu.sphinx.trainer.Utterance.";
+
 
     /**
      * Add transcript with dictionary and exact flag.
      *
-     * @param transcript the transcript
-     * @param dictionary the default dictionary name
-     * @param isExact the default flag
+     * @param transcript    the transcript
+     * @param dictionary    the default dictionary name
+     * @param isExact       the default flag
      * @param wordSeparator the word separator characters
      */
-    public void add(String transcript, Dictionary dictionary, 
-		    boolean isExact, String wordSeparator);
+    public void add(String transcript, Dictionary dictionary,
+                    boolean isExact, String wordSeparator);
 
-    /**
-     * Gets the transcript iterator.
-     */
+
+    /** Gets the transcript iterator. */
     public void startTranscriptIterator();
 
-    /**
-     * Returns whether there is a next transcript.
-     */
+
+    /** Returns whether there is a next transcript. */
     public boolean hasMoreTranscripts();
 
-    /**
-     * Returns next transcript.
-     */
+
+    /** Returns next transcript. */
     public Transcript nextTranscript();
 
 }
