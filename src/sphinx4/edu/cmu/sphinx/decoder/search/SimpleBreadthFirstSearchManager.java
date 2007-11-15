@@ -93,13 +93,13 @@ public class SimpleBreadthFirstSearchManager implements SearchManager {
     public final static String PROP_GROW_SKIP_INTERVAL = "growSkipInterval";
 
 
-    private Linguist linguist; // Provides grammar/language info
+    protected Linguist linguist; // Provides grammar/language info
     private Pruner pruner; // used to prune the active list
     private AcousticScorer scorer; // used to score the active list
     private int currentFrameNumber; // the current frame number
     private ActiveList activeList; // the list of active tokens
     private List<Token> resultList; // the current set of results
-    private LogMath logMath;
+    protected LogMath logMath;
     private Logger logger;
 
     // ------------------------------------
@@ -335,6 +335,11 @@ public class SimpleBreadthFirstSearchManager implements SearchManager {
      */
     protected Token setBestToken(Token token, SearchState state) {
         return bestTokenMap.put(state, token);
+    }
+
+
+    protected ActiveList getActiveList() {
+        return activeList;
     }
 
 

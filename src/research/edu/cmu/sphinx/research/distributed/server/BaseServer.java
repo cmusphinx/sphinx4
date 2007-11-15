@@ -1,6 +1,6 @@
 /**
  * Copyright 2001 Sun Microsystems, Inc.
- * 
+ *
  * See the file "license.terms" for information on usage and
  * redistribution of this file, and for a DISCLAIMER OF ALL 
  * WARRANTIES.
@@ -14,27 +14,22 @@ import java.net.Socket;
 
 
 /**
- * A bare-bones BaseServer containing a ServerSocket waiting for connection
- * requests. Subclasses should implement the <code>spawnProtocolHandler</code>
- * method.
+ * A bare-bones BaseServer containing a ServerSocket waiting for connection requests. Subclasses should implement the
+ * <code>spawnProtocolHandler</code> method.
  */
 public abstract class BaseServer implements Runnable {
 
-    /**
-     * The port number to listen on. It is the value specified by the
-     * System property "port".
-     */
+    /** The port number to listen on. It is the value specified by the System property "port". */
     private int port = Integer.parseInt
-	(System.getProperty("port", String.valueOf(52703)));
+            (System.getProperty("port", String.valueOf(52703)));
 
 
     /**
-     * Implements the run() method of Runnable interface. It starts a
-     * ServerSocket, listens for connections, and spawns a handler for
-     * each connection.
+     * Implements the run() method of Runnable interface. It starts a ServerSocket, listens for connections, and spawns
+     * a handler for each connection.
      */
     public void run() {
-	ServerSocket ss;
+        ServerSocket ss;
 
         try {
             ss = new ServerSocket(getPort());
@@ -46,11 +41,11 @@ public abstract class BaseServer implements Runnable {
         }
 
         while (true) {
-	    try {
+            try {
                 Socket socket = ss.accept();
-		System.out.println("... new socket connection");
-		spawnProtocolHandler(socket);
-	    } catch (IOException ioe) {
+                System.out.println("... new socket connection");
+                spawnProtocolHandler(socket);
+            } catch (IOException ioe) {
                 System.err.println("Could not accept socket " + ioe);
                 ioe.printStackTrace();
                 break;
@@ -77,9 +72,8 @@ public abstract class BaseServer implements Runnable {
 
 
     /**
-     * This method is called after a connection request is made to this
-     * BaseServer. The <code>Socket</code> created as a result of the
-     * connection request is passed to this method.
+     * This method is called after a connection request is made to this BaseServer. The <code>Socket</code> created as a
+     * result of the connection request is passed to this method.
      *
      * @param socket the socket
      */

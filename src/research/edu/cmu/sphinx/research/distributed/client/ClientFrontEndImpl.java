@@ -13,29 +13,15 @@
 
 package edu.cmu.sphinx.research.distributed.client;
 
-import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.Socket;
-
-import edu.cmu.sphinx.frontend.Data;
-import edu.cmu.sphinx.frontend.DataEndSignal;
-import edu.cmu.sphinx.frontend.DataProcessingException;
-import edu.cmu.sphinx.frontend.DataStartSignal;
-import edu.cmu.sphinx.frontend.DoubleData;
-import edu.cmu.sphinx.frontend.FrontEnd;
-
+import edu.cmu.sphinx.frontend.*;
 import edu.cmu.sphinx.frontend.util.StreamDataSource;
 import edu.cmu.sphinx.util.SphinxProperties;
 
+import java.io.*;
+import java.net.Socket;
 
 
-/**
- * An implementation of the ClientFrontEnd interface.
- */
+/** An implementation of the ClientFrontEnd interface. */
 public class ClientFrontEndImpl implements ClientFrontEnd {
 
 
@@ -55,20 +41,20 @@ public class ClientFrontEndImpl implements ClientFrontEnd {
     /**
      * Constructs a default ClientFrontEndImpl.
      *
-     * @param name the name of this ClientFrontEndImpl
+     * @param name    the name of this ClientFrontEndImpl
      * @param context the context of this ClientFrontEndImpl
-     *
      * @throws InstantiationException if there is an initialization error
-     * @throws IOException if there is an I/O error
+     * @throws IOException            if there is an I/O error
      */
     public void initialize(String name, String context)
-        throws InstantiationException, IOException {
+            throws InstantiationException, IOException {
         SphinxProperties props = SphinxProperties.getSphinxProperties(context);
 
         streamAudioSource = new StreamDataSource();
-        streamAudioSource.initialize("StreamDataSource", null, props, null);
+        streamAudioSource.initialize();
+//        streamAudioSource.initialize("StreamDataSource", null, props, null);
 
-        frontend = FrontEndFactory.getFrontEnd(props, "client");
+//        frontend = FrontEndFactory.getFrontEnd(props, "client");
         frontend.setDataSource(streamAudioSource);
 
         serverAddress = props.getString(PROP_SERVER, PROP_SERVER_DEFAULT);
@@ -76,9 +62,7 @@ public class ClientFrontEndImpl implements ClientFrontEnd {
     }
 
 
-    /**
-     * Connects this ClientFrontEndImpl to the back-end server.
-     */
+    /** Connects this ClientFrontEndImpl to the back-end server. */
     public void connect() {
         try {
             socket = connectToBackEnd();
@@ -88,9 +72,7 @@ public class ClientFrontEndImpl implements ClientFrontEnd {
     }
 
 
-    /**
-     * Closes the connection to the back-end server.
-     */
+    /** Closes the connection to the back-end server. */
     public void close() {
         try {
             closeConnection(socket);
@@ -99,17 +81,16 @@ public class ClientFrontEndImpl implements ClientFrontEnd {
         }
     }
 
-    
+
     /**
      * Decodes the data in the given InputStream.
      *
-     * @param is the InputStream to decode
+     * @param is         the InputStream to decode
      * @param streamName the name of the InputStream
-     *
      * @return the result string
      */
-    public String decode(InputStream is, String streamName) 
-        throws DataProcessingException, IOException {
+    public String decode(InputStream is, String streamName)
+            throws DataProcessingException, IOException {
         sendRecognition();
         streamAudioSource.setInputStream(is, streamName);
         sendData();
@@ -118,32 +99,25 @@ public class ClientFrontEndImpl implements ClientFrontEnd {
     }
 
 
-    /**
-     * Connects this client to the server.
-     */
+    /** Connects this client to the server. */
     private Socket connectToBackEnd() throws IOException {
         Socket socket = new Socket(serverAddress, serverPort);
         reader = new BufferedReader
-            (new InputStreamReader(socket.getInputStream()));
+                (new InputStreamReader(socket.getInputStream()));
         dataWriter = new DataOutputStream
-            (new BufferedOutputStream(socket.getOutputStream()));
+                (new BufferedOutputStream(socket.getOutputStream()));
         return socket;
     }
 
 
-    /**
-     * Sends a single int "1" to the back-end server to
-     * signal the cepstra will be sent for recognition.
-     */
+    /** Sends a single int "1" to the back-end server to signal the cepstra will be sent for recognition. */
     private void sendRecognition() throws IOException {
         dataWriter.writeInt(1);
         dataWriter.flush();
     }
 
 
-    /**
-     * Closes the connection to the back-end server.
-     */
+    /** Closes the connection to the back-end server. */
     private void closeConnection(Socket socket) throws IOException {
         reader.close();
         dataWriter.close();
@@ -151,9 +125,7 @@ public class ClientFrontEndImpl implements ClientFrontEnd {
     }
 
 
-    /**
-     * Sends all the available cepstra to the back-end server.
-     */
+    /** Sends all the available cepstra to the back-end server. */
     private void sendData() throws DataProcessingException, IOException {
         Data cepstrum = null;
         do {
@@ -166,7 +138,7 @@ public class ClientFrontEndImpl implements ClientFrontEnd {
                         dataWriter.flush();
                     } else {
                         throw new IllegalStateException
-                            ("No DataStartSignal read");
+                                ("No DataStartSignal read");
                     }
                 } else {
                     if (cepstrum instanceof DoubleData) {
@@ -181,7 +153,7 @@ public class ClientFrontEndImpl implements ClientFrontEnd {
                         inUtterance = false;
                     } else if (cepstrum instanceof DataStartSignal) {
                         throw new IllegalStateException
-                            ("Too many DataStartSignals.");
+                                ("Too many DataStartSignals.");
                     }
                     dataWriter.flush();
                 }

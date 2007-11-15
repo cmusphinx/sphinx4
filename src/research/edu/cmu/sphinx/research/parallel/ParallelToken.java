@@ -1,25 +1,24 @@
-
 /*
- * Copyright 1999-2002 Carnegie Mellon University.  
- * Portions Copyright 2002 Sun Microsystems, Inc.  
- * Portions Copyright 2002 Mitsubishi Electric Research Laboratories.
- * All Rights Reserved.  Use is subject to license terms.
- * 
- * See the file "license.terms" for information on usage and
- * redistribution of this file, and for a DISCLAIMER OF ALL 
- * WARRANTIES.
- *
- */
+* Copyright 1999-2002 Carnegie Mellon University.
+* Portions Copyright 2002 Sun Microsystems, Inc.
+* Portions Copyright 2002 Mitsubishi Electric Research Laboratories.
+* All Rights Reserved.  Use is subject to license terms.
+*
+* See the file "license.terms" for information on usage and
+* redistribution of this file, and for a DISCLAIMER OF ALL
+* WARRANTIES.
+*
+*/
 
 package edu.cmu.sphinx.research.parallel;
 
-import edu.cmu.sphinx.linguist.flat.SentenceHMMState;
 import edu.cmu.sphinx.decoder.search.Token;
+import edu.cmu.sphinx.linguist.flat.SentenceHMMState;
 
 
 /**
- * A Token for the within parallel stream sentence HMM states.
- * The <code>getScore()</code> method returns the parallel stream score.
+ * A Token for the within parallel stream sentence HMM states. The <code>getScore()</code> method returns the parallel
+ * stream score.
  */
 public class ParallelToken extends Token {
 
@@ -28,85 +27,80 @@ public class ParallelToken extends Token {
     private boolean pruned;         // is this token pruned?
     private int lastCombineTime;    // the last combination time
     private String lastCombineStamp;
-    
+
 
     /**
      * Constructs a ParallelToken
      *
-     * @param predecessor the predecessor for this token
-     * @param state the SentenceHMMState associated with this token
-     * @param featureScore the score for this feature stream
+     * @param predecessor   the predecessor for this token
+     * @param state         the SentenceHMMState associated with this token
+     * @param featureScore  the score for this feature stream
      * @param combinedScore the combinedScore
-     * @param frameNumber the frame number associated with this token
-     *
+     * @param frameNumber   the frame number associated with this token
      */
-    public ParallelToken(ParallelToken predecessor, 
-			 SentenceHMMState state,
-			 float featureScore,
-			 float combinedScore,
-			 int frameNumber) {
-	super(predecessor, state, featureScore, 0.0f, 0.0f, frameNumber);
+    public ParallelToken(ParallelToken predecessor,
+                         SentenceHMMState state,
+                         float featureScore,
+                         float combinedScore,
+                         int frameNumber) {
+        super(predecessor, state, featureScore, 0.0f, 0.0f, frameNumber);
         if (predecessor != null) {
             this.featureStream = predecessor.getFeatureStream();
         }
-	this.combinedScore = combinedScore;
-	this.pruned = false;
+        this.combinedScore = combinedScore;
+        this.pruned = false;
     }
 
 
     /**
      * Constructs a ParallelToken
      *
-     * @param predecessor the predecessor for this token
-     * @param state the SentenceHMMState associated with this token
-     * @param featureScore the score for this feature stream
-     * @param combinedScore the combinedScore
-     * @param frameNumber the frame number associated with this token
-     * @param lastCombineFrame the frame number at which score combination
-     *     last occurred
-     *
+     * @param predecessor      the predecessor for this token
+     * @param state            the SentenceHMMState associated with this token
+     * @param featureScore     the score for this feature stream
+     * @param combinedScore    the combinedScore
+     * @param frameNumber      the frame number associated with this token
+     * @param lastCombineFrame the frame number at which score combination last occurred
      */
     public ParallelToken(ParallelToken predecessor,
-			 SentenceHMMState state,
-			 float featureScore,
-			 float combinedScore,
-			 int frameNumber,
-			 int lastCombineFrame) {
-	this(predecessor, state, featureScore, combinedScore,frameNumber);
-	this.lastCombineTime = lastCombineFrame;
+                         SentenceHMMState state,
+                         float featureScore,
+                         float combinedScore,
+                         int frameNumber,
+                         int lastCombineFrame) {
+        this(predecessor, state, featureScore, combinedScore, frameNumber);
+        this.lastCombineTime = lastCombineFrame;
     }
 
 
     /**
      * Constructs a ParallelToken
      *
-     * @param predecessor the predecessor for this token
-     * @param state the SentenceHMMState associated with this token
-     * @param featureScore the score for this feature stream
-     * @param combinedScore the combinedScore
-     * @param frameNumber the frame number associated with this token
-     * @param lastCombineStamp the stamp used to identify the last
-     *    score combination event
-     *
+     * @param predecessor      the predecessor for this token
+     * @param state            the SentenceHMMState associated with this token
+     * @param featureScore     the score for this feature stream
+     * @param combinedScore    the combinedScore
+     * @param frameNumber      the frame number associated with this token
+     * @param lastCombineStamp the stamp used to identify the last score combination event
      */
     public ParallelToken(ParallelToken predecessor,
-			 SentenceHMMState state,
-			 float featureScore,
-			 float combinedScore,
-			 int frameNumber,
+                         SentenceHMMState state,
+                         float featureScore,
+                         float combinedScore,
+                         int frameNumber,
                          String lastCombineStamp) {
-	this(predecessor, state, featureScore, combinedScore, -1);
+        this(predecessor, state, featureScore, combinedScore, -1);
         this.lastCombineStamp = lastCombineStamp;
     }
 
-    
+
     /**
-     * Constructs a ParallelToken with no predecessors, i.e.,
-     * this is the ParallelToken at the first state of the SentenceHMM.
+     * Constructs a ParallelToken with no predecessors, i.e., this is the ParallelToken at the first state of the
+     * SentenceHMM.
      *
-     * @param state the SentenceHMMState associated with this token
+     * @param state         the SentenceHMMState associated with this token
      * @param featureStream the feature stream of this ParallelToken
-     * @param frameNumber the frame number of this token
+     * @param frameNumber   the frame number of this token
      */
     public ParallelToken(SentenceHMMState state, FeatureStream featureStream,
                          int frameNumber) {
@@ -137,21 +131,21 @@ public class ParallelToken extends Token {
 
     /**
      * Returns the combined score of this ParallelToken.
-     * 
+     *
      * @return the combined score of this ParallelToken
      */
     public float getCombinedScore() {
-	return combinedScore;
+        return combinedScore;
     }
 
-    
+
     /**
      * Returns the feature score of this ParallelToken.
      *
      * @return the feature score of this ParallelToken
      */
     public float getFeatureScore() {
-	return getScore();
+        return getScore();
     }
 
 
@@ -161,7 +155,7 @@ public class ParallelToken extends Token {
      * @return the name of the acoustic model
      */
     public String getModelName() {
-	return featureStream.getName();
+        return featureStream.getName();
     }
 
 
@@ -171,10 +165,10 @@ public class ParallelToken extends Token {
      * @return the last frame score combination takes place
      */
     public int getLastCombineTime() {
-	return lastCombineTime; 
+        return lastCombineTime;
     }
 
-    
+
     /**
      * Returns the stamp used to identify the last score combination event.
      *
@@ -201,18 +195,17 @@ public class ParallelToken extends Token {
      * @param featureScore the new feature score
      */
     public void setFeatureScore(float featureScore) {
-	setScore(featureScore);
+        setScore(featureScore);
     }
 
 
     /**
      * Sets the frame number at which score combination takes place.
      *
-     * @param frameNumber the frame at which score combination last took
-     *     place.
+     * @param frameNumber the frame at which score combination last took place.
      */
     public void setLastCombineTime(int frameNumber) {
-	this.lastCombineTime = frameNumber;
+        this.lastCombineTime = frameNumber;
     }
 
 
@@ -222,7 +215,7 @@ public class ParallelToken extends Token {
      * @param stamp the stamp for identification
      */
     public void setLastCombineStamp(String stamp) {
-	this.lastCombineStamp = stamp;
+        this.lastCombineStamp = stamp;
     }
 
 
@@ -232,7 +225,7 @@ public class ParallelToken extends Token {
      * @return true if this ParallelToken has been pruned.
      */
     public boolean isPruned() {
-	return pruned;
+        return pruned;
     }
 
 
@@ -242,6 +235,6 @@ public class ParallelToken extends Token {
      * @param pruned sets this ParallelToken to be pruned or not
      */
     public void setPruned(boolean pruned) {
-	this.pruned = pruned;
+        this.pruned = pruned;
     }
 }

@@ -1,65 +1,48 @@
-
 /*
- * Copyright 1999-2002 Carnegie Mellon University.  
- * Portions Copyright 2002 Sun Microsystems, Inc.  
- * Portions Copyright 2002 Mitsubishi Electric Research Laboratories.
- * All Rights Reserved.  Use is subject to license terms.
- * 
- * See the file "license.terms" for information on usage and
- * redistribution of this file, and for a DISCLAIMER OF ALL 
- * WARRANTIES.
- *
- */
+* Copyright 1999-2002 Carnegie Mellon University.
+* Portions Copyright 2002 Sun Microsystems, Inc.
+* Portions Copyright 2002 Mitsubishi Electric Research Laboratories.
+* All Rights Reserved.  Use is subject to license terms.
+*
+* See the file "license.terms" for information on usage and
+* redistribution of this file, and for a DISCLAIMER OF ALL
+* WARRANTIES.
+*
+*/
 
 package edu.cmu.sphinx.research.parallel;
 
 import edu.cmu.sphinx.decoder.search.ActiveList;
-
 import edu.cmu.sphinx.frontend.FrontEnd;
-
 import edu.cmu.sphinx.linguist.acoustic.AcousticModel;
-
 import edu.cmu.sphinx.util.props.*;
 
 /**
- * Implements a feature stream used in parallel decoding.
- * A feature stream describes the type of features that are generated,
- * so it is represented by the {@link #PROP_FRONT_END front end}
- * that generates the features, and the {@link #PROP_ACOUSTIC_MODEL 
- * acoustic model} that should be used to decode those features.
- * <p>
- * Since the parallel decoder uses information from multiple feature
- * streams for decoding, the {@link #PROP_ETA eta value} of the 
- * feature stream represents the relative weight that is applied 
- * for the scores from each feature stream.
- * <p>
- * To allow stream-specific pruning, each feature stream maintains
- * its own {@link edu.cmu.sphinx.decoder.search.ActiveList active list},
- * which is where tokens of that particular stream should be stored.
+ * Implements a feature stream used in parallel decoding. A feature stream describes the type of features that are
+ * generated, so it is represented by the {@link #PROP_FRONT_END front end} that generates the features, and the {@link
+ * #PROP_ACOUSTIC_MODEL acoustic model} that should be used to decode those features.
+ * <p/>
+ * Since the parallel decoder uses information from multiple feature streams for decoding, the {@link #PROP_ETA eta
+ * value} of the feature stream represents the relative weight that is applied for the scores from each feature stream.
+ * <p/>
+ * To allow stream-specific pruning, each feature stream maintains its own {@link edu.cmu.sphinx.decoder.search.ActiveList
+ * active list}, which is where tokens of that particular stream should be stored.
  */
 public class FeatureStream implements Configurable {
 
-    /**
-     * Property for the acoustic model of this feature stream.
-     */
+    /** Property for the acoustic model of this feature stream. */
     @S4Component(type = AcousticModel.class)
     public static final String PROP_ACOUSTIC_MODEL = "acousticModel";
 
-    /**
-     * Property for the front end of this feature stream.
-     */
+    /** Property for the front end of this feature stream. */
     @S4Component(type = FrontEnd.class)
     public static final String PROP_FRONT_END = "frontEnd";
 
-    /**
-     * Property for the eta value of this feature stream.
-     */
+    /** Property for the eta value of this feature stream. */
     @S4Double(defaultValue = 1.0)
     public static final String PROP_ETA = "eta";
 
-    /**
-     * Default value of PROP_ETA.
-     */
+    /** Default value of PROP_ETA. */
     public static final float PROP_ETA_DEFAULT = 1.0f;
 
 
@@ -77,7 +60,7 @@ public class FeatureStream implements Configurable {
      */
     public void newProperties(PropertySheet ps) throws PropertyException {
         model = (AcousticModel) ps.getComponent
-            (PROP_ACOUSTIC_MODEL);
+                (PROP_ACOUSTIC_MODEL);
         name = model.getName();
         frontEnd = (FrontEnd) ps.getComponent(PROP_FRONT_END);
         eta = ps.getFloat(PROP_ETA);
@@ -93,6 +76,7 @@ public class FeatureStream implements Configurable {
         return name;
     }
 
+
     /**
      * Returns the acoustic model of this feature stream.
      *
@@ -101,6 +85,7 @@ public class FeatureStream implements Configurable {
     public AcousticModel getAcousticModel() {
         return model;
     }
+
 
     /**
      * Returns the front end of this feature stream.
@@ -111,6 +96,7 @@ public class FeatureStream implements Configurable {
         return frontEnd;
     }
 
+
     /**
      * Returns the eta value of this FeatureStream.
      *
@@ -119,6 +105,7 @@ public class FeatureStream implements Configurable {
     public float getEta() {
         return eta;
     }
+
 
     /**
      * Returns the active list
@@ -129,12 +116,12 @@ public class FeatureStream implements Configurable {
         return activeList;
     }
 
-    /**
-     * Frees the acoustic model.
-     */
+
+    /** Frees the acoustic model. */
     public void freeAcousticModel() {
         model = null;
     }
+
 
     /**
      * Sets the eta value of this FeatureStream
@@ -144,6 +131,7 @@ public class FeatureStream implements Configurable {
     public void setEta(float eta) {
         this.eta = eta;
     }
+
 
     /**
      * Sets the active list

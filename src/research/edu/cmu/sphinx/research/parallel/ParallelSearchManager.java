@@ -28,7 +28,10 @@ import edu.cmu.sphinx.linguist.flat.SentenceHMMStateArc;
 import edu.cmu.sphinx.result.Result;
 import edu.cmu.sphinx.util.LogMath;
 import edu.cmu.sphinx.util.Timer;
-import edu.cmu.sphinx.util.props.*;
+import edu.cmu.sphinx.util.props.PropertyException;
+import edu.cmu.sphinx.util.props.PropertySheet;
+import edu.cmu.sphinx.util.props.S4Boolean;
+import edu.cmu.sphinx.util.props.S4Component;
 
 import java.io.IOException;
 import java.util.*;
@@ -81,7 +84,7 @@ public class ParallelSearchManager implements SearchManager {
     private AcousticScorer scorer;
     private Pruner featureScorePruner;
     private Pruner combinedScorePruner;
-//    private ScoreCombiner featureScoreCombiner;
+    //    private ScoreCombiner featureScoreCombiner;
     private LogMath logMath;
 
     private int currentFrameNumber;           // the current frame number

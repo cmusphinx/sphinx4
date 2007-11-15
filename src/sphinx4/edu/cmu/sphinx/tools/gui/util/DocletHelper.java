@@ -14,44 +14,47 @@
 
 package edu.cmu.sphinx.tools.gui.util;
 
-import com.sun.javadoc.*;
 
 /**
- * This class is used as the Javadoc Doclet handler
- * that customize the javadoc output of the classes
+ * This class is used as the Javadoc Doclet handler that customize the javadoc output of the classes
  *
  * @author Ariani
  */
-public class DocletHelper extends Doclet {
-    
-    /** the start of javadoc */
-    public static boolean start(RootDoc root) {
-        
-        ClassDoc[] classes = root.classes();
-        for (int i = 0; i < classes.length; ++i) {
-            ClassDoc cd = classes[i];            
-            printMembers(cd.fields(true)); // only interested in the fields
-        }
-        return true;
-    }
-    
-   
-    /** 
-     * this helper function describe what should be written for each class 
-     * @param mems array of fields that belong to this class
-     */
-    static void printMembers(FieldDoc[] mems) {
-        for (int i = 0; i < mems.length; ++i) {
-            if ( mems[i].isPublic() && mems[i].isStatic() ){
-                /* the javadoc output expected would be :
-                 * ===[property_name]***[property_comment]
-                 * ===[\n]
-                 */
-                
-                System.out.print("===" +mems[i].name() ); // property name               
-                System.out.println("=="+mems[i].commentText()); // comment
-            }
-        }
-    }  
-    
+class DocletHelper {
+
 }
+
+// commented because not compilable.
+//public class DocletHelper extends Doclet {
+//
+//    /** the start of javadoc */
+//    public static boolean start(RootDoc root) {
+//
+//        ClassDoc[] classes = root.classes();
+//        for (int i = 0; i < classes.length; ++i) {
+//            ClassDoc cd = classes[i];
+//            printMembers(cd.fields(true)); // only interested in the fields
+//        }
+//        return true;
+//    }
+//
+//
+//    /**
+//     * this helper function describe what should be written for each class
+//     * @param mems array of fields that belong to this class
+//     */
+//    static void printMembers(FieldDoc[] mems) {
+//        for (int i = 0; i < mems.length; ++i) {
+//            if ( mems[i].isPublic() && mems[i].isStatic() ){
+//                /* the javadoc output expected would be :
+//                 * ===[property_name]***[property_comment]
+//                 * ===[\n]
+//                 */
+//
+//                System.out.print("===" +mems[i].name() ); // property name
+//                System.out.println("=="+mems[i].commentText()); // comment
+//            }
+//        }
+//    }
+//
+//}
