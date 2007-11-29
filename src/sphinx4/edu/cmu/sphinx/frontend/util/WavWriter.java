@@ -28,9 +28,13 @@ public class WavWriter extends BaseDataProcessor {
     @S4String
     public static final String PROP_OUT_FILE_NAME_PATTERN = "outFilePattern";
 
+    @S4Boolean(defaultValue = false)
+
+    public static final String PROP_IS_COMPLETE_PATH = "isCompletePath";
+    private boolean isCompletePath = false;
 
     /** The default value for PROP_RAND_STREAM_START */
-    private String outPattern = null;
+    private String dumpFilePath = null;
 
     /** SphinxProperty for the number of bits per value. */
     @S4Integer(defaultValue = 16)
@@ -79,7 +83,12 @@ public class WavWriter extends BaseDataProcessor {
         if ((data instanceof DataEndSignal && !captureUtts) || (data instanceof SpeechEndSignal && captureUtts)) {
             AudioFormat wavFormat = new AudioFormat(sampleRate, bitsPerSample, 1, isSigned, true);
             AudioFileFormat.Type outputType = getTargetType("wav");
-            String wavName = outPattern + getNextFreeIndex(outPattern) + ".wav";
+
+            String wavName;
+            if (isCompletePath)
+                wavName = dumpFilePath;
+            else
+                wavName = dumpFilePath + getNextFreeIndex(dumpFilePath) + ".wav";
 
             byte[] abAudioData = baos.toByteArray();
             ByteArrayInputStream bais = new ByteArrayInputStream(abAudioData);
@@ -137,7 +146,7 @@ public class WavWriter extends BaseDataProcessor {
     public void initialize() {
         super.initialize();
 
-        assert outPattern != null;
+        assert dumpFilePath != null;
         baos = new ByteArrayOutputStream();
     }
 
@@ -148,7 +157,8 @@ public class WavWriter extends BaseDataProcessor {
     public void newProperties(PropertySheet ps) throws PropertyException {
         super.newProperties(ps);
 
-        outPattern = ps.getString(WavWriter.PROP_OUT_FILE_NAME_PATTERN);
+        dumpFilePath = ps.getString(WavWriter.PROP_OUT_FILE_NAME_PATTERN);
+        isCompletePath = ps.getBoolean(PROP_IS_COMPLETE_PATH);
 
         bitsPerSample = ps.getInt(PROP_BITS_PER_SAMPLE);
         if (bitsPerSample % 8 != 0) {
