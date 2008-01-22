@@ -85,7 +85,7 @@ public class ConcatFileDataSource extends StreamDataSource
     @S4Integer(defaultValue = 1)
     public static final String PROP_START_FILE = "startFile";
 
-    /** The default value for PROP_START_FILE_DEFAULT. */
+    /** The default value for PROP_START_FILE. */
     public static final int PROP_START_FILE_DEFAULT = 1;
 
     /** The SphinxProperty that specifies the number of files to skip for every file read. */

@@ -125,7 +125,7 @@ public class ModelLoader implements Loader {
     @S4String
     public final static String PROP_MODEL = "modelDefinition";
 
-    /** The default value of PROP_MODEL_DEFAULT. */
+    /** The default value of PROP_MODEL. */
     public final static String PROP_MODEL_DEFAULT = "model.mdef";
 
     /** Subdirectory where the acoustic model can be found */

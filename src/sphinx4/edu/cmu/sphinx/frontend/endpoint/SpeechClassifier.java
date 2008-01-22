@@ -70,7 +70,7 @@ public class SpeechClassifier extends BaseDataProcessor {
     @S4Double(defaultValue = 0.003)
     public static final String PROP_ADJUSTMENT = "adjustment";
 
-    /** The default value of PROP_ADJUSTMENT_DEFAULT. */
+    /** The default value of PROP_ADJUSTMENT. */
     public static final double PROP_ADJUSTMENT_DEFAULT = 0.003;
 
     /** The SphinxProperty specifying whether to print debug messages. */
