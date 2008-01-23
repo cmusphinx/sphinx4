@@ -27,7 +27,7 @@ import java.util.List;
 
 
 /**
- * A Simple acoustic scorer. a certain number of frames have been processed
+ * A Simple acoustic scorer which scores within the current thread.
  * <p/>
  * Note that all scores are maintained in LogMath log base.
  */
@@ -43,14 +43,9 @@ public class SimpleAcousticScorer implements AcousticScorer {
     @S4Boolean(defaultValue = false)
     public final static String PROP_NORMALIZE_SCORES = "normalizeScores";
 
-    /** Default value for PROP_NORMALIZE_SCORES */
-
-    public final static boolean PROP_NORMALIZE_SCORES_DEFAULT = false;
-
     // ------------------------------
     // configuration data
     // -----------------------------
-    private String name;
     private FrontEnd frontEnd;
     private boolean normalizeScores;
 
@@ -61,14 +56,6 @@ public class SimpleAcousticScorer implements AcousticScorer {
     public void newProperties(PropertySheet ps) throws PropertyException {
         frontEnd = (FrontEnd) ps.getComponent(PROP_FRONTEND);
         normalizeScores = ps.getBoolean(PROP_NORMALIZE_SCORES);
-    }
-
-
-    /* (non-Javadoc)
-    * @see edu.cmu.sphinx.util.props.Configurable#getName()
-    */
-    public String getName() {
-        return name;
     }
 
 
@@ -95,9 +82,9 @@ public class SimpleAcousticScorer implements AcousticScorer {
             Data data = frontEnd.getData();
 
             while (data instanceof Signal) {
-                if(data instanceof SpeechEndSignal)
+                if (data instanceof SpeechEndSignal)
                     return null;
-                
+
                 data = frontEnd.getData();
             }
 

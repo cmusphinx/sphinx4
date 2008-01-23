@@ -19,21 +19,11 @@ import edu.cmu.sphinx.util.props.PropertySheet;
 /** A Null pruner. Does no actual pruning */
 public class NullPruner implements Pruner {
 
-    private String name;
-
 
     /* (non-Javadoc)
     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
     */
     public void newProperties(PropertySheet ps) throws PropertyException {
-    }
-
-
-    /* (non-Javadoc)
-    * @see edu.cmu.sphinx.util.props.Configurable#getName()
-    */
-    public String getName() {
-        return name;
     }
 
 
