@@ -125,7 +125,7 @@ class Sphinx4Loader extends Sphinx3Loader {
         HMMManager hmmManager = super.getHmmManager();
         Pool matrixPool = super.getMatrixPool();
         Pool mixtureWeightsPool = super.getMixtureWeightsPool();
-        Map contextIndependentUnits = super.getContextIndependentUnits();
+        Map<String, Unit> contextIndependentUnits = super.getContextIndependentUnits();
 
         assert numTiedState == mixtureWeightsPool.getFeature(NUM_SENONES, 0);
         assert numTiedTransitionMatrices == matrixPool.size();

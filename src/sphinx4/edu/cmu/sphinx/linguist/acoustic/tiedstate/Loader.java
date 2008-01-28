@@ -14,6 +14,7 @@
 package edu.cmu.sphinx.linguist.acoustic.tiedstate;
 
 import edu.cmu.sphinx.util.props.Configurable;
+import edu.cmu.sphinx.linguist.acoustic.Unit;
 
 import java.io.IOException;
 import java.util.Map;
@@ -106,7 +107,7 @@ public interface Loader extends Configurable {
      *
      * @return the map of context independent units.
      */
-    public Map getContextIndependentUnits();
+    public Map<String, Unit> getContextIndependentUnits();
 
 
     /** logs information about this loader */

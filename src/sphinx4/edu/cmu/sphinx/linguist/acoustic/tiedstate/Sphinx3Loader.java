@@ -487,7 +487,7 @@ public class Sphinx3Loader implements Loader {
      *
      * @return the map of context independent units.
      */
-    public Map getContextIndependentUnits() {
+    public Map<String, Unit> getContextIndependentUnits() {
         return contextIndependentUnits;
     }
 

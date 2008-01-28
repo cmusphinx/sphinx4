@@ -283,7 +283,7 @@ public class Model implements AcousticModel {
      * @return the unit or null if the unit was not found
      */
     private Unit lookupUnit(String name) {
-        return (Unit) loader.getContextIndependentUnits().get(name);
+        return loader.getContextIndependentUnits().get(name);
     }
 
 
