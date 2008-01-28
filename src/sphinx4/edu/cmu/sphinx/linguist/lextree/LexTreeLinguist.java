@@ -127,6 +127,7 @@ public class LexTreeLinguist implements Linguist {
     /** A sphinx property used to define the grammar to use when building the search graph */
     @S4Component(type = Grammar.class)
     public final static String PROP_GRAMMAR = "grammar";
+
     /** A sphinx property used to define the acoustic model to use when building the search graph */
     @S4Component(type = AcousticModel.class)
     public final static String PROP_ACOUSTIC_MODEL = "acousticModel";
@@ -138,15 +139,13 @@ public class LexTreeLinguist implements Linguist {
     /** Sphinx property that defines the name of the logmath to be used by this search manager. */
     @S4Component(type = LogMath.class)
     public final static String PROP_LOG_MATH = "logMath";
+
     /**
      * Sphinx property used to determine whether or not the gstates are dumped. * A sphinx property that determines
      * whether or not full word histories are used to determine when two states are equal.
      */
     @S4Boolean(defaultValue = true)
     public final static String PROP_FULL_WORD_HISTORIES = "fullWordHistories";
-
-    /** The default value for PROP_FULL_WORD_HISTORIES */
-    public final static boolean PROP_FULL_WORD_HISTORIES_DEFAULT = true;
 
     /** A sphinx property for the language model to be used by this grammar */
     @S4Component(type = LanguageModel.class)
@@ -160,11 +159,8 @@ public class LexTreeLinguist implements Linguist {
     @S4Integer(defaultValue = 0)
     public final static String PROP_CACHE_SIZE = "cacheSize";
 
-    /** Property that defines the dictionary to use for this grammar */
-    public final static int PROP_CACHE_SIZE_DEFAULT = 0;
 
     // just for detailed debugging
-    private final static boolean tracing = false;
     private final static SearchStateArc[] EMPTY_ARC = new SearchStateArc[0];
 
     // ----------------------------------
@@ -181,14 +177,12 @@ public class LexTreeLinguist implements Linguist {
     // Data that is configured by the
     // property sheet
     // ------------------------------------
-    private String name;
     private Logger logger;
     private boolean fullWordHistories = true;
     private boolean addFillerWords = false;
     private boolean generateUnitStates = false;
     private boolean wantUnigramSmear = true;
     private float unigramSmearWeight = 1.0f;
-    private float unigramSmearOffset = .0f;
     private boolean cacheEnabled = false;
     private int maxArcCacheSize = 0;
 
@@ -247,16 +241,6 @@ public class LexTreeLinguist implements Linguist {
         }
         maxArcCacheSize = newMaxArcCacheSize;
         cacheEnabled = maxArcCacheSize > 0;
-    }
-
-
-    /*
-    * (non-Javadoc)
-    *
-    * @see edu.cmu.sphinx.util.props.Configurable#getName()
-    */
-    public String getName() {
-        return name;
     }
 
 
