@@ -83,17 +83,11 @@ public class FullDictionary implements Dictionary {
         logger = ps.getLogger();
         wordDictionaryFile = ConfigurationManagerUtils.getResource(PROP_DICTIONARY, ps);
         fillerDictionaryFile = ConfigurationManagerUtils.getResource(PROP_FILLER_DICTIONARY, ps);
-        addSilEndingPronunciation = ps.getBoolean(
-                PROP_ADD_SIL_ENDING_PRONUNCIATION
-        );
-        wordReplacement = ps.getString(Dictionary.PROP_WORD_REPLACEMENT
-        );
-        allowMissingWords = ps.getBoolean(Dictionary.PROP_ALLOW_MISSING_WORDS
-        );
-        createMissingWords = ps.getBoolean(PROP_CREATE_MISSING_WORDS
-        );
-        unitManager = (UnitManager) ps.getComponent(PROP_UNIT_MANAGER
-        );
+        addSilEndingPronunciation = ps.getBoolean(PROP_ADD_SIL_ENDING_PRONUNCIATION);
+        wordReplacement = ps.getString(Dictionary.PROP_WORD_REPLACEMENT);
+        allowMissingWords = ps.getBoolean(Dictionary.PROP_ALLOW_MISSING_WORDS);
+        createMissingWords = ps.getBoolean(PROP_CREATE_MISSING_WORDS);
+        unitManager = (UnitManager) ps.getComponent(PROP_UNIT_MANAGER);
     }
 
 
@@ -145,8 +139,8 @@ public class FullDictionary implements Dictionary {
 
 
     /**
-     * Loads the given sphinx3 style simple dictionary from the given InputStream. The InputStream is assumed to
-     * contain ASCII data.
+     * Loads the given sphinx3 style simple dictionary from the given InputStream. The InputStream is assumed to contain
+     * ASCII data.
      *
      * @param inputStream  the InputStream of the dictionary
      * @param isFillerDict true if this is a filler dictionary, false otherwise

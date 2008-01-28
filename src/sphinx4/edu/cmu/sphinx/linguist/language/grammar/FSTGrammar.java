@@ -102,9 +102,6 @@ public class FSTGrammar extends Grammar {
     /** The SphinxProperty for the location of the FST n-gram file. */
     @S4String(defaultValue = "default.arpa_gram")
     public final static String PROP_PATH = "path";
-    /** The default value for PROP_PATH. */
-    public final static String PROP_PATH_DEFAULT = "default.arpa_gram";
-
 
     /** Sphinx property that defines the logMath component. */
     @S4Component(type = LogMath.class)
@@ -149,6 +146,7 @@ public class FSTGrammar extends Grammar {
     */
     public void newProperties(PropertySheet ps) throws PropertyException {
         super.newProperties(ps);
+        
         path = ps.getString(PROP_PATH);
         logMath = (LogMath) ps.getComponent(PROP_LOG_MATH);
     }
@@ -159,8 +157,7 @@ public class FSTGrammar extends Grammar {
      *
      * @return the initial node for the grammar.
      */
-    protected GrammarNode createGrammar()
-            throws IOException {
+    protected GrammarNode createGrammar() throws IOException {
 
         GrammarNode initialNode = null;
         GrammarNode finalNode = null;

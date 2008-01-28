@@ -15,6 +15,7 @@ package edu.cmu.sphinx.linguist;
 import edu.cmu.sphinx.linguist.dictionary.Word;
 
 import java.util.List;
+import java.util.ArrayList;
 
 
 /**
@@ -275,5 +276,17 @@ public class WordSequence {
             }
         }
         return false;
+    }
+
+
+    /** Returns a subsequence with both <code>startIndex</code> and <code>stopIndex</code> inclusive. */
+    public WordSequence getSubSequence(int startIndex, int stopIndex) {
+        List<Word> subseqWords = new ArrayList<Word>();
+
+        for (int i = startIndex; i <= stopIndex; i++) {
+            subseqWords.add(getWord(i));
+        }
+
+        return getWordSequence(subseqWords);
     }
 }

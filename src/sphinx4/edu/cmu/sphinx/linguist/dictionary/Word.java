@@ -129,6 +129,22 @@ public class Word {
     }
 
 
+    @Override
+    public int hashCode() {
+        return spelling.hashCode();
+    }
+
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Word) {
+            return spelling.equals(((Word)obj).spelling);
+        }
+
+        return false;
+    }
+
+
     /**
      * Returns a string representation of this word, which is the spelling
      *
