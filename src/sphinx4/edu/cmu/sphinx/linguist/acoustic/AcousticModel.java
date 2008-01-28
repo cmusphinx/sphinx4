@@ -77,7 +77,7 @@ public interface AcousticModel extends Configurable {
      * @return an iterator that can be used to iterate through all CI units. The iterator returns objects of type
      *         <code>Unit</code>
      */
-    public Iterator getContextIndependentUnitIterator();
+    public Iterator<Unit> getContextIndependentUnitIterator();
 
 
     /**

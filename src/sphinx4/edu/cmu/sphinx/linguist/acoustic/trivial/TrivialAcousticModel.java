@@ -45,7 +45,7 @@ public class TrivialAcousticModel implements AcousticModel {
 
 
     private String name;
-    private Map hmmMap = new HashMap();
+    private Map<Unit, HMM> hmmMap = new HashMap<Unit, HMM>();
     private int leftContextSize;
     private int rightContextSize;
 
@@ -127,7 +127,7 @@ public class TrivialAcousticModel implements AcousticModel {
         HMM hmm = null;
         if (!exactMatch || position == HMMPosition.UNDEFINED) {
             unit = unit.getBaseUnit();
-            hmm = (HMM) hmmMap.get(unit);
+            hmm = hmmMap.get(unit);
         }
         return hmm;
     }
@@ -150,7 +150,7 @@ public class TrivialAcousticModel implements AcousticModel {
      * @return an iterator that can be used to iterate through all CI units. The iterator returns objects of type
      *         <code>Unit</code>
      */
-    public Iterator getContextIndependentUnitIterator() {
+    public Iterator<Unit> getContextIndependentUnitIterator() {
         return hmmMap.keySet().iterator();
     }
 
