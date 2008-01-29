@@ -160,6 +160,7 @@ public class Microphone extends BaseDataProcessor {
     private boolean closeBetweenUtterances;
     private boolean keepDataReference;
     private boolean signed;
+    private boolean bigEndian;
     private int frameSizeInBytes;
     private int msecPerRead;
     private int selectedChannel;
@@ -182,7 +183,7 @@ public class Microphone extends BaseDataProcessor {
         int sampleSizeInBits = ps.getInt(PROP_BITS_PER_SAMPLE);
 
         int channels = ps.getInt(PROP_CHANNELS);
-        boolean bigEndian = ps.getBoolean(PROP_BIG_ENDIAN);
+        bigEndian = ps.getBoolean(PROP_BIG_ENDIAN);
         signed = ps.getBoolean(PROP_SIGNED);
 
         desiredFormat = new AudioFormat
@@ -596,9 +597,16 @@ public class Microphone extends BaseDataProcessor {
                 utterance.add(data);
             }
 
-            double[] samples = DataUtil.bytesToValues
-                    (data, 0, data.length, sampleSizeInBytes, signed);
-
+	    double[] samples;
+    	
+    	    if (bigEndian) {
+    		samples = DataUtil.bytesToValues
+                	(data, 0, data.length, sampleSizeInBytes, signed);
+    	    } else {
+        	samples = DataUtil.littleEndianBytesToValues
+            		(data, 0, data.length, sampleSizeInBytes, signed);
+    	    }
+    	    
             if (channels > 1) {
                 samples = convertStereoToMono(samples, channels);
             }
