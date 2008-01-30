@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /** The primary decoder class */
-public class Decoder implements Configurable {
+public class Decoder implements Configurable, ResultProducer {
 
     /** The sphinx property name for the number of features to recognize at once. */
     @S4Integer(defaultValue = 100000)

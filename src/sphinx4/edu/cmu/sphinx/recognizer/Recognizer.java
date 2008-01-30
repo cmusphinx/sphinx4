@@ -13,6 +13,7 @@
 package edu.cmu.sphinx.recognizer;
 
 import edu.cmu.sphinx.decoder.Decoder;
+import edu.cmu.sphinx.decoder.ResultProducer;
 import edu.cmu.sphinx.instrumentation.Resetable;
 import edu.cmu.sphinx.result.Result;
 import edu.cmu.sphinx.result.ResultListener;
@@ -52,7 +53,7 @@ import java.util.List;
  * <p/>
  * Note that some Recognizer methods may throw an IllegalStateException if the recognizer is not in the proper state
  */
-public class Recognizer implements Configurable {
+public class Recognizer implements Configurable, ResultProducer {
 
     /** Property name for the decoder to be used by this recognizer. */
     @S4Component(type = Decoder.class)
