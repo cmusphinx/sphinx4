@@ -12,33 +12,30 @@
  */
 package edu.cmu.sphinx.decoder.search;
 
-import edu.cmu.sphinx.util.props.Configurable;
-import edu.cmu.sphinx.util.props.S4Boolean;
-import edu.cmu.sphinx.util.props.S4Double;
-import edu.cmu.sphinx.util.props.S4Integer;
+import edu.cmu.sphinx.util.LogMath;
+import edu.cmu.sphinx.util.props.*;
 
 /** Creates new active lists. */
-public interface ActiveListFactory extends Configurable {
+public abstract class ActiveListFactory implements Configurable {
+
+
+    /** Sphinx property that defines the name of the logmath to be used by this search manager. */
+    @S4Component(type = LogMath.class)
+    public final static String PROP_LOG_MATH = "logMath";
 
     /**
      * property that sets the desired (or target) size for this active list.  This is sometimes referred to as the beam
      * size
      */
-    @S4Integer(defaultValue = 2000)
+    @S4Integer(defaultValue = -1)
     public final static String PROP_ABSOLUTE_BEAM_WIDTH = "absoluteBeamWidth";
-
-    /** The default value for the PROP_ABSOLUTE_BEAM_WIDTH property */
-    public final static int PROP_ABSOLUTE_BEAM_WIDTH_DEFAULT = 2000;
 
     /**
      * Property that sets the minimum score relative to the maximum score in the list for pruning.  Tokens with a score
      * less than relativeBeamWidth * maximumScore will be pruned from the list
      */
-    @S4Double(defaultValue = 0.0)
+    @S4Double(defaultValue = 1E-80)
     public final static String PROP_RELATIVE_BEAM_WIDTH = "relativeBeamWidth";
-
-    /** The default value for the PROP_RELATIVE_BEAM_WIDTH property */
-    public final static double PROP_RELATIVE_BEAM_WIDTH_DEFAULT = 0.0;
 
     /**
      * Property that indicates whether or not the active list will implement 'strict pruning'.  When strict pruning is
@@ -49,8 +46,17 @@ public interface ActiveListFactory extends Configurable {
     @S4Boolean(defaultValue = true)
     public final static String PROP_STRICT_PRUNING = "strictPruning";
 
-    /** The default for the PROP_STRICT_PRUNING property */
-    public final static boolean PROP_STRICT_PRUNING_DEFAULT = true;
+    protected int absoluteBeamWidth;
+    protected float logRelativeBeamWidth;
+
+
+    public void newProperties(PropertySheet ps) throws PropertyException {
+        absoluteBeamWidth = ps.getInt(PROP_ABSOLUTE_BEAM_WIDTH);
+        double relativeBeamWidth = ps.getDouble(PROP_RELATIVE_BEAM_WIDTH);
+
+        LogMath logMath = (LogMath) ps.getComponent(PROP_LOG_MATH);
+        logRelativeBeamWidth = logMath.linearToLog(relativeBeamWidth);
+    }
 
 
     /**
@@ -58,5 +64,5 @@ public interface ActiveListFactory extends Configurable {
      *
      * @return the active list
      */
-    ActiveList newInstance();
+    public abstract ActiveList newInstance();
 }

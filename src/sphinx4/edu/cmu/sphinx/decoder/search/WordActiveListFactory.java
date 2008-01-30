@@ -14,8 +14,9 @@ package edu.cmu.sphinx.decoder.search;
 
 import edu.cmu.sphinx.linguist.WordSearchState;
 import edu.cmu.sphinx.linguist.dictionary.Word;
-import edu.cmu.sphinx.util.LogMath;
-import edu.cmu.sphinx.util.props.*;
+import edu.cmu.sphinx.util.props.PropertyException;
+import edu.cmu.sphinx.util.props.PropertySheet;
+import edu.cmu.sphinx.util.props.S4Integer;
 
 import java.util.*;
 
@@ -25,32 +26,16 @@ import java.util.*;
  * number of copies of any particular word in the word beam.  Also the word active list can restrict the number of
  * fillers in the beam.
  */
-public class WordActiveListFactory implements ActiveListFactory {
-
-    /** Sphinx property that defines the name of the logmath to be used by this search manager. */
-    @S4Component(type = LogMath.class)
-    public final static String PROP_LOG_MATH = "logMath";
+public class WordActiveListFactory extends ActiveListFactory {
 
     /** property that sets the max paths for a single word. (zero disables this feature) */
     @S4Integer(defaultValue = 0)
-    public final static String PROP_MAX_PATHS_PER_WORD
-            = "maxPathsPerWord";
-
-    /** The default value for the PROP_MAX_PATHS_PER_WORD property */
-    public final static int PROP_MAX_PATHS_PER_WORD_DEFAULT = 0;
+    public final static String PROP_MAX_PATHS_PER_WORD = "maxPathsPerWord";
 
     /** property that sets the max filler words allowed in the beam. (zero disables this feature) */
     @S4Integer(defaultValue = 1)
     public final static String PROP_MAX_FILLER_WORDS = "maxFillerWords";
 
-    /** The default value for the PROP_MAX_FILLER_WORDS property */
-    public final static int PROP_MAX_FILLER_WORDS_DEFAULT = 1;
-
-
-    private String name;
-    private int absoluteBeamWidth = 2000;
-    private float logRelativeBeamWidth;
-    private LogMath logMath;
     private int maxPathsPerWord;
     private int maxFiller;
 
@@ -61,26 +46,10 @@ public class WordActiveListFactory implements ActiveListFactory {
     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
     */
     public void newProperties(PropertySheet ps) throws PropertyException {
-        absoluteBeamWidth = ps.getInt(PROP_ABSOLUTE_BEAM_WIDTH
-        );
-        double relativeBeamWidth = ps.getDouble(PROP_RELATIVE_BEAM_WIDTH
-        );
-        logMath = (LogMath) ps.getComponent(PROP_LOG_MATH);
-        logRelativeBeamWidth = logMath.linearToLog(relativeBeamWidth);
-        maxPathsPerWord = ps.getInt(PROP_MAX_PATHS_PER_WORD
-        );
-        maxFiller = ps.getInt(PROP_MAX_FILLER_WORDS
-        );
-    }
+        super.newProperties(ps);
 
-
-    /*
-    * (non-Javadoc)
-    *
-    * @see edu.cmu.sphinx.util.props.Configurable#getName()
-    */
-    public String getName() {
-        return name;
+        maxPathsPerWord = ps.getInt(PROP_MAX_PATHS_PER_WORD);
+        maxFiller = ps.getInt(PROP_MAX_FILLER_WORDS);
     }
 
 
@@ -103,7 +72,7 @@ public class WordActiveListFactory implements ActiveListFactory {
     class WordActiveList implements ActiveList {
 
         private Token bestToken;
-        private List tokenList = new LinkedList();
+        private List<Token> tokenList = new LinkedList<Token>();
 
 
         /**
@@ -201,7 +170,7 @@ public class WordActiveListFactory implements ActiveListFactory {
          *
          * @return the set of tokens
          */
-        public List getTokens() {
+        public List<Token> getTokens() {
             return tokenList;
         }
 

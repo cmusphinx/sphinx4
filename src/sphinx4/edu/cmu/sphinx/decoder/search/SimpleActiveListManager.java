@@ -51,8 +51,6 @@ public class SimpleActiveListManager implements ActiveListManager {
     private Logger logger;
     private boolean checkPriorLists;
     private List activeListFactories;
-    private int absoluteWordBeam;
-    private double relativeWordBeam;
     private ActiveList[] currentActiveLists;
 
 

@@ -12,22 +12,16 @@
  */
 package edu.cmu.sphinx.decoder.search;
 
-import edu.cmu.sphinx.util.LogMath;
-import edu.cmu.sphinx.util.props.*;
+import edu.cmu.sphinx.util.props.PropertyException;
+import edu.cmu.sphinx.util.props.PropertySheet;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 
 /** A factory for simple active lists */
-public class SimpleActiveListFactory implements ActiveListFactory {
-
-    /** Sphinx property that defines the name of the logmath to be used by this search manager. */
-    @S4Component(type = LogMath.class)
-    public final static String PROP_LOG_MATH = "logMath";
-
-    private String name;
-    private int absoluteBeamWidth = 2000;
-    private float logRelativeBeamWidth;
-    private LogMath logMath;
+public class SimpleActiveListFactory extends ActiveListFactory {
 
 
     /*
@@ -36,22 +30,7 @@ public class SimpleActiveListFactory implements ActiveListFactory {
     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
     */
     public void newProperties(PropertySheet ps) throws PropertyException {
-        absoluteBeamWidth = ps.getInt(PROP_ABSOLUTE_BEAM_WIDTH
-        );
-        double relativeBeamWidth = ps.getDouble(PROP_RELATIVE_BEAM_WIDTH
-        );
-        logMath = (LogMath) ps.getComponent(PROP_LOG_MATH);
-        logRelativeBeamWidth = logMath.linearToLog(relativeBeamWidth);
-    }
-
-
-    /*
-    * (non-Javadoc)
-    *
-    * @see edu.cmu.sphinx.util.props.Configurable#getName()
-    */
-    public String getName() {
-        return name;
+        super.newProperties(ps);
     }
 
 
