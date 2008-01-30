@@ -14,8 +14,8 @@ package edu.cmu.sphinx.linguist;
 
 import edu.cmu.sphinx.linguist.dictionary.Word;
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -288,5 +288,17 @@ public class WordSequence {
         }
 
         return getWordSequence(subseqWords);
+    }
+
+
+    /** @return <code>true</code> if this <code>WordSequence</code> contains the argument. */
+    public boolean contains(Word word) {
+        assert word != null;
+        for (int i = 0; i < words.length; i++) {
+            if (words[i].equals(word))
+                return true;
+        }
+
+        return false;
     }
 }
