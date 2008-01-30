@@ -223,7 +223,7 @@ public class LexTreeLinguist implements Linguist {
     private Word[] sentenceStartWordArray;
     private SearchGraph searchGraph;
     private HMMPool hmmPool;
-    private HMMTree hmmTree;
+    protected HMMTree hmmTree;
     private ArcCache arcCache = new ArcCache();
 
     private int cacheTrys;
@@ -347,8 +347,7 @@ public class LexTreeLinguist implements Linguist {
 
         hmmPool = new HMMPool(acousticModel, logger, unitManager);
 
-        hmmTree = new HMMTree(hmmPool, dictionary, languageModel,
-                addFillerWords, languageWeight);
+        generateHmmTree();
 
         hmmPool.dumpInfo();
 
@@ -357,6 +356,11 @@ public class LexTreeLinguist implements Linguist {
         // information about the process
 
         searchGraph = new LexTreeSearchGraph(getInitialSearchState());
+    }
+
+
+    protected void generateHmmTree() {
+        hmmTree = new HMMTree(hmmPool, dictionary, languageModel, addFillerWords, languageWeight);
     }
 
 
