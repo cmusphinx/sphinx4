@@ -18,7 +18,8 @@ import edu.cmu.sphinx.result.ResultListener;
 import edu.cmu.sphinx.util.props.*;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /** The primary decoder class */
 public class Decoder implements Configurable {
@@ -34,11 +35,10 @@ public class Decoder implements Configurable {
     @S4Component(type = SearchManager.class)
     public final static String PROP_SEARCH_MANAGER = "searchManager";
 
-    private String name;
     private SearchManager searchManager;
     private int featureBlockSize;
 
-    private List resultListeners = Collections.synchronizedList(new ArrayList());
+    private List<ResultListener> resultListeners = new ArrayList<ResultListener>();
 
 
     /*
@@ -47,20 +47,8 @@ public class Decoder implements Configurable {
     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
     */
     public void newProperties(PropertySheet ps) throws PropertyException {
-        featureBlockSize = ps.getInt(PROP_FEATURE_BLOCK_SIZE
-        );
-        searchManager = (SearchManager) ps.getComponent(PROP_SEARCH_MANAGER
-        );
-    }
-
-
-    /*
-    * (non-Javadoc)
-    *
-    * @see edu.cmu.sphinx.util.props.Configurable#getName()
-    */
-    public String getName() {
-        return name;
+        featureBlockSize = ps.getInt(PROP_FEATURE_BLOCK_SIZE);
+        searchManager = (SearchManager) ps.getComponent(PROP_SEARCH_MANAGER);
     }
 
 
@@ -124,12 +112,11 @@ public class Decoder implements Configurable {
      * @param result the new result
      */
     private void fireResultListeners(Result result) {
-        synchronized (resultListeners) {
-            for (Iterator i = resultListeners.iterator(); i.hasNext();) {
-                ResultListener resultListener = (ResultListener) i.next();
-                resultListener.newResult(result);
-            }
+//        synchronized (resultListeners) {
+        for (ResultListener resultListener : resultListeners) {
+            resultListener.newResult(result);
         }
+//        }
     }
 
 
