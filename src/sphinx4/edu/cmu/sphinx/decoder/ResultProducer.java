@@ -1,18 +1,19 @@
 package edu.cmu.sphinx.decoder;
 
 import edu.cmu.sphinx.result.ResultListener;
+import edu.cmu.sphinx.util.props.Configurable;
 
 /**
  * Some API-elements shared by components which are able to produce <code>Result</code>s.
  *
  * @see edu.cmu.sphinx.result.Result
  */
-public interface ResultProducer {
+public interface ResultProducer extends Configurable {
 
-    /** Registers a new listener for <code>Result</code>-notifications */
+    /** Registers a new listener for <code>Result</code>. */
     void addResultListener(ResultListener resultListener);
 
 
-    /** Removs a listener from this <code>ResultProducer</code>-instance. */
+    /** Removes a listener from this <code>ResultProducer</code>-instance. */
     void removeResultListener(ResultListener resultListener);
 }
