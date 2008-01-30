@@ -200,9 +200,9 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
         pruneTimer = Timer.getTimer("Prune");
         growTimer = Timer.getTimer("Grow");
 
-        totalTokensScored = StatisticsVariable                 .getStatisticsVariable("totalTokensScored");
-        curTokensScored = StatisticsVariable                .getStatisticsVariable("curTokensScored");
-        tokensCreated = StatisticsVariable                    .getStatisticsVariable("tokensCreated");
+        totalTokensScored = StatisticsVariable.getStatisticsVariable("totalTokensScored");
+        curTokensScored = StatisticsVariable.getStatisticsVariable("curTokensScored");
+        tokensCreated = StatisticsVariable.getStatisticsVariable("tokensCreated");
 
         linguist.allocate();
         pruner.allocate();
@@ -434,9 +434,8 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
 
         // monitorWords(activeList);
         monitorStates(activeList);
-        if (false) {
-            System.out.println("BEST " + bestToken);
-        }
+
+//            System.out.println("BEST " + bestToken);
 
         curTokensScored.value += activeList.size();
         totalTokensScored.value += activeList.size();
@@ -675,10 +674,7 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
                 if (firstToken) {
                     activeListAdd(newBestToken);
                 } else {
-                    if (false) {
-                        System.out.println("Replacing " + bestToken + " with "
-                                + newBestToken);
-                    }
+//                    System.out.println("Replacing " + bestToken + " with " + newBestToken);
                     activeListReplace(bestToken, newBestToken);
                     if (buildWordLattice && newBestToken.isWord()) {
 
