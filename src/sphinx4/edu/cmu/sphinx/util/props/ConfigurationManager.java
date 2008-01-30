@@ -170,14 +170,29 @@ public class ConfigurationManager implements Cloneable {
      *
      * @param confClass The class of the configurable to be instantiated and to be added to this configuration manager
      *                  instance.
+     * @param name      The desired lookup-name of the configurable
+     * @throws IllegalArgumentException if the there's already a component with the same <code>name</code> registered to
+     *                                  this configuration manager instance.
+     */
+    public void addConfigurable(Class<? extends Configurable> confClass, String name) {
+        addConfigurable(confClass, name, new HashMap<String, Object>());
+    }
+
+
+    /**
+     * Registers a new configurable to this configuration manager.
+     *
+     * @param confClass The class of the configurable to be instantiated and to be added to this configuration manager
+     *                  instance.
      * @param name      The desired  lookup-name of the configurable
      * @param props     The properties to be used for component configuration
      * @throws IllegalArgumentException if the there's already a component with the same <code>name</code> registered to
      *                                  this configuration manager instance.
      */
     public void addConfigurable(Class<? extends Configurable> confClass, String name, Map<String, Object> props) {
-        if (name == null)
+        if (name == null) // use the class name as default if no name is given
             name = confClass.getName();
+
         if (symbolTable.containsKey(name))
             throw new IllegalArgumentException("tried to override existing component name");
 
@@ -191,16 +206,22 @@ public class ConfigurationManager implements Cloneable {
 
 
     /**
-     * Registers a new configurable to this configuration manager.
+     * Adds an already instantiated <code>Configurable</code> to this configuration manager.
      *
-     * @param confClass    The class of the configurable to be instantiated and to be added to this configuration
-     *                     manager instance.
-     * @param instanceName The desired  lookup-instanceName of the configurable
-     * @throws IllegalArgumentException if the there's already a component with the same <code>instanceName</code>
-     *                                  registered to this configuration manager instance.
+     * @param name The desired lookup-instanceName of the configurable
      */
-    public void addConfigurable(Class<? extends Configurable> confClass, String instanceName) {
-        addConfigurable(confClass, instanceName, new HashMap<String, Object>());
+    public void addConfigurable(Configurable configurable, String name) {
+        if (symbolTable.containsKey(name))
+            throw new IllegalArgumentException("tried to override existing component name");
+
+        RawPropertyData dummyRPD = new RawPropertyData(name, configurable.getClass().getName());
+
+        PropertySheet ps = new PropertySheet(configurable, name, dummyRPD, this);
+        symbolTable.put(name, ps);
+        rawPropertyMap.put(name, dummyRPD);
+
+        for (ConfigurationChangeListener changeListener : changeListeners)
+            changeListener.componentAdded(this, ps);
     }
 
 
