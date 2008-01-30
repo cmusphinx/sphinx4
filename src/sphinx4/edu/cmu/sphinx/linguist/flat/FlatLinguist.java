@@ -90,6 +90,23 @@ public class FlatLinguist implements Linguist, Configurable {
     @S4Double(defaultValue = 1.0)
     public static final String PROP_PHONE_INSERTION_PROBABILITY = "phoneInsertionProbability";
 
+
+    /** Property to control the the dumping of the search space */
+    @S4Boolean(defaultValue = false)
+    public final static String PROP_SHOW_SEARCH_SPACE = "showSearchSpace";
+
+    /**
+     * Property to control whether compilation progress is displayed on stdout. If this property is true, a 'dot' is
+     * displayed for every 1000 search states added to the search space
+     */
+    @S4Boolean(defaultValue = false)
+    public final static String PROP_SHOW_COMPILATION_PROGRESS = "showCompilationProgress";
+
+    /** Property that controls whether word probabilities are spread across all pronunciations. */
+    @S4Boolean(defaultValue = false)
+    public final static String PROP_SPREAD_WORD_PROBABILITIES_ACROSS_PRONUNCIATIONS =
+            "spreadWordProbabilitiesAcrossPronunciations";
+
     /** Default value for PROP_PHONE_INSERTION_PROBABILITY */
     public static final double PROP_PHONE_INSERTION_PROBABILITY_DEFAULT = 1.0;
 
@@ -172,15 +189,14 @@ public class FlatLinguist implements Linguist, Configurable {
         setupAcousticModel(ps);
         logMath = (LogMath) ps.getComponent(PROP_LOG_MATH);
         grammar = (Grammar) ps.getComponent(PROP_GRAMMAR);
-        unitManager = (UnitManager) ps.getComponent(PROP_UNIT_MANAGER
-        );
+        unitManager = (UnitManager) ps.getComponent(PROP_UNIT_MANAGER);
 
         // get the rest of the configuration data
         logWordInsertionProbability = logMath.linearToLog(ps.getDouble(PROP_WORD_INSERTION_PROBABILITY));
         logSilenceInsertionProbability = logMath.linearToLog(ps.getDouble(PROP_SILENCE_INSERTION_PROBABILITY));
         logUnitInsertionProbability = logMath.linearToLog(ps.getDouble(PROP_UNIT_INSERTION_PROBABILITY));
         languageWeight = ps.getFloat(Linguist.PROP_LANGUAGE_WEIGHT);
-        showSentenceHMM = ps.getBoolean(Linguist.PROP_SHOW_SEARCH_SPACE);
+        showSentenceHMM = ps.getBoolean(PROP_SHOW_SEARCH_SPACE);
         dumpGStates = ps.getBoolean(PROP_DUMP_GSTATES);
         showCompilationProgress = ps.getBoolean(PROP_SHOW_COMPILATION_PROGRESS);
         spreadWordProbabilitiesAcrossPronunciations = ps.getBoolean(PROP_SPREAD_WORD_PROBABILITIES_ACROSS_PRONUNCIATIONS);
@@ -195,6 +211,8 @@ public class FlatLinguist implements Linguist, Configurable {
             phoneLoopAcousticModel = (AcousticModel)
                     ps.getComponent(PROP_PHONE_LOOP_ACOUSTIC_MODEL);
         }
+
+        name = ps.getInstanceName();
     }
 
 
@@ -863,6 +881,7 @@ public class FlatLinguist implements Linguist, Configurable {
             if (units.length > 0) {
                 return (getRightContextSize(units[0]) < getRightContextSize());
             }
+
             return false;
         }
 

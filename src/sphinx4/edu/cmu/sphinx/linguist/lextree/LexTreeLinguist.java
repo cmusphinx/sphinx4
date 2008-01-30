@@ -133,7 +133,7 @@ public class LexTreeLinguist implements Linguist {
     public final static String PROP_ACOUSTIC_MODEL = "acousticModel";
 
     /** A sphinx property used to define the unit manager to use when building the search graph */
-    @S4Component(type = UnitManager.class)
+    @S4Component(type = UnitManager.class, defaultClass = UnitManager.class)
     public final static String PROP_UNIT_MANAGER = "unitManager";
 
     /** Sphinx property that defines the name of the logmath to be used by this search manager. */
@@ -158,6 +158,28 @@ public class LexTreeLinguist implements Linguist {
     /** A sphinx property that defines the size of the arc cache (zero to disable the cache). */
     @S4Integer(defaultValue = 0)
     public final static String PROP_CACHE_SIZE = "cacheSize";
+
+    /** Property that controls whether filler words are automatically added to the vocabulary */
+    @S4Boolean(defaultValue = false)
+    public final static String PROP_ADD_FILLER_WORDS = "addFillerWords";
+
+    /**
+     * Property to control whether or not the linguist will generate unit states.   When this property is false the
+     * linguist may omit UnitSearchState states.  For some search algorithms this will allow for a faster search with
+     * more compact results.
+     */
+    @S4Boolean(defaultValue = false)
+    public final static String PROP_GENERATE_UNIT_STATES = "generateUnitStates";
+
+
+    /** A sphinx property that determines whether or not unigram probabilities are smeared through the lex tree */
+    @S4Boolean(defaultValue = false)
+    public final static String PROP_WANT_UNIGRAM_SMEAR = "wantUnigramSmear";
+
+
+    /** A sphinx property that determines the weight of the smear */
+    @S4Double(defaultValue = 1.0)
+    public final static String PROP_UNIGRAM_SMEAR_WEIGHT = "unigramSmearWeight";
 
 
     // just for detailed debugging
