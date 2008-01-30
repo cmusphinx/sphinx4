@@ -37,6 +37,9 @@ public class HMMPool {
     private UnitManager unitManager;
 
 
+    protected HMMPool(){
+    }
+
     /**
      * Constructs a HMMPool object.
      *
@@ -179,7 +182,7 @@ public class HMMPool {
      * @param position the position within the word
      * @return the hmm associated with the unit/position
      */
-    public final HMM getHMM(int unitID, HMMPosition position) {
+    public HMM getHMM(int unitID, HMMPosition position) {
         return hmmTable[position.getIndex()][unitID];
     }
 

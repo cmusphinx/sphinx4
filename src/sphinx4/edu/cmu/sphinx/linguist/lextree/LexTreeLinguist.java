@@ -201,14 +201,14 @@ public class LexTreeLinguist implements Linguist {
     // ------------------------------------
     private Logger logger;
     private boolean fullWordHistories = true;
-    private boolean addFillerWords = false;
+    protected boolean addFillerWords = false;
     private boolean generateUnitStates = false;
     private boolean wantUnigramSmear = true;
     private float unigramSmearWeight = 1.0f;
     private boolean cacheEnabled = false;
     private int maxArcCacheSize = 0;
 
-    private float languageWeight;
+    protected float languageWeight;
     private float logWordInsertionProbability;
     private float logUnitInsertionProbability;
     private float logFillerInsertionProbability;
@@ -223,8 +223,9 @@ public class LexTreeLinguist implements Linguist {
     private Word[] sentenceStartWordArray;
     private SearchGraph searchGraph;
     private HMMPool hmmPool;
-    protected HMMTree hmmTree;
     private ArcCache arcCache = new ArcCache();
+
+    protected HMMTree hmmTree;
 
     private int cacheTrys;
     private int cacheHits;
@@ -324,6 +325,11 @@ public class LexTreeLinguist implements Linguist {
     }
 
 
+    public Dictionary getDictionary() {
+        return dictionary;
+    }
+
+
     /**
      * retrieves the initial language state
      *
@@ -338,18 +344,14 @@ public class LexTreeLinguist implements Linguist {
 
 
     /** Compiles the n-gram into a lex tree that is used during the search */
-    protected void compileGrammar() {
+    private void compileGrammar() {
         Timer.start("compile");
 
         sentenceEndWord = dictionary.getSentenceEndWord();
         sentenceStartWordArray = new Word[1];
         sentenceStartWordArray[0] = dictionary.getSentenceStartWord();
 
-        hmmPool = new HMMPool(acousticModel, logger, unitManager);
-
         generateHmmTree();
-
-        hmmPool.dumpInfo();
 
         Timer.stop("compile");
         // Now that we are all done, dump out some interesting
@@ -360,7 +362,11 @@ public class LexTreeLinguist implements Linguist {
 
 
     protected void generateHmmTree() {
+        hmmPool = new HMMPool(acousticModel, logger, unitManager);
+
         hmmTree = new HMMTree(hmmPool, dictionary, languageModel, addFillerWords, languageWeight);
+
+        hmmPool.dumpInfo();
     }
 
 
