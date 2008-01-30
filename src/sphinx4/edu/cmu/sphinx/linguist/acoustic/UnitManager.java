@@ -125,7 +125,7 @@ public class UnitManager implements Configurable {
             Unit u = new Unit(name, filler, nextID++);
             unit = u;
             ciMap.put(name, unit);
-            if (logger.isLoggable(Level.INFO)) {
+            if (logger != null && logger.isLoggable(Level.INFO)) {
                 logger.info("CI Unit: " + unit);
             }
         }
