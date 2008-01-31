@@ -54,12 +54,12 @@ public abstract class Grammar implements Configurable, GrammarInterface {
     /** Property that defines the dictionary to use for this grammar */
     @S4Component(type = Dictionary.class)
     public final static String PROP_DICTIONARY = "dictionary";
-    
+
     // ----------------------------
     // Configuration data
     // -----------------------------
     private Logger logger;
-    
+
     private boolean showGrammar;
     private boolean optimizeGrammar = true;
     private boolean addSilenceWords = false;
@@ -244,8 +244,37 @@ public abstract class Grammar implements Configurable, GrammarInterface {
      */
     private GrammarNode selectRandomSuccessor(GrammarNode node) {
         GrammarArc[] arcs = node.getSuccessors();
-        int index = randomizer.nextInt(arcs.length);
-        return arcs[index].getGrammarNode();
+
+        // select a transition arc with respect to the arc-probabilities (which are log and we don't have a logMath here
+        // which makes the implementation a little bit messy
+        if (arcs.length > 1) {
+            double[] linWeights = new double[arcs.length];
+            double linWeightsSum = 0;
+
+            final double EPS = 1E-10;
+
+            for (int i = 0; i < linWeights.length; i++) {
+                linWeights[i] = (arcs[0].getProbability() + EPS) / (arcs[i].getProbability() + EPS);
+                linWeightsSum += linWeights[i];
+            }
+
+            for (int i = 0; i < linWeights.length; i++) {
+                linWeights[i] /= linWeightsSum;
+            }
+
+
+            double selIndex = randomizer.nextDouble();
+            int index = 0;
+            for (int i = 0; selIndex > EPS; i++) {
+                index = i;
+                selIndex -= linWeights[i];
+            }
+
+            return arcs[index].getGrammarNode();
+
+        } else {
+            return arcs[0].getGrammarNode();
+        }
     }
 
 
