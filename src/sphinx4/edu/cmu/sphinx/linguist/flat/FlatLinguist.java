@@ -477,18 +477,6 @@ public class FlatLinguist implements Linguist, Configurable {
     }
 
 
-    /** @return the Grammar */
-    public Grammar getGrammar() {
-        return grammar;
-    }
-
-
-    /** @return the AcousticModel */
-    public AcousticModel getAcousticModel() {
-        return acousticModel;
-    }
-
-
     /** The search graph that is produced by the flat linguist. */
     class FlatSearchGraph implements SearchGraph {
 

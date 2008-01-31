@@ -240,20 +240,6 @@ public class Recognizer implements Configurable, ResultProducer {
 
 
     /* (non-Javadoc)
-    * @see edu.cmu.sphinx.util.props.Configurable#getName()
-    */
-    public String getName() {
-        return name;
-    }
-
-
-    /** @return the decoder containing all the components of this recognizer */
-    public Decoder getDecoder() {
-        return decoder;
-    }
-
-
-    /* (non-Javadoc)
     * @see java.lang.Object#toString()
     */
     public String toString() {

@@ -12,9 +12,6 @@
 
 package edu.cmu.sphinx.decoder.search;
 
-import edu.cmu.sphinx.decoder.pruner.Pruner;
-import edu.cmu.sphinx.decoder.scorer.AcousticScorer;
-import edu.cmu.sphinx.linguist.Linguist;
 import edu.cmu.sphinx.result.Result;
 import edu.cmu.sphinx.util.props.Configurable;
 
@@ -64,19 +61,6 @@ public interface SearchManager extends Configurable {
 
     /** Performs post-recognition cleanup. This method should be called after recognize returns a final result. */
     public void stopRecognition();
-
-
-    /** @return the Linguist used by this decoder */
-    public Linguist getLinguist();
-
-
-    /** @return the Pruner used by this decoder */
-    public Pruner getPruner();
-
-
-    /** @return the Scorer used by this decoder */
-    public AcousticScorer getScorer();
-
 }
 
 

@@ -30,7 +30,7 @@ public final class ConfigurationManagerUtils {
     private static final Pattern globalSymbolPattern = Pattern.compile("\\$\\{(\\w+)\\}");
 
     /** A common property (used by all components) that sets the log level for the component. */
-    private final static String GLOBAL_COMMON_LOGLEVEL = "logLevel";
+    public final static String GLOBAL_COMMON_LOGLEVEL = "logLevel";
 
     /** The default file suffix of configuration files. */
     public static final String CM_FILE_SUFFIX = ".sxl";

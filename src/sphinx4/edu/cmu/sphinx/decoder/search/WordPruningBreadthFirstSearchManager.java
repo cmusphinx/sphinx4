@@ -849,36 +849,6 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
 
 
     /**
-     * Returns the Linguist.
-     *
-     * @return the Linguist
-     */
-    public Linguist getLinguist() {
-        return linguist;
-    }
-
-
-    /**
-     * Returns the Pruner.
-     *
-     * @return the Pruner
-     */
-    public Pruner getPruner() {
-        return pruner;
-    }
-
-
-    /**
-     * Returns the AcousticScorer.
-     *
-     * @return the AcousticScorer
-     */
-    public AcousticScorer getScorer() {
-        return scorer;
-    }
-
-
-    /**
      * Returns the LogMath used.
      *
      * @return the LogMath used

@@ -1,10 +1,11 @@
 package edu.cmu.sphinx.tools.batch;
 
 import edu.cmu.sphinx.decoder.search.Token;
-import edu.cmu.sphinx.linguist.flat.FlatLinguist;
 import edu.cmu.sphinx.linguist.language.grammar.BatchForcedAlignerGrammar;
 import edu.cmu.sphinx.linguist.language.grammar.ForcedAlignerGrammar;
 import edu.cmu.sphinx.result.Result;
+import edu.cmu.sphinx.util.props.PropertyException;
+import edu.cmu.sphinx.util.props.PropertySheet;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -31,11 +32,12 @@ public class BatchForcedAlignerRecognizer extends BatchNISTRecognizer {
 
     String segFile;
     ForcedAlignerGrammar forcedAlignerGrammar;
+    public BatchForcedAlignerGrammar bfaGrammar;
 
 
     protected void setInputStream(CTLUtterance utt) throws IOException {
         super.setInputStream(utt);
-        ((BatchForcedAlignerGrammar) (((FlatLinguist) (recognizer.getDecoder().getSearchManager().getLinguist())).getGrammar())).setUtterance(utt.getName());
+        bfaGrammar.setUtterance(utt.getName());
     }
 
 
@@ -54,11 +56,23 @@ public class BatchForcedAlignerRecognizer extends BatchNISTRecognizer {
     }
 
 
+    /*
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
+    */
+    @Override
+    public void newProperties(PropertySheet ps) throws PropertyException {
+        super.newProperties(ps);
+
+        bfaGrammar = (BatchForcedAlignerGrammar) ps.getComponent("forcedAlignerGrammar");
+    }
+
+
     public static void main(String[] argv) {
 
         if (argv.length != 1) {
-            System.out.println(
-                    "Usage: BatchForcedAlignerRecognizer propertiesFile");
+            System.out.println("Usage: BatchForcedAlignerRecognizer propertiesFile");
             System.exit(1);
         }
 

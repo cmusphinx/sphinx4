@@ -118,9 +118,4 @@ public class Decoder implements Configurable, ResultProducer {
         }
 //        }
     }
-
-
-    public SearchManager getSearchManager() {
-        return searchManager;
-    }
 }
