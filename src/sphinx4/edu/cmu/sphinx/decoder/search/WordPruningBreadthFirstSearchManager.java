@@ -105,6 +105,7 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
 
     /** Sphinx4 property that specifies the relative beam width */
     @S4Double(defaultValue = 0.0)
+    // todo this should be a more meaningful defaul e.g. the common 1E-80
     public final static String PROP_RELATIVE_BEAM_WIDTH = "relativeBeamWidth";
 
     // TODO: since the token stacks are permanently disabled,
