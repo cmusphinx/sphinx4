@@ -9,7 +9,6 @@ import junit.framework.Assert;
 import org.junit.Test;
 
 import java.io.*;
-import java.lang.reflect.Proxy;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
@@ -25,19 +24,21 @@ import java.util.regex.Pattern;
  *
  * @author Holger Brandl
  */
-public class ConfigurationManagerUtils {
+public final class ConfigurationManagerUtils {
 
     // this pattern matches strings of the form '${word}'
-    private static Pattern globalSymbolPattern = Pattern.compile("\\$\\{(\\w+)\\}");
-
-    /** A common property (used by all components) that sets the tersness of the log output */
-    public final static String PROP_COMMON_LOG_TERSE = "logTerse";
+    private static final Pattern globalSymbolPattern = Pattern.compile("\\$\\{(\\w+)\\}");
 
     /** A common property (used by all components) that sets the log level for the component. */
-    public final static String GLOBAL_COMMON_LOGLEVEL = "logLevel";
+    private final static String GLOBAL_COMMON_LOGLEVEL = "logLevel";
 
     /** The default file suffix of configuration files. */
     public static final String CM_FILE_SUFFIX = ".sxl";
+
+
+    // disabled constructor because the class is just a collection of utitilites for handling system configurations
+    private ConfigurationManagerUtils() {
+    }
 
 
     /**
@@ -360,32 +361,6 @@ public class ConfigurationManagerUtils {
     }
 
 
-    /** PropertySheet.setter-methods should be used instead. */
-    @Deprecated
-    public static void setProperty(String componentName, String propName, String propValue, ConfigurationManager cm) {
-
-        PropertySheet ps = cm.getPropertySheet(componentName);
-        try {
-            Proxy wrapper = ps.getProperty(propName, Object.class).getAnnotation();
-            if (wrapper instanceof S4Component) {
-                ps.setComponent(propName, propValue, cm.lookup(propValue));
-            } else if (wrapper instanceof S4Boolean)
-                ps.setBoolean(propName, Boolean.valueOf(propValue));
-            else if (wrapper instanceof S4Integer)
-                ps.setInt(propName, Integer.valueOf(propValue));
-            else if (wrapper instanceof S4String)
-                ps.setString(propName, propValue);
-            else if (wrapper instanceof S4Double)
-                ps.setDouble(propName, Double.valueOf(propValue));
-            else if (wrapper instanceof S4ComponentList)
-                throw new RuntimeException("to set component lists please use PS.setComponentList()");
-//                   ps.setComponentList(propName, null, cm.lookup(propValue));
-        } catch (PropertyException e) {
-            e.printStackTrace();
-        }
-    }
-
-
     /**
      * Renames a given <code>Configurable</code>. The configurable component named <code>oldName</code> is assumed to be
      * registered to the CM. Renaming does not only affect the configurable itself but possibly global property values
@@ -533,7 +508,7 @@ public class ConfigurationManagerUtils {
     }
 
 
-    public static boolean isSubClass(Class aClass, Class possibleSuperclass) {
+    private static boolean isSubClass(Class aClass, Class possibleSuperclass) {
         while (aClass != null && !aClass.equals(Object.class)) {
             aClass = aClass.getSuperclass();
 
@@ -561,7 +536,7 @@ public class ConfigurationManagerUtils {
 
 
     /**
-     * Why do we need this method. The reason is, that we would like to avoid the getPropertyManager part of the
+     * Why do we need this method? The reason is, that we would like to avoid this method ot be part of the
      * <code>PropertySheet</code>-API. In some circumstances it is nevertheless required to get access to the managing
      * <code>ConfigurationManager</code>.
      */

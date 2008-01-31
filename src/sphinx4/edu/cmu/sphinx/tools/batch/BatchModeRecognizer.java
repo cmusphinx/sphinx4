@@ -27,6 +27,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Proxy;
 import java.net.URL;
 import java.util.Iterator;
 import java.util.List;
@@ -197,7 +198,7 @@ public class BatchModeRecognizer implements Configurable {
             recognizer.deallocate();
         } catch (IOException io) {
             logger.severe("I/O error during decoding: " + io.getMessage());
-	    throw io;
+            throw io;
         }
         logger.info("BatchDecoder: " + count + " files decoded");
     }
@@ -314,7 +315,7 @@ public class BatchModeRecognizer implements Configurable {
                     ci.putResponse("Usage: set component property value");
                 } else {
 //                    System.err.println("tried to configure the CM with " + args );
-                    ConfigurationManagerUtils.setProperty(args[1], args[3], args[2], BatchModeRecognizer.this.cm);
+                    setProperty(args[1], args[3], args[2], BatchModeRecognizer.this.cm);
                 }
                 return "";
             }
@@ -534,7 +535,7 @@ public class BatchModeRecognizer implements Configurable {
             }
         } catch (IOException io) {
             logger.severe("I/O error during decoding: " + io.getMessage());
-	    throw io;
+            throw io;
         }
     }
 
@@ -560,29 +561,29 @@ public class BatchModeRecognizer implements Configurable {
             URL url = new File(cmFile).toURI().toURL();
             cm = new ConfigurationManager(url);
             bmr = (BatchModeRecognizer) cm.lookup("batch");
-	    if (bmr == null) {
-		System.err.println("Can't find batchModeRecognizer in " + cmFile);
-	    }
-	    if (argv.length >= 3 && argv[2].equals("-shell")) {
-		bmr.shell(batchFile);
-	    } else {
-		bmr.decode(batchFile);
-	    }
-	    /*
-        } catch (IOException ioe) {
-            System.err.println("I/O error: \n");
-	    ioe.printStackTrace();
-        } catch (InstantiationException e) {
-            System.err.println("Error during initialization: \n");
-	    e.printStackTrace();
-        } catch (PropertyException e) {
-            System.err.println("Error during initialization: \n");
-	    e.printStackTrace();
-	    */
+            if (bmr == null) {
+                System.err.println("Can't find batchModeRecognizer in " + cmFile);
+            }
+            if (argv.length >= 3 && argv[2].equals("-shell")) {
+                bmr.shell(batchFile);
+            } else {
+                bmr.decode(batchFile);
+            }
+            /*
+           } catch (IOException ioe) {
+               System.err.println("I/O error: \n");
+           ioe.printStackTrace();
+           } catch (InstantiationException e) {
+               System.err.println("Error during initialization: \n");
+           e.printStackTrace();
+           } catch (PropertyException e) {
+               System.err.println("Error during initialization: \n");
+           e.printStackTrace();
+           */
         } catch (Exception e) {
             System.err.println("Error during decoding: \n  ");
-	    e.printStackTrace();
-	}
+            e.printStackTrace();
+        }
     }
 
 
@@ -618,5 +619,29 @@ public class BatchModeRecognizer implements Configurable {
         }
         logger.info("BatchDecoder: " + count + " files decoded");
         return result;
+    }
+
+
+    private static void setProperty(String componentName, String propName, String propValue, ConfigurationManager cm) {
+
+        PropertySheet ps = cm.getPropertySheet(componentName);
+        try {
+            Proxy wrapper = ps.getProperty(propName, Object.class).getAnnotation();
+            if (wrapper instanceof S4Component) {
+                ps.setComponent(propName, propValue, cm.lookup(propValue));
+            } else if (wrapper instanceof S4Boolean)
+                ps.setBoolean(propName, Boolean.valueOf(propValue));
+            else if (wrapper instanceof S4Integer)
+                ps.setInt(propName, Integer.valueOf(propValue));
+            else if (wrapper instanceof S4String)
+                ps.setString(propName, propValue);
+            else if (wrapper instanceof S4Double)
+                ps.setDouble(propName, Double.valueOf(propValue));
+            else if (wrapper instanceof S4ComponentList)
+                throw new RuntimeException("to set component lists please use PS.setComponentList()");
+//                   ps.setComponentList(propName, null, cm.lookup(propValue));
+        } catch (PropertyException e) {
+            e.printStackTrace();
+        }
     }
 }
