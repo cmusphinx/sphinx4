@@ -34,7 +34,7 @@ import java.util.logging.Logger;
 /**
  * Provides the breadth first search. To perform recognition an application should call initialize before recognition
  * begins, and repeatedly call <code> recognize </code> until Result.isFinal() returns true. Once a final result has
- * been obtained, <code> terminate </code> should be called.
+ * been obtained, <code> stopRecognition </code> should be called.
  * <p/>
  * All scores and probabilities are maintained in the log math log domain.
  */
