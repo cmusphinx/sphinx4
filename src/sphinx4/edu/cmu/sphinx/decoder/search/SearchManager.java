@@ -45,6 +45,10 @@ public interface SearchManager extends Configurable {
     public void startRecognition();
 
 
+    /** Performs post-recognition cleanup. This method should be called after recognize returns a final result. */
+    public void stopRecognition();
+
+
     /**
      * Performs recognition. Processes no more than the given number of frames before returning. This method returns a
      * partial result after nFrames have been processed, or a final result if recognition completes while processing
@@ -57,10 +61,6 @@ public interface SearchManager extends Configurable {
      *         arrived
      */
     public Result recognize(int nFrames);
-
-
-    /** Performs post-recognition cleanup. This method should be called after recognize returns a final result. */
-    public void stopRecognition();
 }
 
 
