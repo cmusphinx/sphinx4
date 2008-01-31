@@ -16,9 +16,9 @@ import edu.cmu.sphinx.linguist.acoustic.Unit;
 import edu.cmu.sphinx.linguist.acoustic.UnitManager;
 import edu.cmu.sphinx.util.ExtendedStreamTokenizer;
 import edu.cmu.sphinx.util.Timer;
+import edu.cmu.sphinx.util.props.ConfigurationManagerUtils;
 import edu.cmu.sphinx.util.props.PropertyException;
 import edu.cmu.sphinx.util.props.PropertySheet;
-import edu.cmu.sphinx.util.props.ConfigurationManagerUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -362,16 +362,21 @@ public class FullDictionary implements Dictionary {
      * @return a string representation of this FullDictionary
      */
     public String toString() {
+        return super.toString() + "numWords=" + wordDictionary.size() + " dictLlocation=" + getWordDictionaryFile();
+    }
+
+
+    private String dumpToString() {
         SortedMap<String, Object> sorted = new TreeMap<String, Object>(wordDictionary);
         String result = "";
         sorted.putAll(fillerDictionary);
-        for (Iterator i = sorted.keySet().iterator(); i.hasNext();) {
-            String text = (String) i.next();
+        for (Object o : sorted.keySet()) {
+            String text = (String) o;
             Word word = getWord(text);
             Pronunciation[] pronunciations = word.getPronunciations(null);
             result += (word + "\n");
-            for (int p = 0; p < pronunciations.length; p++) {
-                result += ("   " + pronunciations[p].toString() + "\n");
+            for (Pronunciation pronunciation : pronunciations) {
+                result += ("   " + pronunciation.toString() + "\n");
             }
         }
         return result;
@@ -386,12 +391,5 @@ public class FullDictionary implements Dictionary {
     public Word[] getFillerWords() {
         return fillerDictionary.values().toArray(
                 new Word[fillerDictionary.values().size()]);
-    }
-
-
-    /** Dumps this FullDictionary to System.out. */
-    public void dump() {
-        System.out.println(wordDictionary.size() + " words");
-        System.out.print(toString());
     }
 }

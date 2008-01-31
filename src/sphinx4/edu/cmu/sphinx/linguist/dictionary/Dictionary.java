@@ -18,7 +18,6 @@ import edu.cmu.sphinx.util.props.S4Component;
 import edu.cmu.sphinx.util.props.S4String;
 
 import java.io.IOException;
-import java.net.URL;
 
 /**
  * Provides a generic interface to a dictionary. The dictionary is responsibile for determining how a word is
@@ -32,34 +31,30 @@ public interface Dictionary extends Configurable {
     public static final String SENTENCE_END_SPELLING = "</s>";
     /** Spelling of the 'word' that marks a silence */
     public static final String SILENCE_SPELLING = "<sil>";
+
     /** The name of the SphinxProperty that defines the location (directory or jar file) for the dictionary */
     @S4String
     public static final String PROP_LOCATION = "location";
-    /** The default value of PROP_LOCATION. */
-    public static final String PROP_LOCATION_DEFAULT = null;
+
     /** The name of the SphinxProperty for the dictionary file path. */
     @S4String
     public static final String PROP_DICTIONARY = "dictionaryPath";
-    /** The default value of PROP_DICTIONARY. */
-    public static final String PROP_DICTIONARY_DEFAULT = null;
+
     /** The name of the SphinxProperty for the filler dictionary file path. */
     @S4String
     public static final String PROP_FILLER_DICTIONARY = "fillerPath";
-    /** The default value of PROP_FILLER_DICTIONARY. */
-    public static final String PROP_FILLER_DICTIONARY_DEFAULT = null;
+
     /** The name of the SphinxProperty that specifies whether to add a duplicate SIL-ending pronunication. */
     @S4Boolean(defaultValue = false)
     public static final String PROP_ADD_SIL_ENDING_PRONUNCIATION = "addSilEndingPronunciation";
-    /** The default value of PROP_ADD_SIL_ENDING_PRONUNCIATION. */
-    public static final boolean PROP_ADD_SIL_ENDING_PRONUNCIATION_DEFAULT = false;
+
     /**
      * The name of the SphinxProperty that specifies the word to substitute when a lookup fails to find the word in the
      * dictionary. If this is not set, no substitute is performed.
      */
     @S4String(mandatory = false)
     public static final String PROP_WORD_REPLACEMENT = "wordReplacement";
-    /** The default value of PROP_WORD_REPLACEMENT. */
-    public static final String PROP_WORD_REPLACEMENT_DEFAULT = null;
+
     /**
      * The name of the SphinxProperty that specifies whether the dictionary should return null if a word is not found in
      * the dictionary, or whether it should throw an error. If true, a null is returned for words that are not found in
@@ -67,8 +62,7 @@ public interface Dictionary extends Configurable {
      */
     @S4Boolean(defaultValue = false)
     public static final String PROP_ALLOW_MISSING_WORDS = "allowMissingWords";
-    /** The default value of PROP_ALLOW_MISSING_WORDS. */
-    public static final boolean PROP_ALLOW_MISSING_WORDS_DEFAULT = false;
+
     /**
      * The SphinxProperty that specifies whether the Dictionary.getWord() method should return a Word object even if the
      * word does not exist in the dictionary. If this property is true, and property allowMissingWords is also true, the
@@ -77,8 +71,6 @@ public interface Dictionary extends Configurable {
      */
     @S4Boolean(defaultValue = false)
     public static final String PROP_CREATE_MISSING_WORDS = "createMissingWords";
-    /** The default value of PROP_CREATE_MISSING_WORD. */
-    public static final boolean PROP_CREATE_MISSING_WORDS_DEFAULT = false;
 
     /** The sphinx property that defines the name of the unit manager that is used to convert strings to Unit objects */
     @S4Component(type = UnitManager.class)
@@ -128,32 +120,12 @@ public interface Dictionary extends Configurable {
     public WordClassification[] getPossibleWordClassifications();
 
 
-    /** Dumps out a dictionary */
-    public void dump();
-
-
     /**
      * Gets the set of all filler words in the dictionary
      *
      * @return an array (possibly empty) of all filler words
      */
     public Word[] getFillerWords();
-
-
-    /**
-     * Get the word dictionary file.
-     *
-     * @return the URL of the word dictionary file
-     */
-    public URL getWordDictionaryFile();
-
-
-    /**
-     * Get the filler dictionary file.
-     *
-     * @return the URL of the filler dictionary file
-     */
-    public URL getFillerDictionaryFile();
 
 
     /**
