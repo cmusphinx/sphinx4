@@ -47,7 +47,6 @@ public class SimpleActiveListManager implements ActiveListManager {
     // --------------------------------------
     // Configuration data
     // --------------------------------------
-    private String name;
     private Logger logger;
     private boolean checkPriorLists;
     private List activeListFactories;
@@ -64,16 +63,6 @@ public class SimpleActiveListManager implements ActiveListManager {
 
         activeListFactories = ps.getComponentList(PROP_ACTIVE_LIST_FACTORIES);
         checkPriorLists = ps.getBoolean(PROP_CHECK_PRIOR_LISTS_EMPTY);
-    }
-
-
-    /*
-    * (non-Javadoc)
-    *
-    * @see edu.cmu.sphinx.util.props.Configurable#getName()
-    */
-    public String getName() {
-        return name;
     }
 
 
