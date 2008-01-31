@@ -48,9 +48,6 @@ public class ParallelSearchManager implements SearchManager {
     @S4Boolean(defaultValue = false)
     public static final String PROP_DO_FEATURE_PRUNING = "doFeaturePruning";
 
-    /** The default value for whether to do feature pruning, which is false. */
-    public static final boolean PROP_DO_FEATURE_PRUNING_DEFAULT = false;
-
     /** The sphinx property for the feature score pruner. */
     @S4Component(type = FeatureScorePruner.class)
     public static final String PROP_FEATURE_SCORE_PRUNER = "featureScorePruner";
@@ -58,9 +55,6 @@ public class ParallelSearchManager implements SearchManager {
     /** The sphinx property name for whether to do combine pruning. */
     @S4Boolean(defaultValue = false)
     public static final String PROP_DO_COMBINE_PRUNING = "doCombinePruning";
-
-    /** The default value for whether to do combine pruning, which is false. */
-    public static final boolean PROP_DO_COMBINE_PRUNING_DEFAULT = false;
 
 //    /** The sphinx property for the combined score pruner. */
 //    @S4Component(type = FeatureScoreCombiner.class)
@@ -79,7 +73,6 @@ public class ParallelSearchManager implements SearchManager {
     public static final String PROP_LOG_MATH = "logMath";
 
 
-    private String name;
     private ParallelSimpleLinguist linguist;
     private AcousticScorer scorer;
     private Pruner featureScorePruner;
@@ -91,9 +84,9 @@ public class ParallelSearchManager implements SearchManager {
     private ActiveListFactory activeListFactory;
     private ActiveList combinedActiveList;    // ActiveList for common states
     private ActiveList delayedExpansionList;  // for tokens at CombineStates
-    private List resultList;
+    private List<Token> resultList;
 
-    private Map bestTokenMap;
+    private Map<SearchState, Token> bestTokenMap;
 
     private Timer scoreTimer;
     private Timer pruneTimer;
@@ -112,24 +105,18 @@ public class ParallelSearchManager implements SearchManager {
 
         logMath = (LogMath) ps.getComponent(PROP_LOG_MATH);
 
-        linguist = (ParallelSimpleLinguist) ps.getComponent
-                (PROP_LINGUIST);
+        linguist = (ParallelSimpleLinguist) ps.getComponent(PROP_LINGUIST);
 
-        scorer = (AcousticScorer) ps.getComponent
-                (PROP_SCORER);
+        scorer = (AcousticScorer) ps.getComponent(PROP_SCORER);
 
-        activeListFactory = (ActiveListFactory) ps.getComponent
-                (PROP_ACTIVE_LIST_FACTORY);
+        activeListFactory = (ActiveListFactory) ps.getComponent(PROP_ACTIVE_LIST_FACTORY);
 
-        this.doFeaturePruning = ps.getBoolean
-                (PROP_DO_FEATURE_PRUNING);
+        this.doFeaturePruning = ps.getBoolean(PROP_DO_FEATURE_PRUNING);
 
-        this.doCombinePruning = ps.getBoolean
-                (PROP_DO_COMBINE_PRUNING);
+        this.doCombinePruning = ps.getBoolean(PROP_DO_COMBINE_PRUNING);
 
         if (doFeaturePruning) {
-            featureScorePruner = (FeatureScorePruner) ps.getComponent
-                    (PROP_FEATURE_SCORE_PRUNER);
+            featureScorePruner = (FeatureScorePruner) ps.getComponent(PROP_FEATURE_SCORE_PRUNER);
         }
 //        if (doCombinePruning) {
 //            combinedScorePruner = (CombinedScorePruner) ps.getComponent
@@ -149,7 +136,7 @@ public class ParallelSearchManager implements SearchManager {
      * @see edu.cmu.sphinx.decoder.search.SearchManager#allocate()
      */
     public void allocate() throws IOException {
-        bestTokenMap = new HashMap();
+        bestTokenMap = new HashMap<SearchState, Token>();
         linguist.allocate();
         if (doFeaturePruning) {
             featureScorePruner.allocate();
@@ -161,21 +148,7 @@ public class ParallelSearchManager implements SearchManager {
     }
 
 
-    /*
-    * (non-Javadoc)
-    *
-    * @see edu.cmu.sphinx.util.props.Configurable#getName()
-    */
-    public String getName() {
-        return name;
-    }
-
-
-    /**
-     * Prints a debug message.
-     *
-     * @param message the debug message to print
-     */
+    /** @param message the debug message to print */
     private void debugPrint(String message) {
         if (false) {
             System.out.println(message);
@@ -232,7 +205,7 @@ public class ParallelSearchManager implements SearchManager {
         }
 
         // grow the first CombineToken until we've reach emitting states
-        resultList = new LinkedList();
+        resultList = new LinkedList<Token>();
 
         calculateCombinedScore(firstToken);
 
@@ -343,7 +316,7 @@ public class ParallelSearchManager implements SearchManager {
 
         debugPrint("Growing");
 
-        resultList = new LinkedList();
+        resultList = new LinkedList<Token>();
         combinedActiveList = activeListFactory.newInstance();
         delayedExpansionList = activeListFactory.newInstance();
 
@@ -567,7 +540,7 @@ public class ParallelSearchManager implements SearchManager {
      * @return the best Token for the given SearchState
      */
     private Token getBestToken(SearchState state) {
-        return (Token) bestTokenMap.get(state);
+        return bestTokenMap.get(state);
     }
 
 
@@ -578,7 +551,7 @@ public class ParallelSearchManager implements SearchManager {
      * @param token the best Token for the given SearchState
      */
     private Token setBestToken(SearchState state, Token token) {
-        return (Token) bestTokenMap.put(state, token);
+        return bestTokenMap.put(state, token);
     }
 
 
@@ -600,8 +573,8 @@ public class ParallelSearchManager implements SearchManager {
         // make sure that this state is non-emitting
         assert !token.isEmitting();
 
-        SearchState state = (SearchState) token.getSearchState();
-        SearchStateArc[] arcs = (SearchStateArc[]) state.getSuccessors();
+        SearchState state = token.getSearchState();
+        SearchStateArc[] arcs = state.getSuccessors();
 
         // expand into each successor states
         for (int a = 0; a < arcs.length; a++) {
@@ -750,7 +723,7 @@ public class ParallelSearchManager implements SearchManager {
             combinedScorePruner.stopRecognition();
         }
         linguist.stopRecognition();
-        bestTokenMap = new HashMap();
+        bestTokenMap = new HashMap<SearchState, Token>();
     }
 
 
