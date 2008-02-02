@@ -16,16 +16,12 @@ import edu.cmu.sphinx.frontend.*;
 import edu.cmu.sphinx.frontend.endpoint.SpeechEndSignal;
 import edu.cmu.sphinx.frontend.endpoint.SpeechStartSignal;
 import edu.cmu.sphinx.result.Result;
-import edu.cmu.sphinx.util.props.PropertyException;
-import edu.cmu.sphinx.util.props.PropertySheet;
 
 
 /**
  * A decoder which does not use the common pull-principle of S4 but recognizes frame-wise (aka push-principle). When
  * using this decoder, make sure that the <code>AcousticScorer</code> used by the <code>SearchManager</code> can access
  * some buffered <code>Data</code>s.
- *
- * @see
  */
 public class FrameDecoder extends AbstractDecoder implements DataProcessor {
 
@@ -33,6 +29,17 @@ public class FrameDecoder extends AbstractDecoder implements DataProcessor {
 
     private boolean isRecognizing;
     public Result result;
+
+
+    /**
+     * Decode a single frame.
+     *
+     * @param referenceText the reference text (or null)
+     * @return a result
+     */
+    public Result decode(String referenceText) {
+        return searchManager.recognize(1);
+    }
 
 
     public Data getData() throws DataProcessingException {
@@ -85,19 +92,4 @@ public class FrameDecoder extends AbstractDecoder implements DataProcessor {
     public void initialize() {
     }
 
-
-    /**
-     * Decode frames until recognition is complete
-     *
-     * @param referenceText the reference text (or null)
-     * @return a result
-     */
-    public Result decode(String referenceText) {
-        return searchManager.recognize(1);
-    }
-
-
-    public void newProperties(PropertySheet ps) throws PropertyException {
-        super.newProperties(ps);
-    }
 }
