@@ -279,7 +279,7 @@ public final class WordSequence {
     }
 
 
-    /** Returns a subsequence with both <code>startIndex</code> and <code>stopIndex</code> inclusive. */
+    /** Returns a subsequence with both <code>startIndex</code> and <code>stopIndex</code> exclusive. */
     public WordSequence getSubSequence(int startIndex, int stopIndex) {
         List<Word> subseqWords = new ArrayList<Word>();
 
