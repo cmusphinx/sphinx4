@@ -15,6 +15,7 @@ package edu.cmu.sphinx.linguist;
 import edu.cmu.sphinx.linguist.dictionary.Word;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -288,6 +289,12 @@ public final class WordSequence {
         }
 
         return getWordSequence(subseqWords);
+    }
+
+
+    /** Returns the words contained in this sequence wrapped into a list. */
+    public List<Word> asList() {
+        return Arrays.asList(words);
     }
 
 

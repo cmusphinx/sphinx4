@@ -19,9 +19,9 @@ import edu.cmu.sphinx.result.Result;
 
 
 /**
- * A decoder which does not use the common pull-principle of S4 but recognizes frame-wise (aka push-principle). When
- * using this decoder, make sure that the <code>AcousticScorer</code> used by the <code>SearchManager</code> can access
- * some buffered <code>Data</code>s.
+ * A decoder which does not use the common pull-principle of S4 but processes only one single frame on each call of
+ * <code>decode()</code>. When using this decoder, make sure that the <code>AcousticScorer</code> used by the
+ * <code>SearchManager</code> can access some buffered <code>Data</code>s.
  */
 public class FrameDecoder extends AbstractDecoder implements DataProcessor {
 
