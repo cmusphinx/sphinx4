@@ -14,6 +14,7 @@
 package edu.cmu.sphinx.frontend;
 
 import edu.cmu.sphinx.util.MatrixUtils;
+import edu.cmu.sphinx.util.machlearn.Observation;
 
 /**
  * A Data object that holds data of primitive type float.
@@ -21,7 +22,7 @@ import edu.cmu.sphinx.util.MatrixUtils;
  * @see Data
  */
 @SuppressWarnings({"UnnecessaryLocalVariable"})
-public class FloatData implements Data, Cloneable {
+public class FloatData implements Data, Cloneable, Observation {
 
     private float[] values;
     private int sampleRate;

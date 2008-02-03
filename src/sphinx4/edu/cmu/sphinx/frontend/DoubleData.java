@@ -13,9 +13,11 @@
 
 package edu.cmu.sphinx.frontend;
 
+import edu.cmu.sphinx.util.machlearn.Observation;
+
 /** A Data object that holds data of primitive type double. */
 @SuppressWarnings({"UnnecessaryLocalVariable"})
-public class DoubleData implements Data, Cloneable {
+public class DoubleData implements Data, Cloneable, Observation {
 
     private double[] values;
     private int sampleRate;
