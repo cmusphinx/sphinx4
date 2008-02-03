@@ -45,8 +45,6 @@ public class ThreadedAcousticScorer implements AcousticScorer {
     @S4Integer(defaultValue = 1)
     public final static String PROP_NUM_THREADS = "numThreads";
 
-    /** The default value for PROP_NUM_THREADS. */
-    public final static int PROP_NUM_THREADS_DEFAULT = 1;
 
     /**
      * A sphinx property name that controls whether the number of available CPUs on the system is used when determining
@@ -58,8 +56,6 @@ public class ThreadedAcousticScorer implements AcousticScorer {
     @S4Boolean(defaultValue = false)
     public final static String PROP_IS_CPU_RELATIVE = "isCpuRelative";
 
-    /** The default value for PROP_IS_CPU_RELATIVE. */
-    public final static boolean PROP_IS_CPU_RELATIVE_DEFAULT = false;
 
     /**
      * A Sphinx Property name that controls the minimum number of scoreables sent to a thread. This is used to prevent
@@ -69,27 +65,17 @@ public class ThreadedAcousticScorer implements AcousticScorer {
     @S4Integer(defaultValue = 50)
     public final static String PROP_MIN_SCOREABLES_PER_THREAD = "minScoreablesPerThread";
 
-    /** The default value for PROP_MIN_SCOREABLES_PER_THREAD. */
-    public final static int PROP_MIN_SCOREABLES_PER_THREAD_DEFAULT = 50;
 
     /** A SphinxProperty specifying whether the scoreables should keep a reference to the scored features. */
     @S4Boolean(defaultValue = false)
     public final static String PROP_SCOREABLES_KEEP_FEATURE = "scoreablesKeepFeature";
 
-    /** The default value for PROP_SCOREABLES_KEEP_FEATURE. */
-    public final static boolean PROP_SCOREABLES_KEEP_FEATURE_DEFAULT = false;
 
     /** A sphinx property that controls the amount of acoustic gain. */
     @S4Double(defaultValue = 1.0)
     public final static String PROP_ACOUSTIC_GAIN = "acousticGain";
 
-    /** The default value for the PROP_ACOUSTIC_LOOKAHEAD_FRAMES property. */
-    public final static float PROP_ACOUSTIC_GAIN_DEFAULT = 1F;
 
-    // ----------------------------
-    // Configuration data
-    // ----------------------------
-    private String name;
     private BaseDataProcessor frontEnd;      // where features come from
     private int numThreads;         // number of threads in use
     private int minScoreablesPerThread; // min scoreables sent to a thread
@@ -122,7 +108,6 @@ public class ThreadedAcousticScorer implements AcousticScorer {
                 t.start();
             }
         }
-
     }
 
 
@@ -132,7 +117,6 @@ public class ThreadedAcousticScorer implements AcousticScorer {
     * @see edu.cmu.sphinx.decoder.scorer.AcousticScorer#deallocate()
     */
     public void deallocate() {
-
     }
 
 
@@ -161,22 +145,6 @@ public class ThreadedAcousticScorer implements AcousticScorer {
         if (numThreads < 1) {
             numThreads = 1;
         }
-
-    }
-
-
-    /*
-    * (non-Javadoc)
-    *
-    * @see edu.cmu.sphinx.util.props.Configurable#getName()
-    */
-    public String getName() {
-        return name;
-    }
-
-
-    /** Initializes the scorer */
-    public void startRecognition() {
     }
 
 
@@ -193,9 +161,9 @@ public class ThreadedAcousticScorer implements AcousticScorer {
             Data data = frontEnd.getData();
 
             while (data instanceof Signal) {
-                if(data instanceof SpeechEndSignal)
+                if (data instanceof SpeechEndSignal)
                     return null;
-                
+
                 data = frontEnd.getData();
             }
 
@@ -243,6 +211,11 @@ public class ThreadedAcousticScorer implements AcousticScorer {
             return best;
         }
         return best;
+    }
+
+
+    /** Initializes the scorer */
+    public void startRecognition() {
     }
 
 
