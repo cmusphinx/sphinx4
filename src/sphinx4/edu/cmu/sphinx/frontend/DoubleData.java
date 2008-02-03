@@ -13,16 +13,23 @@
 
 package edu.cmu.sphinx.frontend;
 
-import edu.cmu.sphinx.util.machlearn.Observation;
+import edu.cmu.sphinx.util.machlearn.ObservationVector;
 
 /** A Data object that holds data of primitive type double. */
-@SuppressWarnings({"UnnecessaryLocalVariable"})
-public class DoubleData implements Data, Cloneable, Observation {
+public class DoubleData extends ObservationVector implements Data {
 
-    private double[] values;
     private int sampleRate;
     private long firstSampleNumber;
     private long collectTime;
+
+
+    /**
+     * Constructs a new <code>Data</code> object with values only. All other internal fields like sampling rate etc. are
+     * initialized to -1.
+     */
+    public DoubleData(double[] values) {
+        super(values);
+    }
 
 
     /**
@@ -35,7 +42,8 @@ public class DoubleData implements Data, Cloneable, Observation {
      */
     public DoubleData(double[] values, int sampleRate,
                       long collectTime, long firstSampleNumber) {
-        this.values = values;
+        super(values);
+
         this.sampleRate = sampleRate;
         this.collectTime = collectTime;
         this.firstSampleNumber = firstSampleNumber;
@@ -50,16 +58,6 @@ public class DoubleData implements Data, Cloneable, Observation {
     public String toString() {
         return ("DoubleData: " + sampleRate + "Hz, first sample #: " +
                 firstSampleNumber + ", collect time: " + collectTime);
-    }
-
-
-    /**
-     * Returns the values of this DoubleData object.
-     *
-     * @return the values
-     */
-    public double[] getValues() {
-        return values;
     }
 
 
@@ -101,7 +99,10 @@ public class DoubleData implements Data, Cloneable, Observation {
      */
     public Object clone() throws CloneNotSupportedException {
         try {
-            Data data = (Data) super.clone();
+            DoubleData data = (DoubleData) super.clone();
+            data.sampleRate = sampleRate;
+            data.collectTime = collectTime;
+            data.firstSampleNumber = firstSampleNumber;
             return data;
         } catch (CloneNotSupportedException e) {
             throw new InternalError(e.toString());
