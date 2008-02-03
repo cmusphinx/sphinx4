@@ -4,27 +4,30 @@ import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
-import org.xml.sax.helpers.DefaultHandler;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-/** A SAX XML Handler implementation that builds up the map of raw property data objects */
-class ConfigHandler extends DefaultHandler {
+/**
+ * Handles configurations like the old one but is also able to process a new "include"-field
+ *
+ * @author Holger Brandl
+ */
+public class IncludingConfigHandler extends ConfigHandler {
 
     RawPropertyData rpd = null;
     Locator locator;
     List<String> itemList = null;
     String itemListName = null;
     StringBuffer curItem;
-    protected Map<String, RawPropertyData> rpdMap;
-    protected GlobalProperties globalProperties;
 
 
-    public ConfigHandler(Map<String, RawPropertyData> rpdMap, GlobalProperties globalProperties) {
-        this.rpdMap = rpdMap;
-        this.globalProperties = globalProperties;
+    public IncludingConfigHandler(Map<String, RawPropertyData> rpdMap, GlobalProperties globalProperties) {
+        super(rpdMap, globalProperties);
     }
 
 
@@ -35,6 +38,16 @@ class ConfigHandler extends DefaultHandler {
                              Attributes attributes) throws SAXException {
         if (qName.equals("config")) {
             // nothing to do
+        } else if (qName.equals("include")) {
+            String includeFileName = attributes.getValue("file");
+
+            try {
+                URL fileURL = new File(includeFileName).toURI().toURL();
+                SaxLoader saxLoader = new SaxLoader(fileURL, globalProperties, rpdMap);
+                saxLoader.load();
+            } catch (IOException e) {
+                throw new RuntimeException("Error while processing <include file=\"" + includeFileName + "\">");
+            }
         } else if (qName.equals("component")) {
             String curComponent = attributes.getValue("name");
             String curType = attributes.getValue("type");
@@ -85,17 +98,6 @@ class ConfigHandler extends DefaultHandler {
 
 
     /* (non-Javadoc)
-    * @see org.xml.sax.ContentHandler#characters(char[], int, int)
-    */
-    public void characters(char ch[], int start, int length)
-            throws SAXParseException {
-        if (curItem != null) {
-            curItem.append(ch, start, length);
-        }
-    }
-
-
-    /* (non-Javadoc)
     * @see org.xml.sax.ContentHandler#endElement(java.lang.String, java.lang.String, java.lang.String)
     */
     public void endElement(String uri, String localName, String qName)
@@ -103,6 +105,7 @@ class ConfigHandler extends DefaultHandler {
         if (qName.equals("component")) {
             rpdMap.put(rpd.getName(), rpd);
             rpd = null;
+        } else if (qName.equals("include")) {
         } else if (qName.equals("property")) {
             // nothing to do
         } else if (qName.equals("propertylist")) {
@@ -117,13 +120,5 @@ class ConfigHandler extends DefaultHandler {
             itemList.add(curItem.toString().trim());
             curItem = null;
         }
-    }
-
-
-    /* (non-Javadoc)
-    * @see org.xml.sax.ContentHandler#setDocumentLocator(org.xml.sax.Locator)
-    */
-    public void setDocumentLocator(Locator locator) {
-        this.locator = locator;
     }
 }

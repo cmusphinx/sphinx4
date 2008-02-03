@@ -41,7 +41,7 @@ public class ConfigurationManager implements Cloneable {
      */
     public ConfigurationManager(URL url) throws IOException, PropertyException {
         configURL = url;
-        SaxLoader saxLoader = new SaxLoader(url, globalProperties);
+        SaxLoader saxLoader = new SaxLoader(url, globalProperties, null);
         rawPropertyMap = saxLoader.load();
 
         ConfigurationManagerUtils.applySystemProperties(rawPropertyMap, globalProperties);

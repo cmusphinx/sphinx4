@@ -38,10 +38,16 @@ public class SaxLoader {
      *
      * @param url              the location to load
      * @param globalProperties the map of global properties
+     * @param initRPD
      */
-    public SaxLoader(URL url, GlobalProperties globalProperties) {
+    public SaxLoader(URL url, GlobalProperties globalProperties, Map<String, RawPropertyData> initRPD) {
         this.url = url;
         this.globalProperties = globalProperties;
+
+        if (initRPD == null)
+            rpdMap = new HashMap<String, RawPropertyData>();
+        else
+            rpdMap = initRPD;
     }
 
 
@@ -52,11 +58,11 @@ public class SaxLoader {
      * @throws IOException if an I/O or parse error occurs
      */
     public Map<String, RawPropertyData> load() throws IOException {
-        rpdMap = new HashMap<String, RawPropertyData>();
         try {
             SAXParserFactory factory = SAXParserFactory.newInstance();
             XMLReader xr = factory.newSAXParser().getXMLReader();
-            ConfigHandler handler = new ConfigHandler(rpdMap, globalProperties);
+//            ConfigHandler handler = new ConfigHandler(rpdMap, globalProperties);
+            IncludingConfigHandler handler = new IncludingConfigHandler(rpdMap, globalProperties);
             xr.setContentHandler(handler);
             xr.setErrorHandler(handler);
             InputStream is = url.openStream();
@@ -71,6 +77,7 @@ public class SaxLoader {
         } catch (ParserConfigurationException e) {
             throw new IOException(e.getMessage());
         }
+
         return rpdMap;
     }
 }
