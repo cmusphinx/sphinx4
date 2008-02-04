@@ -1,7 +1,6 @@
 package edu.cmu.sphinx.util.props;
 
 import org.xml.sax.Attributes;
-import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
@@ -9,7 +8,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -18,13 +16,6 @@ import java.util.Map;
  * @author Holger Brandl
  */
 public class IncludingConfigHandler extends ConfigHandler {
-
-    RawPropertyData rpd = null;
-    Locator locator;
-    List<String> itemList = null;
-    String itemListName = null;
-    StringBuffer curItem;
-
 
     public IncludingConfigHandler(Map<String, RawPropertyData> rpdMap, GlobalProperties globalProperties) {
         super(rpdMap, globalProperties);
@@ -46,7 +37,7 @@ public class IncludingConfigHandler extends ConfigHandler {
                 SaxLoader saxLoader = new SaxLoader(fileURL, globalProperties, rpdMap);
                 saxLoader.load();
             } catch (IOException e) {
-                throw new RuntimeException("Error while processing <include file=\"" + includeFileName + "\">");
+                throw new RuntimeException("Error while processing <include file=\"" + includeFileName + "\">", e);
             }
         } else if (qName.equals("component")) {
             String curComponent = attributes.getValue("name");
@@ -69,8 +60,7 @@ public class IncludingConfigHandler extends ConfigHandler {
                 // we are not in a component so add this to the global
                 // set of symbols
 //                    String symbolName = "${" + name + "}"; // why should we warp the global props here
-                String symbolName = name;
-                globalProperties.setValue(symbolName, value);
+                globalProperties.setValue(name, value);
             } else if (rpd.contains(name)) {
                 throw new SAXParseException("Duplicate property: " + name,
                         locator);
@@ -93,32 +83,6 @@ public class IncludingConfigHandler extends ConfigHandler {
         } else {
             throw new SAXParseException("Unknown element '" + qName + "'",
                     locator);
-        }
-    }
-
-
-    /* (non-Javadoc)
-    * @see org.xml.sax.ContentHandler#endElement(java.lang.String, java.lang.String, java.lang.String)
-    */
-    public void endElement(String uri, String localName, String qName)
-            throws SAXParseException {
-        if (qName.equals("component")) {
-            rpdMap.put(rpd.getName(), rpd);
-            rpd = null;
-        } else if (qName.equals("include")) {
-        } else if (qName.equals("property")) {
-            // nothing to do
-        } else if (qName.equals("propertylist")) {
-            if (rpd.contains(itemListName)) {
-                throw new SAXParseException("Duplicate property: "
-                        + itemListName, locator);
-            } else {
-                rpd.add(itemListName, itemList);
-                itemList = null;
-            }
-        } else if (qName.equals("item")) {
-            itemList.add(curItem.toString().trim());
-            curItem = null;
         }
     }
 }

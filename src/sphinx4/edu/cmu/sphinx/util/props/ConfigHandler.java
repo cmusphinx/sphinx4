@@ -13,11 +13,12 @@ import java.util.Map;
 /** A SAX XML Handler implementation that builds up the map of raw property data objects */
 class ConfigHandler extends DefaultHandler {
 
-    RawPropertyData rpd = null;
-    Locator locator;
-    List<String> itemList = null;
-    String itemListName = null;
-    StringBuffer curItem;
+    protected RawPropertyData rpd = null;
+    protected Locator locator;
+    protected List<String> itemList = null;
+    protected String itemListName = null;
+    protected StringBuffer curItem;
+
     protected Map<String, RawPropertyData> rpdMap;
     protected GlobalProperties globalProperties;
 
@@ -56,8 +57,7 @@ class ConfigHandler extends DefaultHandler {
                 // we are not in a component so add this to the global
                 // set of symbols
 //                    String symbolName = "${" + name + "}"; // why should we warp the global props here
-                String symbolName = name;
-                globalProperties.setValue(symbolName, value);
+                globalProperties.setValue(name, value);
             } else if (rpd.contains(name)) {
                 throw new SAXParseException("Duplicate property: " + name,
                         locator);
