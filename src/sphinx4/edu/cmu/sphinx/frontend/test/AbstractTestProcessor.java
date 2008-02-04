@@ -53,7 +53,7 @@ public abstract class AbstractTestProcessor extends BaseDataProcessor {
         long curStartSample = startSample;
         long shiftSamples = ms2samples((int) shiftMs, sampleRate);
         for (int i = 0; i < numFrames; i++) {
-            double[] values = createRandFeatureVector(featDim);
+            double[] values = createRandFeatureVector(featDim, null, null);
             datas.add(new DoubleData(values, sampleRate, System.currentTimeMillis(), curStartSample));
 
             curStartSample += shiftSamples;
@@ -63,11 +63,24 @@ public abstract class AbstractTestProcessor extends BaseDataProcessor {
     }
 
 
-    public static double[] createRandFeatureVector(int featDim) {
+    public static double[] createRandFeatureVector(int featDim, double[] mean, double[] variance) {
+        if (mean == null) {
+            mean = new double[featDim];
+        }
+
+        if (variance == null) {
+            variance = new double[featDim];
+            for (int i = 0; i < variance.length; i++) {
+                variance[i] = 1;
+            }
+        }
+
+        assert featDim == mean.length && featDim == variance.length;
+
         double[] updBlock = new double[featDim];
 
         for (int i = 0; i < updBlock.length; i++) {
-            updBlock[i] = 10 * r.nextDouble(); // *10 to get better debuggable (sprich: merkbarer) values
+            updBlock[i] = mean[i] + variance[i] * r.nextDouble(); // *10 to get better debuggable (sprich: merkbarer) values
         }
 
         return updBlock;
