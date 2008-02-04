@@ -578,6 +578,7 @@ public class PropertySheet implements Cloneable {
      */
     public void setRaw(String key, Object val) {
         rawProps.put(key, val);
+        propValues.put(key, val);
     }
 
 
