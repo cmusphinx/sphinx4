@@ -12,12 +12,13 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * A buffer for <code>Data</code>-elements.
+ * A FIFO-buffer for <code>Data</code>-elements.
  * <p/>
  * <code>Data</code>s are inserted to the buffer using the <code>processDataFrame</code>-method.
  */
 public class DataBufferProcessor extends BaseDataProcessor implements DataListener {
 
+    /** The FIFO- data buffer. */
     private List<Data> featureBuffer = new LinkedList<Data>();
 
     /**
@@ -38,9 +39,17 @@ public class DataBufferProcessor extends BaseDataProcessor implements DataListen
     private long waitTime;
 
 
+    /** The maximal size of the buffer in frames. The oldest frames will be removed if the buffer grows out of bounds. */
+    @S4Integer(defaultValue = 10000)
+    public static final String PROP_BUFFER_SIZE = "maxBufferSize";
+    private int maxBufferSize;
+
+
     @Override
     public void newProperties(PropertySheet ps) throws PropertyException {
         super.newProperties(ps);
+
+        maxBufferSize = ps.getInt(PROP_BUFFER_SIZE);
 
         waitIfEmpty = ps.getBoolean(PROP_WAIT_IF_EMPTY);
 
@@ -51,6 +60,11 @@ public class DataBufferProcessor extends BaseDataProcessor implements DataListen
 
     public void processDataFrame(Data data) {
         featureBuffer.add(data);
+
+        //reduce the buffer-size if necessary
+        while (featureBuffer.size() > maxBufferSize) {
+            featureBuffer.remove(0);
+        }
     }
 
 

@@ -17,7 +17,7 @@ import java.util.List;
  * @see edu.cmu.sphinx.decoder.FrameDecoder
  * @see edu.cmu.sphinx.frontend.databranch.DataBufferProcessor
  */
-public class PullTreeBrancher extends BaseDataProcessor {
+public class FrontEndSplitter extends BaseDataProcessor {
 
 
     @S4ComponentList(type = Configurable.class)
