@@ -66,7 +66,8 @@ public class PropertySheet implements Cloneable {
      * @param property The property annoation masked by a proxy.
      */
     private void registerProperty(String propName, S4PropWrapper property) {
-        assert property != null && propName != null;
+        if (property == null || propName == null)
+            throw new InternalConfigurationException(getInstanceName(), propName, "property or its value is null");
 
         registeredProperties.put(propName, property);
         propValues.put(propName, null);
@@ -287,7 +288,7 @@ public class PropertySheet implements Cloneable {
                         if (Modifier.isAbstract(defClass.getModifiers()) && s4Component.mandatory())
                             throw new InternalConfigurationException(getInstanceName(), name, defClass.getName() + " is abstract!");
 
-                        // because we're forced to use the default type, assert that it is set
+                        // because we're forced to use the default type, make sure that it is set
                         if (defClass.equals(Configurable.class)) {
                             if (s4Component.mandatory()) {
                                 throw new InternalConfigurationException(getInstanceName(), name, instanceName + ": no default class defined for " + name);
@@ -297,12 +298,15 @@ public class PropertySheet implements Cloneable {
                         }
 
                         configurable = ConfigurationManager.getInstance(defClass);
-                        assert configurable != null;
+                        if (configurable == null) {
+                            throw new InternalConfigurationException(getInstanceName(), name,
+                                    "instantiation of referenenced Configurable failed");
+                        }
                     }
                 }
 
             } catch (ClassNotFoundException e) {
-                throw new PropertyException(e);
+                throw new PropertyException(e, getInstanceName(), null, null);
             }
 
             propValues.put(name, configurable);
@@ -372,7 +376,12 @@ public class PropertySheet implements Cloneable {
 
             for (Object componentName : components) {
                 Configurable configurable = cm.lookup((String) componentName);
-                assert configurable != null;
+
+                if (configurable == null) {
+                    throw new InternalConfigurationException(name, (String) componentName,
+                            "lookup of list-element '" + componentName + "' failed!");
+                }
+
                 list.add(configurable);
             }
 
@@ -433,10 +442,13 @@ public class PropertySheet implements Cloneable {
      */
     public void setString(String name, String value) throws PropertyException {
         // ensure that there is such a property
-        assert registeredProperties.keySet().contains(name) : "'" + name + "' is not a registered compontent";
+        if (!registeredProperties.keySet().contains(name))
+            throw new InternalConfigurationException(getInstanceName(), name, "'" + name +
+                    "' is not a registered string-property");
 
         Proxy annotation = registeredProperties.get(name).getAnnotation();
-        assert annotation instanceof S4String;
+        if (!(annotation instanceof S4String))
+            throw new InternalConfigurationException(getInstanceName(), name, "'" + name + "' is of type string");
 
         applyConfigurationChange(name, value, value);
     }
@@ -450,10 +462,13 @@ public class PropertySheet implements Cloneable {
      */
     public void setInt(String name, int value) throws PropertyException {
         // ensure that there is such a property
-        assert registeredProperties.keySet().contains(name) : "'" + name + "' is not a registered compontent";
+        if (!registeredProperties.keySet().contains(name))
+            throw new InternalConfigurationException(getInstanceName(), name, "'" + name +
+                    "' is not a registered int-property");
 
         Proxy annotation = registeredProperties.get(name).getAnnotation();
-        assert annotation instanceof S4Integer;
+        if (!(annotation instanceof S4Integer))
+            throw new InternalConfigurationException(getInstanceName(), name, "'" + name + "' is of type int");
 
         applyConfigurationChange(name, value, value);
     }
@@ -467,10 +482,13 @@ public class PropertySheet implements Cloneable {
      */
     public void setDouble(String name, double value) throws PropertyException {
         // ensure that there is such a property
-        assert registeredProperties.keySet().contains(name) : "'" + name + "' is not a registered compontent";
+        if (!registeredProperties.keySet().contains(name))
+            throw new InternalConfigurationException(getInstanceName(), name, "'" + name +
+                    "' is not a registered double-property");
 
         Proxy annotation = registeredProperties.get(name).getAnnotation();
-        assert annotation instanceof S4Double;
+        if (!(annotation instanceof S4Double))
+            throw new InternalConfigurationException(getInstanceName(), name, "'" + name + "' is of type double");
 
         applyConfigurationChange(name, value, value);
     }
@@ -483,11 +501,13 @@ public class PropertySheet implements Cloneable {
      * @param value the value for the property
      */
     public void setBoolean(String name, Boolean value) throws PropertyException {
-        // ensure that there is such a property
-        assert registeredProperties.keySet().contains(name) : "'" + name + "' is not a registered compontent";
+        if (!registeredProperties.keySet().contains(name))
+            throw new InternalConfigurationException(getInstanceName(), name, "'" + name +
+                    "' is not a registered boolean-property");
 
         Proxy annotation = registeredProperties.get(name).getAnnotation();
-        assert annotation instanceof S4Boolean;
+        if (!(annotation instanceof S4Boolean))
+            throw new InternalConfigurationException(getInstanceName(), name, "'" + name + "' is of type boolean");
 
         applyConfigurationChange(name, value, value);
     }
@@ -501,11 +521,14 @@ public class PropertySheet implements Cloneable {
      * @param value  the value for the property
      */
     public void setComponent(String name, String cmName, Configurable value) throws PropertyException {
-        // ensure that there is such a property
-        assert registeredProperties.keySet().contains(name) : "'" + name + "' is not a registered compontent";
+        if (!registeredProperties.keySet().contains(name))
+            throw new InternalConfigurationException(getInstanceName(), name, "'" + name +
+                    "' is not a registered compontent");
 
         Proxy annotation = registeredProperties.get(name).getAnnotation();
-        assert annotation instanceof S4Component;
+        if (!(annotation instanceof S4Double))
+            throw new InternalConfigurationException(getInstanceName(), name, "'" + name + "' is of type component");
+
 
         applyConfigurationChange(name, cmName, value);
     }
@@ -520,13 +543,13 @@ public class PropertySheet implements Cloneable {
      * @param value      the value for the property
      */
     public void setComponentList(String name, List<String> valueNames, List<Configurable> value) throws PropertyException {
-        // ensure that there is such a property
-        assert registeredProperties.keySet().contains(name) : "'" + name + "' is not a registered compontent";
+        if (!registeredProperties.keySet().contains(name))
+            throw new InternalConfigurationException(getInstanceName(), name, "'" + name +
+                    "' is not a registered component-list");
 
         Proxy annotation = registeredProperties.get(name).getAnnotation();
-        assert annotation instanceof S4ComponentList;
-
-//        assert valueNames.size() == value.size();
+        if (!(annotation instanceof S4ComponentList))
+            throw new InternalConfigurationException(getInstanceName(), name, "'" + name + "' is of type component-list");
 
         rawProps.put(name, valueNames);
         propValues.put(name, value);
@@ -663,6 +686,12 @@ public class PropertySheet implements Cloneable {
 
         // maybe we could test a little bit more here. suggestions?
         return true;
+    }
+
+
+    @Override
+    public String toString() {
+        return getInstanceName() + "; isInstantiated=" + isInstanciated() + "; props=" + rawProps.keySet().toString();
     }
 
 
