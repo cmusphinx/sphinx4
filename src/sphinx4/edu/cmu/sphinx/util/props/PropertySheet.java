@@ -377,12 +377,12 @@ public class PropertySheet implements Cloneable {
             for (Object componentName : components) {
                 Configurable configurable = cm.lookup((String) componentName);
 
-                if (configurable == null) {
+                if (configurable != null) {
+                    list.add(configurable);
+                } else if (!annoation.beTolerant()) {
                     throw new InternalConfigurationException(name, (String) componentName,
                             "lookup of list-element '" + componentName + "' failed!");
                 }
-
-                list.add(configurable);
             }
 
             propValues.put(name, list);
@@ -526,7 +526,7 @@ public class PropertySheet implements Cloneable {
                     "' is not a registered compontent");
 
         Proxy annotation = registeredProperties.get(name).getAnnotation();
-        if (!(annotation instanceof S4Double))
+        if (!(annotation instanceof S4Component))
             throw new InternalConfigurationException(getInstanceName(), name, "'" + name + "' is of type component");
 
 

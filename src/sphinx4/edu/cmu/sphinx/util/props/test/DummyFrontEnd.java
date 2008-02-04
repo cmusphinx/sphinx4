@@ -13,16 +13,14 @@ public class DummyFrontEnd implements Configurable {
 
     @S4Boolean(defaultValue = true)
     public static final String PROP_USE_MFFCS = "useMfccs";
+    boolean useMfccs;
 
     @S4ComponentList(
-            type = Configurable.class,
+            type = Configurable.class, beTolerant = true,
             defaultList = {DummyProcessor.class, AnotherDummyProcessor.class, DummyProcessor.class}
     )
     public static final String DATA_PROCS = "dataProcs";
-
     List<Configurable> dataProcs;
-
-    boolean useMfccs;
 
 
     public void newProperties(PropertySheet ps) throws PropertyException {

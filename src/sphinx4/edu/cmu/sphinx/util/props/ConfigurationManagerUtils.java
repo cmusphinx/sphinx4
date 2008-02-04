@@ -1,12 +1,6 @@
 package edu.cmu.sphinx.util.props;
 
-import edu.cmu.sphinx.frontend.DataProcessor;
-import edu.cmu.sphinx.frontend.FrontEnd;
-import edu.cmu.sphinx.instrumentation.AccuracyTracker;
-import edu.cmu.sphinx.instrumentation.BestPathAccuracyTracker;
 import edu.cmu.sphinx.util.SphinxLogFormatter;
-import junit.framework.Assert;
-import org.junit.Test;
 
 import java.io.*;
 import java.net.MalformedURLException;
@@ -508,7 +502,7 @@ public final class ConfigurationManagerUtils {
     }
 
 
-    private static boolean isSubClass(Class aClass, Class possibleSuperclass) {
+    public static boolean isSubClass(Class aClass, Class possibleSuperclass) {
         while (aClass != null && !aClass.equals(Object.class)) {
             aClass = aClass.getSuperclass();
 
@@ -517,21 +511,6 @@ public final class ConfigurationManagerUtils {
         }
 
         return false;
-    }
-
-
-    @Test
-    public void testClassTesting() {
-        Assert.assertTrue(isImplementingInterface(FrontEnd.class, DataProcessor.class));
-        Assert.assertTrue(isImplementingInterface(DataProcessor.class, Configurable.class));
-        Assert.assertFalse(isImplementingInterface(Configurable.class, Configurable.class));
-
-        Assert.assertFalse(isSubClass(Configurable.class, Configurable.class));
-        Assert.assertTrue(isSubClass(Integer.class, Object.class));
-        Assert.assertFalse(isSubClass(Object.class, Object.class));
-
-        Assert.assertTrue(isSubClass(BestPathAccuracyTracker.class, AccuracyTracker.class));
-
     }
 
 

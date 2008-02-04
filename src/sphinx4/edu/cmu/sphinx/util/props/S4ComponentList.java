@@ -23,4 +23,11 @@ public @interface S4ComponentList {
      * component list was defined (via xml or during runtime).
      */
     Class<? extends Configurable>[] defaultList() default {};
+
+
+    /**
+     * If this flag is set the <code>ConfigurationManager</code> will not fail if some elements of the list couldn't be
+     * instantitated.
+     */
+    boolean beTolerant() default false;
 }
