@@ -51,7 +51,7 @@ public class PropertyException extends RuntimeException {
     }
 
 
-    public PropertyException(ClassNotFoundException e) {
+    public PropertyException(Exception e) {
         super(e);
     }
 
