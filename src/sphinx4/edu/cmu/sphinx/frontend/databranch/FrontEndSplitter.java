@@ -17,10 +17,10 @@ import java.util.List;
  * @see edu.cmu.sphinx.decoder.FrameDecoder
  * @see edu.cmu.sphinx.frontend.databranch.DataBufferProcessor
  */
-public class FrontEndSplitter extends BaseDataProcessor {
+public class FrontEndSplitter extends BaseDataProcessor implements DataProducer {
 
 
-    @S4ComponentList(type = Configurable.class)
+    @S4ComponentList(type = Configurable.class, beTolerant = true)
     public static final String PROP_DATA_LISTENERS = "dataListeners";
     private List<DataListener> listeners = new ArrayList<DataListener>();
 
@@ -66,12 +66,6 @@ public class FrontEndSplitter extends BaseDataProcessor {
             return;
         }
         listeners.remove(l);
-    }
-
-
-    /** Returns an array of all the SplitData listeners registered on this component. */
-    public synchronized DataListener[] getAllDataListeners() {
-        return (DataListener[]) listeners.toArray();
     }
 }
 
