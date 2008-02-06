@@ -284,7 +284,7 @@ public final class WordSequence {
     public WordSequence getSubSequence(int startIndex, int stopIndex) {
         List<Word> subseqWords = new ArrayList<Word>();
 
-        for (int i = startIndex; i <= stopIndex; i++) {
+        for (int i = startIndex; i < stopIndex; i++) {
             subseqWords.add(getWord(i));
         }
 
