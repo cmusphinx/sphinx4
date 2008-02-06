@@ -24,6 +24,10 @@ public abstract class AbstractDecoder implements ResultProducer, Configurable {
     public static final String PROP_RESULT_LISTENERS = "resultListeners";
     protected List<ResultListener> resultListeners = new ArrayList<ResultListener>();
 
+    /** If set to true the used search-manager will be automatically allocated in <code>newProperties()</code>. */
+    @S4Boolean(defaultValue = false)
+    public static final String AUTO_ALLOCATE = "autoAllocate";
+
 
     /**
      * Decode frames until recognition is complete
@@ -36,6 +40,14 @@ public abstract class AbstractDecoder implements ResultProducer, Configurable {
 
     public void newProperties(PropertySheet ps) throws PropertyException {
         searchManager = (SearchManager) ps.getComponent(PROP_SEARCH_MANAGER);
+
+        if (ps.getBoolean(AUTO_ALLOCATE)) {
+            try {
+                searchManager.allocate();
+            } catch (IOException e) {
+                throw new PropertyException(e, ps.getInstanceName(), PROP_SEARCH_MANAGER, "search manager allocation failed");
+            }
+        }
 
         List<? extends Configurable> list = ps.getComponentList(PROP_RESULT_LISTENERS);
         for (Configurable configurable : list) {
