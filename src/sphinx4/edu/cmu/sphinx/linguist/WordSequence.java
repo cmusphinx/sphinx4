@@ -15,7 +15,6 @@ package edu.cmu.sphinx.linguist;
 import edu.cmu.sphinx.linguist.dictionary.Word;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 
@@ -213,27 +212,10 @@ public final class WordSequence {
      */
     public String toString() {
         StringBuffer sb = new StringBuffer();
-        for (int i = 0; i < words.length; i++) {
+        for (Word word : words) {
             sb.append("[");
-            sb.append(words[i].toString());
+            sb.append(word.toString());
             sb.append("]");
-        }
-        return sb.toString();
-    }
-
-
-    /**
-     * Returns an English text form of this word sequence, e.g., "this is a".
-     *
-     * @return the English text form
-     */
-    public String toText() {
-        StringBuffer sb = new StringBuffer(20);
-        for (int i = 0; i < words.length; i++) {
-            if (i != 0) {
-                sb.append(" ");
-            }
-            sb.append(words[i].toString());
         }
         return sb.toString();
     }
@@ -292,20 +274,7 @@ public final class WordSequence {
     }
 
 
-    /** Returns the words contained in this sequence wrapped into a list. */
-    public List<Word> asList() {
-        return Arrays.asList(words);
-    }
-
-
-    /** @return <code>true</code> if this <code>WordSequence</code> contains the argument. */
-    public boolean contains(Word word) {
-        assert word != null;
-        for (int i = 0; i < words.length; i++) {
-            if (words[i].equals(word))
-                return true;
-        }
-
-        return false;
+    public Word[] getWords() {
+        return getSubSequence(0, size()).words; //create a copy yo keep the class imutable
     }
 }

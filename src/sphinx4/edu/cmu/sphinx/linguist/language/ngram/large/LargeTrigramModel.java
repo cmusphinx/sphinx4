@@ -362,7 +362,7 @@ public class LargeTrigramModel implements LanguageModel {
      */
     public float getProbability(WordSequence wordSequence) {
         if (logFile != null) {
-            logFile.println(wordSequence.toText());
+            logFile.println(wordSequence.toString().replace("][", " "));
         }
         int numberWords = wordSequence.size();
         if (numberWords <= maxDepth) {
