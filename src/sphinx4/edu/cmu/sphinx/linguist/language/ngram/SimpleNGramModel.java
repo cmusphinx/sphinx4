@@ -335,8 +335,7 @@ public class SimpleNGramModel implements LanguageModel {
                     }
                     wordList.add(wordObject);
                 }
-                WordSequence wordSequence = WordSequence
-                        .getWordSequence(wordList);
+                WordSequence wordSequence = new WordSequence(wordList);
                 if (tok.hasMoreTokens()) {
                     log10Backoff = Float.parseFloat(tok.nextToken());
                 }

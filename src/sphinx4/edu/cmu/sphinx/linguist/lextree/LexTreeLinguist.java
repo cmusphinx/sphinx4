@@ -337,8 +337,7 @@ public class LexTreeLinguist implements Linguist {
      */
     private SearchState getInitialSearchState() {
         InitialWordNode node = hmmTree.getInitialNode();
-        return new LexTreeWordState(node, node.getParent(), WordSequence
-                .getWordSequence(sentenceStartWordArray).trim(
+        return new LexTreeWordState(node, node.getParent(), (new WordSequence(sentenceStartWordArray)).trim(
                 languageModel.getMaxDepth() - 1), 0f, logOne, logOne);
     }
 

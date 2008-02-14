@@ -348,7 +348,7 @@ class HMMTree {
         if (!word.isFiller()) {
             Word[] wordArray = new Word[1];
             wordArray[0] = word;
-            prob = lm.getProbability(WordSequence.getWordSequence(wordArray));
+            prob = lm.getProbability((new WordSequence(wordArray)));
             // System.out.println("gwup: " + word + " " + prob);
             prob *= languageWeight;
         }
@@ -565,9 +565,9 @@ class HMMTree {
 
 
         /**
-         * Creates the entry point map for this entry point.  The entry point map is represented by the unitToEntryPointMap. It
-         * contains a node for each possible left context. The node successors point to the following hmm nodes (usually
-         * associated with the next units that can follow from this entry point.
+         * Creates the entry point map for this entry point.  The entry point map is represented by the
+         * unitToEntryPointMap. It contains a node for each possible left context. The node successors point to the
+         * following hmm nodes (usually associated with the next units that can follow from this entry point.
          */
         void createEntryPointMap() {
             for (Iterator<Unit> i = exitPoints.iterator(); i.hasNext();) {
@@ -587,8 +587,9 @@ class HMMTree {
 
 
         /**
-         * An alternate version of createEntryPointMap that compresses common hmms across all entry points, not just those
-         * shaing the same left context.  This really doesn't speed things up in the least bit, so it is not worth the effort.
+         * An alternate version of createEntryPointMap that compresses common hmms across all entry points, not just
+         * those shaing the same left context.  This really doesn't speed things up in the least bit, so it is not worth
+         * the effort.
          */
         void createEntryPointMap_alternateVersion() {
             HashMap<HMM, Node> map = new HashMap<HMM, Node>();
@@ -617,9 +618,9 @@ class HMMTree {
 
 
         /**
-         * Connects the single unit words associated with this entry point.   The singleUnitWords list contains all single unit
-         * pronunciations that have as their sole unit, the unit associated with this entry point. Entry points for these words
-         * are added to the epNode for all possible left (exit) and right (entry) contexts.
+         * Connects the single unit words associated with this entry point.   The singleUnitWords list contains all
+         * single unit pronunciations that have as their sole unit, the unit associated with this entry point. Entry
+         * points for these words are added to the epNode for all possible left (exit) and right (entry) contexts.
          *
          * @param lc     the left context
          * @param epNode the entry point node

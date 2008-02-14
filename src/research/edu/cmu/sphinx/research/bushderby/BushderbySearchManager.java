@@ -465,7 +465,7 @@ public class BushderbySearchManager extends SimpleBreadthFirstSearchManager {
                 }
                 Collections.reverse(wordList);
                 logProbability = languageModel.getProbability
-                        (WordSequence.getWordSequence(wordList));
+                        (new WordSequence((List<Word>) wordList));
             }
         }
         return logProbability;

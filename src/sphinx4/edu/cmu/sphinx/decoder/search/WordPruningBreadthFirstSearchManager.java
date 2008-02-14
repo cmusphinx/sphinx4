@@ -1178,7 +1178,7 @@ class WordTracker {
             }
             token = token.getPredecessor();
         }
-        return WordSequence.getWordSequence(wordList);
+        return new WordSequence(wordList);
     }
 }
 

@@ -28,13 +28,7 @@ public final class WordSequence {
     private transient int hashCode = -1;
 
     /** an empty word sequence, that is, it has no words. */
-    public final static WordSequence EMPTY = new WordSequence();
-
-
-    /** Constructs a word sequence with the zero depth. */
-    private WordSequence() {
-        this(0);
-    }
+    public final static WordSequence EMPTY = new WordSequence(0);
 
 
     /**
@@ -52,7 +46,7 @@ public final class WordSequence {
      *
      * @param words the word IDs of the word sequence
      */
-    private WordSequence(Word[] words) {
+    public WordSequence(Word[] words) {
         this.words = new Word[words.length];
         System.arraycopy(words, 0, this.words, 0, words.length);
         check();
@@ -60,29 +54,12 @@ public final class WordSequence {
 
 
     /**
-     * Returns a WordSequence with the given word IDs.
-     *
-     * @param words the array of words for the sequence
-     * @return a WordSequence with the given words
-     */
-    public static WordSequence getWordSequence(Word[] words) {
-        return (new WordSequence(words));
-    }
-
-
-    /**
      * Constructs a word sequence from the list of words
      *
      * @param list the list of words
-     * @return a WordSequence for the given words
      */
-    public static WordSequence getWordSequence(List list) {
-        WordSequence sequence = new WordSequence(list.size());
-        for (int i = 0; i < list.size(); i++) {
-            sequence.words[i] = (Word) list.get(i);
-        }
-        sequence.check();
-        return sequence;
+    public WordSequence(List<Word> list) {
+        this(list.toArray(new Word[list.size()]));
     }
 
 
@@ -270,10 +247,11 @@ public final class WordSequence {
             subseqWords.add(getWord(i));
         }
 
-        return getWordSequence(subseqWords);
+        return new WordSequence(subseqWords);
     }
 
 
+    /** Returns the words of the <code>WordSequence</code>. */
     public Word[] getWords() {
         return getSubSequence(0, size()).words; //create a copy yo keep the class imutable
     }
