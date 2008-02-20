@@ -8,6 +8,7 @@ import edu.cmu.sphinx.util.props.PropertySheet;
 import edu.cmu.sphinx.util.props.S4Boolean;
 import edu.cmu.sphinx.util.props.S4Integer;
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -101,5 +102,10 @@ public class DataBufferProcessor extends BaseDataProcessor implements DataListen
 
     public void clearBuffer() {
         featureBuffer.clear();
+    }
+
+
+    public List<Data> getBuffer() {
+        return Collections.unmodifiableList(featureBuffer);
     }
 }
