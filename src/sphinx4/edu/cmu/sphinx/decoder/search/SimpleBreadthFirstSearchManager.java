@@ -273,20 +273,25 @@ public class SimpleBreadthFirstSearchManager implements SearchManager {
      */
     protected boolean scoreTokens() {
         boolean moreTokens;
-        Token bestToken = null;
+
         scoreTimer.start();
-        bestToken = (Token) scorer.calculateScores(activeList.getTokens());
+        Token bestToken = (Token) scorer.calculateScores(activeList.getTokens());
         scoreTimer.stop();
+
         moreTokens = (bestToken != null);
         activeList.setBestToken(bestToken);
+
+        // update statistics
         curTokensScored.value += activeList.size();
         totalTokensScored.value += activeList.size();
         tokensPerSecond.value = totalTokensScored.value / getTotalTime();
-        if (logger.isLoggable(Level.FINE)) {
-            logger.fine(currentFrameNumber + " " + activeList.size()
-                    + " " + curTokensScored.value + " "
-                    + (int) tokensPerSecond.value);
-        }
+
+//        if (logger.isLoggable(Level.FINE)) {
+//            logger.fine(currentFrameNumber + " " + activeList.size()
+//                    + " " + curTokensScored.value + " "
+//                    + (int) tokensPerSecond.value);
+//        }
+
         return moreTokens;
     }
 
@@ -375,7 +380,7 @@ public class SimpleBreadthFirstSearchManager implements SearchManager {
             // We're actually multiplying the variables, but since
             // these come in log(), multiply gets converted to add
             float logEntryScore = token.getScore() + arc.getProbability();
-            if (wantEntryPruning) {
+            if (wantEntryPruning) { // false by default
                 if (logEntryScore < threshold) {
                     continue;
                 }
