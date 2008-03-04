@@ -13,6 +13,8 @@ package edu.cmu.sphinx.util;
 
 import edu.cmu.sphinx.util.props.*;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Logger;
 
 /**
@@ -21,22 +23,22 @@ import java.util.logging.Logger;
  */
 public final class LogMath implements Configurable {
 
-    /** Sphinx property to get the Log base */
+    /**
+     * Sphinx property to get the Log base. According to forum discussionss a value between 1.00001 and 1.0004 should be
+     * used for speech reocgnition. Going above 1.0005 will probably hurt.
+     */
     @S4Double(defaultValue = Math.E)
     public final static String PROP_LOG_BASE = "logBase";
-    /** Default value for the Log base */
-    public final static float PROP_LOG_BASE_DEFAULT = (float) Math.E;
+
+
     /**
      * Sphinx property that controls whether we use the old, slow (but correct) method of performing the LogMath.add by
      * doing the actual computation.
      */
     @S4Boolean(defaultValue = true)
     public final static String PROP_USE_ADD_TABLE = "useAddTable";
-    /**
-     * Default value for whether we use the old, slow (but correct) method of performing the LogMath.add by doing the
-     * actual computation.
-     */
-    public final static boolean PROP_USE_ADD_TABLE_DEFAULT = true;
+
+
     private static float logZero = -Float.MAX_VALUE;
     private static float logOne = 0.0f;
 
@@ -45,7 +47,6 @@ public final class LogMath implements Configurable {
     // ------------------------------
     private float logBase;
     private boolean useAddTable;
-    private String name;
 
     private transient Logger logger;
 
@@ -55,19 +56,22 @@ public final class LogMath implements Configurable {
     private transient float maxLogValue;
     private transient float minLogValue;
 
-
-    // The empty construtor is required to keep reflection based instantiation in ConfigruationManager working
-    public LogMath() {
-        this(false, PROP_LOG_BASE_DEFAULT, null);
-    }
+    /** The most recently created instance of this class. */
+    private transient static LogMath lastInstance;
 
 
-    public LogMath(boolean useAddTable, float logBase, Logger logger) {
-        this.useAddTable = useAddTable;
-        this.logBase = logBase;
-        this.logger = logger;
+    /** Returns the last created instance of <code>LogMath</code> or a default instance using all default parameters. */
+    public static LogMath getInstance() {
+        if (lastInstance == null) {
+            Logger.getLogger(LogMath.class.getName()).warning("Creating default LogMath-instance");
 
-        init();
+            Map<String, Object> logProps = new HashMap<String, Object>();
+            logProps.put("useAddTable", Boolean.TRUE);
+            logProps.put("logBase", 1.0001);
+            lastInstance = (LogMath) ConfigurationManager.getInstance(LogMath.class, logProps);
+        }
+
+        return lastInstance;
     }
 
 
@@ -78,20 +82,16 @@ public final class LogMath implements Configurable {
     */
     public void newProperties(PropertySheet ps) throws PropertyException {
         logger = ps.getLogger();
+
         logBase = ps.getFloat(PROP_LOG_BASE);
-        useAddTable = ps.getBoolean(PROP_USE_ADD_TABLE
-        );
+        useAddTable = ps.getBoolean(PROP_USE_ADD_TABLE);
+
         init();
-    }
 
+        if (lastInstance != null)
+            System.err.println("Creating new instance of LogMath while another instance is already present");
 
-    /*
-    * (non-Javadoc)
-    *
-    * @see edu.cmu.sphinx.util.props.Configurable#getName()
-    */
-    public String getName() {
-        return name;
+        lastInstance = this;
     }
 
 
@@ -180,35 +180,13 @@ public final class LogMath implements Configurable {
 
 
     /**
-     * Returns the summation of two numbers when the arguments and the result are in log.
-     * <p/>
-     * <p/>
-     * That is, it returns log(a + b) given log(a) and log(b) </p>
-     * <p/>
-     * <p/>
-     * This method makes use of the equality: </p>
-     * <p/>
-     * <p/>
-     * <b>log(a + b) = log(a) + log (1 + exp(log(b) - log(a))) </b> </p>
-     * <p/>
-     * <p/>
-     * which is derived from: </p>
-     * <p/>
-     * <p/>
-     * <b>a + b = a * (1 + (b / a)) </b> </p>
-     * <p/>
-     * <p/>
-     * which in turns makes use of: </p>
-     * <p/>
-     * <p/>
-     * <b>b / a = exp (log(b) - log(a)) </b> </p>
-     * <p/>
-     * <p/>
-     * Important to notice that <code>subtractAsLinear(a, b)</code> is *not* the same as <code>addAsLinear(a,
-     * -b)</code>, since we're in the log domain, and -b is in fact the inverse. </p>
-     * <p/>
-     * <p/>
-     * No underflow/overflow check is performed. </p>
+     * Returns the summation of two numbers when the arguments and the result are in log. <p/> <p/> That is, it returns
+     * log(a + b) given log(a) and log(b) </p> <p/> <p/> This method makes use of the equality: </p> <p/> <p/> <b>log(a
+     * + b) = log(a) + log (1 + exp(log(b) - log(a))) </b> </p> <p/> <p/> which is derived from: </p> <p/> <p/> <b>a + b
+     * = a * (1 + (b / a)) </b> </p> <p/> <p/> which in turns makes use of: </p> <p/> <p/> <b>b / a = exp (log(b) -
+     * log(a)) </b> </p> <p/> <p/> Important to notice that <code>subtractAsLinear(a, b)</code> is *not* the same as
+     * <code>addAsLinear(a, -b)</code>, since we're in the log domain, and -b is in fact the inverse. </p> <p/> <p/> No
+     * underflow/overflow check is performed. </p>
      *
      * @param logVal1 value in log domain (i.e. log(val1)) to add
      * @param logVal2 value in log domain (i.e. log(val2)) to add
@@ -233,12 +211,8 @@ public final class LogMath implements Configurable {
 
     /**
      * Method used by add() internally. It returns the difference between the highest number and the total summation of
-     * two numbers.
-     * <p/>
-     * Considering the expression (in which we assume natural log)
-     * <p/>
-     * <p/>
-     * <b>log(a + b) = log(a) + log(1 + exp(log(b) - log(a))) </b> </p>
+     * two numbers. <p/> Considering the expression (in which we assume natural log) <p/> <p/> <b>log(a + b) = log(a) +
+     * log(1 + exp(log(b) - log(a))) </b> </p>
      * <p/>
      * the current function returns the second term of the right hand side of the equality above, generalized for the
      * case of any log base. This function can be contructed as a table, if table lookup is faster than actual
@@ -260,12 +234,8 @@ public final class LogMath implements Configurable {
 
     /**
      * Method used by add() internally. It returns the difference between the highest number and the total summation of
-     * two numbers.
-     * <p/>
-     * Considering the expression (in which we assume natural log)
-     * <p/>
-     * <p/>
-     * <b>log(a + b) = log(a) + log(1 + exp(log(b) - log(a))) </b> </p>
+     * two numbers. <p/> Considering the expression (in which we assume natural log) <p/> <p/> <b>log(a + b) = log(a) +
+     * log(1 + exp(log(b) - log(a))) </b> </p>
      * <p/>
      * the current function returns the second term of the right hand side of the equality above, generalized for the
      * case of any log base. This function is contructed as a table lookup.
@@ -298,30 +268,18 @@ public final class LogMath implements Configurable {
 
 
     /**
-     * Returns the difference between two numbers when the arguments and the result are in log.
-     * <p/>
-     * <p/>
-     * That is, it returns log(a - b) given log(a) and log(b) </p>
-     * <p/>
-     * <p/>
-     * Implementation is less efficient than add(), since we're less likely to use this function, provided for
-     * completeness. Notice however that the result only makes sense if the minuend is higher than the subtrahend.
-     * Otherwise, we should return the log of a negative number. </p>
-     * <p/>
-     * <p/>
-     * It implements the subtraction as: </p>
-     * <p/>
-     * <p/>
-     * <b>log(a - b) = log(a) + log(1 - exp(log(b) - log(a))) </b> </p>
-     * <p/>
-     * <p/>
-     * No need to check for underflow/overflow. </p>
+     * Returns the difference between two numbers when the arguments and the result are in log. <p/> <p/> That is, it
+     * returns log(a - b) given log(a) and log(b) </p> <p/> <p/> Implementation is less efficient than add(), since
+     * we're less likely to use this function, provided for completeness. Notice however that the result only makes
+     * sense if the minuend is higher than the subtrahend. Otherwise, we should return the log of a negative number.
+     * </p> <p/> <p/> It implements the subtraction as: </p> <p/> <p/> <b>log(a - b) = log(a) + log(1 - exp(log(b) -
+     * log(a))) </b> </p> <p/> <p/> No need to check for underflow/overflow. </p>
      *
      * @param logMinuend    value in log domain (i.e. log(minuend)) to be subtracted from
      * @param logSubtrahend value in log domain (i.e. log(subtrahend)) that is being subtracted
      * @return difference between minuend and the subtrahend in the log domain
-     * @throws IllegalArgumentException <p/>
-     *                                  This is a very slow way to do this, but this method should rarely be used. </p>
+     * @throws IllegalArgumentException <p/> This is a very slow way to do this, but this method should rarely be used.
+     *                                  </p>
      */
     public final float subtractAsLinear(float logMinuend, float logSubtrahend)
             throws IllegalArgumentException {
@@ -340,22 +298,10 @@ public final class LogMath implements Configurable {
     /**
      * Converts the source, which is assumed to be a log value whose base is sourceBase, to a log value whose base is
      * resultBase. Possible values for both the source and result bases include Math.E, 10.0, LogMath.getLogBase(). If a
-     * source or result base is not supported, an IllegalArgumentException will be thrown.
-     * <p/>
-     * <p/>
-     * It takes advantage of the relation: </p>
-     * <p/>
-     * <p/>
-     * <b>log_a(b) = log_c(b) / lob_c(a) </b> </p>
-     * <p/>
-     * <p/>
-     * or: </p>
-     * <p/>
-     * <p/>
-     * <b>log_a(b) = log_c(b) * lob_a(c) </b> </p>
-     * <p/>
-     * <p/>
-     * where <b>log_a(b) </b> is logarithm of <b>b </b> base <b>a </b> etc. </p>
+     * source or result base is not supported, an IllegalArgumentException will be thrown. <p/> <p/> It takes advantage
+     * of the relation: </p> <p/> <p/> <b>log_a(b) = log_c(b) / lob_c(a) </b> </p> <p/> <p/> or: </p> <p/> <p/>
+     * <b>log_a(b) = log_c(b) * lob_a(c) </b> </p> <p/> <p/> where <b>log_a(b) </b> is logarithm of <b>b </b> base <b>a
+     * </b> etc. </p>
      *
      * @param logSource  log value whose base is sourceBase
      * @param sourceBase the base of the log the source

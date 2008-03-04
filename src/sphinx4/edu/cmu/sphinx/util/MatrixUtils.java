@@ -106,4 +106,15 @@ public class MatrixUtils {
         }
         return logMixtureWeights;
     }
+
+
+    public static double[] logToLinear(float[] vector, LogMath logMath) {
+        double[] logMixtureWeights = new double[vector.length];
+
+        for (int i = 0; i < vector.length; i++) {
+            logMixtureWeights[i] = logMath.logToLinear(vector[i]);
+        }
+
+        return logMixtureWeights;
+    }
 }
