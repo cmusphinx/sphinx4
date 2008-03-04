@@ -15,11 +15,15 @@ package edu.cmu.sphinx.linguist.acoustic.tiedstate.test;
 import edu.cmu.sphinx.frontend.FloatData;
 import edu.cmu.sphinx.linguist.acoustic.tiedstate.MixtureComponent;
 import edu.cmu.sphinx.util.LogMath;
+import edu.cmu.sphinx.util.props.ConfigurationManager;
 import static junit.framework.Assert.assertTrue;
 import static org.junit.Assert.assertEquals;
+import org.junit.Before;
 import org.junit.Test;
 
 import static java.lang.Math.*;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Some tests which test the functionality of <code>MixtureComponentt</code>s.
@@ -29,7 +33,16 @@ import static java.lang.Math.*;
  */
 public class MixtureComponentTest {
 
-    private LogMath lm = new LogMath();
+    private LogMath lm;
+
+
+    @Before
+    public void setup() {
+        Map<String, Object> props = new HashMap<String, Object>();
+        props.put(LogMath.PROP_USE_ADD_TABLE, false);
+
+        lm = (LogMath) ConfigurationManager.getInstance(LogMath.class, props);
+    }
 
 
     /**
