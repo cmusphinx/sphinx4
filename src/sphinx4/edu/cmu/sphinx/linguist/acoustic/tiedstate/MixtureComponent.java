@@ -14,12 +14,14 @@ package edu.cmu.sphinx.linguist.acoustic.tiedstate;
 
 import edu.cmu.sphinx.frontend.FloatData;
 import edu.cmu.sphinx.util.LogMath;
-import edu.cmu.sphinx.util.MatrixUtils;
+
+import java.util.Arrays;
 
 /**
- * Defines the set of shared elements for a GaussianMixture. Since these elements are potentially shared by a number of
- * {@link GaussianMixture GaussianMixtures}, these elements should not be written to. The GaussianMixture defines a
- * single probability density function along with a set of adaptation parameters.
+ * Defines the set of shared elements for a GaussianMixture. Since these elements are potentially
+ * shared by a number of {@link GaussianMixture GaussianMixtures}, these elements should not be
+ * written to. The GaussianMixture defines a single probability density function along with a set of
+ * adaptation parameters.
  * <p/>
  * Note that all scores and weights are in LogMath log base
  */
@@ -153,8 +155,9 @@ public class MixtureComponent implements Cloneable {
     /**
      * Calculate the score for this mixture against the given feature.
      * <p/>
-     * Note: The support of <code>DoubleData</code>-features would require an array conversion to float[]. Because
-     * getScore might be invoked with very high frequency, features are restricted to be <code>FloatData</code>s.
+     * Note: The support of <code>DoubleData</code>-features would require an array conversion to
+     * float[]. Because getScore might be invoked with very high frequency, features are restricted
+     * to be <code>FloatData</code>s.
      *
      * @param feature the feature to score
      * @return the score, in log, for the given feature
@@ -165,15 +168,16 @@ public class MixtureComponent implements Cloneable {
 
 
     /**
-     * Calculate the score for this mixture against the given feature. We model the output distributions using a mixture
-     * of Gaussians, therefore the current implementation is simply the computation of a multi-dimensional Gaussian.
+     * Calculate the score for this mixture against the given feature. We model the output
+     * distributions using a mixture of Gaussians, therefore the current implementation is simply
+     * the computation of a multi-dimensional Gaussian. <p/> <p><b>Normal(x) = exp{-0.5 * (x-m)' *
+     * inv(Var) * (x-m)} / {sqrt((2 * PI) ^ N) * det(Var))}</b></p>
      * <p/>
-     * <p><b>Normal(x) = exp{-0.5 * (x-m)' * inv(Var) * (x-m)} / {sqrt((2 * PI) ^ N) * det(Var))}</b></p>
-     * <p/>
-     * where <b>x</b> and <b>m</b> are the incoming cepstra and mean vector respectivally, <b>Var</b> is the Covariance
-     * matrix, <b>det()</b> is the determinant of a matrix, <b>inv()</b> is its inverse, <b>exp</b> is the exponential
-     * operator, <b>x'</b> is the transposed vector of <b>x</b> and <b>N</b> is the dimension of the vectors <b>x</b>
-     * and <b>m</b>.
+     * where <b>x</b> and <b>m</b> are the incoming cepstra and mean vector respectivally,
+     * <b>Var</b> is the Covariance matrix, <b>det()</b> is the determinant of a matrix,
+     * <b>inv()</b> is its inverse, <b>exp</b> is the exponential operator, <b>x'</b> is the
+     * transposed vector of <b>x</b> and <b>N</b> is the dimension of the vectors <b>x</b> and
+     * <b>m</b>.
      *
      * @param feature the feature to score
      * @return the score, in log, for the given feature
@@ -220,15 +224,12 @@ public class MixtureComponent implements Cloneable {
 
 
     /**
-     * Pre-compute factors for the Mahalanobis distance. Some of the Mahalanobis distance computation can be carried out
-     * in advance. Especifically, the factor containing only variance in the Gaussian can be computed in advance,
-     * keeping in mind that the the determinant of the covariance matrix, for the degenerate case of a mixture with
-     * independent components - only the diagonal elements are non-zero - is simply the product of the diagonal
-     * elements.
-     * <p/>
-     * We're computing the expression:
-     * <p/>
-     * <p><b>{sqrt((2 * PI) ^ N) * det(Var))}</b></p>
+     * Pre-compute factors for the Mahalanobis distance. Some of the Mahalanobis distance
+     * computation can be carried out in advance. Especifically, the factor containing only variance
+     * in the Gaussian can be computed in advance, keeping in mind that the the determinant of the
+     * covariance matrix, for the degenerate case of a mixture with independent components - only
+     * the diagonal elements are non-zero - is simply the product of the diagonal elements. <p/>
+     * We're computing the expression: <p/> <p><b>{sqrt((2 * PI) ^ N) * det(Var))}</b></p>
      *
      * @return the precomputed distance
      */
@@ -347,7 +348,7 @@ public class MixtureComponent implements Cloneable {
 
 
     public String toString() {
-        return "mu=" + MatrixUtils.toString(mean) + " cov=" + MatrixUtils.toString(variance);
+        return "mu=" + Arrays.toString(mean) + " cov=" + Arrays.toString(variance);
     }
 }
 

@@ -30,31 +30,6 @@ public class MatrixUtils {
     }
 
 
-    public static String toString(double[] v) {
-        StringBuffer s = new StringBuffer("[");
-
-        for (int r = 0; r < v.length; r++)
-            s.append(" ").append(df.format(v[r]));
-
-        return s.append(" ]").toString();
-    }
-
-
-    public static String toString(int[] v) {
-        StringBuffer s = new StringBuffer("[");
-
-        for (int r = 0; r < v.length; r++)
-            s.append(" ").append(v[r]);
-
-        return s.append(" ]").toString();
-    }
-
-
-    public static String toString(float[] vector) {
-        return toString(float2double(vector));
-    }
-
-
     public static String toString(float[][] matrix) {
         return toString(float2double(matrix));
     }
@@ -94,27 +69,5 @@ public class MatrixUtils {
             doubArr[i] = float2double(array[i]);
 
         return doubArr;
-    }
-
-
-    /** Converts a vector from linear domain to logdomain using a given <code>LogMath</code>-instance for conversion. */
-    public static float[] linearToLog(float[] vector, LogMath logMath) {
-        float[] logMixtureWeights = new float[vector.length];
-        int nbGaussians = vector.length;
-        for (int i = 0; i < nbGaussians; i++) {
-            logMixtureWeights[i] = logMath.linearToLog(vector[i]);
-        }
-        return logMixtureWeights;
-    }
-
-
-    public static double[] logToLinear(float[] vector, LogMath logMath) {
-        double[] logMixtureWeights = new double[vector.length];
-
-        for (int i = 0; i < vector.length; i++) {
-            logMixtureWeights[i] = logMath.logToLinear(vector[i]);
-        }
-
-        return logMixtureWeights;
     }
 }

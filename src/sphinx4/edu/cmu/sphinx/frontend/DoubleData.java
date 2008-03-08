@@ -13,10 +13,10 @@
 
 package edu.cmu.sphinx.frontend;
 
-import edu.cmu.sphinx.util.machlearn.ObservationVector;
+import edu.cmu.sphinx.util.machlearn.OVector;
 
 /** A Data object that holds data of primitive type double. */
-public class DoubleData extends ObservationVector implements Data {
+public class DoubleData extends OVector implements Data {
 
     private int sampleRate;
     private long firstSampleNumber;
@@ -24,8 +24,8 @@ public class DoubleData extends ObservationVector implements Data {
 
 
     /**
-     * Constructs a new <code>Data</code> object with values only. All other internal fields like sampling rate etc. are
-     * initialized to -1.
+     * Constructs a new <code>Data</code> object with values only. All other internal fields like
+     * sampling rate etc. are initialized to -1.
      */
     public DoubleData(double[] values) {
         super(values);
@@ -72,7 +72,8 @@ public class DoubleData extends ObservationVector implements Data {
 
 
     /**
-     * Returns the position of the first sample in the original data. The very first sample number is zero.
+     * Returns the position of the first sample in the original data. The very first sample number
+     * is zero.
      *
      * @return the position of the first sample in the original data
      */
@@ -84,8 +85,8 @@ public class DoubleData extends ObservationVector implements Data {
     /**
      * Returns the time in milliseconds at which the audio data is collected.
      *
-     * @return the difference, in milliseconds, between the time the audio data is collected and midnight, January 1,
-     *         1970
+     * @return the difference, in milliseconds, between the time the audio data is collected and
+     *         midnight, January 1, 1970
      */
     public long getCollectTime() {
         return collectTime;
