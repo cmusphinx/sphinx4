@@ -13,8 +13,6 @@ package edu.cmu.sphinx.util;
 
 import edu.cmu.sphinx.util.props.*;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.logging.Logger;
 
 /**
@@ -27,7 +25,8 @@ public final class LogMath implements Configurable {
      * Sphinx property to get the Log base. According to forum discussionss a value between 1.00001 and 1.0004 should be
      * used for speech reocgnition. Going above 1.0005 will probably hurt.
      */
-    @S4Double(defaultValue = Math.E)
+//    @S4Double(defaultValue = Math.E)
+    @S4Double(defaultValue = 1.0001)
     public final static String PROP_LOG_BASE = "logBase";
 
 
@@ -63,12 +62,7 @@ public final class LogMath implements Configurable {
     /** Returns the last created instance of <code>LogMath</code> or a default instance using all default parameters. */
     public static LogMath getInstance() {
         if (lastInstance == null) {
-            Logger.getLogger(LogMath.class.getName()).warning("Creating default LogMath-instance");
-
-            Map<String, Object> logProps = new HashMap<String, Object>();
-            logProps.put("useAddTable", Boolean.TRUE);
-            logProps.put("logBase", 1.0001);
-            lastInstance = (LogMath) ConfigurationManager.getInstance(LogMath.class, logProps);
+            lastInstance = (LogMath) ConfigurationManager.getInstance(LogMath.class);
         }
 
         return lastInstance;
@@ -465,5 +459,28 @@ public final class LogMath implements Configurable {
         return (float) (0.4342944819 * java.lang.Math.log(value));
         // If you want to get rid of the constant:
         // return ((1.0f / Math.log(10.0f)) * Math.log(value));
+    }
+
+
+    /** Converts a vector from linear domain to logdomain using a given <code>LogMath</code>-instance for conversion. */
+    public static float[] linearToLog(float[] vector, LogMath logMath) {
+        float[] logMixtureWeights = new float[vector.length];
+        int nbGaussians = vector.length;
+        for (int i = 0; i < nbGaussians; i++) {
+            logMixtureWeights[i] = logMath.linearToLog(vector[i]);
+        }
+        return logMixtureWeights;
+    }
+
+
+    /** Converts a vector from log to linear domain using a given <code>LogMath</code>-instance for conversion. */
+    public static double[] logToLinear(float[] vector, LogMath logMath) {
+        double[] logMixtureWeights = new double[vector.length];
+
+        for (int i = 0; i < vector.length; i++) {
+            logMixtureWeights[i] = logMath.logToLinear(vector[i]);
+        }
+
+        return logMixtureWeights;
     }
 }
