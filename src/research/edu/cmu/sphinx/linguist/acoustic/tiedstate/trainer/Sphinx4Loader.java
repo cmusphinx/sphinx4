@@ -298,7 +298,7 @@ class Sphinx4Loader extends Sphinx3Loader {
 
 //        SphinxProperties acousticProperties = super.getAcousticProperties();
         SphinxProperties acousticProperties = null;
-        LogMath logMath = (LogMath) ConfigurationManager.getInstance(LogMath.class);
+        LogMath logMath = ConfigurationManager.getInstance(LogMath.class);
         boolean sparseForm = acousticProperties.getBoolean
                 (Sphinx3Loader.PROP_SPARSE_FORM, false);
         logger.info("Loading transition matrices from: ");
@@ -367,7 +367,7 @@ class Sphinx4Loader extends Sphinx3Loader {
 
 //        SphinxProperties acousticProperties = super.getAcousticProperties();
         SphinxProperties acousticProperties = null;
-        LogMath logMath = (LogMath) ConfigurationManager.getInstance(LogMath.class);
+        LogMath logMath = ConfigurationManager.getInstance(LogMath.class);
         boolean sparseForm = acousticProperties.getBoolean
                 (Sphinx3Loader.PROP_SPARSE_FORM, false);
         logger.info("Loading transition matrices from: ");

@@ -14,9 +14,14 @@ package edu.cmu.sphinx.frontend.window;
 
 import edu.cmu.sphinx.frontend.*;
 import edu.cmu.sphinx.frontend.util.DataUtil;
-import edu.cmu.sphinx.util.props.*;
+import edu.cmu.sphinx.util.props.PropertyException;
+import edu.cmu.sphinx.util.props.PropertySheet;
+import edu.cmu.sphinx.util.props.S4Double;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Slices up a Data object into a number of overlapping windows (usually refered to as "frames" in the speech world). In
@@ -357,6 +362,25 @@ public class RaisedCosineWindower extends BaseDataProcessor {
             throw new RuntimeException(this.getName() + " was not initialized yet!");
 
         return windowShiftInMs;
+    }
+
+
+    /**
+     * Rounds a given sample-number to the number of samples will be processed by this instance including the padding
+     * samples at the end..
+     */
+    public long roundToFrames(long samples) {
+        int windowSize = DataUtil.getSamplesPerWindow(sampleRate, windowSizeInMs);
+        int windowShift = DataUtil.getSamplesPerShift(sampleRate, windowShiftInMs);
+
+        long mxNumShifts = samples / windowShift;
+
+        for (int i = (int) mxNumShifts; ; i--) {
+            long remainingSamples = samples - windowShift * i;
+
+            if (remainingSamples > windowSize)
+                return windowShift * (i + 1) + windowSize;
+        }
     }
 }
 

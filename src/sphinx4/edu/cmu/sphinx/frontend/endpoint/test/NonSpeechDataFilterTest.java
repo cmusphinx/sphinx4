@@ -31,7 +31,7 @@ public class NonSpeechDataFilterTest extends AbstractTestProcessor {
             Map<String, Object> props = new HashMap<String, Object>();
             props.put(NonSpeechDataFilter.PROP_MERGE_SPEECH_SEGMENTS, mergeSpeechSegments);
 
-            return (NonSpeechDataFilter) ConfigurationManager.getInstance(NonSpeechDataFilter.class, props);
+            return ConfigurationManager.getInstance(NonSpeechDataFilter.class, props);
         } catch (PropertyException e) {
             e.printStackTrace();
         }

@@ -62,7 +62,7 @@ public final class LogMath implements Configurable {
     /** Returns the last created instance of <code>LogMath</code> or a default instance using all default parameters. */
     public static LogMath getInstance() {
         if (lastInstance == null) {
-            lastInstance = (LogMath) ConfigurationManager.getInstance(LogMath.class);
+            lastInstance = ConfigurationManager.getInstance(LogMath.class);
         }
 
         return lastInstance;

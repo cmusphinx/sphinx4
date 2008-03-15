@@ -95,7 +95,7 @@ class Sphinx3Saver implements Saver {
             FileNotFoundException, IOException, ZipException {
 
         this.binary = binary;
-        logMath = (LogMath) ConfigurationManager.getInstance(LogMath.class);
+        logMath = ConfigurationManager.getInstance(LogMath.class);
 
         // extract the feature vector length
         String vectorLengthProp = Sphinx3Loader.PROP_VECTOR_LENGTH;

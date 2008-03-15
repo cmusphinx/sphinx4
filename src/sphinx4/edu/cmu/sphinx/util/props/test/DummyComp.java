@@ -85,7 +85,7 @@ public class DummyComp implements Configurable {
 
     @Test
     public void testGetDefaultInstance() throws PropertyException, InstantiationException {
-        DummyComp dc = (DummyComp) ConfigurationManager.getInstance(DummyComp.class);
+        DummyComp dc = ConfigurationManager.getInstance(DummyComp.class);
 
         Assert.assertEquals(4, dc.getBeamWidth());
         Assert.assertEquals(1.3, dc.getAlpha(), 1E-10);
@@ -109,7 +109,7 @@ public class DummyComp implements Configurable {
         Map<String, Object> defaultProps = new HashMap<String, Object>();
         defaultProps.put(DummyComp.PROP_FRONTEND, new DummyFrontEnd());
 
-        DummyComp dc = (DummyComp) ConfigurationManager.getInstance(DummyComp.class, defaultProps);
+        DummyComp dc = ConfigurationManager.getInstance(DummyComp.class, defaultProps);
 
         Assert.assertEquals(4, dc.getBeamWidth());
         Assert.assertEquals(1.3, dc.getAlpha(), 1E-10);

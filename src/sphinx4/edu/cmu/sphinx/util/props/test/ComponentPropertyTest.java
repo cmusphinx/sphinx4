@@ -28,7 +28,7 @@ public class ComponentPropertyTest implements Configurable {
 
     @Test
     public void testDefInstance() throws PropertyException, InstantiationException {
-        ComponentPropertyTest cpt = (ComponentPropertyTest) ConfigurationManager.getInstance(ComponentPropertyTest.class);
+        ComponentPropertyTest cpt = ConfigurationManager.getInstance(ComponentPropertyTest.class);
 
         Assert.assertTrue(cpt != null);
         Assert.assertTrue(cpt.dataProc instanceof AnotherDummyProcessor);

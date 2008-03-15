@@ -14,19 +14,19 @@ public class FrontEndUtils {
 
 
     /** Returns a the next <code>DataProcessor</code> of type <code>predecClass</code> which preceeds <code>dp</code> */
-    public static DataProcessor getDataSource(DataProcessor dp, Class<? extends DataProcessor> predecClass) {
-        while (!predecClass.isInstance(dp.getPredecessor())) {
-            dp = dp.getPredecessor();
+    public static <T extends DataProcessor> T getFrontEndProcessor(DataProcessor dp, Class<T> predecClass) {
+        while (!predecClass.isInstance(dp)) {
+            if (dp instanceof FrontEnd)
+                dp = ((FrontEnd) dp).getLastDataProcessor();
+            else
+                dp = dp.getPredecessor();
 
             if (dp == null)
                 return null;
-
-            if (dp instanceof FrontEnd)
-                dp = ((FrontEnd) dp).getLastDataProcessor();
         }
 
 
-        return dp;
+        return (T) dp;
     }
 
 

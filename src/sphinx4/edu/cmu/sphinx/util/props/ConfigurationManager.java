@@ -444,7 +444,7 @@ public class ConfigurationManager implements Cloneable {
      * Creates an instance of the given <code>Configurable</code> by using the default parameters as defined by the
      * class annotations to parameterize the component.
      */
-    public static Configurable getInstance(Class<? extends Configurable> targetClass) throws PropertyException {
+    public static <C extends Configurable> C getInstance(Class<C> targetClass) throws PropertyException {
         return getInstance(targetClass, new HashMap<String, Object>());
     }
 
@@ -454,10 +454,10 @@ public class ConfigurationManager implements Cloneable {
      * class annotations to parameterize the component. Default prarmeters will be overrided if a their names are
      * containd in the given <code>props</code>-map
      */
-    public static Configurable getInstance(Class<? extends Configurable> targetClass, Map<String, Object> props) throws PropertyException {
+    public static <C extends Configurable> C getInstance(Class<C> targetClass, Map<String, Object> props) throws PropertyException {
         PropertySheet ps = getPropSheetInstanceFromClass(targetClass, props, null, new ConfigurationManager());
         Configurable configurable = ps.getOwner();
-        return configurable;
+        return (C) configurable;
     }
 
 

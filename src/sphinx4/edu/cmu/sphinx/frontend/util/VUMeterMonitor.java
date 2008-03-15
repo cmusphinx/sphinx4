@@ -48,7 +48,7 @@ public class VUMeterMonitor extends BaseDataProcessor {
 
         // show the panel only if  a microphone is used as data source
         if (d instanceof DataStartSignal)
-            vuMeterPanel.setVisible(FrontEndUtils.getDataSource(this, Microphone.class) != null);
+            vuMeterPanel.setVisible(FrontEndUtils.getFrontEndProcessor(this, Microphone.class) != null);
 
         if (d instanceof DoubleData)
             vumeter.calculateVULevels(d);

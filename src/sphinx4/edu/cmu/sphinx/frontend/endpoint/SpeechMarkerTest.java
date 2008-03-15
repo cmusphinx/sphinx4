@@ -22,7 +22,7 @@ public class SpeechMarkerTest extends AbstractTestProcessor {
         try {
 
 
-            SpeechMarker speechMarker = (SpeechMarker) ConfigurationManager.getInstance(SpeechMarker.class);
+            SpeechMarker speechMarker = ConfigurationManager.getInstance(SpeechMarker.class);
             speechMarker.initialize();
 
 //            Map<String, Object> props = new HashMap<String, Object>();

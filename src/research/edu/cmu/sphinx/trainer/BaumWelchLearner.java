@@ -87,7 +87,7 @@ public class BaumWelchLearner implements Learner {
             throws IOException {
         this.props = props;
         context = props.getContext();
-        logMath = (LogMath) ConfigurationManager.getInstance(LogMath.class);
+        logMath = ConfigurationManager.getInstance(LogMath.class);
         initialize();
     }
 

@@ -41,7 +41,7 @@ public class MixtureComponentTest {
         Map<String, Object> props = new HashMap<String, Object>();
         props.put(LogMath.PROP_USE_ADD_TABLE, false);
 
-        lm = (LogMath) ConfigurationManager.getInstance(LogMath.class, props);
+        lm = ConfigurationManager.getInstance(LogMath.class, props);
     }
 
 

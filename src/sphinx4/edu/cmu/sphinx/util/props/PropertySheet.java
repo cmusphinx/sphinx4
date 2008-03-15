@@ -560,7 +560,7 @@ public class PropertySheet implements Cloneable {
 
     private void applyConfigurationChange(String propName, Object cmName, Object value) throws PropertyException {
         rawProps.put(propName, cmName);
-        propValues.put(propName, value);
+        propValues.put(propName, value != null ? value : cmName);
 
         if (getInstanceName() != null)
             cm.fireConfChanged(getInstanceName(), propName);
@@ -576,7 +576,7 @@ public class PropertySheet implements Cloneable {
      * @param key the simple property name
      * @param val the value for the property
      */
-    public void setRaw(String key, Object val) {
+    void setRaw(String key, Object val) {
         rawProps.put(key, val);
         propValues.put(key, null);
     }
