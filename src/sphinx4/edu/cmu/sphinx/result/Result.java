@@ -301,23 +301,24 @@ public class Result {
      *
      * @return the set of feature frames associated with this result, or null if the frames are not available.
      */
-    public Data[] getDataFrames() {
-        Data[] features = null;
-
+    public List<Data> getDataFrames() {
         // find the best token, and then trace back for all the features
         Token token = getBestToken();
-        if (token != null) {
-            List<Data> featureList = new LinkedList<Data>();
-            do {
-                Data feature = token.getData();
-                featureList.add(0, feature);
-                token = token.getPredecessor();
-            } while (token != null);
 
-            features = new Data[featureList.size()];
-            featureList.toArray(features);
-        }
-        return features;
+        if (token == null)
+            return null;
+
+        List<Data> featureList = new LinkedList<Data>();
+
+        do {
+            Data feature = token.getData();
+            if (feature != null)
+                featureList.add(0, feature);
+
+            token = token.getPredecessor();
+        } while (token != null);
+
+        return featureList;
     }
 
 
