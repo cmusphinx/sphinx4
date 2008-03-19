@@ -59,11 +59,11 @@ public class FeatureStream implements Configurable {
      * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
      */
     public void newProperties(PropertySheet ps) throws PropertyException {
-        model = (AcousticModel) ps.getComponent
-                (PROP_ACOUSTIC_MODEL);
-        name = model.getName();
+        model = (AcousticModel) ps.getComponent(PROP_ACOUSTIC_MODEL);
         frontEnd = (FrontEnd) ps.getComponent(PROP_FRONT_END);
         eta = ps.getFloat(PROP_ETA);
+
+        name = model.getName();
     }
 
 

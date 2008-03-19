@@ -13,26 +13,18 @@
 package edu.cmu.sphinx.decoder.scorer;
 
 import edu.cmu.sphinx.decoder.search.Token;
-import edu.cmu.sphinx.frontend.*;
-import edu.cmu.sphinx.frontend.endpoint.SpeechEndSignal;
-import edu.cmu.sphinx.frontend.util.DataUtil;
+import edu.cmu.sphinx.frontend.Data;
 import edu.cmu.sphinx.util.props.*;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.logging.Logger;
 
 /**
  * An acoustic scorer that breaks the scoring up into a configurable number of separate threads.
  * <p/>
  * All scores are maintained in LogMath log base
  */
-public class ThreadedAcousticScorer implements AcousticScorer {
-
-    /** Property the defines the frontend to retrieve features from for scoring */
-    @S4Component(type = BaseDataProcessor.class)
-    public final static String PROP_FRONTEND = "frontend";
+public class ThreadedAcousticScorer extends AbstractScorer {
 
     /**
      * A SphinxProperty name that controls the number of threads that are used to score hmm states. If the isCpuRelative
@@ -76,11 +68,9 @@ public class ThreadedAcousticScorer implements AcousticScorer {
     public final static String PROP_ACOUSTIC_GAIN = "acousticGain";
 
 
-    private BaseDataProcessor frontEnd;      // where features come from
     private int numThreads;         // number of threads in use
     private int minScoreablesPerThread; // min scoreables sent to a thread
     private boolean keepData;       // scoreables keep feature or not
-    private Logger logger;
     private float acousticGain;             // acoustic gain
 
     private Mailbox mailbox;        // sync between caller and threads
@@ -88,12 +78,27 @@ public class ThreadedAcousticScorer implements AcousticScorer {
     private Data currentData;       // current feature being processed
 
 
-    /*
-    * (non-Javadoc)
-    *
-    * @see edu.cmu.sphinx.decoder.scorer.AcousticScorer#allocate()
-    */
-    public void allocate() throws IOException {
+    @Override
+    public void newProperties(PropertySheet ps) throws PropertyException {
+        super.newProperties(ps);
+
+        boolean cpuRelative = ps.getBoolean(PROP_IS_CPU_RELATIVE);
+        numThreads = ps.getInt(PROP_NUM_THREADS);
+        minScoreablesPerThread = ps.getInt(PROP_MIN_SCOREABLES_PER_THREAD);
+        keepData = ps.getBoolean(PROP_SCOREABLES_KEEP_FEATURE);
+        acousticGain = ps.getFloat(PROP_ACOUSTIC_GAIN);
+
+        if (cpuRelative) {
+            numThreads += Runtime.getRuntime().availableProcessors();
+        }
+        if (numThreads < 1) {
+            numThreads = 1;
+        }
+    }
+
+
+    @Override
+    public void allocate() {
         logger.info("# of scoring threads: " + numThreads);
 
         // if we only have one thread, then we'll score the
@@ -111,112 +116,44 @@ public class ThreadedAcousticScorer implements AcousticScorer {
     }
 
 
-    /*
-    * (non-Javadoc)
-    *
-    * @see edu.cmu.sphinx.decoder.scorer.AcousticScorer#deallocate()
-    */
-    public void deallocate() {
-    }
-
-
-    /*
-    * (non-Javadoc)
-    *
-    * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
-    */
-    public void newProperties(PropertySheet ps) throws PropertyException {
-        logger = ps.getLogger();
-
-        frontEnd = (BaseDataProcessor) ps.getComponent(PROP_FRONTEND);
-        boolean cpuRelative = ps.getBoolean(PROP_IS_CPU_RELATIVE);
-        numThreads = ps.getInt(PROP_NUM_THREADS);
-        minScoreablesPerThread = ps.getInt(PROP_MIN_SCOREABLES_PER_THREAD);
-        keepData = ps.getBoolean(PROP_SCOREABLES_KEEP_FEATURE);
-        acousticGain = ps.getFloat(PROP_ACOUSTIC_GAIN);
-
-        if (cpuRelative) {
-            numThreads += Runtime.getRuntime().availableProcessors();
-        }
-        if (numThreads < 1) {
-            numThreads = 1;
-        }
-    }
-
-
-    /**
-     * Scores the given set of states
-     *
-     * @param scoreableList a list containing scoreable objects to be scored
-     * @return the best scorign scoreable, or null if there are no more features to score
-     */
-    public Scoreable calculateScores(List<Token> scoreableList) {
+    protected Scoreable doScoring(List<Token> scoreableList, Data data) {
         Scoreable best = null;
 
-        try {
-            Data data = frontEnd.getData();
+        currentData = data;
 
-            while (data instanceof Signal) {
-                if (data instanceof SpeechEndSignal)
-                    return null;
+        if (numThreads > 1) {
 
-                data = frontEnd.getData();
+            int nThreads = numThreads;
+            int scoreablesPerThread = (scoreableList.size() + (numThreads - 1))
+                    / numThreads;
+            if (scoreablesPerThread < minScoreablesPerThread) {
+                scoreablesPerThread = minScoreablesPerThread;
+                nThreads = (scoreableList.size() + (scoreablesPerThread - 1))
+                        / scoreablesPerThread;
             }
 
-            if (data == null)
-                return null;
+            semaphore.reset(nThreads);
 
-            if (data instanceof DoubleData)
-                data = DataUtil.DoubleData2FloatData((DoubleData) data);
-
-            currentData = data;
-
-            if (numThreads > 1) {
-
-                int nThreads = numThreads;
-                int scoreablesPerThread = (scoreableList.size() + (numThreads - 1))
-                        / numThreads;
-                if (scoreablesPerThread < minScoreablesPerThread) {
-                    scoreablesPerThread = minScoreablesPerThread;
-                    nThreads = (scoreableList.size() + (scoreablesPerThread - 1))
-                            / scoreablesPerThread;
+            for (int i = 0; i < nThreads; i++) {
+                ScoreableJob job = new ScoreableJob(scoreableList, i
+                        * scoreablesPerThread, scoreablesPerThread);
+                if (i < (nThreads - 1)) {
+                    mailbox.post(job);
+                } else {
+                    Scoreable myBest = scoreScoreables(job);
+                    semaphore.post(myBest);
                 }
-
-                semaphore.reset(nThreads);
-
-                for (int i = 0; i < nThreads; i++) {
-                    ScoreableJob job = new ScoreableJob(scoreableList, i
-                            * scoreablesPerThread, scoreablesPerThread);
-                    if (i < (nThreads - 1)) {
-                        mailbox.post(job);
-                    } else {
-                        Scoreable myBest = scoreScoreables(job);
-                        semaphore.post(myBest);
-                    }
-                }
-
-                best = semaphore.pend();
-
-            } else {
-                ScoreableJob job = new ScoreableJob(scoreableList, 0,
-                        scoreableList.size());
-                best = scoreScoreables(job);
             }
-        } catch (DataProcessingException dpe) {
-            dpe.printStackTrace();
-            return best;
+
+            best = semaphore.pend();
+
+        } else {
+            ScoreableJob job = new ScoreableJob(scoreableList, 0,
+                    scoreableList.size());
+            best = scoreScoreables(job);
         }
+
         return best;
-    }
-
-
-    /** Initializes the scorer */
-    public void startRecognition() {
-    }
-
-
-    /** Performs post-recognition cleanup. */
-    public void stopRecognition() {
     }
 
 
