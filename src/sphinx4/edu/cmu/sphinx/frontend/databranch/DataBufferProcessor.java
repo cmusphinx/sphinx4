@@ -41,7 +41,7 @@ public class DataBufferProcessor extends BaseDataProcessor implements DataListen
 
 
     /** The maximal size of the buffer in frames. The oldest frames will be removed if the buffer grows out of bounds. */
-    @S4Integer(defaultValue = 10000)
+    @S4Integer(defaultValue = 50000)
     public static final String PROP_BUFFER_SIZE = "maxBufferSize";
     private int maxBufferSize;
 

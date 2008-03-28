@@ -3,6 +3,7 @@ package edu.cmu.sphinx.decoder.scorer;
 import edu.cmu.sphinx.decoder.search.Token;
 import edu.cmu.sphinx.frontend.*;
 import edu.cmu.sphinx.frontend.endpoint.SpeechEndSignal;
+import edu.cmu.sphinx.frontend.endpoint.SpeechStartSignal;
 import edu.cmu.sphinx.frontend.util.DataUtil;
 import edu.cmu.sphinx.util.props.PropertyException;
 import edu.cmu.sphinx.util.props.PropertySheet;
@@ -84,6 +85,19 @@ public abstract class AbstractScorer implements AcousticScorer {
 
 
     public void startRecognition() {
+        // iterate through the feature stream until a SpeechStartSignal is being found
+        int debugCounter = 0;
+
+        while (!(frontEnd.getData() instanceof SpeechStartSignal)) {
+            debugCounter++;
+
+            if (debugCounter > 100) { // print a warning every second
+                debugCounter = 0;
+                logger.finer("Waiting for speech segment...");
+            }
+        }
+
+        // if this line becomes  reached all following feature frames will be part of a speech segment
     }
 
 
