@@ -24,10 +24,7 @@ import edu.cmu.sphinx.linguist.dictionary.Pronunciation;
 import edu.cmu.sphinx.linguist.dictionary.Word;
 
 import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Represents a single state in the recognition trellis. Subclasses of a token are used to represent the various
@@ -70,9 +67,15 @@ public class Token implements Scoreable {
     private SearchState searchState;
 
     private int location;
-    private Object appObject;
+    private Data myData;
 
     private static Set predecessorClasses = null;
+
+    /**
+     * A collection of arbitrary properties assigned to this token. This field becomes lazy intitialized to reduce
+     * memory footprint.
+     */
+    private HashMap<String, Object> tokenProps;
 
 
     /**
@@ -194,17 +197,19 @@ public class Token implements Scoreable {
     }
 
 
+    /** Sets the feature for this Token. */
+    public void setData(Data data) {
+        myData = data;
+    }
+
+
     /**
      * Returns the feature for this Token.
      *
      * @return the feature for this Token
      */
     public Data getData() {
-        if (appObject != null && appObject instanceof Data) {
-            return (Data) appObject;
-        } else {
-            return null;
-        }
+        return myData;
     }
 
 
@@ -236,7 +241,7 @@ public class Token implements Scoreable {
         logTotalScore += logAcousticScore;
 
         if (keepData) {
-            setAppObject(feature);
+            setData(feature);
         }
 
         return logTotalScore;
@@ -362,8 +367,8 @@ public class Token implements Scoreable {
     public String toString() {
         String appString = "";
 
-        if (appObject != null) {
-            appString = " " + appObject.toString();
+        if (tokenProps != null) {
+            appString = " " + tokenProps.toString();
         }
         return
                 numFmt.format(getFrameNumber()) + " " +
@@ -571,18 +576,10 @@ public class Token implements Scoreable {
      *
      * @return the application object
      */
-    public Object getAppObject() {
-        return appObject;
+    public synchronized Map<String, Object> getTokenProps() {
+        if (tokenProps == null)
+            tokenProps = new HashMap<String, Object>();
+
+        return tokenProps;
     }
-
-
-    /**
-     * Sets the application object
-     *
-     * @param obj the application object
-     */
-    public void setAppObject(Object obj) {
-        appObject = obj;
-    }
-
 }

@@ -19,7 +19,10 @@ import edu.cmu.sphinx.recognizer.StateListener;
 import edu.cmu.sphinx.result.Result;
 import edu.cmu.sphinx.result.ResultListener;
 import edu.cmu.sphinx.util.LogMath;
-import edu.cmu.sphinx.util.props.*;
+import edu.cmu.sphinx.util.props.PropertyException;
+import edu.cmu.sphinx.util.props.PropertySheet;
+import edu.cmu.sphinx.util.props.S4Boolean;
+import edu.cmu.sphinx.util.props.S4Component;
 
 import java.text.DecimalFormat;
 import java.util.Collections;
@@ -79,6 +82,7 @@ public class BeamFinder implements ResultListener,
     private int totalUtterances;
 
     private final static DecimalFormat logFormatter = new DecimalFormat("0.#E0");
+    public final String TOKEN_RANK = "TOKENRANK";
 
 
     /*
@@ -185,7 +189,8 @@ public class BeamFinder implements ResultListener,
                     float scoreDiff = bestToken.getScore() -
                             token.getScore();
                     assert scoreDiff >= 0;
-                    token.setAppObject(new TokenRank(rank++, scoreDiff));
+
+                    token.getTokenProps().put(TOKEN_RANK, new TokenRank(rank++, scoreDiff));
                     // checkRank(token);
                 }
             }
@@ -202,7 +207,7 @@ public class BeamFinder implements ResultListener,
     private void checkRank(Token token) {
         while (token != null) {
             if (token.isEmitting()) {
-                if (token.getAppObject() == null) {
+                if (token.getTokenProps().get(TOKEN_RANK) == null) {
                     if (token.getFrameNumber() != 0) {
                         System.out.println("MISSING " + token);
                     }
@@ -261,7 +266,7 @@ public class BeamFinder implements ResultListener,
         maxAbsoluteBeam = 0;
         while (token != null) {
             if (token.isEmitting()) {
-                TokenRank rank = (TokenRank) token.getAppObject();
+                TokenRank rank = (TokenRank) token.getTokenProps().get(TOKEN_RANK);
                 if (rank != null) {
                     if (rank.getAbsoluteRank() > maxAbsoluteBeam) {
                         maxAbsoluteBeam = rank.getAbsoluteRank();
@@ -301,7 +306,7 @@ public class BeamFinder implements ResultListener,
 
         while (token != null) {
             if (token.isEmitting()) {
-                TokenRank rank = (TokenRank) token.getAppObject();
+                TokenRank rank = (TokenRank) token.getTokenProps().get(TOKEN_RANK);
                 if (rank != null) {
                     if (rank.getRelativeRank() > maxRelativeBeam) {
                         maxRelativeBeam = rank.getRelativeRank();
