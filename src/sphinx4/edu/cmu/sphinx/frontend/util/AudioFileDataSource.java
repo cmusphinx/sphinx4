@@ -57,7 +57,10 @@ public class AudioFileDataSource extends BaseDataProcessor {
     private boolean utteranceEndSent = false;
     private boolean utteranceStarted = false;
 
+    @S4ComponentList(type = Configurable.class)
+    public static final String AUDIO_FILE_LISTENERS = "audioFileListners";
     protected List<AudioFileProcessListener> fileListeners = new ArrayList<AudioFileProcessListener>();
+
     private File curAudioFile;
 
 
@@ -82,6 +85,13 @@ public class AudioFileDataSource extends BaseDataProcessor {
     public void newProperties(PropertySheet ps) throws PropertyException {
         super.newProperties(ps);
         bytesPerRead = ps.getInt(PROP_BYTES_PER_READ);
+
+        // attach all pool-listeners
+        List<? extends Configurable> list = ps.getComponentList(AUDIO_FILE_LISTENERS);
+        for (Configurable configurable : list) {
+            assert configurable instanceof AudioFileProcessListener;
+            addNewFileListener((AudioFileProcessListener) configurable);
+        }
 
         initialize();
     }
