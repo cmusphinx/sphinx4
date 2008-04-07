@@ -10,7 +10,7 @@
     <property name="version" value="1.0beta"/>
 
     <path id="libs">
-        <fileset dir="lib" includes="**/jsapi.jar,**/js.jar,**/forms_rt.jar,**/javolution.jar,junit4.1.jar"/>
+        <fileset dir="lib" includes="**/jsapi.jar,**/js.jar,**/forms_rt.jar,**/javolution.jar,junit-4.4.jar"/>
     </path>
     <property name="src_dir" value="src"/>
     <property name="build_dir" value="bld"/>
@@ -458,7 +458,8 @@
         </replace>
         <replace file="${model_class_dir}/${my_model_name}/Model.java">
             <replacevalue>import edu.cmu.sphinx.linguist.acoustic.*;
-import edu.cmu.sphinx.linguist.acoustic.tiedstate.*;</replacevalue>
+                import edu.cmu.sphinx.linguist.acoustic.tiedstate.*;
+            </replacevalue>
             <replacetoken>import edu.cmu.sphinx.linguist.acoustic.*;</replacetoken>
         </replace>
 
@@ -475,7 +476,8 @@ import edu.cmu.sphinx.linguist.acoustic.tiedstate.*;</replacevalue>
         </replace>
         <replace file="${model_class_dir}/${my_model_name}/ModelLoader.java">
             <replacevalue>import edu.cmu.sphinx.linguist.acoustic.*;
-import edu.cmu.sphinx.linguist.acoustic.tiedstate.*;</replacevalue>
+                import edu.cmu.sphinx.linguist.acoustic.tiedstate.*;
+            </replacevalue>
             <replacetoken>import edu.cmu.sphinx.linguist.acoustic.*;</replacetoken>
         </replace>
     </target>
