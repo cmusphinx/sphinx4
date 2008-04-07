@@ -522,4 +522,102 @@ public final class ConfigurationManagerUtils {
     public static ConfigurationManager getPropertyManager(PropertySheet ps) {
         return ps.getPropertyManager();
     }
+
+
+    /** Returns a map of all component-properties of this config-manager (including their associeted property-sheets. */
+    public static Map<String, List<PropertySheet>> listAllsPropNames(ConfigurationManager cm) {
+        Map<String, List<PropertySheet>> allProps = new HashMap<String, List<PropertySheet>>();
+
+        for (String configName : cm.getComponentNames()) {
+            PropertySheet ps = cm.getPropertySheet(configName);
+
+            for (String propName : ps.getRegisteredProperties()) {
+                if (!allProps.containsKey(propName))
+                    allProps.put(propName, new ArrayList<PropertySheet>());
+
+                allProps.get(propName).add(ps);
+            }
+        }
+
+        return allProps;
+    }
+
+
+    public static void dumpPropStructure(ConfigurationManager cm) {
+        Map<String, List<PropertySheet>> allProps = listAllsPropNames(cm);
+
+        System.out.println("Property-structure of '" + cm.getConfigURL() + "':");
+
+        // print non-ambiguous props first
+        System.out.println("\nUnambiguous properties = ");
+        for (String propName : allProps.keySet()) {
+            if (allProps.get(propName).size() == 1)
+                System.out.print(propName + ", ");
+        }
+
+        // now print ambiguous properties (including the associated components
+        System.out.println("\n\nAmbiguous properties: ");
+        for (String propName : allProps.keySet()) {
+            if (allProps.get(propName).size() == 1)
+                continue;
+
+            System.out.print(propName + "=");
+            for (PropertySheet ps : allProps.get(propName)) {
+                System.out.print(ps.getInstanceName() + ", ");
+            }
+            System.out.println();
+        }
+    }
+
+
+    /**
+     * Attempts to set the value of an arbitrary component-property. If the property-name is ambiguous  with resepect to
+     * the given <code>ConfiguratioManager</code> an extended syntax (componentName->propName) can be used to acess the
+     * property.
+     */
+    public static void setProperty(ConfigurationManager cm, String propName, String propValue) {
+        assert propValue != null;
+
+        Map<String, List<PropertySheet>> allProps = listAllsPropNames(cm);
+
+        if (allProps.get(propName) == null)
+            throw new RuntimeException("No property '" + propName + "' in configuration '" + cm.getConfigURL() + "'!");
+
+
+        if (allProps.get(propName).size() > 1) {
+            throw new RuntimeException("Property-name '" + propName + "' is ambiguous with respect to configuration '"
+                    + cm.getConfigURL() + "'. Use 'componentName->propName' to disambiguate your request.");
+        }
+
+        String compName;
+
+        // if disambiguation syntax is used find the correct PS first
+        if (propName.contains("->")) {
+            String[] splitProp = propName.split("->");
+            compName = splitProp[0];
+            propName = splitProp[1];
+        } else {
+            compName = allProps.get(propName).get(0).getInstanceName();
+        }
+
+        // now set the property
+        PropertySheet ps = cm.getPropertySheet(compName);
+        PropertySheet.PropertyType propType = ps.getType(propName);
+        switch (propType) {
+            case BOOL:
+                ps.setBoolean(propName, Boolean.getBoolean(propValue));
+                break;
+            case DOUBLE:
+                ps.setDouble(propName, new Double(propValue));
+                break;
+            case INT:
+                ps.setInt(propName, new Integer(propValue));
+                break;
+            case STRING:
+                ps.setString(propName, propValue);
+                break;
+            default:
+                ps.setRaw(propName, propValue);
+        }
+    }
 }

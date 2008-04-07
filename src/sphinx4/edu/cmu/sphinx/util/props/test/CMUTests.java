@@ -5,9 +5,13 @@ import edu.cmu.sphinx.frontend.FrontEnd;
 import edu.cmu.sphinx.instrumentation.AccuracyTracker;
 import edu.cmu.sphinx.instrumentation.BestPathAccuracyTracker;
 import edu.cmu.sphinx.util.props.Configurable;
+import edu.cmu.sphinx.util.props.ConfigurationManager;
 import edu.cmu.sphinx.util.props.ConfigurationManagerUtils;
 import junit.framework.Assert;
 import org.junit.Test;
+
+import java.io.File;
+import java.io.IOException;
 
 /** Some unit-tests for the ConfigurationManagerUtils. */
 public class CMUTests {
@@ -23,5 +27,18 @@ public class CMUTests {
         Assert.assertFalse(ConfigurationManagerUtils.isSubClass(Object.class, Object.class));
 
         Assert.assertTrue(ConfigurationManagerUtils.isSubClass(BestPathAccuracyTracker.class, AccuracyTracker.class));
+    }
+
+
+    @Test
+    public void setComponentPropertyTest() throws IOException {
+        File configFile = new File("../../sphinx4/tests/other/testconfig.xml");
+        ConfigurationManager cm = new ConfigurationManager(configFile.toURI().toURL());
+
+        int newBeamWidth = 4711;
+        ConfigurationManagerUtils.setProperty(cm, "beamWidth", "" + newBeamWidth);
+
+        DummyComp dummyComp = (DummyComp) cm.lookup("duco");
+        Assert.assertEquals(newBeamWidth, dummyComp.getBeamWidth());
     }
 }
