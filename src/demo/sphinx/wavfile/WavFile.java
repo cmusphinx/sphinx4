@@ -17,6 +17,8 @@ import edu.cmu.sphinx.recognizer.Recognizer;
 import edu.cmu.sphinx.result.Result;
 import edu.cmu.sphinx.util.props.ConfigurationManager;
 import edu.cmu.sphinx.util.props.PropertyException;
+import junit.framework.Assert;
+import org.junit.Test;
 
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
@@ -87,6 +89,17 @@ public class WavFile {
         } catch (UnsupportedAudioFileException e) {
             System.err.println("Audio file format not supported: " + e);
             e.printStackTrace();
+        }
+    }
+
+
+    /** Converts this demo into a unit-test. */
+    @Test
+    public void testLatticeDemo() {
+        try {
+            main(new String[]{});
+        } catch (Throwable t) {
+            Assert.fail();
         }
     }
 }
