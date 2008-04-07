@@ -16,7 +16,7 @@ public class SphinxShell {
 
     public static void main(String[] args) throws IOException {
         if (args.length == 0 || (args.length == 1 && (args[0].startsWith("-h") || args[0].startsWith("--h")))) {
-            System.out.println("Usage: CMUTests <config-xml-file> *[<[component>->]<parameter>=<value>]");
+            System.out.println("Usage: CMUTests <config-xml-file> *([[<component>->]<parameter>=<value>] )");
             System.out.println("Example: CMUTests foobar.xml beamWidth=123 phoneDecoder->autoAllocate=true");
 
             System.out.println("\nOther options are: ");
