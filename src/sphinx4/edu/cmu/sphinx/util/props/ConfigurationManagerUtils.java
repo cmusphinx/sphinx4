@@ -580,7 +580,7 @@ public final class ConfigurationManagerUtils {
 
         Map<String, List<PropertySheet>> allProps = listAllsPropNames(cm);
 
-        if (allProps.get(propName) == null)
+        if (allProps.get(propName) == null && !propName.contains("->"))
             throw new RuntimeException("No property '" + propName + "' in configuration '" + cm.getConfigURL() + "'!");
 
 
