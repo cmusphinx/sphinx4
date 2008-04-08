@@ -32,6 +32,7 @@
 	<pathelement location="${lib_dir}/jsapi.jar"/>
 	<pathelement location="${lib_dir}/tags.jar"/>
 	<pathelement location="${lib_dir}/js.jar"/>
+	<pathelement location="${lib_dir}/junit-4.4.jar"/>
     </path>
 
 
