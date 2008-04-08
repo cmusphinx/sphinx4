@@ -744,6 +744,11 @@ public class PropertySheet implements Cloneable {
 
                         try {
                             String propertyName = (String) field.get(null);
+
+                            // make sure that there is not already another property with this name
+                            assert !propertySheet.getRegisteredProperties().contains(propertyName) :
+                                    "duplicate property-name for different properties: " + propertyName;
+
                             propertySheet.registerProperty(propertyName, new S4PropWrapper((Proxy) annotation));
                         } catch (IllegalAccessException e) {
                             e.printStackTrace();

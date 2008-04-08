@@ -1,8 +1,6 @@
 package edu.cmu.sphinx.util.props;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.*;
 
 /**
  * A component property.
@@ -12,6 +10,7 @@ import java.lang.annotation.RetentionPolicy;
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.FIELD)
 @S4Property
 public @interface S4Component {
 
