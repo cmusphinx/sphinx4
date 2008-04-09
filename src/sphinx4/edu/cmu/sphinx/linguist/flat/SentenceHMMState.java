@@ -34,7 +34,6 @@ public abstract class SentenceHMMState implements Serializable, SearchState {
     private final static int MASK_IS_SHARED_STATE = 0x20;
     private final static int MASK_WHICH = 0xffff;
     private final static int SHIFT_WHICH = 0x8;
-    private final static int BINARY_VERSION_NUMBER = 0x10000;
 
     private static int globalStateNumber = -1000;
 
@@ -230,16 +229,6 @@ public abstract class SentenceHMMState implements Serializable, SearchState {
 
 
     /**
-     * Reports an invalid message
-     *
-     * @param msg the message to display
-     */
-    private void report(String msg) {
-        System.out.println("Invalid state " + getTitle() + "-" + msg);
-    }
-
-
-    /**
      * Gets the number of successors
      *
      * @return the number of successors
@@ -255,7 +244,11 @@ public abstract class SentenceHMMState implements Serializable, SearchState {
      * @return the set of successors
      */
     public SearchStateArc[] getSuccessors() {
-        return getSuccessorArray();
+        if (successorArray == null) {
+            successorArray = new SentenceHMMStateArc[arcs.size()];
+            arcs.values().toArray(successorArray);
+        }
+        return successorArray;
     }
 
 
@@ -266,20 +259,6 @@ public abstract class SentenceHMMState implements Serializable, SearchState {
      */
     public Object getLexState() {
         return this;
-    }
-
-
-    /**
-     * Returns the succesors as SentenceHMMStateArc
-     *
-     * @return the successors
-     */
-    private SentenceHMMStateArc[] getSuccessorArray() {
-        if (successorArray == null) {
-            successorArray = new SentenceHMMStateArc[arcs.size()];
-            arcs.values().toArray(successorArray);
-        }
-        return successorArray;
     }
 
 
@@ -570,18 +549,20 @@ public abstract class SentenceHMMState implements Serializable, SearchState {
      */
     public static boolean visitStates(SentenceHMMStateVisitor visitor,
                                       SentenceHMMState start, boolean sorted) {
-        Set states = collectStates(start);
+        Set<SentenceHMMState> states = collectStates(start);
 
         if (sorted) {
             // sort the states by stateNumber
 
-            TreeSet sortedStates = new TreeSet(new Comparator() {
-                public int compare(Object o1, Object o2) {
-                    SentenceHMMState so1 = (SentenceHMMState) o1;
-                    SentenceHMMState so2 = (SentenceHMMState) o2;
+            TreeSet<SentenceHMMState> sortedStates = new TreeSet<SentenceHMMState>(new Comparator<SentenceHMMState>() {
+
+                public int compare(SentenceHMMState o1, SentenceHMMState o2) {
+                    SentenceHMMState so1 = o1;
+                    SentenceHMMState so2 = o2;
                     return so1.stateNumber - so2.stateNumber;
                 }
             });
+
             sortedStates.addAll(states);
             states = sortedStates;
         }
@@ -650,18 +631,18 @@ public abstract class SentenceHMMState implements Serializable, SearchState {
      * @param start the state to start the search from
      * @return the set of collected state
      */
-    public static Set collectStates(SentenceHMMState start) {
-        Set visitedStates = new HashSet();
-        List queue = new LinkedList();
+    public static Set<SentenceHMMState> collectStates(SentenceHMMState start) {
+        Set<SentenceHMMState> visitedStates = new HashSet<SentenceHMMState>();
+        List<SentenceHMMState> queue = new LinkedList<SentenceHMMState>();
 
         queue.add(start);
 
         while (queue.size() > 0) {
-            SentenceHMMState state = (SentenceHMMState) queue.remove(0);
+            SentenceHMMState state = queue.remove(0);
             visitedStates.add(state);
-            SentenceHMMStateArc[] successors = state.getSuccessorArray();
+            SearchStateArc[] successors = state.getSuccessors();
             for (int i = 0; i < successors.length; i++) {
-                SentenceHMMStateArc arc = successors[i];
+                SearchStateArc arc = successors[i];
                 SentenceHMMState nextState = (SentenceHMMState) arc.getState();
                 if (!visitedStates.contains(nextState)) {
                     queue.add(nextState);
