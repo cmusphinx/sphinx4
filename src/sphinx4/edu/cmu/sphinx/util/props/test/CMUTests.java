@@ -7,7 +7,7 @@ import edu.cmu.sphinx.instrumentation.BestPathAccuracyTracker;
 import edu.cmu.sphinx.util.props.Configurable;
 import edu.cmu.sphinx.util.props.ConfigurationManager;
 import edu.cmu.sphinx.util.props.ConfigurationManagerUtils;
-import junit.framework.Assert;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.File;

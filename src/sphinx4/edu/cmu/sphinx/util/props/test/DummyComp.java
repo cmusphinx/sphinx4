@@ -1,7 +1,7 @@
 package edu.cmu.sphinx.util.props.test;
 
 import edu.cmu.sphinx.util.props.*;
-import junit.framework.Assert;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.File;

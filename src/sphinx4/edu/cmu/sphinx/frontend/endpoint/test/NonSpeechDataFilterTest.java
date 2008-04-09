@@ -10,7 +10,7 @@ import edu.cmu.sphinx.frontend.endpoint.SpeechStartSignal;
 import edu.cmu.sphinx.frontend.test.AbstractTestProcessor;
 import edu.cmu.sphinx.util.props.ConfigurationManager;
 import edu.cmu.sphinx.util.props.PropertyException;
-import static junit.framework.Assert.assertTrue;
+import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
 import java.util.ArrayList;

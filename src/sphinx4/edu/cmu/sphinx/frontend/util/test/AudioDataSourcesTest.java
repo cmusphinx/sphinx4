@@ -4,7 +4,7 @@ import edu.cmu.sphinx.frontend.*;
 import edu.cmu.sphinx.frontend.util.AudioFileDataSource;
 import edu.cmu.sphinx.frontend.util.AudioFileProcessListener;
 import edu.cmu.sphinx.frontend.util.ConcatAudioFileDataSource;
-import junit.framework.Assert;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 

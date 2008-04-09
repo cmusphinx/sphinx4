@@ -17,7 +17,7 @@ import edu.cmu.sphinx.recognizer.Recognizer;
 import edu.cmu.sphinx.result.Result;
 import edu.cmu.sphinx.util.props.ConfigurationManager;
 import edu.cmu.sphinx.util.props.PropertyException;
-import junit.framework.Assert;
+import org.junit.Assert;
 import org.junit.Test;
 
 import javax.sound.sampled.AudioInputStream;

@@ -10,7 +10,7 @@ import edu.cmu.sphinx.frontend.endpoint.SpeechEndSignal;
 import edu.cmu.sphinx.frontend.endpoint.SpeechStartSignal;
 import edu.cmu.sphinx.frontend.test.AbstractTestProcessor;
 import edu.cmu.sphinx.util.props.ConfigurationManager;
-import junit.framework.Assert;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -29,13 +29,14 @@ import java.util.logging.Logger;
  */
 public class ScorerTests {
 
-    Token testToken =  new Token(1.f, 1.f, null){
+    Token testToken = new Token(1.f, 1.f, null) {
 
         @Override
         public float calculateScore(Data feature, boolean keepData, float gain) {
             return -1;
         }
     };
+
 
     @BeforeClass
     public static void configureLogger() {
@@ -63,7 +64,7 @@ public class ScorerTests {
             Assert.assertTrue(dummyFrontEnd.getBufferSize() < (startBufferSize - 100));
 
             List<Token> dummyTokens = Arrays.asList(testToken);
-            
+
             scorer.calculateScores(dummyTokens);
 
             scorer.stopRecognition();
