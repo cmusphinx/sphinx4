@@ -37,7 +37,7 @@ public class IncludingConfigHandler extends ConfigHandler {
                 SaxLoader saxLoader = new SaxLoader(fileURL, globalProperties, rpdMap);
                 saxLoader.load();
             } catch (IOException e) {
-                throw new RuntimeException("Error while processing <include file=\"" + includeFileName + "\">", e);
+                throw new RuntimeException("Error while processing <include file=\"" + includeFileName + "\">: " + e.toString(), e);
             }
         } else if (qName.equals("component")) {
             String curComponent = attributes.getValue("name");
