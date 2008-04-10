@@ -24,7 +24,8 @@ public abstract class AbstractScorer implements AcousticScorer {
 
     /** Property the defines the frontend to retrieve features from for scoring */
     @S4Component(type = BaseDataProcessor.class)
-    public final static String PROP_FRONTEND = "frontend";
+    public final static String FEATURE_FRONTEND = "frontend";
+    protected BaseDataProcessor frontEnd;
 
     /**
      * If set only the feature frames which appear between a <code>SpeechStartSignal</code> and a
@@ -34,15 +35,24 @@ public abstract class AbstractScorer implements AcousticScorer {
     public static final String USE_STREAM_SIGNALS = "useStreamSignals";
     private boolean useStreamSignals;
 
-    protected BaseDataProcessor frontEnd;
+
+    /**
+     * An opotional post-processor for computed scores that will normalize scores. If not set, no normalization will
+     * applied and the token scores will be returned unchanged.
+     */
+    @S4Component(type = ScoreNormalizer.class, mandatory = false)
+    public final static String SCORE_NORMALIZER = "scoreNormalizer";
+    private ScoreNormalizer scoreNormalizer;
+
 
     protected Logger logger;
     protected String name;
 
 
     public void newProperties(PropertySheet ps) throws PropertyException {
-        frontEnd = (BaseDataProcessor) ps.getComponent(PROP_FRONTEND);
+        frontEnd = (BaseDataProcessor) ps.getComponent(FEATURE_FRONTEND);
         useStreamSignals = ps.getBoolean(USE_STREAM_SIGNALS);
+        scoreNormalizer = (ScoreNormalizer) ps.getComponent(SCORE_NORMALIZER);
 
         logger = ps.getLogger();
         name = ps.getInstanceName();
@@ -50,13 +60,12 @@ public abstract class AbstractScorer implements AcousticScorer {
 
 
     /**
-     * Scores the given set of states
+     * Scores the given set of states.
      *
-     * @param scoreableList a list containing scoreable objects to be scored
-     * @return the best scorign scoreable, or null if there are no more features to score
+     * @param scoreableList A list containing scoreable objects to be scored
+     * @return The best scoring scoreable, or <code>null</code> if there are no more features to score
      */
     public Scoreable calculateScores(List<Token> scoreableList) {
-
         if (scoreableList.size() <= 0) {
             return null;
         }
@@ -77,7 +86,13 @@ public abstract class AbstractScorer implements AcousticScorer {
             if (data instanceof DoubleData)
                 data = DataUtil.DoubleData2FloatData((DoubleData) data);
 
-            return doScoring(scoreableList, data);
+            Scoreable bestToken = doScoring(scoreableList, data);
+
+            // apply optional score normalization
+            if (scoreNormalizer != null)
+                bestToken = scoreNormalizer.normalize(scoreableList, bestToken);
+
+            return bestToken;
         } catch (DataProcessingException dpe) {
             dpe.printStackTrace();
             return null;

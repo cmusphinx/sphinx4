@@ -53,7 +53,7 @@ public class ScorerTests {
             DataBufferProcessor dummyFrontEnd = createDummyFrontEnd();
 
             Map<String, Object> props = new HashMap<String, Object>();
-            props.put(AbstractScorer.PROP_FRONTEND, dummyFrontEnd);
+            props.put(AbstractScorer.FEATURE_FRONTEND, dummyFrontEnd);
             AcousticScorer scorer = ConfigurationManager.getInstance(scorerClass, props);
 
             int startBufferSize = dummyFrontEnd.getBufferSize();
