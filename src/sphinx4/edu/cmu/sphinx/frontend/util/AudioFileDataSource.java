@@ -105,6 +105,11 @@ public class AudioFileDataSource extends BaseDataProcessor {
     public void initialize() {
         super.initialize();
 
+        // reset all stream tags
+        streamEndReached = false;
+        utteranceEndSent = false;
+        utteranceStarted = false;
+
         if (bytesPerRead % 2 == 1) {
             bytesPerRead++;
         }
