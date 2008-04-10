@@ -266,7 +266,8 @@ public class ConfigurationManager implements Cloneable {
         }
 
         for (String globProp : subCM.globalProperties.keySet()) {
-            if (globalProperties.keySet().contains(globProp)) {
+            // the second test is necessary because system-props will be global-props in both CMs
+            if (globalProperties.keySet().contains(globProp) && !System.getProperties().keySet().contains(globProp)) {
                 throw new IllegalArgumentException(globProp + " is already registered as global property");
             }
         }
