@@ -39,10 +39,15 @@ public class ConfigurationManager implements Cloneable {
      * @param url place to load initial properties from
      * @throws java.io.IOException if an error occurs while loading properties from the URL
      */
-    public ConfigurationManager(URL url) throws IOException, PropertyException {
+    public ConfigurationManager(URL url) throws PropertyException {
         configURL = url;
         SaxLoader saxLoader = new SaxLoader(url, globalProperties, null);
-        rawPropertyMap = saxLoader.load();
+
+        try {
+            rawPropertyMap = saxLoader.load();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
         ConfigurationManagerUtils.applySystemProperties(rawPropertyMap, globalProperties);
         ConfigurationManagerUtils.configureLogger(this);
