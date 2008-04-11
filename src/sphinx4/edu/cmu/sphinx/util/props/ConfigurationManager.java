@@ -1,5 +1,6 @@
 package edu.cmu.sphinx.util.props;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.*;
@@ -36,8 +37,18 @@ public class ConfigurationManager implements Cloneable {
      * Creates a new configuration manager. Initial properties are loaded from the given URL. No need to keep the notion
      * of 'context' around anymore we will just pass around this property manager.
      *
-     * @param url place to load initial properties from
-     * @throws java.io.IOException if an error occurs while loading properties from the URL
+     * @param configFileName The location of the configuration file.
+     */
+    public ConfigurationManager(String configFileName) throws PropertyException {
+        this(ConfigurationManagerUtils.getURL(new File(configFileName)));
+    }
+
+
+    /**
+     * Creates a new configuration manager. Initial properties are loaded from the given URL. No need to keep the notion
+     * of 'context' around anymore we will just pass around this property manager.
+     *
+     * @param url The location of the configuration file.
      */
     public ConfigurationManager(URL url) throws PropertyException {
         configURL = url;
@@ -122,7 +133,7 @@ public class ConfigurationManager implements Cloneable {
      * @return all component named registered to this instance of <code>ConfigurationManager</code>
      */
     public Collection<String> getComponentNames() {
-        return Arrays.asList(rawPropertyMap.keySet().toArray(new String[]{}));
+        return Arrays.asList(rawPropertyMap.keySet().toArray(new String[rawPropertyMap.size()]));
     }
 
 
@@ -146,11 +157,7 @@ public class ConfigurationManager implements Cloneable {
         if (showCreations)
             System.out.println("Creating: " + instanceName);
 
-        Configurable instance = ps.getOwner();
-//        instance.newProperties(ps);
-
-        //todo registerCommonProperties -> register logLevel
-        return instance;
+        return ps.getOwner();
     }
 
 

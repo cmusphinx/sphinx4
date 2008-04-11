@@ -620,4 +620,15 @@ public final class ConfigurationManagerUtils {
                 ps.setRaw(propName, propValue);
         }
     }
+
+
+    public static URL getURL(File file) {
+        try {
+            return file.toURI().toURL();
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
 }
