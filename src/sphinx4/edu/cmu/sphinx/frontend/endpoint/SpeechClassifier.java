@@ -15,10 +15,15 @@ package edu.cmu.sphinx.frontend.endpoint;
 
 import edu.cmu.sphinx.frontend.*;
 import edu.cmu.sphinx.util.LogMath;
-import edu.cmu.sphinx.util.props.*;
+import edu.cmu.sphinx.util.props.PropertyException;
+import edu.cmu.sphinx.util.props.PropertySheet;
+import edu.cmu.sphinx.util.props.S4Double;
+import edu.cmu.sphinx.util.props.S4Integer;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 /**
@@ -44,15 +49,10 @@ public class SpeechClassifier extends BaseDataProcessor {
     @S4Integer(defaultValue = 10)
     public static final String PROP_FRAME_LENGTH_MS = "frameLengthInMs";
 
-    /** The default value of PROP_FRAME_LENGTH_MS. */
-    public static final int PROP_FRAME_LENGTH_MS_DEFAULT = 10;
-
     /** The SphinxProperty specifying the minimum signal level used to update the background signal level. */
     @S4Double(defaultValue = 0)
     public static final String PROP_MIN_SIGNAL = "minSignal";
 
-    /** The default value of PROP_MIN_SIGNAL. */
-    public static final double PROP_MIN_SIGNAL_DEFAULT = 0;
 
     /**
      * The SphinxProperty specifying the threshold. If the current signal level is greater than the background level by
@@ -63,49 +63,33 @@ public class SpeechClassifier extends BaseDataProcessor {
     @S4Double(defaultValue = 10)
     public static final String PROP_THRESHOLD = "threshold";
 
-    /** The default value of PROP_THRESHOLD. */
-    public static final double PROP_THRESHOLD_DEFAULT = 10;
-
     /** The SphinxProperty specifying the adjustment. */
     @S4Double(defaultValue = 0.003)
     public static final String PROP_ADJUSTMENT = "adjustment";
 
-    /** The default value of PROP_ADJUSTMENT. */
-    public static final double PROP_ADJUSTMENT_DEFAULT = 0.003;
+    protected Logger logger;
+    protected double averageNumber = 1;
+    protected double adjustment;
+    protected double level;               // average signal level
+    protected double background;          // background signal level
+    protected double minSignal;           // minimum valid signal level
+    protected double threshold;
+    protected float frameLengthSec;
 
-    /** The SphinxProperty specifying whether to print debug messages. */
-    @S4Boolean(defaultValue = false)
-    public static final String PROP_DEBUG = "debug";
-
-    /** The default value of PROP_DEBUG. */
-    public static final boolean PROP_DEBUG_DEFAULT = false;
-
-
-    private boolean debug;
-    private double averageNumber = 1;
-    private double adjustment;
-    private double level;               // average signal level
-    private double background;          // background signal level
-    private double minSignal;           // minimum valid signal level
-    private double threshold;
-    private float frameLengthSec;
-    List<Data> outputQueue = new LinkedList<Data>();
+    protected List<Data> outputQueue = new LinkedList<Data>();
 
 
-    /*
-    * (non-Javadoc)
-    *
-    * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
-    */
+    @Override
     public void newProperties(PropertySheet ps) throws PropertyException {
         super.newProperties(ps);
-        int frameLengthMs = ps.getInt
-                (PROP_FRAME_LENGTH_MS);
+        int frameLengthMs = ps.getInt(PROP_FRAME_LENGTH_MS);
         frameLengthSec = ((float) frameLengthMs) / 1000.f;
+
         adjustment = ps.getDouble(PROP_ADJUSTMENT);
         threshold = ps.getDouble(PROP_THRESHOLD);
         minSignal = ps.getDouble(PROP_MIN_SIGNAL);
-        debug = ps.getBoolean(PROP_DEBUG);
+
+        logger = ps.getLogger();
 
         initialize();
     }
@@ -119,7 +103,7 @@ public class SpeechClassifier extends BaseDataProcessor {
 
 
     /** Resets this LevelTracker to a starting state. */
-    private void reset() {
+    protected void reset() {
         level = 0;
         background = 100;
     }
@@ -131,7 +115,7 @@ public class SpeechClassifier extends BaseDataProcessor {
      * @param samples the samples
      * @return the calculated log root mean square in log 10
      */
-    private double logRootMeanSquare(double[] samples) {
+    protected double logRootMeanSquare(double[] samples) {
         assert samples.length > 0;
         double sumOfSquares = 0.0f;
         for (int i = 0; i < samples.length; i++) {
@@ -150,7 +134,7 @@ public class SpeechClassifier extends BaseDataProcessor {
      *
      * @param audio the audio frame
      */
-    private void classify(DoubleData audio) {
+    protected void classify(DoubleData audio) {
         double current = logRootMeanSquare(audio.getValues());
         // System.out.println("current: " + current);
         boolean isSpeech = false;
@@ -166,16 +150,18 @@ public class SpeechClassifier extends BaseDataProcessor {
             }
             isSpeech = (level - background > threshold);
         }
-        SpeechClassifiedData labeledAudio
-                = new SpeechClassifiedData(audio, isSpeech);
-        if (debug) {
+
+        SpeechClassifiedData labeledAudio = new SpeechClassifiedData(audio, isSpeech);
+
+        if (logger.isLoggable(Level.FINEST)) {
             String speech = "";
-            if (labeledAudio.isSpeech()) {
+            if (labeledAudio.isSpeech())
                 speech = "*";
-            }
+
             System.out.println("Bkg: " + background + ", level: " + level +
                     ", current: " + current + " " + speech);
         }
+
         outputQueue.add(labeledAudio);
     }
 
