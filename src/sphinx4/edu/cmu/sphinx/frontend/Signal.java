@@ -13,6 +13,9 @@
 
 package edu.cmu.sphinx.frontend;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Indicates events like beginning or end of data, data dropped, quality changed, etc.. It implements the Data
  * interface, and it will pass between DataProcessors to inform them about the Data that is passed between
@@ -23,7 +26,14 @@ package edu.cmu.sphinx.frontend;
  */
 public class Signal implements Data {
 
-    private long time;  // the time this Signal was issued
+    /** the time this Signal was issued. */
+    private long time;
+
+    /**
+     * A (lazily initialized) collection of names properties of this signal. This collection might contain infos about
+     * the file being processed, shift-size of frame-length of the windowing process, etc.
+     */
+    private Map<String, Object> props;
 
 
     /**
@@ -43,5 +53,14 @@ public class Signal implements Data {
      */
     public long getTime() {
         return time;
+    }
+
+
+    /** Returns the properties associated to this signal. */
+    public synchronized Map<String, Object> getProps() {
+        if (props == null)
+            props = new HashMap<String, Object>();
+
+        return props;
     }
 }
