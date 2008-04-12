@@ -1,6 +1,7 @@
 package edu.cmu.sphinx.util.props.test;
 
 import edu.cmu.sphinx.frontend.DataProcessor;
+import edu.cmu.sphinx.frontend.DoubleData;
 import edu.cmu.sphinx.frontend.FrontEnd;
 import edu.cmu.sphinx.instrumentation.AccuracyTracker;
 import edu.cmu.sphinx.instrumentation.BestPathAccuracyTracker;
@@ -27,6 +28,10 @@ public class CMUTests {
         Assert.assertFalse(ConfigurationManagerUtils.isSubClass(Object.class, Object.class));
 
         Assert.assertTrue(ConfigurationManagerUtils.isSubClass(BestPathAccuracyTracker.class, AccuracyTracker.class));
+
+        Assert.assertTrue(ConfigurationManagerUtils.isDerivedClass(BestPathAccuracyTracker.class, AccuracyTracker.class));
+        Assert.assertTrue(ConfigurationManagerUtils.isDerivedClass(BestPathAccuracyTracker.class, BestPathAccuracyTracker.class));
+        Assert.assertTrue(!ConfigurationManagerUtils.isDerivedClass(BestPathAccuracyTracker.class, DoubleData.class));
     }
 
 

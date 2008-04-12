@@ -477,7 +477,7 @@ public final class ConfigurationManagerUtils {
 
     /**
      * @return <code>true</code> if <code>aClass</code> is either equal to <code>poosibleParent</code>, a subclass of
-     *         it, or implementing if <code>possibl\</code> is an interface.
+     *         it, or implements it if <code>possibleParent</code> is an interface.
      */
     public static boolean isDerivedClass(Class aClass, Class possibleParent) {
         return aClass.equals(possibleParent)
