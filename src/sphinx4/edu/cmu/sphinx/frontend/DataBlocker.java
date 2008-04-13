@@ -40,25 +40,31 @@ public class DataBlocker extends BaseDataProcessor {
 
 
     public Data getData() throws DataProcessingException {
+        Data data = getPredecessor().getData();
+
+        if (data instanceof DataStartSignal) {
+            sampleRate = ((DataStartSignal) data).getSampleRate();
+            blockSizeSamples = (int) Math.round(sampleRate * blockSizeMs / 1000);
+
+            curInBufferSize = 0;
+            inBuffer.clear();
+        }
+
+        if (!(data instanceof DoubleData)) {
+            return data;
+        }
+
         // collect enough data to be able to create a new data block
         while (curInBufferSize < blockSizeSamples) {
-            Data data = getPredecessor().getData();
-
-            if (data instanceof DataStartSignal) {
-                sampleRate = ((DataStartSignal) data).getSampleRate();
-                blockSizeSamples = (int) Math.round(sampleRate * blockSizeMs / 1000);
-            }
-
-            if (!(data instanceof DoubleData)) {
-                inBuffer.clear();
-                curInBufferSize = 0;
-                return data;
-            }
+            if (!(data instanceof DoubleData))
+                continue;
 
             DoubleData dd = (DoubleData) data;
 
             inBuffer.add(dd);
             curInBufferSize += dd.getValues().length;
+
+            data = getPredecessor().getData();
         }
 
         // now we are ready to merge all data blocks into one
