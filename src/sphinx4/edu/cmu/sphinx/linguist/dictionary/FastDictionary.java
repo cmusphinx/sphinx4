@@ -80,8 +80,6 @@ public class FastDictionary implements Dictionary {
      */
     @S4String(mandatory = false)
     public static final String PROP_ADDENDA = "addenda";
-    /** The default value of PROP_ADDENDA. */
-    public static final String PROP_ADDENDA_DEFAULT = null;
 
     // -------------------------------
     // Configuration data
@@ -119,17 +117,11 @@ public class FastDictionary implements Dictionary {
         fillerDictionaryFile = ConfigurationManagerUtils.getResource(PROP_FILLER_DICTIONARY, ps);
         addendaUrlList = this.getResourceList(PROP_ADDENDA, ps);
 
-        addSilEndingPronunciation = ps.getBoolean(
-                PROP_ADD_SIL_ENDING_PRONUNCIATION
-        );
-        wordReplacement = ps.getString(Dictionary.PROP_WORD_REPLACEMENT
-        );
-        allowMissingWords = ps.getBoolean(Dictionary.PROP_ALLOW_MISSING_WORDS
-        );
-        createMissingWords = ps.getBoolean(PROP_CREATE_MISSING_WORDS
-        );
-        unitManager = (UnitManager) ps.getComponent(PROP_UNIT_MANAGER
-        );
+        addSilEndingPronunciation = ps.getBoolean(PROP_ADD_SIL_ENDING_PRONUNCIATION);
+        wordReplacement = ps.getString(Dictionary.PROP_WORD_REPLACEMENT);
+        allowMissingWords = ps.getBoolean(Dictionary.PROP_ALLOW_MISSING_WORDS);
+        createMissingWords = ps.getBoolean(PROP_CREATE_MISSING_WORDS);
+        unitManager = (UnitManager) ps.getComponent(PROP_UNIT_MANAGER);
     }
 
 
@@ -340,7 +332,7 @@ public class FastDictionary implements Dictionary {
      */
     private Word processEntry(String word) {
         List<Pronunciation> pList = new LinkedList<Pronunciation>();
-        String line = null;
+        String line;
         int count = 0;
         boolean isFiller = false;
 

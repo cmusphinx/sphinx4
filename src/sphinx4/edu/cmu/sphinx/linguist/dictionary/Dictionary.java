@@ -32,10 +32,6 @@ public interface Dictionary extends Configurable {
     /** Spelling of the 'word' that marks a silence */
     public static final String SILENCE_SPELLING = "<sil>";
 
-    /** The name of the SphinxProperty that defines the location (directory or jar file) for the dictionary */
-    @S4String
-    public static final String PROP_LOCATION = "location";
-
     /** The name of the SphinxProperty for the dictionary file path. */
     @S4String
     public static final String PROP_DICTIONARY = "dictionaryPath";
@@ -73,7 +69,7 @@ public interface Dictionary extends Configurable {
     public static final String PROP_CREATE_MISSING_WORDS = "createMissingWords";
 
     /** The sphinx property that defines the name of the unit manager that is used to convert strings to Unit objects */
-    @S4Component(type = UnitManager.class)
+    @S4Component(type = UnitManager.class, defaultClass = UnitManager.class)
     public static final String PROP_UNIT_MANAGER = "unitManager";
 
 

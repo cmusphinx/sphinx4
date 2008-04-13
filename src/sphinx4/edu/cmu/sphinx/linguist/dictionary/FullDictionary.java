@@ -57,7 +57,6 @@ public class FullDictionary implements Dictionary {
     // ----------------------------------
     // configuration variables
     // ----------------------------------
-    private String name;
     private Logger logger;
     private boolean addSilEndingPronunciation;
     private boolean allowMissingWords;
@@ -81,6 +80,7 @@ public class FullDictionary implements Dictionary {
     */
     public void newProperties(PropertySheet ps) throws PropertyException {
         logger = ps.getLogger();
+
         wordDictionaryFile = ConfigurationManagerUtils.getResource(PROP_DICTIONARY, ps);
         fillerDictionaryFile = ConfigurationManagerUtils.getResource(PROP_FILLER_DICTIONARY, ps);
         addSilEndingPronunciation = ps.getBoolean(PROP_ADD_SIL_ENDING_PRONUNCIATION);
@@ -88,16 +88,6 @@ public class FullDictionary implements Dictionary {
         allowMissingWords = ps.getBoolean(Dictionary.PROP_ALLOW_MISSING_WORDS);
         createMissingWords = ps.getBoolean(PROP_CREATE_MISSING_WORDS);
         unitManager = (UnitManager) ps.getComponent(PROP_UNIT_MANAGER);
-    }
-
-
-    /*
-    * (non-Javadoc)
-    *
-    * @see edu.cmu.sphinx.util.props.Configurable#getName()
-    */
-    public String getName() {
-        return name;
     }
 
 
