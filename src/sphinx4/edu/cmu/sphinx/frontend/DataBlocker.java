@@ -40,22 +40,22 @@ public class DataBlocker extends BaseDataProcessor {
 
 
     public Data getData() throws DataProcessingException {
-        Data data = getPredecessor().getData();
-
-        if (data instanceof DataStartSignal) {
-            sampleRate = ((DataStartSignal) data).getSampleRate();
-            blockSizeSamples = (int) Math.round(sampleRate * blockSizeMs / 1000);
-
-            curInBufferSize = 0;
-            inBuffer.clear();
-        }
-
-        if (!(data instanceof DoubleData)) {
-            return data;
-        }
-
-        // collect enough data to be able to create a new data block
         while (curInBufferSize < blockSizeSamples) {
+            Data data = getPredecessor().getData();
+
+            if (data instanceof DataStartSignal) {
+                sampleRate = ((DataStartSignal) data).getSampleRate();
+                blockSizeSamples = (int) Math.round(sampleRate * blockSizeMs / 1000);
+
+                curInBufferSize = 0;
+                inBuffer.clear();
+            }
+
+            if (!(data instanceof DoubleData)) {
+                return data;
+            }
+
+            // collect enough data to be able to create a new data block
             if (!(data instanceof DoubleData))
                 continue;
 
@@ -63,8 +63,6 @@ public class DataBlocker extends BaseDataProcessor {
 
             inBuffer.add(dd);
             curInBufferSize += dd.getValues().length;
-
-            data = getPredecessor().getData();
         }
 
         // now we are ready to merge all data blocks into one
@@ -107,11 +105,6 @@ public class DataBlocker extends BaseDataProcessor {
     public void newProperties(PropertySheet propertySheet) throws PropertyException {
         super.newProperties(propertySheet);
         blockSizeMs = propertySheet.getDouble(PROP_BLOCK_SIZE_MS);
-    }
-
-
-    public String getName() {
-        return this.getClass().getName();
     }
 
 

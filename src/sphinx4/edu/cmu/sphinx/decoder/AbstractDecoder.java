@@ -28,6 +28,8 @@ public abstract class AbstractDecoder implements ResultProducer, Configurable {
     @S4Boolean(defaultValue = false)
     public static final String AUTO_ALLOCATE = "autoAllocate";
 
+    private String name;
+
 
     /**
      * Decode frames until recognition is complete
@@ -39,6 +41,8 @@ public abstract class AbstractDecoder implements ResultProducer, Configurable {
 
 
     public void newProperties(PropertySheet ps) throws PropertyException {
+        name = ps.getInstanceName();
+
         searchManager = (SearchManager) ps.getComponent(PROP_SEARCH_MANAGER);
 
         if (ps.getBoolean(AUTO_ALLOCATE)) {
@@ -99,5 +103,15 @@ public abstract class AbstractDecoder implements ResultProducer, Configurable {
         for (ResultListener resultListener : resultListeners) {
             resultListener.newResult(result);
         }
+    }
+
+
+    public String toString() {
+        return getName();
+    }
+
+
+    public String getName() {
+        return name;
     }
 }

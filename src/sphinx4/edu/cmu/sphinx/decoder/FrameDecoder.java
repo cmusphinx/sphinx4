@@ -74,11 +74,6 @@ public class FrameDecoder extends AbstractDecoder implements DataProcessor {
     }
 
 
-    public String getName() {
-        return FrameDecoder.class.getName();
-    }
-
-
     public DataProcessor getPredecessor() {
         return predecessor;
     }

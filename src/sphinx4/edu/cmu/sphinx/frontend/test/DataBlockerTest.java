@@ -54,8 +54,8 @@ public class DataBlockerTest extends BaseDataProcessor {
     @Test
     public void skipLastSamples() throws DataProcessingException {
         int sampleRate = 1000;
-        input.add(new DataStartSignal(sampleRate));
 
+        input.add(new DataStartSignal(sampleRate));
         input.addAll(createDataInput(500, 500, sampleRate, 0));
         input.addAll(createDataInput(300, 300, sampleRate, 500));
         input.add(new DataEndSignal(0));
