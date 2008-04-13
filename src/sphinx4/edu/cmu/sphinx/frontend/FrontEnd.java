@@ -151,10 +151,13 @@ public class FrontEnd extends BaseDataProcessor {
         super.newProperties(ps);
         frontEndList = (List<DataProcessor>) ps.getComponentList(PROP_PIPELINE);
 
-        for (Iterator i = frontEndList.iterator(); i.hasNext();) {
-            DataProcessor dp = (DataProcessor) i.next();
+        last = null;
+        for (DataProcessor dp : frontEndList) {
             assert dp != null;
-            dp.setPredecessor(last);
+
+            if (last != null)
+                dp.setPredecessor(last);
+
             if (first == null) {
                 first = dp;
             }
