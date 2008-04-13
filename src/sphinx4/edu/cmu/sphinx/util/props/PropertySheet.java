@@ -416,6 +416,13 @@ public class PropertySheet implements Cloneable {
         try {
 
             if (!isInstanciated()) {
+                // ensure that all mandatory properties are set before instantiating the component
+                Collection<String> undefProps = getUndefinedMandatoryProps();
+                if (!undefProps.isEmpty()) {
+                    throw new InternalConfigurationException(getInstanceName(),
+                            undefProps.toString(), "not all mandatory properties are defined");
+                }
+
                 owner = ownerClass.newInstance();
                 owner.newProperties(this);
             }
@@ -426,6 +433,33 @@ public class PropertySheet implements Cloneable {
         }
 
         return owner;
+    }
+
+
+    /**
+     * Returns the set of all component properties which were tagged as mandatory but which are not set (or no default
+     * value is given).
+     */
+    public Collection<String> getUndefinedMandatoryProps() {
+        Collection<String> undefProps = new ArrayList<String>();
+        for (String propName : getRegisteredProperties()) {
+            Proxy anno = registeredProperties.get(propName).getAnnotation();
+
+            boolean isMandatory = false;
+            if (anno instanceof S4Component) {
+                isMandatory = ((S4Component) anno).mandatory() && ((S4Component) anno).defaultClass() == null;
+            } else if (anno instanceof S4String) {
+                isMandatory = ((S4String) anno).mandatory() && ((S4String) anno).defaultValue().equals(S4String.NOT_DEFINED);
+            } else if (anno instanceof S4Integer) {
+                isMandatory = ((S4Integer) anno).mandatory() && ((S4Integer) anno).defaultValue() == S4Integer.NOT_DEFINED;
+            } else if (anno instanceof S4Double) {
+                isMandatory = ((S4Double) anno).mandatory() && ((S4Double) anno).defaultValue() == S4Double.NOT_DEFINED;
+            }
+
+            if (isMandatory && !((rawProps.get(propName) != null) || (propValues.get(propName) != null)))
+                undefProps.add(propName);
+        }
+        return undefProps;
     }
 
 
