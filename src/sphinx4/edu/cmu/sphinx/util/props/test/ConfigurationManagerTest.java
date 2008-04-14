@@ -55,11 +55,15 @@ public class ConfigurationManagerTest {
         File configFile = new File("../../sphinx4/tests/other/testconfig.xml");
         ConfigurationManager cm = new ConfigurationManager(configFile.toURI().toURL());
 
+        Assert.assertTrue(cm.getInstanceNames(DummyFrontEndProcessor.class).isEmpty());
+
         PropertySheet propSheet = cm.getPropertySheet("duco");
 
         propSheet.setDouble("alpha", 11);
 
         DummyComp duco = (DummyComp) cm.lookup("duco");
+
+        Assert.assertTrue(cm.getInstanceNames(DummyFrontEndProcessor.class).size() == 1);
 
         // IMPORTANT because we assume the configurable to be instantiated first at
         // lookup there is no need to call newProperties here

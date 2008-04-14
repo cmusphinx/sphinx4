@@ -118,7 +118,7 @@ public class ConfigurationManager implements Cloneable {
             if (!ps.isInstanciated())
                 continue;
 
-            if (ConfigurationManagerUtils.isDerivedClass(ps.getClass(), type))
+            if (ConfigurationManagerUtils.isDerivedClass(ps.getConfigurableClass(), type))
                 instanceNames.add(ps.getInstanceName());
         }
 
