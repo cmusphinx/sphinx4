@@ -101,7 +101,12 @@ public final class ConfigurationManagerUtils {
 
     /** Configure the logger */
     public static void configureLogger(ConfigurationManager cm) {
-        // apply theb log level (if defined) for the root logger (because we're using package based logging now
+        // Allow others to override the logging settings.
+        if (System.getProperty("java.util.logging.config.class") != null
+                || System.getProperty("java.util.logging.config.file") != null) {
+            return;
+        }
+        // apply the log level (if defined) for the root logger (because we're using package based logging now
 
         Logger rootLogger = Logger.getLogger("");
 
