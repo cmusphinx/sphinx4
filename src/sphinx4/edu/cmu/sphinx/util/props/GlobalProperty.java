@@ -16,6 +16,9 @@ public class GlobalProperty {
 
 
     public Object getValue() {
+        if (value instanceof GlobalProperty)
+            return ((GlobalProperty) value).getValue();
+
         return value;
     }
 

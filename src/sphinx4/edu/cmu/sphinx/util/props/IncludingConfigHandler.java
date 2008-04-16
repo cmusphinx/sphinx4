@@ -17,72 +17,103 @@ import java.util.Map;
  */
 public class IncludingConfigHandler extends ConfigHandler {
 
+    private boolean replaceDuplicates = false;
+
+
     public IncludingConfigHandler(Map<String, RawPropertyData> rpdMap, GlobalProperties globalProperties) {
         super(rpdMap, globalProperties);
     }
 
 
-    /* (non-Javadoc)
-    * @see org.xml.sax.ContentHandler#startElement(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes)
-    */
-    public void startElement(String uri, String localName, String qName,
-                             Attributes attributes) throws SAXException {
+    public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
         if (qName.equals("config")) {
-            // nothing to do
+            // test if this configuration extends another one
+            String extendedConfigName = attributes.getValue("extends");
+            if (extendedConfigName != null) {
+                mergeConfigs(extendedConfigName, true);
+                replaceDuplicates = true;
+            }
+
         } else if (qName.equals("include")) {
             String includeFileName = attributes.getValue("file");
+            mergeConfigs(includeFileName, false);
 
-            try {
-                URL fileURL = new File(includeFileName).toURI().toURL();
-                SaxLoader saxLoader = new SaxLoader(fileURL, globalProperties, rpdMap);
-                saxLoader.load();
-            } catch (IOException e) {
-                throw new RuntimeException("Error while processing <include file=\"" + includeFileName + "\">: " + e.toString(), e);
-            }
         } else if (qName.equals("component")) {
             String curComponent = attributes.getValue("name");
             String curType = attributes.getValue("type");
-            if (rpdMap.get(curComponent) != null) {
-                throw new SAXParseException(
-                        "duplicate definition for " + curComponent, locator);
+
+            if (rpdMap.get(curComponent) != null && !replaceDuplicates) {
+                throw new SAXParseException("duplicate definition for " + curComponent, locator);
             }
+
             rpd = new RawPropertyData(curComponent, curType);
+
         } else if (qName.equals("property")) {
             String name = attributes.getValue("name");
+
+//                  if (rpd == null) {
+//                      if (attributes.getValue("string") != null) {
+//                          globalProperties.put(name, new GlobalProperty(attributes.getValue("string")));
+//
+//                      } else if (attributes.getValue("float") != null) {
+//                          Double value = Double.parseDouble(attributes.getValue("float"));
+//                          globalProperties.put(name, new GlobalProperty(value));
+//
+//                      } else if (attributes.getValue("int") != null) {
+//                          Integer value = Integer.parseInt(attributes.getValue("int"));
+//                          globalProperties.put(name, new GlobalProperty(value));
+//
+//                      } else if (attributes.getValue("boolean") != null) {
+//                          Boolean value = Boolean.getBoolean(attributes.getValue("boolean"));
+//                          globalProperties.put(name, new GlobalProperty(value));
+//                      }
+//                  }
+
             String value = attributes.getValue("value");
-            if (attributes.getLength() != 2 || name == null
-                    || value == null) {
-                throw new SAXParseException(
-                        "property element must only have "
-                                + "'name' and 'value' attributes", locator);
+            if (attributes.getLength() != 2 || name == null) {
+                throw new SAXParseException("property element must only have " + "'name' and 'value' attributes", locator);
             }
+
             if (rpd == null) {
                 // we are not in a component so add this to the global
                 // set of symbols
 //                    String symbolName = "${" + name + "}"; // why should we warp the global props here
                 globalProperties.setValue(name, value);
-            } else if (rpd.contains(name)) {
-                throw new SAXParseException("Duplicate property: " + name,
-                        locator);
+
+            } else if (rpd.contains(name) && !replaceDuplicates) {
+                throw new SAXParseException("Duplicate property: " + name, locator);
+
             } else {
                 rpd.add(name, value);
             }
+
         } else if (qName.equals("propertylist")) {
             itemListName = attributes.getValue("name");
             if (attributes.getLength() != 1 || itemListName == null) {
-                throw new SAXParseException("list element must only have "
-                        + "the 'name'  attribute", locator);
+                throw new SAXParseException("list element must only have the 'name'  attribute", locator);
             }
             itemList = new ArrayList<String>();
+
         } else if (qName.equals("item")) {
             if (attributes.getLength() != 0) {
-                throw new SAXParseException("unknown 'item' attribute",
-                        locator);
+                throw new SAXParseException("unknown 'item' attribute", locator);
             }
             curItem = new StringBuffer();
+
         } else {
-            throw new SAXParseException("Unknown element '" + qName + "'",
-                    locator);
+            throw new SAXParseException("Unknown element '" + qName + "'", locator);
+        }
+    }
+
+
+    private void mergeConfigs(String configFileName, boolean replaceDuplicates) {
+        try {
+
+            URL fileURL = new File(configFileName).toURI().toURL();
+            SaxLoader saxLoader = new SaxLoader(fileURL, globalProperties, rpdMap);
+            saxLoader.load();
+        } catch (IOException e) {
+            throw new RuntimeException("Error while processing <include file=\"" + configFileName + "\">: " + e.toString(), e);
         }
     }
 }

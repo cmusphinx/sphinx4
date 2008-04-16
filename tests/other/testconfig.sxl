@@ -5,6 +5,7 @@
 <config>
     <property name="myalpha" value="9.99"/>
     <property name="anotherDataProc" value="processor"/>
+    <property name="hiddenproductad" value="opencards"/>
 
     <component name="processor" type="edu.cmu.sphinx.util.props.test.DummyProcessor">
     </component>

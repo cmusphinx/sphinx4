@@ -35,7 +35,7 @@ public class ConfigurationManagerTest {
 
     @Test
     public void testSerialization() throws IOException, PropertyException {
-        File configFile = new File("../../sphinx4/tests/other/testconfig.xml");
+        File configFile = new File("../../sphinx4/tests/other/testconfig.sxl");
         ConfigurationManager cm = new ConfigurationManager(configFile.toURI().toURL());
 
         File tmpFile = File.createTempFile("ConfigurationManager", ".tmp.xml");
@@ -52,7 +52,7 @@ public class ConfigurationManagerTest {
 
     @Test
     public void testDynamicConfiguruationChange() throws IOException, PropertyException, InstantiationException {
-        File configFile = new File("../../sphinx4/tests/other/testconfig.xml");
+        File configFile = new File("../../sphinx4/tests/other/testconfig.sxl");
         ConfigurationManager cm = new ConfigurationManager(configFile.toURI().toURL());
 
         Assert.assertTrue(cm.getInstanceNames(DummyFrontEndProcessor.class).isEmpty());
@@ -95,4 +95,26 @@ public class ConfigurationManagerTest {
     }
 
 
+    @Test
+    public void testXmlExtendedConfiguration() {
+        ConfigurationManager cm = new ConfigurationManager("../../sphinx4/tests/other/extendconfig.sxl");
+
+        String instanceName = "duco";
+        Assert.assertTrue(cm.getPropertySheet(instanceName) != null);
+        Assert.assertTrue(cm.lookup(instanceName) != null);
+        Assert.assertTrue(cm.lookup(instanceName) instanceof DummyComp);
+
+        DummyComp docu = (DummyComp) cm.lookup(instanceName);
+
+        // test the parameters were sucessfully overridden
+        Assert.assertTrue(docu.getFrontEnd().getDataProcs().isEmpty());
+        Assert.assertTrue(docu.getBeamWidth() == 4711);
+
+        // test the the non-overridden properties of the parent-configuration were preserved
+        Assert.assertNotNull((DummyProcessor) cm.lookup("processor"));
+
+        // test the global properties:
+        Assert.assertTrue("-5".equals(cm.getGlobalProperties().get("myalpha").getValue())); // overridden property
+        Assert.assertEquals("opencards", cm.getGlobalProperties().get("hiddenproductad").getValue()); // preserved property
+    }
 }
