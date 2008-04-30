@@ -264,7 +264,7 @@ public class MixtureComponent implements Cloneable {
 
 
     /** Applies transformations to means and variances. */
-    private void transformStats() {
+    public void transformStats() {
         int featDim = mean.length;
         /*
         * The transformed mean vector is given by:
