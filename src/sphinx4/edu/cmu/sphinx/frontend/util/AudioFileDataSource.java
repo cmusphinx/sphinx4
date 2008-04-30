@@ -25,6 +25,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * An AudioFileDataSource generates a stream of audio data from a given audion file. All required information concerning
@@ -57,6 +58,8 @@ public class AudioFileDataSource extends BaseDataProcessor {
     private boolean utteranceEndSent = false;
     private boolean utteranceStarted = false;
 
+    protected Logger logger;
+
     @S4ComponentList(type = Configurable.class)
     public static final String AUDIO_FILE_LISTENERS = "audioFileListners";
     protected List<AudioFileProcessListener> fileListeners = new ArrayList<AudioFileProcessListener>();
@@ -86,6 +89,8 @@ public class AudioFileDataSource extends BaseDataProcessor {
         super.newProperties(ps);
         bytesPerRead = ps.getInt(PROP_BYTES_PER_READ);
 
+        logger = ps.getLogger();
+        
         // attach all pool-listeners
         List<? extends Configurable> list = ps.getComponentList(AUDIO_FILE_LISTENERS);
         for (Configurable configurable : list) {
