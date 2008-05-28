@@ -589,7 +589,7 @@ public final class ConfigurationManagerUtils {
             throw new RuntimeException("No property '" + propName + "' in configuration '" + cm.getConfigURL() + "'!");
 
 
-        if (allProps.get(propName).size() > 1) {
+        if (!propName.contains("->") && allProps.get(propName).size() > 1) {
             throw new RuntimeException("Property-name '" + propName + "' is ambiguous with respect to configuration '"
                     + cm.getConfigURL() + "'. Use 'componentName->propName' to disambiguate your request.");
         }
@@ -621,8 +621,19 @@ public final class ConfigurationManagerUtils {
             case STRING:
                 ps.setString(propName, propValue);
                 break;
+            case COMP:
+                ps.setComponent(propName, propValue, null);
+                break;
+            case COMPLIST:
+                List<String> compNames = new ArrayList<String>();
+                for (String component : propValue.split(";")) {
+                    compNames.add(component.trim());
+                }
+
+                ps.setComponentList(propName, compNames, null);
+                break;
             default:
-                ps.setRaw(propName, propValue);
+                throw new RuntimeException("unknown property-type");
         }
     }
 
