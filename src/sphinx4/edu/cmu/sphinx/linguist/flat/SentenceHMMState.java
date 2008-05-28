@@ -293,7 +293,9 @@ public abstract class SentenceHMMState implements Serializable, SearchState {
      */
     private void rawConnect(SentenceHMMStateArc arc) {
         SentenceHMMState state = (SentenceHMMState) arc.getState();
-        arcs.put(state.getValueSignature(), arc);
+
+        // attach the state-number because the state-signature is not necessarily unique
+        arcs.put(state.getValueSignature() + state.getStateNumber(), arc);
     }
 
 
