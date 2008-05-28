@@ -100,7 +100,9 @@ public class SimpleBreadthFirstSearchManager implements SearchManager {
     private ActiveList activeList; // the list of active tokens
     private List<Token> resultList; // the current set of results
     protected LogMath logMath;
+
     private Logger logger;
+    private String name;
 
     // ------------------------------------
     // monitoring data
@@ -134,6 +136,8 @@ public class SimpleBreadthFirstSearchManager implements SearchManager {
     */
     public void newProperties(PropertySheet ps) throws PropertyException {
         logger = ps.getLogger();
+        name = ps.getInstanceName();
+
         logMath = (LogMath) ps.getComponent(PROP_LOG_MATH);
 
         linguist = (Linguist) ps.getComponent(PROP_LINGUIST);
@@ -177,13 +181,29 @@ public class SimpleBreadthFirstSearchManager implements SearchManager {
                 noData = true;
             }
         }
+
         if (!noData) {
-            result = new Result(activeList, resultList, currentFrameNumber,
-                    done, logMath);
+            // because the growBranches() is called although no data is left after the last speech frame,
+            // the ordering of the active-list might depend on the transition-probs and (penalty-scores) only.
+            // Therefore we need to undo the last grow-step up to final states or the last emitting state
+            // in order to fix the list.
+            ActiveList fixedList = activeList.newInstance();
+            for (Token token : activeList.getTokens()) {
+                Token curLookBackToken = token.getPredecessor();
+                while (!curLookBackToken.isEmitting() || curLookBackToken.isFinal())
+                    curLookBackToken = curLookBackToken.getPredecessor();
+
+                fixedList.add(curLookBackToken);
+            }
+
+            // now create the restult using the fixed active-list
+            result = new Result(fixedList, resultList, currentFrameNumber, done, logMath);
         }
+
         if (showTokenCount) {
             showTokenCount();
         }
+
         return result;
     }
 
@@ -343,7 +363,7 @@ public class SimpleBreadthFirstSearchManager implements SearchManager {
     }
 
 
-    protected ActiveList getActiveList() {
+    public ActiveList getActiveList() {
         return activeList;
     }
 
@@ -563,5 +583,11 @@ public class SimpleBreadthFirstSearchManager implements SearchManager {
         scorer.deallocate();
         pruner.deallocate();
         linguist.deallocate();
+    }
+
+
+    @Override
+    public String toString() {
+        return name;
     }
 }
