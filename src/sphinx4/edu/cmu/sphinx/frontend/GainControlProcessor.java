@@ -13,7 +13,7 @@ import edu.cmu.sphinx.util.props.S4Double;
 public class GainControlProcessor extends BaseDataProcessor {
 
     @S4Double(defaultValue = 1.0)
-    public static final String PROP_DEFAULT_GAIN = "defGain";
+    public static final String GAIN_FACTOR = "gainFactor";
 
     private double gainFactor;
 
@@ -26,7 +26,7 @@ public class GainControlProcessor extends BaseDataProcessor {
     public void newProperties(PropertySheet ps) throws PropertyException {
         super.newProperties(ps);
 
-        gainFactor = ps.getDouble(PROP_DEFAULT_GAIN);
+        gainFactor = ps.getDouble(GAIN_FACTOR);
     }
 
 
