@@ -59,9 +59,9 @@ public class BaseRuleGrammar extends BaseGrammar
         Enumeration e = rules.elements();
         while (e.hasMoreElements()) {
             GRule g = (GRule) e.nextElement();
-            if (g.isPublic) {
-                g.isEnabled = enabled;
-            }
+//            if (g.isPublic) {
+            g.isEnabled = enabled;
+//            }
         }
     }
 //////////////////////

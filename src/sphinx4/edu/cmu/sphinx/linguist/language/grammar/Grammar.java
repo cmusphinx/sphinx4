@@ -232,7 +232,7 @@ public abstract class Grammar implements Configurable, GrammarInterface {
             }
             node = selectRandomSuccessor(node);
         }
-        return sb.toString();
+        return sb.toString().trim();
     }
 
 
