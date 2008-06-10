@@ -6,6 +6,7 @@ import org.xml.sax.SAXParseException;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Map;
@@ -109,11 +110,18 @@ public class IncludingConfigHandler extends ConfigHandler {
     private void mergeConfigs(String configFileName, boolean replaceDuplicates) {
         try {
 
-            URL fileURL = new File(configFileName).toURI().toURL();
+            URL fileURL = new File(PATH_PREFIX + configFileName).toURI().toURL();
+            System.err.println("loading included config:" + fileURL.toURI());
             SaxLoader saxLoader = new SaxLoader(fileURL, globalProperties, rpdMap);
             saxLoader.load();
         } catch (IOException e) {
             throw new RuntimeException("Error while processing <include file=\"" + configFileName + "\">: " + e.toString(), e);
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
         }
     }
+
+
+    /** Allows to adjust relative paths used to include/extend system configurations. */
+    public static String PATH_PREFIX = "";
 }
