@@ -3,11 +3,9 @@ package edu.cmu.sphinx.frontend.databranch;
 import edu.cmu.sphinx.frontend.BaseDataProcessor;
 import edu.cmu.sphinx.frontend.Data;
 import edu.cmu.sphinx.frontend.DataProcessingException;
-import edu.cmu.sphinx.util.props.PropertyException;
-import edu.cmu.sphinx.util.props.PropertySheet;
-import edu.cmu.sphinx.util.props.S4Boolean;
-import edu.cmu.sphinx.util.props.S4Integer;
+import edu.cmu.sphinx.util.props.*;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -46,21 +44,36 @@ public class DataBufferProcessor extends BaseDataProcessor implements DataListen
     private int maxBufferSize;
 
 
+    @S4ComponentList(type = Configurable.class, beTolerant = true)
+    public static final String DATA_LISTENERS = "dataListeners";
+    private List<DataListener> dataListeners = new ArrayList<DataListener>();
+
+
     @Override
     public void newProperties(PropertySheet ps) throws PropertyException {
         super.newProperties(ps);
 
         maxBufferSize = ps.getInt(PROP_BUFFER_SIZE);
-
         waitIfEmpty = ps.getBoolean(PROP_WAIT_IF_EMPTY);
 
         if (waitIfEmpty) // if false we don't need the value
             waitTime = ps.getInt(PROP_WAIT_TIME_MS);
+
+        List<? extends Configurable> list = ps.getComponentList(DATA_LISTENERS);
+        for (Configurable configurable : list) {
+            assert configurable instanceof DataListener;
+            addDataListener((DataListener) configurable);
+        }
     }
 
 
     public void processDataFrame(Data data) {
         featureBuffer.add(data);
+
+        // inform data-listeners if necessary
+        for (DataListener dataListener : dataListeners) {
+            dataListener.processDataFrame(data);
+        }
 
         //reduce the buffer-size if necessary
         while (featureBuffer.size() > maxBufferSize) {
@@ -108,4 +121,23 @@ public class DataBufferProcessor extends BaseDataProcessor implements DataListen
     public List<Data> getBuffer() {
         return Collections.unmodifiableList(featureBuffer);
     }
+
+
+    /** Adds a new listener. */
+    public void addDataListener(DataListener l) {
+        if (l == null)
+            return;
+
+        dataListeners.add(l);
+    }
+
+
+    /** Removes a listener. */
+    public void removeDataListener(DataListener l) {
+        if (l == null)
+            return;
+
+        dataListeners.remove(l);
+    }
+
 }
