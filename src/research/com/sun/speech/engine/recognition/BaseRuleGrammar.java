@@ -9,10 +9,7 @@ package com.sun.speech.engine.recognition;
 
 import javax.speech.recognition.*;
 import java.io.Serializable;
-import java.util.Enumeration;
-import java.util.Hashtable;
-import java.util.Properties;
-import java.util.Vector;
+import java.util.*;
 
 /**
  * Implementation of javax.speech.recognition.RuleGrammar.
@@ -26,6 +23,8 @@ public class BaseRuleGrammar extends BaseGrammar
     protected Vector imports;
     protected Vector importedRules;
 
+    protected HashMap<String, Collection<String>> ruleTags;
+
 
     /**
      * Create a new BaseRuleGrammar
@@ -36,6 +35,7 @@ public class BaseRuleGrammar extends BaseGrammar
     public BaseRuleGrammar(BaseRecognizer R, String name) {
         super(R, name);
         rules = new Hashtable();
+        ruleTags = new HashMap<String, Collection<String>>();
         imports = new Vector();
         importedRules = new Vector();
     }
@@ -606,7 +606,16 @@ public class BaseRuleGrammar extends BaseGrammar
 
         if (r instanceof RuleTag) {
             RuleTag rt = (RuleTag) r;
-            resolveRule(rt.getRule());
+
+            Rule rule = rt.getRule();
+
+            // add the tag the tag-table
+            if (!ruleTags.containsKey(rule.toString()))
+                ruleTags.put(rule.toString(), new HashSet<String>());
+
+            ruleTags.get(rule.toString()).add(rt.getTag());
+
+            resolveRule(rule);
             return;
         }
 
@@ -636,6 +645,12 @@ public class BaseRuleGrammar extends BaseGrammar
         if (!importedRules.contains(simpleName)) {
             importedRules.addElement(simpleName);
         }
+    }
+
+
+    /** Returns the jsgf tags associated to the given rule. Cf.  jsgf-specification for details. */
+    public Collection<String> getJSGFTags(String ruleName) {
+        return ruleTags.get(ruleName);
     }
 
 

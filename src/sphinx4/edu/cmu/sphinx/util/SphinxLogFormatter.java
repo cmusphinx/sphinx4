@@ -16,7 +16,6 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.logging.Formatter;
-import java.util.logging.Level;
 import java.util.logging.LogRecord;
 
 /**
@@ -69,8 +68,13 @@ public class SphinxLogFormatter extends Formatter {
             sbuf.append(" ");
 
             String loggerName = record.getLoggerName();
-            String[] strings = loggerName.split("[.]");
-            String source = strings[strings.length - 1];
+            String source;
+            if (loggerName != null) {
+                String[] strings = loggerName.split("[.]");
+                source = strings[strings.length - 1];
+            } else {
+                source = loggerName;
+            }
 
             sbuf.append(Utilities.pad(record.getLevel().getName() + " " + source, 24));
             sbuf.append("  ");

@@ -23,9 +23,7 @@ import javax.speech.recognition.*;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 /**
  * Defines a BNF-style grammar based on JSGF grammar rules in a file.
