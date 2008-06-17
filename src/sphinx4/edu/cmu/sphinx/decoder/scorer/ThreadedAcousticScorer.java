@@ -99,7 +99,7 @@ public class ThreadedAcousticScorer extends AbstractScorer {
 
     @Override
     public void allocate() {
-        logger.info("# of scoring threads: " + numThreads);
+        logger.fine("# of scoring threads: " + numThreads);
 
         // if we only have one thread, then we'll score the
         // states in the calling thread and we won't need any

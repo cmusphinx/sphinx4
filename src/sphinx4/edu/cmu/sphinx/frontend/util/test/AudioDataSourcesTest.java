@@ -4,6 +4,7 @@ import edu.cmu.sphinx.frontend.*;
 import edu.cmu.sphinx.frontend.util.AudioFileDataSource;
 import edu.cmu.sphinx.frontend.util.AudioFileProcessListener;
 import edu.cmu.sphinx.frontend.util.ConcatAudioFileDataSource;
+import edu.cmu.sphinx.util.props.ConfigurationManager;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -60,7 +61,7 @@ public class AudioDataSourcesTest {
 
     @Test
     public void testConcatDataSource() throws DataProcessingException {
-        ConcatAudioFileDataSource dataSource = new ConcatAudioFileDataSource();
+        ConcatAudioFileDataSource dataSource = ConfigurationManager.getInstance(ConcatAudioFileDataSource.class);
 
         dataSource.addNewFileListener(new AudioFileProcessListener() {
 
@@ -75,7 +76,9 @@ public class AudioDataSourcesTest {
             }
         });
 
-        dataSource.setBatchFile(new File(baseDir + "test.drv"));
+        File batchFile = new File(baseDir + "test.drv");
+        assert batchFile.isFile() : "no file, not test.";
+        dataSource.setBatchFile(batchFile);
 
 
         Assert.assertTrue(dataSource.getData() instanceof DataStartSignal);
