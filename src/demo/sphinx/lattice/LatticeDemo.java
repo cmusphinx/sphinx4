@@ -32,6 +32,7 @@ import java.net.URL;
 /** A simple Lattice demo showing a simple speech application that generates a Lattice from a recognition result. */
 public class LatticeDemo {
 
+
     /** Main method for running the Lattice demo. */
     public static void main(String[] args) {
         try {
@@ -39,8 +40,7 @@ public class LatticeDemo {
             if (args.length > 0) {
                 audioURL = new File(args[0]).toURI().toURL();
             } else {
-                audioURL =
-                        LatticeDemo.class.getResource("10001-90210-01803.wav");
+                audioURL = LatticeDemo.class.getResource("10001-90210-01803.wav");
             }
 
             URL url;
@@ -72,8 +72,7 @@ public class LatticeDemo {
 
                 if (result != null) {
                     Lattice lattice = new Lattice(result);
-                    LatticeOptimizer optimizer
-                            = new LatticeOptimizer(lattice);
+                    LatticeOptimizer optimizer = new LatticeOptimizer(lattice);
                     optimizer.optimize();
                     lattice.dumpAllPaths();
                     String resultText = result.getBestResultNoFiller();
@@ -84,13 +83,13 @@ public class LatticeDemo {
             }
         } catch (IOException e) {
             System.err.println("Problem when loading LatticeDemo: " + e);
-            e.printStackTrace();
+            throw new RuntimeException(e);
         } catch (PropertyException e) {
             System.err.println("Problem configuring LatticeDemo: " + e);
-            e.printStackTrace();
+            throw new RuntimeException(e);
         } catch (UnsupportedAudioFileException e) {
             System.err.println("Audio file format not supported.");
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
     }
 

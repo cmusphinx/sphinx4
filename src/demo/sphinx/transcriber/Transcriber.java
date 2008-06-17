@@ -26,10 +26,16 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 
 /** A simple example that shows how to transcribe a continuous audio file that has multiple utterances in it. */
 public class Transcriber {
+
+    private static List<Result> unitTestBuffer = new ArrayList<Result>();
+
 
     /** Main method for running the HelloDigits demo. */
     public static void main(String[] args) {
@@ -66,19 +72,20 @@ public class Transcriber {
                 if (result != null) {
                     String resultText = result.getBestResultNoFiller();
                     System.out.println(resultText);
+                    unitTestBuffer.add(result);
                 } else {
                     done = true;
                 }
             }
         } catch (IOException e) {
             System.err.println("Problem when loading Transcriber: " + e);
-            e.printStackTrace();
+            throw new RuntimeException(e);
         } catch (PropertyException e) {
             System.err.println("Problem configuring Transcriber: " + e);
-            e.printStackTrace();
+            throw new RuntimeException(e);
         } catch (UnsupportedAudioFileException e) {
             System.err.println("Audio file format not supported.");
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
     }
 
@@ -87,9 +94,16 @@ public class Transcriber {
     @Test
     public void testLatticeDemo() {
         try {
-            main(new String[]{});
+            Transcriber.main(new String[]{});
         } catch (Throwable t) {
             Assert.fail();
+        }
+
+        List<String> expResults = Arrays.asList("zero zero zero", "two one oh", "zero one eight zero three");
+        Assert.assertTrue(unitTestBuffer.size() == expResults.size());
+        for (int i = 0; i < expResults.size(); i++) {
+            String recogResult = unitTestBuffer.get(i).getBestResultNoFiller();
+            Assert.assertEquals(expResults.get(i), recogResult);
         }
     }
 }

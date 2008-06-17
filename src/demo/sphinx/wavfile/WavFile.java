@@ -35,6 +35,9 @@ import java.net.URL;
  */
 public class WavFile {
 
+    public static Result result;
+
+
     /** Main method for running the WavFile demo. */
     public static void main(String[] args) {
         try {
@@ -71,7 +74,7 @@ public class WavFile {
             reader.setInputStream(ais, audioFileURL.getFile());
 
             /* decode the audio file */
-            Result result = recognizer.recognize();
+            result = recognizer.recognize();
 
             /* print out the results */
             if (result != null) {
@@ -82,13 +85,13 @@ public class WavFile {
             }
         } catch (IOException e) {
             System.err.println("Problem when loading WavFile: " + e);
-            e.printStackTrace();
+            throw new RuntimeException(e);
         } catch (PropertyException e) {
             System.err.println("Problem configuring WavFile: " + e);
-            e.printStackTrace();
+            throw new RuntimeException(e);
         } catch (UnsupportedAudioFileException e) {
             System.err.println("Audio file format not supported: " + e);
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
     }
 
@@ -97,9 +100,12 @@ public class WavFile {
     @Test
     public void testLatticeDemo() {
         try {
-            main(new String[]{});
+            WavFile.main(new String[]{});
         } catch (Throwable t) {
             Assert.fail();
         }
+
+        Assert.assertNotNull(result);
+        Assert.assertTrue(result.getBestResultNoFiller().equals("one two three four five"));
     }
 }
