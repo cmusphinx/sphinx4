@@ -22,26 +22,26 @@
             <item>batchCMN</item>
             <item>featureExtraction</item>
 
-            <item>secndBrancher</item>
+            <item>frontendBrancher</item>
             <item>secndDecoder</item>
         </propertylist>
     </component>
 
 
-    <component name="secndBrancher" type="edu.cmu.sphinx.frontend.databranch.FrontEndSplitter">
+    <component name="frontendBrancher" type="edu.cmu.sphinx.frontend.databranch.FrontEndSplitter">
         <propertylist name="dataListeners">
-            <item>secndDataBuffer</item>
+            <item>dataBuffer</item>
         </propertylist>
     </component>
 
 
-    <component name="secndDataBuffer" type="edu.cmu.sphinx.frontend.databranch.DataBufferProcessor">
+    <component name="dataBuffer" type="edu.cmu.sphinx.frontend.databranch.DataBufferProcessor">
         <property name="waitIfEmpty" value="true"/>
     </component>
 
 
     <component name="secndScorer" type="edu.cmu.sphinx.decoder.scorer.ThreadedAcousticScorer">
-        <property name="frontend" value="secndDataBuffer"/>
+        <property name="frontend" value="dataBuffer"/>
         <property name="isCpuRelative" value="true"/>
         <property name="numThreads" value="0"/>
         <property name="minScoreablesPerThread" value="10"/>
@@ -58,9 +58,12 @@
         </propertylist>
     </component>
 
-     <component name="secndSearchManager" type="edu.cmu.sphinx.decoder.search.SimpleBreadthFirstSearchManager">
+    <component name="secndSearchManager" type="edu.cmu.sphinx.decoder.search.SimpleBreadthFirstSearchManager">
         <property name="logMath" value="logMath"/>
-        <property name="linguist" value="secndLinguist"/>
+        <!-- for sake of simplicity we share the linguist with the other recognizer here -->
+        <!-- however this is neither necessary nor the common usecase. Normally both recognizers would --> 
+        <!-- decode on  different search spaces -->
+        <property name="linguist" value="flatLinguist"/>
         <property name="pruner" value="secndSearchPruner"/>
         <property name="scorer" value="secndScorer"/>
         <property name="activeListFactory" value="secndActiveList"/>
