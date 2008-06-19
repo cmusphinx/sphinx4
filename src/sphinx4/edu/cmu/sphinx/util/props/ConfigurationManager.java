@@ -97,6 +97,8 @@ public class ConfigurationManager implements Cloneable {
                     System.err.println("class not found !" + e.toString());
                 } catch (ClassCastException e) {
                     System.err.println("can not cast class !" + e.toString());
+                } catch (ExceptionInInitializerError e){
+                    System.err.println("couldn't load class !" + e.toString());
                 }
             }
         }
