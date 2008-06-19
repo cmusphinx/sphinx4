@@ -259,9 +259,6 @@
               todir="${classes_dir}/demo/sphinx/wavfile"/>
         <copy file="${src_dir}/demo/sphinx/wavfile/digits.gram"
               todir="${classes_dir}/demo/sphinx/wavfile"/>
-        <copy todir="${classes_dir}/demo/sphinx/wavfile/multirec">
-            <fileset dir="${src_dir}/demo/sphinx/wavfile/multirec"/>
-        </copy>
         <mkdir dir="${bin_dir}"/>
         <jar destfile="${bin_dir}/WavFile.jar"
              manifest="${src_dir}/demo/sphinx/wavfile/wavfile.Manifest"

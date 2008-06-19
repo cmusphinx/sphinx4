@@ -51,7 +51,6 @@ public class WavFile {
             }
 
             URL configURL = WavFile.class.getResource("config.xml");
-//            URL configURL = WavFile.class.getResource("multirec/multirecog.xml");
 
             System.out.println("Loading Recognizer as defined in '" + configURL.toString() + "'...\n");
 
