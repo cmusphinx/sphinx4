@@ -52,7 +52,7 @@ public class ConfigurationManager implements Cloneable {
      */
     public ConfigurationManager(URL url) throws PropertyException {
         configURL = url;
-        SaxLoader saxLoader = new SaxLoader(url, globalProperties, null);
+        SaxLoader saxLoader = new SaxLoader(url, globalProperties, null, false);
 
         try {
             rawPropertyMap = saxLoader.load();

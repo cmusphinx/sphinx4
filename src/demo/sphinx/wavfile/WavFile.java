@@ -98,7 +98,7 @@ public class WavFile {
 
     /** Converts this demo into a unit-test. */
     @Test
-    public void testLatticeDemo() {
+    public void testWavFileDemo() {
         try {
             WavFile.main(new String[]{});
         } catch (Throwable t) {

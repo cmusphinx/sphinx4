@@ -21,8 +21,10 @@ public class IncludingConfigHandler extends ConfigHandler {
     private boolean replaceDuplicates = false;
 
 
-    public IncludingConfigHandler(Map<String, RawPropertyData> rpdMap, GlobalProperties globalProperties) {
+    public IncludingConfigHandler(Map<String, RawPropertyData> rpdMap, GlobalProperties globalProperties, boolean replaceDuplicates) {
         super(rpdMap, globalProperties);
+
+        this.replaceDuplicates = replaceDuplicates;
     }
 
 
@@ -38,6 +40,10 @@ public class IncludingConfigHandler extends ConfigHandler {
         } else if (qName.equals("include")) {
             String includeFileName = attributes.getValue("file");
             mergeConfigs(includeFileName, false);
+
+        } else if (qName.equals("extendwith")) {
+            String includeFileName = attributes.getValue("file");
+            mergeConfigs(includeFileName, true);
 
         } else if (qName.equals("component")) {
             String curComponent = attributes.getValue("name");
@@ -111,8 +117,8 @@ public class IncludingConfigHandler extends ConfigHandler {
         try {
 
             URL fileURL = new File(PATH_PREFIX + configFileName).toURI().toURL();
-            System.err.println("loading included config:" + fileURL.toURI());
-            SaxLoader saxLoader = new SaxLoader(fileURL, globalProperties, rpdMap);
+            System.err.println((replaceDuplicates ? "extending" : "including") + " config:" + fileURL.toURI());
+            SaxLoader saxLoader = new SaxLoader(fileURL, globalProperties, rpdMap, replaceDuplicates);
             saxLoader.load();
         } catch (IOException e) {
             throw new RuntimeException("Error while processing <include file=\"" + configFileName + "\">: " + e.toString(), e);

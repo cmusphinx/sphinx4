@@ -31,6 +31,7 @@ public class SaxLoader {
     private URL url;
     private Map<String, RawPropertyData> rpdMap;
     private GlobalProperties globalProperties;
+    private boolean replaceDuplicates;
 
 
     /**
@@ -39,10 +40,12 @@ public class SaxLoader {
      * @param url              the location to load
      * @param globalProperties the map of global properties
      * @param initRPD
+     * @param replaceDuplicates
      */
-    public SaxLoader(URL url, GlobalProperties globalProperties, Map<String, RawPropertyData> initRPD) {
+    public SaxLoader(URL url, GlobalProperties globalProperties, Map<String, RawPropertyData> initRPD, boolean replaceDuplicates) {
         this.url = url;
         this.globalProperties = globalProperties;
+        this.replaceDuplicates = replaceDuplicates;
 
         if (initRPD == null)
             rpdMap = new HashMap<String, RawPropertyData>();
@@ -62,7 +65,7 @@ public class SaxLoader {
             SAXParserFactory factory = SAXParserFactory.newInstance();
             XMLReader xr = factory.newSAXParser().getXMLReader();
 //            ConfigHandler handler = new ConfigHandler(rpdMap, globalProperties);
-            IncludingConfigHandler handler = new IncludingConfigHandler(rpdMap, globalProperties);
+            IncludingConfigHandler handler = new IncludingConfigHandler(rpdMap, globalProperties, replaceDuplicates);
             xr.setContentHandler(handler);
             xr.setErrorHandler(handler);
             InputStream is = url.openStream();
