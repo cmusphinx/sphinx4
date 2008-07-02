@@ -155,7 +155,7 @@
 
     <component name="mfcFrontEnd" type="edu.cmu.sphinx.frontend.FrontEnd">
         <propertylist name="pipeline">
-            <item>streamDataSource</item>
+            <item>audioFileDataSource</item>
             <item>premphasizer</item>
             <item>windower</item>
             <item>fft</item>
@@ -166,13 +166,8 @@
         </propertylist>
     </component>
 
-    <component name="streamDataSource"
-               type="edu.cmu.sphinx.frontend.util.StreamDataSource">
-        <property name="sampleRate" value="16000"/>
-        <property name="bitsPerSample" value="16"/>
-        <property name="bigEndianData" value="false"/>
-        <property name="signedData" value="true"/>
-    </component>
+
+    <component name="audioFileDataSource" type="edu.cmu.sphinx.frontend.util.AudioFileDataSource"/>
 
     <component name="premphasizer"
                type="edu.cmu.sphinx.frontend.filter.Preemphasizer"/>

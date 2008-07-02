@@ -12,6 +12,7 @@
 
 package demo.sphinx.wavfile;
 
+import edu.cmu.sphinx.frontend.util.AudioFileDataSource;
 import edu.cmu.sphinx.frontend.util.StreamDataSource;
 import edu.cmu.sphinx.recognizer.Recognizer;
 import edu.cmu.sphinx.result.Result;
@@ -64,15 +65,9 @@ public class WavFile {
             System.out.println("Decoding " + audioFileURL.getFile());
             System.out.println(AudioSystem.getAudioFileFormat(audioFileURL));
 
-            StreamDataSource reader
-                    = (StreamDataSource) cm.lookup("streamDataSource");
-
-            AudioInputStream ais
-                    = AudioSystem.getAudioInputStream(audioFileURL);
-
-            /* set the stream data source to read from the audio file */
-            reader.setInputStream(ais, audioFileURL.getFile());
-
+            AudioFileDataSource dataSource = (AudioFileDataSource) cm.lookup("audioFileDataSource");
+            dataSource.setAudioFile(audioFileURL, null);
+            
             /* decode the audio file */
             result = recognizer.recognize();
 
