@@ -12,7 +12,10 @@
 package edu.cmu.sphinx.frontend.util;
 
 import edu.cmu.sphinx.frontend.*;
-import edu.cmu.sphinx.util.props.*;
+import edu.cmu.sphinx.util.props.PropertyException;
+import edu.cmu.sphinx.util.props.PropertySheet;
+import edu.cmu.sphinx.util.props.S4Boolean;
+import edu.cmu.sphinx.util.props.S4Integer;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -52,7 +55,7 @@ public class StreamDataSource extends BaseDataProcessor {
     public static final boolean PROP_SIGNED_DATA_DEFAULT = true;
 
     private InputStream dataStream;
-    private int sampleRate;
+    protected int sampleRate;
     private int bytesPerRead;
     private int bytesPerValue;
     private long totalValuesRead;
@@ -61,6 +64,7 @@ public class StreamDataSource extends BaseDataProcessor {
     private boolean streamEndReached = false;
     private boolean utteranceEndSent = false;
     private boolean utteranceStarted = false;
+    protected int bitsPerSample;
 
 
     /*
@@ -71,17 +75,16 @@ public class StreamDataSource extends BaseDataProcessor {
     public void newProperties(PropertySheet ps) throws PropertyException {
         super.newProperties(ps);
         sampleRate = ps.getInt(PROP_SAMPLE_RATE);
-        bytesPerRead = ps.getInt(PROP_BYTES_PER_READ
-        );
-        int bitsPerSample = ps.getInt(PROP_BITS_PER_SAMPLE
-        );
+        bytesPerRead = ps.getInt(PROP_BYTES_PER_READ);
+        bitsPerSample = ps.getInt(PROP_BITS_PER_SAMPLE);
+
         if (bitsPerSample % 8 != 0) {
             throw new Error("StreamDataSource: bits per sample must be a " +
                     "multiple of 8.");
         }
+        
         bytesPerValue = bitsPerSample / 8;
-        bigEndian = ps.getBoolean(PROP_BIG_ENDIAN_DATA
-        );
+        bigEndian = ps.getBoolean(PROP_BIG_ENDIAN_DATA);
         signedData = ps.getBoolean(PROP_SIGNED_DATA);
         if (bytesPerRead % 2 == 1) {
             bytesPerRead++;

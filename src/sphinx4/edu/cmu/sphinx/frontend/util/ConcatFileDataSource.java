@@ -72,35 +72,20 @@ import java.util.Random;
  * constructor. This transcript file will be used in detected gap insertion errors, because it accurately describes the
  * "correct" sequence of speech and silences in the concatenated version of the audio files.
  */
-public class ConcatFileDataSource extends StreamDataSource
-        implements ReferenceSource {
-
-    /** SphinxProperty for the sample rate. */
-    @S4Integer(defaultValue = 16000)
-    public static final String PROP_SAMPLE_RATE = "sampleRate";
-    /** Default value for PROP_SAMPLE_RATE. */
-    public static final int PROP_SAMPLE_RATE_DEFAULT = 16000;
+public class ConcatFileDataSource extends StreamDataSource implements ReferenceSource {
 
     /** The SphinxProperty that specifies which file to start at. */
     @S4Integer(defaultValue = 1)
     public static final String PROP_START_FILE = "startFile";
 
-    /** The default value for PROP_START_FILE. */
-    public static final int PROP_START_FILE_DEFAULT = 1;
-
     /** The SphinxProperty that specifies the number of files to skip for every file read. */
     @S4Integer(defaultValue = 0)
     public static final String PROP_SKIP = "skip";
-
-    /** The default value for PROP_SKIP. */
-    public static final int PROP_SKIP_DEFAULT = 0;
 
     /** The SphinxProperty that specifies the total number of files to read. The default value should be no limit. */
     @S4Integer(defaultValue = -1)
     public static final String PROP_TOTAL_FILES = "totalFiles";
 
-    /** The default value for PROP_TOTAL_FILES. */
-    public static final int PROP_TOTAL_FILES_DEFAULT = -1;
 
     /**
      * The SphinxProperty that specifies the silence audio file, if any. If this property is null, then no silences are
@@ -109,15 +94,9 @@ public class ConcatFileDataSource extends StreamDataSource
     @S4String
     public static final String PROP_SILENCE_FILE = "silenceFile";
 
-    /** The default value for PROP_SILENCE_FILE. */
-    public static final String PROP_SILENCE_FILE_DEFAULT = null;
-
     /** The SphinxProperty that specifies whether to add random silence. */
     @S4Boolean(defaultValue = false)
     public static final String PROP_ADD_RANDOM_SILENCE = "addRandomSilence";
-
-    /** The default value for PROP_ADD_RANDOM_SILENCE. */
-    public static final boolean PROP_ADD_RANDOM_SILENCE_DEFAULT = false;
 
     /**
      * The SphinxProperty that specifies the maximum number of times the silence file is added  between files. If
@@ -128,9 +107,6 @@ public class ConcatFileDataSource extends StreamDataSource
     @S4Integer(defaultValue = 3)
     public static final String PROP_MAX_SILENCE = "maxSilence";
 
-    /** The default value of PROP_MAX_SILENCE. */
-    public static final int PROP_MAX_SILENCE_DEFAULT = 3;
-
     /**
      * The SphinxProperty that specifies the name of the transcript file. If this property is set, a transcript file
      * will be created. No transcript file will be created if this property is not set.
@@ -138,28 +114,13 @@ public class ConcatFileDataSource extends StreamDataSource
     @S4String
     public static final String PROP_TRANSCRIPT_FILE = "transcriptFile";
 
-    /** The default value of PROP_TRANSCRIPT_FILE. */
-    public static final String PROP_TRANSCRIPT_FILE_DEFAULT = null;
-
     /** SphinxProperty for the file containing a list of audio files to read from. */
     @S4String
     public static final String PROP_BATCH_FILE = "batchFile";
 
-    /** The default value of PROP_BATCH_FILE. */
-    public static final String PROP_BATCH_FILE_DEFAULT = null;
-
-    /** SphinxProperty for the number of bits per value. */
-    @S4Integer(defaultValue = 16)
-    public static final String PROP_BITS_PER_SAMPLE = "bitsPerSample";
-
-    /** Default value for PROP_BITS_PER_SAMPLE. */
-    public static final int PROP_BITS_PER_SAMPLE_DEFAULT = 16;
-
 
     private static final String GAP_LABEL = "inter_segment_gap";
-
     private boolean addRandomSilence;
-    private boolean createTranscript;
     private int skip;
     private int maxSilence;
     private int silenceCount;
@@ -170,13 +131,10 @@ public class ConcatFileDataSource extends StreamDataSource
     private String nextFile = null;
     private String context;
     private String transcriptFile;
-    private StreamDataSource streamDataSource;
     private List<String> referenceList;
     private FileWriter transcript;
     private int startFile;
     private int totalFiles;
-    private int sampleRate;
-    private int bitsPerSample;
     private String batchFile;
 
 
@@ -187,23 +145,16 @@ public class ConcatFileDataSource extends StreamDataSource
     */
     public void newProperties(PropertySheet ps) throws PropertyException {
         super.newProperties(ps);
-        int sampleRate = ps.getInt(PROP_SAMPLE_RATE);
-        int bitsPerSample = ps.getInt
-                (PROP_BITS_PER_SAMPLE);
+
         bytesPerSecond = sampleRate * (bitsPerSample / 8);
-        addRandomSilence = ps.getBoolean
-                (PROP_ADD_RANDOM_SILENCE);
+        addRandomSilence = ps.getBoolean(PROP_ADD_RANDOM_SILENCE);
         maxSilence = ps.getInt(PROP_MAX_SILENCE);
         skip = ps.getInt(PROP_SKIP);
         silenceFileName = ps.getString(PROP_SILENCE_FILE);
-        startFile = ps.getInt
-                (PROP_START_FILE);
-        totalFiles = ps.getInt
-                (PROP_TOTAL_FILES);
-        transcriptFile = ps.getString
-                (PROP_TRANSCRIPT_FILE);
-        batchFile = ps.getString
-                (PROP_BATCH_FILE);
+        startFile = ps.getInt(PROP_START_FILE);
+        totalFiles = ps.getInt(PROP_TOTAL_FILES);
+        transcriptFile = ps.getString(PROP_TRANSCRIPT_FILE);
+        batchFile = ps.getString(PROP_BATCH_FILE);
     }
 
 
@@ -237,7 +188,7 @@ public class ConcatFileDataSource extends StreamDataSource
      *
      * @return a list of all reference text
      */
-    public List getReferences() {
+    public List<String> getReferences() {
         return referenceList;
     }
 
