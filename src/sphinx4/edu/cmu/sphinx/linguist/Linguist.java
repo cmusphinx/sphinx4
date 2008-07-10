@@ -108,19 +108,6 @@ public interface Linguist extends Configurable {
     @S4Double(defaultValue = 1.0)
     public final static String PROP_LANGUAGE_WEIGHT = "languageWeight";
 
-    /**
-     * Property to control the maximum number of right contexts to consider before switching over to using composite
-     * hmms
-     */
-    // todo remove because not used at all
-//    @S4Integer(defaultValue = 1000)
-//    public final static String PROP_COMPOSITE_THRESHOLD = "compositeThreshold";
-
-    /** Property to control the the validating of the search space */
-    // todo remove because not used at all
-//    @S4Boolean(defaultValue = false)
-//    public final static String PROP_VALIDATE_SEARCH_SPACE = "validateSearchSpace";
-
 
     /**
      * Retrieves search graph.  The search graph represents the search space to be used to guide the search.
