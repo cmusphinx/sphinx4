@@ -15,6 +15,8 @@ import java.util.logging.Logger;
  */
 public class PropertySheet implements Cloneable {
 
+    public static final String COMP_LOG_LEVEL = "logLevel";
+
     public enum PropertyType {
 
         INT, DOUBLE, BOOL, COMP, STRING, COMPLIST
@@ -688,11 +690,11 @@ public class PropertySheet implements Cloneable {
             logger = Logger.getLogger(ownerClass.getName());
 
         // if there's a logLevel set for component apply to the logger
-        if (rawProps.get("logLevel") != null)
-            logger.setLevel(Level.parse((String) rawProps.get("logLevel")));
+        Object rawLogLevel = rawProps.get(COMP_LOG_LEVEL);
+        if (rawLogLevel != null)
+            logger.setLevel(rawLogLevel instanceof String ? Level.parse((String) rawLogLevel) : (Level) rawLogLevel);
 
         return logger;
-
     }
 
 

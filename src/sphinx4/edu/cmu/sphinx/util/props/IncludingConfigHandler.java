@@ -10,6 +10,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.logging.Logger;
 
 /**
  * Handles configurations like the old one but is also able to process a new "include"-field
@@ -117,7 +118,10 @@ public class IncludingConfigHandler extends ConfigHandler {
         try {
 
             URL fileURL = new File(PATH_PREFIX + configFileName).toURI().toURL();
-            System.err.println((replaceDuplicates ? "extending" : "including") + " config:" + fileURL.toURI());
+
+            Logger logger = Logger.getLogger(IncludingConfigHandler.class.getSimpleName());
+            logger.fine((replaceDuplicates ? "extending" : "including") + " config:" + fileURL.toURI());
+
             SaxLoader saxLoader = new SaxLoader(fileURL, globalProperties, rpdMap, replaceDuplicates);
             saxLoader.load();
         } catch (IOException e) {
