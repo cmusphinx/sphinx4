@@ -23,7 +23,9 @@ import javax.speech.recognition.*;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Defines a BNF-style grammar based on JSGF grammar rules in a file.
@@ -154,13 +156,9 @@ public class JSGFGrammar extends Grammar {
     @S4String
     public final static String PROP_BASE_GRAMMAR_URL = "grammarLocation";
 
-
     /** Sphinx property that defines the location of the JSGF grammar file. */
     @S4String(defaultValue = "default.gram")
     public final static String PROP_GRAMMAR_NAME = "grammarName";
-
-    /** Default value for PROP_GRAMMAR_NAME */
-    public final static String PROP_GRAMMAR_NAME_DEFAULT = "default.gram";
 
     /** Sphinx property that defines the logMath component. */
     @S4Component(type = LogMath.class)
@@ -191,8 +189,7 @@ public class JSGFGrammar extends Grammar {
         baseURL = ConfigurationManagerUtils.getResource(PROP_BASE_GRAMMAR_URL, ps);
         logMath = (LogMath) ps.getComponent(PROP_LOG_MATH);
 
-        grammarName = ps
-                .getString(PROP_GRAMMAR_NAME);
+        grammarName = ps.getString(PROP_GRAMMAR_NAME);
         loadGrammar = true;
     }
 
@@ -214,6 +211,12 @@ public class JSGFGrammar extends Grammar {
      */
     public void setBaseURL(URL url) {
         baseURL = url;
+    }
+
+
+    /** Returns the name of this grammar. */
+    public String getGrammarName() {
+        return grammarName;
     }
 
 
