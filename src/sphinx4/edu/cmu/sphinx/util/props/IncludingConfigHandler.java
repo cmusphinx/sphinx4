@@ -20,12 +20,14 @@ import java.util.logging.Logger;
 public class IncludingConfigHandler extends ConfigHandler {
 
     private boolean replaceDuplicates = false;
+    private URL baseURL;
 
 
-    public IncludingConfigHandler(Map<String, RawPropertyData> rpdMap, GlobalProperties globalProperties, boolean replaceDuplicates) {
+    public IncludingConfigHandler(Map<String, RawPropertyData> rpdMap, GlobalProperties globalProperties, boolean replaceDuplicates, URL baseURL) {
         super(rpdMap, globalProperties);
 
         this.replaceDuplicates = replaceDuplicates;
+        this.baseURL = baseURL;
     }
 
 
@@ -117,7 +119,8 @@ public class IncludingConfigHandler extends ConfigHandler {
     private void mergeConfigs(String configFileName, boolean replaceDuplicates) {
         try {
 
-            URL fileURL = new File(PATH_PREFIX + configFileName).toURI().toURL();
+            File parent = new File(baseURL.getFile()).getParentFile();
+            URL fileURL = new File(parent.getPath() + File.separatorChar +  configFileName).toURI().toURL();
 
             Logger logger = Logger.getLogger(IncludingConfigHandler.class.getSimpleName());
             logger.fine((replaceDuplicates ? "extending" : "including") + " config:" + fileURL.toURI());
@@ -130,8 +133,4 @@ public class IncludingConfigHandler extends ConfigHandler {
             e.printStackTrace();
         }
     }
-
-
-    /** Allows to adjust relative paths used to include/extend system configurations. */
-    public static String PATH_PREFIX = "";
 }

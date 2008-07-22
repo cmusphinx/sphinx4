@@ -65,7 +65,7 @@ public class SaxLoader {
             SAXParserFactory factory = SAXParserFactory.newInstance();
             XMLReader xr = factory.newSAXParser().getXMLReader();
 //            ConfigHandler handler = new ConfigHandler(rpdMap, globalProperties);
-            IncludingConfigHandler handler = new IncludingConfigHandler(rpdMap, globalProperties, replaceDuplicates);
+            IncludingConfigHandler handler = new IncludingConfigHandler(rpdMap, globalProperties, replaceDuplicates, url);
             xr.setContentHandler(handler);
             xr.setErrorHandler(handler);
             InputStream is = url.openStream();
