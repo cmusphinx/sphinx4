@@ -20,14 +20,14 @@
     <!-- ********************************************************** -->
 
     <property name="version" value="1_2_0"/>
-    <property name="src_dir" value="src"/>
-    <property name="build_dir" value="bld"/>
-    <property name="classes_dir" value="${build_dir}/classes"/>
+    <property name="demo_src_dir" value="src/apps"/>
+    <property name="build_dir" value="appsbld"/>
+    <property name="demo_classes_dir" value="${build_dir}/classes/apps"/>
     <property name="lib_dir" value="lib"/>
     <property name="bin_dir" value="bin"/>
     <property name="deploy_dir" value="deploy"/>
     <path id="libs">
-        <pathelement path="${classes_dir}"/>
+        <pathelement path="${demo_classes_dir}"/>
         <pathelement location="${lib_dir}/sphinx4.jar"/>
         <pathelement location="${lib_dir}/jsapi.jar"/>
         <pathelement location="${lib_dir}/tags.jar"/>
@@ -90,206 +90,206 @@
             description="Compiles Sphinx-4 demos"/>
 
     <target name="compile_sphinx_helloworld">
-        <mkdir dir="${classes_dir}/demo/sphinx/helloworld"/>
+        <mkdir dir="${demo_classes_dir}/edu/cmu/sphinx/demo/helloworld"/>
         <javac debug="true"
                source="1.5"
                listfiles="true"
                deprecation="true"
-               srcdir="${src_dir}"
-               destdir="${classes_dir}"
-               includes="demo/sphinx/helloworld/**">
+               srcdir="${demo_src_dir}"
+               destdir="${demo_classes_dir}"
+               includes="edu/cmu/sphinx/demo/helloworld/**">
             <classpath refid="libs"/>
         </javac>
-        <copy file="${src_dir}/demo/sphinx/helloworld/hello.gram"
-              todir="${classes_dir}/demo/sphinx/helloworld"/>
-        <copy file="${src_dir}/demo/sphinx/helloworld/helloworld.config.xml"
-              todir="${classes_dir}/demo/sphinx/helloworld"/>
+        <copy file="${demo_src_dir}/edu/cmu/sphinx/demo/helloworld/hello.gram"
+              todir="${demo_classes_dir}/edu/cmu/sphinx/demo/helloworld"/>
+        <copy file="${demo_src_dir}/edu/cmu/sphinx/demo/helloworld/helloworld.config.xml"
+              todir="${demo_classes_dir}/edu/cmu/sphinx/demo/helloworld"/>
         <mkdir dir="${bin_dir}"/>
         <jar destfile="${bin_dir}/HelloWorld.jar"
-             manifest="${src_dir}/demo/sphinx/helloworld/helloworld.Manifest"
-             basedir="${classes_dir}"
-             includes="demo/sphinx/helloworld/**"
+             manifest="${demo_src_dir}/edu/cmu/sphinx/demo/helloworld/helloworld.Manifest"
+             basedir="${demo_classes_dir}"
+             includes="edu/cmu/sphinx/demo/helloworld/**"
              filesonly="true"
              compress="true"/>
     </target>
 
     <target name="compile_sphinx_hellodigits">
-        <mkdir dir="${classes_dir}/demo/sphinx/hellodigits"/>
+        <mkdir dir="${demo_classes_dir}/edu/cmu/sphinx/demo/hellodigits"/>
         <javac debug="true"
                source="1.5"
                listfiles="true"
                deprecation="true"
-               srcdir="${src_dir}"
-               includes="demo/sphinx/hellodigits/**"
-               destdir="${classes_dir}">
+               srcdir="${demo_src_dir}"
+               includes="edu/cmu/sphinx/demo/hellodigits/**"
+               destdir="${demo_classes_dir}">
             <classpath refid="libs"/>
         </javac>
-        <copy file="${src_dir}/demo/sphinx/hellodigits/digits.gram"
-              todir="${classes_dir}/demo/sphinx/hellodigits"/>
-        <copy file="${src_dir}/demo/sphinx/hellodigits/hellodigits.config.xml"
-              todir="${classes_dir}/demo/sphinx/hellodigits"/>
+        <copy file="${demo_src_dir}/edu/cmu/sphinx/demo/hellodigits/digits.gram"
+              todir="${demo_classes_dir}/edu/cmu/sphinx/demo/hellodigits"/>
+        <copy file="${demo_src_dir}/edu/cmu/sphinx/demo/hellodigits/hellodigits.config.xml"
+              todir="${demo_classes_dir}/edu/cmu/sphinx/demo/hellodigits"/>
         <jar destfile="${bin_dir}/HelloDigits.jar"
-             manifest="${src_dir}/demo/sphinx/hellodigits/hellodigits.Manifest"
-             basedir="${classes_dir}"
-             includes="demo/sphinx/hellodigits/**"
+             manifest="${demo_src_dir}/edu/cmu/sphinx/demo/hellodigits/hellodigits.Manifest"
+             basedir="${demo_classes_dir}"
+             includes="edu/cmu/sphinx/demo/hellodigits/**"
              filesonly="true"
              compress="true"/>
     </target>
 
     <target name="compile_jsapi_dialog" if="jsapi_jar.isPresent">
-        <mkdir dir="${classes_dir}/demo/jsapi/dialog"/>
+        <mkdir dir="${demo_classes_dir}/edu/cmu/sphinx/demo/jsapi/dialog"/>
         <javac debug="true"
                source="1.5"
                listfiles="true"
                deprecation="true"
-               srcdir="${src_dir}"
-               includes="demo/jsapi/dialog/**"
-               destdir="${classes_dir}">
+               srcdir="${demo_src_dir}"
+               includes="edu/cmu/sphinx/demo/jsapi/dialog/**"
+               destdir="${demo_classes_dir}">
             <classpath refid="libs"/>
         </javac>
 
-        <copy todir="${classes_dir}/demo/jsapi/dialog">
-            <fileset dir="${src_dir}/demo/jsapi/dialog">
+        <copy todir="${demo_classes_dir}/edu/cmu/sphinx/demo/jsapi/dialog">
+            <fileset dir="${demo_src_dir}/edu/cmu/sphinx/demo/jsapi/dialog">
                 <include name="**/*.gram"/>
                 <include name="**/playlist.txt"/>
                 <include name="**/weather.lm"/>
             </fileset>
         </copy>
 
-        <copy file="${src_dir}/demo/jsapi/dialog/dialog.config.xml"
-              todir="${classes_dir}/demo/jsapi/dialog"/>
+        <copy file="${demo_src_dir}/edu/cmu/sphinx/demo/jsapi/dialog/dialog.config.xml"
+              todir="${demo_classes_dir}/edu/cmu/sphinx/demo/jsapi/dialog"/>
         <jar destfile="${bin_dir}/Dialog.jar"
-             manifest="${src_dir}/demo/jsapi/dialog/dialog.Manifest"
-             basedir="${classes_dir}"
-             includes="demo/jsapi/dialog/**"
+             manifest="${demo_src_dir}/edu/cmu/sphinx/demo/jsapi/dialog/dialog.Manifest"
+             basedir="${demo_classes_dir}"
+             includes="edu/cmu/sphinx/demo/jsapi/dialog/**"
              filesonly="true"
              compress="true"/>
     </target>
 
     <target name="compile_jsapi_jsgf" if="jsapi_jar.isPresent">
-        <mkdir dir="${classes_dir}/demo/jsapi/jsgf"/>
+        <mkdir dir="${demo_classes_dir}/edu/cmu/sphinx/demo/jsapi/jsgf"/>
         <javac debug="true"
                source="1.5"
                listfiles="true"
                deprecation="true"
-               srcdir="${src_dir}"
-               includes="demo/jsapi/jsgf/**"
-               destdir="${classes_dir}">
+               srcdir="${demo_src_dir}"
+               includes="edu/cmu/sphinx/demo/jsapi/jsgf/**"
+               destdir="${demo_classes_dir}">
             <classpath refid="libs"/>
         </javac>
 
-        <copy todir="${classes_dir}/demo/jsapi/jsgf">
-            <fileset dir="${src_dir}/demo/jsapi/jsgf">
+        <copy todir="${demo_classes_dir}/edu/cmu/sphinx/demo/jsapi/jsgf">
+            <fileset dir="${demo_src_dir}/edu/cmu/sphinx/demo/jsapi/jsgf">
                 <include name="**/*.gram"/>
             </fileset>
         </copy>
 
-        <copy file="${src_dir}/demo/jsapi/jsgf/jsgf.config.xml"
-              todir="${classes_dir}/demo/jsapi/jsgf"/>
+        <copy file="${demo_src_dir}/edu/cmu/sphinx/demo/jsapi/jsgf/jsgf.config.xml"
+              todir="${demo_classes_dir}/edu/cmu/sphinx/demo/jsapi/jsgf"/>
         <jar destfile="${bin_dir}/JSGFDemo.jar"
-             manifest="${src_dir}/demo/jsapi/jsgf/jsgf.Manifest"
-             basedir="${classes_dir}"
-             includes="demo/jsapi/jsgf/**"
+             manifest="${demo_src_dir}/edu/cmu/sphinx/demo/jsapi/jsgf/jsgf.Manifest"
+             basedir="${demo_classes_dir}"
+             includes="edu/cmu/sphinx/demo/jsapi/jsgf/**"
              filesonly="true"
              compress="true"/>
     </target>
 
     <target name="compile_sphinx_hellongram">
-        <mkdir dir="${classes_dir}/demo/sphinx/hellongram"/>
+        <mkdir dir="${demo_classes_dir}/edu/cmu/sphinx/demo/hellongram"/>
         <javac debug="true"
                source="1.5"
                listfiles="true"
                deprecation="true"
-               srcdir="${src_dir}"
-               includes="demo/sphinx/hellongram/**"
-               destdir="${classes_dir}">
+               srcdir="${demo_src_dir}"
+               includes="edu/cmu/sphinx/demo/hellongram/**"
+               destdir="${demo_classes_dir}">
             <classpath refid="libs"/>
         </javac>
-        <copy file="${src_dir}/demo/sphinx/hellongram/hellongram.trigram.lm"
-              todir="${classes_dir}/demo/sphinx/hellongram"/>
-        <copy file="${src_dir}/demo/sphinx/hellongram/hellongram.config.xml"
-              todir="${classes_dir}/demo/sphinx/hellongram"/>
+        <copy file="${demo_src_dir}/edu/cmu/sphinx/demo/hellongram/hellongram.trigram.lm"
+              todir="${demo_classes_dir}/edu/cmu/sphinx/demo/hellongram"/>
+        <copy file="${demo_src_dir}/edu/cmu/sphinx/demo/hellongram/hellongram.config.xml"
+              todir="${demo_classes_dir}/edu/cmu/sphinx/demo/hellongram"/>
         <mkdir dir="${bin_dir}"/>
         <jar destfile="${bin_dir}/HelloNGram.jar"
-             manifest="${src_dir}/demo/sphinx/hellongram/hellongram.Manifest"
-             basedir="${classes_dir}"
-             includes="demo/sphinx/hellongram/**"
+             manifest="${demo_src_dir}/edu/cmu/sphinx/demo/hellongram/hellongram.Manifest"
+             basedir="${demo_classes_dir}"
+             includes="edu/cmu/sphinx/demo/hellongram/**"
              filesonly="true"
              compress="true"/>
     </target>
 
     <target name="compile_sphinx_lattice">
-        <mkdir dir="${classes_dir}/demo/sphinx/lattice"/>
+        <mkdir dir="${demo_classes_dir}/edu/cmu/sphinx/demo/lattice"/>
         <javac debug="true"
                source="1.5"
                listfiles="true"
                deprecation="true"
-               srcdir="${src_dir}"
-               includes="demo/sphinx/lattice/**"
-               destdir="${classes_dir}">
+               srcdir="${demo_src_dir}"
+               includes="edu/cmu/sphinx/demo/lattice/**"
+               destdir="${demo_classes_dir}">
             <classpath refid="libs"/>
         </javac>
-        <copy file="${src_dir}/demo/sphinx/lattice/10001-90210-01803.wav"
-              todir="${classes_dir}/demo/sphinx/lattice"/>
-        <copy file="${src_dir}/demo/sphinx/lattice/config.xml"
-              todir="${classes_dir}/demo/sphinx/lattice"/>
+        <copy file="${demo_src_dir}/edu/cmu/sphinx/demo/lattice/10001-90210-01803.wav"
+              todir="${demo_classes_dir}/edu/cmu/sphinx/demo/lattice"/>
+        <copy file="${demo_src_dir}/edu/cmu/sphinx/demo/lattice/config.xml"
+              todir="${demo_classes_dir}/edu/cmu/sphinx/demo/lattice"/>
         <mkdir dir="${bin_dir}"/>
         <jar destfile="${bin_dir}/LatticeDemo.jar"
-             manifest="${src_dir}/demo/sphinx/lattice/latticedemo.Manifest"
-             basedir="${classes_dir}"
-             includes="demo/sphinx/lattice/**"
+             manifest="${demo_src_dir}/edu/cmu/sphinx/demo/lattice/latticedemo.Manifest"
+             basedir="${demo_classes_dir}"
+             includes="edu/cmu/sphinx/demo/lattice/**"
              filesonly="true"
              compress="true"/>
     </target>
 
     <target name="compile_sphinx_wavfile">
-        <mkdir dir="${classes_dir}/demo/sphinx/wavfile"/>
+        <mkdir dir="${demo_classes_dir}/edu/cmu/sphinx/demo/wavfile"/>
         <javac debug="true"
                source="1.5"
                listfiles="true"
                deprecation="true"
-               srcdir="${src_dir}"
-               includes="demo/sphinx/wavfile/**"
-               destdir="${classes_dir}">
+               srcdir="${demo_src_dir}"
+               includes="edu/cmu/sphinx/demo/wavfile/**"
+               destdir="${demo_classes_dir}">
             <classpath refid="libs"/>
         </javac>
-        <copy file="${src_dir}/demo/sphinx/wavfile/config.xml"
-              todir="${classes_dir}/demo/sphinx/wavfile"/>
-        <copy file="${src_dir}/demo/sphinx/wavfile/12345.wav"
-              todir="${classes_dir}/demo/sphinx/wavfile"/>
-        <copy file="${src_dir}/demo/sphinx/wavfile/digits.gram"
-              todir="${classes_dir}/demo/sphinx/wavfile"/>
+        <copy file="${demo_src_dir}/edu/cmu/sphinx/demo/wavfile/config.xml"
+              todir="${demo_classes_dir}/edu/cmu/sphinx/demo/wavfile"/>
+        <copy file="${demo_src_dir}/edu/cmu/sphinx/demo/wavfile/12345.wav"
+              todir="${demo_classes_dir}/edu/cmu/sphinx/demo/wavfile"/>
+        <copy file="${demo_src_dir}/edu/cmu/sphinx/demo/wavfile/digits.gram"
+              todir="${demo_classes_dir}/edu/cmu/sphinx/demo/wavfile"/>
         <mkdir dir="${bin_dir}"/>
         <jar destfile="${bin_dir}/WavFile.jar"
-             manifest="${src_dir}/demo/sphinx/wavfile/wavfile.Manifest"
-             basedir="${classes_dir}"
-             includes="demo/sphinx/wavfile/**"
+             manifest="${demo_src_dir}/edu/cmu/sphinx/demo/wavfile/wavfile.Manifest"
+             basedir="${demo_classes_dir}"
+             includes="edu/cmu/sphinx/demo/wavfile/**"
              filesonly="true"
              compress="true"/>
     </target>
 
     <target name="compile_sphinx_transcriber">
-        <mkdir dir="${classes_dir}/demo/sphinx/transcriber"/>
+        <mkdir dir="${demo_classes_dir}/edu/cmu/sphinx/demo/transcriber"/>
         <javac debug="true"
                source="1.5"
                listfiles="true"
                deprecation="true"
-               srcdir="${src_dir}"
-               includes="demo/sphinx/transcriber/**"
-               destdir="${classes_dir}">
+               srcdir="${demo_src_dir}"
+               includes="edu/cmu/sphinx/demo/transcriber/**"
+               destdir="${demo_classes_dir}">
             <classpath refid="libs"/>
         </javac>
-        <copy file="${src_dir}/demo/sphinx/transcriber/config.xml"
-              todir="${classes_dir}/demo/sphinx/transcriber"/>
-        <copy file="${src_dir}/demo/sphinx/transcriber/10001-90210-01803.wav"
-              todir="${classes_dir}/demo/sphinx/transcriber"/>
-        <copy file="${src_dir}/demo/sphinx/transcriber/digits.gram"
-              todir="${classes_dir}/demo/sphinx/transcriber"/>
+        <copy file="${demo_src_dir}/edu/cmu/sphinx/demo/transcriber/config.xml"
+              todir="${demo_classes_dir}/edu/cmu/sphinx/demo/transcriber"/>
+        <copy file="${demo_src_dir}/edu/cmu/sphinx/demo/transcriber/10001-90210-01803.wav"
+              todir="${demo_classes_dir}/edu/cmu/sphinx/demo/transcriber"/>
+        <copy file="${demo_src_dir}/edu/cmu/sphinx/demo/transcriber/digits.gram"
+              todir="${demo_classes_dir}/edu/cmu/sphinx/demo/transcriber"/>
         <mkdir dir="${bin_dir}"/>
         <jar destfile="${bin_dir}/Transcriber.jar"
-             manifest="${src_dir}/demo/sphinx/transcriber/transcriber.Manifest"
-             basedir="${classes_dir}"
-             includes="demo/sphinx/transcriber/**"
+             manifest="${demo_src_dir}/edu/cmu/sphinx/demo/transcriber/transcriber.Manifest"
+             basedir="${demo_classes_dir}"
+             includes="edu/cmu/sphinx/demo/transcriber/**"
              filesonly="true"
              compress="true"/>
     </target>
@@ -305,63 +305,63 @@
     </target>
 
     <target name="compile_tags" if="jsapi_jar.isPresent">
-        <mkdir dir="${classes_dir}/demo/jsapi/tags"/>
+        <mkdir dir="${demo_classes_dir}/edu/cmu/sphinx/demo/jsapi/tags"/>
         <javac debug="true"
                source="1.5"
                listfiles="true"
                deprecation="true"
-               srcdir="${src_dir}"
-               includes="demo/jsapi/tags/**"
-               destdir="${classes_dir}">
+               srcdir="${demo_src_dir}"
+               includes="edu/cmu/sphinx/demo/jsapi/tags/**"
+               destdir="${demo_classes_dir}">
             <classpath refid="libs"/>
         </javac>
 
-        <copy todir="${classes_dir}/demo/jsapi/tags">
-            <fileset dir="${src_dir}/demo/jsapi/tags">
+        <copy todir="${demo_classes_dir}/edu/cmu/sphinx/demo/jsapi/tags">
+            <fileset dir="${demo_src_dir}/edu/cmu/sphinx/demo/jsapi/tags">
                 <include name="**/*.gram"/>
             </fileset>
         </copy>
 
         <jar destfile="${bin_dir}/FeatureValueDemo.jar"
-             manifest="${src_dir}/demo/jsapi/tags/fvd.Manifest"
-             basedir="${classes_dir}"
-             includes="demo/jsapi/tags/**"
+             manifest="${demo_src_dir}/edu/cmu/sphinx/demo/jsapi/tags/fvd.Manifest"
+             basedir="${demo_classes_dir}"
+             includes="edu/cmu/sphinx/demo/jsapi/tags/**"
              excludes="demo/jsapi/tags/LiveConnectDemo**"
              filesonly="true"
              compress="true"/>
 
         <jar destfile="${bin_dir}/LiveConnectDemo.jar"
-             manifest="${src_dir}/demo/jsapi/tags/lcd.Manifest"
-             basedir="${classes_dir}"
-             includes="demo/jsapi/tags/**"
+             manifest="${demo_src_dir}/edu/cmu/sphinx/demo/jsapi/tags/lcd.Manifest"
+             basedir="${demo_classes_dir}"
+             includes="edu/cmu/sphinx/demo/jsapi/tags/**"
              excludes="demo/jsapi/tags/FeatureValueDemo**"
              filesonly="true"
              compress="true"/>
     </target>
 
     <target name="compile_zipcity" depends="init,keystore">
-        <mkdir dir="${classes_dir}/demo/sphinx/zipcity"/>
+        <mkdir dir="${demo_classes_dir}/edu/cmu/sphinx/demo/zipcity"/>
         <javac debug="true"
                source="1.5"
                listfiles="true"
                deprecation="true"
-               srcdir="${src_dir}"
-               includes="demo/sphinx/zipcity/**"
-               destdir="${classes_dir}">
+               srcdir="${demo_src_dir}"
+               includes="edu/cmu/sphinx/demo/zipcity/**"
+               destdir="${demo_classes_dir}">
             <classpath refid="libs"/>
         </javac>
-        <copy file="${src_dir}/demo/sphinx/zipcity/zipcity.gram"
-              todir="${classes_dir}/demo/sphinx/zipcity"/>
-        <copy file="${src_dir}/demo/sphinx/zipcity/zipcity.config.xml"
-              todir="${classes_dir}/demo/sphinx/zipcity"/>
-        <copy file="${src_dir}/demo/sphinx/zipcity/zip.txt"
-              todir="${classes_dir}/demo/sphinx/zipcity"/>
-        <copy file="${src_dir}/demo/sphinx/zipcity/s4.jpg"
-              todir="${classes_dir}/demo/sphinx/zipcity"/>
+        <copy file="${demo_src_dir}/edu/cmu/sphinx/demo/zipcity/zipcity.gram"
+              todir="${demo_classes_dir}/edu/cmu/sphinx/demo/zipcity"/>
+        <copy file="${demo_src_dir}/edu/cmu/sphinx/demo/zipcity/zipcity.config.xml"
+              todir="${demo_classes_dir}/edu/cmu/sphinx/demo/zipcity"/>
+        <copy file="${demo_src_dir}/edu/cmu/sphinx/demo/zipcity/zip.txt"
+              todir="${demo_classes_dir}/edu/cmu/sphinx/demo/zipcity"/>
+        <copy file="${demo_src_dir}/edu/cmu/sphinx/demo/zipcity/s4.jpg"
+              todir="${demo_classes_dir}/edu/cmu/sphinx/demo/zipcity"/>
         <jar destfile="${bin_dir}/ZipCity.jar"
-             manifest="${src_dir}/demo/sphinx/zipcity/zipcity.Manifest"
-             basedir="${classes_dir}"
-             includes="demo/sphinx/zipcity/**"
+             manifest="${demo_src_dir}/edu/cmu/sphinx/demo/zipcity/zipcity.Manifest"
+             basedir="${demo_classes_dir}"
+             includes="edu/cmu/sphinx/demo/zipcity/**"
              filesonly="true"
              compress="true"/>
     </target>
@@ -388,25 +388,25 @@
 
 
     <target name="compile_sphinx_confidence">
-        <mkdir dir="${classes_dir}/demo/sphinx/confidence"/>
+        <mkdir dir="${demo_classes_dir}/edu/cmu/sphinx/demo/confidence"/>
         <javac debug="true"
                source="1.5"
                listfiles="true"
                deprecation="true"
-               srcdir="${src_dir}"
-               destdir="${classes_dir}"
-               includes="demo/sphinx/confidence/**">
+               srcdir="${demo_src_dir}"
+               destdir="${demo_classes_dir}"
+               includes="edu/cmu/sphinx/demo/confidence/**">
             <classpath refid="libs"/>
         </javac>
-        <copy file="${src_dir}/demo/sphinx/confidence/config.xml"
-              todir="${classes_dir}/demo/sphinx/confidence"/>
-        <copy file="${src_dir}/demo/sphinx/confidence/confidence.trigram.lm"
-              todir="${classes_dir}/demo/sphinx/confidence"/>
+        <copy file="${demo_src_dir}/edu/cmu/sphinx/demo/confidence/config.xml"
+              todir="${demo_classes_dir}/edu/cmu/sphinx/demo/confidence"/>
+        <copy file="${demo_src_dir}/edu/cmu/sphinx/demo/confidence/confidence.trigram.lm"
+              todir="${demo_classes_dir}/edu/cmu/sphinx/demo/confidence"/>
         <mkdir dir="${bin_dir}"/>
         <jar destfile="${bin_dir}/Confidence.jar"
-             manifest="${src_dir}/demo/sphinx/confidence/confidence.Manifest"
-             basedir="${classes_dir}"
-             includes="demo/sphinx/confidence/**"
+             manifest="${demo_src_dir}/edu/cmu/sphinx/demo/confidence/confidence.Manifest"
+             basedir="${demo_classes_dir}"
+             includes="edu/cmu/sphinx/demo/confidence/**"
              filesonly="true"
              compress="true"/>
     </target>
