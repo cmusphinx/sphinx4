@@ -263,14 +263,14 @@
             <patternset refid="${patternset_to_compile}"/>
             <classpath refid="libs"/>
         </javac>
-        <javac debug="true"
-               source="1.5"
-               srcdir="${src_dir}/demo"
-               deprecation="true"
-               destdir="${classes_dir}">
-            <patternset refid="${patternset_to_compile}"/>
-            <classpath refid="libs"/>
-        </javac>
+        <!--<javac debug="true"-->
+               <!--source="1.5"-->
+               <!--srcdir="${src_dir}/apps/edu/cmu/sphinx/demo"-->
+               <!--deprecation="true"-->
+               <!--destdir="${classes_dir}/apps">-->
+            <!--<patternset refid="${patternset_to_compile}"/>-->
+            <!--<classpath refid="libs"/>-->
+        <!--</javac>-->
     </target>
 
 
