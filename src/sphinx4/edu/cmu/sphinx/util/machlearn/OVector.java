@@ -3,7 +3,7 @@ package edu.cmu.sphinx.util.machlearn;
 import java.util.Arrays;
 
 /** An real-valued observation. */
-public class OVector implements Observation, Cloneable {
+public class OVector implements Cloneable {
 
     protected double[] values;
 

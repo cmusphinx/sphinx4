@@ -774,7 +774,7 @@ public class BaseRuleGrammar extends BaseGrammar
     }
 
 
-    /** Remove a pair of leading/trailing angle brackets <>. */
+    /** Remove a pair of leading/trailing angle brackets . */
     protected String stripRuleName(String n) {
         if (n.startsWith("<") && n.endsWith(">")) {
             return n.substring(1, n.length() - 1);
