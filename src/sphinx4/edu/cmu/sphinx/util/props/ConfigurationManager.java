@@ -97,7 +97,7 @@ public class ConfigurationManager implements Cloneable {
                     System.err.println("class not found !" + e.toString());
                 } catch (ClassCastException e) {
                     System.err.println("can not cast class !" + e.toString());
-                } catch (ExceptionInInitializerError e){
+                } catch (ExceptionInInitializerError e) {
                     System.err.println("couldn't load class !" + e.toString());
                 }
             }
@@ -470,7 +470,19 @@ public class ConfigurationManager implements Cloneable {
      * containd in the given <code>props</code>-map
      */
     public static <C extends Configurable> C getInstance(Class<C> targetClass, Map<String, Object> props) throws PropertyException {
-        PropertySheet ps = getPropSheetInstanceFromClass(targetClass, props, null, new ConfigurationManager());
+        return getInstance(targetClass, new HashMap<String, Object>(), null);
+
+    }
+
+
+    /**
+     * Creates an instance of the given <code>Configurable</code> by using the default parameters as defined by the
+     * class annotations to parameterize the component. Default prarmeters will be overrided if a their names are
+     * containd in the given <code>props</code>-map. The component is used to create a parameterized logger for the
+     * Configurable being created.
+     */
+    public static <C extends Configurable> C getInstance(Class<C> targetClass, Map<String, Object> props, String compName) throws PropertyException {
+        PropertySheet ps = getPropSheetInstanceFromClass(targetClass, props, compName, new ConfigurationManager());
         Configurable configurable = ps.getOwner();
         return (C) configurable;
     }
