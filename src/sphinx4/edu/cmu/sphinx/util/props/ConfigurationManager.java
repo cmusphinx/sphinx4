@@ -470,7 +470,7 @@ public class ConfigurationManager implements Cloneable {
      * containd in the given <code>props</code>-map
      */
     public static <C extends Configurable> C getInstance(Class<C> targetClass, Map<String, Object> props) throws PropertyException {
-        return getInstance(targetClass, new HashMap<String, Object>(), null);
+        return getInstance(targetClass, props, null);
 
     }
 
