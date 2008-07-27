@@ -99,8 +99,18 @@ public final class ConfigurationManagerUtils {
     }
 
 
+    // ensure that the system logging configured only once to circumvent jdk logging bug
+    // cf.  http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=5035854
+    private static boolean wasLogConfigured;
+
+    
     /** Configure the logger */
     public static void configureLogger(ConfigurationManager cm) {
+        if (wasLogConfigured)
+            return;
+
+        wasLogConfigured = true;
+
         // Allow others to override the logging settings.
         if (System.getProperty("java.util.logging.config.class") != null
                 || System.getProperty("java.util.logging.config.file") != null) {
