@@ -201,10 +201,15 @@ class ReferenceUtterance {
         }
         startTime = Float.parseFloat(st.nextToken()); // parse start time
         endTime = Float.parseFloat(st.nextToken());   // parse end time
-        st.nextToken();                               // parse <...>
-        words = new String[st.countTokens()];
-        for (int i = 0; i < words.length; i++) {
-            words[i] = st.nextToken();
+
+        if (st.hasMoreTokens()) {
+            st.nextToken();                               // parse <...>
+            words = new String[st.countTokens()];
+            for (int i = 0; i < words.length; i++) {
+                words[i] = st.nextToken();
+            }
+        } else {
+            words = new String[0];
         }
     }
 
