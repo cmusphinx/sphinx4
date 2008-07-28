@@ -59,7 +59,13 @@ public final class WordSequence {
      * @param list the list of words
      */
     public WordSequence(List<Word> list) {
-        this(list.toArray(new Word[list.size()]));
+        this.words = new Word[list.size()];
+        for (int i = 0; i < list.size(); i++) {
+            words[i] = list.get(i);
+
+        }
+
+        check();
     }
 
 

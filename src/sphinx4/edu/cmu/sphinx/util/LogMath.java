@@ -13,13 +13,14 @@ package edu.cmu.sphinx.util;
 
 import edu.cmu.sphinx.util.props.*;
 
+import java.io.Serializable;
 import java.util.logging.Logger;
 
 /**
  * Provides a set of methods for performing simple math in the log domain. The logarithmic base can be set by the
  * SphinxProperty: <br> <code> edu.cmu.sphinx.util.LogMath.logBase </code><br>
  */
-public final class LogMath implements Configurable {
+public final class LogMath implements Configurable, Serializable {
 
     /**
      * Sphinx property to get the Log base. According to forum discussionss a value between 1.00001 and 1.0004 should be

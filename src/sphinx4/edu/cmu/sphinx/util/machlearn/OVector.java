@@ -1,9 +1,10 @@
 package edu.cmu.sphinx.util.machlearn;
 
+import java.io.Serializable;
 import java.util.Arrays;
 
 /** An real-valued observation. */
-public class OVector implements Cloneable {
+public class OVector implements Cloneable, Serializable {
 
     protected double[] values;
 

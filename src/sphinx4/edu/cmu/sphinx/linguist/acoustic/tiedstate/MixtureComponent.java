@@ -15,6 +15,7 @@ package edu.cmu.sphinx.linguist.acoustic.tiedstate;
 import edu.cmu.sphinx.frontend.FloatData;
 import edu.cmu.sphinx.util.LogMath;
 
+import java.io.Serializable;
 import java.util.Arrays;
 
 /**
@@ -31,7 +32,7 @@ import java.util.Arrays;
 // senones by sharing intermediate results for these subcomponents?
 //  ]]]
 
-public class MixtureComponent implements Cloneable {
+public class MixtureComponent implements Cloneable, Serializable {
 
     private float[] mean;
     /** Mean after transformed by the adaptation parameters. */
