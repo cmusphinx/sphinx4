@@ -684,10 +684,11 @@ public class PropertySheet implements Cloneable {
     public Logger getLogger() {
         Logger logger;
 
+        String baseName = ConfigurationManagerUtils.getLogPrefix(cm) + ownerClass.getName();
         if (instanceName != null) {
-            logger = Logger.getLogger(ownerClass.getName() + "." + instanceName);
+            logger = Logger.getLogger(baseName + "." + instanceName);
         } else
-            logger = Logger.getLogger(ownerClass.getName());
+            logger = Logger.getLogger(baseName);
 
         // if there's a logLevel set for component apply to the logger
         Object rawLogLevel = rawProps.get(COMP_LOG_LEVEL);

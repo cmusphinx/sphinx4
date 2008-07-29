@@ -99,11 +99,24 @@ public final class ConfigurationManagerUtils {
     }
 
 
+    public static String getLogPrefix(ConfigurationManager cm) {
+        String prefix;
+
+        if (cm.getConfigURL() != null)
+            // remark: the replacement of xml/sxl suffix is not necessary and just done to improve readability
+            prefix = new File(cm.getConfigURL().getFile()).getName().replace(".sxl", "").replace(".xml", "");
+        else
+            prefix = cm.hashCode() + "";
+
+        return "S4CM." + prefix + ".";
+    }
+
+
     // ensure that the system logging configured only once to circumvent jdk logging bug
     // cf.  http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=5035854
     private static boolean wasLogConfigured;
 
-    
+
     /** Configure the logger */
     public static void configureLogger(ConfigurationManager cm) {
         if (wasLogConfigured)
@@ -118,10 +131,11 @@ public final class ConfigurationManagerUtils {
         }
         // apply the log level (if defined) for the root logger (because we're using package based logging now
 
-        Logger rootLogger = Logger.getLogger("");
+        String cmPrefix = getLogPrefix(cm);
+        Logger cmRootLogger = Logger.getLogger(cmPrefix.substring(0, cmPrefix.length()-1));
 
         // we need to determine the root-level here, beacuse the logManager will reset it
-        Level rootLevel = rootLogger.getLevel();
+        Level rootLevel = Logger.getLogger("").getLevel();
 
         LogManager logManager = LogManager.getLogManager();
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
@@ -147,14 +161,11 @@ public final class ConfigurationManagerUtils {
         if (level == null)
             level = Level.WARNING.getName();
 
-        Level userLevel = Level.parse(level);
-        Level newLevel = userLevel.intValue() < rootLevel.intValue() ? userLevel : rootLevel;
-
-        rootLogger.setLevel(newLevel);
+        cmRootLogger.setLevel(Level.parse(level));
 
         // Now we find the SphinxLogFormatter that the log manager created
         // and configure it.
-        Handler[] handlers = rootLogger.getHandlers();
+        Handler[] handlers = cmRootLogger.getHandlers();
         for (Handler handler : handlers) {
             handler.setFormatter(new SphinxLogFormatter());
 //            if (handler instanceof ConsoleHandler) {
@@ -164,6 +175,9 @@ public final class ConfigurationManagerUtils {
 //                }
 //            }
         }
+
+        // restore the old root logger level
+        Logger.getLogger("").setLevel(rootLevel);
     }
 
 
