@@ -458,6 +458,7 @@ public class Result {
                     word = token.getWord();
                     lastWordFirstFeature = lastFeature;
                 }
+                word = token.getWord();
             }
             Data feature = token.getData();
             if (feature != null) {
