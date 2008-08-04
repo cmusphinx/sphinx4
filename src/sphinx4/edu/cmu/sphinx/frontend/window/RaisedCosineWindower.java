@@ -68,8 +68,8 @@ public class RaisedCosineWindower extends BaseDataProcessor {
 
 
     // required to access the DataStartSignal-properties
-    public static final String PROP_WINDOW_SHIFT = "windowSize";
-    public static final String PROP_WINDOW_SIZE = "windowShift";
+    public static final String WINDOW_SHIFT_SAMPLES = "windowSize";
+    public static final String WINDOW_SIZE_SAMPLES = "windowShift";
 
     private double[] cosineWindow; // the raised consine window
     private int windowShift; // the window size
@@ -164,8 +164,8 @@ public class RaisedCosineWindower extends BaseDataProcessor {
 
                         // attach the frame-length and the shift-length to the start-signal to allow
                         Map<String, Object> props = startSignal.getProps();
-                        props.put(PROP_WINDOW_SHIFT, windowShift);
-                        props.put(PROP_WINDOW_SIZE, cosineWindow.length);
+                        props.put(WINDOW_SHIFT_SAMPLES, windowShift);
+                        props.put(WINDOW_SIZE_SAMPLES, cosineWindow.length);
 
                         // reset the current first sample number
                         currentFirstSampleNumber = -1;
@@ -358,6 +358,11 @@ public class RaisedCosineWindower extends BaseDataProcessor {
             throw new RuntimeException(this.getName() + " was not initialized yet!");
 
         return windowShiftInMs;
+    }
+
+
+    public int getSampleRate() {
+        return sampleRate;
     }
 
 
