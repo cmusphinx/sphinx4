@@ -114,8 +114,18 @@ public abstract class AbstractScorer implements AcousticScorer {
         // iterate through the feature stream until a SpeechStartSignal is being found
         int debugCounter = 0;
 
-        Data data;
-        while (!((data = frontEnd.getData()) instanceof SpeechStartSignal) && !(data instanceof DataEndSignal) && useStreamSignals) {
+        Data data = frontEnd.getData();
+
+        if(!useStreamSignals)
+            return;
+        
+//        while (frontEnd.getData() != null  && (!((data = frontEnd.getData()) instanceof SpeechStartSignal) && !(data instanceof DataEndSignal) && useStreamSignals)) {
+        while (!(data instanceof SpeechStartSignal) && !(data instanceof DataEndSignal)) {
+            data = frontEnd.getData();
+
+            if(data == null)
+                throw new RuntimeException("Not enough data in frontend to start recognition");
+            
             debugCounter++;
 
             if (debugCounter > 100) { // print a warning every second

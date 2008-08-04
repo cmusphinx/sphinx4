@@ -177,27 +177,19 @@ public class SimpleBreadthFirstSearchManager implements SearchManager {
         Result result = null;
         for (int i = 0; i < nFrames && !done; i++) {
             done = recognize();
-            if (done && currentFrameNumber <= 0) {
-                noData = true;
-            }
         }
 
-        if (!noData) {
-            // because the growBranches() is called although no data is left after the last speech frame,
-            // the ordering of the active-list might depend on the transition-probs and (penalty-scores) only.
-            // Therefore we need to undo the last grow-step up to final states or the last emitting state
-            // in order to fix the list.
-            ActiveList fixedList = activeList.newInstance();
-            for (Token token : activeList.getTokens()) {
-                Token curLookBackToken = token.getPredecessor();
-                while (!curLookBackToken.isEmitting() || curLookBackToken.isFinal())
-                    curLookBackToken = curLookBackToken.getPredecessor();
+        // generate a new temporary result if the current token is based on a final search state
+        if (activeList.getBestToken().isFinal() || done) {
 
-                fixedList.add(curLookBackToken);
-            }
+            // to make the current result as correct as possible we undo the last search graph expansion here
+            ActiveList fixedList = undoLastGrowStep();
 
             // now create the restult using the fixed active-list
             result = new Result(fixedList, resultList, currentFrameNumber, done, logMath);
+
+            if (result.getDataFrames().isEmpty())
+                result = null;
         }
 
         if (showTokenCount) {
@@ -205,6 +197,32 @@ public class SimpleBreadthFirstSearchManager implements SearchManager {
         }
 
         return result;
+    }
+
+
+    /**
+     * Because the growBranches() is called although no data is left after the last speech frame, the ordering of the
+     * active-list might depend on the transition-probs and (penalty-scores) only. Therefore we need to undo the last
+     * grow-step up to final states or the last emitting state in order to fix the list..
+     */
+    private ActiveList undoLastGrowStep() {
+        ActiveList fixedList = activeList.newInstance();
+
+        for (Token token : activeList.getTokens()) {
+            Token curToken = token.getPredecessor();
+
+            // remove the final states that are not the real final ones because they're just hide prior  final tokens:
+            while (curToken.getPredecessor() != null && (
+                    (curToken.isFinal() && curToken.getPredecessor() != null && !curToken.getPredecessor().isFinal())
+                            || (curToken.isEmitting() && curToken.getData() == null) // the so long not scored tokens
+                            || (!curToken.isFinal() && !curToken.isEmitting()))) {
+                curToken = curToken.getPredecessor();
+            }
+
+            fixedList.add(curToken);
+        }
+
+        return fixedList;
     }
 
 
@@ -292,14 +310,16 @@ public class SimpleBreadthFirstSearchManager implements SearchManager {
      * @return <code>true</code> if there are more frames to score, otherwise, false
      */
     protected boolean scoreTokens() {
-        boolean moreTokens;
+        boolean isDone = false;
 
         scoreTimer.start();
         Token bestToken = (Token) scorer.calculateScores(activeList.getTokens());
         scoreTimer.stop();
 
-        moreTokens = (bestToken != null);
-        activeList.setBestToken(bestToken);
+        if (bestToken != null) {
+            isDone = true;
+            activeList.setBestToken(bestToken);
+        }
 
         // update statistics
         curTokensScored.value += activeList.size();
@@ -312,7 +332,7 @@ public class SimpleBreadthFirstSearchManager implements SearchManager {
 //                    + (int) tokensPerSecond.value);
 //        }
 
-        return moreTokens;
+        return isDone;
     }
 
 
