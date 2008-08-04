@@ -96,6 +96,7 @@ public class Transcriber {
         try {
             Transcriber.main(new String[]{});
         } catch (Throwable t) {
+            t.printStackTrace();
             Assert.fail();
         }
 

@@ -73,6 +73,10 @@ public abstract class AbstractScorer implements AcousticScorer {
         try {
             Data data = frontEnd.getData();
 
+            while (data instanceof DataStartSignal || data instanceof DataEndSignal) {
+                data = frontEnd.getData();
+            }
+
             while (data instanceof Signal && useStreamSignals) {
                 if (data instanceof SpeechEndSignal)
                     return null;
@@ -114,18 +118,15 @@ public abstract class AbstractScorer implements AcousticScorer {
         // iterate through the feature stream until a SpeechStartSignal is being found
         int debugCounter = 0;
 
-        Data data = frontEnd.getData();
-
-        if(!useStreamSignals)
+        if (!useStreamSignals)
             return;
-        
-//        while (frontEnd.getData() != null  && (!((data = frontEnd.getData()) instanceof SpeechStartSignal) && !(data instanceof DataEndSignal) && useStreamSignals)) {
-        while (!(data instanceof SpeechStartSignal) && !(data instanceof DataEndSignal)) {
-            data = frontEnd.getData();
 
-            if(data == null)
-                throw new RuntimeException("Not enough data in frontend to start recognition");
-            
+        Data data;
+        while (!((data = frontEnd.getData()) instanceof SpeechStartSignal)) {
+            if (data == null) {
+                break;
+            }
+
             debugCounter++;
 
             if (debugCounter > 100) { // print a warning every second
@@ -133,6 +134,9 @@ public abstract class AbstractScorer implements AcousticScorer {
                 logger.finer("Waiting for speech segment...");
             }
         }
+
+        if (data == null)
+            logger.warning("Not enough data in frontend to start recognition");
 
         // (if this line becomes reached && useStreamSignals) all following feature frames will be part of a speech segment
     }
