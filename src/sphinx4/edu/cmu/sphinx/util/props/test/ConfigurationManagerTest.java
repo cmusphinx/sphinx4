@@ -97,7 +97,7 @@ public class ConfigurationManagerTest {
 
     @Test
     public void testXmlExtendedConfiguration() {
-        ConfigurationManager cm = new ConfigurationManager("../../sphinx4/tests/other/extendconfig.sxl");
+        ConfigurationManager cm = new ConfigurationManager("../tests/other/extendconfig.sxl");
 
         String instanceName = "duco";
         Assert.assertTrue(cm.getPropertySheet(instanceName) != null);

@@ -2,7 +2,7 @@
 
 <!--    Sphinx-4 Configuration file which gives an example for configfile-extendsion. -->
 
-<config extends="../../sphinx4/tests/other/testconfig.sxl">
+<config extends="testconfig.sxl">
     <!--  properties can be overridden  -->
     <property name="myalpha" value="-5"/>
     <property name="newProperty" value="lalala"/>
