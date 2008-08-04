@@ -95,6 +95,7 @@ public class WavFile {
         try {
             WavFile.main(new String[]{});
         } catch (Throwable t) {
+            t.printStackTrace();
             Assert.fail();
         }
 

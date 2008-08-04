@@ -105,5 +105,7 @@ public class Transcriber {
             String recogResult = unitTestBuffer.get(i).getBestResultNoFiller();
             Assert.assertEquals(expResults.get(i), recogResult);
         }
+
+        System.out.println("finished");
     }
 }

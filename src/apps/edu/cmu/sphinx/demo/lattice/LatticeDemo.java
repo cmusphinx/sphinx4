@@ -100,6 +100,7 @@ public class LatticeDemo {
         try {
             main(new String[]{});
         } catch (Throwable t) {
+            t.printStackTrace();
             Assert.fail();
         }
     }
