@@ -180,7 +180,8 @@ public class SimpleBreadthFirstSearchManager implements SearchManager {
         }
 
         // generate a new temporary result if the current token is based on a final search state
-        if (activeList.getBestToken().isFinal() || done) {
+        // remark: the first check for not null is necessary in cases that the search space does not contain scorable tokens.
+        if (activeList.getBestToken() != null && (activeList.getBestToken().isFinal() || done)) {
 
             // to make the current result as correct as possible we undo the last search graph expansion here
             ActiveList fixedList = undoLastGrowStep();
