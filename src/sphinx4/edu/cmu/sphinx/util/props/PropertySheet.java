@@ -308,7 +308,7 @@ public class PropertySheet implements Cloneable {
                 }
 
             } catch (ClassNotFoundException e) {
-                throw new PropertyException(e, getInstanceName(), null, null);
+                throw new PropertyException(e, getInstanceName(), name, null);
             }
 
             propValues.put(name, configurable);
