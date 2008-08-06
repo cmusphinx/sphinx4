@@ -15,6 +15,12 @@ public class OVector implements Cloneable, Serializable {
     }
 
 
+    /** Creates a one-dimensional instance of this class. */
+    public OVector(double value) {
+        this(new double[]{value});
+    }
+
+
     /**
      * Returns the values of this observation.
      *
