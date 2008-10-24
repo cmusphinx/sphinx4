@@ -1,2 +1,2 @@
-cvs -z3 -d:ext:cvs.sourceforge.net:/cvsroot/cmusphinx $*
+cvs -z3 -d:ext:cmusphinx.cvs.sourceforge.net:/cvsroot/cmusphinx $*
 

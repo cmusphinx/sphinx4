@@ -24,6 +24,5 @@ hostName=`./getHostname`
 systemName=system_description_$hostName.html
 
 ./makeSystempage < regressionResults/regression.log > $systemName
-sscp $systemName
-sshh mv $systemName /home/groups/c/cm/cmusphinx/htdocs
+srsync htdocs $systemName
 

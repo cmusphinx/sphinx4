@@ -18,6 +18,4 @@
 ./makeTestReports MediumVocabResults
 ./makeTestReports LargeVocabResults
 
-tar cf testreports.tar AutoGen*.html
-sscp testreports.tar
-sshh '(cd /home/groups/c/cm/cmusphinx/htdocs/regressionReports; tar xf ~/testreports.tar; chgrp cmusphinx `ls AutoGen*`;)'
+srsync htdocs/regressionReports AutoGen*.html

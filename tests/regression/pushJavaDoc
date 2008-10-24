@@ -14,9 +14,7 @@
 if ant -emacs javadoc 
 then
     if [  -f bld/javadoc/index.html ]; then
-        (cd bld; tar cf ../javadoc.tar javadoc)
-        sscp javadoc.tar
-        sshh '(cd /home/groups/c/cm/cmusphinx/htdocs; tar xf ~/javadoc.tar; chgrp -R cmusphinx javadoc; mv javadoc sphinx4)'
+        (cd bld; srsync htdocs/sphinx4 javadoc)
         echo OK
     else
         echo Error: javadoc: no output produced

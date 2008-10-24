@@ -24,5 +24,4 @@ hostName=`./getHostname`
 reportName=regression_report_$hostName.html
 
 ./makeWebpage < regressionResults/regression.log > $reportName
-sscp $reportName
-sshh mv $reportName /home/groups/c/cm/cmusphinx/htdocs
+srsync htdocs $reportName

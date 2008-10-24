@@ -14,10 +14,7 @@
 if ant -emacs javadoc_check 
 then
     if [  -f bld/javadoc_check/index.html ]; then
-        (cd bld; tar cf ../doccheck.tar javadoc_check)
-        sscp doccheck.tar
-        sshh '(cd /home/groups/c/cm/cmusphinx/htdocs; tar xf ~/doccheck.tar; chgrp -R cmusphinx javadoc_check;)'
-
+        (cd bld; srsync htdocs javadoc_check)
         echo OK
     else
         echo Error: javadoc_check: no output produced
