@@ -18,5 +18,10 @@ interimLog=interim.log
 scvs checkout $logBase
 cat $interimLog >> $logBase
 scvs commit -m "regression_test" $logBase
-srsync htdocs $logBase
+
+# We only need the following uf we're ever able to update the mysql
+# server at sf.net from command line programs, (as opposed to web
+# browser based updates)
+
+#srsync htdocs $logBase
 #sshh '(cd /home/groups/c/cm/cmusphinx/cgi-bin/ && ./mysql_update_table.pl ~/'`basename $logBase`')'
