@@ -51,7 +51,8 @@ testDir=../
 cd $regressionDir
 machine=`./getHostname`
 archiveDir=/lab/speech/sphinx4/regressionArchive/
-archiveFile=${archiveDir}/${testType}.${machine}.zip
+archiveBasename=${testType}.${machine}.zip
+archiveFile=${archiveDir}/${archiveBasename}
 
 ###########################
 # then we build the archive
@@ -61,14 +62,14 @@ cd $testDir
 if [ ! -d $archiveDir ]; then
    mkdir $archiveDir
 fi
-/bin/rm -f $archiveFile
-find . -name '*.out' -mtime -7 -print | zip $archiveFile -@
-find . -name 'hs*.log' -print | zip $archiveFile -@
-find . -name 'gc.txt' -print | zip $archiveFile -@
+/bin/rm -f $archiveBasename
+find . -name '*.out' -mtime -7 -print | zip $archiveBasename -@
+find . -name 'hs*.log' -print | zip $archiveBasename -@
+find . -name 'gc.txt' -print | zip $archiveBasename -@
 
-archiveBasename=`basename $archiveFile`
 srsync  htdocs/sphinx4/regressionArchive $archiveBasename
-echo "Log files archived in $archiveFile at http://cmusphinx.org/sphinx4/regressionArchive" > $errorLog
+mv -f $archiveBasename $archiveFile
+echo "Log files archived in $archiveBasename at http://cmusphinx.org/sphinx4/regressionArchive" > $errorLog
 echo "" >> $errorLog
 echo "Errors found:" >> $errorLog
 echo "" >> $errorLog
