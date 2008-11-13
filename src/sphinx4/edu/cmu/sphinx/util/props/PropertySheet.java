@@ -777,6 +777,7 @@ public class PropertySheet implements Cloneable {
                         int fieldModifiers = field.getModifiers();
                         assert Modifier.isStatic(fieldModifiers) : "property fields are assumed to be static";
                         assert Modifier.isPublic(fieldModifiers) : "property fields are assumed to be public";
+                        assert Modifier.isFinal(fieldModifiers) : "property fields are assumed to be final";
                         assert field.getType().equals(String.class) : "properties fields are assumed to be instances of java.lang.String";
 
                         try {
