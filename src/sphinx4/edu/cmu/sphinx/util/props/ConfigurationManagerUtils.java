@@ -132,7 +132,7 @@ public final class ConfigurationManagerUtils {
         // apply the log level (if defined) for the root logger (because we're using package based logging now
 
         String cmPrefix = getLogPrefix(cm);
-        Logger cmRootLogger = Logger.getLogger(cmPrefix.substring(0, cmPrefix.length()-1));
+        Logger cmRootLogger = Logger.getLogger(cmPrefix.substring(0, cmPrefix.length() - 1));
 
         // we need to determine the root-level here, beacuse the logManager will reset it
         Level rootLevel = Logger.getLogger("").getLevel();
@@ -670,5 +670,27 @@ public final class ConfigurationManagerUtils {
         }
 
         return null;
+    }
+
+
+    /**
+     * Makes sure that all components registered to a <code>ConfigurationManager</code> are instantiated, and
+     * instantiates not yet instantiated ones.
+     *
+     * @return A collection containing all component names that had not been instantiated prior to the call of this
+     *         method.
+     */
+    public static Collection<String> instantiateAll(ConfigurationManager cm) {
+        Collection<String> nonInstComponents = new ArrayList<String>();
+
+        for (String compName : cm.getComponentNames()) {
+            if (!cm.getPropertySheet(compName).isInstanciated())
+                nonInstComponents.add(compName);
+        }
+
+        for (String compName : nonInstComponents)
+            cm.lookup(compName);
+
+        return nonInstComponents;
     }
 }
