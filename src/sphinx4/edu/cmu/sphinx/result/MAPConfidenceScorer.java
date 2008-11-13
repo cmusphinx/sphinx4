@@ -14,7 +14,9 @@ package edu.cmu.sphinx.result;
 import edu.cmu.sphinx.decoder.search.Token;
 import edu.cmu.sphinx.util.props.*;
 
-import java.util.*;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Computes confidences for the highest scoring path in a Result. The highest scoring path refers to the path with the
@@ -29,25 +31,17 @@ public class MAPConfidenceScorer implements ConfidenceScorer, Configurable {
     @S4Double(defaultValue = 1.0)
     public final static String PROP_LANGUAGE_WEIGHT = "languageWeight";
 
-    /** The default value for the PROP_LANGUAGE_WEIGHT property */
-    public final static float PROP_LANGUAGE_WEIGHT_DEFAULT = 1.0f;
 
     /** Sphinx property that specifies whether to dump the lattice. */
     @S4Boolean(defaultValue = false)
     public final static String PROP_DUMP_LATTICE = "dumpLattice";
 
-    /** The default value of PROP_DUMP_LATTICE. */
-    public final static boolean PROP_DUMP_LATTICE_DEFAULT = false;
 
     /** Sphinx property that specifies whether to dump the sausage. */
     @S4Boolean(defaultValue = false)
     public final static String PROP_DUMP_SAUSAGE = "dumpSausage";
 
-    /** The default value of PROP_DUMP_SAUSAGE. */
-    public final static boolean PROP_DUMP_SAUSAGE_DEFAULT = false;
 
-
-    private String name;
     private float languageWeight;
     private boolean dumpLattice;
     private boolean dumpSausage;
@@ -59,22 +53,9 @@ public class MAPConfidenceScorer implements ConfidenceScorer, Configurable {
      * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
      */
     public void newProperties(PropertySheet ps) throws PropertyException {
-        languageWeight = ps.getFloat(PROP_LANGUAGE_WEIGHT
-        );
-        dumpLattice = ps.getBoolean(PROP_DUMP_LATTICE
-        );
-        dumpSausage = ps.getBoolean(PROP_DUMP_SAUSAGE
-        );
-    }
-
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see edu.cmu.sphinx.util.props.Configurable#getName()
-     */
-    public String getName() {
-        return name;
+        languageWeight = ps.getFloat(PROP_LANGUAGE_WEIGHT);
+        dumpLattice = ps.getBoolean(PROP_DUMP_LATTICE);
+        dumpSausage = ps.getBoolean(PROP_DUMP_SAUSAGE);
     }
 
 
@@ -100,24 +81,20 @@ public class MAPConfidenceScorer implements ConfidenceScorer, Configurable {
             s.dumpAISee("mapSausage.gdl", "MAP Sausage");
         }
 
-        ConfidenceResult sausage = s;
         WordResultPath mapPath = new WordResultPath();
         List<Token> wordTokens = getWordTokens(result.getBestToken());
 
         /* start with the first slot */
         int slot = 0;
 
-        Iterator<Token> i = wordTokens.iterator();
-
-        while (i.hasNext()) {
-            Token token = i.next();
-            String word = token.getWord().getSpelling();
+        for (Token wordToken : wordTokens) {
+            String word = wordToken.getWord().getSpelling();
             WordResult wr = null;
             ConfusionSet cs = null;
 
             /* track through all the slots to find the word */
-            while (slot < sausage.size() && wr == null) {
-                cs = sausage.getConfusionSet(slot);
+            while (slot < s.size() && wr == null) {
+                cs = s.getConfusionSet(slot);
                 wr = cs.getWordResult(word);
                 if (wr == null) {
                     slot++;
@@ -134,7 +111,7 @@ public class MAPConfidenceScorer implements ConfidenceScorer, Configurable {
             slot++;
         }
 
-        return (new MAPConfidenceResult(sausage, mapPath));
+        return (new MAPConfidenceResult(s, mapPath));
     }
 
 
