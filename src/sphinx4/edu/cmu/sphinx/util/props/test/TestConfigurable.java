@@ -63,10 +63,9 @@ public class TestConfigurable implements Configurable {
 
 
     @Test
-    // note: it is not a bug but a feature of this test to print a stacktrace
     public void testNullStringProperty() throws PropertyException, InstantiationException {
         HashMap<String, Object> props = new HashMap<String, Object>();
-        props.put("dataProc", AnotherDummyProcessor.class);
+        props.put("dataProc", new AnotherDummyProcessor());
 
         TestConfigurable teco = ConfigurationManager.getInstance(TestConfigurable.class, props);
         Assert.assertTrue(teco.myString == null);
@@ -80,7 +79,7 @@ public class TestConfigurable implements Configurable {
 
         Map<String, Object> props = new HashMap<String, Object>();
         props.put(PROP_ASTRING, testString);
-        props.put(PROP_DATA_PROC, AnotherDummyProcessor.class);
+        props.put(PROP_DATA_PROC, new DummyProcessor());
         TestConfigurable tc = ConfigurationManager.getInstance(TestConfigurable.class, props);
 
         // now create a property sheet in order to modify the configurable

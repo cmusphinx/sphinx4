@@ -265,50 +265,42 @@ public class PropertySheet implements Cloneable {
         if (propVal == null || propVal instanceof String || propVal instanceof GlobalProperty) {
             Configurable configurable = null;
 
-            try {
-                if (propValues.get(name) != null) {
-                    PropertySheet ps = cm.getPropertySheet(flattenProp(name));
-                    if (ps != null)
-                        configurable = ps.getOwner();
-                }
+            if (propValues.get(name) != null) {
+                PropertySheet ps = cm.getPropertySheet(flattenProp(name));
+                if (ps != null)
+                    configurable = ps.getOwner();
+            }
 
-                if (configurable != null && !expectedType.isInstance(configurable))
-                    throw new InternalConfigurationException(getInstanceName(), name, "mismatch between annoation and component type");
+            if (configurable != null && !expectedType.isInstance(configurable))
+                throw new InternalConfigurationException(getInstanceName(), name, "mismatch between annoation and component type");
 
-                if (configurable == null) {
-                    Class<? extends Configurable> defClass;
+            if (configurable == null) {
+                Class<? extends Configurable> defClass;
 
-                    if (propValues.get(name) != null)
-                        defClass = (Class<? extends Configurable>) Class.forName((String) propValues.get(name));
-                    else
-                        defClass = s4Component.defaultClass();
+                defClass = s4Component.defaultClass();
 
-                    if (defClass.equals(Configurable.class) && s4Component.mandatory()) {
-                        throw new InternalConfigurationException(getInstanceName(), name, "mandatory property is not set!");
+                if (defClass.equals(Configurable.class) && s4Component.mandatory()) {
+                    throw new InternalConfigurationException(getInstanceName(), name, "mandatory property is not set!");
 
-                    } else {
-                        if (Modifier.isAbstract(defClass.getModifiers()) && s4Component.mandatory())
-                            throw new InternalConfigurationException(getInstanceName(), name, defClass.getName() + " is abstract!");
+                } else {
+                    if (Modifier.isAbstract(defClass.getModifiers()) && s4Component.mandatory())
+                        throw new InternalConfigurationException(getInstanceName(), name, defClass.getName() + " is abstract!");
 
-                        // because we're forced to use the default type, make sure that it is set
-                        if (defClass.equals(Configurable.class)) {
-                            if (s4Component.mandatory()) {
-                                throw new InternalConfigurationException(getInstanceName(), name, instanceName + ": no default class defined for " + name);
-                            } else {
-                                return null;
-                            }
-                        }
-
-                        configurable = ConfigurationManager.getInstance(defClass);
-                        if (configurable == null) {
-                            throw new InternalConfigurationException(getInstanceName(), name,
-                                    "instantiation of referenenced Configurable failed");
+                    // because we're forced to use the default type, make sure that it is set
+                    if (defClass.equals(Configurable.class)) {
+                        if (s4Component.mandatory()) {
+                            throw new InternalConfigurationException(getInstanceName(), name, instanceName + ": no default class defined for " + name);
+                        } else {
+                            return null;
                         }
                     }
-                }
 
-            } catch (ClassNotFoundException e) {
-                throw new PropertyException(e, getInstanceName(), name, null);
+                    configurable = ConfigurationManager.getInstance(defClass);
+                    if (configurable == null) {
+                        throw new InternalConfigurationException(getInstanceName(), name,
+                                "instantiation of referenenced Configurable failed");
+                    }
+                }
             }
 
             propValues.put(name, configurable);
