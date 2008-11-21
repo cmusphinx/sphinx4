@@ -673,24 +673,14 @@ public final class ConfigurationManagerUtils {
     }
 
 
-    /**
-     * Makes sure that all components registered to a <code>ConfigurationManager</code> are instantiated, and
-     * instantiates not yet instantiated ones.
-     *
-     * @return A collection containing all component names that had not been instantiated prior to the call of this
-     *         method.
-     */
-    public static Collection<String> instantiateAll(ConfigurationManager cm) {
+    /** Returns the not yet instantiated components registered to this configuration manager. */
+    public static Collection<String> getNonInstaniatedComps(ConfigurationManager cm) {
         Collection<String> nonInstComponents = new ArrayList<String>();
 
         for (String compName : cm.getComponentNames()) {
             if (!cm.getPropertySheet(compName).isInstanciated())
                 nonInstComponents.add(compName);
         }
-
-        for (String compName : nonInstComponents)
-            cm.lookup(compName);
-
         return nonInstComponents;
     }
 }
