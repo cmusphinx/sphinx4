@@ -12,12 +12,12 @@
     <!-- ******************************************************** -->
     <!-- frequently tuned properties                              -->
     <!-- ******************************************************** --> 
-    <property name="absoluteBeamWidth"  value="500"/>
-    <property name="relativeBeamWidth"  value="1E-80"/>
-    <property name="absoluteWordBeamWidth" value="20"/>
-    <property name="relativeWordBeamWidth" value="1E-60"/>
-    <property name="wordInsertionProbability" value="1E-16"/>
-    <property name="languageWeight" value="7.0"/>
+    <property name="absoluteBeamWidth"  value="5000"/>
+    <property name="relativeBeamWidth"  value="1E-120"/>
+    <property name="absoluteWordBeamWidth" value="200"/>
+    <property name="relativeWordBeamWidth" value="1E-80"/>
+    <property name="wordInsertionProbability" value="0.7"/>
+    <property name="languageWeight" value="10.5"/>
     <property name="silenceInsertionProbability" value=".1"/>
     <property name="frontend" value="epFrontEnd"/>
     <property name="recognizer" value="recognizer"/>
