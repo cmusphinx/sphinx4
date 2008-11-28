@@ -157,6 +157,7 @@
         <propertylist name="pipeline">
             <item>audioFileDataSource</item>
             <item>premphasizer</item>
+            <item>dither</item>
             <item>windower</item>
             <item>fft</item>
             <item>melFilterBank</item>
@@ -171,6 +172,9 @@
 
     <component name="premphasizer"
                type="edu.cmu.sphinx.frontend.filter.Preemphasizer"/>
+
+    <component name="dither"
+               type="edu.cmu.sphinx.frontend.filter.Dither"/>
 
     <component name="windower"
                type="edu.cmu.sphinx.frontend.window.RaisedCosineWindower"/>
