@@ -77,13 +77,19 @@ public interface Loader extends Configurable {
      */
     public Pool getMixtureWeightPool();
 
-
     /**
      * Gets the transition matrix pool
      *
      * @return the pool
      */
     public Pool getTransitionMatrixPool();
+
+    /**
+     * Gets the transformation matrix
+     *
+     * @return the matrix
+     */
+    public float[][] getTransformMatrix();
 
 
     /**

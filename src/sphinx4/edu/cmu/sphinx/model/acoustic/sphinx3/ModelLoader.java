@@ -206,6 +206,7 @@ public class ModelLoader implements Loader {
     private Pool varianceTransformationVectorPool;
     private Pool mixtureWeightsPool;
     private Pool senonePool;
+    private float[][] transformMatrix;
     private Map<String, Unit> contextIndependentUnits;
     private HMMManager hmmManager;
     private LogMath logMath;
@@ -215,6 +216,7 @@ public class ModelLoader implements Loader {
     protected final static String DENSITY_FILE_VERSION = "1.0";
     protected final static String MIXW_FILE_VERSION = "1.0";
     protected final static String TMAT_FILE_VERSION = "1.0";
+    protected final static String TRANSFORM_FILE_VERSION = "0.1";
     // --------------------------------------
     // Configuration variables
     // --------------------------------------
@@ -379,6 +381,7 @@ public class ModelLoader implements Loader {
                 createDummyMatrixPool("varianceTransformationMatrix");
         varianceTransformationVectorPool =
                 createDummyVectorPool("varianceTransformationMatrix");
+        transformMatrix = null;
         // do the actual acoustic model loading
         loadModelFiles(model);
     }
@@ -459,6 +462,8 @@ public class ModelLoader implements Loader {
                     (dataDir + "mixture_weights", mixtureWeightFloor);
             matrixPool = loadTransitionMatricesBinary
                     (dataDir + "transition_matrices");
+            transformMatrix = loadTransformMatrix 
+            		(dataDir + "feature_transform");
         } else {
             meansPool = loadDensityFileAscii
                     (dataDir + "means.ascii", -Float.MAX_VALUE);
@@ -1359,6 +1364,56 @@ public class ModelLoader implements Loader {
         return pool;
     }
 
+    /**
+     * Loads the transform matrices (Binary)
+     *
+     * @param path the path to the transform matrix
+     * @return a transform matrix
+     * @throws java.io.FileNotFoundException if a file cannot be found
+     * @throws java.io.IOException           if an error occurs while loading the data
+     */
+    protected float[][] loadTransformMatrix(String path)
+            throws FileNotFoundException, IOException {
+        logger.fine("Loading transform matrix from: " + path);
+
+        int numRows;
+        int numValues;
+        int num;
+
+        Properties props = new Properties();
+        
+        try {
+	    DataInputStream dis = readS3BinaryHeader(location, path, props);
+	} catch (Exception e) {
+	    return null;
+	}
+
+        String version = props.getProperty("version");
+        boolean doCheckSum;
+
+        if (version == null || !version.equals(TRANSFORM_FILE_VERSION)) {
+            throw new IOException("Unsupported version in " + path);
+        }
+
+        String checksum = props.getProperty("chksum0");
+        doCheckSum = (checksum != null && checksum.equals("yes"));
+
+        readInt(dis);
+        numRows = readInt(dis);
+        numValues = readInt(dis);
+        num = readInt(dis);
+        
+        assert num == numRows * numValues;
+        
+        float[][] result = new float[numRows][];
+        
+	for (int i = 0; i < numRows; i++) {
+	    result[i] = readFloatArray(dis, numValues);
+        }
+        dis.close();
+        return result;
+    }
+
 
     /**
      * Creates a pool with a single identity matrix in it.
@@ -1491,7 +1546,15 @@ public class ModelLoader implements Loader {
         return senonePool;
     }
 
-
+    /*
+     * Gets the transform matrix for this loader
+     *
+     * @return the pool
+     */
+     public float[][] getTransformMatrix() {
+         return transformMatrix;
+     }
+    
     /**
      * Returns the size of the left context for context dependent units
      *
