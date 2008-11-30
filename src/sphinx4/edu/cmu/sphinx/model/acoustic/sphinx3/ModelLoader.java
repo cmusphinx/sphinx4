@@ -1382,8 +1382,9 @@ public class ModelLoader implements Loader {
 
         Properties props = new Properties();
         
+        DataInputStream dis;
         try {
-	    DataInputStream dis = readS3BinaryHeader(location, path, props);
+	    dis = readS3BinaryHeader(location, path, props);
 	} catch (Exception e) {
 	    return null;
 	}
