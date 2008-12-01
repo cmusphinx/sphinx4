@@ -270,23 +270,48 @@ public class ConfigurationManager implements Cloneable {
     }
 
 
+    /** @param subCM The subconfiguration that shouwld be  to this instance */
     public void addSubConfiguration(ConfigurationManager subCM) {
+        addSubConfiguration(subCM, false);
+    }
+
+
+    /**
+     * Adds a subconfiguration to this instance by registering all subCM-components and all its global properties.
+     *
+     * @param subCM                The subconfiguration that shouwld be  to this instance
+     * @param doOverrideComponents If <code>true</code> non-instantiated components will be overriden by elements of
+     *                             subCM even if already being registered to this CM-instance. The same holds for global
+     *                             properties.
+     * @throws RuntimeException if an already instantiated component in this instance is redefined in subCM.
+     */
+    public void addSubConfiguration(ConfigurationManager subCM, boolean doOverrideComponents) {
         Collection<String> compNames = getComponentNames();
 
-        for (String addCompName : subCM.getComponentNames()) {
-            if (compNames.contains(addCompName)) {
-                throw new RuntimeException(addCompName + " is already registered to system configuration");
+        for (String componentName : subCM.getComponentNames()) {
+            if (compNames.contains(componentName)) {
+                if (doOverrideComponents && !getPropertySheet(componentName).isInstanciated()) {
+                    PropertySheet ps = subCM.getPropertySheet(componentName);
+                    symbolTable.put(componentName, ps);
+                    rawPropertyMap.put(componentName, new RawPropertyData(componentName, ps.getConfigurableClass().getSimpleName()));
+
+                } else {
+                    throw new RuntimeException(componentName + " is already registered to system configuration");
+                }
             }
         }
 
         for (String globProp : subCM.globalProperties.keySet()) {
             // the second test is necessary because system-props will be global-props in both CMs
             if (globalProperties.keySet().contains(globProp) && !System.getProperties().keySet().contains(globProp)) {
-                throw new IllegalArgumentException(globProp + " is already registered as global property");
+                if (!doOverrideComponents)
+                    throw new RuntimeException(globProp + " is already registered as global property");
             }
         }
 
         globalProperties.putAll(subCM.globalProperties);
+
+        // correct the reference to the cm
         for (PropertySheet ps : subCM.symbolTable.values()) {
             ps.setCM(this);
         }
