@@ -10,12 +10,8 @@
 package edu.cmu.sphinx.frontend.feature;
 
 import edu.cmu.sphinx.frontend.*;
-import edu.cmu.sphinx.recognizer.Recognizer;
 import edu.cmu.sphinx.linguist.acoustic.tiedstate.*;
-import edu.cmu.sphinx.model.acoustic.*;
 import edu.cmu.sphinx.util.props.*;
-
-import java.util.*;
 
 /**
  * Implements an LDA transformation. The dimension of the feature stream is
@@ -80,12 +76,9 @@ public class LDA extends BaseDataProcessor {
 
 			for (int i = 0; i < rows; i++) {
 				out [i] = 0;
-				String res = "";
 				for (int j = 0; j < values; j++) {
 					out[i] += in[j] * transformMatrix[i][j];
-					res = res + in[j] + " on " + transformMatrix[i][j] + " ";
 				}
-				System.out.println (res + "Result " + out[i]);
 			}
 			output = new FloatData(out, inputData.getSampleRate(), inputData
 					.getCollectTime(), inputData.getFirstSampleNumber());
