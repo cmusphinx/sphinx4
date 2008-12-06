@@ -205,6 +205,7 @@
         <property name="frontend" value="${frontend}"/>
         <property name="isCpuRelative" value="true"/>
         <property name="minScoreablesPerThread" value="10"/>
+        <property name="useStreamSignals" value="false"/> 
     </component>
 
     <!-- ******************************************************** -->

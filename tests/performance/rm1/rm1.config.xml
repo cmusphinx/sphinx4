@@ -123,6 +123,7 @@
         <property name="numThreads" value="0"/>
         <property name="minScoreablesPerThread" value="10"/>
         <property name="acousticGain" value="1"/>
+        <property name="useStreamSignals" value="false"/>
     </component>
 
     <!-- ******************************************************** -->

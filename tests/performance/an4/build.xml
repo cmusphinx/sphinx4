@@ -676,6 +676,7 @@ Run ant with -Dskip=5 to do the standard 'quick' version of a test.
             <sysproperty key="ngramLanguageModel[location]"
                          value="an4_words.bigram.lm"/>
             <sysproperty key="ngramLanguageModel[maxDepth]" value="1"/>
+            <sysproperty key="threadedScorer[useStreamSignals]" value="true"/> 
             <arg value="${config}"/> 
         </java>
     </target>

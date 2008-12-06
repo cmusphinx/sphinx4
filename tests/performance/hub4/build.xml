@@ -128,6 +128,7 @@ Run ant with -Dskip=5 to do the standard 'quick' version of a test.
             <sysproperty key="live[skip]" value="${skip}"/> 
             <sysproperty key="concatDataSource[skip]" value="${skip}"/> 
             <sysproperty key="speedTracker[showResponseTime]" value="true"/> 
+            <sysproperty key="threadedScorer[useStreamSignals]" value="true"/> 
             <sysproperty key="frontend" value="mfcLiveFrontEnd"/> 
             <arg value="${config}"/> 
         </java>

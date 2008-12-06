@@ -80,6 +80,7 @@
     <component name="simpleScorer"
                type="edu.cmu.sphinx.decoder.scorer.SimpleAcousticScorer">
         <property name="frontend" value="mfcFrontEnd"/>
+        <property name="useStreamSignals" value="false"/>
     </component>
 
 
