@@ -385,33 +385,6 @@ public class JSGFGrammar extends Grammar {
         debugPrintln("parseRuleAlternatives: " + ruleAlternatives.toString());
         GrammarGraph result = new GrammarGraph();
 
-//        List<Integer> disabledRuleIndices = new ArrayList<Integer>();
-//        for (int i = 0; i < ruleAlternatives.getRules().length; i++) {
-//            Rule rule = ruleAlternatives.getRules()[i];
-//            boolean isRuleDisabled = isRuleDisabled(rule);
-//            if (isRuleDisabled)
-//                disabledRuleIndices.add(i);
-//        }
-//
-//        Rule[] filterRules = new Rule[ruleAlternatives.getRules().length - disabledRuleIndices.size()];
-//        float[] unfilterWeights = ruleAlternatives.getWeights();
-//        float[] filterWeights = new float[ruleAlternatives.getRules().length - disabledRuleIndices.size()];
-//
-//        int counter = 0;
-//        for (int i = 0; i < ruleAlternatives.getRules().length; i++) {
-//            Rule rule = ruleAlternatives.getRules()[i];
-//            if(disabledRuleIndices.contains(i))
-//                continue;
-//
-//            filterRules[counter] = rule;
-//            if(unfilterWeights != null)
-//            filterWeights[counter] = unfilterWeights[i];
-//            counter++;
-//        }
-//
-//        Rule[] rules = filterRules;
-//        float[] weights = filterWeights;
-
         Rule[] rules = ruleAlternatives.getRules();
         float[] weights = ruleAlternatives.getWeights();
         normalizeWeights(weights);
@@ -425,21 +398,11 @@ public class JSGFGrammar extends Grammar {
             }
             debugPrintln("Alternative: " + rule.toString());
             GrammarGraph newNodes = parseRule(rule);
-//            assert newNodes.getStartNode() != null;
-            if (newNodes.getStartNode() != null) {
-                result.getStartNode().add(newNodes.getStartNode(), weight);
-                newNodes.getEndNode().add(result.getEndNode(), 0.0f);
-            }
+            result.getStartNode().add(newNodes.getStartNode(), weight);
+            newNodes.getEndNode().add(result.getEndNode(), 0.0f);
         }
 
         return result;
-    }
-
-
-    private boolean isRuleDisabled(Rule rule) throws GrammarException {
-        RuleName ruleName = ruleGrammar.resolve(new RuleName(rule.toString()));
-        boolean isRuleEnabled = ruleName != null && !ruleGrammar.isEnabled(ruleName.getSimpleRuleName());
-        return isRuleEnabled;
     }
 
 
@@ -489,9 +452,6 @@ public class JSGFGrammar extends Grammar {
         // expand and connect each rule in the sequence serially
         for (int i = 0; i < rules.length; i++) {
             Rule rule = rules[i];
-            if (isRuleDisabled(rule))
-                continue;
-
             GrammarGraph newNodes = parseRule(rule);
 
             // first node
@@ -603,7 +563,6 @@ public class JSGFGrammar extends Grammar {
                 }
             }
             postProcessGrammar();
-            System.err.println("");
         } catch (EngineException ee) {
             // ee.printStackTrace();
             throw new IOException(ee.toString());
