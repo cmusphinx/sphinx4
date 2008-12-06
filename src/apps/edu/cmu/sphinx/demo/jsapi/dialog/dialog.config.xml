@@ -108,7 +108,7 @@
     <component name="jsgfGrammar" type="edu.cmu.sphinx.jsapi.JSGFGrammar">
         <property name="dictionary" value="dictionary"/>
         <property name="grammarLocation" 
-             value="resource:/edu.cmu.sphinx.demo.jsapi.dialog.Dialog!/demo/jsapi/dialog/"/>
+             value="resource:/edu.cmu.sphinx.demo.jsapi.dialog.Dialog!/edu/cmu/sphinx/demo/jsapi/dialog/"/>
         <property name="grammarName" value="menu"/>
 	<property name="logMath" value="logMath"/>
     </component>
@@ -368,7 +368,7 @@
     <component name="trigramModel" 
         type="edu.cmu.sphinx.linguist.language.ngram.SimpleNGramModel">
         <property name="location" 
-            value="resource:/edu.cmu.sphinx.demo.jsapi.dialog.Dialog!/demo/jsapi/dialog/weather.lm"/>
+            value="resource:/edu.cmu.sphinx.demo.jsapi.dialog.Dialog!/edu/cmu/sphinx/demo/jsapi/dialog/weather.lm"/>
         <property name="logMath" value="logMath"/>
         <property name="dictionary" value="dictionary"/>
         <property name="maxDepth" value="3"/>
