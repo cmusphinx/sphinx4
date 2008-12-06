@@ -839,7 +839,15 @@ class ModelInitializerLoader implements Loader {
         return matrixPool;
     }
 
-
+    /*
+     * Gets the transform matrix
+     *
+     * @return null since this feature is not supported
+     */
+     public float[][] getTransformMatrix() {
+         return null;
+     }
+    
     /*
     * Gets the senone pool for this loader
     *
