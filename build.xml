@@ -457,11 +457,11 @@
             <replacetoken>TiedStateAcousticModel</replacetoken>
         </replace>
         <replace file="${model_class_dir}/${my_model_name}/Model.java">
-            <replacevalue>import edu.cmu.sphinx.linguist.acoustic.*;
+            <replacevalue>
                 import edu.cmu.sphinx.linguist.acoustic.tiedstate.*;
             </replacevalue>
-            <replacetoken>import edu.cmu.sphinx.linguist.acoustic.*;</replacetoken>
-        </replace>
+            <replacetoken>// Placeholder for a package import</replacetoken>       
+         </replace>
 
         <mkdir dir="${model_class_dir}/${my_model_name}/"/>
         <copy file="${tiedstate_dir}/Sphinx3Loader.java"
@@ -475,10 +475,8 @@
             <replacetoken>Sphinx3Loader</replacetoken>
         </replace>
         <replace file="${model_class_dir}/${my_model_name}/ModelLoader.java">
-            <replacevalue>import edu.cmu.sphinx.linguist.acoustic.*;
-                import edu.cmu.sphinx.linguist.acoustic.tiedstate.*;
-            </replacevalue>
-            <replacetoken>import edu.cmu.sphinx.linguist.acoustic.*;</replacetoken>
+            <replacevalue>import edu.cmu.sphinx.linguist.acoustic.tiedstate.*;</replacevalue>
+            <replacetoken>// Placeholder for a package import</replacetoken>
         </replace>
     </target>
 

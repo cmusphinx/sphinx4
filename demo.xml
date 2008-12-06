@@ -21,7 +21,7 @@
 
     <property name="version" value="1_2_0"/>
     <property name="demo_src_dir" value="src/apps"/>
-    <property name="build_dir" value="appsbld"/>
+    <property name="build_dir" value="bld"/>
     <property name="demo_classes_dir" value="${build_dir}/classes/apps"/>
     <property name="lib_dir" value="lib"/>
     <property name="bin_dir" value="bin"/>

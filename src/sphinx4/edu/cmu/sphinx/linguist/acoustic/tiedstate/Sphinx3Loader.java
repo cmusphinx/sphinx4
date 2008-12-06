@@ -11,6 +11,8 @@
  */
 package edu.cmu.sphinx.linguist.acoustic.tiedstate;
 
+// Placeholder for a package import
+
 import edu.cmu.sphinx.linguist.acoustic.*;
 import edu.cmu.sphinx.util.*;
 import edu.cmu.sphinx.util.props.*;
