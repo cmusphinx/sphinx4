@@ -100,7 +100,7 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
      * A sphinx property that controls whether or not we keep all tokens. If this is set to false, only word tokens are
      * retained, otherwise all tokens are retained.
      */
-    @S4Boolean(defaultValue = false)
+    @S4Boolean(defaultValue = true)
     public final static String PROP_KEEP_ALL_TOKENS = "keepAllTokens";
 
     /** Sphinx4 property that specifies the relative beam width */
@@ -280,6 +280,9 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
 
         result = new Result(loserManager, activeList, resultList,
                 currentFrameNumber, done, logMath);
+
+        if (result.getDataFrames().isEmpty())
+                result = null;
 
         // tokenTypeTracker.show();
         if (showTokenCount) {
