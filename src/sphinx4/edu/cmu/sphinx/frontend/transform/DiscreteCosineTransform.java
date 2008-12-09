@@ -42,11 +42,17 @@ public class DiscreteCosineTransform extends BaseDataProcessor {
     /** The default value for PROP_CEPSTRUM_LENGTH */
     public static final int PROP_CEPSTRUM_LENGTH_DEFAULT = 13;
 
+    /** The name of the sphinx property for the size of the ceptrum */
+    @S4Boolean(defaultValue = false)
+    public static final String PROP_DCT2 = "useDCT2";
+
+    /** The default value for PROP_DCT2 */
+    public static final boolean PROP_DCT2_DEFAULT = false;
 
     private int cepstrumSize; // size of a Cepstrum
     private int numberMelFilters; // number of mel-filters
     private double[][] melcosine;
-
+    private boolean useDCT2;
 
     /*
     * (non-Javadoc)
@@ -58,6 +64,7 @@ public class DiscreteCosineTransform extends BaseDataProcessor {
         numberMelFilters = ps.getInt(PROP_NUMBER_FILTERS
         );
         cepstrumSize = ps.getInt(PROP_CEPSTRUM_LENGTH);
+        useDCT2 = ps.getBoolean(PROP_DCT2);
     }
 
 
@@ -133,8 +140,15 @@ public class DiscreteCosineTransform extends BaseDataProcessor {
                 melspectrum[i] = -1.0e+5;
             }
         }
+	
+	double[] cepstrum;
+	
         // create the cepstrum by apply the melcosine filter
-        double[] cepstrum = applyMelCosine(melspectrum);
+	if (useDCT2) {
+            cepstrum = applyMelCosine2(melspectrum);
+	} else {
+	    cepstrum = applyMelCosine(melspectrum);
+	}
         DoubleData output = new DoubleData(cepstrum, input.getSampleRate(),
                 input.getCollectTime(),
                 input.getFirstSampleNumber());
@@ -164,6 +178,41 @@ public class DiscreteCosineTransform extends BaseDataProcessor {
                 }
                 cepstrum[i] /= period;
             }
+        }
+        return cepstrum;
+    }
+    
+        /**
+     * Apply the optimized MelCosine filter used in pocketsphinx to the given melspectrum.
+     *
+     * @param melspectrum the MelSpectrum data
+     * @return MelCepstrum data produced by apply the MelCosine filter to the MelSpectrum data
+     */
+    private double[] applyMelCosine2 (double[] melspectrum) {
+        // create the cepstrum
+        double[] cepstrum = new double[cepstrumSize];
+        double sqrt_inv_n = Math.sqrt(1.0 / numberMelFilters);
+        double sqrt_inv_2n = Math.sqrt(2.0 / numberMelFilters);
+
+	cepstrum[0] = melspectrum [0];
+	for (int j = 1; j < numberMelFilters; j++) {
+	    cepstrum[0] += melspectrum[j];
+	}
+
+	cepstrum[0] *= sqrt_inv_n;
+
+        if (numberMelFilters <= 0) {
+		return cepstrum;
+	}
+	
+        for (int i = 1; i < cepstrum.length; i++) {
+            double[] melcosine_i = melcosine[i];
+            int j = 0;
+            cepstrum[i] = 0;
+            for (j = 0; j < numberMelFilters; j++) {
+                    cepstrum[i] += (melspectrum[j] * melcosine_i[j]);
+            }
+            cepstrum[i] *= sqrt_inv_2n;
         }
         return cepstrum;
     }
