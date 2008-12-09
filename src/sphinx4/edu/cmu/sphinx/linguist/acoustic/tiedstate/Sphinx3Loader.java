@@ -237,6 +237,7 @@ public class Sphinx3Loader implements Loader {
     private float mixtureWeightFloor;
     private float varianceFloor;
     private boolean useCDUnits;
+    private boolean loaded = false;
 
 
     /*
@@ -373,22 +374,21 @@ public class Sphinx3Loader implements Loader {
 
 
     public void load() throws IOException {
-        // TODO: what is this all about?
-        hmmManager = new HMMManager();
-        contextIndependentUnits = new LinkedHashMap<String, Unit>();
-        // dummy pools for these elements
-        meanTransformationMatrixPool =
-                createDummyMatrixPool("meanTransformationMatrix");
-        meanTransformationVectorPool =
-                createDummyVectorPool("meanTransformationMatrix");
-        varianceTransformationMatrixPool =
-                createDummyMatrixPool("varianceTransformationMatrix");
-        varianceTransformationVectorPool =
-                createDummyVectorPool("varianceTransformationMatrix");
-        transformMatrix = null;
-        // do the actual acoustic model loading
-        loadModelFiles(model);
-    }
+		if (!loaded) {
+			// TODO: what is this all about?
+			hmmManager = new HMMManager();
+			contextIndependentUnits = new LinkedHashMap<String, Unit>();
+			// dummy pools for these elements
+			meanTransformationMatrixPool = createDummyMatrixPool("meanTransformationMatrix");
+			meanTransformationVectorPool = createDummyVectorPool("meanTransformationMatrix");
+			varianceTransformationMatrixPool = createDummyMatrixPool("varianceTransformationMatrix");
+			varianceTransformationVectorPool = createDummyVectorPool("varianceTransformationMatrix");
+			transformMatrix = null;
+			// do the actual acoustic model loading
+			loadModelFiles(model);
+			loaded = true;
+		}
+	}
 
 
     /**

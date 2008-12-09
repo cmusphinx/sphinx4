@@ -76,8 +76,9 @@ public class LDA extends BaseDataProcessor {
 
 			for (int i = 0; i < rows; i++) {
 				out [i] = 0;
+				float transform_matrix_i[] = transformMatrix[i];
 				for (int j = 0; j < values; j++) {
-					out[i] += in[j] * transformMatrix[i][j];
+					out[i] += in[j] * transform_matrix_i[j];
 				}
 			}
 			output = new FloatData(out, inputData.getSampleRate(), inputData
