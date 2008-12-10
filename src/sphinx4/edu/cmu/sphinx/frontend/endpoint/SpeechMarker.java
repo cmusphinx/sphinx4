@@ -81,6 +81,12 @@ public class SpeechMarker extends BaseDataProcessor {
     private int speechLeader;
     private int speechTrailer;
 
+    /**
+     * A constant that is attached to all DataStartSignal passing this component. This allows subsequent
+     * <code>DataProcessor</code>s (like the <code>Scorer</code>) to adapt their processsing behavior.
+     */
+    public static final String VAD_TAGGED_FEAT_STREAM = "vadTaggedFeatureStream";
+
 
     /*
     * (non-Javadoc)
@@ -172,21 +178,14 @@ public class SpeechMarker extends BaseDataProcessor {
     }
 
 
-    //todo nobody relies on these unused fields. They should be removed.
-    private int numUttStarts;
-    private int numUttEnds;
-
-
     private void sendToQueue(Data audio) {
-        // now add the audio
         outputQueue.add(audio);
-        if (audio instanceof DataStartSignal) {
-            numUttEnds = 0;
-            numUttStarts++;
-        } else if (audio instanceof DataEndSignal) {
-            numUttStarts = 0;
-            numUttEnds++;
-        }
+    }
+
+
+    public static void tagFeatureStream(Data data) {
+        if (data instanceof DataStartSignal)
+            ((DataStartSignal) data).getProps().put(SpeechMarker.VAD_TAGGED_FEAT_STREAM, null);
     }
 
 
@@ -256,6 +255,7 @@ public class SpeechMarker extends BaseDataProcessor {
                 }
                 lastCollectTime = data.getCollectTime();
             } else if (current instanceof DataStartSignal) {
+                tagFeatureStream(current);
                 i.next(); // put the SPEECH_START after the UTTERANCE_START
                 break;
             } else if (current instanceof DataEndSignal) {
