@@ -141,7 +141,7 @@ set MAXITER_UNTIED = 9
     </component>
 
     <component name="acousticModelLoader"
-			   type="edu.cmu.sphinx.model.acoustic.sphinx3.ModelLoader">
+			   type="edu.cmu.sphinx.linguist.acoustic.tiedstate.Sphinx3Loader">
 		<property name="logMath" value="logMath"/>
         <property name="unitManager" value="unitManager"/>
 
@@ -151,7 +151,7 @@ set MAXITER_UNTIED = 9
 	</component>
 
      <component name="acousticModels"
-                type="edu.cmu.sphinx.model.acoustic.sphinx3.Model">
+                type="edu.cmu.sphinx.linguist.acoustic.tiedstate.TiedStateAcousticModel">
 		<property name="loader" value="acousticModelLoader"/>
         <property name="unitManager" value="unitManager"/>
      </component>
