@@ -419,7 +419,6 @@ public class Microphone extends BaseDataProcessor {
      */
     public synchronized void stopRecording() {
         if (audioLine != null) {
-    	    audioLine.flush();
             if (recorder != null) {
                 recorder.stopRecording();
                 recorder = null;
@@ -471,6 +470,7 @@ public class Microphone extends BaseDataProcessor {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+    	    audioLine.flush();
         }
 
 
