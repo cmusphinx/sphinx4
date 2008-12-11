@@ -79,7 +79,7 @@ public class SausageDumpTest {
 		float lmw = (float) 7.0;
 		try {
 		    lmw = cm.getPropertySheet("lexTreeLinguist").getFloat
-			("languageWeight", (float) 7.0);
+			("languageWeight");
 		} catch (PropertyException e1) {
 		    System.err.println("couldn't retrieve language weight, using default " + lmw);
 		}
@@ -104,9 +104,6 @@ public class SausageDumpTest {
             e.printStackTrace();
         } catch (PropertyException e) {
             System.err.println("Problem configuring LatticeDumpTest: " + e);
-            e.printStackTrace();
-        } catch (InstantiationException e) {
-            System.err.println("Problem creating LatticeDumpTest: " + e);
             e.printStackTrace();
         } catch (UnsupportedAudioFileException e) {
             System.err.println("Audio file format not supported: " + e);

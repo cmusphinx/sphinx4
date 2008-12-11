@@ -12,14 +12,9 @@
 
 package tests.result.lattice;
 
-import edu.cmu.sphinx.result.Edge;
 import edu.cmu.sphinx.result.Node;
-import edu.cmu.sphinx.result.Result;
 import edu.cmu.sphinx.result.Lattice;
-import edu.cmu.sphinx.result.LatticeOptimizer;
-
 import edu.cmu.sphinx.util.LogMath;
-
 import edu.cmu.sphinx.util.props.ConfigurationManager;
 import edu.cmu.sphinx.util.props.PropertyException;
 
@@ -85,15 +80,12 @@ public class PosteriorTest {
 	    System.out.println
 		("D: " + logMath.logToLinear((float) d.getPosterior()) +
 		 "  (manual: 1.0)");
-	} catch (IOException e) {
+		} catch (IOException e) {
             System.err.println("Problem when loading LatticeDumpTest: " + e);
             e.printStackTrace();
         } catch (PropertyException e) {
             System.err.println("Problem configuring LatticeDumpTest: " + e);
             e.printStackTrace();
-        } catch (InstantiationException e) {
-            System.err.println("Problem creating LatticeDumpTest: " + e);
-            e.printStackTrace();
-	}
+        }
     }
 }

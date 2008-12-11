@@ -548,8 +548,6 @@ public class Live {
                     allocated = true;
                 }
 
-            } catch (InstantiationException e) {
-                warn("Can't create recognizer from " + configName + " " + e);
             } catch (PropertyException pe) {
                 warn("Can't configure recognizer " + pe);
             } catch (IOException ioe) {

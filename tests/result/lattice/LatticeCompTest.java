@@ -122,9 +122,6 @@ public class LatticeCompTest {
         } catch (PropertyException e) {
             System.err.println("Problem configuring LatticeCompTest: " + e);
             e.printStackTrace();
-        } catch (InstantiationException e) {
-            System.err.println("Problem creating LatticeCompTest: " + e);
-            e.printStackTrace();
         } catch (UnsupportedAudioFileException e) {
             System.err.println("Audio file format not supported: " + e);
             e.printStackTrace();

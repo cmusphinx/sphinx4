@@ -95,9 +95,6 @@ public class LatticeDumpTest {
         } catch (PropertyException e) {
             System.err.println("Problem configuring LatticeDumpTest: " + e);
             e.printStackTrace();
-        } catch (InstantiationException e) {
-            System.err.println("Problem creating LatticeDumpTest: " + e);
-            e.printStackTrace();
         } catch (UnsupportedAudioFileException e) {
             System.err.println("Audio file format not supported: " + e);
             e.printStackTrace();

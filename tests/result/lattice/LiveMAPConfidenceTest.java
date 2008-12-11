@@ -100,9 +100,6 @@ public class LiveMAPConfidenceTest {
         } catch (PropertyException e) {
             System.err.println("Problem configuring MAPConfidenceTest: " + e);
             e.printStackTrace();
-        } catch (InstantiationException e) {
-            System.err.println("Problem creating MAPConfidenceTest: " + e);
-            e.printStackTrace();
         }
     }
 }

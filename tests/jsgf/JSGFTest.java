@@ -81,9 +81,6 @@ public class JSGFTest {
         } catch (PropertyException e) {
             System.err.println("Problem configuring JSGFTest: " + e);
             e.printStackTrace();
-        } catch (InstantiationException e) {
-            System.err.println("Problem creating JSGFTest: " + e);
-            e.printStackTrace();
         } catch (GrammarException e) {
             System.err.println("Problem parsing result: " + e);
             e.printStackTrace();
