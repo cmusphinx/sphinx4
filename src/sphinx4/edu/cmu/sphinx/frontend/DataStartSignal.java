@@ -23,6 +23,11 @@ package edu.cmu.sphinx.frontend;
 public class DataStartSignal extends Signal {
 
     private int sampleRate;
+    /**
+     * A constant that is attached to all DataStartSignal passing this component. This allows subsequent
+     * <code>DataProcessor</code>s (like the <code>Scorer</code>) to adapt their processsing behavior.
+     */
+    public static final String VAD_TAGGED_FEAT_STREAM = "vadTaggedFeatureStream";
 
 
     /**
@@ -42,8 +47,35 @@ public class DataStartSignal extends Signal {
      * @param time       the time this DataStartSignal is created
      */
     public DataStartSignal(int sampleRate, long time) {
+        this(sampleRate, time, false);
+    }
+
+
+    /**
+     * Constructs a DataStartSignal at the given time.
+     *
+     * @param sampleRate  the sampling rate of the started data stream.
+     * @param tagAsVadStream <code>true</code> if this feature stream will contain vad-signals
+     */
+    public DataStartSignal(int sampleRate, boolean tagAsVadStream) {
+        this(sampleRate, System.currentTimeMillis(), tagAsVadStream);
+    }
+
+
+    /**
+     * Constructs a DataStartSignal at the given time.
+     *
+     * @param sampleRate  the sampling rate of the started data stream.
+     * @param time        the time this DataStartSignal is created
+     * @param tagAsVadStream <code>true</code> if this feature stream will contain vad-signals
+     */
+    public DataStartSignal(int sampleRate, long time, boolean tagAsVadStream) {
         super(time);
         this.sampleRate = sampleRate;
+
+        if (tagAsVadStream) {
+            this.getProps().put(VAD_TAGGED_FEAT_STREAM, null);
+        }
     }
 
 
@@ -60,5 +92,16 @@ public class DataStartSignal extends Signal {
     /** @return the sampling rate of the started data stream. */
     public int getSampleRate() {
         return sampleRate;
+    }
+
+
+
+    public static void tagAsVadStream(DataStartSignal dsSignal) {
+        dsSignal.getProps().put(DataStartSignal.VAD_TAGGED_FEAT_STREAM, true);
+    }
+
+
+    public static void untagAsVadStream(DataStartSignal dsSignal) {
+        dsSignal.getProps().remove(DataStartSignal.VAD_TAGGED_FEAT_STREAM);
     }
 }

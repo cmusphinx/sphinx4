@@ -61,11 +61,12 @@ public class ScorerTests {
             scorer.allocate();
             scorer.startRecognition();
 
-            Assert.assertTrue(dummyFrontEnd.getBufferSize() < (startBufferSize - 100));
+//            Assert.assertTrue(dummyFrontEnd.getBufferSize() < (startBufferSize - 100));
 
             List<Token> dummyTokens = Arrays.asList(testToken);
 
             scorer.calculateScores(dummyTokens);
+            Assert.assertTrue(dummyFrontEnd.getBufferSize() < (startBufferSize - 100));
 
             scorer.stopRecognition();
             scorer.deallocate();
@@ -75,7 +76,7 @@ public class ScorerTests {
 
     private DataBufferProcessor createDummyFrontEnd() {
         DataBufferProcessor bufferProc = ConfigurationManager.getInstance(DataBufferProcessor.class);
-        bufferProc.processDataFrame(new DataStartSignal(16000));
+        bufferProc.processDataFrame(new DataStartSignal(16000, true));
 
         for (DoubleData doubleData : AbstractTestProcessor.createFeatVectors(5, 16000, 0, 39, 10))
             bufferProc.processDataFrame(doubleData);

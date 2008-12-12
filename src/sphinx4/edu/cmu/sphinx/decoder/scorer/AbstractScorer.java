@@ -15,12 +15,11 @@ import java.util.List;
 import java.util.logging.Logger;
 
 /**
- * Implements some common scorer functionality but keeps specific scoring open for subclasses.
+ * Implements some basic scorer functionality but keeps specific scoring open for sub-classes.
  *
  * @author Holger Brandl
  */
 public abstract class AbstractScorer implements AcousticScorer {
-
 
     /** Property the defines the frontend to retrieve features from for scoring */
     @S4Component(type = BaseDataProcessor.class)
@@ -33,7 +32,7 @@ public abstract class AbstractScorer implements AcousticScorer {
      */
     @S4Boolean(defaultValue = true)
     public static final String USE_STREAM_SIGNALS = "useStreamSignals";
-    private boolean useStreamSignals;
+    private Boolean isVadEmbeddedStream;
 
 
     /**
@@ -51,7 +50,6 @@ public abstract class AbstractScorer implements AcousticScorer {
 
     public void newProperties(PropertySheet ps) throws PropertyException {
         frontEnd = (BaseDataProcessor) ps.getComponent(FEATURE_FRONTEND);
-        useStreamSignals = ps.getBoolean(USE_STREAM_SIGNALS);
         scoreNormalizer = (ScoreNormalizer) ps.getComponent(SCORE_NORMALIZER);
 
         logger = ps.getLogger();
@@ -71,22 +69,18 @@ public abstract class AbstractScorer implements AcousticScorer {
         }
 
         try {
-            Data data = frontEnd.getData();
-
-            while (data instanceof DataStartSignal || data instanceof DataEndSignal) {
-                data = frontEnd.getData();
-            }
-
-            while (data instanceof Signal && useStreamSignals) {
+            Data data = getNextData();
+            while (data instanceof Signal) {
                 if (data instanceof SpeechEndSignal)
                     return null;
 
-                data = frontEnd.getData();
+                data = getNextData();
             }
 
-            if (data == null || data instanceof DataEndSignal)
+            if (data == null)
                 return null;
 
+            // convert the data to FloatData if not yet done
             if (data instanceof DoubleData)
                 data = DataUtil.DoubleData2FloatData((DoubleData) data);
 
@@ -104,6 +98,44 @@ public abstract class AbstractScorer implements AcousticScorer {
     }
 
 
+    private Data getNextData() {
+        Data data = frontEnd.getData();
+
+        // reconfigure the scorer for the coming data stream
+        if (data instanceof DataStartSignal)
+            isVadEmbeddedStream = ((DataStartSignal) data).getProps().containsKey(DataStartSignal.VAD_TAGGED_FEAT_STREAM);
+
+        return data;
+    }
+
+
+    public void startRecognition() {
+        if (isVadEmbeddedStream == null) {
+            Data firstData = getNextData();
+            assert firstData instanceof DataStartSignal;
+        }
+
+        if (!isVadEmbeddedStream)
+            return;
+
+        Data data = getNextData();
+        while (!((data) instanceof SpeechStartSignal)) {
+            if (data == null) {
+                break;
+            }
+
+            data = getNextData();
+        }
+
+        if (data == null)
+            logger.warning("Not enough data in frontend to start recognition");
+    }
+
+
+    public void stopRecognition() {
+    }
+
+
     /**
      * Scores a a list of <code>Token</code>s given a <code>Data</code>-object.
      *
@@ -112,38 +144,6 @@ public abstract class AbstractScorer implements AcousticScorer {
      * @return the best scoring <code>Token</code> or <code>null</code> if the list of tokens was empty.
      */
     protected abstract Scoreable doScoring(List<Token> scoreableList, Data data);
-
-
-    public void startRecognition() {
-        // iterate through the feature stream until a SpeechStartSignal is being found
-        int debugCounter = 0;
-
-        if (!useStreamSignals)
-            return;
-
-        Data data;
-        while (!((data = frontEnd.getData()) instanceof SpeechStartSignal)) {
-            if (data == null) {
-                break;
-            }
-
-            debugCounter++;
-
-            if (debugCounter > 100) { // print a warning every second
-                debugCounter = 0;
-                logger.finer("Waiting for speech segment...");
-            }
-        }
-
-        if (data == null)
-            logger.warning("Not enough data in frontend to start recognition");
-
-        // (if this line becomes reached && useStreamSignals) all following feature frames will be part of a speech segment
-    }
-
-
-    public void stopRecognition() {
-    }
 
 
     public void allocate() throws IOException {

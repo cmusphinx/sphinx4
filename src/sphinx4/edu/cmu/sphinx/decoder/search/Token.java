@@ -146,6 +146,8 @@ public class Token implements Scoreable {
         this.location = -1;
         curCount++;
 
+//        if (predecessor != null && predecessor.isEmitting() && isEmitting())
+//            assert predecessor.getScore() < getScore();
     }
 
 
@@ -238,6 +240,26 @@ public class Token implements Scoreable {
         HMMSearchState hmmSearchState = (HMMSearchState) searchState;
         HMMState hmmState = hmmSearchState.getHMMState();
         logAcousticScore = hmmState.getScore(feature) * gain;
+
+        // apply normalization to make all density values to be between 0 and 1
+        // under the assumption that a non-zero variance flooring is being used.
+        // This is needed for debugging only
+//        if (feature instanceof FloatData) {
+//            int featDim = (int) ((FloatData) feature).getValues().length;
+//
+//            float[] varFloor = new float[featDim];
+//            Arrays.fill(varFloor,  MixtureComponent.DEFAULT_VAR_FLOOR);
+//
+//            // setup a dummy OPDF with a single component density
+//            float[] mean = new float[featDim];
+//            MixtureComponent mc = new MixtureComponent(LogMath.getInstance(), mean, varFloor);
+//            float maxDensityValue = mc.getScore(new FloatData(mean, 16000, 0, 0));
+//
+//            // normalizae all acoustic scores with respect to the largest possible value
+//            logAcousticScore -= maxDensityValue;
+//        }
+
+
         logTotalScore += logAcousticScore;
 
         if (keepData) {

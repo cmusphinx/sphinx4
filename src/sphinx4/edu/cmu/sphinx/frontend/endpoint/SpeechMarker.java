@@ -39,7 +39,6 @@ import java.util.ListIterator;
  * after the first non-speech audio. The algorithm returns to 'ou-of-speech' state. If any speech audio is encountered
  * in-between, the accounting starts all over again.
  */
-@SuppressWarnings({"UnnecessaryLocalVariable"})
 public class SpeechMarker extends BaseDataProcessor {
 
     /**
@@ -48,51 +47,32 @@ public class SpeechMarker extends BaseDataProcessor {
      */
     @S4Integer(defaultValue = 200)
     public static final String PROP_START_SPEECH = "startSpeech";
+    private int startSpeechTime;
 
-    /** The default value of PROP_START_SPEECH. */
-    public static final int PROP_START_SPEECH_DEFAULT = 200;
 
     /** The SphinxProperty for the amount of time in silence (in milliseconds) to be considered as utterance end. */
     @S4Integer(defaultValue = 500)
     public static final String PROP_END_SILENCE = "endSilence";
+    private int endSilenceTime;
 
-    /** The default value of PROP_END_SILENCE. */
-    public static final int PROP_END_SILENCE_DEFAULT = 500;
 
     /** The SphinxProperty for the amount of time (in milliseconds) before speech start to be included as speech data. */
     @S4Integer(defaultValue = 100)
     public static final String PROP_SPEECH_LEADER = "speechLeader";
+    private int speechLeader;
 
-    /** The default value of PROP_SPEECH_LEADER. */
-    public static final int PROP_SPEECH_LEADER_DEFAULT = 100;
 
     /** The SphinxProperty for the amount of time (in milliseconds) after speech ends to be included as speech data. */
     @S4Integer(defaultValue = 100)
     public static final String PROP_SPEECH_TRAILER = "speechTrailer";
-
-    /** The default value of PROP_SPEECH_TRAILER. */
-    public static final int PROP_SPEECH_TRAILER_DEFAULT = 100;
+    private int speechTrailer;
 
 
     private List<Data> outputQueue;  // Audio objects are added to the end
     private boolean inSpeech;
-    private int startSpeechTime;
-    private int endSilenceTime;
-    private int speechLeader;
-    private int speechTrailer;
-
-    /**
-     * A constant that is attached to all DataStartSignal passing this component. This allows subsequent
-     * <code>DataProcessor</code>s (like the <code>Scorer</code>) to adapt their processsing behavior.
-     */
-    public static final String VAD_TAGGED_FEAT_STREAM = "vadTaggedFeatureStream";
 
 
-    /*
-    * (non-Javadoc)
-    *
-    * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
-    */
+    @Override
     public void newProperties(PropertySheet ps) throws PropertyException {
         super.newProperties(ps);
 
@@ -166,6 +146,10 @@ public class SpeechMarker extends BaseDataProcessor {
                 SpeechClassifiedData data = (SpeechClassifiedData) audio;
                 audio = data.getDoubleData();
             }
+
+            if (audio instanceof DataStartSignal)
+                DataStartSignal.tagAsVadStream((DataStartSignal) audio);
+
             return audio;
         } else {
             return null;
@@ -180,12 +164,6 @@ public class SpeechMarker extends BaseDataProcessor {
 
     private void sendToQueue(Data audio) {
         outputQueue.add(audio);
-    }
-
-
-    public static void tagFeatureStream(Data data) {
-        if (data instanceof DataStartSignal)
-            ((DataStartSignal) data).getProps().put(SpeechMarker.VAD_TAGGED_FEAT_STREAM, null);
     }
 
 
@@ -255,7 +233,6 @@ public class SpeechMarker extends BaseDataProcessor {
                 }
                 lastCollectTime = data.getCollectTime();
             } else if (current instanceof DataStartSignal) {
-                tagFeatureStream(current);
                 i.next(); // put the SPEECH_START after the UTTERANCE_START
                 break;
             } else if (current instanceof DataEndSignal) {
