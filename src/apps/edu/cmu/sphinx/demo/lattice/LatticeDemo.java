@@ -21,6 +21,7 @@ import edu.cmu.sphinx.util.props.ConfigurationManager;
 import edu.cmu.sphinx.util.props.PropertyException;
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.Ignore;
 
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
@@ -96,6 +97,7 @@ public class LatticeDemo {
 
     /** Converts this demo into a unit-test. */
     @Test
+    @Ignore(value = "because this test relies on files available only from within CMU")
     public void testLatticeDemo() {
         try {
             main(new String[]{});
