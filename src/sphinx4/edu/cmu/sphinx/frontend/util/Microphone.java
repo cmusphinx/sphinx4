@@ -23,17 +23,14 @@ import java.util.logging.Logger;
 
 
 /**
- * <p/>
- * A Microphone captures audio data from the system's underlying audio input systems. Converts these audio data into
- * Data objects. When the method <code>startRecording()</code> is called, a new thread will be created and used to
+ * <p/> A Microphone captures audio data from the system's underlying audio input systems. Converts these audio data
+ * into Data objects. When the method <code>startRecording()</code> is called, a new thread will be created and used to
  * capture audio, and will stop when <code>stopRecording()</code> is called. Calling <code>getData()</code> returns the
- * captured audio data as Data objects. </p>
- * <p/>
- * This Microphone will attempt to obtain an audio device with the format specified in the configuration. If such a
- * device with that format cannot be obtained, it will try to obtain a device with an audio format that has a higher
- * sample rate than the configured sample rate, while the other parameters of the format (i.e., sample size, endianness,
- * sign, and channel) remain the same. If, again, no such device can be obtained, it flags an error, and a call
- * <code>startRecording</code> returns false. </p>
+ * captured audio data as Data objects. </p> <p/> This Microphone will attempt to obtain an audio device with the format
+ * specified in the configuration. If such a device with that format cannot be obtained, it will try to obtain a device
+ * with an audio format that has a higher sample rate than the configured sample rate, while the other parameters of the
+ * format (i.e., sample size, endianness, sign, and channel) remain the same. If, again, no such device can be obtained,
+ * it flags an error, and a call <code>startRecording</code> returns false. </p>
  */
 public class Microphone extends BaseDataProcessor {
 
@@ -434,7 +431,7 @@ public class Microphone extends BaseDataProcessor {
         private boolean done = false;
         private volatile boolean started = false;
         private long totalSamplesRead = 0;
-        private Object lock = new Object();
+        private final Object lock = new Object();
 
 
         /**
@@ -470,7 +467,9 @@ public class Microphone extends BaseDataProcessor {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-    	    audioLine.flush();
+
+            // flush can not be called here because the audio-line might has been set to  null already by the mic-thread 
+//    	    audioLine.flush();
         }
 
 
@@ -510,6 +509,7 @@ public class Microphone extends BaseDataProcessor {
                      */
                     audioStream.close();
                     audioLine.close();
+                    System.err.println("set to null");
                     audioLine = null;
                 }
             } catch (IOException ioe) {
@@ -598,16 +598,16 @@ public class Microphone extends BaseDataProcessor {
                 utterance.add(data);
             }
 
-	    double[] samples;
-    	
-    	    if (bigEndian) {
-    		samples = DataUtil.bytesToValues
-                	(data, 0, data.length, sampleSizeInBytes, signed);
-    	    } else {
-        	samples = DataUtil.littleEndianBytesToValues
-            		(data, 0, data.length, sampleSizeInBytes, signed);
-    	    }
-    	    
+            double[] samples;
+
+            if (bigEndian) {
+                samples = DataUtil.bytesToValues
+                        (data, 0, data.length, sampleSizeInBytes, signed);
+            } else {
+                samples = DataUtil.littleEndianBytesToValues
+                        (data, 0, data.length, sampleSizeInBytes, signed);
+            }
+
             if (channels > 1) {
                 samples = convertStereoToMono(samples, channels);
             }
