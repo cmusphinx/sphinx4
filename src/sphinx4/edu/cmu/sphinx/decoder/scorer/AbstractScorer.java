@@ -12,6 +12,7 @@ import edu.cmu.sphinx.util.props.S4Component;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 
 /**
@@ -102,8 +103,13 @@ public abstract class AbstractScorer implements AcousticScorer {
         Data data = frontEnd.getData();
 
         // reconfigure the scorer for the coming data stream
-        if (data instanceof DataStartSignal)
-            isVadEmbeddedStream = ((DataStartSignal) data).getProps().containsKey(DataStartSignal.VAD_TAGGED_FEAT_STREAM);
+        if (data instanceof DataStartSignal){
+            Map<String,Object> dataProps = ((DataStartSignal) data).getProps();
+            if(dataProps.containsKey(DataStartSignal.VAD_TAGGED_FEAT_STREAM))
+                isVadEmbeddedStream = (Boolean) dataProps.get(DataStartSignal.VAD_TAGGED_FEAT_STREAM);
+            else
+                isVadEmbeddedStream = false;
+        }
 
         return data;
     }
@@ -151,5 +157,11 @@ public abstract class AbstractScorer implements AcousticScorer {
 
 
     public void deallocate() {
+    }
+
+
+    @Override
+    public String toString() {
+        return name;
     }
 }
