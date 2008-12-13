@@ -65,17 +65,16 @@ public class SortingActiveListFactory extends ActiveListFactory {
         private Token bestToken;
         // when the list is changed these things should be
         // changed/updated as well
-        private List tokenList;
+        private List<Token> tokenList;
 
 
         /** Creates an empty active list */
-        public SortingActiveList(int absoluteBeamWidth,
-                                 float logRelativeBeamWidth) {
+        public SortingActiveList(int absoluteBeamWidth, float logRelativeBeamWidth) {
             this.absoluteBeamWidth = absoluteBeamWidth;
             this.logRelativeBeamWidth = logRelativeBeamWidth;
-            this.tokenList = new ArrayList(absoluteBeamWidth > 0
-                    ? absoluteBeamWidth
-                    : DEFAULT_SIZE);
+
+            int initListSize = absoluteBeamWidth > 0 ? absoluteBeamWidth : DEFAULT_SIZE;
+            this.tokenList = new ArrayList<Token>(initListSize);
         }
 
 

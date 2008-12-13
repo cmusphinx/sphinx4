@@ -35,11 +35,8 @@ import java.util.*;
 public class Token implements Scoreable {
 
     /** a token comparator that is used to order tokens in descending order */
-    public final static Comparator COMPARATOR = new Comparator() {
-        public int compare(Object o1, Object o2) {
-            Token t1 = (Token) o1;
-            Token t2 = (Token) o2;
-
+    public final static Comparator<Token> COMPARATOR = new Comparator<Token>() {
+        public int compare(Token t1, Token t2) {
             if (t1.getScore() > t2.getScore()) {
                 return -1;
             } else if (t1.getScore() == t2.getScore()) {
@@ -49,8 +46,6 @@ public class Token implements Scoreable {
             }
         }
     };
-
-    private final static boolean COMBINE_BRANCHES = true;
 
     private static int curCount;
     private static int lastCount;

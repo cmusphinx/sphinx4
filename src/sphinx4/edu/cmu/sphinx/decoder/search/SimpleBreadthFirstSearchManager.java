@@ -173,7 +173,6 @@ public class SimpleBreadthFirstSearchManager implements SearchManager {
      */
     public Result recognize(int nFrames) {
         boolean done = false;
-        boolean noData = false;
         Result result = null;
         for (int i = 0; i < nFrames && !done; i++) {
             done = recognize();

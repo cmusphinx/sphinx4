@@ -110,7 +110,7 @@ public class WordActiveListFactory extends ActiveListFactory {
 
         public ActiveList purge() {
             int fillerCount = 0;
-            Map countMap = new HashMap();
+            Map<Word, Integer> countMap = new HashMap<Word, Integer>();
             Collections.sort(tokenList, Token.COMPARATOR);
             // remove word duplicates
             for (ListIterator i = tokenList.listIterator(); i.hasNext();) {
