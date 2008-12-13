@@ -13,8 +13,6 @@ src/apps/edu/cmu/sphinx/demo/zipcity/README.html
 src/apps/edu/cmu/sphinx/demo/zipcity/screenshot.gif
 doc-files/architecture.gif
 doc/1-2-searchgraph.jpg
-doc/Eclipse.html
-doc/NetBeans.html
 doc/ProgrammersGuide.html
 doc/Sphinx4-faq.html
 doc/UsingSphinxTrainModels.html
