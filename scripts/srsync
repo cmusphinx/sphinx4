@@ -6,4 +6,4 @@ dest=$1
 
 shift
 
-rsync -auvz $* $SF_USER@web.sourceforge.net:$dest
+rsync -auvzR $* $SF_USER@web.sourceforge.net:$dest
