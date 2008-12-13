@@ -70,11 +70,12 @@ public final class LogMath implements Configurable, Serializable {
     }
 
 
-    /*
-    * (non-Javadoc)
-    *
-    * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
-    */
+    /** Resets the singelton instance kept by this class. This is mainly required for unit-testing. */
+    public static void clearInstance() {
+        lastInstance = null;
+    }
+
+
     public void newProperties(PropertySheet ps) throws PropertyException {
         logger = ps.getLogger();
 
