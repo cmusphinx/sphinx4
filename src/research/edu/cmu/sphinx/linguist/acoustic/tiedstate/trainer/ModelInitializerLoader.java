@@ -29,7 +29,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.zip.ZipException;
 
 
 /**
@@ -50,8 +49,6 @@ class ModelInitializerLoader implements Loader {
     private final static String FILLER = "filler";
     private final static String SILENCE_CIPHONE = "SIL";
 
-    private final static int BYTE_ORDER_MAGIC = 0x11223344;
-
     public final static String MODEL_VERSION = "0.3";
 
     private final static int CONTEXT_SIZE = 1;
@@ -69,18 +66,11 @@ class ModelInitializerLoader implements Loader {
     private Pool senonePool;
     private int vectorLength;
 
-    private Map contextIndependentUnits;
+    private Map<String, Unit> contextIndependentUnits;
     private Map phoneList;
     private HMMManager hmmManager;
     private LogMath logMath;
     private SphinxProperties acousticProperties;
-    private boolean binary = false;
-    private String location;
-    private boolean swap;
-
-    private final static String DENSITY_FILE_VERSION = "1.0";
-    private final static String MIXW_FILE_VERSION = "1.0";
-    private final static String TMAT_FILE_VERSION = "1.0";
 
 
     /**
@@ -90,7 +80,7 @@ class ModelInitializerLoader implements Loader {
      * @param props     the SphinxProperties object
      */
     public ModelInitializerLoader(String modelName, SphinxProperties props)
-            throws FileNotFoundException, IOException, ZipException {
+            throws IOException {
 
 //	logMath = LogMath.getLogMath(props.getContext());
 //
@@ -104,18 +94,14 @@ class ModelInitializerLoader implements Loader {
 //	    (vectorLengthProp, TiedStateAcousticModel.PROP_VECTOR_LENGTH_DEFAULT);
 
         hmmManager = new HMMManager();
-        contextIndependentUnits = new LinkedHashMap();
+        contextIndependentUnits = new LinkedHashMap<String, Unit>();
         phoneList = new LinkedHashMap();
 
         // dummy pools for these elements
-        meanTransformationMatrixPool
-                = createDummyMatrixPool("meanTransformationMatrix");
-        meanTransformationVectorPool
-                = createDummyVectorPool("meanTransformationMatrix");
-        varianceTransformationMatrixPool
-                = createDummyMatrixPool("varianceTransformationMatrix");
-        varianceTransformationVectorPool
-                = createDummyVectorPool("varianceTransformationMatrix");
+        meanTransformationMatrixPool = createDummyMatrixPool("meanTransformationMatrix");
+        meanTransformationVectorPool = createDummyVectorPool("meanTransformationMatrix");
+        varianceTransformationMatrixPool = createDummyMatrixPool("varianceTransformationMatrix");
+        varianceTransformationVectorPool = createDummyVectorPool("varianceTransformationMatrix");
 
         // do the actual acoustic model loading
         createModels(modelName, props);
@@ -128,8 +114,7 @@ class ModelInitializerLoader implements Loader {
      * @param modelName the name of the acoustic model; if null we just load from the default location
      * @param props     the SphinxProperties object to use
      */
-    private void createModels(String modelName, SphinxProperties props)
-            throws FileNotFoundException, IOException, ZipException {
+    private void createModels(String modelName, SphinxProperties props) throws IOException {
 
         String prefix, phone, dataDir, propsFile;
 
@@ -140,7 +125,7 @@ class ModelInitializerLoader implements Loader {
         }
         // System.out.println("Using prefix: " + prefix);
 
-        location = props.getString
+        String location = props.getString
                 (prefix + "location", TiedStateAcousticModel.PROP_LOCATION_DEFAULT);
         phone = props.getString
                 (prefix + "phone_list",
@@ -160,7 +145,7 @@ class ModelInitializerLoader implements Loader {
         // load the acoustic properties file (am.props), 
         // create a different URL depending on the data format
 
-        String url = null;
+        String url;
         String format = StreamFactory.resolve(location);
 
         if (format.equals(StreamFactory.ZIP_FILE)) {
@@ -179,7 +164,7 @@ class ModelInitializerLoader implements Loader {
         // load the HMM model file
         boolean useCDUnits = props.getBoolean
                 (Sphinx3Loader.PROP_USE_CD_UNITS, false);
-        assert useCDUnits == false;
+        assert !useCDUnits;
         try {
             loadPhoneList(useCDUnits,
                     StreamFactory.getInputStream(location, phone),
@@ -218,7 +203,7 @@ class ModelInitializerLoader implements Loader {
      *
      * @return the map of context independent units.
      */
-    public Map getContextIndependentUnits() {
+    public Map<String, Unit> getContextIndependentUnits() {
         return contextIndependentUnits;
     }
 
@@ -232,11 +217,10 @@ class ModelInitializerLoader implements Loader {
      * @param varianceFloor the lowest allowed variance
      * @return the senone pool
      */
-    private void addModelToSenonePool(Pool pool, int[] stateID,
-                                      float distFloor, float varianceFloor) {
+    private void addModelToSenonePool(Pool pool, int[] stateID, float distFloor, float varianceFloor) {
         assert pool != null;
 
-        int numMixtureWeights = mixtureWeightsPool.size();
+//        int numMixtureWeights = mixtureWeightsPool.size();
 
         /*
       int numMeans = meansPool.size();
@@ -294,9 +278,8 @@ class ModelInitializerLoader implements Loader {
      * @throws FileNotFoundException if the file cannot be found
      * @throws IOException           if an error occurs while loading the data
      */
-    private SphinxProperties loadAcousticPropertiesFile(String context,
-                                                        String url)
-            throws FileNotFoundException, IOException {
+    private SphinxProperties loadAcousticPropertiesFile(String context, String url)
+            throws IOException {
         SphinxProperties.initContext(context, new URL(url));
         return (SphinxProperties.getSphinxProperties(context));
     }
@@ -314,7 +297,6 @@ class ModelInitializerLoader implements Loader {
     private void addModelToDensityPool(Pool pool, int[] stateID,
                                        int numStreams, int numGaussiansPerState)
             throws IOException {
-        int token_type;
         int numStates;
         int numInPool;
 
@@ -390,20 +372,6 @@ class ModelInitializerLoader implements Loader {
 
 
     /**
-     * Dump the data
-     *
-     * @param name the name of the data
-     * @param data the data itself
-     */
-    private void dumpData(String name, float[] data) {
-        System.out.println(" ----- " + name + " -----------");
-        for (int i = 0; i < data.length; i++) {
-            System.out.println(name + " " + i + ": " + data[i]);
-        }
-    }
-
-
-    /**
      * Convert to log math
      *
      * @param data the data to normalize
@@ -427,14 +395,9 @@ class ModelInitializerLoader implements Loader {
      * @throws FileNotFoundException if a file cannot be found
      * @throws IOException           if an error occurs while loading the data
      */
-    private void loadPhoneList(boolean useCDUnits,
-                               InputStream inputStream,
-                               String path, SphinxProperties props)
-            throws FileNotFoundException, IOException {
-        int token_type;
+    private void loadPhoneList(boolean useCDUnits, InputStream inputStream, String path, SphinxProperties props)
+            throws IOException {
         int numState = 0;
-        int numStatePerHMM;
-        int numContextIndependentTiedState;
         // TODO: this should be flexible, but we're hardwiring for now
         int numStreams = 1;
         // Since we're initializing, we start simple.
@@ -457,14 +420,11 @@ class ModelInitializerLoader implements Loader {
         float distFloor = props.getFloat(Sphinx3Loader.PROP_MC_FLOOR,
                 Sphinx3Loader.PROP_MC_FLOOR_DEFAULT);
         float mixtureWeightFloor =
-                props.getFloat(Sphinx3Loader.PROP_MW_FLOOR,
-                        Sphinx3Loader.PROP_MW_FLOOR_DEFAULT);
+                props.getFloat(Sphinx3Loader.PROP_MW_FLOOR, Sphinx3Loader.PROP_MW_FLOOR_DEFAULT);
         float transitionProbabilityFloor = 0;
 //                props.getFloat(Sphinx3Loader.PROP_TP_FLOOR,
 //                        Sphinx3Loader.PROP_TP_FLOOR_DEFAULT);
-        float varianceFloor =
-                props.getFloat(Sphinx3Loader.PROP_VARIANCE_FLOOR,
-                        Sphinx3Loader.PROP_VARIANCE_FLOOR_DEFAULT);
+        float varianceFloor = props.getFloat(Sphinx3Loader.PROP_VARIANCE_FLOOR, Sphinx3Loader.PROP_VARIANCE_FLOOR_DEFAULT);
 
 
         logger.info("Loading phone list file from: ");
@@ -839,15 +799,17 @@ class ModelInitializerLoader implements Loader {
         return matrixPool;
     }
 
+
     /*
-     * Gets the transform matrix
-     *
-     * @return null since this feature is not supported
-     */
-     public float[][] getTransformMatrix() {
-         return null;
-     }
-    
+    * Gets the transform matrix
+    *
+    * @return null since this feature is not supported
+    */
+    public float[][] getTransformMatrix() {
+        return null;
+    }
+
+
     /*
     * Gets the senone pool for this loader
     *

@@ -28,7 +28,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.zip.ZipException;
 
 
 /**
@@ -48,21 +47,6 @@ class Sphinx4Loader extends Sphinx3Loader {
             TrainerAcousticModel.PROP_PREFIX + "maxStatePerModel";
 
     public final static int MAX_MODEL_SIZE_DEFAULT = 10;
-
-
-    /**
-     * Loads the sphinx4 ascii model.
-     *
-     * @param modelName the name of the model as specified in the props file.
-     * @param props     the SphinxProperties object
-     * @param binary    if <code>true</code> the file is in binary format
-     */
-    public Sphinx4Loader(String modelName, SphinxProperties props,
-                         boolean binary) throws
-            FileNotFoundException, IOException, ZipException {
-//	super(modelName, props, binary);
-
-    }
 
 
     /**

@@ -106,8 +106,8 @@ public class ModelBuilder implements GUIFileActionListener {
     public boolean checkDuplicateConfigurationSet(String name) {
         //iterate through all classes in the model, and check if the name exist
         // names are case-sensitive
-        for (Iterator it = _classes.values().iterator(); it.hasNext();) {
-            ConfigurableComponent cc = (ConfigurableComponent) it.next();
+        for (Object o : _classes.values()) {
+            ConfigurableComponent cc = (ConfigurableComponent) o;
             if (cc.containsConfigurationSet(name)) {
                 return true;
             }
@@ -121,9 +121,9 @@ public class ModelBuilder implements GUIFileActionListener {
      * the Model
      */
     public void clearAll() {
-        for (Iterator it = _classes.values().iterator(); it.hasNext();) {
+        for (Object o : _classes.values()) {
             // delete the configuration property values of each component in the model
-            ConfigurableComponent cc = (ConfigurableComponent) it.next();
+            ConfigurableComponent cc = (ConfigurableComponent) o;
             cc.deleteAllConfigurationProp();
         }
     }
@@ -148,8 +148,8 @@ public class ModelBuilder implements GUIFileActionListener {
      */
     public void saveData(ConfigProperties cp) {
         // copy all configuration properties from each class        
-        for (Iterator it = _classes.values().iterator(); it.hasNext();) {
-            ConfigurableComponent cc = (ConfigurableComponent) it.next();
+        for (Object o : _classes.values()) {
+            ConfigurableComponent cc = (ConfigurableComponent) o;
             cp.addRPDProperties(cc.getConfigurationPropMap());
         }
     }
@@ -173,7 +173,7 @@ public class ModelBuilder implements GUIFileActionListener {
     public String getSourceCode(String classname) {
         String text = "";
         if (_source_path == null) {
-            return new String("== Source code not available ==");
+            return "== Source code not available ==";
         }
         try {
             String completename = classname.trim().replace('.', '/');
@@ -211,19 +211,19 @@ public class ModelBuilder implements GUIFileActionListener {
     public Map getclasslist(String classtype) {
         try {
             Class searchclass = Class.forName(classtype);
-            Map myreturn = new HashMap();
+            Map<String, String> myreturn = new HashMap<String, String>();
             if (_classes != null && classtype != null &&
                     !classtype.trim().equalsIgnoreCase("")) {
-                for (Iterator it = _classes.values().iterator(); it.hasNext();) {
-                    ConfigurableComponent cc = (ConfigurableComponent) it.next();
+                for (Object o : _classes.values()) {
+                    ConfigurableComponent cc = (ConfigurableComponent) o;
                     Class c = cc.getComponentClass();
                     Map configset = cc.getConfigurationPropMap();
 
                     if (searchclass.isAssignableFrom(c) && (configset != null) &&
                             !configset.isEmpty()) {
                         // System.out.println("&&&" + searchclass.getName() + "is a superclass of" + c.getName());
-                        for (Iterator it2 = configset.keySet().iterator(); it2.hasNext();) {
-                            String configname = (String) it2.next();
+                        for (Object o1 : configset.keySet()) {
+                            String configname = (String) o1;
                             myreturn.put(configname, c.getName());
                             // System.out.println(" $$ " + c.getName() + " " + configname);
 
@@ -274,11 +274,11 @@ public class ModelBuilder implements GUIFileActionListener {
         Map rpdMap = cp.getOtherProp(); // get map that has classname as key
 
         // iterate through the property map and retrieve the values to initialize the model
-        for (Iterator it = rpdMap.entrySet().iterator(); it.hasNext();) {
-            Map.Entry entry = (Map.Entry) it.next();
+        for (Object o : rpdMap.entrySet()) {
+            Map.Entry entry = (Map.Entry) o;
             String classname = (String) entry.getKey();
-            for (Iterator it2 = ((Map) entry.getValue()).entrySet().iterator(); it2.hasNext();) {
-                Map.Entry nextentry = (Map.Entry) it2.next();
+            for (Object o1 : ((Map) entry.getValue()).entrySet()) {
+                Map.Entry nextentry = (Map.Entry) o1;
                 RawPropertyData rpd = (RawPropertyData) nextentry.getValue();
                 if (_classes.containsKey(classname)) {
                     // copy the value from rpd
@@ -301,8 +301,8 @@ public class ModelBuilder implements GUIFileActionListener {
      */
     private void addIncompleteProps(Map propertyMap, ConfigurableComponent checker) {
         Map completePropMap = checker.getPropertyMap();
-        for (Iterator it = completePropMap.entrySet().iterator(); it.hasNext();) {
-            Map.Entry propentry = (Map.Entry) it.next();
+        for (Object o : completePropMap.entrySet()) {
+            Map.Entry propentry = (Map.Entry) o;
             String propname = (String) propentry.getKey();
 
             // if it doesn't exist yet
@@ -326,8 +326,8 @@ public class ModelBuilder implements GUIFileActionListener {
      * doesn't exist in sphinx model, delete it this method should always be private
      */
     private void checkProperty(Map propertyMap, ConfigurableComponent checker) {
-        for (Iterator it2 = propertyMap.entrySet().iterator(); it2.hasNext();) {
-            Map.Entry propentry = (Map.Entry) it2.next();
+        for (Object o : propertyMap.entrySet()) {
+            Map.Entry propentry = (Map.Entry) o;
             String propname = (String) propentry.getKey();
 
             if (!checker.containsProperty(propname)) {
@@ -354,17 +354,17 @@ public class ModelBuilder implements GUIFileActionListener {
      */
     public void printModel() {
         //group members
-        for (Iterator it = _groups.entrySet().iterator(); it.hasNext();) {
-            Map.Entry entry = (Map.Entry) it.next();
+        for (Object o : _groups.entrySet()) {
+            Map.Entry entry = (Map.Entry) o;
             String groupname = (String) entry.getKey();
             Set groupmembers = (Set) entry.getValue();
             System.out.println("Group : " + groupname);
-            for (Iterator it2 = groupmembers.iterator(); it2.hasNext();) {
-                System.out.println("-" + ((ConfigurableComponent) it2.next()).getName());
+            for (Object groupmember : groupmembers) {
+                System.out.println("-" + ((ConfigurableComponent) groupmember).getName());
             }
         }
-        for (Iterator it3 = _classes.values().iterator(); it3.hasNext();) {
-            ConfigurableComponent cc = (ConfigurableComponent) it3.next();
+        for (Object o : _classes.values()) {
+            ConfigurableComponent cc = (ConfigurableComponent) o;
             System.out.print(cc.toString());
 
         }
@@ -465,10 +465,10 @@ public class ModelBuilder implements GUIFileActionListener {
             ConfigurableComponent tempcc;
 
             // get the list of classes from each group
-            for (Iterator it = myFolders.iterator(); it.hasNext();) {
+            for (Object myFolder : myFolders) {
                 thisgroup = new HashSet();
 
-                tempName = (String) it.next();
+                tempName = (String) myFolder;
                 //   System.out.println("Folder "+tempName);
 
                 myClasses = new HashSet(); // classes from this section
@@ -476,9 +476,9 @@ public class ModelBuilder implements GUIFileActionListener {
                         startPackage + '.' + tempName, myClasses);
 
                 // get the classes for this section and build the model
-                for (Iterator it2 = myClasses.iterator(); it2.hasNext();) {
+                for (Object myClass : myClasses) {
                     try {
-                        tempcc = createcomponent((Class) it2.next(),
+                        tempcc = createcomponent((Class) myClass,
                                 startPackage + '.' + tempName);
                         _classes.put(tempcc.getName(), tempcc);
                         thisgroup.add(tempcc);
@@ -518,7 +518,7 @@ public class ModelBuilder implements GUIFileActionListener {
     private ConfigurableComponent createcomponent(Class c, String group)
             throws ConfigurableUtilException, IllegalAccessException {
         ConfigurableComponent cc =
-                new ConfigurableComponent(new String(group), c, c.getName(), new String(""));
+                new ConfigurableComponent(group, c, c.getName(), "");
         System.out.println("***** create ConfigurableComponent " +
                 c.getName() + " for " + group);
 
@@ -532,7 +532,7 @@ public class ModelBuilder implements GUIFileActionListener {
             if (Modifier.isPublic(m) && Modifier.isStatic(m) && Modifier.isFinal(m)) {
                 if (fieldname.startsWith("PROP_") && !fieldname.trim().endsWith("_DEFAULT")) {
                     //name of property
-                    String propname = new String((String) publicFields[i].get(null));
+//                    String propname = new String((String) publicFields[i].get(null));
                     //create the configurable property
                     //System.out.println("***** create ConfigurableProperty " + 
                     //       (String)publicFields[i].get(null));
@@ -554,9 +554,9 @@ public class ModelBuilder implements GUIFileActionListener {
      * @return ConfigurableProperty
      */
     private ConfigurableProperty createProperty(Class c, Field field) throws ConfigurableUtilException {
-        ConfigurableProperty cp = null;
+        ConfigurableProperty cp;
         try {
-            cp = CreatePropertyHelper.createProperty(field, c, _source_path, _classes_path);
+            cp = CreatePropertyHelper.createProperty(field, c);
             //    cp = CreatePropertyHelper.createProperty(field,c);
         } catch (IllegalAccessException e) {
             throw new ConfigurableUtilException
@@ -602,8 +602,6 @@ public class ModelBuilder implements GUIFileActionListener {
 
 
         private static void processAnnotation() throws IllegalAccessException {
-
-            Annotation myannot;
 
             Annotation[] annotations = _field.getAnnotations();
 
@@ -662,8 +660,7 @@ public class ModelBuilder implements GUIFileActionListener {
         } // end processAnnotation
 
 
-        private static ConfigurableProperty createProperty
-                (Field f, Class c, String sourcepath, String classpath) throws IllegalAccessException {
+        private static ConfigurableProperty createProperty(Field f, Class c) throws IllegalAccessException {
             _class = c;
             _field = f;
             _fieldname = f.getName();
@@ -671,20 +668,20 @@ public class ModelBuilder implements GUIFileActionListener {
             _defval = null;
             _classtype = null;
 
-            ConfigurableProperty cp = null;
-            String propname = new String((String) _field.get(null)); //name of configurable property
+            ConfigurableProperty cp;
+            String propname = (String) _field.get(null); //name of configurable property
 
             //javadoc comment of the property
             String field_comment = JavadocExtractor.getJavadocComment(_class.getName(),
                     _classes_path, _source_path, _fieldname);
             if (field_comment == null) // no comment
-                field_comment = new String("");
+                field_comment = "";
             System.out.println(" Comment *** : " + field_comment);
 
             processAnnotation();
 
             if (_defval == null)
-                _defval = new String("");
+                _defval = "";
 
             if (_type != null &&
                     (_type == PropertyType.COMPONENT || _type == PropertyType.COMPONENT_LIST)) {

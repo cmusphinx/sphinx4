@@ -28,7 +28,7 @@ public class JSGFParser implements JSGFParserConstants {
             System.out.println("JSGF Parser Version " + version
                     + " :  Reading from file " + args[0] + " . . .");
             try {
-                URL codeBase = null;
+                URL codeBase;
                 File f = new File(".");
                 String path = f.getAbsolutePath() + "/" + args[0];
                 try {
@@ -77,7 +77,7 @@ public class JSGFParser implements JSGFParserConstants {
     /** newGrammarFromJSGF - Once JavaCC supports Readers we will change this */
     public static RuleGrammar newGrammarFromJSGF(InputStream i, Recognizer R)
             throws GrammarException {
-        RuleGrammar G = null;
+        RuleGrammar G;
         if (parser == null) {
             parser = new JSGFParser(i);
         } else {
@@ -98,8 +98,7 @@ public class JSGFParser implements JSGFParserConstants {
                     e.getMessage());
             GrammarSyntaxDetail gsda[] = new GrammarSyntaxDetail[1];
             gsda[0] = gsd;
-            GrammarException ge = new GrammarException("Grammar Error", gsda);
-            throw ge;
+            throw new GrammarException("Grammar Error", gsda);
         }
     }
 
@@ -107,7 +106,7 @@ public class JSGFParser implements JSGFParserConstants {
     /** newGrammarFromJSGF - Once JavaCC supports Readers we will change this */
     public static RuleGrammar newGrammarFromJSGF(Reader i, Recognizer R)
             throws GrammarException {
-        RuleGrammar G = null;
+        RuleGrammar G;
         if (parser == null) {
             parser = new JSGFParser(i);
         } else {
@@ -128,8 +127,7 @@ public class JSGFParser implements JSGFParserConstants {
                     e.getMessage());
             GrammarSyntaxDetail gsda[] = new GrammarSyntaxDetail[1];
             gsda[0] = gsd;
-            GrammarException ge = new GrammarException("Grammar Error", gsda);
-            throw ge;
+            throw new GrammarException("Grammar Error", gsda);
         }
     }
 
@@ -290,7 +288,7 @@ public class JSGFParser implements JSGFParserConstants {
     /** Parse an apparent rulename reference. */
     public static RuleName parseRuleName(String text)
             throws GrammarException {
-        RuleName r = null;
+        RuleName r;
         try {
             ByteArrayInputStream stream = new ByteArrayInputStream(text.getBytes());
             if (parser == null) parser = new JSGFParser(stream);
@@ -307,7 +305,7 @@ public class JSGFParser implements JSGFParserConstants {
     /** Parse and apparent import declaration */
     public static RuleName parseImport(String text)
             throws GrammarException {
-        RuleName r = null;
+        RuleName r;
         try {
             ByteArrayInputStream stream = new ByteArrayInputStream(text.getBytes());
             if (parser == null) parser = new JSGFParser(stream);
@@ -345,21 +343,19 @@ public class JSGFParser implements JSGFParserConstants {
 
 
     final public RuleGrammar GrammarUnit(Recognizer R) throws ParseException {
-        RuleGrammar G = null;
+        RuleGrammar G;
         switch ((jj_ntk == -1) ? jj_ntk() : jj_ntk) {
             case IDENTIFIER:
                 IdentHeader();
                 break;
             default:
                 jj_la1[0] = jj_gen;
-                ;
         }
         G = GrammarDeclaration(R);
         label_1:
         while (true) {
             switch ((jj_ntk == -1) ? jj_ntk() : jj_ntk) {
                 case IMPORT:
-                    ;
                     break;
                 default:
                     jj_la1[1] = jj_gen;
@@ -372,7 +368,6 @@ public class JSGFParser implements JSGFParserConstants {
             switch ((jj_ntk == -1) ? jj_ntk() : jj_ntk) {
                 case PUBLIC:
                 case 28:
-                    ;
                     break;
                 default:
                     jj_la1[2] = jj_gen;
@@ -391,7 +386,7 @@ public class JSGFParser implements JSGFParserConstants {
     final public RuleGrammar GrammarDeclaration(Recognizer R) throws ParseException {
         String s;
         RuleGrammar G = null;
-        Token t = null;
+        Token t;
         t = jj_consume_token(GRAMMAR);
         s = Name();
         jj_consume_token(26);
@@ -400,7 +395,6 @@ public class JSGFParser implements JSGFParserConstants {
         } catch (IllegalArgumentException ge) {
             System.out.println("ERROR " + ge);
         }
-        ;
 
         if (G != null && G instanceof BaseRuleGrammar && t != null &&
                 t.specialToken != null) {
@@ -429,12 +423,10 @@ public class JSGFParser implements JSGFParserConstants {
                         break;
                     default:
                         jj_la1[3] = jj_gen;
-                        ;
                 }
                 break;
             default:
                 jj_la1[4] = jj_gen;
-                ;
         }
         jj_consume_token(26);
     }
@@ -443,7 +435,7 @@ public class JSGFParser implements JSGFParserConstants {
     final public void ImportDeclaration(RuleGrammar G) throws ParseException {
         boolean all = false;
         String name;
-        Token t = null;
+        Token t;
         t = jj_consume_token(IMPORT);
         jj_consume_token(28);
         name = Name();
@@ -455,7 +447,6 @@ public class JSGFParser implements JSGFParserConstants {
                 break;
             default:
                 jj_la1[5] = jj_gen;
-                ;
         }
         jj_consume_token(31);
         jj_consume_token(26);
@@ -504,7 +495,6 @@ public class JSGFParser implements JSGFParserConstants {
         label_3:
         while (true) {
             if (jj_2_1(2)) {
-                ;
             } else {
                 break label_3;
             }
@@ -525,7 +515,7 @@ public class JSGFParser implements JSGFParserConstants {
         String s;
         Rule r;
         Token t = null;
-        Token t1 = null;
+        Token t1;
         switch ((jj_ntk == -1) ? jj_ntk() : jj_ntk) {
             case PUBLIC:
                 t = jj_consume_token(PUBLIC);
@@ -533,7 +523,6 @@ public class JSGFParser implements JSGFParserConstants {
                 break;
             default:
                 jj_la1[7] = jj_gen;
-                ;
         }
         t1 = jj_consume_token(28);
         s = ruleDef();
@@ -569,7 +558,7 @@ public class JSGFParser implements JSGFParserConstants {
 
 
     final public RuleAlternatives alternatives() throws ParseException {
-        Vector rv = new Vector();
+        Vector<Rule> rv = new Vector<Rule>();
         Rule r;
         float w;
         float wa[] = new float[25];
@@ -590,7 +579,6 @@ public class JSGFParser implements JSGFParserConstants {
                 while (true) {
                     switch ((jj_ntk == -1) ? jj_ntk() : jj_ntk) {
                         case 33:
-                            ;
                             break;
                         default:
                             jj_la1[8] = jj_gen;
@@ -621,7 +609,6 @@ public class JSGFParser implements JSGFParserConstants {
                     wa[cnt++] = w;
                     switch ((jj_ntk == -1) ? jj_ntk() : jj_ntk) {
                         case 33:
-                            ;
                             break;
                         default:
                             jj_la1[9] = jj_gen;
@@ -685,7 +672,7 @@ public class JSGFParser implements JSGFParserConstants {
 
     final public RuleSequence sequence() throws ParseException {
         Rule r;
-        Vector v = new Vector();
+        Vector<Rule> v = new Vector<Rule>();
         label_6:
         while (true) {
             r = item();
@@ -700,7 +687,6 @@ public class JSGFParser implements JSGFParserConstants {
                 case 28:
                 case 36:
                 case 38:
-                    ;
                     break;
                 default:
                     jj_la1[12] = jj_gen;
@@ -718,7 +704,6 @@ public class JSGFParser implements JSGFParserConstants {
 
     final public float weight() throws ParseException {
         Token t;
-        float f;
         jj_consume_token(34);
         switch ((jj_ntk == -1) ? jj_ntk() : jj_ntk) {
             case FLOATING_POINT_LITERAL:
@@ -789,7 +774,6 @@ public class JSGFParser implements JSGFParserConstants {
                         break;
                     default:
                         jj_la1[16] = jj_gen;
-                        ;
                 }
                 switch ((jj_ntk == -1) ? jj_ntk() : jj_ntk) {
                     case TAG:
@@ -797,7 +781,6 @@ public class JSGFParser implements JSGFParserConstants {
                         break;
                     default:
                         jj_la1[17] = jj_gen;
-                        ;
                 }
                 break;
             case 36:
@@ -824,7 +807,6 @@ public class JSGFParser implements JSGFParserConstants {
                         break;
                     default:
                         jj_la1[19] = jj_gen;
-                        ;
                 }
                 switch ((jj_ntk == -1) ? jj_ntk() : jj_ntk) {
                     case TAG:
@@ -832,7 +814,6 @@ public class JSGFParser implements JSGFParserConstants {
                         break;
                     default:
                         jj_la1[20] = jj_gen;
-                        ;
                 }
                 break;
             case 38:
@@ -846,7 +827,6 @@ public class JSGFParser implements JSGFParserConstants {
                         break;
                     default:
                         jj_la1[21] = jj_gen;
-                        ;
                 }
                 break;
             default:
@@ -881,7 +861,6 @@ public class JSGFParser implements JSGFParserConstants {
             v.addElement(t.image);
             switch ((jj_ntk == -1) ? jj_ntk() : jj_ntk) {
                 case TAG:
-                    ;
                     break;
                 default:
                     jj_la1[23] = jj_gen;
@@ -960,7 +939,6 @@ public class JSGFParser implements JSGFParserConstants {
                 break;
             default:
                 jj_la1[25] = jj_gen;
-                ;
         }
         jj_consume_token(31);
         if (all) s = s + ".*";
@@ -972,7 +950,7 @@ public class JSGFParser implements JSGFParserConstants {
     }
 
 
-    final private boolean jj_2_1(int xla) {
+    private boolean jj_2_1(int xla) {
         jj_la = xla;
         jj_lastpos = jj_scanpos = token;
         try {
@@ -987,7 +965,7 @@ public class JSGFParser implements JSGFParserConstants {
     }
 
 
-    final private boolean jj_3_1() {
+    private boolean jj_3_1() {
         if (jj_scan_token(29)) return true;
         if (jj_scan_token(IDENTIFIER)) return true;
         return false;
@@ -1001,7 +979,6 @@ public class JSGFParser implements JSGFParserConstants {
     private Token jj_scanpos, jj_lastpos;
     private int jj_la;
     public boolean lookingAhead = false;
-    private boolean jj_semLA;
     private int jj_gen;
     final private int[] jj_la1 = new int[26];
     static private int[] jj_la1_0;
@@ -1093,7 +1070,7 @@ public class JSGFParser implements JSGFParserConstants {
     }
 
 
-    final private Token jj_consume_token(int kind) throws ParseException {
+    private Token jj_consume_token(int kind) throws ParseException {
         Token oldToken;
         if ((oldToken = token).next != null) token = token.next;
         else token = token.next = token_source.getNextToken();
@@ -1125,7 +1102,7 @@ public class JSGFParser implements JSGFParserConstants {
     final private LookaheadSuccess jj_ls = new LookaheadSuccess();
 
 
-    final private boolean jj_scan_token(int kind) {
+    private boolean jj_scan_token(int kind) {
         if (jj_scanpos == jj_lastpos) {
             jj_la--;
             if (jj_scanpos.next == null) {
@@ -1170,7 +1147,7 @@ public class JSGFParser implements JSGFParserConstants {
     }
 
 
-    final private int jj_ntk() {
+   private int jj_ntk() {
         if ((jj_nt = token.next) == null)
             return (jj_ntk = (token.next = token_source.getNextToken()).kind);
         else
@@ -1178,7 +1155,7 @@ public class JSGFParser implements JSGFParserConstants {
     }
 
 
-    private java.util.Vector jj_expentries = new java.util.Vector();
+    private Vector<int[]> jj_expentries = new Vector<int[]>();
     private int[] jj_expentry;
     private int jj_kind = -1;
     private int[] jj_lasttokens = new int[100];
@@ -1248,7 +1225,7 @@ public class JSGFParser implements JSGFParserConstants {
         jj_add_error_token(0, 0);
         int[][] exptokseq = new int[jj_expentries.size()][];
         for (int i = 0; i < jj_expentries.size(); i++) {
-            exptokseq[i] = (int[]) jj_expentries.elementAt(i);
+            exptokseq[i] = jj_expentries.elementAt(i);
         }
         return new ParseException(token, exptokseq, tokenImage);
     }
@@ -1262,7 +1239,7 @@ public class JSGFParser implements JSGFParserConstants {
     }
 
 
-    final private void jj_rescan_token() {
+    private void jj_rescan_token() {
         jj_rescan = true;
         for (int i = 0; i < 1; i++) {
             JJCalls p = jj_2_rtns[i];
@@ -1283,7 +1260,7 @@ public class JSGFParser implements JSGFParserConstants {
     }
 
 
-    final private void jj_save(int index, int xla) {
+    private void jj_save(int index, int xla) {
         JJCalls p = jj_2_rtns[index];
         while (p.gen > jj_gen) {
             if (p.next == null) {

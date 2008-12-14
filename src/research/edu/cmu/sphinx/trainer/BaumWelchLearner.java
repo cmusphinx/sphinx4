@@ -65,7 +65,6 @@ public class BaumWelchLearner implements Learner {
 
     private FrontEnd frontEnd;
     private DataProcessor dataSource;
-    private String context;
     private String inputDataType;
     private SphinxProperties props;
     private LogMath logMath;
@@ -83,10 +82,8 @@ public class BaumWelchLearner implements Learner {
 
 
     /** Constructor for this learner. */
-    public BaumWelchLearner(SphinxProperties props)
-            throws IOException {
+    public BaumWelchLearner(SphinxProperties props) throws IOException {
         this.props = props;
-        context = props.getContext();
         logMath = ConfigurationManager.getInstance(LogMath.class);
         initialize();
     }

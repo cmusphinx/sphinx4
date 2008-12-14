@@ -54,13 +54,13 @@ public class DataDumper extends BaseDataProcessor {
     */
     public void newProperties(PropertySheet ps) throws PropertyException {
         super.newProperties(ps);
+        
         logger = ps.getLogger();
+
         enable = ps.getBoolean(PROP_ENABLE);
-        String format = ps.getString(PROP_OUTPUT_FORMAT
-        );
+        String format = ps.getString(PROP_OUTPUT_FORMAT);
         formatter = new DecimalFormat(format);
-        outputSignals = ps.getBoolean(PROP_OUTPUT_SIGNALS
-        );
+        outputSignals = ps.getBoolean(PROP_OUTPUT_SIGNALS);
     }
 
 
@@ -91,6 +91,8 @@ public class DataDumper extends BaseDataProcessor {
      * @param input the data to dump
      */
     private void dumpData(Data input) {
+        logger.finer("dumping data...");
+        
         if (input instanceof Signal) {
             if (outputSignals) {
                 System.out.println("Signal: " + input);

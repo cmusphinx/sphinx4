@@ -18,10 +18,9 @@ import edu.cmu.sphinx.linguist.acoustic.AcousticModel;
 public class UtteranceHMMGraph extends Graph implements UtteranceGraph {
 
     /** Constructor for class UtteranceHMMGraph. */
-    public UtteranceHMMGraph(String context, Utterance utterance,
-                             AcousticModel acousticModel) {
+    public UtteranceHMMGraph(String context, Utterance utterance, AcousticModel acousticModel) {
         super();
-        Transcript currentTranscript;
+
         Graph transcriptGraph;
         for (utterance.startTranscriptIterator();
              utterance.hasMoreTranscripts();) {

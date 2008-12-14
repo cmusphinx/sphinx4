@@ -11,7 +11,7 @@ public class JSGFParserTokenManager implements JSGFParserConstants {
     }
 
 
-    private final int jjStopStringLiteralDfa_0(int pos, long active0) {
+    private int jjStopStringLiteralDfa_0(int pos, long active0) {
         switch (pos) {
             case 0:
                 if ((active0 & 0x400000140L) != 0L)
@@ -82,19 +82,19 @@ public class JSGFParserTokenManager implements JSGFParserConstants {
     }
 
 
-    private final int jjStartNfa_0(int pos, long active0) {
+    private int jjStartNfa_0(int pos, long active0) {
         return jjMoveNfa_0(jjStopStringLiteralDfa_0(pos, active0), pos + 1);
     }
 
 
-    private final int jjStopAtPos(int pos, int kind) {
+    private int jjStopAtPos(int pos, int kind) {
         jjmatchedKind = kind;
         jjmatchedPos = pos;
         return pos + 1;
     }
 
 
-    private final int jjStartNfaWithStates_0(int pos, int kind, int state) {
+    private int jjStartNfaWithStates_0(int pos, int kind, int state) {
         jjmatchedKind = kind;
         jjmatchedPos = pos;
         try {
@@ -107,7 +107,7 @@ public class JSGFParserTokenManager implements JSGFParserConstants {
     }
 
 
-    private final int jjMoveStringLiteralDfa0_0() {
+    private int jjMoveStringLiteralDfa0_0() {
         switch (curChar) {
             case 40:
                 return jjStopAtPos(0, 36);
@@ -150,7 +150,7 @@ public class JSGFParserTokenManager implements JSGFParserConstants {
     }
 
 
-    private final int jjMoveStringLiteralDfa1_0(long active0) {
+    private int jjMoveStringLiteralDfa1_0(long active0) {
         try {
             curChar = input_stream.readChar();
         }
@@ -182,7 +182,7 @@ public class JSGFParserTokenManager implements JSGFParserConstants {
     }
 
 
-    private final int jjMoveStringLiteralDfa2_0(long old0, long active0) {
+    private int jjMoveStringLiteralDfa2_0(long old0, long active0) {
         if (((active0 &= old0)) == 0L)
             return jjStartNfa_0(0, old0);
         try {
@@ -208,7 +208,7 @@ public class JSGFParserTokenManager implements JSGFParserConstants {
     }
 
 
-    private final int jjMoveStringLiteralDfa3_0(long old0, long active0) {
+    private int jjMoveStringLiteralDfa3_0(long old0, long active0) {
         if (((active0 &= old0)) == 0L)
             return jjStartNfa_0(1, old0);
         try {
@@ -236,7 +236,7 @@ public class JSGFParserTokenManager implements JSGFParserConstants {
     }
 
 
-    private final int jjMoveStringLiteralDfa4_0(long old0, long active0) {
+    private int jjMoveStringLiteralDfa4_0(long old0, long active0) {
         if (((active0 &= old0)) == 0L)
             return jjStartNfa_0(2, old0);
         try {
@@ -260,7 +260,7 @@ public class JSGFParserTokenManager implements JSGFParserConstants {
     }
 
 
-    private final int jjMoveStringLiteralDfa5_0(long old0, long active0) {
+    private int jjMoveStringLiteralDfa5_0(long old0, long active0) {
         if (((active0 &= old0)) == 0L)
             return jjStartNfa_0(3, old0);
         try {
@@ -288,7 +288,7 @@ public class JSGFParserTokenManager implements JSGFParserConstants {
     }
 
 
-    private final int jjMoveStringLiteralDfa6_0(long old0, long active0) {
+    private int jjMoveStringLiteralDfa6_0(long old0, long active0) {
         if (((active0 &= old0)) == 0L)
             return jjStartNfa_0(4, old0);
         try {
@@ -310,7 +310,7 @@ public class JSGFParserTokenManager implements JSGFParserConstants {
     }
 
 
-    private final void jjCheckNAdd(int state) {
+    private void jjCheckNAdd(int state) {
         if (jjrounds[state] != jjround) {
             jjstateSet[jjnewStateCnt++] = state;
             jjrounds[state] = jjround;
@@ -318,27 +318,27 @@ public class JSGFParserTokenManager implements JSGFParserConstants {
     }
 
 
-    private final void jjAddStates(int start, int end) {
+    private void jjAddStates(int start, int end) {
         do {
             jjstateSet[jjnewStateCnt++] = jjnextStates[start];
         } while (start++ != end);
     }
 
 
-    private final void jjCheckNAddTwoStates(int state1, int state2) {
+    private void jjCheckNAddTwoStates(int state1, int state2) {
         jjCheckNAdd(state1);
         jjCheckNAdd(state2);
     }
 
 
-    private final void jjCheckNAddStates(int start, int end) {
+    private void jjCheckNAddStates(int start, int end) {
         do {
             jjCheckNAdd(jjnextStates[start]);
         } while (start++ != end);
     }
 
 
-    private final void jjCheckNAddStates(int start) {
+    private void jjCheckNAddStates(int start) {
         jjCheckNAdd(jjnextStates[start]);
         jjCheckNAdd(jjnextStates[start + 1]);
     }
@@ -370,19 +370,17 @@ public class JSGFParserTokenManager implements JSGFParserConstants {
     };
 
 
-    private final int jjMoveNfa_0(int startState, int curPos) {
-        int[] nextStates;
+    private int jjMoveNfa_0(int startState, int curPos) {
         int startsAt = 0;
         jjnewStateCnt = 54;
         int i = 1;
         jjstateSet[0] = startState;
-        int j, kind = 0x7fffffff;
+        int kind = 0x7fffffff;
         for (; ;) {
             if (++jjround == 0x7fffffff)
                 ReInitRounds();
             if (curChar < 64) {
                 long l = 1L << curChar;
-                MatchLoop:
                 do {
                     switch (jjstateSet[--i]) {
                         case 3:
@@ -607,7 +605,6 @@ public class JSGFParserTokenManager implements JSGFParserConstants {
                 } while (i != startsAt);
             } else if (curChar < 128) {
                 long l = 1L << (curChar & 077);
-                MatchLoop:
                 do {
                     switch (jjstateSet[--i]) {
                         case 3:
@@ -698,12 +695,11 @@ public class JSGFParserTokenManager implements JSGFParserConstants {
                     }
                 } while (i != startsAt);
             } else {
-                int hiByte = (int) (curChar >> 8);
+                int hiByte = curChar >> 8;
                 int i1 = hiByte >> 6;
                 long l1 = 1L << (hiByte & 077);
                 int i2 = (curChar & 0xff) >> 6;
                 long l2 = 1L << (curChar & 077);
-                MatchLoop:
                 do {
                     switch (jjstateSet[--i]) {
                         case 3:
@@ -753,7 +749,7 @@ public class JSGFParserTokenManager implements JSGFParserConstants {
     }
 
 
-    private final int jjMoveStringLiteralDfa0_3() {
+    private int jjMoveStringLiteralDfa0_3() {
         switch (curChar) {
             case 42:
                 return jjMoveStringLiteralDfa1_3(0x800L);
@@ -763,7 +759,7 @@ public class JSGFParserTokenManager implements JSGFParserConstants {
     }
 
 
-    private final int jjMoveStringLiteralDfa1_3(long active0) {
+    private int jjMoveStringLiteralDfa1_3(long active0) {
         try {
             curChar = input_stream.readChar();
         }
@@ -782,24 +778,22 @@ public class JSGFParserTokenManager implements JSGFParserConstants {
     }
 
 
-    private final int jjMoveStringLiteralDfa0_1() {
+    private int jjMoveStringLiteralDfa0_1() {
         return jjMoveNfa_1(0, 0);
     }
 
 
-    private final int jjMoveNfa_1(int startState, int curPos) {
-        int[] nextStates;
+    private int jjMoveNfa_1(int startState, int curPos) {
         int startsAt = 0;
         jjnewStateCnt = 3;
         int i = 1;
         jjstateSet[0] = startState;
-        int j, kind = 0x7fffffff;
+        int kind = 0x7fffffff;
         for (; ;) {
             if (++jjround == 0x7fffffff)
                 ReInitRounds();
             if (curChar < 64) {
                 long l = 1L << curChar;
-                MatchLoop:
                 do {
                     switch (jjstateSet[--i]) {
                         case 0:
@@ -823,8 +817,6 @@ public class JSGFParserTokenManager implements JSGFParserConstants {
                     }
                 } while (i != startsAt);
             } else if (curChar < 128) {
-                long l = 1L << (curChar & 077);
-                MatchLoop:
                 do {
                     switch (jjstateSet[--i]) {
                         default:
@@ -832,12 +824,11 @@ public class JSGFParserTokenManager implements JSGFParserConstants {
                     }
                 } while (i != startsAt);
             } else {
-                int hiByte = (int) (curChar >> 8);
-                int i1 = hiByte >> 6;
-                long l1 = 1L << (hiByte & 077);
-                int i2 = (curChar & 0xff) >> 6;
-                long l2 = 1L << (curChar & 077);
-                MatchLoop:
+                int hiByte = curChar >> 8;
+//                int i1 = hiByte >> 6;
+//                long l1 = 1L << (hiByte & 077);
+//                int i2 = (curChar & 0xff) >> 6;
+//                long l2 = 1L << (curChar & 077);
                 do {
                     switch (jjstateSet[--i]) {
                         default:
@@ -863,7 +854,7 @@ public class JSGFParserTokenManager implements JSGFParserConstants {
     }
 
 
-    private final int jjMoveStringLiteralDfa0_2() {
+    private int jjMoveStringLiteralDfa0_2() {
         switch (curChar) {
             case 42:
                 return jjMoveStringLiteralDfa1_2(0x400L);
@@ -873,7 +864,7 @@ public class JSGFParserTokenManager implements JSGFParserConstants {
     }
 
 
-    private final int jjMoveStringLiteralDfa1_2(long active0) {
+    private int jjMoveStringLiteralDfa1_2(long active0) {
         try {
             curChar = input_stream.readChar();
         }
@@ -900,7 +891,7 @@ public class JSGFParserTokenManager implements JSGFParserConstants {
     };
 
 
-    private static final boolean jjCanMove_0(int hiByte, int i1, int i2, long l1, long l2) {
+    private static boolean jjCanMove_0(int hiByte, int i1, int i2, long l1, long l2) {
         switch (hiByte) {
             case 0:
                 return ((jjbitVec2[i2] & l2) != 0L);
@@ -912,7 +903,7 @@ public class JSGFParserTokenManager implements JSGFParserConstants {
     }
 
 
-    private static final boolean jjCanMove_1(int hiByte, int i1, int i2, long l1, long l2) {
+    private static boolean jjCanMove_1(int hiByte, int i1, int i2, long l1, long l2) {
         switch (hiByte) {
             case 0:
                 return ((jjbitVec4[i2] & l2) != 0L);
@@ -960,8 +951,8 @@ public class JSGFParserTokenManager implements JSGFParserConstants {
             0x11c0L,
     };
     protected JavaCharStream input_stream;
-    private final int[] jjrounds = new int[54];
-    private final int[] jjstateSet = new int[108];
+    private int[] jjrounds = new int[54];
+    private int[] jjstateSet = new int[108];
     StringBuffer image;
     int jjimageLen;
     int lengthOfMatch;
@@ -989,7 +980,7 @@ public class JSGFParserTokenManager implements JSGFParserConstants {
     }
 
 
-    private final void ReInitRounds() {
+    private void ReInitRounds() {
         int i;
         jjround = 0x80000001;
         for (i = 54; i-- > 0;)
@@ -1033,7 +1024,6 @@ public class JSGFParserTokenManager implements JSGFParserConstants {
 
 
     public Token getNextToken() {
-        int kind;
         Token specialToken = null;
         Token matchedToken;
         int curPos = 0;
@@ -1125,8 +1115,7 @@ public class JSGFParserTokenManager implements JSGFParserConstants {
                     try {
                         curChar = input_stream.readChar();
                         continue;
-                    }
-                    catch (java.io.IOException e1) {
+                    } catch (java.io.IOException e1) {
                     }
                 }
                 int error_line = input_stream.getEndLine();

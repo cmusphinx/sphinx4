@@ -39,24 +39,8 @@ public class ServerDecoder extends BaseServer {
      * @throws InstantiationException if an initialization error occurs
      * @throws IOException            if an I/O error occurs
      */
-    public ServerDecoder(String context) throws InstantiationException,
-            IOException {
-        initDecoder(context);
-    }
-
-
-    /**
-     * Initialize the decoder with the given context.
-     *
-     * @param context the context to use
-     * @throws InstantiationException if an initialization error occurs
-     * @throws IOException            if an I/O error occurs
-     */
-    public void initDecoder(String context) throws InstantiationException,
-            IOException {
-        // using null as the DataSource will still initialize the decoder
-//        decoder = new Decoder(context);
-//        decoder.initialize();
+    public ServerDecoder(Decoder d) {
+        decoder = d;
     }
 
 
@@ -168,9 +152,11 @@ public class ServerDecoder extends BaseServer {
         String pwd = System.getProperty("user.dir");
 
         try {
-            SphinxProperties.initContext
-                    (context, new URL("file://" + pwd + "/" + propertiesFile));
-            ServerDecoder decoder = new ServerDecoder(context);
+            SphinxProperties.initContext(context, new URL("file://" + pwd + "/" + propertiesFile));
+
+            assert false : "not implemented yet";
+            
+            ServerDecoder decoder = new ServerDecoder(null);
             (new Thread(decoder)).start();
         } catch (Exception e) {
             e.printStackTrace();

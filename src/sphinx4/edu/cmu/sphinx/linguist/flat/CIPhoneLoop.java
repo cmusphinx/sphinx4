@@ -35,7 +35,6 @@ import java.util.Map;
 public class CIPhoneLoop {
 
     private AcousticModel model;
-    private LogMath logMath;
     private float logPhoneInsertionProbability;
     private float logOne = LogMath.getLogOne();
 
@@ -66,13 +65,13 @@ public class CIPhoneLoop {
 
     class PhoneLoopSearchGraph implements SearchGraph {
 
-        private Map existingStates;
+        private Map<String, SearchState> existingStates;
         private SentenceHMMState firstState;
 
 
         /** Constructs a phone loop search graph. */
         public PhoneLoopSearchGraph() {
-            existingStates = new HashMap();
+            existingStates = new HashMap<String, SearchState>();
             firstState = new UnknownWordState();
             SentenceHMMState branchState = new BranchOutState(firstState);
             attachState(firstState, branchState, logOne, logOne, logOne);

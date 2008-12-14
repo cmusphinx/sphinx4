@@ -42,47 +42,31 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
 
     /** A sphinx property used to define the grammar to use when building the search graph */
     @S4Component(type = Grammar.class)
-    public final static String PROP_GRAMMAR = "grammar";
+    public final static String GRAMMAR = "grammar";
 
     /** A sphinx property used to define the unit manager to use when building the search graph */
     @S4Component(type = UnitManager.class)
-    public final static String PROP_UNIT_MANAGER = "unitManager";
+    public final static String UNIT_MANAGER = "unitManager";
 
     /** A sphinx property used to define the acoustic model to use when building the search graph */
     @S4Component(type = AcousticModel.class)
-    public final static String PROP_ACOUSTIC_MODEL = "acousticModel";
+    public final static String ACOUSTIC_MODEL = "acousticModel";
 
     /** Sphinx property that specifies whether to add a branch for detecting out-of-grammar utterances. */
     @S4Boolean(defaultValue = false)
-    public final static String PROP_ADD_OUT_OF_GRAMMAR_BRANCH
-            = "addOutOfGrammarBranch";
-
-    /** Default value of PROP_ADD_OUT_OF_GRAMMAR_BRANCH. */
-    public final static boolean PROP_ADD_OUT_OF_GRAMMAR_BRANCH_DEFAULT = false;
-
+    public final static String ADD_OUT_OF_GRAMMAR_BRANCH = "addOutOfGrammarBranch";
 
     /** Sphinx property for the probability of entering the out-of-grammar branch. */
     @S4Double(defaultValue = 1.0)
-    public final static String PROP_OUT_OF_GRAMMAR_PROBABILITY
-            = "outOfGrammarProbability";
-
-    /** The default value for PROP_OUT_OF_GRAMMAR_PROBABILITY. */
-    public final static double PROP_OUT_OF_GRAMMAR_PROBABILITY_DEFAULT
-            = 1.0;
-
+    public final static String OUT_OF_GRAMMAR_PROBABILITY = "outOfGrammarProbability";
 
     /** Sphinx property for the probability of inserting a CI phone in the out-of-grammar ci phone loop */
     @S4Double(defaultValue = 1.0)
-    public static final String PROP_PHONE_INSERTION_PROBABILITY
-            = "phoneInsertionProbability";
-
-    /** Default value for PROP_PHONE_INSERTION_PROBABILITY */
-    public static final double PROP_PHONE_INSERTION_PROBABILITY_DEFAULT = 1.0;
+    public static final String PHONE_INSERTION_PROBABILITY = "phoneInsertionProbability";
 
     /** Sphinx property for the acoustic model to use to build the phone loop that detects out of grammar utterances. */
     @S4Component(type = AcousticModel.class)
-    public final static String PROP_PHONE_LOOP_ACOUSTIC_MODEL
-            = "phoneLoopAcousticModel";
+    public final static String PHONE_LOOP_ACOUSTIC_MODEL = "phoneLoopAcousticModel";
 
     /** Sphinx property that defines the name of the logmath to be used by this search manager. */
     @S4Component(type = LogMath.class)
@@ -116,7 +100,6 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
     // the search graph
     // -------------------------------------
     private SearchGraph searchGraph;
-    private String name;
     private Logger logger;
     private HMMPool hmmPool;
     SearchStateArc outOfGrammarGraph;
@@ -145,40 +128,24 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
     public void newProperties(PropertySheet ps) throws PropertyException {
         // hookup to all of the components
         logger = ps.getLogger();
-        setupAcousticModel(ps);
+        acousticModel = (AcousticModel) ps.getComponent(ACOUSTIC_MODEL);
+
         logMath = (LogMath) ps.getComponent(PROP_LOG_MATH);
-        grammar = (Grammar) ps.getComponent(PROP_GRAMMAR);
-        unitManager = (UnitManager) ps.getComponent(PROP_UNIT_MANAGER
-        );
+        grammar = (Grammar) ps.getComponent(GRAMMAR);
+        unitManager = (UnitManager) ps.getComponent(UNIT_MANAGER);
 
         // get the rest of the configuration data
-        logWordInsertionProbability = logMath.linearToLog(ps.getDouble(
-                PROP_WORD_INSERTION_PROBABILITY
-        ));
-        logSilenceInsertionProbability = logMath.linearToLog(ps.getDouble(
-                PROP_SILENCE_INSERTION_PROBABILITY
-        ));
-        logUnitInsertionProbability = logMath.linearToLog(ps.getDouble(
-                PROP_UNIT_INSERTION_PROBABILITY
-        ));
-        logFillerInsertionProbability = logMath.linearToLog(ps.getDouble(
-                PROP_FILLER_INSERTION_PROBABILITY
-        ));
-        languageWeight = ps.getFloat(Linguist.PROP_LANGUAGE_WEIGHT
-        );
-        addOutOfGrammarBranch = ps.getBoolean
-                (PROP_ADD_OUT_OF_GRAMMAR_BRANCH
-                );
-        logOutOfGrammarBranchProbability = logMath.linearToLog
-                (ps.getDouble(PROP_OUT_OF_GRAMMAR_PROBABILITY
-                ));
-        logPhoneInsertionProbability = logMath.linearToLog
-                (ps.getDouble(PROP_PHONE_INSERTION_PROBABILITY
-                ));
+        logWordInsertionProbability = logMath.linearToLog(ps.getDouble(PROP_WORD_INSERTION_PROBABILITY));
+        logSilenceInsertionProbability = logMath.linearToLog(ps.getDouble(PROP_SILENCE_INSERTION_PROBABILITY));
+        logUnitInsertionProbability = logMath.linearToLog(ps.getDouble(PROP_UNIT_INSERTION_PROBABILITY));
+        logFillerInsertionProbability = logMath.linearToLog(ps.getDouble(PROP_FILLER_INSERTION_PROBABILITY));
+        languageWeight = ps.getFloat(Linguist.PROP_LANGUAGE_WEIGHT);
+        addOutOfGrammarBranch = ps.getBoolean(ADD_OUT_OF_GRAMMAR_BRANCH);
+        logOutOfGrammarBranchProbability = logMath.linearToLog(ps.getDouble(OUT_OF_GRAMMAR_PROBABILITY));
+        
+        logPhoneInsertionProbability = logMath.linearToLog(ps.getDouble(PHONE_INSERTION_PROBABILITY));
         if (addOutOfGrammarBranch) {
-            phoneLoopAcousticModel = (AcousticModel)
-                    ps.getComponent(PROP_PHONE_LOOP_ACOUSTIC_MODEL
-                    );
+            phoneLoopAcousticModel = (AcousticModel) ps.getComponent(PHONE_LOOP_ACOUSTIC_MODEL);
         }
     }
 
@@ -200,26 +167,10 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
      */
     protected void setupAcousticModel(PropertySheet ps)
             throws PropertyException {
-        acousticModel = (AcousticModel) ps.getComponent(PROP_ACOUSTIC_MODEL
-        );
+        acousticModel = (AcousticModel) ps.getComponent(ACOUSTIC_MODEL);
     }
 
 
-    /*
-    * (non-Javadoc)
-    *
-    * @see edu.cmu.sphinx.util.props.Configurable#getName()
-    */
-    public String getName() {
-        return name;
-    }
-
-
-    /*
-    * (non-Javadoc)
-    *
-    * @see edu.cmu.sphinx.linguist.Linguist#allocate()
-    */
     public void allocate() throws IOException {
         logger.info("Allocating DFLAT");
         allocateAcousticModel();
@@ -293,8 +244,8 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
 
         Set nodeSet = grammar.getGrammarNodes();
 
-        for (Iterator i = nodeSet.iterator(); i.hasNext();) {
-            GrammarNode node = (GrammarNode) i.next();
+        for (Object aNodeSet : nodeSet) {
+            GrammarNode node = (GrammarNode) aNodeSet;
             initUnitMaps(node);
         }
         searchGraph = new DynamicFlatSearchGraph();
@@ -325,8 +276,7 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
             }
             int[] nextUnits = new int[unitSet.size()];
             int index = 0;
-            for (Iterator<Unit> i = unitSet.iterator(); i.hasNext();) {
-                Unit unit = i.next();
+            for (Unit unit : unitSet) {
                 nextUnits[index++] = unit.getBaseID();
             }
             nodeToNextUnitArrayMap.put(node, nextUnits);
@@ -517,18 +467,6 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
          */
         public float getInsertionProbability() {
             return logOne;
-        }
-
-
-        /**
-         * Simple debugging output
-         *
-         * @param msg the debug message
-         */
-        void debug(String msg) {
-            if (false) {
-                System.out.println(msg);
-            }
         }
 
 
@@ -743,7 +681,7 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
                         list.add(arcs[i]);
                     }
                 }
-                arcs = (GrammarArc[]) list.toArray(new GrammarArc[list.size()]);
+                arcs = list.toArray(new GrammarArc[list.size()]);
             }
             return arcs;
         }
@@ -862,7 +800,7 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
          * @return the set of successors
          */
         public SearchStateArc[] getSuccessors() {
-            return (SearchStateArc[]) nextArcs.toArray(new
+            return nextArcs.toArray(new
                     SearchStateArc[nextArcs.size()]);
         }
 
@@ -989,7 +927,7 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
          * @return the set of sucessor arcs
          */
         SearchStateArc[] getSuccessors(int lc, int index) {
-            SearchStateArc[] arcs = null;
+            SearchStateArc[] arcs;
             if (index == pronunciation.getUnits().length - 1) {
                 if (isContextIndependentUnit(
                         pronunciation.getUnits()[index])) {
@@ -1327,7 +1265,7 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
             // of a word, if not get the next full hmm in the word
             // otherwise generate arcs to the next set of words
 
-            Pronunciation pronunciation = pState.getPronunciation();
+//            Pronunciation pronunciation = pState.getPronunciation();
             int nextLC = getHMM().getBaseUnit().getBaseID();
 
             if (!isLastUnitOfWord()) {

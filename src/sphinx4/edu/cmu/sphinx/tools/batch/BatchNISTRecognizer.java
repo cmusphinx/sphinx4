@@ -14,6 +14,7 @@ import edu.cmu.sphinx.util.props.*;
 import java.io.*;
 import java.net.URL;
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * Copyright 1999-2002 Carnegie Mellon University. Portions Copyright 2002 Sun Microsystems, Inc. Portions Copyright
@@ -97,10 +98,8 @@ public class BatchNISTRecognizer extends BatchModeRecognizer {
     public void newProperties(PropertySheet ps) throws PropertyException {
         logger = ps.getLogger();
         //cm = ps.getPropertyManager();
-        recognizer = (Recognizer) ps.getComponent(PROP_RECOGNIZER
-        );
-        inputDataProcessors = ps.getComponentList
-                (PROP_INPUT_DATA_PROCESSORS);
+        recognizer = (Recognizer) ps.getComponent(PROP_RECOGNIZER);
+        inputDataProcessors = (List<DataProcessor>) ps.getComponentList(PROP_INPUT_DATA_PROCESSORS);
         dataDir = ps.getString(PROP_DATA_DIR);
         ctlFile = ps.getString(PROP_CTL_FILE);
         refFile = ps.getString(PROP_REF_FILE);
@@ -170,7 +169,7 @@ public class BatchNISTRecognizer extends BatchModeRecognizer {
                 InputStream dataStream = new FileInputStream(file);
                 dataStream.skip(startOffset * bytesPerFrame);
                 if (dataStream.read(data) != data.length) {
-                    new CTLException("Unable to read " + data.length + " bytes of utterance " + name);
+                    throw new CTLException("Unable to read " + data.length + " bytes of utterance " + name);
                 }
             }
             catch (IOException e) {
@@ -251,9 +250,7 @@ public class BatchNISTRecognizer extends BatchModeRecognizer {
 
 
     protected void setInputStream(CTLUtterance utt) throws IOException {
-        for (Iterator i = inputDataProcessors.iterator(); i.hasNext();) {
-            DataProcessor dataSource = (DataProcessor) i.next();
-
+        for (DataProcessor dataSource : inputDataProcessors) {
             if (dataSource instanceof StreamDataSource) {
                 ((StreamDataSource) dataSource).setInputStream(utt.getInputStream(), utt.getName());
             } else if (dataSource instanceof StreamCepstrumSource) {
@@ -339,37 +336,37 @@ public class BatchNISTRecognizer extends BatchModeRecognizer {
 
     static private int hexToByte(char c) {
         switch (c) {
-            case'0':
+            case '0':
                 return 0;
-            case'1':
+            case '1':
                 return 1;
-            case'2':
+            case '2':
                 return 2;
-            case'3':
+            case '3':
                 return 3;
-            case'4':
+            case '4':
                 return 4;
-            case'5':
+            case '5':
                 return 5;
-            case'6':
+            case '6':
                 return 6;
-            case'7':
+            case '7':
                 return 7;
-            case'8':
+            case '8':
                 return 8;
-            case'9':
+            case '9':
                 return 9;
-            case'a':
+            case 'a':
                 return 10;
-            case'b':
+            case 'b':
                 return 11;
-            case'c':
+            case 'c':
                 return 12;
-            case'd':
+            case 'd':
                 return 13;
-            case'e':
+            case 'e':
                 return 14;
-            case'f':
+            case 'f':
                 return 15;
             default:
                 throw new Error("Bad hex char " + c);

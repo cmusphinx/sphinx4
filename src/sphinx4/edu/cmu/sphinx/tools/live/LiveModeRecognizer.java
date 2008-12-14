@@ -24,7 +24,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URL;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -66,7 +65,6 @@ public class LiveModeRecognizer implements Configurable {
     // -------------------------------
     // Configuration data
     // --------------------------------
-    private String name;
     private int skip;
     private Recognizer recognizer;
     private ConcatFileDataSource dataSource;
@@ -104,20 +102,10 @@ public class LiveModeRecognizer implements Configurable {
     }
 
 
-    /*
-    * (non-Javadoc)
-    *
-    * @see edu.cmu.sphinx.util.props.Configurable#getName()
-    */
-    public String getName() {
-        return name;
-    }
-
-
     /** Decodes the batch of audio files */
     public void decode() throws IOException {
         List<String> resultList = new LinkedList<String>();
-        Result result = null;
+        Result result;
         int startReference = 0;
         hypothesisTranscript = new FileWriter(hypothesisFile);
         recognizer.allocate();
@@ -240,8 +228,7 @@ public class LiveModeRecognizer implements Configurable {
      */
     private String listToString(List<String> resultList) {
         StringBuffer sb = new StringBuffer();
-        for (Iterator<String> i = resultList.iterator(); i.hasNext();) {
-            String result = i.next();
+        for (String result : resultList) {
             sb.append(result).append(" ");
         }
         return sb.toString();
@@ -272,7 +259,7 @@ public class LiveModeRecognizer implements Configurable {
         }
         String cmFile = argv[0];
         ConfigurationManager cm;
-        LiveModeRecognizer lmr = null;
+        LiveModeRecognizer lmr;
 
         try {
             URL url = new File(cmFile).toURI().toURL();

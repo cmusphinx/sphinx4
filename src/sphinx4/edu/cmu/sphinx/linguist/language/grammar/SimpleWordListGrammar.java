@@ -45,15 +45,9 @@ public class SimpleWordListGrammar extends Grammar implements Configurable {
     @S4String(defaultValue = "spelling.gram")
     public final static String PROP_PATH = "path";
 
-    /** The default value for PROP_PATH. */
-    public final static String PROP_PATH_DEFAULT = "spelling.gram";
-
     /** Sphinx property that if true, indicates that this is a looping grammar */
     @S4Boolean(defaultValue = true)
     public final static String PROP_LOOP = "isLooping";
-
-    /** The default value for PROP_LOOP. */
-    public final static boolean PROP_LOOP_DEFAULT = true;
 
     /** Sphinx property that defines the logMath component. */
     @S4Component(type = LogMath.class)
@@ -63,7 +57,6 @@ public class SimpleWordListGrammar extends Grammar implements Configurable {
     // ---------------------
     // Configurable data
     // ---------------------
-    private String name;
     private String path;
     private boolean isLooping;
     private LogMath logMath;
@@ -76,6 +69,7 @@ public class SimpleWordListGrammar extends Grammar implements Configurable {
     */
     public void newProperties(PropertySheet ps) throws PropertyException {
         super.newProperties(ps);
+        
         path = ps.getString(PROP_PATH);
         isLooping = ps.getBoolean(PROP_LOOP);
         logMath = (LogMath) ps.getComponent(PROP_LOG_MATH);
@@ -86,7 +80,6 @@ public class SimpleWordListGrammar extends Grammar implements Configurable {
      * Create class from reference text (not implemented).
      *
      * @param bogusText dummy variable
-     * @throws NoSuchMethogException if called with reference sentence
      */
     protected GrammarNode createGrammar(String bogusText)
             throws NoSuchMethodException {
@@ -115,8 +108,8 @@ public class SimpleWordListGrammar extends Grammar implements Configurable {
         initialNode.add(branchNode, LogMath.getLogOne());
         float branchScore = logMath.linearToLog(
                 1.0 / wordGrammarNodes.size());
-        for (Iterator i = wordGrammarNodes.iterator(); i.hasNext();) {
-            GrammarNode wordNode = (GrammarNode) i.next();
+        for (Object wordGrammarNode : wordGrammarNodes) {
+            GrammarNode wordNode = (GrammarNode) wordGrammarNode;
             branchNode.add(wordNode, branchScore);
             wordNode.add(finalNode, LogMath.getLogOne());
             if (isLooping) {

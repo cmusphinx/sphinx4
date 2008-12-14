@@ -17,12 +17,9 @@ import edu.cmu.sphinx.linguist.dictionary.Pronunciation;
 
 
 /** Represents a pronunciation in an SentenceHMMS */
-public class PronunciationState extends SentenceHMMState implements
-        WordSearchState {
+public class PronunciationState extends SentenceHMMState implements        WordSearchState {
 
     private Pronunciation pronunciation;
-    private String prettyLabel;
-
 
     /**
      * Creates a PronunciationState
@@ -68,11 +65,6 @@ public class PronunciationState extends SentenceHMMState implements
      */
     public String getTypeLabel() {
         return "Pron";
-    }
-
-
-    /** empty contructor */
-    private PronunciationState() {
     }
 
 

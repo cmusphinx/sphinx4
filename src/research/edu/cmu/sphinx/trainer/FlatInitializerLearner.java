@@ -27,9 +27,7 @@ import java.io.InputStream;
 /** Provides mechanisms for computing statistics given a set of states and input data. */
 public class FlatInitializerLearner implements Learner {
 
-
-    private final static String PROP_PREFIX =
-            "edu.cmu.sphinx.trainer.";
+    private final static String PROP_PREFIX = "edu.cmu.sphinx.trainer.";
 
 
     /** The SphinxProperty name for the input data type. */
@@ -39,18 +37,8 @@ public class FlatInitializerLearner implements Learner {
     /** The default value for the property PROP_INPUT_TYPE. */
     public final static String PROP_INPUT_TYPE_DEFAULT = "cepstrum";
 
-    /** The sphinx property for the front end class. */
-    public final static String PROP_FRONT_END = PROP_PREFIX + "frontend";
-
-
-    /** The default value of PROP_FRONT_END. */
-    public final static String PROP_FRONT_END_DEFAULT
-            = "edu.cmu.sphinx.frontend.SimpleFrontEnd";
-
-
     private FrontEnd frontEnd;
     private DataProcessor dataSource;
-    private String context;
     private String inputDataType;
     private SphinxProperties props;
     private Data curFeature;
@@ -60,7 +48,6 @@ public class FlatInitializerLearner implements Learner {
     public FlatInitializerLearner(SphinxProperties props)
             throws IOException {
         this.props = props;
-        context = props.getContext();
         initialize();
     }
 
@@ -71,8 +58,7 @@ public class FlatInitializerLearner implements Learner {
      * @throws IOException
      */
     private void initialize() throws IOException {
-        inputDataType = props.getString(PROP_INPUT_TYPE,
-                PROP_INPUT_TYPE_DEFAULT);
+        inputDataType = props.getString(PROP_INPUT_TYPE, PROP_INPUT_TYPE_DEFAULT);
         if (inputDataType.equals("audio")) {
             dataSource = new StreamDataSource();
 //	    dataSource.initialize("batchAudioSource", null, props, null);
@@ -203,7 +189,7 @@ public class FlatInitializerLearner implements Learner {
      * @param graph the graph
      */
     public void setGraph(UtteranceGraph graph) {
-        new Error("Flat initializer does not use a graph!");
+        throw new Error("Flat initializer does not use a graph!");
     }
 
 

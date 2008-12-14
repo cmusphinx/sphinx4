@@ -91,10 +91,6 @@ public class FlatLinguist implements Linguist, Configurable {
     public static final String PROP_PHONE_INSERTION_PROBABILITY = "phoneInsertionProbability";
 
 
-    /** Property to control the the dumping of the search space */
-    @S4Boolean(defaultValue = false)
-    public final static String PROP_SHOW_SEARCH_SPACE = "showSearchSpace";
-
     /**
      * Property to control whether compilation progress is displayed on stdout. If this property is true, a 'dot' is
      * displayed for every 1000 search states added to the search space
@@ -141,7 +137,6 @@ public class FlatLinguist implements Linguist, Configurable {
     private float logWordInsertionProbability;
     private float logSilenceInsertionProbability;
     private float logUnitInsertionProbability;
-    private boolean showSentenceHMM;
     private boolean showCompilationProgress = true;
     private boolean spreadWordProbabilitiesAcrossPronunciations;
     private boolean dumpGStates;
@@ -196,7 +191,6 @@ public class FlatLinguist implements Linguist, Configurable {
         logSilenceInsertionProbability = logMath.linearToLog(ps.getDouble(PROP_SILENCE_INSERTION_PROBABILITY));
         logUnitInsertionProbability = logMath.linearToLog(ps.getDouble(PROP_UNIT_INSERTION_PROBABILITY));
         languageWeight = ps.getFloat(Linguist.PROP_LANGUAGE_WEIGHT);
-        showSentenceHMM = ps.getBoolean(PROP_SHOW_SEARCH_SPACE);
         dumpGStates = ps.getBoolean(PROP_DUMP_GSTATES);
         showCompilationProgress = ps.getBoolean(PROP_SHOW_COMPILATION_PROGRESS);
         spreadWordProbabilitiesAcrossPronunciations = ps.getBoolean(PROP_SPREAD_WORD_PROBABILITIES_ACROSS_PRONUNCIATIONS);

@@ -18,19 +18,17 @@ import java.util.*;
 /** A linguist processor that dumps out stats about the search space */
 public class LinguistStats extends LinguistProcessor {
 
-    private Map stateCountByType = new HashMap();
-    private String name;
-
+    private Map<Class, Integer> stateCountByType = new HashMap<Class, Integer>();
 
     /** Dumps the stats of the linguist */
     public void run() {
         Linguist linguist = getLinguist();
-        List queue = new LinkedList();
-        Set visitedStates = new HashSet();
+        List<SearchState> queue = new LinkedList<SearchState>();
+        Set<SearchState> visitedStates = new HashSet<SearchState>();
         int stateCount = 0;
         queue.add(linguist.getSearchGraph().getInitialState());
         while (queue.size() > 0) {
-            SearchState state = (SearchState) queue.remove(0);
+            SearchState state = queue.remove(0);
             if (!visitedStates.contains(state)) {
                 stateCount++;
                 incrementStateTypeCount(state);
@@ -61,19 +59,18 @@ public class LinguistStats extends LinguistProcessor {
      * @param state the state to track
      */
     private void incrementStateTypeCount(SearchState state) {
-        Integer count = (Integer) stateCountByType.get(state.getClass());
+        Integer count = stateCountByType.get(state.getClass());
         if (count == null) {
             count = 0;
         }
-        count = count.intValue() + 1;
+        count = count + 1;
         stateCountByType.put(state.getClass(), count);
     }
 
 
     /** Dumps all of the class counts */
     private void dumpStateTypeCounts() {
-        for (Iterator i = stateCountByType.keySet().iterator(); i.hasNext();) {
-            Class clazz = (Class) i.next();
+        for (Class clazz  : stateCountByType.keySet()) {
             System.out.println("# " + clazz + ": "
                     + stateCountByType.get(clazz));
         }

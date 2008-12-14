@@ -29,7 +29,6 @@ public class StatisticsVariable {
     public double value;
 
     private String name;        // the name of this value
-    private String owner;             // the owner for this statistic
     private boolean enabled;        // if true this var is enabled
 
 

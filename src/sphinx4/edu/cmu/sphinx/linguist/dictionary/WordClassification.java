@@ -25,5 +25,9 @@ public class WordClassification implements Serializable {
         this.classificationName = classificationName;
     }
 
+
+    public String getClassificationName() {
+        return classificationName;
+    }
 }
 

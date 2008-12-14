@@ -40,6 +40,11 @@ public class TestConfigurable implements Configurable {
     }
 
 
+    public double getGamma() {
+        return gamma;
+    }
+
+
     public DummyProcessor getDataProc() {
         return dataProc;
     }
@@ -75,7 +80,6 @@ public class TestConfigurable implements Configurable {
     @Test
     public void testPropSheetFromConfigurableInstance() throws PropertyException, InstantiationException {
         String testString = "test";
-        double testDouble = 12;
 
         Map<String, Object> props = new HashMap<String, Object>();
         props.put(PROP_ASTRING, testString);

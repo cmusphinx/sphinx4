@@ -14,64 +14,41 @@
 
 package edu.cmu.sphinx.tools.gui;
 
-import edu.cmu.sphinx.tools.gui.util.ModelBuilder;
 import edu.cmu.sphinx.tools.gui.util.ConfigurableComponent;
 import edu.cmu.sphinx.tools.gui.util.ConfigurableProperty;
 import edu.cmu.sphinx.tools.gui.util.PropertyType;
 
-import java.util.Iterator;
-import java.util.Collection;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.Set;
-import java.util.HashSet;
+import javax.swing.*;
+import java.awt.*;
+import java.util.*;
 import java.util.List;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.awt.Component;
-import java.awt.Color;
-import java.awt.TextComponent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import javax.swing.BorderFactory;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.DefaultListModel;    
-import javax.swing.JComboBox;
-import javax.swing.JOptionPane;
-import javax.swing.JFrame;
-import javax.swing.JList;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.ListCellRenderer;
-import javax.swing.ListModel;
-import javax.swing.ListSelectionModel;
 
 
 /**
  * This is a Panel that will handle the GUI of one particular section/group
  *
- * @author Ariani  
+ * @author Ariani
  */
 public class PanelConfigurable extends javax.swing.JPanel {
-        
+
     private PanelMediator _pm;
-    
+
     private static final int COMBO_NEUTRAL = 1;
-    
+
     /** Creates new form PanelConfigurable */
-    public PanelConfigurable(GUIMediator gm, String name, Set groupset) {         
+    public PanelConfigurable(GUIMediator gm, String name, Set groupset) {
         initComponents(); // create the GUI components
-           
+
         _pm = new PanelMediator(name,groupset,gm,this);
-        
+
         // initGUIComponents should come after the PanelMediator creation/init
-        initGUIComponents(); 
-        
+        initGUIComponents();
+
     }
-    
+
     /** there are two property modes for the 3 buttons :
-     * list mode(status=true) : add and remove button 
-     * single mode(status=false) : change button 
+     * list mode(status=true) : add and remove button
+     * single mode(status=false) : change button
      * This method change "setVisible" properties of the above buttons
      */
     private void setVisibleListPropButton(boolean status){
@@ -79,7 +56,7 @@ public class PanelConfigurable extends javax.swing.JPanel {
         jButtonRemove.setVisible(status);
         jButtonChange.setVisible(!status);
     }
-    
+
     /** there are two property modes for the input :
      * component-type mode : use combo box for components
      * other native-type mode : use text area
@@ -89,19 +66,19 @@ public class PanelConfigurable extends javax.swing.JPanel {
         jComboComponent.setVisible(status);
         jTextNewVal.setVisible(!status);
     }
-    
-    /** 
+
+    /**
      * change the data set
      */
     public void setPanelClassSet(Set ccset){
         _pm.setGroupMap(ccset);
     }
-    
+
     /* clear the Panel Detail components */
-    private void setEnablePanelDetail(boolean status){        
+    private void setEnablePanelDetail(boolean status){
 
         jListInner.setEnabled(status);
-        jTextNewVal.setEnabled(status);  
+        jTextNewVal.setEnabled(status);
         jComboComponent.setEnabled(status);
         jButtonChange.setEnabled(status);
         jButtonAdd.setEnabled(status);
@@ -109,10 +86,10 @@ public class PanelConfigurable extends javax.swing.JPanel {
         jButtonRefresh.setEnabled(status);
 
     }
-    
+
     /* additional initialization operation for the GUI components */
     private void initGUIComponents(){
-        
+
         // initialize and set up both jList components 
         // one for the class list, the other one for property list
         jListOuter.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -121,46 +98,46 @@ public class PanelConfigurable extends javax.swing.JPanel {
         jListOuter.setLayoutOrientation(JList.VERTICAL);
         jListInner.setLayoutOrientation(JList.VERTICAL);
         jListPropVal.setLayoutOrientation(JList.VERTICAL);
-        
-        
-        DefaultListModel outerlistModel= new DefaultListModel();        
-        for ( Iterator it = _pm.getGroupMap().keySet().iterator(); it.hasNext();){            
+
+
+        DefaultListModel outerlistModel= new DefaultListModel();
+        for ( Iterator it = _pm.getGroupMap().keySet().iterator(); it.hasNext();){
             outerlistModel.addElement(it.next());
-        }                
-        jListOuter.setModel(outerlistModel);                  
-        jListInner.setModel(new DefaultListModel());         
+        }
+        jListOuter.setModel(outerlistModel);
+        jListInner.setModel(new DefaultListModel());
         // jListInner.setCellRenderer(new MyCellRenderer()); &&&&
-        jListPropVal.setModel(new DefaultListModel()); 
-        
+        jListPropVal.setModel(new DefaultListModel());
+
         // set up combo box; then disable PanelDetail and right panel
         // top right panel will be enabled once there's something
         // chosen in the outer list (classname list)    
 
-        initComboBox();  
+        initComboBox();
         jComboName.setEnabled(false);
-        setEnablePanelDetail(false);          
-        jTextInnerList.setText( new String("Property List : ") );
-         
+        setEnablePanelDetail(false);
+        jTextInnerList.setText("Property List : ");
+
         // this part will initialize the Panel Detail that displays info about one 
         // particular property of a class       
-        setVisibleComponentInput(false);        
-        setVisibleListPropButton(true);        
-        
+        setVisibleComponentInput(false);
+        setVisibleListPropButton(true);
+
     }
-    
+
     /**
      * reset and re-initialize the combo box
      */
     private void initComboBox(){
         if ( jComboName.getItemCount() == 0 ){
             // set up the jcombobox items, set item at the info                     
-            String[] comboinit = {"<Create new set>","Choose configuration set"};            
+            String[] comboinit = {"<Create new set>","Choose configuration set"};
             jComboName.insertItemAt(comboinit[0],0);
-            jComboName.insertItemAt(comboinit[1],1);           
-            jComboName.setSelectedIndex(COMBO_NEUTRAL);             
+            jComboName.insertItemAt(comboinit[1],1);
+            jComboName.setSelectedIndex(COMBO_NEUTRAL);
         }
     }
-    
+
     /**
      * clear all the property details from the inner panel
      */
@@ -170,11 +147,11 @@ public class PanelConfigurable extends javax.swing.JPanel {
         jTextClassType.setText("");
         jTextDefault.setText("");
         jTextDesc.setText("");
-        ((DefaultListModel)jListPropVal.getModel()).clear();    
+        ((DefaultListModel)jListPropVal.getModel()).clear();
         jTextNewVal.setText(null);
-        jComboComponent.removeAllItems();   
+        jComboComponent.removeAllItems();
     }
-    
+
     /**
      * clear all selection and any configuration info displayed on the GUI
      */
@@ -182,9 +159,9 @@ public class PanelConfigurable extends javax.swing.JPanel {
         clearRightPanel();
         jListOuter.clearSelection();
     }
-    
+
     /**
-     * clear all selection of the jlist, 
+     * clear all selection of the jlist,
      * clear all information from the textboxes
      * but the jlist items and the combo box items are still maintained
      */
@@ -193,115 +170,111 @@ public class PanelConfigurable extends javax.swing.JPanel {
         clearPanelDetail();
         setEnablePanelDetail(false);
     }
-    
+
     /**
      * clear all data from the right outer panel;
-     * delete all list items and text box values; reset combo box items 
+     * delete all list items and text box values; reset combo box items
      */
     private void clearRightPanel(){
-        
+
         Component[] carray = jRightPanel.getComponents();
         // the array will contain the upper top right panel components only
         for( int i = 0; i < carray.length; i++){
            if (carray[i] instanceof java.awt.TextComponent ){
                ((TextComponent)carray[i]).setText("");
-           }  
+           }
            else if (carray[i] instanceof javax.swing.JComboBox){
-               ((JComboBox)carray[i]).removeAllItems();               
+               ((JComboBox)carray[i]).removeAllItems();
            }
         }
-        
+
         jListInner.clearSelection();
         // clean the jlist - not in the list of components of right panel
-        ((DefaultListModel)jListInner.getModel()).clear();        
-      
+        ((DefaultListModel)jListInner.getModel()).clear();
+
         clearPanelDetail();
         initComboBox();
         setEnablePanelDetail(false);
     }
 
-   
+
     /*
      * This function is used to check the name of the new set
      * it should only contains alphanumeric '_' or '-'
      */
     private boolean checkSetName(String s){
-       
+
         final char[] chars = s.toCharArray();
-        for (int x = 0; x < chars.length; x++) {      
+        for (int x = 0; x < chars.length; x++) {
             final char c = chars[x];
             if ((c >= 'a') && (c <= 'z')) continue; // lowercase
             if ((c >= 'A') && (c <= 'Z')) continue; // uppercase
             // numeric allowed for 2nd char onwards
-            if ((x >= 1) && (c >= '0') && (c <= '9')) continue; 
+            if ((x >= 1) && (c >= '0') && (c <= '9')) continue;
             if ((x >= 1) && (c == '_')) continue; // underscore after 2nd char 
             if ((x >= 1) && (c == '-')) continue; // dash for 2nd char onwards
             return false;
-        }  
+        }
         return true;
-        
+
     }
-        
+
     /* private method to check if there is a configuration set chosen */
     private boolean isConfigSetChosen(){
         return (jComboName.getSelectedIndex()>1);
     }
-    
+
     /* private method to get the text input from user */
     private String getTextInput(){
-                
-        String newval = null;
+
+        String newval;
         if (jTextNewVal.isVisible()){
             newval = jTextNewVal.getText();
-        } 
+        }
         else{ // jComboComponent is used instead
             newval = (String)jComboComponent.getSelectedItem();
-            newval = newval.substring(0,(newval.indexOf('-')));            
+            newval = newval.substring(0,(newval.indexOf('-')));
         }
         return newval;
     }
-    
+
     /* private method to clear the property value list */
     private void clearPropValue(){
         ((DefaultListModel)jListPropVal.getModel()).clear();
     }
-    
+
     /* private method to fill up the property value jlist with stored value from the model */
     private void initPropValue(Iterator newvalue){
         DefaultListModel model = (DefaultListModel)jListPropVal.getModel();
         model.clear();
         if ( newvalue != null){
-            for ( Iterator it = newvalue; it.hasNext();){
+            for (;newvalue.hasNext();){
                 model.addElement(newvalue.next());
             }
         }
     }
-    
+
      /**
      * private helper function to display the error to user
      */
     private void displayError(String message) {
-        JOptionPane.showMessageDialog(this,message, 
+        JOptionPane.showMessageDialog(this,message,
                         _pm.getname(), JOptionPane.ERROR_MESSAGE);
     }
-    
-    /** 
+
+    /**
      * re-confirm a user action
      */
-   private boolean confirmAction(String message){ 
+   private boolean confirmAction(String message){
         int response;
 
-        response = JOptionPane.showConfirmDialog(this, message, 
-                "Confirm Action",JOptionPane.OK_CANCEL_OPTION);
-        if ( response == JOptionPane.OK_OPTION){
-            return true;
-        }
-        else
-            return false;
+        response = JOptionPane.showConfirmDialog(this, message,                "Confirm Action",JOptionPane.OK_CANCEL_OPTION);
+
+        return response == JOptionPane.OK_OPTION;
    }
 
-    
-    /** 
+
+    /**
      * This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -615,7 +588,7 @@ public class PanelConfigurable extends javax.swing.JPanel {
         {
             List newlist = new ArrayList(
                     Arrays.asList(((DefaultListModel)jListPropVal.getModel()).toArray()));
-            if( newlist.remove(delval) ){            
+            if( newlist.remove(delval) ){
                 try {
                     if(newlist.isEmpty()){ // list is now empty
                         removePropFromSet(); // delete this property from the set
@@ -634,17 +607,17 @@ public class PanelConfigurable extends javax.swing.JPanel {
 
     private void jButtonAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAddActionPerformed
         String newval = getTextInput();
-                
+
         if( newval != null ){
             newval = newval.trim();
             String  classname = (String)jListOuter.getSelectedValue();
             String prop = (String)jListInner.getSelectedValue();
             String setname = (String)jComboName.getSelectedItem();
-            
+
             List newlist = new ArrayList(
                     Arrays.asList(((DefaultListModel)jListPropVal.getModel()).toArray()));
             newlist.add(newval);
-            
+
             if ( !newval.equalsIgnoreCase("") && (classname != null) &&
                     ( setname != null) && (prop != null) )
             {
@@ -657,14 +630,14 @@ public class PanelConfigurable extends javax.swing.JPanel {
                     displayError("Internal Error : "+e.getMessage());
                 }
             }
-        }                
+        }
     }//GEN-LAST:event_jButtonAddActionPerformed
 
     private void jButtonRefreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonRefreshActionPerformed
-        updateDetails();    
+        updateDetails();
     }//GEN-LAST:event_jButtonRefreshActionPerformed
 
-    
+
     private void jButtonRemovePropActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonRemovePropActionPerformed
         removePropFromSet();
     }//GEN-LAST:event_jButtonRemovePropActionPerformed
@@ -690,9 +663,9 @@ public class PanelConfigurable extends javax.swing.JPanel {
             }
         }
     }
-    
+
     /**
-     * private method that's invoked when the 'see source code' button is clicked 
+     * private method that's invoked when the 'see source code' button is clicked
      * It will request the code from PanelMediator
      * and display it in a messagebox
      */
@@ -710,20 +683,20 @@ public class PanelConfigurable extends javax.swing.JPanel {
     /* private method to handle 'Change' button action */
     private void jButtonChangeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonChangeActionPerformed
         String newval = getTextInput();
-                    
+
         if( newval != null ){
             newval = newval.trim();
             String  classname = (String)jListOuter.getSelectedValue();
             String prop = (String)jListInner.getSelectedValue();
             String setname = (String)jComboName.getSelectedItem();
-            
+
             if ( !newval.equalsIgnoreCase("") && (classname != null) &&
                     ( setname != null) && (prop != null) ){
                 try {
                     if ( _pm.allowChangePropertyValue(classname, setname, prop, newval) )
                         _pm.changePropertyValue(classname, setname, prop, newval);
                     //succesfully change the model, now update the current value
-                    clearPropValue();                    
+                    clearPropValue();
                     ((DefaultListModel)jListPropVal.getModel()).addElement
                             (_pm.getPropertyValue(classname,setname,prop).next());
                 }catch(PanelMediatorException pme){
@@ -735,10 +708,10 @@ public class PanelConfigurable extends javax.swing.JPanel {
 
     /* private method to handle a selection change of Inner list */
     private void jListInnerValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_jListInnerValueChanged
-        updateDetails();            
+        updateDetails();
     }//GEN-LAST:event_jListInnerValueChanged
 
-   /* private method that updates the panel detail information based on the 
+   /* private method that updates the panel detail information based on the
     * selection in the outer list(classname) and inner list(property name), 
     * and configuration set selected in combo box
     */
@@ -749,23 +722,23 @@ public class PanelConfigurable extends javax.swing.JPanel {
             String  classname = (String)jListOuter.getSelectedValue();
             ConfigurableProperty cp = _pm.getProperty(classname, prop);
             if(cp != null){
-                jTextPropName.setText(cp.getName());     
-                
+                jTextPropName.setText(cp.getName());
+
                 PropertyType mytype = cp.getType();
                 jTextPropType.setText((mytype==null)?null:mytype.toString());
-                
-                if(mytype.equals( PropertyType.COMPONENT )|| 
+
+                if(mytype.equals( PropertyType.COMPONENT )||
                         mytype.equals(PropertyType.COMPONENT_LIST) )
-                {    
+                {
                     jLabelClassType.setVisible(true);
                     jTextClassType.setVisible(true);
-                    jTextClassType.setText(cp.getClassType());                    
+                    jTextClassType.setText(cp.getClassType());
                 } else {
                     jLabelClassType.setVisible(false);
                     jTextClassType.setVisible(false);
                     jTextClassType.setText("");
                 }
-                
+
                 jTextDefault.setText(cp.getDefault());
                 jTextDesc.setText(cp.getDesc());
                 if( isConfigSetChosen() )
@@ -773,16 +746,16 @@ public class PanelConfigurable extends javax.swing.JPanel {
                         (String)jComboName.getSelectedItem(),prop));
                 else
                     clearPropValue();
-                
+
                 jTextNewVal.setText(null);
                 jComboComponent.removeAllItems();
-                
+
                 //check the type of input that is going to be needed
                 // component? list? other type? or not specified?                   
-                setVisibleListPropButton( _pm.isListProperty(classname,prop) );                  
-                if( _pm.isComponentProperty(classname,prop) ){ 
+                setVisibleListPropButton( _pm.isListProperty(classname,prop) );
+                if( _pm.isComponentProperty(classname,prop) ){
                     // is a component property
-                    setVisibleComponentInput(true);                    
+                    setVisibleComponentInput(true);
                     // addComponent to jComboComponent
                     // System.out.println("$$$ is a component");
                     List mylist = _pm.getComponentList(classname,prop);
@@ -790,18 +763,18 @@ public class PanelConfigurable extends javax.swing.JPanel {
                         for(Iterator it=mylist.iterator();it.hasNext();){
                             jComboComponent.addItem((String)it.next());
                         }
-                    }                    
+                    }
                 }else
                     setVisibleComponentInput(false);
-                                
+
             }
         }
     }
-    
+
     /* private method to handle action performed by the Top Right GUI items */
     private void RightPanelTopActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_RightPanelTopActionPerformed
         Object source = evt.getSource();
-        if ( source instanceof javax.swing.JButton ){ // delete button is clicked     
+        if ( source instanceof javax.swing.JButton ){ // delete button is clicked
             // the first two items in combo box are not for delete
             if ( isConfigSetChosen() && confirmAction("Confirm delete this item?")){
                 try {
@@ -814,14 +787,14 @@ public class PanelConfigurable extends javax.swing.JPanel {
                     displayError("Internal Error : "+ pme.getMessage());
                 }
             }
-       } else if (source instanceof javax.swing.JComboBox){  
+       } else if (source instanceof javax.swing.JComboBox){
             // if the combo box changes    
-            resetInnerSplitPanel();            
-            if (isConfigSetChosen()){                              
+            resetInnerSplitPanel();
+            if (isConfigSetChosen()){
                 setEnablePanelDetail(true);
-            }     
+            }
 
-            else if (jComboName.getSelectedIndex() == 0){ 
+            else if (jComboName.getSelectedIndex() == 0){
                 //selected item is 'create new set'               
                 String s = (String)JOptionPane.showInputDialog(this,
                          "Please enter the name of new config",
@@ -829,20 +802,20 @@ public class PanelConfigurable extends javax.swing.JPanel {
                                          JOptionPane.PLAIN_MESSAGE);
 
                 //If a string was returned, say so.               
-                if ((s != null) && (s.length() > 0) && 
+                if ((s != null) && (s.length() > 0) &&
                         !s.trim().equalsIgnoreCase("") ) {
-                    s = s.trim();  
+                    s = s.trim();
                     if ( checkSetName(s) ){ // is it a valid name?
-                        
+
                         // create a new set in the model
                         try {
-                            _pm.createNewConfigurationSet(s,                         
-                                (String)jListOuter.getSelectedValue()); 
-                            
+                            _pm.createNewConfigurationSet(s,
+                                (String)jListOuter.getSelectedValue());
+
                             // update the combo box
                             jComboName.addItem(s.trim());
                             // select last item           
-                            jComboName.setSelectedIndex(jComboName.getItemCount()-1); 
+                            jComboName.setSelectedIndex(jComboName.getItemCount()-1);
                             setEnablePanelDetail(true);
                         } catch (PanelMediatorException pme){
                             displayError("Internal error " + pme.getMessage());
@@ -853,9 +826,9 @@ public class PanelConfigurable extends javax.swing.JPanel {
                                 "Set name must start with an alphabet "+
                                 "and contain only A-Z; a-z; 0-9; -; _");
                         jComboName.setSelectedIndex(COMBO_NEUTRAL);
-                    }                    
+                    }
                 }
-            } 
+            }
        }
     }//GEN-LAST:event_RightPanelTopActionPerformed
 
@@ -884,15 +857,15 @@ public class PanelConfigurable extends javax.swing.JPanel {
             if ( prop != null ){
                 DefaultListModel innerlistModel= (DefaultListModel)jListInner.getModel();
                 for ( Iterator it = prop.iterator();it.hasNext();){
-                    String propItem = (String)it.next();                 
+                    String propItem = (String)it.next();
                     //  ListItem li = new ListItem(false, propItem );
                     innerlistModel.addElement(propItem);
                 }
             }
-        }        
+        }
     }//GEN-LAST:event_jListOuterValueChanged
-    
-    
+
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButtonAdd;
     private javax.swing.JButton jButtonChange;
@@ -946,9 +919,9 @@ public class PanelConfigurable extends javax.swing.JPanel {
     private javax.swing.JTextField jTextPropName;
     private javax.swing.JTextField jTextPropType;
     // End of variables declaration//GEN-END:variables
-    
+
     /**
-     * This private class would handle the data management for this GUI Panel 
+     * This private class would handle the data management for this GUI Panel
      *
      * @author Ariani
      */
@@ -958,37 +931,37 @@ public class PanelConfigurable extends javax.swing.JPanel {
         private String _sectionName ;
         private GUIMediator _gmediator;
         private PanelConfigurable _panel;
-        
-        /** 
-         * Creates a new instance of PanelMediator 
+
+        /**
+         * Creates a new instance of PanelMediator
          */
         private PanelMediator(String name, Set grpset, GUIMediator gmediator,
             PanelConfigurable panel) {
             _gmediator = gmediator;
             _panel = panel;
-            _sectionName = name;            
-            _ccmap = new HashMap();               
+            _sectionName = name;
+            _ccmap = new HashMap();
             setGroupMap(grpset);
-            
+
             _gmediator.registerPanel(this);
         }
-                      
-        
+
+
         /**
          * from the set of classes belong to this group, create its own Map
          * also used for reset and reload of new data
          */
         private void setGroupMap(Set grpset){
             _ccmap.clear();
-            
+
             //create a hashmap of group members
             for( Iterator it = grpset.iterator(); it.hasNext();){
-                ConfigurableComponent cc = 
+                ConfigurableComponent cc =
                         (ConfigurableComponent)it.next();
                 _ccmap.put(cc.getName(),cc);
             }
         }
-        
+
         /** This method is inherited from GUIFileActionListener
          * It is called once there is a new configuration file loaded
          * Model data will be updated automatically - only need to clear the GUI
@@ -996,7 +969,7 @@ public class PanelConfigurable extends javax.swing.JPanel {
         public void update(ConfigProperties cp) {
             _panel.clearAllDisplay();
         }
-        
+
         /** This method is inherited from GUIFileActionListener
          * It is called once the configuration file is about to be written
          * Nothing needs to be done for GUI
@@ -1013,7 +986,7 @@ public class PanelConfigurable extends javax.swing.JPanel {
             _panel.clearAllDisplay();
             System.out.println("*** clear all ");
         }
-        
+
         /**
          * This method is inherited from GUIFileActionListener
          * Method purpose is to update panels after model change
@@ -1021,8 +994,8 @@ public class PanelConfigurable extends javax.swing.JPanel {
         public void modelRefresh() {
             /* do nothing */
         }
-        
-        
+
+
         /**
          * @return the whole map that represents all information for the GUI Panel
          */
@@ -1043,22 +1016,22 @@ public class PanelConfigurable extends javax.swing.JPanel {
          */
         private Set getConfigurationSet(String classname){
             if (_ccmap.containsKey(classname)){
-                ConfigurableComponent cc = 
+                ConfigurableComponent cc =
                         (ConfigurableComponent)_ccmap.get(classname);
-                
-                if ( cc.getConfigurationPropMap() != null && 
+
+                if ( cc.getConfigurationPropMap() != null &&
                         !cc.getConfigurationPropMap().isEmpty() )
                     return cc.getConfigurationPropMap().keySet();
-                else 
+                else
                     return null;
             }
             else
                 return null;
         }
-        
-        /** 
+
+        /**
          * delete a particular configuration set from a specified classname
-         * 
+         *
          * @param classname Class that the set belongs to
          * @param setname the Configuration set name
          * @throws PanelMediatorException
@@ -1071,7 +1044,7 @@ public class PanelConfigurable extends javax.swing.JPanel {
                 if(cc.containsConfigurationSet(setname)){
                     cc.deleteConfigurationProp(setname);
                 }
-                else 
+                else
                     throw new PanelMediatorException(
                             PanelMediatorException.INVALID_SETNAME,
                             "The configuration set name is invalid");
@@ -1080,10 +1053,10 @@ public class PanelConfigurable extends javax.swing.JPanel {
                 throw new PanelMediatorException(PanelMediatorException.INVALID_CLASSNAME,
                         "The classname is invalid");
         }
-        
-        /** 
+
+        /**
          * delete a property from the configuration set
-         * 
+         *
          * @param classname Class name
          * @param propname Property to be deleted
          * @param setname Configuration set from which the property would be deleted
@@ -1097,7 +1070,7 @@ public class PanelConfigurable extends javax.swing.JPanel {
                 if(cc.containsConfigurationSet(setname)){
                     cc.deleteOneConfigurationPropFromSet(setname,propname);
                 }
-                else 
+                else
                     throw new PanelMediatorException(
                             PanelMediatorException.INVALID_SETNAME,
                             "The configuration set name is invalid");
@@ -1106,7 +1079,7 @@ public class PanelConfigurable extends javax.swing.JPanel {
                 throw new PanelMediatorException(PanelMediatorException.INVALID_CLASSNAME,
                         "The classname is invalid");
         }
-        
+
         /**
          * create a new configuration set, with the complete set of properties
          * and set to default values
@@ -1122,43 +1095,43 @@ public class PanelConfigurable extends javax.swing.JPanel {
             //note that names are case-sensitive
             if ( _gmediator.getModelBuilder().checkDuplicateConfigurationSet(name) ){
                 throw new PanelMediatorException(
-                        PanelMediatorException.DUPLICATE_SET_NAME, 
-                        "This name has been used for another configuration set\n" + 
+                        PanelMediatorException.DUPLICATE_SET_NAME,
+                        "This name has been used for another configuration set\n" +
                         "Please choose a different name");
             }
-            
+
             //create the new configuration set
             if ( _ccmap.containsKey(classname) ){
-                ConfigurableComponent cc = 
+                ConfigurableComponent cc =
                         (ConfigurableComponent)_ccmap.get(classname);
-                cc.createNewSet(name);                
+                cc.createNewSet(name);
             }
             else
                 throw new PanelMediatorException(
                         PanelMediatorException.INVALID_CLASSNAME, "Invalid class name");
         }
-        
+
         /**
          * @return Set of configrable properties owned by the specified class
          */
         private Set getPropertySet(String classname){
             if (_ccmap.containsKey(classname)){
-                ConfigurableComponent cc = 
+                ConfigurableComponent cc =
                         (ConfigurableComponent)_ccmap.get(classname);
                 if ( cc.getPropertyMap() != null && !cc.getPropertyMap().isEmpty() )
-                     return cc.getPropertyMap().keySet(); 
-                else 
+                     return cc.getPropertyMap().keySet();
+                else
                     return null;
             }
             else return null;
         }
-        
-        /** 
+
+        /**
          * @return <code>ConfigurableProperty</code> with information about this property
          */
         private ConfigurableProperty getProperty(String classname,String propname){
             if( _ccmap.containsKey(classname) ){
-                ConfigurableComponent cc = 
+                ConfigurableComponent cc =
                         (ConfigurableComponent)_ccmap.get(classname);
                 if (cc.containsProperty(propname)){
                     return cc.getProperty(propname);
@@ -1169,8 +1142,8 @@ public class PanelConfigurable extends javax.swing.JPanel {
             else
                 return null;
         }
-        
-        /** 
+
+        /**
          * check if this property requires a component with particular class type
          * @param classname
          * @param propname property name
@@ -1185,8 +1158,8 @@ public class PanelConfigurable extends javax.swing.JPanel {
             }
             return false;
         }
-                
-        /** 
+
+        /**
          * check if this property type is a list type
          * @param classname
          * @param propname property name
@@ -1203,18 +1176,18 @@ public class PanelConfigurable extends javax.swing.JPanel {
             }else{
                 return true;
                 // assume it's a list if there is no such property
-            }            
+            }
             return false;
         }
-        
-        /** 
+
+        /**
          * @return property value from the specified classname, set, and property
-         *         a <code>List</code> would be represented as a semi-colon separated 
+         *         a <code>List</code> would be represented as a semi-colon separated
          *          <code>String</code>
          */
-        private Iterator getPropertyValue(String classname,String setName,String propname){            
+        private Iterator getPropertyValue(String classname,String setName,String propname){
             if( _ccmap.containsKey(classname) ){
-                ConfigurableComponent cc = 
+                ConfigurableComponent cc =
                         (ConfigurableComponent)_ccmap.get(classname);
                 Object propval = cc.getConfigurationPropValue(setName,propname);
                 if (propval != null){
@@ -1224,8 +1197,8 @@ public class PanelConfigurable extends javax.swing.JPanel {
                         return retlist.iterator();
                     }
                     else { // instance of List
-                        return ((List)propval).iterator();                       
-                    }  
+                        return ((List)propval).iterator();
+                    }
                 }
                 else
                     return null;
@@ -1233,36 +1206,36 @@ public class PanelConfigurable extends javax.swing.JPanel {
             else
                 return null;
         }
-        
-        
+
+
         /** change the value of the property from specified class, and set
-         * 
+         *
          * @throws PanelMediatorException
          */
         private void changePropertyValue(String classname,String setName,
                 String propname, String propval) throws PanelMediatorException
-        {                 
-            ConfigurableComponent cc = 
+        {
+            ConfigurableComponent cc =
                         (ConfigurableComponent)_ccmap.get(classname);
-            cc.changeConfigurationPropValue(setName,propname,propval);           
+            cc.changeConfigurationPropValue(setName,propname,propval);
         }
-            
+
         /** change the value of the property from specified class, and set
-         * 
+         *
          * @throws PanelMediatorException
          */
         private void changePropertyValue(String classname,String setName,
                 String propname, List propval) throws PanelMediatorException
-        {           
-            ConfigurableComponent cc = 
+        {
+            ConfigurableComponent cc =
                         (ConfigurableComponent)_ccmap.get(classname);
-            cc.changeConfigurationPropValue(setName,propname,propval);           
+            cc.changeConfigurationPropValue(setName,propname,propval);
         }
-        
-        
-        
+
+
+
         /** check if this new property is valid
-         * 
+         *
          * @param classname Name of class
          * @param setName   Configuration set name
          * @param propname  Property name
@@ -1271,17 +1244,17 @@ public class PanelConfigurable extends javax.swing.JPanel {
          */
         private boolean allowChangePropertyValue(String classname,String setName,
                 String propname, Object propval) throws PanelMediatorException
-        {    
+        {
             if( _ccmap.containsKey(classname) ){
-                ConfigurableComponent cc = 
+                ConfigurableComponent cc =
                         (ConfigurableComponent)_ccmap.get(classname);
-                                
-                if(cc.containsConfigurationSet(setName) && cc.containsProperty(propname)){           
+
+                if(cc.containsConfigurationSet(setName) && cc.containsProperty(propname)){
                     ConfigurableProperty cp = cc.getProperty(propname);
                     if(isValidPropertyValue(classname,propname,propval)){
                         return true;
                     }
-                    else{                        
+                    else{
                         throw new PanelMediatorException(
                                 PanelMediatorException.INVALID_VALUE,
                                 "Invalid property value");
@@ -1296,15 +1269,15 @@ public class PanelConfigurable extends javax.swing.JPanel {
                     throw new PanelMediatorException(
                         PanelMediatorException.INVALID_PROPNAME, "Invalid property name");
                 }
-                    
-                              
+
+
             } else { // does not have this class in this section
                 throw new PanelMediatorException(
                         PanelMediatorException.INVALID_CLASSNAME, "Invalid class name");
-            }                     
+            }
         } // changePropertyValue method
-        
-        /** 
+
+        /**
          * check if this value is valid for the specified property
          * @param classname Name of Class
          * @param propname Property Name
@@ -1315,25 +1288,25 @@ public class PanelConfigurable extends javax.swing.JPanel {
                 Object propval)
         {
             if( _ccmap.containsKey(classname) ){
-                ConfigurableComponent cc = 
+                ConfigurableComponent cc =
                         (ConfigurableComponent)_ccmap.get(classname);
-                                
-                if( cc.containsProperty(propname)){           
+
+                if( cc.containsProperty(propname)){
                     ConfigurableProperty cp = cc.getProperty(propname);
                     if(cp.getType() != null){ // property is specified
-                        if(cp.getType().isValid(propval))                            
+                        if(cp.getType().isValid(propval))
                             return true;
                         else
                             return false;
                     }else // there is no property specified, assume it's valid
                         return true;
-                }                
+                }
             }
             return false;
         }
-        
-        
-        /** 
+
+
+        /**
          * this method is used to get java source code of a particular class
          * The source code is generated by ModelBuilder
          *
@@ -1343,20 +1316,20 @@ public class PanelConfigurable extends javax.swing.JPanel {
            return _gmediator.getModelBuilder().getSourceCode(classname);
         }
 
-        /** 
+        /**
          * this method is used to get a list of classes that meets the property
          * type restriction
          */
-        private List getComponentList(String classname,String prop){            
+        private List getComponentList(String classname,String prop){
             ConfigurableProperty cp = getProperty(classname,prop);
             if(cp != null){
-                String classtype = cp.getClassType();           
+                String classtype = cp.getClassType();
                 if(classtype != null && !classtype.equalsIgnoreCase("")){
                     // class type is an existing class
                     // get list of clases that are / subclass of this type
                     // return mymap that contains name of class 
                     // and configuration stored for that class
-                    Map mymap = _gmediator.getModelBuilder().getclasslist(classtype); 
+                    Map mymap = _gmediator.getModelBuilder().getclasslist(classtype);
                     if(mymap != null && !mymap.isEmpty()){
                         List myreturn = new ArrayList();
                         for(Iterator it = mymap.entrySet().iterator();it.hasNext();){
@@ -1368,7 +1341,7 @@ public class PanelConfigurable extends javax.swing.JPanel {
                             String packagename = fullname.substring(0,index);
                             // format the output to be "setname-classname"
                             String myitem = new String
-                                    (setname+"-"+localname+"("+packagename+")");       
+                                    (setname+"-"+localname+"("+packagename+")");
                             // System.out.println("item $$ "+myitem);                            
                             myreturn.add(myitem);
                         }
@@ -1378,7 +1351,7 @@ public class PanelConfigurable extends javax.swing.JPanel {
             }
             return null;
         }
-        
+
     } // end inner class
 
     private class PanelMediatorException extends java.lang.Exception {
@@ -1387,9 +1360,9 @@ public class PanelConfigurable extends javax.swing.JPanel {
         private final static int INVALID_SETNAME = 3;
         private final static int INVALID_PROPNAME = 4;
         private final static int INVALID_VALUE = 5;
-        
+
         private int _mode;
-        
+
         /**
          * Creates a new instance of <code>PanelMediatorException</code> with detail message.
          */
@@ -1398,7 +1371,7 @@ public class PanelConfigurable extends javax.swing.JPanel {
             _mode = mode;
         }
     } // end inner exception class 
-    
+
 }// end PanelConfigurable class
 
 class ListItem {
@@ -1406,7 +1379,7 @@ class ListItem {
       private final static Color WITH_VALUE = Color.BLUE;
       private String value;
       private Color color;
-      
+
       public ListItem(boolean isValueSet, String s) {
           if(isValueSet)
               color = WITH_VALUE;
@@ -1440,7 +1413,7 @@ class ListItem {
       setText(((ListItem)value).getValue());
       setBackground(((ListItem)value).getColor());
 
-      // Set a border if the list item is selected 
+      // Set a border if the list item is selected
         if (iss) {
             setBorder(BorderFactory.createLineBorder(Color.blue, 2));
         } else {

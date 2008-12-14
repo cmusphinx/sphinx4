@@ -18,4 +18,26 @@ public class TrainerLink {
     private TrainerToken source;
     private TrainerToken destination;
     private Edge transition;
+
+
+    public TrainerLink(Edge transition, TrainerToken source, TrainerToken destination) {
+        this.source = source;
+        this.transition = transition;
+        this.destination = destination;
+    }
+
+
+    public TrainerToken getSource() {
+        return source;
+    }
+
+
+    public TrainerToken getDestination() {
+        return destination;
+    }
+
+
+    public Edge getTransition() {
+        return transition;
+    }
 }
