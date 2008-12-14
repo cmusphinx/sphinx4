@@ -137,6 +137,22 @@ public final class ConfigurationManagerUtils {
         // we need to determine the root-level here, beacuse the logManager will reset it
         Level rootLevel = Logger.getLogger("").getLevel();
 
+        configureLogger(cmRootLogger);
+
+
+        String level = cm.getGlobalProperty(GLOBAL_COMMON_LOGLEVEL);
+        if (level == null)
+            level = Level.WARNING.getName();
+
+        cmRootLogger.setLevel(Level.parse(level));
+
+        // restore the old root logger level
+        Logger.getLogger("").setLevel(rootLevel);
+    }
+
+
+    /** Configures a logger to use the sphinx4-log-formatter. */
+    public static void configureLogger(Logger logger) {
         LogManager logManager = LogManager.getLogManager();
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
 
@@ -157,15 +173,10 @@ public final class ConfigurationManagerUtils {
             System.err.println("Can't configure logger, using default configuration");
         }
 
-        String level = cm.getGlobalProperty(GLOBAL_COMMON_LOGLEVEL);
-        if (level == null)
-            level = Level.WARNING.getName();
-
-        cmRootLogger.setLevel(Level.parse(level));
 
         // Now we find the SphinxLogFormatter that the log manager created
         // and configure it.
-        Handler[] handlers = cmRootLogger.getHandlers();
+        Handler[] handlers = logger.getHandlers();
         for (Handler handler : handlers) {
             handler.setFormatter(new SphinxLogFormatter());
 //            if (handler instanceof ConsoleHandler) {
@@ -175,9 +186,6 @@ public final class ConfigurationManagerUtils {
 //                }
 //            }
         }
-
-        // restore the old root logger level
-        Logger.getLogger("").setLevel(rootLevel);
     }
 
 
