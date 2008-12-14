@@ -12,45 +12,29 @@
 
 package edu.cmu.sphinx.trainer;
 
+import edu.cmu.sphinx.util.props.Configurable;
+import edu.cmu.sphinx.util.props.S4Integer;
+import edu.cmu.sphinx.util.props.S4String;
+
 
 /** Provides mechanisms for reading a control file (or a pair control file plus transcription file). */
-public interface ControlFile {
-
-    /** Prefix for trainer.ControlFile SphinxProperties */
-    String PROP_PREFIX = "edu.cmu.sphinx.trainer.ControlFile.";
+public interface ControlFile extends Configurable {
 
     /** Simple control file containing audio file names only. */
-    String PROP_AUDIO_FILE = PROP_PREFIX + "audioFile";
-
-    /** The default value for the property PROP_AUDIO_FILE. */
-    String PROP_AUDIO_FILE_DEFAULT = "train.ctl";
+    @S4String(defaultValue = "train.ctl")
+    String PROP_AUDIO_FILE = "audioFile";
 
     /** Transcription file containing transcriptions, simple or full. */
-    String PROP_TRANSCRIPT_FILE = PROP_PREFIX + "transcriptFile";
-
-    /** The default value for the property PROP_TRANSCRIPT_FILE. */
-    String PROP_TRANSCRIPT_FILE_DEFAULT = "train.trans";
+    @S4String(defaultValue = "train.trans")
+    String PROP_TRANSCRIPT_FILE = "transcriptFile";
 
     /** The SphinxProperty name for which batch partition to process. */
-    public final static String PROP_WHICH_BATCH = PROP_PREFIX + "whichBatch";
-
-    /** The default value for the whichBatch SphinxProperty. */
-    public final static int PROP_WHICH_BATCH_DEFAULT = 1;
+    @S4Integer(defaultValue = 1)
+    public final static String PROP_WHICH_BATCH = "whichBatch";
 
     /** The SphinxProperty name for the total number of batch partitions. */
-    public final static String PROP_TOTAL_BATCHES
-            = PROP_PREFIX + "totalBatches";
-
-    /** The default value of the totalBatches SphinxProperty. */
-    public final static int PROP_TOTAL_BATCHES_DEFAULT = 1;
-
-
-    /**
-     * Initializes the ControlFile with the proper context.
-     *
-     * @param context the context to use
-     */
-    public void initialize(String context);
+    @S4Integer(defaultValue = 1)
+    public final static String PROP_TOTAL_BATCHES = "totalBatches";
 
 
     /** Gets an iterator for utterances. */

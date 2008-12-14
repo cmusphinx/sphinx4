@@ -12,10 +12,9 @@
 
 package edu.cmu.sphinx.trainer;
 
-import edu.cmu.sphinx.util.SphinxProperties;
+import edu.cmu.sphinx.util.props.*;
 
 import java.io.IOException;
-import java.net.URL;
 import java.util.*;
 
 
@@ -24,29 +23,19 @@ import java.util.*;
  * <p/>
  * At this point, a very simple file that helps us debug the code.
  */
-public class Trainer {
+public class Trainer implements Configurable {
 
-    /** Prefix for SphinxProperties in this file. */
-    public final static String PROP_PREFIX = "edu.cmu.sphinx.trainer.Trainer.";
+    @S4Component(type = TrainManager.class)
+    public static final String TRAIN_MANAGER = "trainManager";
 
     /** The SphinxProperty name for the initial trainer stage to be processed. */
-    public final static String PROP_INITIAL_STAGE = PROP_PREFIX +
-            "initialStage";
-
-    /** Default initial stage. */
-    public final static String PROP_INITIAL_STAGE_DEFAULT =
-            "_00_INITIALIZATION";
+    @S4String(defaultValue = "_00_INITIALIZATION")
+    public final static String PROP_INITIAL_STAGE = "initialStage";
 
     /** The SphinxProperty name for the final trainer stage to be processed. */
-    public final static String PROP_FINAL_STAGE = PROP_PREFIX +
-            "finalStage";
+    @S4String(defaultValue = "_40_TIED_CD_TRAIN")
+    public final static String PROP_FINAL_STAGE = "finalStage";
 
-    /** Default final stage. */
-    public final static String PROP_FINAL_STAGE_DEFAULT =
-            "_40_TIED_CD_TRAIN";
-
-
-    private String context;
     private String initialStage;
     private String finalStage;
     private boolean isStageActive = false;
@@ -56,40 +45,12 @@ public class Trainer {
     private TrainManager trainManager;
 
 
-    /**
-     * Constructs a Trainer.
-     *
-     * @param context the context of this trainer.
-     */
-    public Trainer(String context) {
-        this.context = context;
-        SphinxProperties props = SphinxProperties.getSphinxProperties(context);
-        init(props);
-    }
+    public void newProperties(PropertySheet ps) throws PropertyException {
+        trainManager = (TrainManager) ps.getComponent(TRAIN_MANAGER);
 
+        initialStage = ps.getString(PROP_INITIAL_STAGE);
+        finalStage = ps.getString(PROP_FINAL_STAGE);
 
-    /**
-     * Constructs a Trainer.
-     *
-     * @param props the sphinx properties to use
-     */
-    public Trainer(SphinxProperties props) {
-        init(props);
-    }
-
-
-    /**
-     * Common intialization code
-     *
-     * @param props the sphinx properties
-     */
-    private void init(SphinxProperties props) {
-        context = props.getContext();
-        trainManager = new SimpleTrainManager(context);
-        initialStage = props.getString(PROP_INITIAL_STAGE,
-                PROP_INITIAL_STAGE_DEFAULT);
-        finalStage = props.getString(PROP_FINAL_STAGE,
-                PROP_FINAL_STAGE_DEFAULT);
         addStage(Stage._00_INITIALIZATION);
         addStage(Stage._10_CI_TRAIN);
         addStage(Stage._20_UNTIED_CD_TRAIN);
@@ -190,15 +151,9 @@ public class Trainer {
         String propertiesFile = argv[0];
         String pwd = System.getProperty("user.dir");
 
-        try {
-            SphinxProperties.initContext
-                    (context, new URL("file:///" + pwd + "/"
-                            + propertiesFile));
+        //            SphinxProperties.initContext(context, new URL("file:///" + pwd + "/" + propertiesFile));
 
-            Trainer trainer = new Trainer(context);
-            trainer.processStages(context);
-        } catch (IOException ioe) {
-            ioe.printStackTrace();
-        }
+        Trainer trainer = ConfigurationManager.getInstance(Trainer.class);
+        trainer.processStages(context);
     }
 }

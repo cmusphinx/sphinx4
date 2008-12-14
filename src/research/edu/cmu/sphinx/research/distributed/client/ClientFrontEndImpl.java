@@ -15,21 +15,34 @@ package edu.cmu.sphinx.research.distributed.client;
 
 import edu.cmu.sphinx.frontend.*;
 import edu.cmu.sphinx.frontend.util.StreamDataSource;
-import edu.cmu.sphinx.util.SphinxProperties;
+import edu.cmu.sphinx.util.props.*;
 
 import java.io.*;
 import java.net.Socket;
 
-
-/** An implementation of the ClientFrontEnd interface. */
-public class ClientFrontEndImpl implements ClientFrontEnd {
+/**
+ * A FrontEnd that runs on client applications. The main interface between the application and this ClientFrontEnd is
+ * the <b>decode(InputStream inputStream, String streamName)</b> method, which returns the decoded result as a String.
+ * <p/>
+ * <p>The method <b>connect()</b> should be called before <b>decode()</b>, and the method <b>close()</b> should be
+ * called after all decoding is done. Therefore, the correct sequence of calls is: <code> connect();
+ * decode(inputstream1, name1); ... decode(inputstreamN, nameN); close(); </code>
+ */
+public class ClientFrontEndImpl implements Configurable{
 
 
     private BufferedReader reader;
     private DataOutputStream dataWriter;
 
+    @S4String(defaultValue = "localhost")
+    public static final String SERVER_ADRESS = "serverAdress";
     private String serverAddress;
+
+
+    @S4Integer(defaultValue = 52703)
+    public static final String SERVER_PORT = "serverPort";
     private int serverPort;
+
     private Socket socket;
 
     private StreamDataSource streamAudioSource;
@@ -38,27 +51,17 @@ public class ClientFrontEndImpl implements ClientFrontEnd {
     private boolean inUtterance = false;
 
 
-    /**
-     * Constructs a default ClientFrontEndImpl.
-     *
-     * @param name    the name of this ClientFrontEndImpl
-     * @param context the context of this ClientFrontEndImpl
-     * @throws InstantiationException if there is an initialization error
-     * @throws IOException            if there is an I/O error
-     */
-    public void initialize(String name, String context)
-            throws InstantiationException, IOException {
-        SphinxProperties props = SphinxProperties.getSphinxProperties(context);
 
-        streamAudioSource = new StreamDataSource();
+    public void newProperties(PropertySheet ps) throws PropertyException {
+          streamAudioSource = new StreamDataSource();
         streamAudioSource.initialize();
 //        streamAudioSource.initialize("StreamDataSource", null, props, null);
 
 //        frontend = FrontEndFactory.getFrontEnd(props, "client");
         frontend.setDataSource(streamAudioSource);
 
-        serverAddress = props.getString(PROP_SERVER, PROP_SERVER_DEFAULT);
-        serverPort = props.getInt(PROP_PORT, PROP_PORT_DEFAULT);
+        serverAddress = ps.getString(SERVER_ADRESS);
+        serverPort = ps.getInt(SERVER_PORT);
     }
 
 
@@ -170,6 +173,5 @@ public class ClientFrontEndImpl implements ClientFrontEnd {
     private String readResult() throws IOException {
         return reader.readLine();
     }
-
 }
 

@@ -14,9 +14,9 @@ package edu.cmu.sphinx.linguist.acoustic.trivial;
 
 import edu.cmu.sphinx.frontend.Data;
 import edu.cmu.sphinx.linguist.acoustic.*;
-import edu.cmu.sphinx.util.SphinxProperties;
 import edu.cmu.sphinx.util.props.PropertyException;
 import edu.cmu.sphinx.util.props.PropertySheet;
+import edu.cmu.sphinx.util.props.S4Integer;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -31,18 +31,11 @@ public class TrivialAcousticModel implements AcousticModel {
             "edu.cmu.sphinx.linguist.acoustic.trivial.TrivialAcousticModel";
 
     /** Sphinx property that defines the left context size */
-    public final static String PROP_LEFT_CONTEXT_SIZE = PREFIX + ".leftContextSize";
+    @S4Integer(defaultValue = 1)
+    public final static String LEFT_CONTEXT_SIZE ="leftContextSize";
 
-    /** The default value for PROP_LEFT_CONTEXT_SIZE */
-    public final static int PROP_LEFT_CONTEXT_SIZE_DEFAULT = 1;
-
-
-    /** Sphinx property that defines the right context size */
-    public final static String PROP_RIGHT_CONTEXT_SIZE = PREFIX + ".rightContextSize";
-
-    /** The default value for PROP_RIGHT_CONTEXT_SIZE */
-    public final static int PROP_RIGHT_CONTEXT_SIZE_DEFAULT = 1;
-
+    @S4Integer(defaultValue = 1)
+    public final static String RIGHT_CONTEXT_SIZE = "leftContextSize";
 
     private String name;
     private Map<Unit, HMM> hmmMap = new HashMap<Unit, HMM>();
@@ -50,26 +43,14 @@ public class TrivialAcousticModel implements AcousticModel {
     private int rightContextSize;
 
 
-    /**
-     * Initializes this acoustic model
-     *
-     * @param name    the name of this acoustic model
-     * @param context the context for this acoustic model
-     * @throws IOException if the model could not be loaded
-     */
-    public void initialize(String name, String context) throws IOException {
-        this.name = name;
+    public void newProperties(PropertySheet ps) throws PropertyException {
+         this.name = name;
 
         // get acoustic model configuration data from the sphinx
         // properties
 
-        SphinxProperties props = SphinxProperties.getSphinxProperties(context);
-        this.leftContextSize = props.getInt(name,
-                PROP_LEFT_CONTEXT_SIZE,
-                PROP_LEFT_CONTEXT_SIZE_DEFAULT);
-        this.rightContextSize = props.getInt(name,
-                PROP_RIGHT_CONTEXT_SIZE,
-                PROP_RIGHT_CONTEXT_SIZE_DEFAULT);
+        this.leftContextSize = ps.getInt(LEFT_CONTEXT_SIZE);
+        this.rightContextSize = ps.getInt(RIGHT_CONTEXT_SIZE);
 
         // create HMMs for all of the units
 
@@ -82,13 +63,9 @@ public class TrivialAcousticModel implements AcousticModel {
                 "V_seven", "W_one", "Z_zero", "AX_one", "SIL"
         };
 
-        for (int i = 0; i < unitNames.length; i++) {
-            createTrivialHMM(unitNames[i]);
+        for (String unitName : unitNames) {
+            createTrivialHMM(unitName);
         }
-    }
-
-
-    public void newProperties(PropertySheet ps) throws PropertyException {
     }
 
 

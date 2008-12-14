@@ -14,66 +14,52 @@
 package edu.cmu.sphinx.research.distributed.tests;
 
 import edu.cmu.sphinx.frontend.DataProcessingException;
-import edu.cmu.sphinx.research.distributed.client.ClientFrontEnd;
 import edu.cmu.sphinx.research.distributed.client.ClientFrontEndImpl;
 import edu.cmu.sphinx.util.BatchFile;
 import edu.cmu.sphinx.util.NISTAlign;
-import edu.cmu.sphinx.util.SphinxProperties;
 import edu.cmu.sphinx.util.Timer;
+import edu.cmu.sphinx.util.props.*;
 
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
 import java.text.DecimalFormat;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 
 /** A client-side BatchDecoder. It talks to a ServerDeocder to decode a list of files in a batch file. */
-public class BatchClient {
+public class BatchClient implements Configurable {
 
-    private final static String PROP_PREFIX =
-            "edu.cmu.sphinx.research.distributed.tests.BatchClient.";
+    @S4String
+    private static final String BATCH_FILE = "batchFile";
+    private String batchFile;
+
+    @S4Integer(defaultValue = 0)
+    public static final String SKIP = "skip";
+    private int skip;
 
 
-    /** The SphinxProperty name for how many files to skip for every decode. */
-    public final static String PROP_SKIP = PROP_PREFIX + "skip";
-
-
-    /** The default value for the property PROP_SKIP. */
-    public final static int PROP_SKIP_DEFAULT = 0;
+    @S4Component(type = ClientFrontEndImpl.class)
+    private final static String CLIENT = "client";
+    private ClientFrontEndImpl clientFrontEnd;
 
 
     private static DecimalFormat timeFormat = new DecimalFormat("0.00");
 
-    private ClientFrontEnd clientFrontEnd;
-
     private Timer decodeTimer;
     private long cumulativeProcessingTime = 0;
-
-    private String context;
-    private String batchFile;
-    private int skip;
 
     private NISTAlign aligner;
 
 
-    /**
-     * Constructs a BatchClient with the given name and context.
-     *
-     * @param context   the context to use
-     * @param batchFile the batch file to decode
-     * @throws InstantiationException if an initialization error occurs
-     * @throws IOException            if an I/O error occurred
-     */
-    public BatchClient(String context, String batchFile)
-            throws InstantiationException, IOException {
-        this.context = context;
-        this.batchFile = batchFile;
-        SphinxProperties props = SphinxProperties.getSphinxProperties(context);
-        skip = props.getInt(PROP_SKIP, PROP_SKIP_DEFAULT);
-        clientFrontEnd = new ClientFrontEndImpl();
-        clientFrontEnd.initialize("BatchClient", context);
+    public void newProperties(PropertySheet ps) throws PropertyException {
+        this.batchFile = ps.getString(BATCH_FILE);
+
+        skip = ps.getInt(SKIP);
+        clientFrontEnd = (ClientFrontEndImpl) ps.getComponent(CLIENT);
+
         decodeTimer = Timer.getTimer("BatchClientDecode");
         aligner = new NISTAlign(true, true);
     }
@@ -162,10 +148,10 @@ public class BatchClient {
         String pwd = System.getProperty("user.dir");
 
         try {
-            SphinxProperties.initContext
-                    (context, new URL("file://" + pwd + "/" + propertiesFile));
+            Map<String, Object> props = new HashMap<String, Object>();
+            props.put(BATCH_FILE, batchFile);
+            BatchClient client = ConfigurationManager.getInstance(BatchClient.class, props);
 
-            BatchClient client = new BatchClient(context, batchFile);
             client.decode();
 
         } catch (Exception e) {

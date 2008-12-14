@@ -15,46 +15,60 @@ package edu.cmu.sphinx.trainer;
 import edu.cmu.sphinx.linguist.acoustic.AcousticModel;
 import edu.cmu.sphinx.linguist.acoustic.tiedstate.trainer.TrainerAcousticModel;
 import edu.cmu.sphinx.linguist.acoustic.tiedstate.trainer.TrainerScore;
-import edu.cmu.sphinx.util.SphinxProperties;
 import edu.cmu.sphinx.util.Utilities;
+import edu.cmu.sphinx.util.props.*;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 
 
 /** This is a dummy implementation of a TrainManager. */
 class SimpleTrainManager implements TrainManager {
 
-    private Learner learner;
     private ControlFile controlFile;
-    private SphinxProperties props;       // sphinx properties
     private TrainerAcousticModel[] models;
 
     private boolean dumpMemoryInfo;
+
+    @S4Component(type = Learner.class)
+    public static final String LEARNER = "learner";
+    private Learner learner;
+
+    @S4Component(type = Learner.class)
+    public static final String INIT_LEARNER = "initLearner";
+    private Learner initLearner;
+
+    @S4ComponentList(type = AcousticModel.class)
+    public static final String AM_COLLECTION = "learner";
+    private List<? extends AcousticModel> acousticModels;
 
     /**
      * A SphinxProperty name for the boolean property that controls whether or not the recognizer will display detailed
      * memory information while it is running. The default value is <code>true</code>.
      */
-    public final static String PROP_DUMP_MEMORY_INFO =
-            PROP_PREFIX + "dumpMemoryInfo";
+    @S4Boolean(defaultValue = false)
+    public final static String DUMP_MEMORY_INFO = PROP_PREFIX + "dumpMemoryInfo";
 
 
     /** The default value for the property PROP_DUMP_MEMORY_INFO. */
     public final static boolean PROP_DUMP_MEMORY_INFO_DEFAULT = false;
 
+    private int maxIteration;
+    private float minimumImprovement;
 
-    /** Constructor for the class. */
-    public SimpleTrainManager(String context) {
-        //	controlFile = new SimpleControlFile(context);
-        controlFile = null;
+
+    public void newProperties(PropertySheet ps) throws PropertyException {
+        dumpMemoryInfo = ps.getBoolean(DUMP_MEMORY_INFO);
+        learner = (Learner) ps.getComponent(LEARNER);
+        initLearner = (Learner) ps.getComponent(INIT_LEARNER);
+
+        minimumImprovement = ps.getFloat(PROP_MINIMUM_IMPROVEMENT);
+        maxIteration = ps.getInt(PROP_MAXIMUM_ITERATION);
+
+        acousticModels = (List<AcousticModel>) ps.getComponentList(AM_COLLECTION);
     }
 
 
-    /** Initializes the TrainManager with the proper context. */
     public void initialize() {
     }
 
@@ -110,16 +124,11 @@ class SimpleTrainManager implements TrainManager {
         if (1 == models.length) {
             models[0].save(null);
         } else {
-            String name;
-            Collection modelList = AcousticModelFactory.getNames(props);
-            for (Iterator i = modelList.iterator(); i.hasNext();) {
-                name = (String) i.next();
-                AcousticModel model =
-                        AcousticModelFactory.getModel(props, name);
+            for (AcousticModel model : acousticModels) {
                 if (model instanceof TrainerAcousticModel) {
                     TrainerAcousticModel tmodel =
                             (TrainerAcousticModel) model;
-                    tmodel.save(name);
+                    tmodel.save(model.getName());
                 }
             }
         }
@@ -132,16 +141,11 @@ class SimpleTrainManager implements TrainManager {
      * @param context the context of this TrainManager
      */
     private void loadModels(String context) throws IOException {
-
-        props = SphinxProperties.getSphinxProperties(context);
-        dumpMemoryInfo = props.getBoolean(PROP_DUMP_MEMORY_INFO,
-                PROP_DUMP_MEMORY_INFO_DEFAULT);
-
         dumpMemoryInfo("TrainManager start");
 
-        models = getTrainerAcousticModels(context);
-        for (int m = 0; m < models.length; m++) {
-            models[m].load();
+        models = getTrainerAcousticModels();
+        for (TrainerAcousticModel model : models) {
+            model.load();
         }
         dumpMemoryInfo("acoustic model");
 
@@ -155,30 +159,27 @@ class SimpleTrainManager implements TrainManager {
      */
     public void initializeModels(String context) throws IOException {
         TrainerScore score[];
-        props = SphinxProperties.getSphinxProperties(context);
-        dumpMemoryInfo = props.getBoolean(PROP_DUMP_MEMORY_INFO,
-                PROP_DUMP_MEMORY_INFO_DEFAULT);
 
         dumpMemoryInfo("TrainManager start");
 
-        models = getTrainerAcousticModels(context);
+        models = getTrainerAcousticModels();
         for (int m = 0; m < models.length; m++) {
 
-            learner = new FlatInitializerLearner(props);
             if (controlFile == null) {
-                controlFile = new SimpleControlFile(context);
+                controlFile = ConfigurationManager.getInstance(SimpleControlFile.class);
             }
             for (controlFile.startUtteranceIterator();
                  controlFile.hasMoreUtterances();) {
                 Utterance utterance = controlFile.nextUtterance();
-                learner.setUtterance(utterance);
+                initLearner.setUtterance(utterance);
                 while ((score = learner.getScore()) != null) {
                     assert score.length == 1;
                     models[m].accumulate(0, score);
                 }
             }
+
             // normalize() has a return value, but we can ignore it here.
-            float dummy = models[m].normalize();
+            models[m].normalize();
         }
         dumpMemoryInfo("acoustic model");
     }
@@ -187,25 +188,11 @@ class SimpleTrainManager implements TrainManager {
     /**
      * Gets an array of models.
      *
-     * @param context the context of interest
      * @return the AcousticModel(s) used by this Recognizer, not initialized
      */
-    protected TrainerAcousticModel[] getTrainerAcousticModels(String context)
+    protected TrainerAcousticModel[] getTrainerAcousticModels()
             throws IOException {
-        SphinxProperties props = SphinxProperties.getSphinxProperties(context);
-        List modelList = new ArrayList();
-        Collection modelNames = AcousticModelFactory.getNames(props);
-
-        for (Iterator i = modelNames.iterator(); i.hasNext();) {
-            String modelName = (String) i.next();
-            AcousticModel model =
-                    AcousticModelFactory.getModel(props, modelName);
-            if (model instanceof TrainerAcousticModel) {
-                modelList.add(model);
-            }
-        }
-        return (TrainerAcousticModel[])
-                modelList.toArray(new TrainerAcousticModel[modelList.size()]);
+        return models;
     }
 
 
@@ -222,34 +209,24 @@ class SimpleTrainManager implements TrainManager {
         TranscriptGraph transcriptGraph;
         TrainerScore[] score;
         TrainerScore[] nextScore;
-        float minimumImprovement;
-        int maxIteration;
 
         // If initialization was performed, then learner should not be
         // null. Otherwise, we need to load the models.
         if (learner == null) {
             loadModels(context);
         }
-        props = SphinxProperties.getSphinxProperties(context);
-        dumpMemoryInfo = props.getBoolean(PROP_DUMP_MEMORY_INFO,
-                PROP_DUMP_MEMORY_INFO_DEFAULT);
 
-        minimumImprovement = props.getFloat(PROP_MINIMUM_IMPROVEMENT,
-                PROP_MINIMUM_IMPROVEMENT_DEFAULT);
-        maxIteration = props.getInt(PROP_MAXIMUM_ITERATION,
-                PROP_MAXIMUM_ITERATION_DEFAULT);
 
         dumpMemoryInfo("TrainManager start");
 
         assert models != null;
-        models = getTrainerAcousticModels(context);
+        models = getTrainerAcousticModels();
         for (int m = 0; m < models.length; m++) {
             float logLikelihood;
             float lastLogLikelihood = Float.MAX_VALUE;
             float relativeImprovement = 100.0f;
-            learner = new BaumWelchLearner(props);
             if (controlFile == null) {
-                controlFile = new SimpleControlFile(context);
+                controlFile = new SimpleControlFile();
             }
             for (int iteration = 0;
                  (iteration < maxIteration) &&
@@ -308,6 +285,4 @@ class SimpleTrainManager implements TrainManager {
             Utilities.dumpMemoryInfo(what);
         }
     }
-
-
 }

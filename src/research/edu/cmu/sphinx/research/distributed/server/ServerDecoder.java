@@ -13,14 +13,12 @@
 package edu.cmu.sphinx.research.distributed.server;
 
 import edu.cmu.sphinx.decoder.Decoder;
-import edu.cmu.sphinx.util.SphinxProperties;
 
 import java.io.DataInputStream;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.net.URL;
 
 /**
  * A server version of the decoder. After it is being started, it waits for a socket connection from a client. Once it
@@ -152,10 +150,10 @@ public class ServerDecoder extends BaseServer {
         String pwd = System.getProperty("user.dir");
 
         try {
-            SphinxProperties.initContext(context, new URL("file://" + pwd + "/" + propertiesFile));
+//            SphinxProperties.initContext(context, new URL("file://" + pwd + "/" + propertiesFile));
 
             assert false : "not implemented yet";
-            
+
             ServerDecoder decoder = new ServerDecoder(null);
             (new Thread(decoder)).start();
         } catch (Exception e) {

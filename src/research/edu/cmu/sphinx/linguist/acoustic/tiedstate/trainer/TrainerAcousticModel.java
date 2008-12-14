@@ -15,8 +15,9 @@ package edu.cmu.sphinx.linguist.acoustic.tiedstate.trainer;
 import edu.cmu.sphinx.linguist.acoustic.tiedstate.Loader;
 import edu.cmu.sphinx.linguist.acoustic.tiedstate.Saver;
 import edu.cmu.sphinx.linguist.acoustic.tiedstate.TiedStateAcousticModel;
-import edu.cmu.sphinx.util.SphinxProperties;
+import edu.cmu.sphinx.linguist.acoustic.tiedstate.Sphinx3Loader;
 import edu.cmu.sphinx.util.Timer;
+import edu.cmu.sphinx.util.props.*;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -25,15 +26,29 @@ import java.util.logging.Logger;
 /** Represents the generic interface to the Acoustic Model for sphinx4 */
 public class TrainerAcousticModel extends TiedStateAcousticModel {
 
-
     /** Prefix for acoustic model SphinxProperties. */
-    public final static String PROP_PREFIX
-            = "edu.cmu.sphinx.linguist.acoustic.";
+    public final static String PROP_PREFIX = "edu.cmu.sphinx.linguist.acoustic.";
 
 
-    /** The directory where the acoustic model data can be found. */
-    public final static String PROP_LOCATION_SAVE =
-            PROP_PREFIX + "location.save";
+    @S4Component(type = Loader.class)
+    public static final String LOADER = "loader";
+    private Loader loader;
+
+    @S4Component(type = Saver.class)
+    public static final String SAVER = "saver";
+    private Saver saver;
+
+
+    @S4Double(defaultValue = Sphinx3Loader.PROP_VARIANCE_FLOOR_DEFAULT)
+    public final static String PROP_VARIANCE_FLOOR = "varianceFloor";
+
+    /** Mixture component score floor. */
+    @S4Double(defaultValue = Sphinx3Loader.PROP_MC_FLOOR_DEFAULT)
+    public final static String PROP_MC_FLOOR = "MixtureComponentScoreFloor";
+
+    /** Mixture weight floor. */
+    @S4Double(defaultValue = Sphinx3Loader.PROP_MW_FLOOR_DEFAULT)
+    public final static String PROP_MW_FLOOR = "mixtureWeightFloor";
 
 
     /** The default value of PROP_LOCATION_SAVE. */
@@ -45,47 +60,33 @@ public class TrainerAcousticModel extends TiedStateAcousticModel {
      * <p/>
      * sphinx3.ascii sphinx3.binary sphinx4.ascii sphinx4.binary
      */
+    @S4String(defaultValue = "sphinx3.binary")
     public final static String PROP_FORMAT_SAVE = PROP_PREFIX + "format.save";
-
-
-    /** The default value of PROP_FORMAT_SAVE. */
-    public final static String PROP_FORMAT_SAVE_DEFAULT = "sphinx3.binary";
-
-
-    /** The file containing the phone list. */
-    public final static String PROP_PHONE_LIST = "phone_list";
-
-
-    /** The default value of PROP_PHONE_LIST. */
-    public final static String PROP_PHONE_LIST_DEFAULT = "phonelist";
 
 
     /** Flag indicating all models should be operated on. */
     public final static int ALL_MODELS = -1;
 
     /** The logger for this class */
-    private static Logger logger =
-            Logger.getLogger(PROP_PREFIX + "TrainerAcousticModel");
+    private Logger logger;
 
     /** The pool manager */
     private HMMPoolManager hmmPoolManager;
-    private Loader loader;
-    private SphinxProperties props;
-    private String context;
+    public String saveFormat;
 
 
-    /**
-     * Initializes the acoustic model
-     *
-     * @throws IOException if the model could not be created
-     */
-    public void initialize(String name, String context) throws IOException {
-        loader = new ModelInitializerLoader(name, props);
-        hmmPoolManager = new HMMPoolManager(loader, props);
-        this.name = name;
-        this.context = context;
-        this.props = SphinxProperties.getSphinxProperties(context);
-        this.loadTimer = Timer.getTimer(TIMER_LOAD);
+    @Override
+    public void newProperties(PropertySheet ps) throws PropertyException {
+        super.newProperties(ps);
+        logger = ps.getLogger();
+
+        loader = (Loader) ps.getComponent(LOADER);
+        saver = (Saver) ps.getComponent(SAVER);
+
+        hmmPoolManager = new HMMPoolManager(loader);
+        loadTimer = Timer.getTimer(TIMER_LOAD);
+        saveFormat = ps.getString(PROP_FORMAT_SAVE);
+
         logInfo();
     }
 
@@ -97,31 +98,9 @@ public class TrainerAcousticModel extends TiedStateAcousticModel {
      * @throws IOException           if the model could not be loaded
      * @throws FileNotFoundException if the model does not exist
      */
-    public void save(String name) throws IOException, FileNotFoundException {
-        Saver saver;
-
-        String formatProp = PROP_FORMAT_SAVE;
-        if (name != null) {
-            formatProp = PROP_PREFIX + name + ".format.save";
-        }
-        String format = props.getString(formatProp, PROP_FORMAT_SAVE_DEFAULT);
-
-        if (format.equals("sphinx3.ascii")) {
-            logger.info("Sphinx-3 ASCII format");
-            saver = new Sphinx3Saver(name, props, false, loader);
-        } else if (format.equals("sphinx3.binary")) {
-            logger.info("Sphinx-3 binary format");
-            saver = new Sphinx3Saver(name, props, true, loader);
-        } else if (format.equals("sphinx4.ascii")) {
-            logger.info("Sphinx-4 ASCII format");
-            saver = new Sphinx4Saver(name, props, false, loader);
-        } else if (format.equals("sphinx4.binary")) {
-            logger.info("Sphinx-4 binary format");
-            saver = new Sphinx4Saver(name, props, true, loader);
-        } else { // add new saving code here.
-            saver = null;
-            logger.severe("Unsupported acoustic model format " + format);
-        }
+    public void save(String name) throws IOException {
+        saver.save(name, true);
+        logger.info("saved models with " + saver);
     }
 
 
@@ -136,7 +115,7 @@ public class TrainerAcousticModel extends TiedStateAcousticModel {
 //        super.load();
         loadTimer.stop();
         logInfo();
-        hmmPoolManager = new HMMPoolManager(loader, props);
+        hmmPoolManager = new HMMPoolManager(loader);
     }
 
 

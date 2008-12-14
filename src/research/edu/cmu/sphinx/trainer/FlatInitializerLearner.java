@@ -13,12 +13,12 @@
 package edu.cmu.sphinx.trainer;
 
 import edu.cmu.sphinx.frontend.*;
-import edu.cmu.sphinx.frontend.util.StreamCepstrumSource;
 import edu.cmu.sphinx.frontend.util.StreamDataSource;
 import edu.cmu.sphinx.linguist.acoustic.tiedstate.trainer.TrainerAcousticModel;
 import edu.cmu.sphinx.linguist.acoustic.tiedstate.trainer.TrainerScore;
-import edu.cmu.sphinx.util.SphinxProperties;
-import edu.cmu.sphinx.util.Utilities;
+import edu.cmu.sphinx.util.props.PropertyException;
+import edu.cmu.sphinx.util.props.PropertySheet;
+import edu.cmu.sphinx.util.props.S4Component;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -27,73 +27,22 @@ import java.io.InputStream;
 /** Provides mechanisms for computing statistics given a set of states and input data. */
 public class FlatInitializerLearner implements Learner {
 
-    private final static String PROP_PREFIX = "edu.cmu.sphinx.trainer.";
-
-
-    /** The SphinxProperty name for the input data type. */
-    public final static String PROP_INPUT_TYPE = PROP_PREFIX + "inputDataType";
-
-
-    /** The default value for the property PROP_INPUT_TYPE. */
-    public final static String PROP_INPUT_TYPE_DEFAULT = "cepstrum";
-
+    @S4Component(type = FrontEnd.class)
+    public static final String FRONT_END = "frontEnd";
     private FrontEnd frontEnd;
-    private DataProcessor dataSource;
-    private String inputDataType;
-    private SphinxProperties props;
+
+    @S4Component(type = StreamDataSource.class)
+    public static final String DATA_SOURCE = "dataSource";
+    private StreamDataSource dataSource;
+
     private Data curFeature;
 
 
-    /** Constructor for this learner. */
-    public FlatInitializerLearner(SphinxProperties props)
-            throws IOException {
-        this.props = props;
-        initialize();
-    }
+    public void newProperties(PropertySheet ps) throws PropertyException {
+        dataSource = (StreamDataSource) ps.getComponent(DATA_SOURCE);
 
-
-    /**
-     * Initializes the Learner with the proper context and frontend.
-     *
-     * @throws IOException
-     */
-    private void initialize() throws IOException {
-        inputDataType = props.getString(PROP_INPUT_TYPE, PROP_INPUT_TYPE_DEFAULT);
-        if (inputDataType.equals("audio")) {
-            dataSource = new StreamDataSource();
-//	    dataSource.initialize("batchAudioSource", null, props, null);
-            dataSource.initialize();
-        } else if (inputDataType.equals("cepstrum")) {
-            dataSource = new StreamCepstrumSource();
-            dataSource.initialize();
-//	    dataSource.initialize("batchCepstrumSource", null, props, null);
-        } else {
-            throw new Error("Unsupported data type: " + inputDataType + "\n" +
-                    "Only audio and cepstrum are supported\n");
-        }
-
-        frontEnd = getFrontEnd();
-    }
-
-
-    // Cut and paste from e.c.s.d.Recognizer.java
-    /** Initialize and return the frontend based on the given sphinx properties. */
-    protected FrontEnd getFrontEnd() {
-//        String path = null;
-//        try {
-//	    Collection names = FrontEndFactory.getNames(props);
-//	    assert names.size() == 1;
-//	    FrontEnd fe = null;
-//	    for (Iterator i = names.iterator(); i.hasNext(); ) {
-//		String name = (String) i.next();
-//		fe = FrontEndFactory.getFrontEnd(props, name);
-//	    }
-//	    return fe;
-//        } catch (InstantiationException ie) {
-//            throw new Error("IE: Can't create front end " + path, ie);
-//        }
-
-        return null;
+        frontEnd = (FrontEnd) ps.getComponent(FRONT_END);
+        frontEnd.setDataSource(dataSource);
     }
 
 
@@ -105,18 +54,9 @@ public class FlatInitializerLearner implements Learner {
      */
     public void setUtterance(Utterance utterance) throws IOException {
         String file = utterance.toString();
-
         InputStream is = new FileInputStream(file);
-
-        inputDataType = props.getString(PROP_INPUT_TYPE,
-                PROP_INPUT_TYPE_DEFAULT);
-
-        if (inputDataType.equals("audio")) {
-            ((StreamDataSource) dataSource).setInputStream(is, file);
-        } else if (inputDataType.equals("cepstrum")) {
-            boolean bigEndian = Utilities.isCepstraFileBigEndian(file);
-            ((StreamCepstrumSource) dataSource).setInputStream(is, bigEndian);
-        }
+        
+        dataSource.setInputStream(is, file);
     }
 
 
@@ -212,5 +152,4 @@ public class FlatInitializerLearner implements Learner {
             return null;
         }
     }
-
 }

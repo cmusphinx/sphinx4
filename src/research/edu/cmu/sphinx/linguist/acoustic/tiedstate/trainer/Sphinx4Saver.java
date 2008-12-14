@@ -12,18 +12,14 @@
 
 package edu.cmu.sphinx.linguist.acoustic.tiedstate.trainer;
 
-import edu.cmu.sphinx.linguist.acoustic.tiedstate.Loader;
 import edu.cmu.sphinx.linguist.acoustic.tiedstate.Pool;
-import edu.cmu.sphinx.linguist.acoustic.tiedstate.Sphinx3Loader;
 import edu.cmu.sphinx.util.LogMath;
-import edu.cmu.sphinx.util.SphinxProperties;
 import edu.cmu.sphinx.util.StreamFactory;
 
 import java.io.*;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.zip.ZipException;
 
 
 /**
@@ -40,21 +36,6 @@ class Sphinx4Saver extends Sphinx3Saver {
     protected final static String TMAT_FILE_VERSION = "4.0";
 
 
-    /**
-     * Saves the sphinx4 models.
-     *
-     * @param modelName the name of the model as specified in the props file.
-     * @param props     the SphinxProperties object
-     * @param binary    if <code>true</code> the file is saved in binary format
-     * @param loader    this acoustic model's loader
-     */
-    public Sphinx4Saver(String modelName, SphinxProperties props,
-                        boolean binary, Loader loader) throws
-            FileNotFoundException, IOException, ZipException {
-
-        super(modelName, props, binary, loader);
-    }
-
 
     /**
      * Saves the transition matrices
@@ -65,9 +46,8 @@ class Sphinx4Saver extends Sphinx3Saver {
      * @throws FileNotFoundException if a file cannot be found
      * @throws IOException           if an error occurs while saving the data
      */
-    protected void saveTransitionMatricesAscii(Pool pool, String path,
-                                               boolean append)
-            throws FileNotFoundException, IOException {
+    protected void saveTransitionMatricesAscii(Pool pool, String path, boolean append)
+            throws IOException {
 
         String location = super.getLocation();
         OutputStream outputStream = StreamFactory.getOutputStream(location,
@@ -78,10 +58,8 @@ class Sphinx4Saver extends Sphinx3Saver {
         }
         PrintWriter pw = new PrintWriter(outputStream, true);
 
-        SphinxProperties acousticProperties = super.getAcousticProperties();
         LogMath logMath = super.getLogMath();
-        boolean sparseForm = acousticProperties.getBoolean
-                (Sphinx3Loader.PROP_SPARSE_FORM, false);
+
         logger.info("Saving transition matrices to: ");
         logger.info(path);
         int numMatrices = pool.size();
@@ -146,15 +124,11 @@ class Sphinx4Saver extends Sphinx3Saver {
      * @throws FileNotFoundException if a file cannot be found
      * @throws IOException           if an error occurs while saving the data
      */
-    protected void saveTransitionMatricesBinary(Pool pool, String path,
-                                                boolean append)
-            throws FileNotFoundException, IOException {
+    protected void saveTransitionMatricesBinary(Pool pool, String path, boolean append)
+            throws IOException {
 
-        SphinxProperties acousticProperties = super.getAcousticProperties();
         LogMath logMath = super.getLogMath();
 
-        boolean sparseForm = acousticProperties.getBoolean
-                (Sphinx3Loader.PROP_SPARSE_FORM, false);
         logger.info("Saving transition matrices to: ");
         logger.info(path);
         Properties props = new Properties();

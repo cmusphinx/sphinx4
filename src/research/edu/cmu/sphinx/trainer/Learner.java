@@ -13,12 +13,13 @@
 package edu.cmu.sphinx.trainer;
 
 import edu.cmu.sphinx.linguist.acoustic.tiedstate.trainer.TrainerScore;
+import edu.cmu.sphinx.util.props.Configurable;
 
 import java.io.IOException;
 
 
 /** Provides mechanisms for computing statistics given a set of states and input data. */
-public interface Learner {
+public interface Learner extends Configurable {
 
     /** Starts the Learner. */
     public void start();

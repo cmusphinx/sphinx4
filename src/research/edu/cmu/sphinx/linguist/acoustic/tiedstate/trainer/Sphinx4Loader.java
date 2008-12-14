@@ -16,9 +16,11 @@ import edu.cmu.sphinx.linguist.acoustic.*;
 import edu.cmu.sphinx.linguist.acoustic.tiedstate.*;
 import edu.cmu.sphinx.util.ExtendedStreamTokenizer;
 import edu.cmu.sphinx.util.LogMath;
-import edu.cmu.sphinx.util.SphinxProperties;
 import edu.cmu.sphinx.util.StreamFactory;
 import edu.cmu.sphinx.util.props.ConfigurationManager;
+import edu.cmu.sphinx.util.props.PropertyException;
+import edu.cmu.sphinx.util.props.PropertySheet;
+import edu.cmu.sphinx.util.props.S4Integer;
 
 import java.io.DataInputStream;
 import java.io.FileNotFoundException;
@@ -27,7 +29,6 @@ import java.io.InputStream;
 import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 
 /**
@@ -37,16 +38,19 @@ import java.util.logging.Logger;
  */
 class Sphinx4Loader extends Sphinx3Loader {
 
-    /** The logger for this class */
-    private static Logger logger =
-            Logger.getLogger(TrainerAcousticModel.PROP_PREFIX + "AcousticModel");
-
     protected final static String TMAT_FILE_VERSION = "4.0";
 
-    public final static String MAX_MODEL_SIZE =
-            TrainerAcousticModel.PROP_PREFIX + "maxStatePerModel";
+    @S4Integer(defaultValue = 10)
+    public final static String MAX_MODEL_SIZE = "maxStatePerModel";
+    private int maxModelSize;
 
-    public final static int MAX_MODEL_SIZE_DEFAULT = 10;
+
+    @Override
+    public void newProperties(PropertySheet ps) throws PropertyException {
+        super.newProperties(ps);
+
+        maxModelSize = ps.getInt(MAX_MODEL_SIZE);
+    }
 
 
     /**
@@ -59,10 +63,8 @@ class Sphinx4Loader extends Sphinx3Loader {
      * @throws FileNotFoundException if a file cannot be found
      * @throws IOException           if an error occurs while loading the data
      */
-    protected Pool loadHMMPool(boolean useCDUnits,
-                               InputStream inputStream,
-                               String path)
-            throws FileNotFoundException, IOException {
+    protected Pool loadHMMPool(boolean useCDUnits, InputStream inputStream, String path)
+            throws IOException {
         int token_type;
         int numBase;
         int numTri;
@@ -100,10 +102,6 @@ class Sphinx4Loader extends Sphinx3Loader {
         numTiedTransitionMatrices = est.getInt("numTiedTransitionMatrices");
         est.expectString("n_tied_tmat");
 
-//        SphinxProperties props = super.getSystemProperties();
-        SphinxProperties props = null;
-        int maxModelSize =
-                props.getInt(MAX_MODEL_SIZE, MAX_MODEL_SIZE_DEFAULT);
         int[] maxStid = new int[maxModelSize];
 
         HMMManager hmmManager = super.getHmmManager();
@@ -280,11 +278,7 @@ class Sphinx4Loader extends Sphinx3Loader {
         String location = super.getLocation();
         InputStream inputStream = StreamFactory.getInputStream(location, path);
 
-//        SphinxProperties acousticProperties = super.getAcousticProperties();
-        SphinxProperties acousticProperties = null;
         LogMath logMath = ConfigurationManager.getInstance(LogMath.class);
-        boolean sparseForm = acousticProperties.getBoolean
-                (Sphinx3Loader.PROP_SPARSE_FORM, false);
         logger.info("Loading transition matrices from: ");
         logger.info(path);
         int numMatrices;
@@ -346,14 +340,8 @@ class Sphinx4Loader extends Sphinx3Loader {
      * @throws FileNotFoundException if a file cannot be found
      * @throws IOException           if an error occurs while loading the data
      */
-    protected Pool loadTransitionMatricesBinary(String path)
-            throws FileNotFoundException, IOException {
+    protected Pool loadTransitionMatricesBinary(String path) throws IOException {
 
-//        SphinxProperties acousticProperties = super.getAcousticProperties();
-        SphinxProperties acousticProperties = null;
-        LogMath logMath = ConfigurationManager.getInstance(LogMath.class);
-        boolean sparseForm = acousticProperties.getBoolean
-                (Sphinx3Loader.PROP_SPARSE_FORM, false);
         logger.info("Loading transition matrices from: ");
         logger.info(path);
         int numMatrices;

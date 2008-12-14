@@ -14,7 +14,6 @@
 package edu.cmu.sphinx.research.distributed.server;
 
 import edu.cmu.sphinx.frontend.*;
-import edu.cmu.sphinx.util.SphinxProperties;
 
 import java.io.BufferedInputStream;
 import java.io.DataInputStream;
@@ -50,21 +49,6 @@ public class SocketDataSource extends BaseDataProcessor {
         this.dataReader = new DataInputStream
                 (new BufferedInputStream(socket.getInputStream()));
     }
-
-
-    /**
-     * Initializes this DataProcessor.
-     *
-     * @param name         the name of this DataProcessor
-     * @param frontEndName the name of the front-end pipeline this DataProcessor is in
-     * @param props        the SphinxProperties to use
-     * @param predecessor  the predecessor of this DataProcessor
-     */
-    public void initialize(String name, String frontEndName,
-                           SphinxProperties props,
-                           DataProcessor predecessor) {
-    }
-
 
     /**
      * Returns the next Data object produced by this SocketDataSource. The Cepstra objects of an Utterance should be

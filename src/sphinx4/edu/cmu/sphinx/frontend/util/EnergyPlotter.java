@@ -15,7 +15,10 @@ package edu.cmu.sphinx.frontend.util;
 
 import edu.cmu.sphinx.frontend.Data;
 import edu.cmu.sphinx.frontend.DoubleData;
-import edu.cmu.sphinx.util.SphinxProperties;
+import edu.cmu.sphinx.util.props.Configurable;
+import edu.cmu.sphinx.util.props.PropertyException;
+import edu.cmu.sphinx.util.props.PropertySheet;
+import edu.cmu.sphinx.util.props.S4Integer;
 
 import java.util.Arrays;
 
@@ -35,30 +38,20 @@ import java.util.Arrays;
  * <br>+............14 <br>+............14 <br>+............14 <br>+...........13 <br>+........9 <br>+.......8
  * <br>+......7 <br>+......7 <br>+......7 <br>Cepstrum: SPEECH_END <br>+......7 </code>
  */
-public class EnergyPlotter {
+public class EnergyPlotter implements Configurable {
 
     /** The maximum level of energy for which a plot string will be preconstructed. */
-    public static final String PROP_MAX_ENERGY =
-            "edu.cmu.sphinx.frontend.util.EnergyPlotter.maxEnergy";
-
-    /** The default value of PROP_MAX_ENERGY. */
-    public static final int PROP_MAX_ENERGY_DEFAULT = 20;
-
+    @S4Integer(defaultValue = 20)
+    public static final String PROP_MAX_ENERGY = "maxEnergy";
 
     private int maxEnergy;
     private String[] plots;
 
 
-    /**
-     * Constructs an EnergyPlotter.
-     *
-     * @param props the SphinxProperties for this object.
-     */
-    public EnergyPlotter(SphinxProperties props) {
-        maxEnergy = props.getInt(PROP_MAX_ENERGY, PROP_MAX_ENERGY_DEFAULT);
+    public void newProperties(PropertySheet ps) throws PropertyException {
+        maxEnergy = ps.getInt(PROP_MAX_ENERGY);
         buildPlots(maxEnergy);
     }
-
 
     /**
      * Builds the strings for the plots.

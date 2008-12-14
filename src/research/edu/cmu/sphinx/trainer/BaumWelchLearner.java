@@ -13,7 +13,6 @@
 package edu.cmu.sphinx.trainer;
 
 import edu.cmu.sphinx.frontend.*;
-import edu.cmu.sphinx.frontend.util.StreamCepstrumSource;
 import edu.cmu.sphinx.frontend.util.StreamDataSource;
 import edu.cmu.sphinx.linguist.acoustic.HMM;
 import edu.cmu.sphinx.linguist.acoustic.HMMState;
@@ -21,9 +20,9 @@ import edu.cmu.sphinx.linguist.acoustic.tiedstate.SenoneHMM;
 import edu.cmu.sphinx.linguist.acoustic.tiedstate.SenoneHMMState;
 import edu.cmu.sphinx.linguist.acoustic.tiedstate.trainer.TrainerScore;
 import edu.cmu.sphinx.util.LogMath;
-import edu.cmu.sphinx.util.SphinxProperties;
-import edu.cmu.sphinx.util.Utilities;
-import edu.cmu.sphinx.util.props.ConfigurationManager;
+import edu.cmu.sphinx.util.props.PropertyException;
+import edu.cmu.sphinx.util.props.PropertySheet;
+import edu.cmu.sphinx.util.props.S4Component;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -37,19 +36,17 @@ import java.util.logging.Logger;
 public class BaumWelchLearner implements Learner {
 
 
-    private final static String PROP_PREFIX =
-            "edu.cmu.sphinx.trainer.";
+    @S4Component(type = FrontEnd.class)
+    public static final String FRONT_END = "frontEnd";
+    private FrontEnd frontEnd;
 
+    @S4Component(type = LogMath.class)
+    public static final String LOG_MATH = "logMath";
+    private LogMath logMath;
 
-    /** The SphinxProperty name for the input data type. */
-    public final static String PROP_INPUT_TYPE = PROP_PREFIX + "inputDataType";
-
-
-    /** The default value for the property PROP_INPUT_TYPE. */
-    public final static String PROP_INPUT_TYPE_DEFAULT = "cepstrum";
-
-    /** The sphinx property for the front end class. */
-    public final static String PROP_FRONT_END = PROP_PREFIX + "frontend";
+    @S4Component(type = StreamDataSource.class)
+    public static final String DATA_SOURCE = "dataSource";
+    private StreamDataSource dataSource;
 
 
     /** The default value of PROP_FRONT_END. */
@@ -63,11 +60,6 @@ public class BaumWelchLearner implements Learner {
     private static Logger logger =
             Logger.getLogger("edu.cmu.sphinx.trainer.BaumWelch");
 
-    private FrontEnd frontEnd;
-    private DataProcessor dataSource;
-    private String inputDataType;
-    private SphinxProperties props;
-    private LogMath logMath;
     private Data curFeature;
     private UtteranceGraph graph;
     private Object[] scoreArray;
@@ -81,56 +73,20 @@ public class BaumWelchLearner implements Learner {
     private float totalLogScore;
 
 
-    /** Constructor for this learner. */
-    public BaumWelchLearner(SphinxProperties props) throws IOException {
-        this.props = props;
-        logMath = ConfigurationManager.getInstance(LogMath.class);
-        initialize();
-    }
+    public void newProperties(PropertySheet ps) throws PropertyException {
+        dataSource = (StreamDataSource) ps.getComponent(DATA_SOURCE);
 
+        frontEnd = (FrontEnd) ps.getComponent(FRONT_END);
+        frontEnd.setDataSource(dataSource);
 
-    /**
-     * Initializes the Learner with the proper context and frontend.
-     *
-     * @throws IOException
-     */
-    private void initialize() throws IOException {
-        inputDataType = props.getString(PROP_INPUT_TYPE,
-                PROP_INPUT_TYPE_DEFAULT);
-        if (inputDataType.equals("audio")) {
-            dataSource = new StreamDataSource();
-            dataSource.initialize();
-//	    dataSource.initialize("batchAudioSource", null, props, null);
-        } else if (inputDataType.equals("cepstrum")) {
-            dataSource = new StreamCepstrumSource();
-            dataSource.initialize();
-//	    dataSource.initialize("batchCepstrumSource", null, props, null);
-        } else {
-            throw new Error("Unsupported data type: " + inputDataType + "\n" +
-                    "Only audio and cepstrum are supported\n");
-        }
-
-        frontEnd = getFrontEnd();
+        logMath = (LogMath) ps.getComponent(LOG_MATH);
     }
 
 
     // Cut and paste from e.c.s.d.Recognizer.java
     /** Initialize and return the frontend based on the given sphinx properties. */
     protected FrontEnd getFrontEnd() {
-//        String path = null;
-//        try {
-//	    FrontEnd fe = null;
-//	    Collection names = FrontEndFactory.getNames(props);
-//	    assert names.size() == 1;
-//	    for (Iterator i = names.iterator(); i.hasNext();) {
-//		String feName = (String) i.next();
-//		fe = FrontEndFactory.getFrontEnd(props, feName);
-//	    }
-//	    return fe;
-//        } catch (InstantiationException ie) {
-//            throw new Error("IE: Can't create front end " + path, ie);
-//    }
-        return null;
+        return frontEnd;
     }
 
 
@@ -142,18 +98,8 @@ public class BaumWelchLearner implements Learner {
      */
     public void setUtterance(Utterance utterance) throws IOException {
         String file = utterance.toString();
-
         InputStream is = new FileInputStream(file);
-
-        inputDataType = props.getString(PROP_INPUT_TYPE,
-                PROP_INPUT_TYPE_DEFAULT);
-
-        if (inputDataType.equals("audio")) {
-            ((StreamDataSource) dataSource).setInputStream(is, file);
-        } else if (inputDataType.equals("cepstrum")) {
-            boolean bigEndian = Utilities.isCepstraFileBigEndian(file);
-            ((StreamCepstrumSource) dataSource).setInputStream(is, bigEndian);
-        }
+        dataSource.setInputStream(is, file);
     }
 
 

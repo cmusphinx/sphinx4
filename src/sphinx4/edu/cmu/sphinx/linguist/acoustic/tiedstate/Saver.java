@@ -13,11 +13,30 @@
 
 package edu.cmu.sphinx.linguist.acoustic.tiedstate;
 
+import edu.cmu.sphinx.util.props.Configurable;
+import edu.cmu.sphinx.util.props.S4Double;
+import edu.cmu.sphinx.util.props.S4Boolean;
+
 import java.util.Map;
+import java.io.IOException;
 
 
 /** Generic interface for a saver of acoustic models */
-public interface Saver {
+public interface Saver extends Configurable {
+
+    @S4Double(defaultValue = Sphinx3Loader.PROP_VARIANCE_FLOOR_DEFAULT)
+    public final static String PROP_VARIANCE_FLOOR = "varianceFloor";
+
+    /** Mixture component score floor. */
+    @S4Double(defaultValue = Sphinx3Loader.PROP_MC_FLOOR_DEFAULT)
+    public final static String PROP_MC_FLOOR = "MixtureComponentScoreFloor";
+
+    /** Mixture weight floor. */
+    @S4Double(defaultValue = Sphinx3Loader.PROP_MW_FLOOR_DEFAULT)
+    public final static String PROP_MW_FLOOR = "mixtureWeightFloor";
+
+    @S4Boolean(defaultValue = true, isNotDefined = true)
+    public final static String PROP_SPARSE_FORM = "sparseForm";
 
     /**
      * Gets the pool of means for this loader
@@ -102,6 +121,8 @@ public interface Saver {
      */
     public int getRightContextSize();
 
+    
+    public void save(String name, boolean b) throws IOException;
 }
 
 

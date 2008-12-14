@@ -16,17 +16,15 @@ import edu.cmu.sphinx.linguist.acoustic.LeftRightContext;
 import edu.cmu.sphinx.linguist.acoustic.Unit;
 import edu.cmu.sphinx.linguist.acoustic.tiedstate.*;
 import edu.cmu.sphinx.util.LogMath;
-import edu.cmu.sphinx.util.SphinxProperties;
 import edu.cmu.sphinx.util.StreamFactory;
 import edu.cmu.sphinx.util.Utilities;
-import edu.cmu.sphinx.util.props.ConfigurationManager;
+import edu.cmu.sphinx.util.props.*;
 
 import java.io.*;
 import java.net.URL;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.zip.ZipException;
 
 
 /**
@@ -36,9 +34,29 @@ import java.util.zip.ZipException;
  */
 class Sphinx3Saver implements Saver {
 
-    /** The logger for this class */
-    private static Logger logger =
-            Logger.getLogger(TrainerAcousticModel.PROP_PREFIX + "AcousticModel");
+    /**
+     * The SphinxProperty specifying whether the transition matrices of the acoustic model is in sparse form, i.e.,
+     * omitting the zeros of the non-transitioning states.
+     */
+    @S4Boolean(defaultValue = true, isNotDefined = true)
+    public final static String PROP_SPARSE_FORM = "sparseForm";
+    protected boolean sparseForm;
+
+    @S4Boolean(defaultValue = Sphinx3Loader.PROP_USE_CD_UNITS_DEFAULT)
+    public final static String PROP_USE_CD_UNITS = "useCDUnits";
+
+    @S4Double(defaultValue = Sphinx3Loader.PROP_MC_FLOOR_DEFAULT)
+    public final static String PROP_MC_FLOOR = "MixtureComponentScoreFloor";
+
+
+    @S4Component(type = Loader.class)
+    public static final String LOADER = "loader";
+
+    @S4Integer(defaultValue = Sphinx3Loader.PROP_VECTOR_LENGTH_DEFAULT)
+    public final static String PROP_VECTOR_LENGTH = "vectorLength";
+
+    protected Logger logger;
+
 
     protected final static String NUM_SENONES = "num_senones";
     protected final static String NUM_GAUSSIANS_PER_STATE = "num_gaussians";
@@ -72,7 +90,6 @@ class Sphinx3Saver implements Saver {
     private Map contextIndependentUnits;
     private HMMManager hmmManager;
     private LogMath logMath;
-    private SphinxProperties acousticProperties;
     private boolean binary = false;
     private String location;
     private boolean swap;
@@ -81,31 +98,46 @@ class Sphinx3Saver implements Saver {
     protected final static String MIXW_FILE_VERSION = "1.0";
     protected final static String TMAT_FILE_VERSION = "1.0";
 
+    @S4String(defaultValue = ".")
+    public static final String SAVE_LOCATION = "location.save";
 
-    /**
-     * Saves the sphinx3 models.
-     *
-     * @param modelName the name of the model as specified in the props file.
-     * @param props     the SphinxProperties object
-     * @param binary    if <code>true</code> the file is saved in binary format
-     * @param loader    this acoustic model's loader
-     */
-    public Sphinx3Saver(String modelName, SphinxProperties props,
-                        boolean binary, Loader loader) throws
-            FileNotFoundException, IOException, ZipException {
+    @S4String(defaultValue = Sphinx3Loader.PROP_DATA_LOCATION_DEFAULT)
+    public String DATA_LOCATION = "data_location";
+    public String dataDir;
+
+    @S4String(defaultValue = Sphinx3Loader.PROP_PROPERTIES_FILE_DEFAULT)
+    public String DEF_FILE = "definition_file";
+    public String modelDef;
+
+    @S4String(defaultValue = Sphinx3Loader.PROP_PROPERTIES_FILE_DEFAULT)
+    public String PROPERTY_FILE = "properties_file";
+    public String propsFile;
+    public boolean useCDUnits;
+
+
+    public void newProperties(PropertySheet ps) throws PropertyException {
+        logger = ps.getLogger();
+
+        location = ps.getString(SAVE_LOCATION);
+        modelDef = ps.getString(DEF_FILE);
+        dataDir = ps.getString(DATA_LOCATION);
+        propsFile = ps.getString(PROPERTY_FILE);
+
+        sparseForm = ps.getBoolean(PROP_SPARSE_FORM);
+        useCDUnits = ps.getBoolean(PROP_USE_CD_UNITS);
+
+        float distFloor = ps.getFloat(PROP_MC_FLOOR);
+        float mixtureWeightFloor = ps.getFloat(PROP_MW_FLOOR);
+        float transitionProbabilityFloor = 0;
+        float varianceFloor = ps.getFloat(PROP_VARIANCE_FLOOR);
 
         this.binary = binary;
         logMath = ConfigurationManager.getInstance(LogMath.class);
 
         // extract the feature vector length
-        String vectorLengthProp = Sphinx3Loader.PROP_VECTOR_LENGTH;
-        if (modelName != null) {
-            vectorLengthProp = TrainerAcousticModel.PROP_PREFIX + modelName +
-                    ".FeatureVectorLength";
-        }
-        vectorLength = props.getInt
-                (vectorLengthProp, Sphinx3Loader.PROP_VECTOR_LENGTH_DEFAULT);
+        vectorLength = ps.getInt(PROP_VECTOR_LENGTH);
 
+        Loader loader = (Loader) ps.getComponent(LOADER);
         hmmManager = loader.getHMMManager();
         meansPool = loader.getMeansPool();
         variancePool = loader.getVariancePool();
@@ -113,15 +145,11 @@ class Sphinx3Saver implements Saver {
         matrixPool = loader.getTransitionMatrixPool();
         senonePool = loader.getSenonePool();
         contextIndependentUnits = new LinkedHashMap();
-//	acousticProperties = loader.getModelProperties();
-        acousticProperties = null;
+
         // TODO: read checksum from props;
         checksum = "no";
         doCheckSum = (checksum != null && checksum.equals("yes"));
         swap = false;
-
-        // do the actual acoustic model loading
-        saveModelFiles(modelName, props);
     }
 
 
@@ -156,16 +184,6 @@ class Sphinx3Saver implements Saver {
 
 
     /**
-     * Return the acousticProperties.
-     *
-     * @return the acousticProperties
-     */
-    protected SphinxProperties getAcousticProperties() {
-        return acousticProperties;
-    }
-
-
-    /**
      * Return the location.
      *
      * @return the location
@@ -179,47 +197,12 @@ class Sphinx3Saver implements Saver {
      * Saves the AcousticModel from a directory in the file system.
      *
      * @param modelName the name of the acoustic model; if null we just save from the default location
-     * @param props     the SphinxProperties object to use
      */
-    private void saveModelFiles(String modelName, SphinxProperties props)
-            throws FileNotFoundException, IOException, ZipException {
-
-        String prefix, model, dataDir, propsFile;
-
-        if (modelName == null) {
-            prefix = TrainerAcousticModel.PROP_PREFIX;
-        } else {
-            prefix = TrainerAcousticModel.PROP_PREFIX + modelName + ".";
-        }
-        // System.out.println("Using prefix: " + prefix);
-
-        location = props.getString
-                (prefix + "location.save",
-                        TrainerAcousticModel.PROP_LOCATION_SAVE_DEFAULT);
-        model = props.getString
-                (prefix + "definition_file", Sphinx3Loader.PROP_MODEL_DEFAULT);
-        dataDir = props.getString
-                (prefix + "data_location",
-                        Sphinx3Loader.PROP_DATA_LOCATION_DEFAULT) + "/";
-        propsFile = props.getString
-                (prefix + "properties_file",
-                        Sphinx3Loader.PROP_PROPERTIES_FILE_DEFAULT);
-
-        float distFloor = props.getFloat(Sphinx3Loader.PROP_MC_FLOOR,
-                Sphinx3Loader.PROP_MC_FLOOR_DEFAULT);
-        float mixtureWeightFloor =
-                props.getFloat(Sphinx3Loader.PROP_MW_FLOOR,
-                        Sphinx3Loader.PROP_MW_FLOOR_DEFAULT);
-        float transitionProbabilityFloor = 0;
-//	    props.getFloat(Sphinx3Loader.PROP_TP_FLOOR,
-//			   Sphinx3Loader.PROP_TP_FLOOR_DEFAULT);
-        float varianceFloor =
-                props.getFloat(Sphinx3Loader.PROP_VARIANCE_FLOOR,
-                        Sphinx3Loader.PROP_VARIANCE_FLOOR_DEFAULT);
+    public void save(String modelName, boolean b) throws IOException {
 
         logger.info("Saving acoustic model: " + modelName);
         logger.info("    Path      : " + location);
-        logger.info("    modellName: " + model);
+        logger.info("    modellName: " + modelName);
         logger.info("    dataDir   : " + dataDir);
 
         // save the acoustic properties file (am.props), 
@@ -235,12 +218,7 @@ class Sphinx3Saver implements Saver {
             url = file.toURI().toURL();
         }
 
-        if (modelName == null) {
-            prefix = props.getContext() + ".acoustic";
-        } else {
-            prefix = props.getContext() + ".acoustic." + modelName;
-        }
-        saveAcousticPropertiesFile(acousticProperties, propsFile, false);
+        saveAcousticPropertiesFile(propsFile, false);
 
 
         if (binary) {
@@ -266,12 +244,8 @@ class Sphinx3Saver implements Saver {
         //	senonePool = createSenonePool(distFloor);
 
         // save the HMM model file
-        boolean useCDUnits = props.getBoolean
-                (Sphinx3Loader.PROP_USE_CD_UNITS,
-                        Sphinx3Loader.PROP_USE_CD_UNITS_DEFAULT);
-        saveHMMPool(useCDUnits,
-                StreamFactory.getOutputStream(location, model, true),
-                location + File.separator + model);
+
+        saveHMMPool(useCDUnits, StreamFactory.getOutputStream(location, modelName, true), location + File.separator + modelName);
     }
 
 
@@ -344,14 +318,12 @@ class Sphinx3Saver implements Saver {
     /**
      * Loads the Sphinx 3 acoustic model properties file, which is basically a normal system properties file.
      *
-     * @param property the SphinxProperties object
-     * @param path     the path to the acoustic properties file
-     * @param append   if true, append to the current file, if ZIP file
+     * @param path   the path to the acoustic properties file
+     * @param append if true, append to the current file, if ZIP file
      * @throws FileNotFoundException if the file cannot be found
      * @throws IOException           if an error occurs while saving the data
      */
-    private void saveAcousticPropertiesFile(SphinxProperties property,
-                                            String path, boolean append)
+    private void saveAcousticPropertiesFile(String path, boolean append)
             throws FileNotFoundException, IOException {
         logger.info("Saving acoustic properties file to:");
         logger.info(path);
@@ -364,7 +336,6 @@ class Sphinx3Saver implements Saver {
                     + path);
         }
         PrintStream ps = new PrintStream(outputStream, true);
-        property.list(ps);
         outputStream.close();
     }
 
@@ -1038,9 +1009,6 @@ class Sphinx3Saver implements Saver {
         }
         PrintWriter pw = new PrintWriter(outputStream, true);
 
-        boolean sparseForm = acousticProperties.getBoolean
-                (Sphinx3Loader.PROP_SPARSE_FORM,
-                        Sphinx3Loader.PROP_SPARSE_FORM_DEFAULT);
         logger.info("Saving transition matrices to: ");
         logger.info(path);
         int numMatrices = pool.size();
@@ -1104,13 +1072,9 @@ class Sphinx3Saver implements Saver {
      * @throws FileNotFoundException if a file cannot be found
      * @throws IOException           if an error occurs while saving the data
      */
-    protected void saveTransitionMatricesBinary(Pool pool, String path,
-                                                boolean append)
-            throws FileNotFoundException, IOException {
+    protected void saveTransitionMatricesBinary(Pool pool, String path, boolean append)
+            throws IOException {
 
-        boolean sparseForm = acousticProperties.getBoolean
-                (Sphinx3Loader.PROP_SPARSE_FORM,
-                        Sphinx3Loader.PROP_SPARSE_FORM_DEFAULT);
         logger.info("Saving transition matrices to: ");
         logger.info(path);
         int numMatrices;
@@ -1171,16 +1135,6 @@ class Sphinx3Saver implements Saver {
             // writeInt(dos, checkSum);
         }
         dos.close();
-    }
-
-
-    /**
-     * Returns the properties of the saved AcousticModel.
-     *
-     * @return the properties of the saved AcousticModel, or null if it has no properties
-     */
-    public SphinxProperties getModelProperties() {
-        return acousticProperties;
     }
 
 
@@ -1301,5 +1255,6 @@ class Sphinx3Saver implements Saver {
                 + contextIndependentUnits.size());
         hmmManager.logInfo(logger);
     }
+
 }
 

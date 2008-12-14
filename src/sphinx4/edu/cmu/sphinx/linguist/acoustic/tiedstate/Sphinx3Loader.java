@@ -160,32 +160,26 @@ public class Sphinx3Loader implements Loader {
     public final static boolean PROP_SPARSE_FORM_DEFAULT = true;
 
     /** The SphinxProperty specifying whether context-dependent units should be used. */
-    @S4Boolean(defaultValue = true)
+    public final static boolean PROP_USE_CD_UNITS_DEFAULT = true;
+    @S4Boolean(defaultValue = PROP_USE_CD_UNITS_DEFAULT)
     public final static String PROP_USE_CD_UNITS = "useCDUnits";
 
-    /** The default value of PROP_USE_CD_UNITS. */
-    public final static boolean PROP_USE_CD_UNITS_DEFAULT = true;
 
     /** Mixture component score floor. */
-    @S4Double(defaultValue = 0.0)
+    public final static float PROP_MC_FLOOR_DEFAULT = 0.0f;
+    @S4Double(defaultValue = PROP_MC_FLOOR_DEFAULT)
     public final static String PROP_MC_FLOOR = "MixtureComponentScoreFloor";
 
-    /** Mixture component score floor default value. */
-    public final static float PROP_MC_FLOOR_DEFAULT = 0.0f;
-
     /** Variance floor. */
-    @S4Double(defaultValue = 0.0001)
+    public final static float PROP_VARIANCE_FLOOR_DEFAULT = 0.0001f;
+    @S4Double(defaultValue = PROP_VARIANCE_FLOOR_DEFAULT)
     public final static String PROP_VARIANCE_FLOOR = "varianceFloor";
 
-    /** Variance floor default value. */
-    public final static float PROP_VARIANCE_FLOOR_DEFAULT = 0.0001f;
-
     /** Mixture weight floor. */
-    @S4Double(defaultValue = 1e-7)
+    public final static float PROP_MW_FLOOR_DEFAULT = 1e-7f;
+    @S4Double(defaultValue = PROP_MW_FLOOR_DEFAULT)
     public final static String PROP_MW_FLOOR = "mixtureWeightFloor";
 
-    /** Mixture weight floor default value. */
-    public final static float PROP_MW_FLOOR_DEFAULT = 1e-7f;
 
 
     protected final static String NUM_SENONES = "num_senones";
@@ -220,9 +214,9 @@ public class Sphinx3Loader implements Loader {
     // --------------------------------------
     // Configuration variables
     // --------------------------------------
-    private Logger logger;
+    protected Logger logger;
     private boolean binary;
-    private boolean sparseForm;
+    protected boolean sparseForm;
     private int vectorLength;
     private String location;
     private String model;

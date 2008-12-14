@@ -13,7 +13,8 @@
 package edu.cmu.sphinx.trainer;
 
 import edu.cmu.sphinx.linguist.dictionary.Dictionary;
-import edu.cmu.sphinx.util.SphinxProperties;
+import edu.cmu.sphinx.util.props.PropertySheet;
+import edu.cmu.sphinx.util.props.PropertyException;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -26,7 +27,6 @@ import java.util.logging.Logger;
 /** Provides mechanisms for accessing a next utterance's file name and transcription. */
 public class SimpleControlFile implements ControlFile {
 
-    private SphinxProperties props;    // the sphinx properties
     private String audioFile;           // the audio file
     private String transcriptFile;      // the transcript file
     private Dictionary dictionary;          // the dictionary
@@ -38,46 +38,24 @@ public class SimpleControlFile implements ControlFile {
     private List audioFileList;         // list containing the audio files
     private List transcriptFileList;    // list containing the transcriptions
 
+
     /*
-     * The logger for this class
-     */
-    private static Logger logger =
-            Logger.getLogger("edu.cmu.sphinx.trainer.SimpleControlFile");
+    * The logger for this class
+    */
+    private Logger logger;
 
 
-    /**
-     * Constructor for the class.
-     *
-     * @param context the context to use
-     */
-    public SimpleControlFile(String context) {
-        initialize(context);
-    }
+    public void newProperties(PropertySheet ps) throws PropertyException {
+        logger = ps.getLogger();
 
-
-    /**
-     * Initializes the SimpleControlFile with the proper context.
-     *
-     * @param context the context to use
-     */
-    public void initialize(String context) {
-        this.props = SphinxProperties.getSphinxProperties(context);
-        this.audioFile = props.getString(PROP_AUDIO_FILE,
-                PROP_AUDIO_FILE_DEFAULT);
-        this.transcriptFile = props.getString(PROP_TRANSCRIPT_FILE,
-                PROP_TRANSCRIPT_FILE_DEFAULT);
-        this.currentPartition = props.getInt(PROP_WHICH_BATCH,
-                PROP_WHICH_BATCH_DEFAULT);
-        this.numberOfPartitions = props.getInt(PROP_TOTAL_BATCHES,
-                PROP_TOTAL_BATCHES_DEFAULT);
+        this.audioFile = ps.getString(PROP_AUDIO_FILE);
+        this.transcriptFile = ps.getString(PROP_TRANSCRIPT_FILE);
+        this.currentPartition = ps.getInt(PROP_WHICH_BATCH);
+        this.numberOfPartitions = ps.getInt(PROP_TOTAL_BATCHES);
 
         logger.info("Audio control file: " + this.audioFile);
         logger.info("Transcript file: " + this.transcriptFile);
-        try {
-            this.dictionary = new TrainerDictionary(context);
-        } catch (IOException ioe) {
-            throw new Error("IOE: Can't open dictionary.", ioe);
-        }
+        this.dictionary = new TrainerDictionary();
         this.wordSeparator = " \t\n\r\f"; // the white spaces
         logger.info("Processing part " + this.currentPartition +
                 " of " + this.numberOfPartitions);
@@ -120,6 +98,8 @@ public class SimpleControlFile implements ControlFile {
      * @return the next utterance.
      */
     public Utterance nextUtterance() {
+        logger.fine("processing ext utterance");
+        
         String utteranceLine = (String) audioFileIterator.next();
         Utterance utterance = new SimpleUtterance(utteranceLine);
         String utteranceFilename =
@@ -178,5 +158,4 @@ public class SimpleControlFile implements ControlFile {
         }
         return list;
     }
-
 }

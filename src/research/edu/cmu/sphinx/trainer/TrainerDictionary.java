@@ -30,16 +30,6 @@ public class TrainerDictionary extends FullDictionary {
 
 
     /**
-     * Constructor for class.
-     *
-     * @param context this class's context
-     */
-    public TrainerDictionary(String context) throws IllegalArgumentException,
-            IOException {
-    }
-
-
-    /**
      * Gets a word pronunciation graph. Dummy initial and final states optional.
      *
      * @param word     the word

@@ -17,7 +17,6 @@ import edu.cmu.sphinx.frontend.FloatData;
 import edu.cmu.sphinx.linguist.acoustic.HMMState;
 import edu.cmu.sphinx.linguist.acoustic.tiedstate.*;
 import edu.cmu.sphinx.util.LogMath;
-import edu.cmu.sphinx.util.SphinxProperties;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -65,7 +64,7 @@ class HMMPoolManager {
      *
      * @param loader the loader
      */
-    protected HMMPoolManager(Loader loader, SphinxProperties props) {
+    protected HMMPoolManager(Loader loader) {
         hmmManager = loader.getHMMManager();
         indexMap = new HashMap();
         meansPool = loader.getMeansPool();
