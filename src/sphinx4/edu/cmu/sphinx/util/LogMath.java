@@ -94,11 +94,11 @@ public final class LogMath implements Configurable, Serializable {
     /** Initializes this log math */
     private void init() {
         if (logger != null) {
-            logger.info("Log base is " + logBase);
+            logger.config("Log base is " + logBase);
             if (useAddTable) {
-                logger.info("Using AddTable when adding logs");
+                logger.config("Using AddTable when adding logs");
             } else {
-                logger.info("Performing actual computation when adding logs");
+                logger.config("Performing actual computation when adding logs");
             }
         }
         naturalLogBase = (float) Math.log(logBase);
@@ -158,7 +158,7 @@ public final class LogMath implements Configurable, Serializable {
             // PBL added this just to see how many entries really are
             // in the table
             if (logger != null)
-                logger.info("LogAdd table has " + entriesInTheAddTable + " entries.");
+                logger.config("LogAdd table has " + entriesInTheAddTable + " entries.");
 
             theAddTable = new float[entriesInTheAddTable];
             for (int index = 0; index < entriesInTheAddTable; index++) {
