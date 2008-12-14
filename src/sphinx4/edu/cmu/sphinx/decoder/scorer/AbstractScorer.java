@@ -103,9 +103,9 @@ public abstract class AbstractScorer implements AcousticScorer {
         Data data = frontEnd.getData();
 
         // reconfigure the scorer for the coming data stream
-        if (data instanceof DataStartSignal){
-            Map<String,Object> dataProps = ((DataStartSignal) data).getProps();
-            if(dataProps.containsKey(DataStartSignal.VAD_TAGGED_FEAT_STREAM))
+        if (data instanceof DataStartSignal) {
+            Map<String, Object> dataProps = ((DataStartSignal) data).getProps();
+            if (dataProps.containsKey(DataStartSignal.VAD_TAGGED_FEAT_STREAM))
                 isVadEmbeddedStream = (Boolean) dataProps.get(DataStartSignal.VAD_TAGGED_FEAT_STREAM);
             else
                 isVadEmbeddedStream = false;

@@ -74,7 +74,7 @@ public class DataStartSignal extends Signal {
         this.sampleRate = sampleRate;
 
         if (tagAsVadStream) {
-            this.getProps().put(VAD_TAGGED_FEAT_STREAM, null);
+            this.getProps().put(VAD_TAGGED_FEAT_STREAM, tagAsVadStream);
         }
     }
 
