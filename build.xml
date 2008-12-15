@@ -14,7 +14,7 @@
     </path>
     <property name="src_dir" value="src"/>
     <property name="build_dir" value="bld"/>
-    <property name="classes_dir" value="${build_dir}/classes"/>
+    <property name="classes_dir" value="${build_dir}"/>
     <property name="lib_dir" value="lib"/>
     <property name="bin_dir" value="bin"/>
     <property name="deploy_dir" value="deploy"/>
@@ -23,7 +23,7 @@
     <property name="javadoc_zip" value="javadoc.zip"/>
 
     <property name="build_model_dir"
-              value="${build_dir}/models/edu/cmu/sphinx/model/acoustic"/>
+              value="${classes_dir}/edu/cmu/sphinx/model/acoustic"/>
     <property name="model_class_dir"
               value="${src_dir}/sphinx4/edu/cmu/sphinx/model/acoustic"/>
     <property name="tiedstate_dir"
@@ -525,9 +525,9 @@
         </copy>
 
         <jar destfile="${lib_dir}/${my_model_name}.jar">
-            <fileset dir="${build_dir}/models"
+            <fileset dir="${build_dir}"
                      includes="edu/cmu/sphinx/model/acoustic/${my_model_name}/*.class"/>
-            <fileset dir="${build_dir}/models"
+            <fileset dir="${build_dir}"
                      includes="edu/cmu/sphinx/model/acoustic/${my_model_name}/**"
                      excludes="edu/cmu/sphinx/model/acoustic/${my_model_name}/*.class"/>
             <manifest>
