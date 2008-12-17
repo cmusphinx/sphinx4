@@ -403,7 +403,6 @@ Run ant with -Dcount=5 to only do the first five utterances of a test.
             <sysproperty key="batch[count]" value="${count}"/> 
             <sysproperty key="concatDataSource[skip]" value="${skip}"/> 
             <sysproperty key="speedTracker[showResponseTime]" value="true"/> 
-            <sysproperty key="threadedScorer[useStreamSignals]" value="true"/> 
             <sysproperty key="frontend" value="mfcLiveFrontEnd"/>
             <arg value="${config}"/> 
         </java>
@@ -431,7 +430,6 @@ Run ant with -Dcount=5 to only do the first five utterances of a test.
             <sysproperty key="concatDataSource[skip]" value="${skip}"/> 
             <sysproperty key="concatDataSource[batchFile]" 
 	                 value="../an4/an4_words.batch"/>
-            <sysproperty key="threadedScorer[useStreamSignals]" value="true"/> 
             <sysproperty key="frontend" value="mfcLiveFrontEnd"/> 
             <sysproperty key="speedTracker[showResponseTime]" value="true"/> 
             <arg value="${config}"/> 

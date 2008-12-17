@@ -163,13 +163,11 @@
     <component name="simpleScorer"
           type="edu.cmu.sphinx.decoder.scorer.SimpleAcousticScorer">
         <property name="frontend" value="mfcFrontEnd"/>
-        <property name="useStreamSignals" value="false"/>
     </component>
 
     <component name="threadedScorer"
           type="edu.cmu.sphinx.decoder.scorer.ThreadedAcousticScorer">
         <property name="numThreads" value="0"/>
-        <property name="useStreamSignals" value="false"/>
         <property name="frontend" value="mfcFrontEnd"/>
         <property name="acousticGain" value="1"/>
         <property name="isCpuRelative" value="true"/>

@@ -7,7 +7,6 @@ import edu.cmu.sphinx.frontend.endpoint.SpeechStartSignal;
 import edu.cmu.sphinx.frontend.util.DataUtil;
 import edu.cmu.sphinx.util.props.PropertyException;
 import edu.cmu.sphinx.util.props.PropertySheet;
-import edu.cmu.sphinx.util.props.S4Boolean;
 import edu.cmu.sphinx.util.props.S4Component;
 
 import java.io.IOException;
@@ -28,21 +27,14 @@ public abstract class AbstractScorer implements AcousticScorer {
     protected BaseDataProcessor frontEnd;
 
     /**
-     * If set only the feature frames which appear between a <code>SpeechStartSignal</code> and a
-     * <code>SpeechEndSignal</code> will be used for decoding. If not set all feature frames will be used for decoding.
-     */
-    @S4Boolean(defaultValue = true)
-    public static final String USE_STREAM_SIGNALS = "useStreamSignals";
-    private Boolean isVadEmbeddedStream;
-
-
-    /**
      * An opotional post-processor for computed scores that will normalize scores. If not set, no normalization will
      * applied and the token scores will be returned unchanged.
      */
     @S4Component(type = ScoreNormalizer.class, mandatory = false)
     public final static String SCORE_NORMALIZER = "scoreNormalizer";
     private ScoreNormalizer scoreNormalizer;
+
+    private Boolean isVadEmbeddedStream;
 
 
     protected Logger logger;
