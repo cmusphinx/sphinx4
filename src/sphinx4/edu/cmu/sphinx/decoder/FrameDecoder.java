@@ -28,7 +28,7 @@ public class FrameDecoder extends AbstractDecoder implements DataProcessor {
     private DataProcessor predecessor;
 
     private boolean isRecognizing;
-    public Result result;
+    private Result result;
 
 
     /**
@@ -49,10 +49,7 @@ public class FrameDecoder extends AbstractDecoder implements DataProcessor {
             result = decode(null);
 
             if (result != null) {
-                if (result.isFinal()) {
-                    fireResultListeners(result);
-                    result = null;
-                }
+                fireResultListeners(result);
             }
         }
 

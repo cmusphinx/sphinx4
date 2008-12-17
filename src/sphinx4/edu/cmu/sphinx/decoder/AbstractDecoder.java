@@ -38,7 +38,7 @@ public abstract class AbstractDecoder implements ResultProducer, Configurable {
     private boolean fireNonFinalResults;
 
     private String name;
-    private Logger logger;
+    protected Logger logger;
 
     /**
      * Decode frames until recognition is complete
@@ -120,11 +120,6 @@ public abstract class AbstractDecoder implements ResultProducer, Configurable {
 
 
     public String toString() {
-        return getName();
-    }
-
-
-    public String getName() {
         return name;
     }
 }
