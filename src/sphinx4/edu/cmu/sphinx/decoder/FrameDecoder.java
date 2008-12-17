@@ -50,6 +50,7 @@ public class FrameDecoder extends AbstractDecoder implements DataProcessor {
 
             if (result != null) {
                 fireResultListeners(result);
+                result = null;
             }
         }
 
