@@ -1,6 +1,5 @@
 package edu.cmu.sphinx.decoder;
 
-import edu.cmu.sphinx.result.ResultListener;
 import edu.cmu.sphinx.util.props.Configurable;
 
 /**

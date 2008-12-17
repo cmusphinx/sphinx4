@@ -16,7 +16,7 @@ import edu.cmu.sphinx.recognizer.Recognizer;
 import edu.cmu.sphinx.recognizer.RecognizerState;
 import edu.cmu.sphinx.recognizer.StateListener;
 import edu.cmu.sphinx.result.Result;
-import edu.cmu.sphinx.result.ResultListener;
+import edu.cmu.sphinx.decoder.ResultListener;
 import edu.cmu.sphinx.util.props.*;
 
 /** Tracks and reports rejection accuracy. */
@@ -128,7 +128,7 @@ public class RejectionTracker implements
     /*
     * (non-Javadoc)
     *
-    * @see edu.cmu.sphinx.result.ResultListener#newResult(edu.cmu.sphinx.result.Result)
+    * @see edu.cmu.sphinx.decoder.ResultListener#newResult(edu.cmu.sphinx.result.Result)
     */
     public void newResult(Result result) {
         String ref = result.getReferenceText();

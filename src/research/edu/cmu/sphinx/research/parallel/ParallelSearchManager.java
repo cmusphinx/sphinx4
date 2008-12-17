@@ -225,15 +225,12 @@ public class ParallelSearchManager implements SearchManager {
      */
     public Result recognize(int nFrames) {
         boolean done = false;
-        Result result;
 
         for (int i = 0; i < nFrames && !done; i++) {
             done = recognize();
         }
-        result = new Result
-                (combinedActiveList, resultList, currentFrameNumber, done, logMath);
 
-        return result;
+        return new Result(combinedActiveList, resultList, currentFrameNumber, done, logMath);
     }
 
 

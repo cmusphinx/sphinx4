@@ -73,7 +73,7 @@ public class BestConfidenceAccuracyTracker extends AccuracyTracker {
     /*
     * (non-Javadoc)
     *
-    * @see edu.cmu.sphinx.result.ResultListener#newResult(edu.cmu.sphinx.result.Result)
+    * @see edu.cmu.sphinx.decoder.ResultListener#newResult(edu.cmu.sphinx.result.Result)
     */
     public void newResult(Result result) {
         NISTAlign aligner = getAligner();

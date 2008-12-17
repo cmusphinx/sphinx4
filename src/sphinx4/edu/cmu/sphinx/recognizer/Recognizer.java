@@ -14,9 +14,9 @@ package edu.cmu.sphinx.recognizer;
 
 import edu.cmu.sphinx.decoder.Decoder;
 import edu.cmu.sphinx.decoder.ResultProducer;
+import edu.cmu.sphinx.decoder.ResultListener;
 import edu.cmu.sphinx.instrumentation.Resetable;
 import edu.cmu.sphinx.result.Result;
-import edu.cmu.sphinx.result.ResultListener;
 import edu.cmu.sphinx.util.props.*;
 
 import java.io.IOException;

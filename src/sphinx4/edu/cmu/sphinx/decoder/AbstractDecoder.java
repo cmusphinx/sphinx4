@@ -2,12 +2,12 @@ package edu.cmu.sphinx.decoder;
 
 import edu.cmu.sphinx.decoder.search.SearchManager;
 import edu.cmu.sphinx.result.Result;
-import edu.cmu.sphinx.result.ResultListener;
 import edu.cmu.sphinx.util.props.*;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 /** An abstract decoder which implements all functionality which is indpendent of the used decoding-pardigm (pull/push). */
 public abstract class AbstractDecoder implements ResultProducer, Configurable {
@@ -20,7 +20,7 @@ public abstract class AbstractDecoder implements ResultProducer, Configurable {
     //note:
     // although only classes implementing <code>ResultListener</code> are allowed here we can not use
     // the type of the list because it does not extends <code>Configurable</code>
-    @S4ComponentList(type = Configurable.class)
+    @S4ComponentList(type = ResultListener.class)
     public static final String PROP_RESULT_LISTENERS = "resultListeners";
     protected List<ResultListener> resultListeners = new ArrayList<ResultListener>();
 
@@ -28,8 +28,17 @@ public abstract class AbstractDecoder implements ResultProducer, Configurable {
     @S4Boolean(defaultValue = false)
     public static final String AUTO_ALLOCATE = "autoAllocate";
 
-    private String name;
+    /**
+     * If set to <code>false</code> the used search-manager all registered result listeners will be notified only for
+     * final results. Per default non-final results don't trigger notification, because in most application the
+     * utterance final result will be sufficient.
+     */
+    @S4Boolean(defaultValue = false)
+    public static final String FIRE_NON_FINAL_RESULTS = "fireNonFinalResults";
+    private boolean fireNonFinalResults;
 
+    private String name;
+    private Logger logger;
 
     /**
      * Decode frames until recognition is complete
@@ -42,8 +51,10 @@ public abstract class AbstractDecoder implements ResultProducer, Configurable {
 
     public void newProperties(PropertySheet ps) throws PropertyException {
         name = ps.getInstanceName();
+        logger = ps.getLogger();
 
         searchManager = (SearchManager) ps.getComponent(PROP_SEARCH_MANAGER);
+        fireNonFinalResults = ps.getBoolean(FIRE_NON_FINAL_RESULTS);
 
         if (ps.getBoolean(AUTO_ALLOCATE)) {
             try {
@@ -53,9 +64,7 @@ public abstract class AbstractDecoder implements ResultProducer, Configurable {
             }
         }
 
-        List<? extends Configurable> list = ps.getComponentList(PROP_RESULT_LISTENERS);
-        for (Configurable configurable : list) {
-            assert configurable instanceof ResultListener;
+        for (Configurable configurable : ps.getComponentList(PROP_RESULT_LISTENERS)) {
             addResultListener((ResultListener) configurable);
         }
     }
@@ -100,8 +109,12 @@ public abstract class AbstractDecoder implements ResultProducer, Configurable {
      * @param result the new result
      */
     protected void fireResultListeners(Result result) {
-        for (ResultListener resultListener : resultListeners) {
-            resultListener.newResult(result);
+        if (fireNonFinalResults || result.isFinal()) {
+            for (ResultListener resultListener : resultListeners) {
+                resultListener.newResult(result);
+            }
+        }else {
+            logger.finer("skipping non-final result " + result);
         }
     }
 
