@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.*;
+import java.util.logging.Logger;
 
 
 /**
@@ -530,6 +531,16 @@ public class ConfigurationManager implements Cloneable {
         }
 
         return new PropertySheet(targetClass, componentName, cm, rpd);
+    }
+
+
+    /**
+     * Returns the root-logger of this configuration manager. This method is just a convenience mapper around a few CMU
+     * calls.
+     * @return the root logger of this CM-instance
+     */
+    public Logger getRootLogger() {
+        return Logger.getLogger(ConfigurationManagerUtils.getLogPrefix(this));
     }
 }
 
