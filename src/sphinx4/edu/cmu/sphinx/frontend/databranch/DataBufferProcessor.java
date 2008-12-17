@@ -102,6 +102,8 @@ public class DataBufferProcessor extends BaseDataProcessor implements DataListen
 
         if (!featureBuffer.isEmpty()) {
             data = featureBuffer.remove(0);
+        } else {
+            assert !waitIfEmpty;
         }
 
         return data;

@@ -99,6 +99,6 @@ public abstract class BaseDataProcessor implements DataProcessor {
      * @return the name of this BaseDataProcessor
      */
     public String toString() {
-        return name;
+        return name != null ? name : getClass().getSimpleName();
     }
 }

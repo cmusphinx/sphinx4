@@ -280,7 +280,7 @@ public class FrontEnd extends BaseDataProcessor {
                 description = (", " + description);
             }
         }
-        return (this + " {" + description + "}");
+        return (super.toString() + " {" + description + "}");
     }
 
 }
