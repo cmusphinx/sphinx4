@@ -67,7 +67,8 @@ public class Result {
      * @param activeList  the active list associated with this result
      * @param resultList  the result list associated with this result
      * @param frameNumber the frame number for this result.
-     * @param isFinal     if true, the result is a final result
+     * @param isFinal     if true, the result is a final result. This means that the last frame in the speech segment
+     *                    has been decoded. 
      */
     public Result(ActiveList activeList, List resultList, int frameNumber,
                   boolean isFinal, LogMath logMath) {
