@@ -150,6 +150,8 @@ public class SimpleBreadthFirstSearchManager implements SearchManager {
 
     /** Called at the start of recognition. Gets the search manager ready to recognize */
     public void startRecognition() {
+        logger.finer("starting recognition");
+
         linguist.startRecognition();
         pruner.startRecognition();
         scorer.startRecognition();
@@ -227,6 +229,8 @@ public class SimpleBreadthFirstSearchManager implements SearchManager {
         scorer.stopRecognition();
         pruner.stopRecognition();
         linguist.stopRecognition();
+
+        logger.finer("recognition stopped");
     }
 
 
