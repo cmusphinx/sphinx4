@@ -309,14 +309,14 @@ public class SimpleBreadthFirstSearchManager implements SearchManager {
      * @return <code>true</code> if there are more frames to score, otherwise, false
      */
     protected boolean scoreTokens() {
-        boolean isDone = false;
+        boolean hasMoreFrames = false;
 
         scoreTimer.start();
         Token bestToken = (Token) scorer.calculateScores(activeList.getTokens());
         scoreTimer.stop();
 
         if (bestToken != null) {
-            isDone = true;
+            hasMoreFrames = true;
             activeList.setBestToken(bestToken);
         }
 
@@ -331,7 +331,7 @@ public class SimpleBreadthFirstSearchManager implements SearchManager {
 //                    + (int) tokensPerSecond.value);
 //        }
 
-        return isDone;
+        return hasMoreFrames;
     }
 
 
