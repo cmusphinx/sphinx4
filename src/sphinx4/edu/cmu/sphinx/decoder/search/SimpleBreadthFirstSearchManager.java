@@ -129,11 +129,6 @@ public class SimpleBreadthFirstSearchManager implements SearchManager {
     private ActiveListFactory activeListFactory;
 
 
-    /*
-    * (non-Javadoc)
-    *
-    * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
-    */
     public void newProperties(PropertySheet ps) throws PropertyException {
         logger = ps.getLogger();
         name = ps.getInstanceName();
@@ -180,7 +175,7 @@ public class SimpleBreadthFirstSearchManager implements SearchManager {
 
         // generate a new temporary result if the current token is based on a final search state
         // remark: the first check for not null is necessary in cases that the search space does not contain scorable tokens.
-        if (activeList.getBestToken() != null && (activeList.getBestToken().isFinal() || done)) {
+        if ((activeList.getBestToken() != null && (activeList.getBestToken().isFinal()) || done)) {
 
             // to make the current result as correct as possible we undo the last search graph expansion here
             ActiveList fixedList = undoLastGrowStep();
@@ -188,7 +183,7 @@ public class SimpleBreadthFirstSearchManager implements SearchManager {
             // now create the restult using the fixed active-list
             result = new Result(fixedList, resultList, currentFrameNumber, done, logMath);
 
-            if (result.getDataFrames().isEmpty())
+            if (result.getDataFrames() == null || result.getDataFrames().isEmpty())
                 result = null;
         }
 
