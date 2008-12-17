@@ -42,14 +42,6 @@ public interface DataProcessor extends Configurable {
 
 
     /**
-     * Returns the name of this DataProcessor.
-     *
-     * @return the name of this DataProcessor
-     */
-    public String getName();
-
-
-    /**
      * Returns the predecessor DataProcessor.
      *
      * @return the predecessor

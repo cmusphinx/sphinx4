@@ -54,19 +54,6 @@ public abstract class BaseDataProcessor implements DataProcessor {
 
 
     /**
-     * Returns the name of this DataProcessor.
-     *
-     * @return the name of this DataProcessor
-     */
-    public String getName() {
-        if (name != null)
-            return name;
-        else
-            return this.getClass().getName();
-    }
-
-
-    /**
      * Sets the name for this front end
      *
      * @param name the name
@@ -114,5 +101,4 @@ public abstract class BaseDataProcessor implements DataProcessor {
     public String toString() {
         return name;
     }
-
 }

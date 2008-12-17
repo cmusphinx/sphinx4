@@ -274,13 +274,13 @@ public class FrontEnd extends BaseDataProcessor {
         String description = "";
         DataProcessor current = last;
         while (current != null) {
-            description = (current.getName() + description);
+            description = (current + description);
             current = current.getPredecessor();
             if (current != null) {
                 description = (", " + description);
             }
         }
-        return (getName() + " {" + description + "}");
+        return (this + " {" + description + "}");
     }
 
 }

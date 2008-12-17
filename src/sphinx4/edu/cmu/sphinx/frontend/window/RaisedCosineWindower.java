@@ -355,7 +355,7 @@ public class RaisedCosineWindower extends BaseDataProcessor {
      */
     public float getWindowShiftInMs() {
         if (windowShiftInMs == 0)
-            throw new RuntimeException(this.getName() + " was not initialized yet!");
+            throw new RuntimeException(this + " was not initialized yet!");
 
         return windowShiftInMs;
     }
