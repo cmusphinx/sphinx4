@@ -187,7 +187,7 @@ public class SortingActiveListFactory extends ActiveListFactory {
          *
          * @return the iterator for this token list
          */
-        public Iterator iterator() {
+        public Iterator<Token> iterator() {
             return tokenList.iterator();
         }
 
@@ -197,7 +197,7 @@ public class SortingActiveListFactory extends ActiveListFactory {
          *
          * @return the list of tokens
          */
-        public List getTokens() {
+        public List<Token> getTokens() {
             return tokenList;
         }
 

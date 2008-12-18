@@ -133,7 +133,7 @@ public class WordActiveListFactory extends ActiveListFactory {
                 }
 
                 if (maxPathsPerWord > 0) {
-                    Integer count = (Integer) countMap.get(word);
+                    Integer count = countMap.get(word);
                     int c = count == null ? 0 : count;
 
                     // Since the tokens are sorted by score we only
@@ -160,7 +160,7 @@ public class WordActiveListFactory extends ActiveListFactory {
          *
          * @return the iterator for this token list
          */
-        public Iterator iterator() {
+        public Iterator<Token> iterator() {
             return tokenList.iterator();
         }
 

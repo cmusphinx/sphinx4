@@ -58,11 +58,6 @@ public class ThreadedAcousticScorer extends AbstractScorer {
     public final static String PROP_MIN_SCOREABLES_PER_THREAD = "minScoreablesPerThread";
 
 
-    /** A SphinxProperty specifying whether the scoreables should keep a reference to the scored features. */
-    @S4Boolean(defaultValue = false)
-    public final static String PROP_SCOREABLES_KEEP_FEATURE = "scoreablesKeepFeature";
-
-
     /** A sphinx property that controls the amount of acoustic gain. */
     @S4Double(defaultValue = 1.0)
     public final static String PROP_ACOUSTIC_GAIN = "acousticGain";
@@ -70,7 +65,6 @@ public class ThreadedAcousticScorer extends AbstractScorer {
 
     private int numThreads;         // number of threads in use
     private int minScoreablesPerThread; // min scoreables sent to a thread
-    private boolean keepData;       // scoreables keep feature or not
     private float acousticGain;             // acoustic gain
 
     private Mailbox mailbox;        // sync between caller and threads
@@ -85,7 +79,6 @@ public class ThreadedAcousticScorer extends AbstractScorer {
         boolean cpuRelative = ps.getBoolean(PROP_IS_CPU_RELATIVE);
         numThreads = ps.getInt(PROP_NUM_THREADS);
         minScoreablesPerThread = ps.getInt(PROP_MIN_SCOREABLES_PER_THREAD);
-        keepData = ps.getBoolean(PROP_SCOREABLES_KEEP_FEATURE);
         acousticGain = ps.getFloat(PROP_ACOUSTIC_GAIN);
 
         if (cpuRelative) {
@@ -187,9 +180,7 @@ public class ThreadedAcousticScorer extends AbstractScorer {
              * scoreable.getFrameNumber() + " Data: " + currentData.getID()); }
              */
 
-            if (scoreable.calculateScore(currentData, keepData,
-                    acousticGain) > best
-                    .getScore()) {
+            if (scoreable.calculateScore(currentData, keepData, acousticGain) > best.getScore()) {
                 best = scoreable;
             }
         }

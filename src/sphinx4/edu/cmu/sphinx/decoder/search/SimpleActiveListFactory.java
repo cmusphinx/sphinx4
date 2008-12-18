@@ -57,7 +57,7 @@ public class SimpleActiveListFactory extends ActiveListFactory {
         private int absoluteBeamWidth = 2000;
         private float logRelativeBeamWidth;
         private Token bestToken;
-        private List tokenList = new LinkedList();
+        private List<Token> tokenList = new LinkedList<Token>();
 
 
         /**
@@ -129,7 +129,7 @@ public class SimpleActiveListFactory extends ActiveListFactory {
          *
          * @return the iterator for this token list
          */
-        public Iterator iterator() {
+        public Iterator<Token> iterator() {
             return tokenList.iterator();
         }
 
@@ -139,7 +139,7 @@ public class SimpleActiveListFactory extends ActiveListFactory {
          *
          * @return the set of tokens
          */
-        public List getTokens() {
+        public List<Token> getTokens() {
             return tokenList;
         }
 

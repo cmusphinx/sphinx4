@@ -76,7 +76,6 @@
         <property name="isCpuRelative" value="true"/>
         <property name="numThreads" value="0"/>
         <property name="minScoreablesPerThread" value="10"/>
-        <property name="scoreablesKeepFeature" value="true"/>
     </component>
     
     <!-- ******************************************************** -->

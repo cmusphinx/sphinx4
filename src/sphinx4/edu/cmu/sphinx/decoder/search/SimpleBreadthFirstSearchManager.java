@@ -13,6 +13,7 @@ package edu.cmu.sphinx.decoder.search;
 
 import edu.cmu.sphinx.decoder.pruner.Pruner;
 import edu.cmu.sphinx.decoder.scorer.AcousticScorer;
+import edu.cmu.sphinx.frontend.Data;
 import edu.cmu.sphinx.linguist.Linguist;
 import edu.cmu.sphinx.linguist.SearchState;
 import edu.cmu.sphinx.linguist.SearchStateArc;
@@ -185,7 +186,8 @@ public class SimpleBreadthFirstSearchManager implements SearchManager {
             // now create the restult using the fixed active-list
             result = new Result(fixedList, resultList, currentFrameNumber, done, logMath);
 
-            if (result.getDataFrames() == null || result.getDataFrames().isEmpty())
+            List<Data> dataFrames = result.getDataFrames();
+            if (dataFrames == null || dataFrames.isEmpty())
                 result = null;
         }
 

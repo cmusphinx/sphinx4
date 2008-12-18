@@ -84,7 +84,7 @@ public interface ActiveList {
      *
      * @return an iterator
      */
-    public Iterator iterator();
+    public Iterator<Token> iterator();
 
 
     /**

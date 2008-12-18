@@ -215,7 +215,7 @@ public class PartitionActiveListFactory extends ActiveListFactory {
          *
          * @return the iterator for this token list
          */
-        public Iterator iterator() {
+        public Iterator<Token> iterator() {
             return (new TokenArrayIterator(tokenList, size));
         }
 
@@ -225,7 +225,7 @@ public class PartitionActiveListFactory extends ActiveListFactory {
          *
          * @return the list of tokens
          */
-        public List getTokens() {
+        public List<Token> getTokens() {
             return Arrays.asList(tokenList).subList(0, size);
         }
 
@@ -249,7 +249,7 @@ public class PartitionActiveListFactory extends ActiveListFactory {
     }
 }
 
-class TokenArrayIterator implements Iterator {
+class TokenArrayIterator implements Iterator<Token> {
 
     private Token[] tokenArray;
     private int size;
@@ -270,7 +270,7 @@ class TokenArrayIterator implements Iterator {
 
 
     /** Returns the next token in the iteration. */
-    public Object next() throws NoSuchElementException {
+    public Token next() throws NoSuchElementException {
         if (pos >= tokenArray.length) {
             throw new NoSuchElementException();
         }
