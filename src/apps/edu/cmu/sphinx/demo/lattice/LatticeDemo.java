@@ -45,8 +45,8 @@ public class LatticeDemo {
             }
 
             URL url;
-            if (args.length > 0) {
-                url = new File(args[0]).toURI().toURL();
+            if (args.length > 1) {
+                url = new File(args[1]).toURI().toURL();
             } else {
                 url = LatticeDemo.class.getResource("config.xml");
             }
