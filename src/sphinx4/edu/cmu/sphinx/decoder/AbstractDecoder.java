@@ -16,9 +16,6 @@ public abstract class AbstractDecoder implements ResultProducer, Configurable {
     public final static String PROP_SEARCH_MANAGER = "searchManager";
     protected SearchManager searchManager;
 
-    //note:
-    // although only classes implementing <code>ResultListener</code> are allowed here we can not use
-    // the type of the list because it does not extends <code>Configurable</code>
     @S4ComponentList(type = ResultListener.class)
     public static final String PROP_RESULT_LISTENERS = "resultListeners";
     protected List<ResultListener> resultListeners = new ArrayList<ResultListener>();

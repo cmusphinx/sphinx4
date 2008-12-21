@@ -16,15 +16,10 @@ import edu.cmu.sphinx.frontend.util.AudioFileDataSource;
 import edu.cmu.sphinx.recognizer.Recognizer;
 import edu.cmu.sphinx.result.Result;
 import edu.cmu.sphinx.util.props.ConfigurationManager;
-import edu.cmu.sphinx.util.props.PropertyException;
-import org.junit.Assert;
-import org.junit.Test;
 
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.UnsupportedAudioFileException;
 import java.io.File;
-import java.io.IOException;
 import java.net.URL;
+import java.net.MalformedURLException;
 
 
 /**
@@ -34,72 +29,35 @@ import java.net.URL;
  */
 public class WavFile {
 
-    public static Result result;
-
-
     /** Main method for running the WavFile demo. */
-    public static void main(String[] args) {
-        try {
+    public static void main(String[] args) throws MalformedURLException {
+        URL audioFileURL;
+        URL configURL;
 
-            URL audioFileURL;
-
-            if (args.length > 0) {
-                audioFileURL = new File(args[0]).toURI().toURL();
-            } else {
-                audioFileURL = WavFile.class.getResource("12345.wav");
-            }
-
-            URL configURL = WavFile.class.getResource("config.xml");
-
-            System.out.println("Loading Recognizer as defined in '" + configURL.toString() + "'...\n");
-
-            ConfigurationManager cm = new ConfigurationManager(configURL);
-
-            Recognizer recognizer = (Recognizer) cm.lookup("recognizer");
-
-            /* allocate the resource necessary for the recognizer */
-            recognizer.allocate();
-
-            System.out.println("Decoding " + audioFileURL.getFile());
-            System.out.println(AudioSystem.getAudioFileFormat(audioFileURL));
-
-            AudioFileDataSource dataSource = (AudioFileDataSource) cm.lookup("audioFileDataSource");
-            dataSource.setAudioFile(audioFileURL, null);
-            
-            /* decode the audio file */
-            result = recognizer.recognize();
-
-            /* print out the results */
-            if (result != null) {
-                System.out.println("\nRESULT: " +
-                        result.getBestFinalResultNoFiller() + "\n");
-            } else {
-                System.out.println("Result: null\n");
-            }
-        } catch (IOException e) {
-            System.err.println("Problem when loading WavFile: " + e);
-            throw new RuntimeException(e);
-        } catch (PropertyException e) {
-            System.err.println("Problem configuring WavFile: " + e);
-            throw new RuntimeException(e);
-        } catch (UnsupportedAudioFileException e) {
-            System.err.println("Audio file format not supported: " + e);
-            throw new RuntimeException(e);
-        }
-    }
-
-
-    /** Converts this demo into a unit-test. */
-    @Test
-    public void testWavFileDemo() {
-        try {
-            WavFile.main(new String[]{});
-        } catch (Throwable t) {
-            t.printStackTrace();
-            Assert.fail();
+        // use defaults that are loaded from the WavFile.jar or use values provided as arguments to main
+        if (args.length == 2) {
+            configURL = new File(args[0]).toURI().toURL();
+            audioFileURL = new File(args[1]).toURI().toURL();
+        } else {
+            audioFileURL = WavFile.class.getResource("12345.wav");
+            configURL = WavFile.class.getResource("config.xml");
         }
 
-        Assert.assertNotNull(result);
-        Assert.assertTrue(result.getBestResultNoFiller().equals("one two three four five"));
+        System.out.println("Loading Recognizer as defined in '" + configURL.toString() + "'...\n");
+        ConfigurationManager cm = new ConfigurationManager(configURL);
+
+        // look up the recognizer (which will also lookup all its dependencies
+        Recognizer recognizer = (Recognizer) cm.lookup("recognizer");
+        recognizer.allocate();
+
+        // configure the audio input for the recognizer
+        AudioFileDataSource dataSource = (AudioFileDataSource) cm.lookup("audioFileDataSource");
+        dataSource.setAudioFile(audioFileURL, null);
+
+        // decode the audio file.
+        System.out.println("Decoding " + audioFileURL);
+        Result result = recognizer.recognize();
+        
+        System.out.println("Result: " + (result != null ? result.getBestFinalResultNoFiller() : null));
     }
 }

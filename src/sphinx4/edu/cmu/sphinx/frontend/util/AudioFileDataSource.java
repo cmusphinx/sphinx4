@@ -193,6 +193,8 @@ public class AudioFileDataSource extends BaseDataProcessor {
         AudioFormat format = inputStream.getFormat();
         sampleRate = (int) format.getSampleRate();
         bigEndian = format.isBigEndian();
+        
+        logger.finer("input format is " + format);
 
         if (format.getSampleSizeInBits() % 8 != 0)
             throw new Error("StreamDataSource: bits per sample must be a multiple of 8.");
