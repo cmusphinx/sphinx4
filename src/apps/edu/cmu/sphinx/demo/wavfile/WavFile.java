@@ -18,18 +18,13 @@ import edu.cmu.sphinx.result.Result;
 import edu.cmu.sphinx.util.props.ConfigurationManager;
 
 import java.io.File;
-import java.net.URL;
 import java.net.MalformedURLException;
+import java.net.URL;
 
 
-/**
- * A simple Sphinx-4 application that decodes a .WAV file containing connnected-digits audio data. The audio format
- * itself should be PCM-linear, with the sample rate, bits per sample, sign and endianness as specified in the
- * config.xml file.
- */
+/** A simple Sphinx-4 application that decodes a .WAV file containing connnected-digits audio data. */
 public class WavFile {
 
-    /** Main method for running the WavFile demo. */
     public static void main(String[] args) throws MalformedURLException {
         URL audioFileURL;
         URL configURL;
@@ -57,7 +52,7 @@ public class WavFile {
         // decode the audio file.
         System.out.println("Decoding " + audioFileURL);
         Result result = recognizer.recognize();
-        
+
         System.out.println("Result: " + (result != null ? result.getBestFinalResultNoFiller() : null));
     }
 }
