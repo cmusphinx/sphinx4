@@ -149,7 +149,7 @@
     <!-- ******************************************************** -->
     <component name="epFrontEnd" type="edu.cmu.sphinx.frontend.FrontEnd">
         <propertylist name="pipeline">
-            <item>streamDataSource </item>
+            <item>audioFileDataSource </item>
             <item>speechClassifier </item>
             <item>speechMarker </item>
             <item>nonSpeechDataFilter </item>
@@ -167,14 +167,7 @@
     <!-- The frontend pipelines                                   -->
     <!-- ******************************************************** -->
 
-    <component name="streamDataSource"
-                type="edu.cmu.sphinx.frontend.util.StreamDataSource">
-        <property name="sampleRate" value="16000"/>
-        <property name="bitsPerSample" value="16"/>
-        <property name="bigEndianData" value="false"/>
-        <property name="signedData" value="true"/>
-        <property name="bytesPerRead" value="320"/>
-    </component>
+    <component name="audioFileDataSource" type="edu.cmu.sphinx.frontend.util.AudioFileDataSource"/>
 
     <component name="speechClassifier" 
                type="edu.cmu.sphinx.frontend.endpoint.SpeechClassifier">

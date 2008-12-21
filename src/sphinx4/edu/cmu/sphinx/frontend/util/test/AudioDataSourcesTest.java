@@ -41,7 +41,7 @@ public class AudioDataSourcesTest {
 
     @Test
     public void test8KhzSource() throws DataProcessingException {
-        AudioFileDataSource dataSource = new AudioFileDataSource();
+        AudioFileDataSource dataSource = ConfigurationManager.getInstance(AudioFileDataSource.class);
 
         // test simple .wav
         dataSource.setAudioFile(new File(baseDir + "test8k.wav"), null);
@@ -94,7 +94,7 @@ public class AudioDataSourcesTest {
 
 
     private void runAssert(String fileName) throws DataProcessingException {
-        AudioFileDataSource dataSource = new AudioFileDataSource();
+        AudioFileDataSource dataSource = ConfigurationManager.getInstance(AudioFileDataSource.class);
 
         // test simple .wav
         dataSource.setAudioFile(new File(baseDir + fileName), null);
