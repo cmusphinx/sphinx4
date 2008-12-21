@@ -4,7 +4,6 @@ import edu.cmu.sphinx.decoder.search.SearchManager;
 import edu.cmu.sphinx.result.Result;
 import edu.cmu.sphinx.util.props.*;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -57,11 +56,7 @@ public abstract class AbstractDecoder implements ResultProducer, Configurable {
         fireNonFinalResults = ps.getBoolean(FIRE_NON_FINAL_RESULTS);
 
         if (ps.getBoolean(AUTO_ALLOCATE)) {
-            try {
-                searchManager.allocate();
-            } catch (IOException e) {
-                throw new PropertyException(e, ps.getInstanceName(), PROP_SEARCH_MANAGER, "search manager allocation failed");
-            }
+            searchManager.allocate();
         }
 
         for (Configurable configurable : ps.getComponentList(PROP_RESULT_LISTENERS)) {
@@ -71,7 +66,7 @@ public abstract class AbstractDecoder implements ResultProducer, Configurable {
 
 
     /** Allocate resources necessary for decoding */
-    public void allocate() throws IOException {
+    public void allocate() {
         searchManager.allocate();
     }
 

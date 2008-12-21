@@ -135,16 +135,21 @@ public class ParallelSearchManager implements SearchManager {
      *
      * @see edu.cmu.sphinx.decoder.search.SearchManager#allocate()
      */
-    public void allocate() throws IOException {
+    public void allocate() {
         bestTokenMap = new HashMap<SearchState, Token>();
-        linguist.allocate();
-        if (doFeaturePruning) {
-            featureScorePruner.allocate();
+
+        try {
+            linguist.allocate();
+            if (doFeaturePruning) {
+                featureScorePruner.allocate();
+            }
+            if (doCombinePruning) {
+                combinedScorePruner.allocate();
+            }
+            scorer.allocate();
+        } catch (IOException e) {
+            throw new RuntimeException(toString() + ": allocation of search manager resources failed", e);
         }
-        if (doCombinePruning) {
-            combinedScorePruner.allocate();
-        }
-        scorer.allocate();
     }
 
 

@@ -15,8 +15,6 @@ package edu.cmu.sphinx.decoder.search;
 import edu.cmu.sphinx.result.Result;
 import edu.cmu.sphinx.util.props.Configurable;
 
-import java.io.IOException;
-
 /**
  * Defines the interface for the SearchManager. The SearchManager's primary role is to execute the search for a given
  * number of frames. The SearchManager will return interim results as the recognition proceeds and when recognition
@@ -28,7 +26,7 @@ public interface SearchManager extends Configurable {
      * Allocates the resources necessary for this search. This should be called once before an recognitions are
      * performed
      */
-    public void allocate() throws IOException;
+    public void allocate();
 
 
     /**

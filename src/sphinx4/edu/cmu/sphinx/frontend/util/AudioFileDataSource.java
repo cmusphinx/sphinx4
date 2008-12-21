@@ -164,6 +164,7 @@ public class AudioFileDataSource extends BaseDataProcessor {
         try {
             audioStream = AudioSystem.getAudioInputStream(audioFileURL);
         } catch (UnsupportedAudioFileException e) {
+            System.err.println("Audio file format not supported: " + e);
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();

@@ -193,7 +193,7 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
     *
     * @see edu.cmu.sphinx.decoder.search.SearchManager#allocate()
     */
-    public void allocate() throws IOException {
+    public void allocate() {
         // tokenTracker = new TokenTracker();
         // tokenTypeTracker = new TokenTypeTracker();
 
@@ -205,9 +205,13 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
         curTokensScored = StatisticsVariable.getStatisticsVariable("curTokensScored");
         tokensCreated = StatisticsVariable.getStatisticsVariable("tokensCreated");
 
-        linguist.allocate();
-        pruner.allocate();
-        scorer.allocate();
+        try {
+            linguist.allocate();
+            pruner.allocate();
+            scorer.allocate();
+        } catch (IOException e) {
+            throw new RuntimeException(toString() + ": allocation of search manager resources failed", e);
+        }
     }
 
 
@@ -282,7 +286,7 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
                 currentFrameNumber, done, logMath);
 
         if (result.getDataFrames().isEmpty())
-                result = null;
+            result = null;
 
         // tokenTypeTracker.show();
         if (showTokenCount) {
@@ -671,7 +675,7 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
             if (firstToken || bestToken.getScore() < logEntryScore) {
                 Token newBestToken = new Token(predecessor, nextState,
                         logEntryScore, arc.getLanguageProbability(), arc
-                        .getInsertionProbability(), currentFrameNumber);
+                                .getInsertionProbability(), currentFrameNumber);
                 tokensCreated.value++;
 
                 setBestToken(newBestToken, nextState);

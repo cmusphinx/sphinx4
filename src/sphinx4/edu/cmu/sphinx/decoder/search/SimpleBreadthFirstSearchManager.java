@@ -24,10 +24,10 @@ import edu.cmu.sphinx.util.StatisticsVariable;
 import edu.cmu.sphinx.util.Timer;
 import edu.cmu.sphinx.util.props.*;
 
-import java.io.IOException;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.io.IOException;
 
 /**
  * Provides the breadth first search. To perform recognition an application should call initialize before recognition
@@ -573,7 +573,7 @@ public class SimpleBreadthFirstSearchManager implements SearchManager {
     *
     * @see edu.cmu.sphinx.decoder.search.SearchManager#allocate()
     */
-    public void allocate() throws IOException {
+    public void allocate() {
         totalTokensScored = StatisticsVariable
                 .getStatisticsVariable("totalTokensScored");
         tokensPerSecond = StatisticsVariable
@@ -585,9 +585,15 @@ public class SimpleBreadthFirstSearchManager implements SearchManager {
         viterbiPruned = StatisticsVariable
                 .getStatisticsVariable("viterbiPruned");
         beamPruned = StatisticsVariable.getStatisticsVariable("beamPruned");
-        linguist.allocate();
-        pruner.allocate();
-        scorer.allocate();
+
+
+        try {
+            linguist.allocate();
+            pruner.allocate();
+            scorer.allocate();
+        } catch (IOException e) {
+            throw new RuntimeException(toString()+ ": allocation of search manager resources failed", e);
+        }
 
         scoreTimer = Timer.getTimer("scoring");
         pruneTimer = Timer.getTimer("pruning");

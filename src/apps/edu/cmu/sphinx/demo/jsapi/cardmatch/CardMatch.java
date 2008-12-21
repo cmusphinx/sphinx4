@@ -123,25 +123,21 @@ public class CardMatch implements Recorder, Configurable {
 
     /** Starts the card game */
     public void go() {
-        try {
-            System.out.println("Loading recognizer, please wait ...");
-            recognizer.allocate();
-            System.out.println("Here we go ...");
-            Game game = new Game(numberOfCards, imageFiles);
-            cardMatchFrame = new CardMatchFrame("Card Match", this, game, useVoice);
+        System.out.println("Loading recognizer, please wait ...");
+        recognizer.allocate();
+        System.out.println("Here we go ...");
+        Game game = new Game(numberOfCards, imageFiles);
+        cardMatchFrame = new CardMatchFrame("Card Match", this, game, useVoice);
 
-            // add a listener for closing this JFrame and quitting the program
-            cardMatchFrame.addWindowListener(new WindowAdapter() {
-                public void windowClosing(WindowEvent e) {
-                    recognizer.deallocate();
-                    System.exit(0);
-                }
-            });
+        // add a listener for closing this JFrame and quitting the program
+        cardMatchFrame.addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent e) {
+                recognizer.deallocate();
+                System.exit(0);
+            }
+        });
 
-            cardMatchFrame.setVisible(true);
-        } catch (IOException e) {
-            System.err.println("Can't load recognizer " + e);
-        }
+        cardMatchFrame.setVisible(true);
 
     }
 

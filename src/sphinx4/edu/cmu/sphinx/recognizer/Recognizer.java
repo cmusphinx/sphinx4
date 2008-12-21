@@ -19,7 +19,6 @@ import edu.cmu.sphinx.instrumentation.Resetable;
 import edu.cmu.sphinx.result.Result;
 import edu.cmu.sphinx.util.props.*;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -152,7 +151,7 @@ public class Recognizer implements Configurable, ResultProducer {
      *
      * @throws IllegalStateException if the recognizer is not in the <code>DEALLOCATED</code> state
      */
-    public void allocate() throws IllegalStateException, IOException {
+    public void allocate() throws IllegalStateException {
         checkState(RecognizerState.DEALLOCATED);
         setState(RecognizerState.ALLOCATING);
         decoder.allocate();
