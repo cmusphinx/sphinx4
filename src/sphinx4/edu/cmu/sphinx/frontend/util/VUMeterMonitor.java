@@ -23,13 +23,14 @@ import java.awt.*;
 public class VUMeterMonitor extends BaseDataProcessor {
 
     VUMeter vumeter;
-    VUMeterPanel vuMeterPanel = new VUMeterPanel();
+    VUMeterPanel vuMeterPanel;
     JDialog vuMeterDialog;
 
 
     public VUMeterMonitor() {
         vumeter = new VUMeter();
 
+        vuMeterPanel = new VUMeterPanel();
         vuMeterPanel.setVu(vumeter);
         vuMeterPanel.start();
 

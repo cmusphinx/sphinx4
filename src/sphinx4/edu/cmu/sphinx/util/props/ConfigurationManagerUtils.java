@@ -637,6 +637,10 @@ public final class ConfigurationManagerUtils {
             compName = allProps.get(propName).get(0).getInstanceName();
         }
 
+        // set the value to null if the string content is 'null
+        if(propValue.equals("null"))
+            propValue = null;
+
         // now set the property
         PropertySheet ps = cm.getPropertySheet(compName);
         PropertySheet.PropertyType propType = ps.getType(propName);

@@ -13,12 +13,19 @@ public class MatrixUtils {
         StringBuffer s = new StringBuffer("[");
 
         for (int r = 0; r < m.length; r++) {
-            s.append("[");
+            s.append(toString(m[r]));
+            s.append("\n");
+        }
 
-            for (int c = 0; c < numCols(m); c++)
-                s.append(" ").append(df.format(m[r][c]));
+        return s.append(" ]").toString();
+    }
 
-            s.append(" ]\n");
+
+    public static String toString(double[] m) {
+        StringBuffer s = new StringBuffer("[");
+
+        for (int r = 0; r < m.length; r++) {
+            s.append(" ").append(df.format(m[r]));
         }
 
         return s.append(" ]").toString();
