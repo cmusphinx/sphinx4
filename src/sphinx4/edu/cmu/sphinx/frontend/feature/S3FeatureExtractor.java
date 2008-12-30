@@ -96,7 +96,7 @@ public class S3FeatureExtractor extends BaseDataProcessor {
                 } else if (input instanceof DataStartSignal) {
                     dataEndSignal = null;
                     outputQueue.add(input);
-                    Data start = getPredecessor().getData();
+                    Data start = getNextData();
                     int n = processFirstCepstrum(start);
                     computeFeatures(n);
                     if (dataEndSignal != null) {
@@ -118,6 +118,15 @@ public class S3FeatureExtractor extends BaseDataProcessor {
         }
     }
 
+    private Data getNextData() throws DataProcessingException {
+        Data d = getPredecessor().getData();
+        while (d != null && !(d instanceof DoubleData || d instanceof DataEndSignal || d instanceof DataStartSignal)) {
+            outputQueue.add(d);
+            d = getPredecessor().getData();
+        }
+
+        return d;
+    }
 
     /**
      * Replicate the given cepstrum Data object into the first window+1 number of frames in the cepstraBuffer. This is
