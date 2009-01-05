@@ -157,11 +157,7 @@
 
     <component name="threadedScorer"
           type="edu.cmu.sphinx.decoder.scorer.ThreadedAcousticScorer">
-        <property name="numThreads" value="0"/>
         <property name="frontend" value="mfcFrontEnd"/>
-        <property name="acousticGain" value="1"/>
-        <property name="isCpuRelative" value="true"/>
-        <property name="minScoreablesPerThread" value="10"/>
     </component>
 
     <!-- ******************************************************** -->

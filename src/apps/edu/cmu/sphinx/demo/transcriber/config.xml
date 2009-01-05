@@ -70,9 +70,6 @@
     <component name="threadedScorer" 
                 type="edu.cmu.sphinx.decoder.scorer.ThreadedAcousticScorer">
         <property name="frontend" value="${frontend}"/>
-        <property name="isCpuRelative" value="true"/>
-        <property name="numThreads" value="0"/>
-        <property name="minScoreablesPerThread" value="10"/>
     </component>
     
     <!-- ******************************************************** -->
@@ -150,6 +147,7 @@
     <component name="epFrontEnd" type="edu.cmu.sphinx.frontend.FrontEnd">
         <propertylist name="pipeline">
             <item>audioFileDataSource </item>
+            <item>dataBlocker </item>
             <item>speechClassifier </item>
             <item>speechMarker </item>
             <item>nonSpeechDataFilter </item>
@@ -169,6 +167,8 @@
 
     <component name="audioFileDataSource" type="edu.cmu.sphinx.frontend.util.AudioFileDataSource"/>
 
+    <component name="dataBlocker" type="edu.cmu.sphinx.frontend.DataBlocker"/>
+    
     <component name="speechClassifier" 
                type="edu.cmu.sphinx.frontend.endpoint.SpeechClassifier">
         <property name="threshold" value="13"/>
