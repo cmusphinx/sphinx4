@@ -47,6 +47,11 @@ public class AudioFileDataSource extends BaseDataProcessor {
     /** Default value for PROP_BYTES_PER_READ. */
     public static final int PROP_BYTES_PER_READ_DEFAULT = 3200;
 
+    @S4ComponentList(type = Configurable.class)
+    public static final String AUDIO_FILE_LISTENERS = "audioFileListners";
+    protected List<AudioFileProcessListener> fileListeners = new ArrayList<AudioFileProcessListener>();
+
+
     protected InputStream dataStream;
     protected int sampleRate;
     protected int bytesPerRead;
@@ -60,37 +65,16 @@ public class AudioFileDataSource extends BaseDataProcessor {
 
     protected Logger logger;
 
-    @S4ComponentList(type = Configurable.class)
-    public static final String AUDIO_FILE_LISTENERS = "audioFileListners";
-    protected List<AudioFileProcessListener> fileListeners = new ArrayList<AudioFileProcessListener>();
-
     private File curAudioFile;
 
 
-    public AudioFileDataSource() {
-        this(PROP_BYTES_PER_READ_DEFAULT);
-    }
-
-
-    public AudioFileDataSource(int bytesPerRead) {
-        super();
-
-        initialize();
-        this.bytesPerRead = bytesPerRead;
-    }
-
-
-    /*
-    * (non-Javadoc)
-    *
-    * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
-    */
+    @Override
     public void newProperties(PropertySheet ps) throws PropertyException {
         super.newProperties(ps);
         bytesPerRead = ps.getInt(PROP_BYTES_PER_READ);
 
         logger = ps.getLogger();
-        
+
         // attach all pool-listeners
         List<? extends Configurable> list = ps.getComponentList(AUDIO_FILE_LISTENERS);
         for (Configurable configurable : list) {
@@ -102,11 +86,7 @@ public class AudioFileDataSource extends BaseDataProcessor {
     }
 
 
-    /*
-    * (non-Javadoc)
-    *
-    * @see edu.cmu.sphinx.frontend.DataProcessor#initialize(edu.cmu.sphinx.frontend.CommonConfig)
-    */
+    @Override
     public void initialize() {
         super.initialize();
 
@@ -193,8 +173,9 @@ public class AudioFileDataSource extends BaseDataProcessor {
         AudioFormat format = inputStream.getFormat();
         sampleRate = (int) format.getSampleRate();
         bigEndian = format.isBigEndian();
-        
-        logger.finer("input format is " + format);
+
+        String s = format.toString();
+        logger.finer("input format is " + s);
 
         if (format.getSampleSizeInBits() % 8 != 0)
             throw new Error("StreamDataSource: bits per sample must be a multiple of 8.");
