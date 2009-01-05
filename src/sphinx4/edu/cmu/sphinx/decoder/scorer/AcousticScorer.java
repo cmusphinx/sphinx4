@@ -15,14 +15,13 @@ package edu.cmu.sphinx.decoder.scorer;
 import edu.cmu.sphinx.decoder.search.Token;
 import edu.cmu.sphinx.util.props.Configurable;
 
-import java.io.IOException;
 import java.util.List;
 
 /** Provides a mechanism for scoring a set of HMM states */
 public interface AcousticScorer extends Configurable {
 
     /** Allocates resources for this scorer */
-    public void allocate() throws IOException;
+    public void allocate();
 
 
     /** Deallocates resouces for this scorer */
@@ -33,6 +32,9 @@ public interface AcousticScorer extends Configurable {
     public void startRecognition();
 
 
+    /** stops the scorer */
+    public void stopRecognition();
+
     /**
      * Scores the given set of states
      *
@@ -41,9 +43,6 @@ public interface AcousticScorer extends Configurable {
      */
     public Scoreable calculateScores(List<Token> scorableList);
 
-
-    /** stops the scorer */
-    public void stopRecognition();
 }
 
 

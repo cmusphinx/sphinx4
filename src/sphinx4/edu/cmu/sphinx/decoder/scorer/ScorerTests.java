@@ -10,11 +10,11 @@ import edu.cmu.sphinx.frontend.endpoint.SpeechEndSignal;
 import edu.cmu.sphinx.frontend.endpoint.SpeechStartSignal;
 import edu.cmu.sphinx.frontend.test.AbstractTestProcessor;
 import edu.cmu.sphinx.util.props.ConfigurationManager;
+import edu.cmu.sphinx.util.props.ConfigurationManagerUtils;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -45,7 +45,7 @@ public class ScorerTests {
 
 
     @Test
-    public void waitUntilSpeechStart() throws IOException {
+    public void waitUntilSpeechStart() {
         List<Class<? extends AbstractScorer>> scorerClasses = Arrays.asList(SimpleAcousticScorer.class, ThreadedAcousticScorer.class);
 
         for (Class<? extends AbstractScorer> scorerClass : scorerClasses) {
@@ -92,5 +92,32 @@ public class ScorerTests {
         bufferProc.processDataFrame(new DataEndSignal(123));
 
         return bufferProc;
+    }
+
+
+    @Test
+    public void testThreadedScorerDeallocation() throws InterruptedException {
+        Map<String, Object> props = new HashMap<String, Object>();
+        DataBufferProcessor dummyFrontEnd = createDummyFrontEnd();
+
+        props.put(AbstractScorer.FEATURE_FRONTEND, dummyFrontEnd);
+        props.put(ThreadedAcousticScorer.PROP_NUM_THREADS, 4);
+        props.put(ConfigurationManagerUtils.GLOBAL_COMMON_LOGLEVEL, "FINEST");
+        AcousticScorer scorer = ConfigurationManager.getInstance(ThreadedAcousticScorer.class, props);
+
+        scorer.allocate();
+        scorer.startRecognition();
+
+        List<Token> dummyTokens = Arrays.asList(testToken);
+
+        // score around a little
+        scorer.calculateScores(dummyTokens);
+
+        scorer.stopRecognition();
+        scorer.deallocate();
+
+        Thread.sleep(1000);
+        
+        // ensure that all scoring threads have died
     }
 }

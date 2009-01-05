@@ -28,13 +28,15 @@ public class ThreadedAcousticScorer extends AbstractScorer {
 
     /**
      * A SphinxProperty name that controls the number of threads that are used to score hmm states. If the isCpuRelative
-     * property is false, then is is the exact number of threads that are used to score hmm states. if the isCpuRelative
+     * property is false, then is is the exact number of threads that are used to score hmm states. If the isCpuRelative
      * property is true, then this value is combined with the number of available proessors on the system. If you want
      * to have one thread per CPU available to score states, set the NUM_THREADS property to 0 and the isCpuRelative to
-     * true. If you want exactly one thread to process scores set NUM_THREADS to 1 and isCpuRelative to false. The
-     * default value is 1
+     * true. If you want exactly one thread to process scores set NUM_THREADS to 1 and isCpuRelative to false.
+     * <p/>
+     * If the value is 1 isCpuRelative is false no additional thread will be instantiated, and all compuation will be
+     * done in the calling thread itself. The default value is 0.
      */
-    @S4Integer(defaultValue = 1)
+    @S4Integer(defaultValue = 0)
     public final static String PROP_NUM_THREADS = "numThreads";
 
 
@@ -42,10 +44,10 @@ public class ThreadedAcousticScorer extends AbstractScorer {
      * A sphinx property name that controls whether the number of available CPUs on the system is used when determining
      * the number of threads to use for scoring. If true, the NUM_THREADS property is combined with the available number
      * of CPUS to deterimine the number of threads. Note that the number of threads is contrained to be never lower than
-     * zero. Also, if the number of threads is one, the states are scored on the calling thread, no separate threads are
+     * zero. Also, if the number of threads is 0, the states are scored on the calling thread, no separate threads are
      * started. The default value is false.
      */
-    @S4Boolean(defaultValue = false)
+    @S4Boolean(defaultValue = true)
     public final static String PROP_IS_CPU_RELATIVE = "isCpuRelative";
 
 
@@ -54,7 +56,7 @@ public class ThreadedAcousticScorer extends AbstractScorer {
      * over threading of the scoring that could happen if the number of threads is high compared to the size of the
      * activelist. The default is 50
      */
-    @S4Integer(defaultValue = 50)
+    @S4Integer(defaultValue = 10)
     public final static String PROP_MIN_SCOREABLES_PER_THREAD = "minScoreablesPerThread";
 
 
@@ -76,73 +78,92 @@ public class ThreadedAcousticScorer extends AbstractScorer {
     public void newProperties(PropertySheet ps) throws PropertyException {
         super.newProperties(ps);
 
-        boolean cpuRelative = ps.getBoolean(PROP_IS_CPU_RELATIVE);
-        numThreads = ps.getInt(PROP_NUM_THREADS);
         minScoreablesPerThread = ps.getInt(PROP_MIN_SCOREABLES_PER_THREAD);
         acousticGain = ps.getFloat(PROP_ACOUSTIC_GAIN);
 
+        boolean cpuRelative = ps.getBoolean(PROP_IS_CPU_RELATIVE);
+        numThreads = ps.getInt(PROP_NUM_THREADS);
+
         if (cpuRelative) {
             numThreads += Runtime.getRuntime().availableProcessors();
-        }
-        if (numThreads < 1) {
-            numThreads = 1;
         }
     }
 
 
     @Override
     public void allocate() {
+        super.allocate();
+
         logger.fine("# of scoring threads: " + numThreads);
 
-        // if we only have one thread, then we'll score the
+        // if no addtional scoring thread shoudl be used, then we'll score the
         // states in the calling thread and we won't need any
         // of the synchronization objects or threads
 
-        if (numThreads > 1) {
+        if (numThreads > 0) {
             mailbox = new Mailbox();
             semaphore = new Semaphore();
-            for (int i = 0; i < (numThreads - 1); i++) {
-                Thread t = new ScoringThread();
-                t.start();
+
+            for (int i = 0; i < numThreads; i++) {
+                new ScoringThread().start();
+            }
+        }
+    }
+
+
+    @Override
+    public void deallocate() {
+        super.deallocate();
+
+        // stops all scoring threads by setting the mailbox state to be deallocated.
+        // This is in many cases not necessary because all of them are daemon threads, but is mandatory if many sphinx4
+        // instances are started within one appliation.
+
+        if (mailbox != null) {
+            // remark: every call of deallocate will call just one scoring thread.
+            for (int i = 0; i < numThreads; i++) {
+                mailbox.deallocate();
+//                }
             }
         }
     }
 
 
     protected Scoreable doScoring(List<Token> scoreableList, Data data) {
-        Scoreable best = null;
+        Scoreable best;
 
         currentData = data;
 
-        if (numThreads > 1) {
+        if (numThreads > 0) {
 
             int nThreads = numThreads;
-            int scoreablesPerThread = (scoreableList.size() + (numThreads - 1))
-                    / numThreads;
+            int scoreablesPerThread = scoreableList.size() / numThreads;
+
+            // adapt the number of required scoring threads
             if (scoreablesPerThread < minScoreablesPerThread) {
                 scoreablesPerThread = minScoreablesPerThread;
-                nThreads = (scoreableList.size() + (scoreablesPerThread - 1))
-                        / scoreablesPerThread;
+                nThreads = (scoreableList.size() + (scoreablesPerThread - 1)) / scoreablesPerThread;
             }
 
             semaphore.reset(nThreads);
 
             for (int i = 0; i < nThreads; i++) {
-                ScoreableJob job = new ScoreableJob(scoreableList, i
-                        * scoreablesPerThread, scoreablesPerThread);
-                if (i < (nThreads - 1)) {
-                    mailbox.post(job);
-                } else {
-                    Scoreable myBest = scoreScoreables(job);
-                    semaphore.post(myBest);
-                }
+                int size = i == (nThreads - 1) ? scoreableList.size() - scoreablesPerThread * i : scoreablesPerThread;
+
+                ScoreableJob job = new ScoreableJob(scoreableList, i * scoreablesPerThread, size);
+                // why should do we need this special treatment of the last job?
+//                if (i < (nThreads - 1)) {
+                mailbox.post(job);
+//                } else {
+//                    Scoreable myBest = scoreScoreables(job);
+//                    semaphore.post(myBest);
+//                }
             }
 
             best = semaphore.pend();
 
         } else {
-            ScoreableJob job = new ScoreableJob(scoreableList, 0,
-                    scoreableList.size());
+            ScoreableJob job = new ScoreableJob(scoreableList, 0, scoreableList.size());
             best = scoreScoreables(job);
         }
 
@@ -204,12 +225,16 @@ public class ThreadedAcousticScorer extends AbstractScorer {
         public void run() {
             while (true) {
                 ScoreableJob scoreableJob = mailbox.pend();
+                if (scoreableJob == null) {
+                    logger.finer("scorer thread " + this.toString() + "registered to " + ThreadedAcousticScorer.this.toString() + "dies ...");
+                    break;  // this will happen when the scorer becomes deallocated
+                }
+
                 Scoreable best = scoreScoreables(scoreableJob);
                 semaphore.post(best);
             }
         }
     }
-
 }
 
 /** Mailbox class allows a set of threads to communicate a single scoreable job */
@@ -217,6 +242,7 @@ public class ThreadedAcousticScorer extends AbstractScorer {
 class Mailbox {
 
     private ScoreableJob curScoreableJob;
+    private boolean isAllocated = true;
 
 
     /**
@@ -244,6 +270,10 @@ class Mailbox {
     synchronized ScoreableJob pend() {
         ScoreableJob returnScoreableJob;
         while (curScoreableJob == null) {
+            if (!isAllocated) {
+                return null;
+            }
+
             try {
                 wait();
             } catch (InterruptedException ioe) {
@@ -253,6 +283,12 @@ class Mailbox {
         curScoreableJob = null;
         notifyAll();
         return returnScoreableJob;
+    }
+
+
+    public synchronized void deallocate() {
+        isAllocated = false;
+        notifyAll();
     }
 }
 

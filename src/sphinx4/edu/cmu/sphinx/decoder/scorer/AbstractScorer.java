@@ -151,7 +151,7 @@ public abstract class AbstractScorer implements AcousticScorer {
     protected abstract Scoreable doScoring(List<Token> scoreableList, Data data);
 
 
-    public void allocate() throws IOException {
+    public void allocate() {
     }
 
 
