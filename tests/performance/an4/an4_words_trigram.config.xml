@@ -168,7 +168,6 @@
     <component name="threadedScorer"
           type="edu.cmu.sphinx.decoder.scorer.ThreadedAcousticScorer">
         <property name="frontend" value="mfcFrontEnd"/>
-        <property name="acousticGain" value="1"/>
     </component>
 
     <!-- ******************************************************** -->

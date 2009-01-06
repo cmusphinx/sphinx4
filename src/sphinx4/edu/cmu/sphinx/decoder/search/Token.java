@@ -221,20 +221,19 @@ public class Token implements Scoreable {
 
 
     /**
-     * Calculates a score against the given feature. The score can be retreived with get score
+     * Calculates a score against the given feature. The score can be retreived with get score. The token will keep a
+     * reference to the scored feature-vector.
      *
-     * @param feature  the feature to be scored
-     * @param keepData whether this Scoreable should keep a reference to the given feature
-     * @param gain     gain to apply to the score;
+     * @param feature the feature to be scored
      * @return the score for the feature
      */
-    public float calculateScore(Data feature, boolean keepData, float gain) {
+    public float calculateScore(Data feature) {
 
         //assert searchState.isEmitting() 
         //   : "Attempting to score non-scoreable token: " + searchState;
         HMMSearchState hmmSearchState = (HMMSearchState) searchState;
         HMMState hmmState = hmmSearchState.getHMMState();
-        logAcousticScore = hmmState.getScore(feature) * gain;
+        logAcousticScore = hmmState.getScore(feature);
 
         // apply normalization to make all density values to be between 0 and 1
         // under the assumption that a non-zero variance flooring is being used.
@@ -257,9 +256,7 @@ public class Token implements Scoreable {
 
         logTotalScore += logAcousticScore;
 
-        if (keepData) {
-            setData(feature);
-        }
+        setData(feature);
 
         return logTotalScore;
     }

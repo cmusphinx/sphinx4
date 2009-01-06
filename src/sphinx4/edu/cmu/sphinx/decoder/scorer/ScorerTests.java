@@ -32,7 +32,7 @@ public class ScorerTests {
     Token testToken = new Token(1.f, 1.f, null) {
 
         @Override
-        public float calculateScore(Data feature, boolean keepData, float gain) {
+        public float calculateScore(Data feature) {
             return -1;
         }
     };

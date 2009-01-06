@@ -60,14 +60,8 @@ public class ThreadedAcousticScorer extends AbstractScorer {
     public final static String PROP_MIN_SCOREABLES_PER_THREAD = "minScoreablesPerThread";
 
 
-    /** A sphinx property that controls the amount of acoustic gain. */
-    @S4Double(defaultValue = 1.0)
-    public final static String PROP_ACOUSTIC_GAIN = "acousticGain";
-
-
     private int numThreads;         // number of threads in use
     private int minScoreablesPerThread; // min scoreables sent to a thread
-    private float acousticGain;             // acoustic gain
 
     private Mailbox mailbox;        // sync between caller and threads
     private Semaphore semaphore;    // join after call
@@ -79,7 +73,6 @@ public class ThreadedAcousticScorer extends AbstractScorer {
         super.newProperties(ps);
 
         minScoreablesPerThread = ps.getInt(PROP_MIN_SCOREABLES_PER_THREAD);
-        acousticGain = ps.getFloat(PROP_ACOUSTIC_GAIN);
 
         boolean cpuRelative = ps.getBoolean(PROP_IS_CPU_RELATIVE);
         numThreads = ps.getInt(PROP_NUM_THREADS);
@@ -201,7 +194,7 @@ public class ThreadedAcousticScorer extends AbstractScorer {
              * scoreable.getFrameNumber() + " Data: " + currentData.getID()); }
              */
 
-            if (scoreable.calculateScore(currentData, keepData, acousticGain) > best.getScore()) {
+            if (scoreable.calculateScore(currentData) > best.getScore()) {
                 best = scoreable;
             }
         }

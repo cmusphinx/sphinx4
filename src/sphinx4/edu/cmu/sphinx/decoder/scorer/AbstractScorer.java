@@ -35,12 +35,6 @@ public abstract class AbstractScorer implements AcousticScorer {
     public final static String SCORE_NORMALIZER = "scoreNormalizer";
     private ScoreNormalizer scoreNormalizer;
 
-
-    /** A SphinxProperty specifying whether the scoreables should keep a reference to the scored features. */
-    @S4Boolean(defaultValue = true)
-    public final static String PROP_SCOREABLES_KEEP_FEATURE = "scoreablesKeepFeature";
-    protected boolean keepData;
-
     private Boolean isVadEmbeddedStream;
 
     protected Logger logger;
@@ -51,7 +45,6 @@ public abstract class AbstractScorer implements AcousticScorer {
         frontEnd = (BaseDataProcessor) ps.getComponent(FEATURE_FRONTEND);
         scoreNormalizer = (ScoreNormalizer) ps.getComponent(SCORE_NORMALIZER);
 
-        keepData = ps.getBoolean(PROP_SCOREABLES_KEEP_FEATURE);
         logger = ps.getLogger();
         name = ps.getInstanceName();
     }

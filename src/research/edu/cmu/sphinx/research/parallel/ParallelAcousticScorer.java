@@ -52,7 +52,7 @@ public class ParallelAcousticScorer extends AbstractScorer {
 
         for (Iterator i = scoreableList.iterator(); i.hasNext();) {
             Scoreable scoreable = (Scoreable) i.next();
-            float logScore = scoreable.calculateScore(data, keepData, 1.0f);
+            float logScore = scoreable.calculateScore(data);
             if (logScore > logMaxScore) {
                 logMaxScore = logScore;
                 bestScoreable = scoreable;
