@@ -104,11 +104,10 @@ public final class ConfigurationManagerUtils {
 
         if (cm.getConfigURL() != null)
             // remark: the replacement of xml/sxl suffix is not necessary and just done to improve readability
-            prefix = new File(cm.getConfigURL().getFile()).getName().replace(".sxl", "").replace(".xml", "");
+            return "S4CM" + new File(cm.getConfigURL().getFile()).getName().replace(".sxl", "").replace(".xml", "") + ".";
         else
-            prefix = cm.hashCode() + "";
-
-        return "S4CM." + prefix + ".";
+//            return "S4CM"+ cm.hashCode() + ".";
+            return "";
     }
 
 
@@ -638,7 +637,7 @@ public final class ConfigurationManagerUtils {
         }
 
         // set the value to null if the string content is 'null
-        if(propValue.equals("null"))
+        if (propValue.equals("null"))
             propValue = null;
 
         // now set the property
