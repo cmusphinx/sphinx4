@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <jnlp spec="1.0" 
-    codebase="http://cmusphinx.sourceforge.net/sphinx4/zipcity" 
+    codebase="http://cmusphinx.sourceforge.net/sphinx4/src/apps/edu/cmu/sphinx/demo/zipcity"
       href="zipcity.jnlp">
     <information>
         <title>Zip City</title>
         <vendor>Sun Microsystems, Inc.</vendor>
-        <homepage href="http://cmusphinx.sourceforge.net/sphinx4/zipcity"/>
+        <homepage href="http://cmusphinx.sourceforge.net/sphinx4/src/apps/edu/cmu/sphinx/demo/zipcity/READNE.html"/>
         <icon href="s4.jpg"/>
         <description>A webstart demonstration of Sphinx-4</description>
         <description kind="short">
-            a webstart demonstration of Sphinx-4
+            A webstart demonstration of Sphinx-4
         </description>
         <offline-allowed/>
     </information>
