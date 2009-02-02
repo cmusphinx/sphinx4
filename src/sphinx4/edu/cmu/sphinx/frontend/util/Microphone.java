@@ -38,20 +38,13 @@ public class Microphone extends BaseDataProcessor {
     @S4Integer(defaultValue = 16000)
     public static final String PROP_SAMPLE_RATE = "sampleRate";
 
-    /** Default value for PROP_SAMPLE_RATE. */
-    public static final int PROP_SAMPLE_RATE_DEFAULT = 16000;
-
     /**
      * Sphinx property that specifies whether or not the microphone will release the audio between utterances.  On
      * certain systems (linux for one), closing and reopening the audio does not work too well. The default is false for
      * Linux systems, true for others.
      */
     @S4Boolean(defaultValue = true)
-    public final static String PROP_CLOSE_BETWEEN_UTTERANCES =
-            "closeBetweenUtterances";
-
-    /** Default value for PROP_CLOSE_BETWEEN_UTTERANCES. */
-    public final static boolean PROP_CLOSE_BETWEEN_UTTERANCES_DEFAULT = true;
+    public final static String PROP_CLOSE_BETWEEN_UTTERANCES = "closeBetweenUtterances";
 
     /**
      * The Sphinx property that specifies the number of milliseconds of audio data to read each time from the underlying
@@ -60,36 +53,21 @@ public class Microphone extends BaseDataProcessor {
     @S4Integer(defaultValue = 10)
     public final static String PROP_MSEC_PER_READ = "msecPerRead";
 
-    /** The default value of PROP_MSEC_PER_READ. */
-    public final static int PROP_MSEC_PER_READ_DEFAULT = 10;
-
     /** SphinxProperty for the number of bits per value. */
     @S4Integer(defaultValue = 16)
     public static final String PROP_BITS_PER_SAMPLE = "bitsPerSample";
-
-    /** Default value for PROP_BITS_PER_SAMPLE. */
-    public static final int PROP_BITS_PER_SAMPLE_DEFAULT = 16;
 
     /** Property specifying the number of channels. */
     @S4Integer(defaultValue = 1)
     public static final String PROP_CHANNELS = "channels";
 
-    /** Default value for PROP_CHANNELS. */
-    public static final int PROP_CHANNELS_DEFAULT = 1;
-
     /** Property specify the endianness of the data. */
     @S4Boolean(defaultValue = true)
     public static final String PROP_BIG_ENDIAN = "bigEndian";
 
-    /** Default value for PROP_BIG_ENDIAN. */
-    public static final boolean PROP_BIG_ENDIAN_DEFAULT = true;
-
     /** Property specify whether the data is signed. */
     @S4Boolean(defaultValue = true)
     public static final String PROP_SIGNED = "signed";
-
-    /** Default value for PROP_SIGNED. */
-    public static final boolean PROP_SIGNED_DEFAULT = true;
 
     /**
      * The Sphinx property that specifies whether to keep the audio data of an utterance around until the next utterance
@@ -97,9 +75,6 @@ public class Microphone extends BaseDataProcessor {
      */
     @S4Boolean(defaultValue = false)
     public final static String PROP_KEEP_LAST_AUDIO = "keepLastAudio";
-
-    /** The default value of PROP_KEEP_AUDIO. */
-    public final static boolean PROP_KEEP_LAST_AUDIO_DEFAULT = false;
 
     /**
      * The Sphinx property that specifies how to convert stereo audio to mono. Currently, the possible values are
@@ -110,15 +85,9 @@ public class Microphone extends BaseDataProcessor {
     @S4String(defaultValue = "average", range = {"average", "selectChannel"})
     public final static String PROP_STEREO_TO_MONO = "stereoToMono";
 
-    /** The default value of PROP_STEREO_TO_MONO. */
-    public final static String PROP_STEREO_TO_MONO_DEFAULT = "average";
-
     /** The Sphinx property that specifies the channel to use if the audio is stereo */
     @S4Integer(defaultValue = 0)
     public final static String PROP_SELECT_CHANNEL = "selectChannel";
-
-    /** The default value of PROP_SELECT_CHANNEL. */
-    public final static int PROP_SELECT_CHANNEL_DEFAULT = 0;
 
     /**
      * The Sphinx property that specifies the mixer to use.  The value can be "default," (which means let the
@@ -130,14 +99,8 @@ public class Microphone extends BaseDataProcessor {
      * @see edu.cmu.sphinx.tools.audio.AudioTool
      */
     @S4String(defaultValue = "default")
-
     public final static String PROP_SELECT_MIXER = "selectMixer";
 
-    /**
-     * The default value of PROP_SELECT_MIXER.  This means that a specific Mixer will not be used.  Instead, the
-     * AudioSystem will be used to choose the audio line to use.
-     */
-    public final static String PROP_SELECT_MIXER_DEFAULT = "default";
 
     private AudioFormat finalFormat;
     private AudioInputStream audioStream = null;

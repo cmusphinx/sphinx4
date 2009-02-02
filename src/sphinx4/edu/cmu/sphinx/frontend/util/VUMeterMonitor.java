@@ -69,8 +69,6 @@ public class VUMeterMonitor extends BaseDataProcessor {
 
         PropertySheet propSheet = new PropertySheet(mic, null, new RawPropertyData("tt", mic.getClass().getName()), new ConfigurationManager());
         try {
-            propSheet.setInt(Microphone.PROP_MSEC_PER_READ, Microphone.PROP_MSEC_PER_READ_DEFAULT);
-            propSheet.setInt(Microphone.PROP_SAMPLE_RATE, Microphone.PROP_SAMPLE_RATE_DEFAULT);
             propSheet.setString(Microphone.PROP_STEREO_TO_MONO, "selectChannel");
             propSheet.setInt(Microphone.PROP_SELECT_CHANNEL, 2);
             propSheet.setBoolean(Microphone.PROP_BIG_ENDIAN, true);
