@@ -7,7 +7,7 @@
     <!-- * Where to find things...                                * -->
     <!-- *                                                        * -->
     <!-- ********************************************************** -->
-    <property name="version" value="1.0beta"/>
+    <property name="version" value="1.0beta2"/>
 
     <path id="libs">
         <fileset dir="lib" includes="**/jsapi.jar,**/js.jar,**/forms_rt.jar,**/javolution.jar,junit-4.4.jar"/>
