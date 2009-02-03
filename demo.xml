@@ -367,9 +367,9 @@
     </target>
 
     <target name="release_zipcity" depends="compile_zipcity">
-        <copy todir="bld/zipcity" file="demo/sphinx/zipcity/zipcity.jnlp"/>
-        <copy todir="bld/zipcity" file="demo/sphinx/zipcity/s4.jpg"/>
-        <copy todir="bld/zipcity" file="demo/sphinx/zipcity/README.html"/>
+        <copy todir="bld/zipcity" file="${demo_src_dir}/edu/cmu/sphinx/demo/zipcity/zipcity.jnlp"/>
+        <copy todir="bld/zipcity" file="${demo_src_dir}/edu/cmu/sphinx/demo/zipcity/s4.jpg"/>
+        <copy todir="bld/zipcity" file="${demo_src_dir}/edu/cmu/sphinx/demo/zipcity/README.html"/>
         <copy todir="bld/zipcity" file="bin/ZipCity.jar"/>
         <copy todir="bld/zipcity" file="lib/sphinx4.jar"/>
         <copy todir="bld/zipcity" file="lib/jsapi.jar"/>
