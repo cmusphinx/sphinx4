@@ -3,7 +3,6 @@ package edu.cmu.sphinx.util;
 import java.text.DecimalFormat;
 
 /** Some simple matrix and vector manipulation methods. */
-
 public class MatrixUtils {
 
     public static DecimalFormat df = new DecimalFormat("0.00");
