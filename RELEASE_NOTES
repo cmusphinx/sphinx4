@@ -1,32 +1,26 @@
 Sphinx-4 Speech Recognition System
 -------------------------------------------------------------------
 
-Version:       1.0Beta+
-Release Date:  xxx xxxx
+-------------------------------------------------------------------
 
-Detailed Changes:
-----------------
+Version:       1.0Beta2
+Release Date:  Febryary 2008
 
-WDW - 05/20/05
-    Incorporated contribution from Roger Toenz that fixes issues with
-    fully qualified grammar names in JSGF.
+-------------------------------------------------------------------
 
-PBL - 12/13/04
-    Incorporated contribution from Gregg Liming that adds support for 
-    dictionary addenda in the FastDictionary.
+New Features and Improvments:
 
-WDW - 11/09/04 
-    Made WordPruningBreadthFirstSearchManager.recognize behavior
-    consistent with the SimpleBreadthFirstSearchManager:  when
-    their is no more data to decode, a null Result is returned.
-
-    Made AccuracyTracker an abstract class; moved its best path
-    logic to a new class: BestPathAccuracyTracker; created a 
-    new class, BestConfidenceAccuracyTracker, that uses the
-    ConfidenceScorer to determine the best hypothesis.
-
-    Added a LatticeDemo to demonstrate how to obtain lattices
-    from recognition results.
+    * new much cleaner and more robust configuration system
+    * migrated to java5
+    * xml-free instantiation of new systems
+    * improved feature extraction (better voice activity detection, many bugfixes)
+	* Cleaned up some of the core APIs
+    * include-tag for configuration files 
+    * better JavaSound support
+	* fully qualified grammar names in JSGF (Roger Toenz)
+	* support for dictionary addenda in the FastDictionary (Gregg Liming)
+	* added batch tools for measuring performance on NIST corpus with CTL files
+	* many perforamnce and stability improvments
 
 
 -------------------------------------------------------------------
