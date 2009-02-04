@@ -160,7 +160,7 @@
         <property name="logMath" value="logMath"/>
         <property name="dictionary" value="dictionary"/>
         <property name="location"
-         value="/lab/speech/sphinx4/data/wsj0/tcb05cnp.Z.DMP"/>
+         value="./models/language/wsj/wsj5kc.Z.DMP"/>
     </component>
     
     
