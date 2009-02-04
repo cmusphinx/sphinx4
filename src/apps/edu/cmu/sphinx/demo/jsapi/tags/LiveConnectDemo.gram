@@ -1,6 +1,6 @@
 #JSGF V1.0;
 
-grammar demo.jsapi.tags.LiveConnectDemo;
+grammar edu.cmu.sphinx.demo.jsapi.tags.LiveConnectDemo;
 
 <pizzaTopping> = cheese 
 	       | pepperoni 
@@ -14,7 +14,7 @@ grammar demo.jsapi.tags.LiveConnectDemo;
 // within the grammar.  Also note the method calls to addTopping on this
 // new instance.
 //
-<pizza> = <NULL> { this.$value = new Packages.demo.jsapi.tags.Pizza(); }
+<pizza> = <NULL> { this.$value = new Packages.edu.cmu.sphinx.demo.jsapi.tags.Pizza(); }
 	  ([and] <pizzaTopping> { this.$value.addTopping($); })*
           (pizza | pie) 
 	  [with] ([and] <pizzaTopping> { this.$value.addTopping($); })*;
@@ -38,9 +38,9 @@ grammar demo.jsapi.tags.LiveConnectDemo;
 // addCondiment on this new instance.
 //
 <burger> = ((burger | hamburger) { this.$value 
-				    = new Packages.demo.jsapi.tags.Burger(); }
+				    = new Packages.edu.cmu.sphinx.demo.jsapi.tags.Burger(); }
             | cheeseburger { this.$value 
-			      = new Packages.demo.jsapi.tags.Burger();
+			      = new Packages.edu.cmu.sphinx.demo.jsapi.tags.Burger();
 			     this.$value.addTopping("cheese")})
 	  [with] 
 	  ( [and] ( <burgerTopping> { this.$value.addTopping($); }
