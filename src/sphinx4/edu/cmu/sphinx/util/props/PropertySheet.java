@@ -634,7 +634,12 @@ public class PropertySheet implements Cloneable {
 
     /** Returns the type of the given property. */
     public PropertyType getType(String propName) {
-        Proxy annotation = registeredProperties.get(propName).getAnnotation();
+        S4PropWrapper wrapper = registeredProperties.get(propName);
+        if(wrapper == null) {
+            throw new  InternalConfigurationException(getInstanceName(), propName, " is not a valid property of" + getConfigurableClass());
+        }
+
+        Proxy annotation = wrapper.getAnnotation();
         if (annotation instanceof S4Component)
             return PropertyType.COMP;
         else if (annotation instanceof S4ComponentList)

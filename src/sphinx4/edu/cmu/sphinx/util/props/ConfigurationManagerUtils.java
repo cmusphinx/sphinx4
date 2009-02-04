@@ -100,14 +100,12 @@ public final class ConfigurationManagerUtils {
 
 
     public static String getLogPrefix(ConfigurationManager cm) {
-        String prefix;
-
         if (cm.getConfigURL() != null)
             // remark: the replacement of xml/sxl suffix is not necessary and just done to improve readability
-            return "S4CM" + new File(cm.getConfigURL().getFile()).getName().replace(".sxl", "").replace(".xml", "") + ".";
+            return new File(cm.getConfigURL().getFile()).getName().replace(".sxl", "").replace(".xml", "") + ".";
         else
 //            return "S4CM"+ cm.hashCode() + ".";
-            return "";
+            return "S4CM.";
     }
 
 
