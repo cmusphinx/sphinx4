@@ -11,6 +11,7 @@ src/apps/edu/cmu/sphinx/demo/transcriber/README.html
 src/apps/edu/cmu/sphinx/demo/wavfile/README.html
 src/apps/edu/cmu/sphinx/demo/zipcity/README.html
 src/apps/edu/cmu/sphinx/demo/zipcity/screenshot.gif
+doc-files/zipcity.gif
 doc-files/architecture.gif
 doc/1-2-searchgraph.jpg
 doc/ProgrammersGuide.html
