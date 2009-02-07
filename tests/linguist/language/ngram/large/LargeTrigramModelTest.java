@@ -28,9 +28,9 @@ import java.util.StringTokenizer;
 import edu.cmu.sphinx.linguist.WordSequence;
 import edu.cmu.sphinx.linguist.dictionary.Dictionary;
 import edu.cmu.sphinx.linguist.dictionary.FastDictionary;
+import edu.cmu.sphinx.linguist.dictionary.Word;
 import edu.cmu.sphinx.linguist.language.ngram.large.LargeTrigramModel;
 import edu.cmu.sphinx.util.LogMath;
-import edu.cmu.sphinx.util.SphinxProperties;
 import edu.cmu.sphinx.util.Timer;
 import edu.cmu.sphinx.util.Utilities;
 
@@ -73,14 +73,14 @@ public class LargeTrigramModelTest {
         Dictionary dictionary = new FastDictionary(context);
         LargeTrigramModel lm = new LargeTrigramModel(props, dictionary);
 
-        LogMath logMath = LogMath.getLogMath("test");
+        LogMath logMath = LogMath.getLogMath();
 
         InputStream stream = new FileInputStream(testFile);
 
         BufferedReader reader = new BufferedReader
             (new InputStreamReader(stream));
 
-        Timer timer = Timer.getTimer("test", "lmLookup");
+        Timer timer = Timer.getTimer("lmLookup");
         
         String input;
         
@@ -90,12 +90,12 @@ public class LargeTrigramModelTest {
 
 	    if (!input.equals("<START_UTT>") && !input.equals("<END_UTT>")) {
 		StringTokenizer st = new StringTokenizer(input);
-		List list = new ArrayList();
+		List<Word> list = new ArrayList<Word>();
 		while (st.hasMoreTokens()) {
 		    String tok = st.nextToken().toLowerCase().trim();
 		    list.add(dictionary.getWord(tok));
 		}
-		WordSequence wordSequence = WordSequence.getWordSequence(list);
+		WordSequence wordSequence = new WordSequence(list);
 		wordSequences.add(wordSequence);
 	    }	    
         }

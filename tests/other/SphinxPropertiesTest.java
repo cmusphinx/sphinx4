@@ -12,8 +12,6 @@
 
 package tests.other;
 
-import edu.cmu.sphinx.util.SphinxProperties;
-
 import java.io.IOException;
 
 import java.net.URL;

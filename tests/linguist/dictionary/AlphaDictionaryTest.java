@@ -12,8 +12,6 @@
 
 package tests.linguist.dictionary;
 
-import edu.cmu.sphinx.util.SphinxProperties;
-
 import edu.cmu.sphinx.linguist.dictionary.Dictionary;
 import edu.cmu.sphinx.linguist.dictionary.FullDictionary;
 

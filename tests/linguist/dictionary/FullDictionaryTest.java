@@ -12,8 +12,6 @@
 
 package tests.linguist.dictionary;
 
-import edu.cmu.sphinx.util.SphinxProperties;
-
 import edu.cmu.sphinx.linguist.dictionary.Dictionary;
 import edu.cmu.sphinx.linguist.dictionary.FullDictionary;
 import edu.cmu.sphinx.linguist.dictionary.FastDictionary;
@@ -50,8 +48,8 @@ public class FullDictionaryTest {
             (context, new URL
              ("file://" + pwd + File.separatorChar + propertiesFile));
 
-	Timer fullTimer = Timer.getTimer("FullDictionaryTest", "fullTimer");
-	Timer fastTimer = Timer.getTimer("FullDictionaryTest", "fastTimer");
+	Timer fullTimer = Timer.getTimer("fullTimer");
+	Timer fastTimer = Timer.getTimer("fastTimer");
         
 	// some loading timings
 

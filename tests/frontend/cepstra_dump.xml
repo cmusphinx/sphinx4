@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<config>
+
+    <property name="logLevel" value="WARNING"/>
+
+    <component name="mfcFrontEnd" type="edu.cmu.sphinx.frontend.FrontEnd">
+        <propertylist name="pipeline">
+            <item>audioFileDataSource</item>
+            <item>premphasizer</item>
+            <item>dither</item>
+            <item>windower</item>
+            <item>fft</item>
+            <item>melFilterBank</item>
+            <item>dct</item>
+            <item>dataDumper</item>
+        </propertylist>
+    </component>
+
+    <component name="streamDataSource"
+          type="edu.cmu.sphinx.frontend.util.StreamDataSource">
+            <property name="sampleRate" value="16000"/>
+    </component>
+
+    <component name="premphasizer"
+               type="edu.cmu.sphinx.frontend.filter.Preemphasizer"/>
+
+    <component name="dither"
+               type="edu.cmu.sphinx.frontend.filter.Dither"/>
+
+    <component name="windower"
+               type="edu.cmu.sphinx.frontend.window.RaisedCosineWindower"/>
+
+    <component name="fft"
+               type="edu.cmu.sphinx.frontend.transform.DiscreteFourierTransform"/>
+	    <property name="numberFftPoints" value="512"/>
+    </component>
+
+    <component name="melFilterBank"
+               type="edu.cmu.sphinx.frontend.frequencywarp.MelFrequencyFilterBank"/>
+	    <property name="numberFilters" value="40"/>
+	    <property name="minimumFrequency" value="130"/>
+	    <property name="maximumFrequency" value="6800"/>
+    </component>
+
+    <component name="dct"
+               type="edu.cmu.sphinx.frontend.transform.DiscreteCosineTransform"/>
+
+    <component name="dataDumper" type="edu.cmu.sphinx.frontend.util.DataDumper"/>
+</config>

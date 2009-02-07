@@ -19,8 +19,6 @@ import edu.cmu.sphinx.linguist.dictionary.Dictionary;
 import edu.cmu.sphinx.linguist.dictionary.FullDictionary;
 import edu.cmu.sphinx.linguist.language.grammar.FSTGrammar;
 import edu.cmu.sphinx.linguist.language.grammar.Grammar;
-import edu.cmu.sphinx.util.SphinxProperties;
-
 
 /**
  * A test for the FSTGrammar class 

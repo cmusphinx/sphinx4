@@ -27,8 +27,8 @@ import java.util.StringTokenizer;
 import edu.cmu.sphinx.linguist.WordSequence;
 import edu.cmu.sphinx.linguist.dictionary.Dictionary;
 import edu.cmu.sphinx.linguist.dictionary.FastDictionary;
+import edu.cmu.sphinx.linguist.dictionary.Word;
 import edu.cmu.sphinx.linguist.language.ngram.large.LargeTrigramModel;
-import edu.cmu.sphinx.util.SphinxProperties;
 import edu.cmu.sphinx.util.Timer;
 
 
@@ -94,7 +94,7 @@ public class MemoryTest {
 	    outStream = new PrintStream(new FileOutputStream(outFile));
 	}
 	
-        timer = Timer.getTimer(context, "lmLookup");
+        timer = Timer.getTimer("lmLookup");
     }
 
 
@@ -132,12 +132,12 @@ public class MemoryTest {
 
             input = input.toLowerCase();
             StringTokenizer st = new StringTokenizer(input);
-            List list = new ArrayList();
+            List<Word> list = new ArrayList<Word>();
             while (st.hasMoreTokens()) {
                 String tok = (String) st.nextToken();
                 list.add(dictionary.getWord(tok));
             }
-            WordSequence ws = WordSequence.getWordSequence(list);
+            WordSequence ws = new WordSequence(list);
             lm.getProbability(ws);
             totalQueries++;
         }

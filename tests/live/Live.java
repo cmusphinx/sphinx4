@@ -35,10 +35,11 @@ import edu.cmu.sphinx.instrumentation.AccuracyTracker;
 import edu.cmu.sphinx.instrumentation.SpeedTracker;
 import edu.cmu.sphinx.recognizer.Recognizer;
 import edu.cmu.sphinx.result.Result;
-import edu.cmu.sphinx.result.ResultListener;
+import edu.cmu.sphinx.decoder.ResultListener;
 import edu.cmu.sphinx.util.NISTAlign;
 import edu.cmu.sphinx.util.props.ConfigurationManager;
 import edu.cmu.sphinx.util.props.PropertyException;
+import edu.cmu.sphinx.util.props.PropertySheet;
 
 /**
  * The live decoder main program. This class contains the control logic.
@@ -544,6 +545,10 @@ public class Live {
                                         (result.getBestToken().getWordUnitPath());
                                 }
                             }
+							public void newProperties(PropertySheet ps)
+									throws PropertyException {
+								return;
+							}
                         });
                     allocated = true;
                 }

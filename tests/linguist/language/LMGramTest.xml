@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<config>        
+        
+    <component name="dictionary" 
+        type="edu.cmu.sphinx.linguist.dictionary.FullDictionary">
+        <property name="dictionaryPath"
+                  value="/lab/speech/sphinx4/data/wsj/dict/cmudict.0.6d+rm1.txt"/>
+        <property name="fillerPath" 
+	          value="/lab/speech/sphinx4/data/wsj/dict/fillerdict"/>
+        <property name="unitManager" value="unitManager"/>
+    </component>
+    
+    <component name="trigramModel" 
+               type="edu.cmu.sphinx.linguist.language.ngram.SimpleNGramModel">
+        <property name="location"
+	          value="./RM.unigram.arpa"/>
+        <property name="logMath" value="logMath"/>
+        <property name="dictionary" value="dictionary"/>
+    </component>
+    
+    <component name="unitManager" 
+               type="edu.cmu.sphinx.linguist.acoustic.UnitManager"/>
+
+    <component name="logMath" type="edu.cmu.sphinx.util.LogMath">
+        <property name="logBase" value="1.0003"/>
+        <property name="useAddTable" value="true"/>
+    </component>
+    
+    
+</config>
