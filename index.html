@@ -130,23 +130,6 @@ and API</a></li>
 <li><a href="doc/ProgrammersGuide.html">Programmer's
 Guide</a></li>
 </ul>
-<h3>Versions</h3>
-<ul>
-<li><a href="index.html">Most current version</a>
-(<a href="RELEASE_NOTES">release notes</a>)</li>
-<li><a href="http://cmusphinx.org/sphinx4/sphinx4-1.0beta">Sphinx-4
-1.0 beta</a> (<a href="http://cmusphinx.org/sphinx4/sphinx4-1.0beta/RELEASE_NOTES">release
-notes</a>)</li>
-<li><a href="http://cmusphinx.org/sphinx4/sphinx4-0.1alpha">Sphinx-4
-0.1 alpha</a></li>
-</ul>
-<p> <br>
-<font size="-1"> <b>NOTE</b>: This page
-contains links to javadocs. If the links are broken, you should either
-follow instructions in <a href="#create_javadocs">Creating
-Javadocs</a>, or view this page on line at <a href="http://cmusphinx.sourceforge.net/sphinx4/">
-http://cmusphinx.sourceforge.net/sphinx4/</a>. </font> </p>
-<p> </p>
 </td>
 </tr>
 </tbody>
@@ -399,10 +382,9 @@ Running, building, and testing Sphinx-4 requires additional software.
 Before you start, you will need the following software available on
 your machine.</font></p>
 <ul>
-<font face="Arial" size="2"> <li><b>Java
-2 SDK, Standard Edition 5.0</b> or better. Go to <a href="http://java.sun.com">java.sun.com</a>, and
+<font face="Arial" size="2"> <li><b>Java 2 SDK, Standard Edition 5.0</b> or better. Go to <a href="http://java.sun.com">java.sun.com</a>, and
 select "J2SE". At the time of writing, the latest release version is
-5.0 (also referred to as 1.5.0), which is the one we recommend. </li>
+6.0 (also referred to as 1.6.0), which is the one we recommend. </li>
 </font>
 </ul>
 <font face="Arial" size="2"> <br>
@@ -428,11 +410,6 @@ choose "svn" when you install cygwin. </li>
 Sphinx-4</b></a> <br>
 &nbsp;
 <ul>
-<li><a name="nightly"><b>Instructions
-for retrieving code from the nightly build</b></a>
-<p>A tarball is built nightly, and it is available at <a href="http://cmusphinx.org/download/nightly/sphinx4.tar.gz">cmusphinx.org</a>.
-</p>
-</li>
 <li> <b>Instructions for retrieving code from a
 release package.</b>
 <p> Sphinx-4 has two packages available for <a href="http://sourceforge.net/project/showfiles.php?group_id=1904&amp;package_id=117949">download</a>:
@@ -555,132 +532,6 @@ folder and the&nbsp;acoustic model jars (that can be&nbsp;</font><font face="Ari
 simple <code>ant all</code>) to
 your classpath.<br></font></li>
 </br>
-<li><a name="troubleshooting" xhtml="">&nbsp;<b>Troubleshooting</b></a><br>
-&nbsp;
-<ol>
-<li>How can I specify the location of the Java JDK?
-<ul>
-<li>Using the JAVA_HOME environment variable. For the
-different versions of OS, do:
-<ul>
-<li> Unix (t)csh: <code>setenv JAVA_HOME
-/lab/speech/java/jdk1.5.0_06</code> </li>
-<li> Unix (ba)sh: <code>export
-JAVA_HOME='/lab/speech/java/jdk1.5.0_06'</code> </li>
-<li> Windows/cygwin: <code>export
-JAVA_HOME='c:/Progra~1/Java/jdk1.5.0_06'</code> </li>
-</ul>
-</li>
-</ul>
-</li>
-<br>
-<li>How can I update the code in my current working copy?
-<ul>
-<li>If you are using svn, you can do a "svn up".</li>
-</ul>
-</li>
-<br>
-<li>I get a "timeout" message when I try to download/update
-the svn repository.
-<ul>
-<li>Sometimes
-the servers at SourceForge.net are very busy. There's no way around it:
-just try again. svn will take up where it left off in the previous
-attempt. </li>
-</ul>
-</li>
-<br>
-<li><a name="cygwin">What are the
-limitations/hacks if I am using cygwin?</a>
-<ul>
-<li>Make sure that you install "svn" when you install
-cygwin. If you do not want to go through the list of packages trying to
-decide what you need, installing everything is a good solution. </li>
-<br>
-<li>Cygwin does not define a home directory, which is
-used by svn. You have to explicitly define it. You are better off
-creating an environment variable HOME, which will be used by every
-cygwin window that you open. Follow the <a href="#winenv">instructions</a>
-to create this variable on Windows. After creating the environmental
-variable, when you start a new cygwin window, if you type "echo $HOME",
-you should get your home directory, e.g. "/home/johndoe". </li>
-<br>
-<li>Handling absolute paths: Cygwin interprets
-directory paths in a unix-like way, relative to its own "root"
-directory (which cygwin sees as "/" but Windows sees as "c:\cygwin").
-However, the Java platform interprets directory paths via the operating
-system. Therefore, absolute paths, such as "/lab/speech", will be
-interpreted differently by cygwin and by the Java platform. One
-workaround is to keep the absolute path in Windows (e.g. "c:\lab\") and
-create a link, in cygwin, from that location (such as "ln -s
-/cygdrive/c/lab /lab"). If you use absolute paths to identify data
-location and the directories are not setup this way, you may encounter
-error messages such as: </li>
-<pre>d:\work\sphinx4&gt;ant clean<br>/c: Can't open /c: No such file or directory<br></pre>
-<li>Handling DOS 8.3 filename format: Since cygwin
-deals with unix and DOS filename formats at the same time, filenames in
-different files (e.g., build.xml, .props file) have different
-requirements. Paths interpreted directly by cygwin can be as long as
-you want. Paths passed to the program, though, conform to the 8.3
-convention of DOS filenames. Therefore you have to define the path to,
-say, junit as something like /lab/speech/ThirdP~1/junit3.7, since this
-string is passed from the environment to the Java code to the OS. </li>
-</ul>
-</li>
-<br>
-<li><a name="winenv">How do I create or change
-an environmental variable in Windows? </a>
-<ul>
-<a name="winenv"> <li>Creating a variable
-<ul>
-<li>Assume you want to create the environmental
-variable <code>HOME</code>, your userid is "johndoe", and
-you want to set this variable to "/home/johndoe" </li>
-<li>Right click on the "My Computer" icon. If you
-do not have a "My Computer" icon, click on the "Start" menu, then on
-"Control Panel", "Performance and Maintenance", and finally "System" </li>
-<li>On the menu, click on "Properties" </li>
-<li>Click the "Advanced" tab </li>
-<li>Select "Environment Variables" </li>
-<li>Click "New" on the "User variables for johndoe"
-box </li>
-<li>On "Variable Name", type <code>HOME</code>
-</li>
-<li>On "Variable Value", type <code>c:\cygwin\home\johndoe</code>
-</li>
-<li>Click on "Ok" in all windows you just opened to
-confirm the change </li>
-</ul>
-</li>
-<li>Changing a variable
-<ul>
-<li>Assume you want to modify the environmental
-variable <code>PATH</code> </li>
-<li>Right click on the "My Computer" icon. If you
-do not have a "My Computer" icon, click on the "Start" menu, then on
-"Control Panel", "Performance and Maintenance", and finally "System" </li>
-<li>On the menu, click on "Properties" </li>
-<li>Click the "Advanced" tab </li>
-<li>Select "Environment Variables" </li>
-<li>Look for the variable in either the "User
-variables for johndoe" box or the "System variables" box. Particularly,
-<code>PATH</code> will be in the "System
-variables" box. </li>
-<li>Click and the property name, and hit "Edit" on
-the corresponding box </li>
-<li>On "Variable Value", make the change, e.g.
-adding <code>;c:\python24\bin</code> to the end of the
-string </li>
-<li>Click on "Ok" in all windows you just opened to
-confirm the change </li>
-</ul>
-</li>
-</a>
-</ul>
-</li>
-<a name="winenv"> </a>
-</ol>
-</li>
 </font>
 </ul>
 <hr>
@@ -1350,10 +1201,11 @@ important that you read this document before you proceed. </p>
 </font>
 </ul>
 <hr>
-<font face="Arial" size="2">Copyright 1999-2004
+<font face="Arial" size="2">Copyright 1999-2008
 Carnegie Mellon University.<br>
-Portions Copyright 2002-2004 Sun Microsystems, Inc.<br>
-Portions Copyright 2002-2004 Mitsubishi Electric Research Laboratories.<br>
+Portions Copyright 2002-2008 Sun Microsystems, Inc.<br>
+Portions Copyright 2002-2008 Applied Computer Science Group - University of Bielefeld<br>
+Portions Copyright 2002-2008 Mitsubishi Electric Research Laboratories.<br>
 All Rights Reserved. Usage is subject to
 <a href="license.terms">license terms</a>.
 </font>
