@@ -300,8 +300,8 @@
     </target>
 
     <target name="keystore" unless="keystore.exists">
-        <genkey alias="unknown" storepass="public" keystore="tempKeystore"
-                dname="CN=Anonymous Signature, OU=unknown, o=unknown, c=unknown"/>
+        <genkey alias="zipcity" storepass="public" keystore="tempKeystore"
+                dname="CN=Sphinx-4, OU=Sphinx, o=Carnegie Mellon University, c=us"/>
     </target>
 
     <target name="compile_tags" if="jsapi_jar.isPresent">
@@ -376,14 +376,14 @@
         <copy todir="bld/zipcity"
               file="lib/TIDIGITS_8gau_13dCep_16k_40mel_130Hz_6800Hz.jar"/>
 
-        <signjar jar="bld/zipcity/ZipCity.jar" alias="unknown"
+        <signjar jar="bld/zipcity/ZipCity.jar" alias="zipcity"
                  storepass="public" keystore="tempKeystore"/>
-        <signjar jar="bld/zipcity/sphinx4.jar" alias="unknown"
+        <signjar jar="bld/zipcity/sphinx4.jar" alias="zipcity"
                  storepass="public" keystore="tempKeystore"/>
-        <signjar jar="bld/zipcity/jsapi.jar" alias="unknown"
+        <signjar jar="bld/zipcity/jsapi.jar" alias="zipcity"
                  storepass="public" keystore="tempKeystore"/>
         <signjar jar="bld/zipcity/TIDIGITS_8gau_13dCep_16k_40mel_130Hz_6800Hz.jar"
-                 alias="unknown" storepass="public" keystore="tempKeystore"/>
+                 alias="zipcity" storepass="public" keystore="tempKeystore"/>
     </target>
 
 
