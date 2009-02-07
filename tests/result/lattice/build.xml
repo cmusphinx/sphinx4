@@ -20,7 +20,7 @@ NOTE:  Before running the tests, you must have already built
     <property name="maximum_heap_size"  value="256m"/>
     <property name="top_dir"		value="../../.."/>
     <property name="build_dir"		value="${top_dir}/bld"/>
-    <property name="classes_dir"	value="${build_dir}/classes"/>
+    <property name="classes_dir"	value="${build_dir}"/>
     <property name="lib_dir"            value="${top_dir}/lib"/>
 
     <path id="run.classpath">

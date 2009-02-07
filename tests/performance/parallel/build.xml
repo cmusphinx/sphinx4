@@ -23,7 +23,7 @@ Run ant with -Dbatch=test.batch to test the batch file test.batch.
         <fileset dir="lib" includes="${top_dir}/**/jsapi.jar"/>
     </path>
     <property name="build_dir"		value="${top_dir}/bld"/>
-    <property name="classes_dir"	value="${build_dir}/classes"/>
+    <property name="classes_dir"	value="${build_dir}"/>
     <property name="lib_dir"            value="${build_dir}/lib"/>
 
     <property name="classpath"
