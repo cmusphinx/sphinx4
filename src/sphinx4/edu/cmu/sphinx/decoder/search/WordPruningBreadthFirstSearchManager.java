@@ -285,8 +285,10 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
         result = new Result(loserManager, activeList, resultList,
                 currentFrameNumber, done, logMath);
 
-        if (result.getDataFrames().isEmpty())
-            result = null;
+	if ((result.getDataFrames() == null) ||
+	    (result.getDataFrames().isEmpty())) {
+	    result = null;
+	}
 
         // tokenTypeTracker.show();
         if (showTokenCount) {
