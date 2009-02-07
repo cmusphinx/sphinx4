@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<config>        
+
+    <component name="dictionary" 
+        type="edu.cmu.sphinx.linguist.dictionary.FastDictionary">
+        <property name="dictionaryPath"
+                  value="/lab/speech/sphinx4/data/wsj/dict/cmudict.0.6d"/>
+        <property name="fillerPath" 
+	          value="/lab/speech/sphinx4/data/wsj/dict/fillerdict"/>
+        <property name="unitManager" value="unitManager"/>
+        <property name="isMultiDigitGrammar" value="true"/>
+    </component>
+    
+    <component name="unitManager" 
+               type="edu.cmu.sphinx.linguist.acoustic.UnitManager"/>
+</config>

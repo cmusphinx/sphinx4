@@ -12,39 +12,28 @@
 
 package tests.search;
 
-import java.io.File;
-import java.net.URL;
-
-import edu.cmu.sphinx.linguist.dictionary.Dictionary;
-import edu.cmu.sphinx.linguist.dictionary.FullDictionary;
 import edu.cmu.sphinx.linguist.language.grammar.FSTGrammar;
 import edu.cmu.sphinx.linguist.language.grammar.Grammar;
+import edu.cmu.sphinx.util.props.ConfigurationManager;
 
 /**
  * A test for the FSTGrammar class 
  */
 public class FSTGrammarTest {
-    private static String context = "FSTGrammar";
 
     /**
      * Main method of this Test.
      */
     public static void main(String[] argv) {
         try {
-	    String pwd = System.getProperty("user.dir");
-	    SphinxProperties.initContext (context, new URL ("file://" 
-			       + pwd + File.separatorChar + argv[0])); 
-	    Dictionary dictionary = new FullDictionary(context);
+	    ConfigurationManager cm = new ConfigurationManager(argv[0]); 
 
-
-       Grammar grammar = new FSTGrammar();
-
-	    grammar.initialize(context, null, dictionary);
+        Grammar grammar = (FSTGrammar)cm.lookup("grammar");
 	    grammar.dumpGrammar("fst.grammar");
-	    System.out.println("Num nodes loaded is " +
-		    grammar.getNumNodes());
-
+	    
+	    System.out.println("Num nodes loaded is " + grammar.getNumNodes());
 	    System.out.println("done");
+	    
         } catch (Exception e) {
             e.printStackTrace();
         }

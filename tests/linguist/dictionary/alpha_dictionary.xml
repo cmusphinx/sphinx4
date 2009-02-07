@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<config>        
+
+    <component name="fastdictionary" 
+        type="edu.cmu.sphinx.linguist.dictionary.FastDictionary">
+        <property name="dictionaryPath"
+                  value="/lab/speech/sphinx4/data/wsj/dict/alpha.dict"/>
+        <property name="fillerPath" 
+	          value="/lab/speech/sphinx4/data/wsj/dict/fillerdict"/>
+        <property name="unitManager" value="unitManager"/>
+        <property name="isMultiDigitGrammar" value="true"/>
+        <property name="addSilEndingPronuncation" value="true"/>
+    </component>
+
+    <component name="fulldictionary" 
+        type="edu.cmu.sphinx.linguist.dictionary.FullDictionary">
+        <property name="dictionaryPath"
+                  value="/lab/speech/sphinx4/data/wsj/dict/alpha.dict"/>
+        <property name="fillerPath" 
+	          value="/lab/speech/sphinx4/data/wsj/dict/fillerdict"/>
+        <property name="unitManager" value="unitManager"/>
+        <property name="isMultiDigitGrammar" value="true"/>
+        <property name="addSilEndingPronuncation" value="true"/>
+    </component>
+    
+    <component name="unitManager" 
+               type="edu.cmu.sphinx.linguist.acoustic.UnitManager"/>
+</config>

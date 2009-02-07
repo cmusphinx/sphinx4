@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<config>        
+        
+    <component name="dictionary" 
+        type="edu.cmu.sphinx.linguist.dictionary.FullDictionary">
+        <property name="dictionaryPath"
+                  value="./FSTGrammarTest.dic"/>
+        <property name="fillerPath" 
+	          value="./filler.dic"/>
+        <property name="wordReplacement" 
+	          value="pittsburgh"/>
+        <property name="unitManager" value="unitManager"/>
+    </component>
+    
+    <component name="grammar" 
+               type="edu.cmu.sphinx.linguist.language.grammar.FSTGrammar">
+        <property name="location"
+	          value="./FSTGrammarTest.gram"/>
+        <property name="logMath" value="logMath"/>
+        <property name="dictionary" value="dictionary"/>
+    </component>
+    
+    <component name="unitManager" 
+               type="edu.cmu.sphinx.linguist.acoustic.UnitManager"/>
+
+    <component name="logMath" type="edu.cmu.sphinx.util.LogMath">
+        <property name="logBase" value="1.0001"/>
+        <property name="useAddTable" value="true"/>
+    </component>
+    
+    
+</config>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<config>        
+
+    <component name="dictionary" 
+        type="edu.cmu.sphinx.linguist.dictionary.FullDictionary">
+        <property name="dictionaryPath"
+                  value="dict/cmudict.0.6d"/>
+        <property name="fillerPath" 
+	          value="dict/fillerdict"/>
+        <property name="allowMissingWord" 
+	          value="true"/>
+        <property name="unitManager" value="unitManager"/>
+    </component>
+
+      <component name="trigramModel" type="edu.cmu.sphinx.linguist.language.ngram.large.LargeTrigramModel">
+	<property name="unigramWeight" value="0.7"/>
+        <property name="maxDepth" value="3"/>
+        <property name="logMath" value="logMath"/>
+	<property name="dictionary" value="dictionary"/>
+	<property name="location" value="/lab/speech/sphinx4/data/hub4_model/language_model.arpaformat.DMP"/>
+        <property name="applyLanguageWeightAndWip" value="true"/>
+        <property name="wordInsertionProbability" value="0.7"/>
+        <property name="languageWeight" value="9.5"/>
+    </component>
+        
+    <component name="unitManager" 
+               type="edu.cmu.sphinx.linguist.acoustic.UnitManager"/>
+
+    <component name="logMath" type="edu.cmu.sphinx.util.LogMath">
+        <property name="logBase" value="1.0003"/>
+        <property name="useAddTable" value="true"/>
+    </component>
+    
+</config>

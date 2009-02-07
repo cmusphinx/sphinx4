@@ -19,7 +19,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -30,6 +29,7 @@ import edu.cmu.sphinx.linguist.dictionary.FastDictionary;
 import edu.cmu.sphinx.linguist.dictionary.Word;
 import edu.cmu.sphinx.linguist.language.ngram.large.LargeTrigramModel;
 import edu.cmu.sphinx.util.Timer;
+import edu.cmu.sphinx.util.props.ConfigurationManager;
 
 
 /**
@@ -74,25 +74,24 @@ public class MemoryTest {
      * Constructs an MemoryTest.
      *
      * @param context the context to use
-     * @param propsPath the properties file to use
+     * @param configPath the properties file to use
      * @param testFile the N-gram test file
      * @param outFile the output file
      */
-    public MemoryTest(String context, String propsPath, 
+    public MemoryTest(String context, String configPath, 
                       String testFile, String outFile) throws IOException {
 	
-        SphinxProperties.initContext(context, new URL(propsPath));
-        dictionary = new FastDictionary(context);
-        lm = new LargeTrigramModel
-            (SphinxProperties.getSphinxProperties(context), dictionary);
+        ConfigurationManager cm = new ConfigurationManager (configPath);
+        dictionary = (FastDictionary) cm.lookup("dictionary");
+        lm = (LargeTrigramModel) cm.lookup("trigramModel");
         printScores = Boolean.getBoolean("printScores");
 
         InputStream stream = new FileInputStream(testFile);
 
         reader = new BufferedReader(new InputStreamReader(stream));
-	if (outFile != null) {
-	    outStream = new PrintStream(new FileOutputStream(outFile));
-	}
+        if (outFile != null) {
+        	outStream = new PrintStream(new FileOutputStream(outFile));
+	}	
 	
         timer = Timer.getTimer("lmLookup");
     }

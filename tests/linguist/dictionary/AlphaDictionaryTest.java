@@ -14,6 +14,7 @@ package tests.linguist.dictionary;
 
 import edu.cmu.sphinx.linguist.dictionary.Dictionary;
 import edu.cmu.sphinx.linguist.dictionary.FullDictionary;
+import edu.cmu.sphinx.util.props.ConfigurationManager;
 
 import java.io.File;
 
@@ -35,15 +36,11 @@ public class AlphaDictionaryTest {
      *
      * @param propertiesFile a SphinxProperties file
      */
-    public AlphaDictionaryTest(String propertiesFile) throws Exception {
+    public AlphaDictionaryTest(String configFile) throws Exception {
         
-        String pwd = System.getProperty("user.dir");
-        SphinxProperties.initContext
-            (context, new URL
-             ("file://" + pwd + File.separatorChar + propertiesFile));
-        
-        Dictionary dictionary = new FullDictionary(context);
-        dictionary.dump();
+        ConfigurationManager cm = new ConfigurationManager (configFile);    
+        Dictionary dictionary = (FullDictionary)cm.lookup("dictionary");
+        System.out.println (dictionary);
     }
 
 

@@ -18,11 +18,7 @@ import edu.cmu.sphinx.linguist.dictionary.FastDictionary;
 import edu.cmu.sphinx.linguist.dictionary.Pronunciation;
 import edu.cmu.sphinx.linguist.acoustic.Unit;
 import edu.cmu.sphinx.util.Timer;
-
-import java.io.File;
-
-import java.net.URL;
-
+import edu.cmu.sphinx.util.props.ConfigurationManager;
 
 /**
  * A test for FullDictionary class that reads in the connected-digits
@@ -30,23 +26,18 @@ import java.net.URL;
  */
 public class FullDictionaryTest {
 
-
-    private String context = "FullDictionaryTest";
-    private Dictionary fastDictionary;
+	private Dictionary fastDictionary;
     private Dictionary fullDictionary;
 
 
     /**
      * Construct a FullDictionaryTest with the given SphinxProperties file.
      *
-     * @param propertiesFile a SphinxProperties file
+     * @param configFile a SphinxProperties file
      */
-    public FullDictionaryTest(String propertiesFile) throws Exception {
+    public FullDictionaryTest(String configFile) throws Exception {
         
-        String pwd = System.getProperty("user.dir");
-        SphinxProperties.initContext
-            (context, new URL
-             ("file://" + pwd + File.separatorChar + propertiesFile));
+     ConfigurationManager cm = new ConfigurationManager (configFile);
 
 	Timer fullTimer = Timer.getTimer("fullTimer");
 	Timer fastTimer = Timer.getTimer("fastTimer");
@@ -55,11 +46,11 @@ public class FullDictionaryTest {
 
 	for (int i = 0; i < 3; i++) {
 	    fastTimer.start();
-	    fastDictionary = new FastDictionary(context);
+	    fastDictionary = (FastDictionary)cm.lookup("fastdictionary");
 	    fastTimer.stop();
 
 	    fullTimer.start();
-	    fullDictionary = new FullDictionary(context);
+	    fullDictionary = (FullDictionary)cm.lookup("fulldictionary");
 	    fullTimer.stop();
 
 	    Timer.dumpAll();

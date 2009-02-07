@@ -19,7 +19,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -28,11 +27,11 @@ import java.util.StringTokenizer;
 
 import edu.cmu.sphinx.linguist.WordSequence;
 import edu.cmu.sphinx.linguist.dictionary.Dictionary;
-import edu.cmu.sphinx.linguist.dictionary.FastDictionary;
 import edu.cmu.sphinx.linguist.dictionary.Word;
 import edu.cmu.sphinx.linguist.language.ngram.large.LargeTrigramModel;
 import edu.cmu.sphinx.util.Timer;
 import edu.cmu.sphinx.util.Utilities;
+import edu.cmu.sphinx.util.props.ConfigurationManager;
 
 
 /**
@@ -77,17 +76,16 @@ public class UtteranceTest {
      * Constructs an UtteranceTest.
      *
      * @param context the context to use
-     * @param propsPath the properties file to use
+     * @param configPath the properties file to use
      * @param testFile the N-gram test file
      * @param outFile the output file
      */
-    public UtteranceTest(String context, String propsPath, 
+    public UtteranceTest(String context, String configPath, 
 			 String testFile, String outFile) throws IOException, Exception {
 	
-        SphinxProperties.initContext(context, new URL(propsPath));
-        SphinxProperties props = SphinxProperties.getSphinxProperties(context);
-        dictionary = new FastDictionary(context);
-        lm = (LargeTrigramModel) LanguageModelFactory.getModel(props, dictionary);
+        ConfigurationManager cm = new ConfigurationManager(configPath);
+     
+        lm = (LargeTrigramModel) cm.lookup ("trigramModel");
         printScores = Boolean.getBoolean("printScores");
 
         InputStream stream = new FileInputStream(testFile);
@@ -124,7 +122,7 @@ public class UtteranceTest {
 	
         String input;
         
-        List wordSequences = new LinkedList();
+        List<WordSequence> wordSequences = new LinkedList<WordSequence>();
         
         while ((input = reader.readLine().trim()) != null &&
 	       !input.equals("<END_UTT>")) {
@@ -146,7 +144,7 @@ public class UtteranceTest {
 
 	lm.start();
 
-	for (Iterator i = wordSequences.iterator(); i.hasNext(); ) {
+	for (Iterator<WordSequence> i = wordSequences.iterator(); i.hasNext(); ) {
 	    WordSequence ws = (WordSequence) i.next();
             logScores[s++] = (int)lm.getProbability(ws);
 	}
@@ -159,7 +157,7 @@ public class UtteranceTest {
 	
         if (printScores) {
             s = 0;
-            for (Iterator i = wordSequences.iterator(); i.hasNext(); ) {
+            for (Iterator<WordSequence> i = wordSequences.iterator(); i.hasNext(); ) {
                 WordSequence ws = (WordSequence) i.next();
                 outStream.println(Utilities.pad(logScores[s++], 10) + " " +
                                   ws.toString().toUpperCase());
