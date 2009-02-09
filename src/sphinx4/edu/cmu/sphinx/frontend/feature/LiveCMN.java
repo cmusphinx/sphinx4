@@ -89,8 +89,9 @@ public class LiveCMN extends BaseDataProcessor {
         currentMean = new double[cepstrumLength];
         currentMean[0] = initialMean;
 
-        // hack until we've fixed the NonSpeechDataFilter
-//        sum = new double[cepstrumLength];
+//         hack until we've fixed the NonSpeechDataFilter
+        if (sum == null)
+            sum = new double[cepstrumLength];
     }
 
 
