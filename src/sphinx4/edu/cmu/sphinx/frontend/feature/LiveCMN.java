@@ -14,7 +14,10 @@
 package edu.cmu.sphinx.frontend.feature;
 
 import edu.cmu.sphinx.frontend.*;
-import edu.cmu.sphinx.util.props.*;
+import edu.cmu.sphinx.util.props.PropertyException;
+import edu.cmu.sphinx.util.props.PropertySheet;
+import edu.cmu.sphinx.util.props.S4Double;
+import edu.cmu.sphinx.util.props.S4Integer;
 
 /**
  * Subtracts the mean of all the input so far from the Data objects. Unlike the {@link BatchCMN}, it does not read in
@@ -42,20 +45,12 @@ public class LiveCMN extends BaseDataProcessor {
     /** The name of the SphinxProperty for the initial cepstral mean. This is a front-end dependent magic number. */
     @S4Double(defaultValue = 12.0)
     public static final String PROP_INITIAL_MEAN = "initialMean";
-
-
-    /** The default value for PROP_INITIAL_MEAN. */
-    public static final float PROP_INITIAL_MEAN_DEFAULT = 12.0f;
-
+    private double initialMean;     // initial mean, magic number
 
     /** The name of the SphinxProperty for the live CMN window size. */
     @S4Integer(defaultValue = 100)
     public static final String PROP_CMN_WINDOW = "cmnWindow";
-
-
-    /** The default value for PROP_CMN_WINDOW. */
-    public static final int PROP_CMN_WINDOW_DEFAULT = 100;
-
+    private int cmnWindow;
 
     /**
      * The name of the SphinxProperty for the CMN shifting window. The shifting window specifies how many cepstrum after
@@ -63,25 +58,14 @@ public class LiveCMN extends BaseDataProcessor {
      */
     @S4Integer(defaultValue = 160)
     public static final String PROP_CMN_SHIFT_WINDOW = "shiftWindow";
-
-
-    /** The default value of PROP_CMN_SHIFT_WINDOW. */
-    public static final int PROP_CMN_SHIFT_WINDOW_DEFAULT = 160;
+    private int cmnShiftWindow;     // # of Cepstrum to recalculate mean
 
 
     private double[] currentMean;   // array of current means
     private double[] sum;           // array of current sums
-    private double initialMean;     // initial mean, magic number
     private int numberFrame;        // total number of input Cepstrum
-    private int cmnShiftWindow;     // # of Cepstrum to recalculate mean
-    private int cmnWindow;
 
 
-    /*
-    * (non-Javadoc)
-    *
-    * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
-    */
     public void newProperties(PropertySheet ps) throws PropertyException {
         super.newProperties(ps);
         initialMean = ps.getDouble(PROP_INITIAL_MEAN);
@@ -104,7 +88,9 @@ public class LiveCMN extends BaseDataProcessor {
     private void initMeansSums(int cepstrumLength) {
         currentMean = new double[cepstrumLength];
         currentMean[0] = initialMean;
-        sum = new double[cepstrumLength];
+
+        // hack until we've fixed the NonSpeechDataFilter
+//        sum = new double[cepstrumLength];
     }
 
 
@@ -200,8 +186,7 @@ public class LiveCMN extends BaseDataProcessor {
      * @param array      the array to multiply
      * @param multiplier the amount to multiply by
      */
-    private static void multiplyArray(double[] array,
-                                      double multiplier) {
+    private static void multiplyArray(double[] array, double multiplier) {
         for (int i = 0; i < array.length; i++) {
             array[i] *= multiplier;
         }
