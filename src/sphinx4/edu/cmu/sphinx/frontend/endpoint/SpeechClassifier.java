@@ -115,7 +115,7 @@ public class SpeechClassifier extends BaseDataProcessor {
      * @param samples the samples
      * @return the calculated log root mean square in log 10
      */
-    protected double logRootMeanSquare(double[] samples) {
+    public static double logRootMeanSquare(double[] samples) {
         assert samples.length > 0;
         double sumOfSquares = 0.0f;
         for (int i = 0; i < samples.length; i++) {

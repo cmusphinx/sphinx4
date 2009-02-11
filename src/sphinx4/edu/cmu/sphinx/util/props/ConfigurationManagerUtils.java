@@ -640,10 +640,13 @@ public final class ConfigurationManagerUtils {
 
         // now set the property
         PropertySheet ps = cm.getPropertySheet(compName);
+        if (ps == null)
+            throw new RuntimeException("Component '" + propName + "' is not registered to this system configuration '");
+
         PropertySheet.PropertyType propType = ps.getType(propName);
         switch (propType) {
             case BOOL:
-                ps.setBoolean(propName, Boolean.getBoolean(propValue));
+                ps.setBoolean(propName, Boolean.valueOf(propValue));
                 break;
             case DOUBLE:
                 ps.setDouble(propName, new Double(propValue));

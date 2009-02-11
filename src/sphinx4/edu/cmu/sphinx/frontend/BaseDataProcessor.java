@@ -63,6 +63,11 @@ public abstract class BaseDataProcessor implements DataProcessor {
     }
 
 
+    public String getName() {
+        return name;
+    }
+
+
     /**
      * Returns the predecessor DataProcessor.
      *
