@@ -16,9 +16,6 @@ public class DataBlocker extends BaseDataProcessor {
     @S4Double(defaultValue = 10)
     public static final String PROP_BLOCK_SIZE_MS = "blockSizeMs";
 
-    /** The default value for PROP_BLOCK_SIZE_MS. */
-    public static final float PROP_BLOCK_SIZE_MS_DEFAULT = 10;
-
     private double blockSizeMs;
     private int blockSizeSamples = Integer.MAX_VALUE;
 
@@ -48,6 +45,8 @@ public class DataBlocker extends BaseDataProcessor {
                 blockSizeSamples = (int) Math.round(sampleRate * blockSizeMs / 1000);
 
                 curInBufferSize = 0;
+                curFirstSamplePos = 0;
+                
                 inBuffer.clear();
             }
 

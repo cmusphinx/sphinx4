@@ -27,8 +27,8 @@ import edu.cmu.sphinx.util.props.*;
  * <p/>
  * where 'i' denotes time.
  * <p/>
- * The preemphasis factor has a value defined by the field {@link #PROP_PREEMPHASIS_FACTOR}, with default defined by
- * {@link #PROP_PREEMPHASIS_FACTOR_DEFAULT}. A common value for this factor is something around 0.97.
+ * The preemphasis factor has a value defined by the field {@link #PROP_PREEMPHASIS_FACTOR} of 0.97. A common value for
+ * this factor is something around 0.97.
  * <p/>
  * Other {@link Data}objects are passed along unchanged through this Preemphasizer.
  * <p/>
@@ -42,8 +42,7 @@ public class Preemphasizer extends BaseDataProcessor {
     /** The name of the SphinxProperty for preemphasis factor/alpha. */
     @S4Double(defaultValue = 0.97)
     public static final String PROP_PREEMPHASIS_FACTOR = "factor";
-    /** The default value of PROP_PREEMPHASIS_FACTOR. */
-    public static final double PROP_PREEMPHASIS_FACTOR_DEFAULT = 0.97;
+
     private double preemphasisFactor;
     private double prior;
 
@@ -55,8 +54,7 @@ public class Preemphasizer extends BaseDataProcessor {
     */
     public void newProperties(PropertySheet ps) throws PropertyException {
         super.newProperties(ps);
-        preemphasisFactor = ps.getDouble(PROP_PREEMPHASIS_FACTOR
-        );
+        preemphasisFactor = ps.getDouble(PROP_PREEMPHASIS_FACTOR);
     }
 
 
