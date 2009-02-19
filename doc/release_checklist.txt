@@ -89,7 +89,7 @@ Sphinx-4 1.0 Release Steps
     - ant live
     - ant live-ep
     - ant live-free
-    - cd ../../demo/jsapi/cardmatch
+    - cd to /cardmatch demo
     - ant run
     - ant run-ep
     - Go through index.html, click through the links to make sure they are
