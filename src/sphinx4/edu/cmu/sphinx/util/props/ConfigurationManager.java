@@ -176,7 +176,7 @@ public class ConfigurationManager implements Cloneable {
      * @throws IllegalArgumentException if more than one component of the given type is registered to this
      *                                  ConfigurationManager.
      */
-    public <C extends Configurable> C lookup(Class<? extends Configurable> confClass) {
+    public <C extends Configurable> C lookup(Class<C> confClass) {
         List<PropertySheet> matchPropSheets = getPropSheets(confClass);
         if (matchPropSheets.isEmpty())
             return null;
