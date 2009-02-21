@@ -158,9 +158,33 @@ public class ConfigurationManager implements Cloneable {
             return null;
 
         if (showCreations)
-            System.out.println("Creating: " + instanceName);
+            getRootLogger().config("Creating: " + instanceName);
 
         return ps.getOwner();
+    }
+
+
+    /**
+     * Returns a <code>Configurable</code> instance of a given type <code>C</code>, if such a component (or a derived
+     * one) is registered to this <code>ConfigurationManager</code> instance, and there is one and only match.
+     * <p/>
+     * This is a convenience method that allows to access a system configuration without knowing the instance names of
+     * registered components.
+     *
+     * @param <C> A component type
+     * @return The <code>Configurable</code> instance of null if there is no matching <code>Configurable</code>.
+     * @throws IllegalArgumentException if more than one component of the given type is registered to this
+     *                                  ConfigurationManager.
+     */
+    public <C extends Configurable> C lookup(Class<? extends Configurable> confClass) {
+        List<PropertySheet> matchPropSheets = getPropSheets(confClass);
+        if (matchPropSheets.isEmpty())
+            return null;
+
+        if (matchPropSheets.size() > 1)
+            throw new IllegalArgumentException("more than one match to type " + confClass + ": " + matchPropSheets);
+
+        return (C) lookup(matchPropSheets.get(0).getInstanceName());
     }
 
 
@@ -537,6 +561,7 @@ public class ConfigurationManager implements Cloneable {
     /**
      * Returns the root-logger of this configuration manager. This method is just a convenience mapper around a few CMU
      * calls.
+     *
      * @return the root logger of this CM-instance
      */
     public Logger getRootLogger() {

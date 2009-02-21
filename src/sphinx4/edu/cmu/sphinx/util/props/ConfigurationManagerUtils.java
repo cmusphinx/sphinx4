@@ -695,4 +695,12 @@ public final class ConfigurationManagerUtils {
         }
         return nonInstComponents;
     }
+
+
+    public static void setClass(PropertySheet ps, Class<? extends Configurable > confClass) {
+        if(ps.isInstanciated())
+            throw new RuntimeException("configurable " + ps.getInstanceName() + "is already instantiated");
+        
+        ps.setConfigurableClass(confClass);
+    }
 }

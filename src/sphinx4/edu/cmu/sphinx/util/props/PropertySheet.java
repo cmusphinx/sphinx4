@@ -13,6 +13,7 @@ import java.util.logging.Logger;
  *
  * @author Holger Brandl
  */
+@SuppressWarnings({"CastToIncompatibleInterface", "CastToIncompatibleInterface"})
 public class PropertySheet implements Cloneable {
 
     public static final String COMP_LOG_LEVEL = "logLevel";
@@ -34,7 +35,7 @@ public class PropertySheet implements Cloneable {
 
     private ConfigurationManager cm;
     private Configurable owner;
-    private final Class<? extends Configurable> ownerClass;
+    private Class<? extends Configurable> ownerClass;
 
     private String instanceName;
 
@@ -211,6 +212,9 @@ public class PropertySheet implements Cloneable {
         }
 
         Object propObject = propValues.get(name);
+        if (propObject instanceof Integer)
+            propObject = new Double((Integer) propObject);
+
         Double propValue = propObject instanceof Double ? (Double) propObject : Double.valueOf(flattenProp(name));
 
         double[] range = s4Double.range();
@@ -464,6 +468,18 @@ public class PropertySheet implements Cloneable {
 
 
     /**
+     * Sets the configurable class of this object. This method is package-visible because is shhould be applied with
+     * care. This is because it is NOT tested if the new class makes sense with respect to the given configuration
+     * properties.
+     *
+     * @throws RuntimeException if the the <code>Configurable</code> is already instantiated.
+     */
+    void setConfigurableClass(Class<? extends Configurable> confClass) {
+        ownerClass = confClass;
+    }
+
+
+    /**
      * Sets the given property to the given name
      *
      * @param name the simple property name
@@ -635,8 +651,8 @@ public class PropertySheet implements Cloneable {
     /** Returns the type of the given property. */
     public PropertyType getType(String propName) {
         S4PropWrapper wrapper = registeredProperties.get(propName);
-        if(wrapper == null) {
-            throw new  InternalConfigurationException(getInstanceName(), propName, " is not a valid property of" + getConfigurableClass());
+        if (wrapper == null) {
+            throw new InternalConfigurationException(getInstanceName(), propName, " is not a valid property of" + getConfigurableClass());
         }
 
         Proxy annotation = wrapper.getAnnotation();
@@ -758,7 +774,7 @@ public class PropertySheet implements Cloneable {
      * use annotation based class parsing to detect the configurable properties of a <code>Configurable</code>-class
      *
      * @param propertySheet of type PropertySheet
-     * @param configurable  of type Class<? extends Configurable>
+     * @param configurable  of type Class
      */
     public static void processAnnotations(PropertySheet propertySheet, Class<? extends Configurable> configurable) {
         Field[] classFields = configurable.getFields();
