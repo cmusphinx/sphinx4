@@ -608,15 +608,31 @@ public final class ConfigurationManagerUtils {
      * Attempts to set the value of an arbitrary component-property. If the property-name is ambiguous  with resepect to
      * the given <code>ConfiguratioManager</code> an extended syntax (componentName->propName) can be used to acess the
      * property.
+     * <p/>
+     * Beside component properties it is also possible to modify the class of a configurable, but this is only allowd if
+     * the confiurable under question has not been instantiated yet. Furthermore the user has to ensure to set all
+     * mandatory component properties.
      */
     public static void setProperty(ConfigurationManager cm, String propName, String propValue) {
         assert propValue != null;
 
         Map<String, List<PropertySheet>> allProps = listAllsPropNames(cm);
+        Collection<String> configurableNames = cm.getComponentNames();
 
-        if (allProps.get(propName) == null && !propName.contains("->"))
-            throw new RuntimeException("No property '" + propName + "' in configuration '" + cm.getConfigURL() + "'!");
+        if (!allProps.containsKey(propName) && !propName.contains("->") && !configurableNames.contains(propName))
+            throw new RuntimeException("No property or configurable '" + propName + "' in configuration '" + cm.getConfigURL() + "'!");
 
+        // if a configurable-class should be modified
+        if (configurableNames.contains(propName)) {
+            try {
+                final Class<? extends Configurable> confClass = (Class<? extends Configurable>) Class.forName(propValue);
+                ConfigurationManagerUtils.setClass(cm.getPropertySheet(propName), confClass);
+            } catch (ClassNotFoundException e) {
+                throw new RuntimeException(e);
+            }
+
+            return;
+        }
 
         if (!propName.contains("->") && allProps.get(propName).size() > 1) {
             throw new RuntimeException("Property-name '" + propName + "' is ambiguous with respect to configuration '"
@@ -697,10 +713,10 @@ public final class ConfigurationManagerUtils {
     }
 
 
-    public static void setClass(PropertySheet ps, Class<? extends Configurable > confClass) {
-        if(ps.isInstanciated())
-            throw new RuntimeException("configurable " + ps.getInstanceName() + "is already instantiated");
-        
+    public static void setClass(PropertySheet ps, Class<? extends Configurable> confClass) {
+        if (ps.isInstanciated())
+            throw new RuntimeException("configurable " + ps.getInstanceName() + "has already been instantiated");
+
         ps.setConfigurableClass(confClass);
     }
 }

@@ -51,7 +51,8 @@ public class PropertySheet implements Cloneable {
         this.cm = cm;
         this.instanceName = name;
 
-        processAnnotations(this, confClass);
+        parseClass(confClass);
+        setConfigurableClass(confClass);
 
         // now apply all xml properties
         Map<String, Object> flatProps = rpd.flatten(cm).getProperties();
@@ -72,9 +73,13 @@ public class PropertySheet implements Cloneable {
         if (property == null || propName == null)
             throw new InternalConfigurationException(getInstanceName(), propName, "property or its value is null");
 
-        registeredProperties.put(propName, property);
-        propValues.put(propName, null);
-        rawProps.put(propName, null);
+        if (!registeredProperties.keySet().contains(propName))
+            registeredProperties.put(propName, property);
+
+        if (!propValues.keySet().contains(propName)) {
+            propValues.put(propName, null);
+            rawProps.put(propName, null);
+        }
     }
 
 
@@ -468,14 +473,37 @@ public class PropertySheet implements Cloneable {
 
 
     /**
-     * Sets the configurable class of this object. This method is package-visible because is shhould be applied with
-     * care. This is because it is NOT tested if the new class makes sense with respect to the given configuration
-     * properties.
+     * Sets the configurable class of this object.
      *
      * @throws RuntimeException if the the <code>Configurable</code> is already instantiated.
      */
     void setConfigurableClass(Class<? extends Configurable> confClass) {
         ownerClass = confClass;
+
+        // don't allow changes of the class if the configurable has already been instantiated
+        if (isInstanciated())
+            throw new RuntimeException("class is already instantiated");
+
+        // clean up the properties if necessary
+//        registeredProperties.clear();
+
+
+        final Collection<String> classProperties = new HashSet<String>();
+        final Map<Field, Annotation> classProps = parseClass(ownerClass);
+        for (Field field : classProps.keySet()) {
+            try {
+                String propertyName = (String) field.get(null);
+
+                // make sure that there is not already another property with this name
+                assert !classProperties.contains(propertyName) :
+                        "duplicate property-name for different properties: " + propertyName;
+
+                registerProperty(propertyName, new S4PropWrapper((Proxy) classProps.get(field)));
+                classProperties.add(propertyName);
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
 
@@ -773,12 +801,12 @@ public class PropertySheet implements Cloneable {
     /**
      * use annotation based class parsing to detect the configurable properties of a <code>Configurable</code>-class
      *
-     * @param propertySheet of type PropertySheet
-     * @param configurable  of type Class
+     * @param configurable of type Class
      */
-    public static void processAnnotations(PropertySheet propertySheet, Class<? extends Configurable> configurable) {
+    private static Map<Field, Annotation> parseClass(Class<? extends Configurable> configurable) {
         Field[] classFields = configurable.getFields();
 
+        Map<Field, Annotation> s4props = new HashMap<Field, Annotation>();
         for (Field field : classFields) {
             Annotation[] annotations = field.getAnnotations();
 
@@ -793,21 +821,12 @@ public class PropertySheet implements Cloneable {
                         assert Modifier.isFinal(fieldModifiers) : "property fields are assumed to be final";
                         assert field.getType().equals(String.class) : "properties fields are assumed to be instances of java.lang.String";
 
-                        try {
-                            String propertyName = (String) field.get(null);
-
-                            // make sure that there is not already another property with this name
-                            assert !propertySheet.getRegisteredProperties().contains(propertyName) :
-                                    "duplicate property-name for different properties: " + propertyName;
-
-                            propertySheet.registerProperty(propertyName, new S4PropWrapper((Proxy) annotation));
-                        } catch (IllegalAccessException e) {
-                            e.printStackTrace();
-                        }
-
+                        s4props.put(field, annotation);
                     }
                 }
             }
         }
+
+        return s4props;
     }
 }
