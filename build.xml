@@ -249,6 +249,7 @@
         <mkdir dir="${classes_dir}"/>
         <javac debug="true"
                source="1.5"
+               target="1.5"
                srcdir="${src_dir}/sphinx4"
                deprecation="true"
                destdir="${classes_dir}">
@@ -257,6 +258,7 @@
         </javac>
         <javac debug="true"
                source="1.5"
+               target="1.5"
                srcdir="${src_dir}/research"
                deprecation="true"
                destdir="${classes_dir}">
@@ -264,12 +266,13 @@
             <classpath refid="libs"/>
         </javac>
         <!--<javac debug="true"-->
-               <!--source="1.5"-->
-               <!--srcdir="${src_dir}/apps/edu/cmu/sphinx/demo"-->
-               <!--deprecation="true"-->
-               <!--destdir="${classes_dir}/apps">-->
-            <!--<patternset refid="${patternset_to_compile}"/>-->
-            <!--<classpath refid="libs"/>-->
+        <!--source="1.5"-->
+        <!--target="1.5"-->
+        <!--srcdir="${src_dir}/apps/edu/cmu/sphinx/demo"-->
+        <!--deprecation="true"-->
+        <!--destdir="${classes_dir}/apps">-->
+        <!--<patternset refid="${patternset_to_compile}"/>-->
+        <!--<classpath refid="libs"/>-->
         <!--</javac>-->
     </target>
 
@@ -460,8 +463,8 @@
             <replacevalue>
                 import edu.cmu.sphinx.linguist.acoustic.tiedstate.*;
             </replacevalue>
-            <replacetoken>// Placeholder for a package import</replacetoken>       
-         </replace>
+            <replacetoken>// Placeholder for a package import</replacetoken>
+        </replace>
 
         <mkdir dir="${model_class_dir}/${my_model_name}/"/>
         <copy file="${tiedstate_dir}/Sphinx3Loader.java"
