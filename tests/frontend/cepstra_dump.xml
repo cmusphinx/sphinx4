@@ -7,7 +7,7 @@
     <component name="mfcFrontEnd" type="edu.cmu.sphinx.frontend.FrontEnd">
         <propertylist name="pipeline">
             <item>audioFileDataSource</item>
-            <item>premphasizer</item>
+            <item>preemphasizer</item>
             <item>dither</item>
             <item>windower</item>
             <item>fft</item>
@@ -22,7 +22,7 @@
             <property name="sampleRate" value="16000"/>
     </component>
 
-    <component name="premphasizer"
+    <component name="preemphasizer"
                type="edu.cmu.sphinx.frontend.filter.Preemphasizer"/>
 
     <component name="dither"

@@ -209,7 +209,7 @@
     <component name="mfcFrontEnd" type="edu.cmu.sphinx.frontend.FrontEnd">
         <propertylist name="pipeline">
             <item>mfcStreamDataSource</item>
-            <item>mfcPremphasizer</item>
+            <item>mfcpreemphasizer</item>
             <item>mfcWindower</item>
             <item>mfcFft</item>
             <item>melFilterBank</item>
@@ -224,7 +224,7 @@
 	<property name="sampleRate" value="8000"/>
     </component>
 
-    <component name="mfcPremphasizer" 
+    <component name="mfcpreemphasizer"
                type="edu.cmu.sphinx.frontend.filter.Preemphasizer"/>
     
     <component name="mfcWindower" 
@@ -257,7 +257,7 @@
     <component name="plpFrontEnd" type="edu.cmu.sphinx.frontend.FrontEnd">
         <propertylist name="pipeline">
             <item>plpStreamDataSource </item>
-            <item>plpPremphasizer </item>
+            <item>plppreemphasizer </item>
             <item>plpWindower </item>
             <item>plpFft </item>
             <item>plpFilterBank </item>
@@ -272,7 +272,7 @@
 	<property name="sampleRate" value="8000"/>
     </component>
 
-    <component name="plpPremphasizer" 
+    <component name="plppreemphasizer"
                type="edu.cmu.sphinx.frontend.filter.Preemphasizer"/>
     
     <component name="plpWindower" 

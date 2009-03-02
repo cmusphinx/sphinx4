@@ -151,7 +151,7 @@
     <component name="mfcFrontEnd" type="edu.cmu.sphinx.frontend.FrontEnd">
         <propertylist name="pipeline">
             <item>audioFileDataSource</item>
-            <item>premphasizer</item>
+            <item>preemphasizer</item>
             <item>dither</item>
             <item>windower</item>
             <item>fft</item>
@@ -165,7 +165,7 @@
 
     <component name="audioFileDataSource" type="edu.cmu.sphinx.frontend.util.AudioFileDataSource"/>
 
-    <component name="premphasizer"
+    <component name="preemphasizer"
                type="edu.cmu.sphinx.frontend.filter.Preemphasizer"/>
 
     <component name="dither"

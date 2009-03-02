@@ -269,7 +269,7 @@
     <component name="mfcFrontEnd" type="edu.cmu.sphinx.frontend.FrontEnd">
         <propertylist name="pipeline">
             <item>streamDataSource</item>
-            <item>premphasizer</item>
+            <item>preemphasizer</item>
             <item>windower</item>
             <item>fft</item>
             <item>melFilterBank</item>
@@ -289,7 +289,7 @@
             <item>speechClassifier</item>
             <item>speechMarker</item>
             <item>nonSpeechDataFilter</item>
-            <item>premphasizer</item>
+            <item>preemphasizer</item>
             <item>windower</item>
             <item>fft</item>
             <item>melFilterBank</item>
@@ -312,7 +312,7 @@
         <property name="speechTrailer" value="50"/>
     </component>
 
-    <component name="premphasizer"
+    <component name="preemphasizer"
                type="edu.cmu.sphinx.frontend.filter.Preemphasizer"/>
 
     <component name="windower"

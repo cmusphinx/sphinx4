@@ -195,7 +195,7 @@
           type="edu.cmu.sphinx.frontend.FrontEnd">
         <propertylist name="pipeline">
             <item>streamDataSource</item>
-            <item>premphasizer</item>
+            <item>preemphasizer</item>
             <item>windower</item>
             <item>fft</item>
             <item>melFilterBank</item>
@@ -215,10 +215,10 @@
     </component>
 
     <!-- ************************************************** -->
-    <!-- premphasizer                                       -->
+    <!-- preemphasizer                                       -->
     <!-- ************************************************** -->
 
-    <component name="premphasizer"
+    <component name="preemphasizer"
           type="edu.cmu.sphinx.frontend.filter.Preemphasizer">
     </component>
 
