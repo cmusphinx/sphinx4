@@ -233,7 +233,7 @@ public class ConfigurationManager implements Cloneable {
             name = confClass.getName();
 
         if (symbolTable.containsKey(name))
-            throw new IllegalArgumentException("tried to override existing component name");
+            throw new IllegalArgumentException("tried to override existing component name : " + name);
 
         PropertySheet ps = getPropSheetInstanceFromClass(confClass, props, name, this);
         symbolTable.put(name, ps);
