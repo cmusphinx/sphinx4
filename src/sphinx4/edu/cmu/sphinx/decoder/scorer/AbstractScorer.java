@@ -5,22 +5,20 @@ import edu.cmu.sphinx.frontend.*;
 import edu.cmu.sphinx.frontend.endpoint.SpeechEndSignal;
 import edu.cmu.sphinx.frontend.endpoint.SpeechStartSignal;
 import edu.cmu.sphinx.frontend.util.DataUtil;
+import edu.cmu.sphinx.util.props.ConfigurableAdapter;
 import edu.cmu.sphinx.util.props.PropertyException;
 import edu.cmu.sphinx.util.props.PropertySheet;
-import edu.cmu.sphinx.util.props.S4Boolean;
 import edu.cmu.sphinx.util.props.S4Component;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
 
 /**
  * Implements some basic scorer functionality but keeps specific scoring open for sub-classes.
  *
  * @author Holger Brandl
  */
-public abstract class AbstractScorer implements AcousticScorer {
+public abstract class AbstractScorer extends ConfigurableAdapter implements AcousticScorer {
 
     /** Property the defines the frontend to retrieve features from for scoring */
     @S4Component(type = BaseDataProcessor.class)
@@ -37,16 +35,12 @@ public abstract class AbstractScorer implements AcousticScorer {
 
     private Boolean isVadEmbeddedStream;
 
-    protected Logger logger;
-    protected String name;
-
 
     public void newProperties(PropertySheet ps) throws PropertyException {
+        super.newProperties(ps);
+        
         frontEnd = (BaseDataProcessor) ps.getComponent(FEATURE_FRONTEND);
         scoreNormalizer = (ScoreNormalizer) ps.getComponent(SCORE_NORMALIZER);
-
-        logger = ps.getLogger();
-        name = ps.getInstanceName();
     }
 
 
@@ -149,11 +143,5 @@ public abstract class AbstractScorer implements AcousticScorer {
 
 
     public void deallocate() {
-    }
-
-
-    @Override
-    public String toString() {
-        return name;
     }
 }

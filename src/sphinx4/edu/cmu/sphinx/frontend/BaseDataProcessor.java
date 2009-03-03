@@ -13,29 +13,17 @@
 
 package edu.cmu.sphinx.frontend;
 
+import edu.cmu.sphinx.util.props.ConfigurableAdapter;
 import edu.cmu.sphinx.util.Timer;
-import edu.cmu.sphinx.util.props.PropertyException;
-import edu.cmu.sphinx.util.props.PropertySheet;
 
 /**
  * An abstract DataProcessor implementing elements common to all concrete DataProcessors, such as name, predecessor, and
  * timer.
  */
-public abstract class BaseDataProcessor implements DataProcessor {
+public abstract class BaseDataProcessor extends ConfigurableAdapter implements DataProcessor {
 
-    private String name;
     private DataProcessor predecessor;
     private Timer timer;
-
-
-    /*
-    * (non-Javadoc)
-    *
-    * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
-    */
-    public void newProperties(PropertySheet ps) throws PropertyException {
-        name = ps.getInstanceName();
-    }
 
 
     /**
@@ -50,21 +38,6 @@ public abstract class BaseDataProcessor implements DataProcessor {
     /** Initializes this DataProcessor. This is typically called after the DataProcessor has been configured. */
     public void initialize() {
         this.timer = Timer.getTimer(name);
-    }
-
-
-    /**
-     * Sets the name for this front end
-     *
-     * @param name the name
-     */
-    private void setName(String name) {
-        this.name = name;
-    }
-
-
-    public String getName() {
-        return name;
     }
 
 
@@ -95,15 +68,5 @@ public abstract class BaseDataProcessor implements DataProcessor {
      */
     public void setPredecessor(DataProcessor predecessor) {
         this.predecessor = predecessor;
-    }
-
-
-    /**
-     * Returns the name of this BaseDataProcessor.
-     *
-     * @return the name of this BaseDataProcessor
-     */
-    public String toString() {
-        return name != null ? name : getClass().getSimpleName();
     }
 }
