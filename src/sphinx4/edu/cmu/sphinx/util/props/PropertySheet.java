@@ -798,6 +798,20 @@ public class PropertySheet implements Cloneable {
     }
 
 
+    /** Validates a configuration, by ensuring that only valid property-names have been used to configure the component. */
+    public boolean validate() {
+        for (String propName : rawProps.keySet()) {
+            if (propName.equals(ConfigurationManagerUtils.GLOBAL_COMMON_LOGLEVEL))
+                continue;
+
+            if (!registeredProperties.containsKey(propName))
+                return false;
+        }
+
+        return true;
+    }
+
+
     /**
      * use annotation based class parsing to detect the configurable properties of a <code>Configurable</code>-class
      *

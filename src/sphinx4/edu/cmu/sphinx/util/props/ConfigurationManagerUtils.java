@@ -36,6 +36,22 @@ public final class ConfigurationManagerUtils {
 
 
     /**
+     * Validates that only annoated property names have been used to setup this instance of {@code
+     * edu.cmu.sphinx.util.props.ConfigurationManager}.
+     *
+     * @return {@code true} if it is a valid confiuration.
+     */
+    public boolean validateConfiguration(ConfigurationManager cm) {
+        for (String compName : cm.getComponentNames()) {
+            if (!cm.getPropertySheet(compName).validate())
+                return false;
+        }
+
+        return true;
+    }
+
+
+    /**
      * Strips the ${ and } off of a global symbol of the form ${symbol}.
      *
      * @param symbol the symbol to strip
