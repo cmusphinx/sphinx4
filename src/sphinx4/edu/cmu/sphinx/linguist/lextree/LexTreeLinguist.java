@@ -21,7 +21,7 @@ import edu.cmu.sphinx.linguist.language.grammar.Grammar;
 import edu.cmu.sphinx.linguist.language.ngram.LanguageModel;
 import edu.cmu.sphinx.linguist.util.HMMPool;
 import edu.cmu.sphinx.util.LogMath;
-import edu.cmu.sphinx.util.Timer;
+import edu.cmu.sphinx.util.TimerPool;
 import edu.cmu.sphinx.util.props.*;
 
 import java.io.IOException;
@@ -344,7 +344,7 @@ public class LexTreeLinguist implements Linguist {
 
     /** Compiles the n-gram into a lex tree that is used during the search */
     private void compileGrammar() {
-        Timer.start("compile");
+        TimerPool.getTimer(this, "compile").start();
 
         sentenceEndWord = dictionary.getSentenceEndWord();
         sentenceStartWordArray = new Word[1];
@@ -352,7 +352,7 @@ public class LexTreeLinguist implements Linguist {
 
         generateHmmTree();
 
-        Timer.stop("compile");
+        TimerPool.getTimer(this,"compile").stop();
         // Now that we are all done, dump out some interesting
         // information about the process
 

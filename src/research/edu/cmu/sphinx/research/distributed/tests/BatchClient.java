@@ -61,7 +61,7 @@ public class BatchClient implements Configurable {
         skip = ps.getInt(SKIP);
         clientFrontEnd = (ClientFrontEndImpl) ps.getComponent(CLIENT);
 
-        decodeTimer = TimerPool.getTimer("BatchClientDecode");
+        decodeTimer = TimerPool.getTimer(this, "BatchClientDecode");
         aligner = new NISTAlign(true, true);
     }
 

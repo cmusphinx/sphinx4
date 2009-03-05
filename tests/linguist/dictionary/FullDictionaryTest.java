@@ -40,8 +40,8 @@ public class FullDictionaryTest {
         
      ConfigurationManager cm = new ConfigurationManager (configFile);
 
-	Timer fullTimer = TimerPool.getTimer("fullTimer");
-	Timer fastTimer = TimerPool.getTimer("fastTimer");
+	Timer fullTimer = TimerPool.getTimer(this, "fullTimer");
+	Timer fastTimer = TimerPool.getTimer(this, "fastTimer");
         
 	// some loading timings
 

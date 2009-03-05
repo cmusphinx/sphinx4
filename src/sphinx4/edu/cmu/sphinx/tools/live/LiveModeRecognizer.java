@@ -162,7 +162,7 @@ public class LiveModeRecognizer implements Configurable {
 
     /** Detect gap insertion errors. */
     private int detectGapInsertionErrors() throws IOException {
-        Timer gapTimer = TimerPool.getTimer("GapInsertionDetector");
+        Timer gapTimer = TimerPool.getTimer(this, "GapInsertionDetector");
         gapTimer.start();
         GapInsertionDetector gid = new GapInsertionDetector(dataSource
                 .getTranscriptFile(), hypothesisFile, showGapInsertions);
@@ -234,7 +234,7 @@ public class LiveModeRecognizer implements Configurable {
 
     /** Return the timer for alignment. */
     private Timer getAlignTimer() {
-        return TimerPool.getTimer("Align");
+        return TimerPool.getTimer(this, "Align");
     }
 
 

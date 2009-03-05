@@ -60,8 +60,8 @@ public class LinguistTimer {
         // profiling of the linguist, independent of the search
         // or scoring
         Random random = new Random(1000);
-        Timer frameTimer = TimerPool.getTimer("frameTimer");
-        Timer totalTimer = TimerPool.getTimer("totalTimer");
+        Timer frameTimer = TimerPool.getTimer(this, "frameTimer");
+        Timer totalTimer = TimerPool.getTimer(this, "totalTimer");
         // Note: this comparator imposes orderings that are
         // inconsistent with equals.
         System.out.println("TestLinguist: runs " + numRuns + " frames "

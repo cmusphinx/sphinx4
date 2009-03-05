@@ -154,7 +154,7 @@ public class FastDictionary implements Dictionary {
     public void allocate() throws IOException {
         if (!allocated) {
             dictionary = new HashMap<String, Object>();
-            Timer loadTimer = TimerPool.getTimer("DictionaryLoad");
+            Timer loadTimer = TimerPool.getTimer(this, "DictionaryLoad");
             fillerWords = new HashSet<String>();
 
             loadTimer.start();

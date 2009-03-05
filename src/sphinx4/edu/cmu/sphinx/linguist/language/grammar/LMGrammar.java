@@ -14,7 +14,7 @@ package edu.cmu.sphinx.linguist.language.grammar;
 import edu.cmu.sphinx.linguist.WordSequence;
 import edu.cmu.sphinx.linguist.dictionary.Word;
 import edu.cmu.sphinx.linguist.language.ngram.LanguageModel;
-import edu.cmu.sphinx.util.Timer;
+import edu.cmu.sphinx.util.TimerPool;
 import edu.cmu.sphinx.util.props.PropertyException;
 import edu.cmu.sphinx.util.props.PropertySheet;
 import edu.cmu.sphinx.util.props.S4Component;
@@ -61,7 +61,7 @@ public class LMGrammar extends Grammar {
      */
     protected GrammarNode createGrammar() throws IOException {
         languageModel.allocate();
-        Timer.start("LMGrammar.create");
+        TimerPool.getTimer(this,"LMGrammar.create").start();
         GrammarNode firstNode = null;
         if (languageModel.getMaxDepth() > 2) {
             System.out.println("Warning: LMGrammar  limited to bigrams");
@@ -103,7 +103,7 @@ public class LMGrammar extends Grammar {
                 prevNode.add(nextNode, logProbability);
             }
         }
-        Timer.stop("LMGrammar.create");
+        TimerPool.getTimer(this,"LMGrammar.create").stop();
         languageModel.deallocate();
         return firstNode;
     }

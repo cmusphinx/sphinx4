@@ -84,7 +84,7 @@ public class TrainerAcousticModel extends TiedStateAcousticModel {
         saver = (Saver) ps.getComponent(SAVER);
 
         hmmPoolManager = new HMMPoolManager(loader);
-        loadTimer = TimerPool.getTimer(TIMER_LOAD);
+        loadTimer = TimerPool.getTimer(this, TIMER_LOAD);
         saveFormat = ps.getString(PROP_FORMAT_SAVE);
 
         logInfo();

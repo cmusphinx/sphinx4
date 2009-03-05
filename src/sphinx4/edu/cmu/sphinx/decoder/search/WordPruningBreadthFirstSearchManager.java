@@ -198,9 +198,9 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
         // tokenTracker = new TokenTracker();
         // tokenTypeTracker = new TokenTypeTracker();
 
-        scoreTimer = TimerPool.getTimer("Score");
-        pruneTimer = TimerPool.getTimer("Prune");
-        growTimer = TimerPool.getTimer("Grow");
+        scoreTimer = TimerPool.getTimer(this, "Score");
+        pruneTimer = TimerPool.getTimer(this, "Prune");
+        growTimer = TimerPool.getTimer(this, "Grow");
 
         totalTokensScored = StatisticsVariable.getStatisticsVariable("totalTokensScored");
         curTokensScored = StatisticsVariable.getStatisticsVariable("curTokensScored");

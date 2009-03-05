@@ -17,7 +17,7 @@ import edu.cmu.sphinx.linguist.dictionary.Dictionary;
 import edu.cmu.sphinx.linguist.dictionary.Word;
 import edu.cmu.sphinx.linguist.language.ngram.LanguageModel;
 import edu.cmu.sphinx.util.LogMath;
-import edu.cmu.sphinx.util.Timer;
+import edu.cmu.sphinx.util.TimerPool;
 import edu.cmu.sphinx.util.props.*;
 
 import java.io.*;
@@ -228,7 +228,7 @@ public class LargeTrigramModel implements LanguageModel {
     * @see edu.cmu.sphinx.linguist.language.ngram.LanguageModel#allocate()
     */
     public void allocate() throws IOException {
-        Timer.start("LM Load");
+        TimerPool.getTimer(this, "LM Load").start();
         // create the log file if specified
         if (ngramLogFile != null) {
             logFile = new PrintWriter(new FileOutputStream(ngramLogFile));
@@ -271,7 +271,7 @@ public class LargeTrigramModel implements LanguageModel {
                 System.out.println("... Done");
             }
         }
-        Timer.stop("LM Load");
+        TimerPool.getTimer(this,"LM Load").stop();
 
     }
 

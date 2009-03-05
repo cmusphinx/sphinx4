@@ -39,8 +39,8 @@ public class LMGramTest {
 
         ConfigurationManager cm = new ConfigurationManager(configFile);
 
-        Timer lmTimer = TimerPool.getTimer("LanguageModel");
-        Timer gramTimer = TimerPool.getTimer("Grammar");
+        Timer lmTimer = TimerPool.getTimer(this, "LanguageModel");
+        Timer gramTimer = TimerPool.getTimer(this, "Grammar");
 
         lmTimer.start();
         languageModel = (SimpleNGramModel)cm.lookup("languageModel");

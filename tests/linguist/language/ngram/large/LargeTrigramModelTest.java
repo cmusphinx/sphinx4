@@ -12,26 +12,17 @@
 
 package tests.linguist.language.ngram.large;
 
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.PrintStream;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.StringTokenizer;
-
 import edu.cmu.sphinx.linguist.WordSequence;
 import edu.cmu.sphinx.linguist.dictionary.FastDictionary;
 import edu.cmu.sphinx.linguist.dictionary.Word;
 import edu.cmu.sphinx.linguist.language.ngram.large.LargeTrigramModel;
 import edu.cmu.sphinx.util.Timer;
-import edu.cmu.sphinx.util.Utilities;
 import edu.cmu.sphinx.util.TimerPool;
+import edu.cmu.sphinx.util.Utilities;
 import edu.cmu.sphinx.util.props.ConfigurationManager;
+
+import java.io.*;
+import java.util.*;
 
 
 /**
@@ -75,7 +66,7 @@ public class LargeTrigramModelTest {
         BufferedReader reader = new BufferedReader
             (new InputStreamReader(stream));
 
-        Timer timer = TimerPool.getTimer("lmLookup");
+        Timer timer = TimerPool.getTimer(new Object(), "lmLookup");
         
         String input;
         

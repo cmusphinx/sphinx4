@@ -97,7 +97,7 @@ public abstract class Grammar implements Configurable, GrammarInterface {
     public void allocate() throws IOException {
         dictionary.allocate();
         newGrammar();
-        Timer timer = TimerPool.getTimer("grammarLoad");
+        Timer timer = TimerPool.getTimer(this, "grammarLoad");
         timer.start();
         initialNode = createGrammar();
         postProcessGrammar();

@@ -96,7 +96,7 @@ public class UtteranceTest {
 	    outStream = new PrintStream(new FileOutputStream(outFile));
 	}
 	
-        timer = TimerPool.getTimer("lmLookup");
+        timer = TimerPool.getTimer(this, "lmLookup");
     }
 
 

@@ -124,9 +124,9 @@ public class ParallelSearchManager implements SearchManager {
 //                    (PROP_COMBINED_SCORE_PRUNER, CombinedScorePruner.class);
 //        }
 
-        scoreTimer = TimerPool.getTimer("Score");
-        pruneTimer = TimerPool.getTimer("Prune");
-        growTimer = TimerPool.getTimer("Grow");
+        scoreTimer = TimerPool.getTimer(this, "Score");
+        pruneTimer = TimerPool.getTimer(this, "Prune");
+        growTimer = TimerPool.getTimer(this, "Grow");
 
     }
 

@@ -38,7 +38,7 @@ public abstract class BaseDataProcessor extends ConfigurableAdapter implements D
 
     /** Initializes this DataProcessor. This is typically called after the DataProcessor has been configured. */
     public void initialize() {
-        this.timer = TimerPool.getTimer(name);
+        this.timer = TimerPool.getTimer(this, name);
     }
 
 

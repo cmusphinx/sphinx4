@@ -179,7 +179,7 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
         hmmPool = new HMMPool(acousticModel, logger, unitManager);
         nodeToNextUnitArrayMap = new HashMap<GrammarNode, int[]>();
         nodeToUnitSetMap = new HashMap<GrammarNode, Set<Unit>>();
-        Timer timer = TimerPool.getTimer("compileGrammar");
+        Timer timer = TimerPool.getTimer(this, "compileGrammar");
         timer.start();
         compileGrammar();
         timer.stop();

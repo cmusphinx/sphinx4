@@ -29,7 +29,7 @@ public class Timer {
     private final static DecimalFormat timeFormatter = new DecimalFormat("###0.0000");
     private final static DecimalFormat percentFormatter = new DecimalFormat("###0.00%");
 
-    private String name;
+    private final String name;
 
     private double sum;
     private long count = 0L;
@@ -146,26 +146,6 @@ public class Timer {
     /** Stops the timer. */
     public void stop() {
         stop(false);
-    }
-
-
-    /**
-     * Starts a timer by name
-     *
-     * @param name the name of the timer to start
-     */
-    public static void start(String name) {
-        TimerPool.getTimer(name).start();
-    }
-
-
-    /**
-     * Stops a timer by name
-     *
-     * @param name the name of the timer to stop
-     */
-    public static void stop(String name) {
-        TimerPool.getTimer(name).stop();
     }
 
 

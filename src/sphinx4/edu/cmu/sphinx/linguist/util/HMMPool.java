@@ -14,7 +14,7 @@ package edu.cmu.sphinx.linguist.util;
 
 
 import edu.cmu.sphinx.linguist.acoustic.*;
-import edu.cmu.sphinx.util.Timer;
+import edu.cmu.sphinx.util.TimerPool;
 
 import java.util.Iterator;
 import java.util.logging.Level;
@@ -50,7 +50,7 @@ public class HMMPool {
         int maxCIUnits = 0;
         this.model = model;
         this.unitManager = unitManager;
-        Timer.start("buildHmmPool");
+        TimerPool.getTimer(this,"buildHmmPool").start();
 
         if (model.getLeftContextSize() != 1) {
             throw new Error("LexTreeLinguist: Unsupported left context size");
@@ -104,7 +104,7 @@ public class HMMPool {
                 }
             }
         }
-        Timer.stop("buildHmmPool");
+        TimerPool.getTimer(this,"buildHmmPool").stop();
     }
 
 
@@ -340,7 +340,7 @@ public class HMMPool {
     void benchmark() {
         int nullCount = 0;
         System.out.println("benchmarking ...");
-        Timer.start("hmmPoolBenchmark");
+        TimerPool.getTimer(this,"hmmPoolBenchmark").start();
 
         for (int i = 0; i < 1000000; i++) {
             int id = ids[i % ids.length];
@@ -350,7 +350,7 @@ public class HMMPool {
                 nullCount++;
             }
         }
-        Timer.stop("hmmPoolBenchmark");
+        TimerPool.getTimer(this,"hmmPoolBenchmark").stop();
         System.out.println("null count " + nullCount);
     }
 }

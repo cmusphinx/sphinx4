@@ -1,9 +1,11 @@
 package edu.cmu.sphinx.util;
 
-import java.util.WeakHashMap;
-import java.util.Map;
-import java.util.LinkedHashMap;
+import edu.cmu.sphinx.util.props.Configurable;
+
 import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.WeakHashMap;
 
 /**
  *  Keeps reference to a list of timers.
@@ -12,7 +14,7 @@ import java.util.Iterator;
  */
 public class TimerPool {
     
-    private static WeakHashMap<String, Timer> weakRefTimerPool = new WeakHashMap<String, Timer>();
+    private static WeakHashMap<Configurable, Timer> weakRefTimerPool = new WeakHashMap<Configurable, Timer>();
 
     private final static Map<String, Timer> timerPool = new LinkedHashMap<String, Timer>();
 
@@ -20,11 +22,11 @@ public class TimerPool {
     /**
      * Retrieves (or creates) a timer with the given name
      *
-     * @param timerName the name of the particular timer to retrieve. If the timer does not already exist, it will be
-     *                  created
-     * @return the timer.
+     * @param owner
+     *@param timerName the name of the particular timer to retrieve. If the timer does not already exist, it will be
+     *                  created  @return the timer.
      */
-    public static Timer getTimer(String timerName) {
+    public static Timer getTimer(Object owner, String timerName) {
         Timer timer = null;
         
         timer = timerPool.get(timerName);

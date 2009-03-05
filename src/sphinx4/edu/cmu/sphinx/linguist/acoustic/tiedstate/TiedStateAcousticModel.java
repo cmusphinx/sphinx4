@@ -119,7 +119,7 @@ public class TiedStateAcousticModel implements AcousticModel {
      */
     public void allocate() throws IOException {
         if (!allocated) {
-            this.loadTimer = TimerPool.getTimer(TIMER_LOAD);
+            this.loadTimer = TimerPool.getTimer(this, TIMER_LOAD);
             loadTimer.start();
             loader.load();
             loadTimer.stop();
