@@ -18,6 +18,9 @@ public abstract class ConfigurableAdapter implements Configurable{
     public void newProperties(PropertySheet ps) throws PropertyException {
         name = ps.getInstanceName();
         logger = ps.getLogger();
+
+        // fix null names
+        name =  name != null ? name : getClass().getSimpleName();
     }
 
 

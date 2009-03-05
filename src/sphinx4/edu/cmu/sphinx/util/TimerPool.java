@@ -34,7 +34,7 @@ public class TimerPool {
         List<Timer> ownerTimers = weakRefTimerPool.get(owner);
 
         for (Timer timer : ownerTimers) {
-            if (timer.getName().endsWith(timerName))
+            if (timer.getName().equals(timerName))
                 return timer;
         }
 

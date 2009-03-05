@@ -46,6 +46,7 @@ public class Timer {
      * @param name the name of the timer
      */
     Timer(String name) {
+        assert name != null : "timers must have a name!";
         this.name = name;
         reset();
     }
