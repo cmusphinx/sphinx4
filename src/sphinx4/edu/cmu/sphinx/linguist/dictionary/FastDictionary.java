@@ -16,6 +16,7 @@ import edu.cmu.sphinx.linguist.acoustic.Context;
 import edu.cmu.sphinx.linguist.acoustic.Unit;
 import edu.cmu.sphinx.linguist.acoustic.UnitManager;
 import edu.cmu.sphinx.util.Timer;
+import edu.cmu.sphinx.util.TimerPool;
 import edu.cmu.sphinx.util.props.ConfigurationManagerUtils;
 import edu.cmu.sphinx.util.props.PropertyException;
 import edu.cmu.sphinx.util.props.PropertySheet;
@@ -153,7 +154,7 @@ public class FastDictionary implements Dictionary {
     public void allocate() throws IOException {
         if (!allocated) {
             dictionary = new HashMap<String, Object>();
-            Timer loadTimer = Timer.getTimer("DictionaryLoad");
+            Timer loadTimer = TimerPool.getTimer("DictionaryLoad");
             fillerWords = new HashSet<String>();
 
             loadTimer.start();

@@ -18,7 +18,7 @@ import edu.cmu.sphinx.recognizer.RecognizerState;
 import edu.cmu.sphinx.recognizer.StateListener;
 import edu.cmu.sphinx.result.Result;
 import edu.cmu.sphinx.decoder.ResultListener;
-import edu.cmu.sphinx.util.Timer;
+import edu.cmu.sphinx.util.TimerPool;
 import edu.cmu.sphinx.util.props.*;
 
 import java.text.DecimalFormat;
@@ -261,13 +261,13 @@ public class SpeedTracker
     public void statusChanged(RecognizerState status) {
         if (status == RecognizerState.ALLOCATED) {
             if (showTimers) {
-                Timer.dumpAll();
+                TimerPool.dumpAll();
             }
         }
 
         if (status == RecognizerState.DEALLOCATING) {
             if (showTimers) {
-                Timer.dumpAll();
+                TimerPool.dumpAll();
             }
         }
 

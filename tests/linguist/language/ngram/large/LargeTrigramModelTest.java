@@ -30,6 +30,7 @@ import edu.cmu.sphinx.linguist.dictionary.Word;
 import edu.cmu.sphinx.linguist.language.ngram.large.LargeTrigramModel;
 import edu.cmu.sphinx.util.Timer;
 import edu.cmu.sphinx.util.Utilities;
+import edu.cmu.sphinx.util.TimerPool;
 import edu.cmu.sphinx.util.props.ConfigurationManager;
 
 
@@ -74,7 +75,7 @@ public class LargeTrigramModelTest {
         BufferedReader reader = new BufferedReader
             (new InputStreamReader(stream));
 
-        Timer timer = Timer.getTimer("lmLookup");
+        Timer timer = TimerPool.getTimer("lmLookup");
         
         String input;
         
@@ -124,7 +125,7 @@ public class LargeTrigramModelTest {
         }
         
         
-        Timer.dumpAll();
+        TimerPool.dumpAll();
     }
 
     public static String getString(WordSequence ws) {

@@ -21,6 +21,7 @@ import edu.cmu.sphinx.linguist.language.grammar.GrammarNode;
 import edu.cmu.sphinx.linguist.util.HMMPool;
 import edu.cmu.sphinx.util.LogMath;
 import edu.cmu.sphinx.util.Timer;
+import edu.cmu.sphinx.util.TimerPool;
 import edu.cmu.sphinx.util.props.*;
 
 import java.io.IOException;
@@ -178,7 +179,7 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
         hmmPool = new HMMPool(acousticModel, logger, unitManager);
         nodeToNextUnitArrayMap = new HashMap<GrammarNode, int[]>();
         nodeToUnitSetMap = new HashMap<GrammarNode, Set<Unit>>();
-        Timer timer = Timer.getTimer("compileGrammar");
+        Timer timer = TimerPool.getTimer("compileGrammar");
         timer.start();
         compileGrammar();
         timer.stop();

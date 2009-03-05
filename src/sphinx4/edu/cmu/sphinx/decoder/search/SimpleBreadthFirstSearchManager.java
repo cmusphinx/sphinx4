@@ -22,6 +22,7 @@ import edu.cmu.sphinx.result.Result;
 import edu.cmu.sphinx.util.LogMath;
 import edu.cmu.sphinx.util.StatisticsVariable;
 import edu.cmu.sphinx.util.Timer;
+import edu.cmu.sphinx.util.TimerPool;
 import edu.cmu.sphinx.util.props.*;
 
 import java.util.*;
@@ -595,9 +596,9 @@ public class SimpleBreadthFirstSearchManager implements SearchManager {
             throw new RuntimeException(toString()+ ": allocation of search manager resources failed", e);
         }
 
-        scoreTimer = Timer.getTimer("scoring");
-        pruneTimer = Timer.getTimer("pruning");
-        growTimer = Timer.getTimer("growing");
+        scoreTimer = TimerPool.getTimer("scoring");
+        pruneTimer = TimerPool.getTimer("pruning");
+        growTimer = TimerPool.getTimer("growing");
     }
 
 

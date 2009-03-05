@@ -15,6 +15,7 @@ import edu.cmu.sphinx.linguist.Linguist;
 import edu.cmu.sphinx.linguist.SearchState;
 import edu.cmu.sphinx.linguist.SearchStateArc;
 import edu.cmu.sphinx.util.Timer;
+import edu.cmu.sphinx.util.TimerPool;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -59,8 +60,8 @@ public class LinguistTimer {
         // profiling of the linguist, independent of the search
         // or scoring
         Random random = new Random(1000);
-        Timer frameTimer = Timer.getTimer("frameTimer");
-        Timer totalTimer = Timer.getTimer("totalTimer");
+        Timer frameTimer = TimerPool.getTimer("frameTimer");
+        Timer totalTimer = TimerPool.getTimer("totalTimer");
         // Note: this comparator imposes orderings that are
         // inconsistent with equals.
         System.out.println("TestLinguist: runs " + numRuns + " frames "
@@ -94,7 +95,7 @@ public class LinguistTimer {
         System.out.println(" TotalEmitting : " + totalEmittingStates);
         System.out.println("   NonEmitting : " + totalNonEmittingStates);
         System.out.println("  Final States : " + totalFinalStates);
-        Timer.dumpAll();
+        TimerPool.dumpAll();
     }
 
 

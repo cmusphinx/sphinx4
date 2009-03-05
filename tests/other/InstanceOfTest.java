@@ -14,6 +14,7 @@
 package tests.other;
 
 import edu.cmu.sphinx.util.Timer;
+import edu.cmu.sphinx.util.TimerPool;
 
 /**
  * 
@@ -32,10 +33,10 @@ public class InstanceOfTest {
 
     public InstanceOfTest(int iterations) {
 	maxIterations = iterations;
-	instanceOfTimer = Timer.getTimer("instanceOfTimer");
-	booleanTimer = Timer.getTimer("booleanTimer");
-	castTimer = Timer.getTimer("castTimer");
-	noCastTimer = Timer.getTimer("noCastTimer");
+	instanceOfTimer = TimerPool.getTimer("instanceOfTimer");
+	booleanTimer = TimerPool.getTimer("booleanTimer");
+	castTimer = TimerPool.getTimer("castTimer");
+	noCastTimer = TimerPool.getTimer("noCastTimer");
     }
 
     /**
@@ -122,7 +123,7 @@ public class InstanceOfTest {
      * Shows the results
      */
     public void dump() {
-        Timer.dumpAll();
+        TimerPool.dumpAll();
     }
 
     /**
@@ -141,7 +142,7 @@ public class InstanceOfTest {
 	// warm-up
 	iot.doScores(array);
 
-	Timer.resetAll();
+	TimerPool.resetAll();
 
 	// go live
 	iot.doScores(array);

@@ -14,6 +14,7 @@
 package tests.other;
 
 import edu.cmu.sphinx.util.Timer;
+import edu.cmu.sphinx.util.TimerPool;
 
 import java.util.Random;
 
@@ -80,11 +81,11 @@ public class MathTest {
 	}
 
 
-	floatTimer = Timer.getTimer("mixed float");
-	intTimer = Timer.getTimer( "mixed double, float, int");
-	doubleTimer = Timer.getTimer( "pure double");
-	pureIntTimer = Timer.getTimer( "pure int");
-	pureFloatTimer = Timer.getTimer("pure float");
+	floatTimer = TimerPool.getTimer("mixed float");
+	intTimer = TimerPool.getTimer( "mixed double, float, int");
+	doubleTimer = TimerPool.getTimer( "pure double");
+	pureIntTimer = TimerPool.getTimer( "pure int");
+	pureFloatTimer = TimerPool.getTimer("pure float");
     }
 
     /**
@@ -196,7 +197,7 @@ public class MathTest {
      * Shows the results
      */
     public void dump() {
-        Timer.dumpAll();
+        TimerPool.dumpAll();
     }
 
     /**
@@ -210,7 +211,7 @@ public class MathTest {
 	    mt.doScores();
 	}
 
-	Timer.resetAll();
+	TimerPool.resetAll();
 
 	// go live
 	for (int i = 0; i < 5; i++) {

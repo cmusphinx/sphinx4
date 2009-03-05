@@ -28,6 +28,7 @@ import edu.cmu.sphinx.linguist.flat.SentenceHMMStateArc;
 import edu.cmu.sphinx.result.Result;
 import edu.cmu.sphinx.util.LogMath;
 import edu.cmu.sphinx.util.Timer;
+import edu.cmu.sphinx.util.TimerPool;
 import edu.cmu.sphinx.util.props.PropertyException;
 import edu.cmu.sphinx.util.props.PropertySheet;
 import edu.cmu.sphinx.util.props.S4Boolean;
@@ -123,9 +124,9 @@ public class ParallelSearchManager implements SearchManager {
 //                    (PROP_COMBINED_SCORE_PRUNER, CombinedScorePruner.class);
 //        }
 
-        scoreTimer = Timer.getTimer("Score");
-        pruneTimer = Timer.getTimer("Prune");
-        growTimer = Timer.getTimer("Grow");
+        scoreTimer = TimerPool.getTimer("Score");
+        pruneTimer = TimerPool.getTimer("Prune");
+        growTimer = TimerPool.getTimer("Grow");
 
     }
 

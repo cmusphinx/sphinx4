@@ -14,6 +14,7 @@ package edu.cmu.sphinx.linguist.language.grammar;
 import edu.cmu.sphinx.linguist.dictionary.Dictionary;
 import edu.cmu.sphinx.linguist.dictionary.Word;
 import edu.cmu.sphinx.util.Timer;
+import edu.cmu.sphinx.util.TimerPool;
 import edu.cmu.sphinx.util.props.*;
 
 import java.io.FileOutputStream;
@@ -96,7 +97,7 @@ public abstract class Grammar implements Configurable, GrammarInterface {
     public void allocate() throws IOException {
         dictionary.allocate();
         newGrammar();
-        Timer timer = Timer.getTimer("grammarLoad");
+        Timer timer = TimerPool.getTimer("grammarLoad");
         timer.start();
         initialNode = createGrammar();
         postProcessGrammar();

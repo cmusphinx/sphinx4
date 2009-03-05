@@ -18,6 +18,7 @@ import edu.cmu.sphinx.linguist.dictionary.FastDictionary;
 import edu.cmu.sphinx.linguist.dictionary.Pronunciation;
 import edu.cmu.sphinx.linguist.acoustic.Unit;
 import edu.cmu.sphinx.util.Timer;
+import edu.cmu.sphinx.util.TimerPool;
 import edu.cmu.sphinx.util.props.ConfigurationManager;
 
 /**
@@ -39,8 +40,8 @@ public class FullDictionaryTest {
         
      ConfigurationManager cm = new ConfigurationManager (configFile);
 
-	Timer fullTimer = Timer.getTimer("fullTimer");
-	Timer fastTimer = Timer.getTimer("fastTimer");
+	Timer fullTimer = TimerPool.getTimer("fullTimer");
+	Timer fastTimer = TimerPool.getTimer("fastTimer");
         
 	// some loading timings
 
@@ -53,7 +54,7 @@ public class FullDictionaryTest {
 	    fullDictionary = (FullDictionary)cm.lookup("fulldictionary");
 	    fullTimer.stop();
 
-	    Timer.dumpAll();
+	    TimerPool.dumpAll();
 	}
 
 	// some lookup comparisons

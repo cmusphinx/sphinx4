@@ -18,6 +18,7 @@ import edu.cmu.sphinx.research.distributed.client.ClientFrontEndImpl;
 import edu.cmu.sphinx.util.BatchFile;
 import edu.cmu.sphinx.util.NISTAlign;
 import edu.cmu.sphinx.util.Timer;
+import edu.cmu.sphinx.util.TimerPool;
 import edu.cmu.sphinx.util.props.*;
 
 import java.io.FileInputStream;
@@ -60,7 +61,7 @@ public class BatchClient implements Configurable {
         skip = ps.getInt(SKIP);
         clientFrontEnd = (ClientFrontEndImpl) ps.getComponent(CLIENT);
 
-        decodeTimer = Timer.getTimer("BatchClientDecode");
+        decodeTimer = TimerPool.getTimer("BatchClientDecode");
         aligner = new NISTAlign(true, true);
     }
 
@@ -91,7 +92,7 @@ public class BatchClient implements Configurable {
         }
 
         System.out.println("\nBatchDecoder: All files decoded\n");
-        Timer.dumpAll();
+        TimerPool.dumpAll();
 
         clientFrontEnd.close();
     }

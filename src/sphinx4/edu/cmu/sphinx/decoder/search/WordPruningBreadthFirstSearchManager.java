@@ -24,6 +24,7 @@ import edu.cmu.sphinx.result.Result;
 import edu.cmu.sphinx.util.LogMath;
 import edu.cmu.sphinx.util.StatisticsVariable;
 import edu.cmu.sphinx.util.Timer;
+import edu.cmu.sphinx.util.TimerPool;
 import edu.cmu.sphinx.util.props.*;
 
 import java.io.IOException;
@@ -197,9 +198,9 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
         // tokenTracker = new TokenTracker();
         // tokenTypeTracker = new TokenTypeTracker();
 
-        scoreTimer = Timer.getTimer("Score");
-        pruneTimer = Timer.getTimer("Prune");
-        growTimer = Timer.getTimer("Grow");
+        scoreTimer = TimerPool.getTimer("Score");
+        pruneTimer = TimerPool.getTimer("Prune");
+        growTimer = TimerPool.getTimer("Grow");
 
         totalTokensScored = StatisticsVariable.getStatisticsVariable("totalTokensScored");
         curTokensScored = StatisticsVariable.getStatisticsVariable("curTokensScored");

@@ -16,6 +16,7 @@ package edu.cmu.sphinx.linguist.acoustic.tiedstate;
 
 import edu.cmu.sphinx.linguist.acoustic.*;
 import edu.cmu.sphinx.util.Timer;
+import edu.cmu.sphinx.util.TimerPool;
 import edu.cmu.sphinx.util.props.*;
 
 import java.io.IOException;
@@ -118,7 +119,7 @@ public class TiedStateAcousticModel implements AcousticModel {
      */
     public void allocate() throws IOException {
         if (!allocated) {
-            this.loadTimer = Timer.getTimer(TIMER_LOAD);
+            this.loadTimer = TimerPool.getTimer(TIMER_LOAD);
             loadTimer.start();
             loader.load();
             loadTimer.stop();

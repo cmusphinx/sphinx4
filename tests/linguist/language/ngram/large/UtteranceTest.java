@@ -31,6 +31,7 @@ import edu.cmu.sphinx.linguist.dictionary.Word;
 import edu.cmu.sphinx.linguist.language.ngram.large.LargeTrigramModel;
 import edu.cmu.sphinx.util.Timer;
 import edu.cmu.sphinx.util.Utilities;
+import edu.cmu.sphinx.util.TimerPool;
 import edu.cmu.sphinx.util.props.ConfigurationManager;
 
 
@@ -95,7 +96,7 @@ public class UtteranceTest {
 	    outStream = new PrintStream(new FileOutputStream(outFile));
 	}
 	
-        timer = Timer.getTimer("lmLookup");
+        timer = TimerPool.getTimer("lmLookup");
     }
 
 
@@ -177,7 +178,7 @@ public class UtteranceTest {
 	System.out.println("Bigram misses: " + lm.getBigramMisses());
 	System.out.println("Trigram misses: " + lm.getTrigramMisses());
 	System.out.println("Trigram hits: " + lm.getTrigramHits());
-	Timer.dumpAll();
+	TimerPool.dumpAll();
     }
 
 

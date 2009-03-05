@@ -12,14 +12,13 @@
 
 package tests.linguist.language;
 
-import edu.cmu.sphinx.linguist.dictionary.Dictionary;
-import edu.cmu.sphinx.linguist.dictionary.FullDictionary;
 import edu.cmu.sphinx.linguist.language.grammar.Grammar;
 import edu.cmu.sphinx.linguist.language.grammar.LMGrammar;
 import edu.cmu.sphinx.linguist.language.ngram.LanguageModel;
 import edu.cmu.sphinx.linguist.language.ngram.SimpleNGramModel;
 import edu.cmu.sphinx.util.Timer;
 import edu.cmu.sphinx.util.Utilities;
+import edu.cmu.sphinx.util.TimerPool;
 import edu.cmu.sphinx.util.props.ConfigurationManager;
 
 
@@ -40,8 +39,8 @@ public class LMGramTest {
 
         ConfigurationManager cm = new ConfigurationManager(configFile);
 
-        Timer lmTimer = Timer.getTimer("LanguageModel");
-        Timer gramTimer = Timer.getTimer("Grammar");
+        Timer lmTimer = TimerPool.getTimer("LanguageModel");
+        Timer gramTimer = TimerPool.getTimer("Grammar");
 
         lmTimer.start();
         languageModel = (SimpleNGramModel)cm.lookup("languageModel");
@@ -55,7 +54,7 @@ public class LMGramTest {
         gramTimer.stop();
         Utilities.dumpMemoryInfo("after grammar load");
 
-        Timer.dumpAll();
+        TimerPool.dumpAll();
 
         grammar.dumpStatistics();
 

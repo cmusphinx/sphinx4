@@ -13,25 +13,24 @@
 package edu.cmu.sphinx.util;
 
 import java.text.DecimalFormat;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 /**
  * Keeps track of execution times. This class provides methods that can be used for timing processes. The process to be
  * timed should be bracketed by calls to timer.start() and timer.stop().  Repeated operations can be timed more than
  * once. The timer will report the minimum, maximum, average and last time executed for all start/stop pairs when the
  * timer.dump is called.
+ * <p/>
+ * Timer instances can be obtained from a global cache implemented in {@coode TimerPool}.
+ *
+ * @see TimerPool
  */
 public class Timer {
 
-    private final static DecimalFormat timeFormatter
-            = new DecimalFormat("###0.0000");
-    private final static DecimalFormat percentFormatter
-            = new DecimalFormat("###0.00%");
-    private static Map<String, Timer> timerPool = new LinkedHashMap<String, Timer>();
+    private final static DecimalFormat timeFormatter = new DecimalFormat("###0.0000");
+    private final static DecimalFormat percentFormatter = new DecimalFormat("###0.00%");
 
     private String name;
+
     private double sum;
     private long count = 0L;
     private long startTime = 0L;
@@ -42,48 +41,11 @@ public class Timer {
 
 
     /**
-     * Retrieves (or creates) a timer with the given name
-     *
-     * @param timerName the name of the particular timer to retrieve. If the timer does not already exist, it will be
-     *                  created
-     * @return the timer.
-     */
-    public static Timer getTimer(String timerName) {
-        Timer timer = null;
-        timer = timerPool.get(timerName);
-        if (timer == null) {
-            timer = new Timer(timerName);
-            timerPool.put(timerName, timer);
-        }
-        return timer;
-    }
-
-
-    /** Dump all timers */
-    public static void dumpAll() {
-        showTimesShortTitle();
-        for (Iterator<Timer> i = timerPool.values().iterator(); i.hasNext();) {
-            Timer timer = i.next();
-            timer.dump();
-        }
-    }
-
-
-    /** Resets all timers */
-    public static void resetAll() {
-        for (Iterator<Timer> i = timerPool.values().iterator(); i.hasNext();) {
-            Timer timer = i.next();
-            timer.reset();
-        }
-    }
-
-
-    /**
      * Creates a timer.
      *
      * @param name the name of the timer
      */
-    private Timer(String name) {
+    Timer(String name) {
         this.name = name;
         reset();
     }
@@ -193,7 +155,7 @@ public class Timer {
      * @param name the name of the timer to start
      */
     public static void start(String name) {
-        Timer.getTimer(name).start();
+        TimerPool.getTimer(name).start();
     }
 
 
@@ -203,7 +165,7 @@ public class Timer {
      * @param name the name of the timer to stop
      */
     public static void stop(String name) {
-        Timer.getTimer(name).stop();
+        TimerPool.getTimer(name).stop();
     }
 
 
@@ -285,24 +247,6 @@ public class Timer {
      */
     private String fmtTime(double time) {
         return Utilities.pad(timeFormatter.format(time) + "s", 10);
-    }
-
-
-    /** Shows the timing stats title. */
-    private static void showTimesShortTitle() {
-        String title = "Timers";
-        String titleBar =
-                "# ----------------------------- " + title +
-                        "----------------------------------------------------------- ";
-        System.out.println(Utilities.pad(titleBar, 78));
-        System.out.print(Utilities.pad("# Name", 15) + " ");
-        System.out.print(Utilities.pad("Count", 8));
-        System.out.print(Utilities.pad("CurTime", 10));
-        System.out.print(Utilities.pad("MinTime", 10));
-        System.out.print(Utilities.pad("MaxTime", 10));
-        System.out.print(Utilities.pad("AvgTime", 10));
-        System.out.print(Utilities.pad("TotTime", 10));
-        System.out.println();
     }
 
 

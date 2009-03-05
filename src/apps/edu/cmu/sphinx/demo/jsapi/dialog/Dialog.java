@@ -14,7 +14,7 @@ package edu.cmu.sphinx.demo.jsapi.dialog;
 
 import edu.cmu.sphinx.recognizer.Recognizer;
 import edu.cmu.sphinx.result.Result;
-import edu.cmu.sphinx.util.Timer;
+import edu.cmu.sphinx.util.TimerPool;
 import edu.cmu.sphinx.util.props.ConfigurationManager;
 import edu.cmu.sphinx.util.props.PropertyException;
 
@@ -139,7 +139,7 @@ class MyBehavior extends NewGrammarDialogNodeBehavior {
             if (tag.equals("help")) {
                 help();
             } else if (tag.equals("stats")) {
-                Timer.dumpAll();
+                TimerPool.dumpAll();
             } else if (tag.startsWith("goto_")) {
                 return tag.replaceFirst("goto_", "");
             } else if (tag.startsWith("browse")) {

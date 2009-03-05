@@ -16,7 +16,7 @@ import edu.cmu.sphinx.linguist.acoustic.tiedstate.Loader;
 import edu.cmu.sphinx.linguist.acoustic.tiedstate.Saver;
 import edu.cmu.sphinx.linguist.acoustic.tiedstate.TiedStateAcousticModel;
 import edu.cmu.sphinx.linguist.acoustic.tiedstate.Sphinx3Loader;
-import edu.cmu.sphinx.util.Timer;
+import edu.cmu.sphinx.util.TimerPool;
 import edu.cmu.sphinx.util.props.*;
 
 import java.io.FileNotFoundException;
@@ -84,7 +84,7 @@ public class TrainerAcousticModel extends TiedStateAcousticModel {
         saver = (Saver) ps.getComponent(SAVER);
 
         hmmPoolManager = new HMMPoolManager(loader);
-        loadTimer = Timer.getTimer(TIMER_LOAD);
+        loadTimer = TimerPool.getTimer(TIMER_LOAD);
         saveFormat = ps.getString(PROP_FORMAT_SAVE);
 
         logInfo();

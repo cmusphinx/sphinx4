@@ -16,6 +16,7 @@ import edu.cmu.sphinx.linguist.acoustic.Unit;
 import edu.cmu.sphinx.linguist.acoustic.UnitManager;
 import edu.cmu.sphinx.util.ExtendedStreamTokenizer;
 import edu.cmu.sphinx.util.Timer;
+import edu.cmu.sphinx.util.TimerPool;
 import edu.cmu.sphinx.util.props.ConfigurationManagerUtils;
 import edu.cmu.sphinx.util.props.PropertyException;
 import edu.cmu.sphinx.util.props.PropertySheet;
@@ -97,7 +98,7 @@ public class FullDictionary implements Dictionary {
     public void allocate() throws IOException {
 
         if (!allocated) {
-            loadTimer = Timer.getTimer("DictionaryLoad");
+            loadTimer = TimerPool.getTimer("DictionaryLoad");
             loadTimer.start();
             // NOTE: "location" can be null here, in which case the
             // "wordDictionaryFile" and "fillerDictionaryFile" should

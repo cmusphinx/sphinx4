@@ -14,10 +14,7 @@ package edu.cmu.sphinx.tools.live;
 import edu.cmu.sphinx.frontend.util.ConcatFileDataSource;
 import edu.cmu.sphinx.recognizer.Recognizer;
 import edu.cmu.sphinx.result.Result;
-import edu.cmu.sphinx.util.GapInsertionDetector;
-import edu.cmu.sphinx.util.NISTAlign;
-import edu.cmu.sphinx.util.ReferenceSource;
-import edu.cmu.sphinx.util.Timer;
+import edu.cmu.sphinx.util.*;
 import edu.cmu.sphinx.util.props.*;
 
 import java.io.File;
@@ -165,7 +162,7 @@ public class LiveModeRecognizer implements Configurable {
 
     /** Detect gap insertion errors. */
     private int detectGapInsertionErrors() throws IOException {
-        Timer gapTimer = Timer.getTimer("GapInsertionDetector");
+        Timer gapTimer = TimerPool.getTimer("GapInsertionDetector");
         gapTimer.start();
         GapInsertionDetector gid = new GapInsertionDetector(dataSource
                 .getTranscriptFile(), hypothesisFile, showGapInsertions);
@@ -237,7 +234,7 @@ public class LiveModeRecognizer implements Configurable {
 
     /** Return the timer for alignment. */
     private Timer getAlignTimer() {
-        return Timer.getTimer("Align");
+        return TimerPool.getTimer("Align");
     }
 
 
