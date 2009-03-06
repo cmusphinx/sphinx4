@@ -27,7 +27,7 @@ public class DataStartSignal extends Signal {
      * A constant that is attached to all DataStartSignal passing this component. This allows subsequent
      * <code>DataProcessor</code>s (like the <code>Scorer</code>) to adapt their processsing behavior.
      */
-    public static final String VAD_TAGGED_FEAT_STREAM = "vadTaggedFeatureStream";
+    public static final String SPEECH_TAGGED_FEATURE_STREAM = "vadTaggedFeatureStream";
 
 
     /**
@@ -74,7 +74,7 @@ public class DataStartSignal extends Signal {
         this.sampleRate = sampleRate;
 
         if (tagAsVadStream) {
-            this.getProps().put(VAD_TAGGED_FEAT_STREAM, tagAsVadStream);
+            this.getProps().put(SPEECH_TAGGED_FEATURE_STREAM, tagAsVadStream);
         }
     }
 
@@ -97,11 +97,11 @@ public class DataStartSignal extends Signal {
 
 
     public static void tagAsVadStream(DataStartSignal dsSignal) {
-        dsSignal.getProps().put(DataStartSignal.VAD_TAGGED_FEAT_STREAM, true);
+        dsSignal.getProps().put(DataStartSignal.SPEECH_TAGGED_FEATURE_STREAM, true);
     }
 
 
     public static void untagAsVadStream(DataStartSignal dsSignal) {
-        dsSignal.getProps().remove(DataStartSignal.VAD_TAGGED_FEAT_STREAM);
+        dsSignal.getProps().remove(DataStartSignal.SPEECH_TAGGED_FEATURE_STREAM);
     }
 }

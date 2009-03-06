@@ -1022,7 +1022,7 @@ public class Lattice {
         } else {
             System.err.println("Building test Lattice");
 
-            lattice = new Lattice();
+            lattice = new Lattice(LogMath.getInstance());
 
             /*
             1 --> 2 -

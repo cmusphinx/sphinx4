@@ -5,7 +5,10 @@ import edu.cmu.sphinx.frontend.*;
 import edu.cmu.sphinx.frontend.endpoint.SpeechEndSignal;
 import edu.cmu.sphinx.frontend.endpoint.SpeechStartSignal;
 import edu.cmu.sphinx.frontend.util.DataUtil;
-import edu.cmu.sphinx.util.props.*;
+import edu.cmu.sphinx.util.props.ConfigurableAdapter;
+import edu.cmu.sphinx.util.props.PropertyException;
+import edu.cmu.sphinx.util.props.PropertySheet;
+import edu.cmu.sphinx.util.props.S4Component;
 
 import java.util.List;
 import java.util.Map;
@@ -30,12 +33,12 @@ public abstract class AbstractScorer extends ConfigurableAdapter implements Acou
     public final static String SCORE_NORMALIZER = "scoreNormalizer";
     private ScoreNormalizer scoreNormalizer;
 
-    private Boolean isVadEmbeddedStream;
+    private Boolean useSpeechSignals;
 
 
     public void newProperties(PropertySheet ps) throws PropertyException {
         super.newProperties(ps);
-        
+
         frontEnd = (BaseDataProcessor) ps.getComponent(FEATURE_FRONTEND);
         scoreNormalizer = (ScoreNormalizer) ps.getComponent(SCORE_NORMALIZER);
     }
@@ -101,10 +104,10 @@ public abstract class AbstractScorer extends ConfigurableAdapter implements Acou
     protected void handleDataStartSignal(DataStartSignal dataStartSignal) {
         Map<String, Object> dataProps = dataStartSignal.getProps();
 
-        if (dataProps.containsKey(DataStartSignal.VAD_TAGGED_FEAT_STREAM))
-            isVadEmbeddedStream = (Boolean) dataProps.get(DataStartSignal.VAD_TAGGED_FEAT_STREAM);
+        if (dataProps.containsKey(DataStartSignal.SPEECH_TAGGED_FEATURE_STREAM))
+            useSpeechSignals = (Boolean) dataProps.get(DataStartSignal.SPEECH_TAGGED_FEATURE_STREAM);
         else
-            isVadEmbeddedStream = false;
+            useSpeechSignals = false;
     }
 
 
@@ -115,17 +118,17 @@ public abstract class AbstractScorer extends ConfigurableAdapter implements Acou
 
 
     public void startRecognition() {
-        if (isVadEmbeddedStream == null) {
+        if (useSpeechSignals == null) {
             Data firstData = getNextData();
             assert firstData instanceof DataStartSignal :
                     "The first element in an sphinx4-feature stream must be a DataStartSignal but was a " + firstData.getClass().getSimpleName();
         }
 
-        if (!isVadEmbeddedStream)
+        if (!useSpeechSignals)
             return;
 
         Data data = getNextData();
-        while (!((data) instanceof SpeechStartSignal)) {
+        while (!(data instanceof SpeechStartSignal)) {
             if (data == null) {
                 break;
             }
@@ -139,6 +142,7 @@ public abstract class AbstractScorer extends ConfigurableAdapter implements Acou
 
 
     public void stopRecognition() {
+        // nothing needs to be done here
     }
 
 
@@ -152,6 +156,9 @@ public abstract class AbstractScorer extends ConfigurableAdapter implements Acou
     protected abstract Scoreable doScoring(List<Token> scoreableList, Data data);
 
 
+    // Even if we don't do any meaningful allocation here, we implement the methods because
+    // most extending scorers do need them either.
+    
     public void allocate() {
     }
 

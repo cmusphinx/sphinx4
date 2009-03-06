@@ -8,7 +8,6 @@ import edu.cmu.sphinx.result.Lattice;
 import edu.cmu.sphinx.result.Result;
 import edu.cmu.sphinx.util.props.ConfigurationManager;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -42,7 +41,7 @@ public class DemoUnitTests {
 
 
     @Test
-    @Ignore(value = "because this test relies on files available only from within CMU")
+//    @Ignore(value = "because this test relies on files available only from within CMU")
     public void testLatticeDemo() {
         try {
             Lattice.main(new String[]{});
