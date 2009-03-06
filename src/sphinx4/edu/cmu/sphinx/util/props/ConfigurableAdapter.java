@@ -10,7 +10,7 @@ import java.util.logging.Logger;
  */
 public abstract class ConfigurableAdapter implements Configurable{
 
-    protected String name;
+    private String name;
     protected Logger logger;
 
 
