@@ -31,7 +31,6 @@ public class SimpleAcousticScorer extends AbstractScorer {
         best = scoreableList.get(0);
 
         for (Token scoreable : scoreableList) {
-            //TODO: programmable gain
             if (scoreable.calculateScore(data) >
                     best.getScore()) {
                 best = scoreable;

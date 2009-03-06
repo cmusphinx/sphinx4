@@ -14,7 +14,12 @@ package edu.cmu.sphinx.decoder.scorer;
 
 import edu.cmu.sphinx.decoder.search.Token;
 import edu.cmu.sphinx.frontend.Data;
-import edu.cmu.sphinx.util.props.*;
+import edu.cmu.sphinx.frontend.DataEndSignal;
+import edu.cmu.sphinx.frontend.DataStartSignal;
+import edu.cmu.sphinx.util.props.PropertyException;
+import edu.cmu.sphinx.util.props.PropertySheet;
+import edu.cmu.sphinx.util.props.S4Boolean;
+import edu.cmu.sphinx.util.props.S4Integer;
 
 import java.util.List;
 import java.util.ListIterator;
@@ -60,6 +65,15 @@ public class ThreadedAcousticScorer extends AbstractScorer {
     public final static String PROP_MIN_SCOREABLES_PER_THREAD = "minScoreablesPerThread";
 
 
+    /**
+     * If set to true, the scoring threads will be de-/allocated only between the {@code DataStartSignal} and the {@code
+     * DataEndSignal}.
+     */
+    @S4Boolean(defaultValue = false)
+    public static final String BOUND_THREAD_TO_DATA_SEGMENTS = "boundThreadsToDataSegments";
+    private boolean boundThreads;
+
+
     private int numThreads;         // number of threads in use
     private int minScoreablesPerThread; // min scoreables sent to a thread
 
@@ -74,6 +88,8 @@ public class ThreadedAcousticScorer extends AbstractScorer {
 
         minScoreablesPerThread = ps.getInt(PROP_MIN_SCOREABLES_PER_THREAD);
 
+        boundThreads = ps.getBoolean(BOUND_THREAD_TO_DATA_SEGMENTS);
+
         boolean cpuRelative = ps.getBoolean(PROP_IS_CPU_RELATIVE);
         numThreads = ps.getInt(PROP_NUM_THREADS);
 
@@ -87,11 +103,18 @@ public class ThreadedAcousticScorer extends AbstractScorer {
     public void allocate() {
         super.allocate();
 
+        if (!boundThreads)
+            allocateScoringThreads();
+    }
+
+
+    /**
+     * (Re-)Starts all scoring threads. If no addtional scoring thread shoudl be used, then we'll score the states in
+     * the calling thread and we won't need any of the synchronization objects or threads.
+     */
+    private void allocateScoringThreads() {
         logger.fine("# of scoring threads: " + numThreads);
 
-        // if no addtional scoring thread shoudl be used, then we'll score the
-        // states in the calling thread and we won't need any
-        // of the synchronization objects or threads
 
         if (numThreads > 0) {
             mailbox = new Mailbox();
@@ -108,10 +131,16 @@ public class ThreadedAcousticScorer extends AbstractScorer {
     public void deallocate() {
         super.deallocate();
 
-        // stops all scoring threads by setting the mailbox state to be deallocated.
-        // This is in many cases not necessary because all of them are daemon threads, but is mandatory if many sphinx4
-        // instances are started within one appliation.
+        deallocateScoringThreads();
+    }
 
+
+    /**
+     * Stops all scoring threads by setting the mailbox state to be deallocated. This is in many cases not necessary
+     * because all of them are daemon threads, but is mandatory if many sphinx4 instances are started within one
+     * appliation.
+     */
+    private void deallocateScoringThreads() {
         if (mailbox != null) {
             // remark: every call of deallocate will call just one scoring thread.
             for (int i = 0; i < numThreads; i++) {
@@ -119,6 +148,24 @@ public class ThreadedAcousticScorer extends AbstractScorer {
 //                }
             }
         }
+    }
+
+
+    @Override
+    protected void handleDataStartSignal(DataStartSignal dataStartSignal) {
+        super.handleDataStartSignal(dataStartSignal);
+
+        if (boundThreads)
+            allocateScoringThreads();
+    }
+
+
+    @Override
+    protected void handleDataEndSignal(DataEndSignal dataEndSignal) {
+        super.handleDataEndSignal(dataEndSignal);
+
+        if (boundThreads)
+            deallocateScoringThreads();
     }
 
 

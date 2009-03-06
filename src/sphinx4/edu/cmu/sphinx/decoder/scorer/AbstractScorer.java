@@ -5,10 +5,7 @@ import edu.cmu.sphinx.frontend.*;
 import edu.cmu.sphinx.frontend.endpoint.SpeechEndSignal;
 import edu.cmu.sphinx.frontend.endpoint.SpeechStartSignal;
 import edu.cmu.sphinx.frontend.util.DataUtil;
-import edu.cmu.sphinx.util.props.ConfigurableAdapter;
-import edu.cmu.sphinx.util.props.PropertyException;
-import edu.cmu.sphinx.util.props.PropertySheet;
-import edu.cmu.sphinx.util.props.S4Component;
+import edu.cmu.sphinx.util.props.*;
 
 import java.util.List;
 import java.util.Map;
@@ -59,7 +56,7 @@ public abstract class AbstractScorer extends ConfigurableAdapter implements Acou
             Data data = getNextData();
             while (data instanceof Signal) {
                 if (data instanceof SpeechEndSignal)
-                    return null;
+                    return null; // this will indicate the end of the segment to be scored to the search manager
 
                 data = getNextData();
             }
@@ -90,21 +87,38 @@ public abstract class AbstractScorer extends ConfigurableAdapter implements Acou
 
         // reconfigure the scorer for the coming data stream
         if (data instanceof DataStartSignal) {
-            Map<String, Object> dataProps = ((DataStartSignal) data).getProps();
-            if (dataProps.containsKey(DataStartSignal.VAD_TAGGED_FEAT_STREAM))
-                isVadEmbeddedStream = (Boolean) dataProps.get(DataStartSignal.VAD_TAGGED_FEAT_STREAM);
-            else
-                isVadEmbeddedStream = false;
+            handleDataStartSignal((DataStartSignal) data);
         }
 
+        if (data instanceof DataEndSignal)
+            handleDataEndSignal((DataEndSignal) data);
+
         return data;
+    }
+
+
+    /** Handles the first element in a feature-stream. */
+    protected void handleDataStartSignal(DataStartSignal dataStartSignal) {
+        Map<String, Object> dataProps = dataStartSignal.getProps();
+
+        if (dataProps.containsKey(DataStartSignal.VAD_TAGGED_FEAT_STREAM))
+            isVadEmbeddedStream = (Boolean) dataProps.get(DataStartSignal.VAD_TAGGED_FEAT_STREAM);
+        else
+            isVadEmbeddedStream = false;
+    }
+
+
+    /** Handles the last element in a feature-stream. */
+    protected void handleDataEndSignal(DataEndSignal dataEndSignal) {
+        // we don't treat the end-signal here, but extending classes might do
     }
 
 
     public void startRecognition() {
         if (isVadEmbeddedStream == null) {
             Data firstData = getNextData();
-            assert firstData instanceof DataStartSignal;
+            assert firstData instanceof DataStartSignal :
+                    "The first element in an sphinx4-feature stream must be a DataStartSignal but was a " + firstData.getClass().getSimpleName();
         }
 
         if (!isVadEmbeddedStream)
