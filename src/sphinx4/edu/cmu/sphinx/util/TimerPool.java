@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.WeakHashMap;
 
 /**
- * Keeps reference to a list of timers.
+ * Keeps references to a list of timers which can be referenced by a key-pair consisting of an owner and a timer name.
  *
  * @author Holger Brandl
  */
