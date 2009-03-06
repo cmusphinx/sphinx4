@@ -27,7 +27,7 @@ public abstract class AbstractTestProcessor extends BaseDataProcessor {
 
 
     public Data getData() throws DataProcessingException {
-        return input.remove(0);
+        return input.isEmpty() ? null : input.remove(0);
     }
 
 
@@ -36,13 +36,12 @@ public abstract class AbstractTestProcessor extends BaseDataProcessor {
 
         List<Data> output = new ArrayList<Data>();
 
-        while (true) {
-            Data d = dataProc.getData();
+        Data d;
+        while ((d = dataProc.getData()) != null) {
             output.add(d);
-
-            if (d instanceof DataEndSignal)
-                return output;
         }
+
+        return output;
     }
 
 
