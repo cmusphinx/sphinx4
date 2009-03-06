@@ -209,7 +209,7 @@ public class RandomSampleRepeater extends BaseDataProcessor {
 
     @Test
     public void testInsertAtZero() {
-        RandomSampleRepeater rsr = new RandomSampleRepeater();
+        RandomSampleRepeater rsr = ConfigurationManager.getInstance(RandomSampleRepeater.class);
         rsr.randStreamStart = true;
         rsr.useRandSeed = false;
 
@@ -236,7 +236,7 @@ public class RandomSampleRepeater extends BaseDataProcessor {
 
     @Test
     public void testInsertAt4() {
-        RandomSampleRepeater rsr = new RandomSampleRepeater();
+        RandomSampleRepeater rsr = ConfigurationManager.getInstance(RandomSampleRepeater.class);
         rsr.randStreamStart = true;
         rsr.useRandSeed = false;
 
@@ -263,7 +263,7 @@ public class RandomSampleRepeater extends BaseDataProcessor {
 
     @Test
     public void testInsertAtBlockEnd() {
-        RandomSampleRepeater rsr = new RandomSampleRepeater();
+        RandomSampleRepeater rsr = ConfigurationManager.getInstance(RandomSampleRepeater.class);
         rsr.randStreamStart = true;
         rsr.useRandSeed = false;
 
