@@ -335,14 +335,14 @@ public class FlatLinguist implements Linguist, Configurable {
             GState gstate = createGState(grammarNode);
             gstateList.add(gstate);
         }
-        TimerPool.getTimer(this, "createGStates").start();
+        TimerPool.getTimer(this, "createGStates").stop();
         addStartingPath();
 
         // ensures an initial path to the start state
         // Prep all the gstates, by gathering all of the contexts up
         // this allows each gstate to know about its surrounding
         // contexts
-        TimerPool.getTimer(this, "  collectContexts").start();
+        TimerPool.getTimer(this, "collectContexts").start();
         for (GState gstate : gstateList)
             gstate.collectContexts();
         TimerPool.getTimer(this, "collectContexts").stop();
