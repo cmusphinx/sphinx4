@@ -45,14 +45,18 @@ public class FrameDecoder extends AbstractDecoder implements DataProcessor {
     public Data getData() throws DataProcessingException {
         Data d = getPredecessor().getData();
 
-        if ((isRecognizing && (d instanceof FloatData || d instanceof DoubleData || d instanceof SpeechEndSignal))
-                || d instanceof DataEndSignal) { // we also trigger recogntion on a DataEndSignal to allow threaded scorers to shut down correctly
+        if (isRecognizing && (d instanceof FloatData || d instanceof DoubleData || d instanceof SpeechEndSignal)) {
             result = decode(null);
 
             if (result != null) {
                 fireResultListeners(result);
                 result = null;
             }
+        }
+
+        // we also trigger recogntion on a DataEndSignal to allow threaded scorers to shut down correctly
+        if (d instanceof DataEndSignal) {
+            searchManager.stopRecognition();
         }
 
         if (d instanceof SpeechStartSignal) {
