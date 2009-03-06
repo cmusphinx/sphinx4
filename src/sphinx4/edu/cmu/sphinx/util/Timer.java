@@ -20,7 +20,7 @@ import java.text.DecimalFormat;
  * once. The timer will report the minimum, maximum, average and last time executed for all start/stop pairs when the
  * timer.dump is called.
  * <p/>
- * Timer instances can be obtained from a global cache implemented in {@coode TimerPool}.
+ * Timer instances can be obtained from a global cache implemented in {@code TimerPool}.
  *
  * @see TimerPool
  */

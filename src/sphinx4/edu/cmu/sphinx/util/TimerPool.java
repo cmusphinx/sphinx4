@@ -20,6 +20,7 @@ public class TimerPool {
 
     }
 
+
     /**
      * Retrieves (or creates) a timer with the given name
      *
@@ -27,7 +28,7 @@ public class TimerPool {
      * @param timerName the name of the particular timer to retrieve. If the timer does not already exist, it will be
      *                  created  @return the timer.
      */
-    public static Timer getTimer(Object owner, String timerName) {
+    public static synchronized Timer getTimer(Object owner, String timerName) {
         if (!weakRefTimerPool.containsKey(owner))
             weakRefTimerPool.put(owner, new ArrayList<Timer>());
 
@@ -43,6 +44,17 @@ public class TimerPool {
         ownerTimers.add(requestedTimer);
 
         return requestedTimer;
+    }
+
+
+    /** Returns the number of currently caches {@code Timer} instances. */
+    public static int getNumCachedTimers() {
+        int counter = 0;
+        for (Object o : weakRefTimerPool.keySet()) {
+            counter += weakRefTimerPool.get(o).size();
+        }
+
+        return counter;
     }
 
 
