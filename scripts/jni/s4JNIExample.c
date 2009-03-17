@@ -12,7 +12,7 @@ JavaVM* S4JniExample_createJVM(){
     JavaVM *vm;
     jint res;
 
-    setenv("JAVA_VM_VERSION", "1.5", 1);
+//    setenv("JAVA_VM_VERSION", "1.5", 1);
 //    setenv("JAVA_VM_VERSION", "1.5", 0);
     JavaVMInitArgs vm_args;
     JavaVMOption options[7];
