@@ -191,6 +191,8 @@ public class ThreadedAcousticScorer extends AbstractScorer {
             best = scoreScoreables(job);
         }
 
+        currentData = null;
+        
         return best;
     }
 
