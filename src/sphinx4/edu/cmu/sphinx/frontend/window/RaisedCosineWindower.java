@@ -13,6 +13,7 @@
 package edu.cmu.sphinx.frontend.window;
 
 import edu.cmu.sphinx.frontend.*;
+import edu.cmu.sphinx.frontend.endpoint.*;
 import edu.cmu.sphinx.frontend.util.DataUtil;
 import edu.cmu.sphinx.util.props.PropertyException;
 import edu.cmu.sphinx.util.props.PropertySheet;
@@ -160,19 +161,25 @@ public class RaisedCosineWindower extends BaseDataProcessor {
                 } else {
                     if (input instanceof DataStartSignal) {
                         DataStartSignal startSignal = (DataStartSignal) input;
-                        createWindow(startSignal.getSampleRate());
 
-                        // attach the frame-length and the shift-length to the start-signal to allow
+                        createWindow(startSignal.getSampleRate());
+			
+                	// attach the frame-length and the shift-length to the start-signal to allow
+			// detection of incorrect frontend settings
                         Map<String, Object> props = startSignal.getProps();
                         props.put(WINDOW_SHIFT_SAMPLES, windowShift);
                         props.put(WINDOW_SIZE_SAMPLES, cosineWindow.length);
 
                         // reset the current first sample number
                         currentFirstSampleNumber = -1;
-                    } else if (input instanceof DataEndSignal) {
+                    } else if (input instanceof SpeechStartSignal) {
+                        // reset the current first sample number
+                        currentFirstSampleNumber = -1;		    
+                    } else if (input instanceof DataEndSignal || input instanceof SpeechEndSignal) {
                         // end of utterance handling
                         processUtteranceEnd();
                     }
+		    
                     outputQueue.add(input);
                 }
             }
