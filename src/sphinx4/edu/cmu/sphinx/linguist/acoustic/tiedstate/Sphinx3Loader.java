@@ -22,6 +22,7 @@ import edu.cmu.sphinx.util.props.*;
 
 import java.io.*;
 import java.net.URL;
+import java.net.URI;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -262,14 +263,29 @@ public class Sphinx3Loader implements Loader {
         useCDUnits = ps.getBoolean(PROP_USE_CD_UNITS);
     }
 
+    // This function is a bit different from ConfigurationManagerUtils.getResource
+    // for compatibility reasons. By default it looks for the resources, not
+    // for the files.
+    private InputStream getDataStream (String location) {
+	
+	InputStream stream;
+	
+	if (location.startsWith ("file:")) {
+	    try {
+    	        return new FileInputStream (location.substring(5));
+	    } catch (Exception e) {
+		return null;
+	    }
+	}
+	
+	return getClass().getResourceAsStream(location);
+    }
 
     private void loadProperties() {
         if (properties == null) {
             properties = new Properties();
             try {
-                URL url = getClass().getResource(propsFile);
-                // System.out.println(getClass() + " " + url);
-                properties.load(url.openStream());
+                properties.load(getDataStream(propsFile));
             } catch (IOException ioe) {
                 ioe.printStackTrace();
             }
@@ -459,7 +475,7 @@ public class Sphinx3Loader implements Loader {
         }
         senonePool = createSenonePool(distFloor, varianceFloor);
         // load the HMM model file
-        InputStream modelStream = getClass().getResourceAsStream(model);
+        InputStream modelStream = getDataStream(model);
         if (modelStream == null) {
             throw new IOException("can't find model " + model);
         }
@@ -550,7 +566,7 @@ public class Sphinx3Loader implements Loader {
         int numStreams;
         int numGaussiansPerState;
 
-        InputStream inputStream = getClass().getResourceAsStream(path);
+        InputStream inputStream = getDataStream(path);
 
         if (inputStream == null) {
             throw new FileNotFoundException("Error trying to read file "
@@ -685,8 +701,7 @@ public class Sphinx3Loader implements Loader {
                                                  Properties props)
             throws IOException {
 
-        // System.out.println("resource: " + path + ", " + getClass());
-        InputStream inputStream = getClass().getResourceAsStream(path);
+        InputStream inputStream = getDataStream(path);
 
         if (inputStream == null) {
             throw new IOException("Can't open " + path);
