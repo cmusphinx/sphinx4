@@ -135,9 +135,6 @@ public abstract class AbstractScorer extends ConfigurableAdapter implements Acou
 
             data = getNextData();
         }
-
-        if (data == null)
-            logger.warning("Not enough data in frontend to start recognition");
     }
 
 
