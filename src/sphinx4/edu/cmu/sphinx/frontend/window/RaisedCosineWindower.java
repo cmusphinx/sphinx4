@@ -273,13 +273,15 @@ public class RaisedCosineWindower extends BaseDataProcessor {
 
     /**
      * What happens when an DataEndSignal is received. Basically pads up to a window of the overflow buffer with zeros,
-     * and then apply the Hamming window to it.
+     * and then apply the Hamming window to it. Checks if buffer has data.
      */
     private void processUtteranceEnd() {
-        overflowBuffer.padWindow(cosineWindow.length);
-        applyRaisedCosineWindow
-                (overflowBuffer.getBuffer(), cosineWindow.length);
-        overflowBuffer.reset();
+	if (overflowBuffer.getOccupancy() > 0) {
+    	    overflowBuffer.padWindow(cosineWindow.length);
+	    applyRaisedCosineWindow
+        	        (overflowBuffer.getBuffer(), cosineWindow.length);
+    	    overflowBuffer.reset();
+        }
     }
 
 
