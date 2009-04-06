@@ -561,6 +561,7 @@ public class BatchModeRecognizer implements Configurable {
             bmr = (BatchModeRecognizer) cm.lookup("batch");
             if (bmr == null) {
                 System.err.println("Can't find batchModeRecognizer in " + cmFile);
+                return;
             }
             if (argv.length >= 3 && argv[2].equals("-shell")) {
                 bmr.shell(batchFile);

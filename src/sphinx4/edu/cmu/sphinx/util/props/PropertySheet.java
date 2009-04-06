@@ -767,6 +767,10 @@ public class PropertySheet implements Cloneable {
         return true;
     }
 
+    public int hashCode() {
+  	  	assert false : "hashCode not designed";
+  	  	return 1; // any arbitrary constant will do 
+    }
 
     @Override
     public String toString() {

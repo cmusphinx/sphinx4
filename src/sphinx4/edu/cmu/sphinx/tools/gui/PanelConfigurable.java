@@ -727,8 +727,8 @@ public class PanelConfigurable extends javax.swing.JPanel {
                 PropertyType mytype = cp.getType();
                 jTextPropType.setText((mytype==null)?null:mytype.toString());
 
-                if(mytype.equals( PropertyType.COMPONENT )||
-                        mytype.equals(PropertyType.COMPONENT_LIST) )
+                if(mytype != null && (mytype.equals( PropertyType.COMPONENT ) ||
+                        mytype.equals(PropertyType.COMPONENT_LIST)) )
                 {
                     jLabelClassType.setVisible(true);
                     jTextClassType.setVisible(true);

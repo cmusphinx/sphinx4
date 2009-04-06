@@ -484,7 +484,11 @@ public class ConfigurationManager implements Cloneable {
         // make sure that both configuration managers have the same set of global properties
         return cm.getGlobalProperties().equals(getGlobalProperties());
     }
-
+    
+    public int hashCode() {
+    	  assert false : "hashCode not designed";
+    	  return 1; // any arbitrary constant will do 
+    }
 
     /** Creates a deep copy of the given CM instance. */
     // This is not tested yet !!!

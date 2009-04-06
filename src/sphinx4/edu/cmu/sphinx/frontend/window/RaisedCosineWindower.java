@@ -449,7 +449,6 @@ class DoubleBuffer {
      */
     public int append(double[] src, int srcPos, int length) {
         if (occupancy + length > buffer.length) {
-            length = buffer.length - occupancy;
             throw new Error("RaisedCosineWindower: " +
                     "overflow-buffer: attempting to fill " +
                     "buffer beyond its capacity.");

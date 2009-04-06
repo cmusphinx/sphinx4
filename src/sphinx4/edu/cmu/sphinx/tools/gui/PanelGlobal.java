@@ -203,8 +203,8 @@ import java.util.Iterator;
         String propName = TextFieldPropName.getText();
         String propVal =TextFieldPropVal.getText();
         
-        if ( (propName == null) && (propName.trim().equalsIgnoreCase("")) &&
-             (propVal == null) && (propVal.trim().equalsIgnoreCase("")))
+        if ( (propName == null) || (propName.trim().equalsIgnoreCase("")) ||
+             (propVal == null) || (propVal.trim().equalsIgnoreCase("")))
         {
             //if either property name or value is empty
             displayError("Please complete the property name and value first");

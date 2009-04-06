@@ -52,7 +52,7 @@ public class Partitioner {
      * @return the index of the element around which the array is partitioned
      */
     private int midPointPartition(Token[] tokens, int p, int r) {
-        int i = (p + r) / 2;
+        int i = (p + r) >>> 1;
         Token temp = tokens[r];
         setToken(tokens, r, tokens[i]);
         setToken(tokens, i, temp);

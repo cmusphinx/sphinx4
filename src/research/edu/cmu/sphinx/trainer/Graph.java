@@ -227,7 +227,7 @@ public class Graph {
      */
     public void copyGraph(Graph graph) {
         // Make sure the current graph is empty
-        assert ((nodes.size() == 0) & (edges.size() == 0));
+        assert ((nodes.size() == 0) && (edges.size() == 0));
         for (graph.startNodeIterator();
              graph.hasMoreNodes();) {
             addNode(graph.nextNode());

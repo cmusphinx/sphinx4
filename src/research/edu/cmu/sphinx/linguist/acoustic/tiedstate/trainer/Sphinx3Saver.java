@@ -21,7 +21,6 @@ import edu.cmu.sphinx.util.Utilities;
 import edu.cmu.sphinx.util.props.*;
 
 import java.io.*;
-import java.net.URL;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -125,13 +124,6 @@ class Sphinx3Saver implements Saver {
 
         sparseForm = ps.getBoolean(PROP_SPARSE_FORM);
         useCDUnits = ps.getBoolean(PROP_USE_CD_UNITS);
-
-        float distFloor = ps.getFloat(PROP_MC_FLOOR);
-        float mixtureWeightFloor = ps.getFloat(PROP_MW_FLOOR);
-        float transitionProbabilityFloor = 0;
-        float varianceFloor = ps.getFloat(PROP_VARIANCE_FLOOR);
-
-        this.binary = binary;
         logMath = ConfigurationManager.getInstance(LogMath.class);
 
         // extract the feature vector length
@@ -208,19 +200,8 @@ class Sphinx3Saver implements Saver {
         // save the acoustic properties file (am.props), 
         // create a different URL depending on the data format
 
-        URL url = null;
-        String format = StreamFactory.resolve(location);
-
-        if (format.equals(StreamFactory.ZIP_FILE)) {
-            url = new URL("jar:" + location + "!/" + propsFile);
-        } else {
-            File file = new File(location, propsFile);
-            url = file.toURI().toURL();
-        }
-
         saveAcousticPropertiesFile(propsFile, false);
-
-
+        
         if (binary) {
             // First, overwrite the previous file
             saveDensityFileBinary(meansPool, dataDir + "means", true);
@@ -335,7 +316,6 @@ class Sphinx3Saver implements Saver {
             throw new IOException("Error trying to write file "
                     + path);
         }
-        PrintStream ps = new PrintStream(outputStream, true);
         outputStream.close();
     }
 
@@ -1082,8 +1062,6 @@ class Sphinx3Saver implements Saver {
         int numRows;
         int numValues;
         Properties props = new Properties();
-
-        int checkSum = 0;
 
         props.setProperty("version", TMAT_FILE_VERSION);
         if (doCheckSum) {

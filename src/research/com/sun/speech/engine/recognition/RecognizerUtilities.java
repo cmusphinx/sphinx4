@@ -113,7 +113,7 @@ public class RecognizerUtilities {
                 RuleName rn = new RuleName(grams[i].getName() + "." + names[j]);
 
                 // Identify all rules referenced in r
-                Vector refs = new Vector();
+                Vector<RuleName> refs = new Vector<RuleName>();
                 getRuleNameRefs(r, refs);
 
                 for (int k = 0; k < refs.size(); k++) {
@@ -275,20 +275,16 @@ public class RecognizerUtilities {
     static RuleGrammar[] transform(RuleGrammar RG[], boolean eliminateNULL, boolean eliminateVOID)
             throws GrammarException {
         //if (!eliminateNULL && !eliminateVOID) return RG;
-        Hashtable ruleinfo = new Hashtable();
         RuleGrammar NRG[] = (RuleGrammar[]) RG.clone();
         boolean somethingchanged = true;
         boolean nochange = true;
         while (somethingchanged) {
             somethingchanged = false;
             for (int i = 0; i < NRG.length; i++) {
-                RuleGrammar NG = null;
                 String rnames[] = NRG[i].listRuleNames();
                 for (int j = 0; j < rnames.length; j++) {
                     Rule r = NRG[i].getRuleInternal(rnames[j]);
                     Rule nr = transform(r, NRG, eliminateNULL, eliminateVOID);
-                    //System.out.println("do: " + rnames[j]);
-                    //System.out.println("  ("+r+") ("+nr+")");
                     if (nr != r) {
                         nochange = false;
                         somethingchanged = true;

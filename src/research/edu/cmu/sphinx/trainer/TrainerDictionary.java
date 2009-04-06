@@ -53,7 +53,7 @@ public class TrainerDictionary extends FullDictionary {
             try {
                 pronunciationID = Integer.valueOf(number).intValue();
             } catch (NumberFormatException nfe) {
-                new Error("Word with invalid pronunciation ID", nfe);
+                throw new Error("Word with invalid pronunciation ID", nfe);
             }
         }
         pronunciations

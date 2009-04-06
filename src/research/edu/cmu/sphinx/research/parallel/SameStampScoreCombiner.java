@@ -34,9 +34,9 @@ public class SameStampScoreCombiner implements ScoreCombiner {
      * @param stamp     the stamp of tokens to remove
      * @return a list of the removed tokens
      */
-    public List removeTokensByStamp(List tokenList, String stamp) {
-        List returnList = new LinkedList();
-        for (ListIterator i = tokenList.listIterator(); i.hasNext();) {
+    public List<ParallelToken> removeTokensByStamp(List<ParallelToken> tokenList, String stamp) {
+        List<ParallelToken> returnList = new LinkedList<ParallelToken>();
+        for (ListIterator<ParallelToken> i = tokenList.listIterator(); i.hasNext();) {
             ParallelToken token = (ParallelToken) i.next();
             if (token.getLastCombineStamp().equals(stamp)) {
                 returnList.add(token);
@@ -64,11 +64,11 @@ public class SameStampScoreCombiner implements ScoreCombiner {
         // System.out.println("TokenList size: " + tokenList.size());
 
         double logHighestCombinedScore = Double.NEGATIVE_INFINITY;
-        List highestList = null;
+        List<ParallelToken> highestList = null;
 
         while (tokenList.size() > 0) {
             ParallelToken firstToken = (ParallelToken) tokenList.get(0);
-            List sameStampList = removeTokensByStamp
+            List<ParallelToken> sameStampList = removeTokensByStamp
                     (tokenList, firstToken.getLastCombineStamp());
 
             double logCombinedScore = getCombinedScore(sameStampList);
@@ -81,10 +81,10 @@ public class SameStampScoreCombiner implements ScoreCombiner {
             }
         }
 
-        assert highestList != null & highestList.size() > 1;
+        assert highestList != null && highestList.size() > 1;
         // System.out.println("Highest TokenList size: " + highestList.size());
 
-        for (Iterator i = highestList.iterator(); i.hasNext();) {
+        for (Iterator<ParallelToken> i = highestList.iterator(); i.hasNext();) {
             ParallelToken token = (ParallelToken) i.next();
             token.setCombinedScore((float) logHighestCombinedScore);
         }

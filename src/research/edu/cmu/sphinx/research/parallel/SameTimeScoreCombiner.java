@@ -99,7 +99,7 @@ public class SameTimeScoreCombiner implements ScoreCombiner {
             }
         }
 
-        assert highestList != null & highestList.size() > 0;
+        assert highestList != null && highestList.size() > 0;
         // System.out.println("Highest TokenList size: " + highestList.size());
 
         for (Iterator i = highestList.iterator(); i.hasNext();) {

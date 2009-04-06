@@ -63,10 +63,7 @@ public class AudioFileDataSource extends BaseDataProcessor {
     private boolean utteranceEndSent = false;
     private boolean utteranceStarted = false;
 
-    protected Logger logger;
-
     private File curAudioFile;
-
 
     @Override
     public void newProperties(PropertySheet ps) throws PropertyException {

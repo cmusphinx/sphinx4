@@ -67,7 +67,6 @@ public class SpeechClassifier extends BaseDataProcessor {
     @S4Double(defaultValue = 0.003)
     public static final String PROP_ADJUSTMENT = "adjustment";
 
-    protected Logger logger;
     protected double averageNumber = 1;
     protected double adjustment;
     protected double level;               // average signal level

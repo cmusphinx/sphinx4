@@ -96,7 +96,6 @@ public class ClassFinder {
         File tempDir = getStartingDir(startDir);
         validateDirectory(tempDir);
 
-        ArrayList dirList = new ArrayList();
         File[] myFilesDirs = tempDir.listFiles();
         String tempFile = null;
 

@@ -113,11 +113,11 @@ public class DataBlockerTest extends BaseDataProcessor {
 
 
     /**
-     * Tests wether the samples of all <code>Data</code>s in the list are ordered in increasing order with +1
+     * Tests whether the samples of all <code>Data</code>s in the list are ordered in increasing order with +1
      * increments.
      */
     public static boolean hasIncreasingOrder(List<Data> output, int lastValue) {
-        double dataCounter = 0;
+        int dataCounter = 0;
 
         for (Data data : output) {
             if (data instanceof DoubleData) {

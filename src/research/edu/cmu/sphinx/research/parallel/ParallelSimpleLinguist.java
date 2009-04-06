@@ -59,7 +59,7 @@ public class ParallelSimpleLinguist extends FlatLinguist {
     public static final String PROP_FEATURE_STREAMS = "featureStreams";
 
 
-    private List featureStreams;
+    private List<FeatureStream> featureStreams;
 
     private int tokenStackCapacity;
 
@@ -88,8 +88,8 @@ public class ParallelSimpleLinguist extends FlatLinguist {
      */
     protected void setupAcousticModel(PropertySheet ps)
             throws PropertyException {
-        featureStreams = ps.getComponentList
-                (PROP_FEATURE_STREAMS);
+        List componentList = ps.getComponentList(PROP_FEATURE_STREAMS);
+		featureStreams = componentList;
     }
 
 
@@ -115,7 +115,7 @@ public class ParallelSimpleLinguist extends FlatLinguist {
      *
      * @return an iterator of the feature streams
      */
-    public Iterator getFeatureStreams() {
+    public Iterator<FeatureStream> getFeatureStreams() {
         return featureStreams.iterator();
     }
 
@@ -315,15 +315,13 @@ public class ParallelSimpleLinguist extends FlatLinguist {
          * @return the last SentenceHMMState from the expansion
          */
         private SentenceHMMState getTiedHMMStates(UnitState unitState) {
-            SentenceHMMState combineState = new CombineState(unitState.getParent(), unitState.getWhich());
-
             HMM[] hmms = new HMM[featureStreams.size()];
 
             SentenceHMMState lastState;
 
             int s = 0;
             // create an HMM branch for each feature stream
-            for (Iterator i = featureStreams.iterator(); i.hasNext(); s++) {
+            for (Iterator<FeatureStream> i = featureStreams.iterator(); i.hasNext(); s++) {
                 FeatureStream stream = (FeatureStream) i.next();
                 hmms[s] = stream.getAcousticModel().lookupNearestHMM
                         (unitState.getUnit(), unitState.getPosition(), false);

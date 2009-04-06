@@ -28,7 +28,7 @@ import java.util.logging.LogRecord;
  */
 public class SphinxLogFormatter extends Formatter {
 
-    private static DateFormat DATE_FORMATTER = new SimpleDateFormat("hh:mm.SSS");
+    private DateFormat DATE_FORMATTER = new SimpleDateFormat("hh:mm.SSS");
     private boolean terse;
 
 
