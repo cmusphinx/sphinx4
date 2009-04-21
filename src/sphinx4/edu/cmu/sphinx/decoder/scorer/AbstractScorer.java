@@ -120,6 +120,10 @@ public abstract class AbstractScorer extends ConfigurableAdapter implements Acou
     public void startRecognition() {
         if (useSpeechSignals == null) {
             Data firstData = getNextData();
+            
+            if (firstData == null)
+        	    return;
+            
             assert firstData instanceof DataStartSignal :
                     "The first element in an sphinx4-feature stream must be a DataStartSignal but was a " + firstData.getClass().getSimpleName();
         }
