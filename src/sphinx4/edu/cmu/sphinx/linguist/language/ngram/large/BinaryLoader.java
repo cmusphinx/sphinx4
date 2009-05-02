@@ -645,27 +645,26 @@ public class BinaryLoader {
     private final String[] readWords(DataInputStream stream, int length,
                                      int numberUnigrams) throws IOException {
         String[] words = new String[numberUnigrams];
-
-        StringBuffer buffer = new StringBuffer();
         byte[] bytes = new byte[length];
         bytesRead += stream.read(bytes);
 
         int s = 0;
+        int wordStart = 0;
         for (int i = 0; i < length; i++) {
             char c = (char) (bytes[i] & 0xFF);
             bytesRead++;
             if (c == '\0') {
                 // if its the end of a string, add it to the 'words' array
-                words[s] = buffer.toString().toLowerCase();
-                buffer = new StringBuffer();
+            	byte[] wordBytes = new byte[i - wordStart];
+            	System.arraycopy(bytes, wordStart, wordBytes, 0, i - wordStart);
+                wordStart = i + 1;          
+                words[s] = new String(wordBytes).toLowerCase();
                 if (words[s].equals(Dictionary.SENTENCE_START_SPELLING)) {
                     startWordID = s;
                 } else if (words[s].equals(Dictionary.SENTENCE_END_SPELLING)) {
                     endWordID = s;
                 }
                 s++;
-            } else {
-                buffer.append(c);
             }
         }
         assert (s == numberUnigrams);
