@@ -94,7 +94,7 @@ public class FastDictionary implements Dictionary {
     protected URL fillerDictionaryFile;
     protected List<URL> addendaUrlList;
 
-    private UnitManager unitManager;
+    protected UnitManager unitManager;
 
     // -------------------------------
     // working data
@@ -243,7 +243,7 @@ public class FastDictionary implements Dictionary {
      * @param isFiller if true, the unit is a filler unit
      * @return the unit
      */
-    private Unit getCIUnit(String name, boolean isFiller) {
+    protected Unit getCIUnit(String name, boolean isFiller) {
         return unitManager.getUnit(name, isFiller, Context.EMPTY_CONTEXT);
     }
 
