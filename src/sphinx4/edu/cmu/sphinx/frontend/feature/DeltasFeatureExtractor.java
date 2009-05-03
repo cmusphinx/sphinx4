@@ -12,6 +12,7 @@
 package edu.cmu.sphinx.frontend.feature;
 
 import edu.cmu.sphinx.frontend.*;
+import edu.cmu.sphinx.frontend.endpoint.*;
 import edu.cmu.sphinx.util.props.*;
 
 import java.util.*;
@@ -113,7 +114,7 @@ public class DeltasFeatureExtractor extends BaseDataProcessor {
                     if (dataEndSignal != null) {
                         outputQueue.add(dataEndSignal);
                     }
-                } else if (input instanceof DataEndSignal) {
+                } else if (input instanceof DataEndSignal || input instanceof SpeechEndSignal) {
                     // when the DataEndSignal is right at the boundary
                     int n = replicateLastCepstrum();
                     computeFeatures(n);
@@ -132,7 +133,7 @@ public class DeltasFeatureExtractor extends BaseDataProcessor {
 
     private Data getNextData() throws DataProcessingException {
         Data d = getPredecessor().getData();
-        while (d != null && !(d instanceof DoubleData || d instanceof DataEndSignal || d instanceof DataStartSignal)) {
+        while (d != null && !(d instanceof DoubleData || d instanceof DataEndSignal || d instanceof DataStartSignal || d instanceof SpeechEndSignal)) {
             outputQueue.add(d);
             d = getPredecessor().getData();
         }

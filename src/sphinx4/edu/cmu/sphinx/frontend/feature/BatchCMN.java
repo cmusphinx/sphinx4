@@ -13,6 +13,7 @@
 package edu.cmu.sphinx.frontend.feature;
 
 import edu.cmu.sphinx.frontend.*;
+import edu.cmu.sphinx.frontend.endpoint.*;
 import edu.cmu.sphinx.util.props.PropertyException;
 import edu.cmu.sphinx.util.props.PropertySheet;
 
@@ -25,7 +26,8 @@ import java.util.*;
  * data.
  * <p/>
  * The CMN processing subtracts the mean from all the {@link Data} objects between a {@link
- * edu.cmu.sphinx.frontend.DataStartSignal} and a {@link DataEndSignal}.  BatchCMN will read in all the {@link Data}
+ * edu.cmu.sphinx.frontend.DataStartSignal} and a {@link DataEndSignal} or between a {@link
+ * edu.cmu.sphinx.frontend.endpoint.SpeechStartSignal} and a {@link SpeechEndSignal}.  BatchCMN will read in all the {@link Data}
  * objects, calculate the mean, and subtract this mean from all the {@link Data} objects. For a given utterance, it will
  * only produce an output after reading all the incoming data for the utterance. As a result, this process can introduce
  * a significant processing delay, which is acceptable for batch processing, but not for live mode. In the latter case,
@@ -130,7 +132,7 @@ public class BatchCMN extends BaseDataProcessor {
                     }
                     cepstraList.add(input);
 
-                } else if (input instanceof DataEndSignal) {
+                } else if (input instanceof DataEndSignal || input instanceof SpeechEndSignal) {
                     cepstraList.add(input);
                     break;
                 } else { // DataStartSignal or other Signal
