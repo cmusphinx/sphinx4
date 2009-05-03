@@ -36,7 +36,7 @@ public class ConcatFeatureExtractor extends BaseDataProcessor {
     private int currentPosition;
     private int window;
     private DoubleData[] cepstraBuffer;
-    private DataEndSignal dataEndSignal;
+    private Signal pendingSignal;
     private List<Data> outputQueue;
 
 
@@ -86,13 +86,13 @@ public class ConcatFeatureExtractor extends BaseDataProcessor {
                     addCepstrum((DoubleData) input);
                     computeFeatures(1);
                 } else if (input instanceof DataStartSignal) {
-                    dataEndSignal = null;
+                    pendingSignal = null;
                     outputQueue.add(input);
                     Data start = getNextData();
                     int n = processFirstCepstrum(start);
                     computeFeatures(n);
-                    if (dataEndSignal != null) {
-                        outputQueue.add(dataEndSignal);
+                    if (pendingSignal != null) {
+                        outputQueue.add(pendingSignal);
                     }
                 } else if (input instanceof DataEndSignal || input instanceof SpeechEndSignal) {
                     // when the DataEndSignal is right at the boundary
@@ -147,16 +147,16 @@ public class ConcatFeatureExtractor extends BaseDataProcessor {
             currentPosition = window;
             currentPosition %= cepstraBufferSize;
             int numberFeatures = 1;
-            dataEndSignal = null;
+            pendingSignal = null;
             for (int i = 0; i < window; i++) {
                 Data next = getNextData();
                 if (next != null) {
                     if (next instanceof DoubleData) {
                         // just a cepstra
                         addCepstrum((DoubleData) next);
-                    } else if (next instanceof DataEndSignal) {
+                    } else if (next instanceof DataEndSignal || next instanceof SpeechEndSignal) {
                         // end of segment cepstrum
-                        dataEndSignal = (DataEndSignal) next;
+                        pendingSignal = (Signal) next;
                         replicateLastCepstrum();
                         numberFeatures += i;
                         break;

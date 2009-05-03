@@ -29,7 +29,6 @@ import java.util.*;
  * 12 cepstra (c[1] through c[12]) <br>followed by delta cepstra (delta c[1] through delta c[12]) <br>followed by c[0],
  * delta c[0] <br>followed by delta delta c[0] through delta delta c[12] </p>
  */
-@SuppressWarnings({"UnnecessaryLocalVariable"})
 public class S3FeatureExtractor extends BaseDataProcessor {
 
     /** The name of the SphinxProperty for the window of the S3FeatureExtractor. */
@@ -44,7 +43,7 @@ public class S3FeatureExtractor extends BaseDataProcessor {
     private int window;
     private int jp1, jp2, jp3, jf1, jf2, jf3;
     private DoubleData[] cepstraBuffer;
-    private DataEndSignal dataEndSignal;
+    private Signal pendingSignal;
     private List<Data> outputQueue;
 
 
@@ -95,13 +94,13 @@ public class S3FeatureExtractor extends BaseDataProcessor {
                     addCepstrum((DoubleData) input);
                     computeFeatures(1);
                 } else if (input instanceof DataStartSignal) {
-                    dataEndSignal = null;
+                    pendingSignal = null;
                     outputQueue.add(input);
                     Data start = getNextData();
                     int n = processFirstCepstrum(start);
                     computeFeatures(n);
-                    if (dataEndSignal != null) {
-                        outputQueue.add(dataEndSignal);
+                    if (pendingSignal != null) {
+                        outputQueue.add(pendingSignal);
                     }
                 } else if (input instanceof DataEndSignal || input instanceof SpeechEndSignal) {
                     // when the DataEndSignal is right at the boundary
@@ -154,16 +153,16 @@ public class S3FeatureExtractor extends BaseDataProcessor {
             currentPosition = window;
             currentPosition %= cepstraBufferSize;
             int numberFeatures = 1;
-            dataEndSignal = null;
+            pendingSignal = null;
             for (int i = 0; i < window; i++) {
                 Data next = getPredecessor().getData();
                 if (next != null) {
                     if (next instanceof DoubleData) {
                         // just a cepstra
                         addCepstrum((DoubleData) next);
-                    } else if (next instanceof DataEndSignal) {
+                    } else if (next instanceof DataEndSignal || next instanceof SpeechEndSignal) {
                         // end of segment cepstrum
-                        dataEndSignal = (DataEndSignal) next;
+                        pendingSignal = (Signal) next;
                         replicateLastCepstrum();
                         numberFeatures += i;
                         break;
