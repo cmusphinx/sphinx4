@@ -101,7 +101,7 @@ public class FastDictionary implements Dictionary {
     // -------------------------------
     protected Map<String, Object> dictionary;
 
-    private final static String FILLER_TAG = "-F-";
+    protected final static String FILLER_TAG = "-F-";
     protected Set<String> fillerWords;
     protected boolean allocated;
 
