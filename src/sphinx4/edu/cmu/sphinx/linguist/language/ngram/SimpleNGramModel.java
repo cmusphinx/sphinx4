@@ -29,10 +29,10 @@ import java.util.*;
 import java.util.logging.Logger;
 
 /**
- * An ascii ARPA language model loader. This loader makes no attempt to optimize storage, so it can only load very small
+ * An ASCII ARPA language model loader. This loader makes no attempt to optimize storage, so it can only load very small
  * language models
  * <p/>
- * Note that all probabilites in the grammar are stored in LogMath log base format. Language Probabilties in the
+ * Note that all probabilities in the grammar are stored in LogMath log base format. Language Probabilities in the
  * language model file are stored in log 10 base.
  */
 public class SimpleNGramModel implements LanguageModel {
@@ -173,7 +173,7 @@ public class SimpleNGramModel implements LanguageModel {
      * @return the smear term associated with this word sequence
      */
     public float getSmear(WordSequence wordSequence) {
-        return 0.0f; // TODO not implememted
+        return 0.0f; // TODO not implemented
     }
 
 
@@ -196,7 +196,7 @@ public class SimpleNGramModel implements LanguageModel {
     /**
      * Returns the maximum depth of the language model
      *
-     * @return the maximum depth of the language mdoel
+     * @return the maximum depth of the language model
      */
     public int getMaxDepth() {
         return maxNGram;
@@ -204,7 +204,7 @@ public class SimpleNGramModel implements LanguageModel {
 
 
     /**
-     * Returns the set of words in the lanaguage model. The set is unmodifiable.
+     * Returns the set of words in the language model. The set is unmodifiable.
      *
      * @return the unmodifiable set of words
      */
