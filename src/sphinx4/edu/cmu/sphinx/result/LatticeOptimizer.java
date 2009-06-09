@@ -11,7 +11,6 @@
  */
 package edu.cmu.sphinx.result;
 
-import java.util.Iterator;
 import java.util.Vector;
 
 /**
@@ -93,9 +92,7 @@ public class LatticeOptimizer {
             moreChanges = false;
             // search for a node that can be optimized
             // note that we use getCopyOfNodes to avoid concurrent changes to nodes
-            for (Iterator i = lattice.getCopyOfNodes().iterator(); i.hasNext();) {
-                Node n = (Node) i.next();
-
+            for (Node n : lattice.getCopyOfNodes()) {
                 // we are iterating down a list of node before optimization
                 // previous iterations may have removed nodes from the list
                 // therefore we have to check that the node stiff exists
@@ -121,9 +118,9 @@ public class LatticeOptimizer {
     protected boolean optimizeNodeForward(Node n) {
         assert lattice.hasNode(n);
 
-        Vector leavingEdges = new Vector(n.getLeavingEdges());
+        Vector<Edge> leavingEdges = new Vector<Edge>(n.getLeavingEdges());
         for (int j = 0; j < leavingEdges.size(); j++) {
-            Edge e = (Edge) leavingEdges.elementAt(j);
+            Edge e = leavingEdges.elementAt(j);
             for (int k = j + 1; k < leavingEdges.size(); k++) {
                 Edge e2 = (Edge) leavingEdges.elementAt(k);
 
@@ -201,8 +198,7 @@ public class LatticeOptimizer {
                 e2.getLMScore()));
 
         // add n2's edges to n1
-        for (Iterator i = n2.getLeavingEdges().iterator(); i.hasNext();) {
-            Edge e = (Edge) i.next();
+        for (Edge e : n2.getLeavingEdges()) {
             e2 = n1.getEdgeToNode(e.getToNode());
             if (e2 == null) {
                 lattice.addEdge(n1, e.getToNode(),
@@ -224,10 +220,10 @@ public class LatticeOptimizer {
 
 
     /**
-     * Minimize the Lattice deterministic, so that no node has multiple incomming edges from equivalent nodes.
+     * Minimize the Lattice deterministic, so that no node has multiple incoming edges from equivalent nodes.
      * <p/>
-     * Given two edges from equivalent nodes to a single nodes, replace with one edge from one node with incomming edges
-     * that are a union of the incomming edges of the old two nodes.
+     * Given two edges from equivalent nodes to a single nodes, replace with one edge from one node with incoming edges
+     * that are a union of the incoming edges of the old two nodes.
      * <p/>
      * A --> B --> C X --> B' --/
      * <p/>
@@ -253,9 +249,7 @@ public class LatticeOptimizer {
             moreChanges = false;
             // search for a node that can be optimized
             // note that we use getCopyOfNodes to avoid concurrent changes to nodes
-            for (Iterator i = lattice.getCopyOfNodes().iterator(); i.hasNext();) {
-                Node n = (Node) i.next();
-
+            for (Node n : lattice.getCopyOfNodes()) {
                 // we are iterating down a list of node before optimization
                 // previous iterations may have removed nodes from the list
                 // therefore we have to check that the node stiff exists
@@ -273,10 +267,10 @@ public class LatticeOptimizer {
      * have a union of entering and leaving edges
      *
      * @param n
-     * @return true if Node n required opimizing backwards
+     * @return true if Node n required optimizing backwards
      */
     protected boolean optimizeNodeBackward(Node n) {
-        Vector enteringEdges = new Vector(n.getEnteringEdges());
+        Vector<Edge> enteringEdges = new Vector<Edge>(n.getEnteringEdges());
         for (int j = 0; j < enteringEdges.size(); j++) {
             Edge e = (Edge) enteringEdges.elementAt(j);
             for (int k = j + 1; k < n.getEnteringEdges().size(); k++) {
@@ -370,8 +364,7 @@ public class LatticeOptimizer {
                 e2.getLMScore()));
 
         // add n2's "from" edges to n1
-        for (Iterator i = n2.getEnteringEdges().iterator(); i.hasNext();) {
-            Edge e = (Edge) i.next();
+        for (Edge e : n2.getEnteringEdges()) {
             e2 = n1.getEdgeFromNode(e.getFromNode());
             if (e2 == null) {
                 lattice.addEdge(e.getFromNode(), n1,
@@ -394,8 +387,7 @@ public class LatticeOptimizer {
 
     /** Remove all Nodes that have no Edges to them (but not <s>) */
     protected void removeHangingNodes() {
-        for (Iterator i = lattice.getCopyOfNodes().iterator(); i.hasNext();) {
-            Node n = (Node) i.next();
+        for (Node n : lattice.getCopyOfNodes()) {
             if (lattice.hasNode(n)) {
                 if (n == lattice.getInitialNode()) {
 

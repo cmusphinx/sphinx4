@@ -126,8 +126,7 @@ public class Node {
      * @return the edge to that node or <code> null</code>  if no edge could be found.
      */
     public Edge getEdgeToNode(Node n) {
-        for (Iterator<Edge> j = leavingEdges.iterator(); j.hasNext();) {
-            Edge e = (Edge) j.next();
+        for (Edge e : leavingEdges) {
             if (e.getToNode() == n) {
                 return e;
             }
@@ -154,8 +153,7 @@ public class Node {
      * @return the edge from that node or <code> null</code>  if no edge could be found.
      */
     public Edge getEdgeFromNode(Node n) {
-        for (Iterator<Edge> j = enteringEdges.iterator(); j.hasNext();) {
-            Edge e = (Edge) j.next();
+        for (Edge e : enteringEdges) {
             if (e.getFromNode() == n) {
                 return e;
             }
@@ -174,8 +172,7 @@ public class Node {
         if (enteringEdges.size() != n.getEnteringEdges().size()) {
             return false;
         }
-        for (Iterator<Edge> i = enteringEdges.iterator(); i.hasNext();) {
-            Edge e = (Edge) i.next();
+        for (Edge e : enteringEdges) {
             Node fromNode = e.getFromNode();
             if (!n.hasEdgeFromNode(fromNode)) {
                 return false;
@@ -195,8 +192,7 @@ public class Node {
         if (leavingEdges.size() != n.getLeavingEdges().size()) {
             return false;
         }
-        for (Iterator<Edge> i = leavingEdges.iterator(); i.hasNext();) {
-            Edge e = (Edge) i.next();
+        for (Edge e : leavingEdges) {
             Node toNode = e.getToNode();
             if (!n.hasEdgeToNode(toNode)) {
                 return false;
@@ -494,9 +490,7 @@ public class Node {
      */
     private void calculateBeginTime() {
         beginTime = 0;
-        Iterator<Edge> e = enteringEdges.iterator();
-        while (e.hasNext()) {
-            Edge edge = (Edge) e.next();
+        for (Edge edge : enteringEdges) {
             if (edge.getFromNode().getEndTime() > beginTime) {
                 beginTime = edge.getFromNode().getEndTime();
             }
@@ -511,9 +505,7 @@ public class Node {
      */
     public List<Node> getChildNodes() {
         LinkedList<Node> childNodes = new LinkedList<Node>();
-        Iterator<Edge> e = leavingEdges.iterator();
-        while (e.hasNext()) {
-            Edge edge = (Edge) e.next();
+        for (Edge edge : leavingEdges) {
             childNodes.add(edge.getToNode());
         }
         return childNodes;
@@ -527,9 +519,7 @@ public class Node {
 
 
     protected void cacheDescendantsHelper(Node n) {
-        Iterator<Node> i = n.getChildNodes().iterator();
-        while (i.hasNext()) {
-            Node child = (Node) i.next();
+        for (Node child : n.getChildNodes()) {
             if (descendants.contains(child)) {
                 continue;
             }
@@ -540,9 +530,7 @@ public class Node {
 
 
     protected boolean isAncestorHelper(List<Node> children, Node node, Set<Node> seenNodes) {
-        Iterator<Node> i = children.iterator();
-        while (i.hasNext()) {
-            Node n = (Node) i.next();
+        for (Node n : children) {
             if (seenNodes.contains(n)) {
                 continue;
             }
@@ -614,8 +602,7 @@ public class Node {
      * @return an equivalent edge, if any; or null if no equivalent edge
      */
     public Edge findEquivalentLeavingEdge(Edge edge) {
-        for (Iterator<Edge> i = leavingEdges.iterator(); i.hasNext();) {
-            Edge e = (Edge) i.next();
+        for (Edge e : leavingEdges) {
             if (e.isEquivalent(edge)) {
                 return e;
             }

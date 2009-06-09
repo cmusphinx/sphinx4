@@ -20,20 +20,22 @@ import java.util.TreeMap;
  * A confusion set is a set of words with their associated posteriors. In Java terms it's a SortedMap from posteriors to
  * sets of WordResults, but the class is called a set because that's what this beast is known as in the literature.
  *
- * @author pgorniak
+ * @author P. Gorniak
  */
-public class ConfusionSet extends TreeMap {
+public class ConfusionSet extends TreeMap<Double, Set<WordResult>> {
 
-    /**
+	private static final long serialVersionUID = 1L;
+
+
+	/**
      * Add a word hypothesis to this confusion set.
      *
      * @param word the hypothesis to add
      */
-    @SuppressWarnings({"unchecked"})
     public void addWordHypothesis(WordResult word) {
-        Set wordSet = getWordSet(word.getConfidence());
+        Set<WordResult> wordSet = getWordSet(word.getConfidence());
         if (wordSet == null) {
-            wordSet = new HashSet();
+            wordSet = new HashSet<WordResult>();
             put(word.getConfidence(), wordSet);
         }
         wordSet.add(word);
@@ -46,8 +48,8 @@ public class ConfusionSet extends TreeMap {
      * @param posterior the confidence (posterior)
      * @return a set of hypotheses with this confidence, null if no such hypotheses
      */
-    public Set getWordSet(double posterior) {
-        return (Set) get(new Double(posterior));
+    public Set<WordResult> getWordSet(double posterior) {
+        return get(new Double(posterior));
     }
 
 
@@ -57,8 +59,8 @@ public class ConfusionSet extends TreeMap {
      *
      * @return a set of best hypotheses
      */
-    public Set getBestHypothesisSet() {
-        return (Set) get(lastKey());
+    public Set<WordResult> getBestHypothesisSet() {
+        return get(lastKey());
     }
 
 
@@ -68,7 +70,7 @@ public class ConfusionSet extends TreeMap {
      * @return the best hypothesis stored in this confusion set (by confidence)
      */
     public WordResult getBestHypothesis() {
-        Set s = getBestHypothesisSet();
+        Set<WordResult> s = getBestHypothesisSet();
         return (WordResult) s.iterator().next();
     }
 
@@ -76,7 +78,7 @@ public class ConfusionSet extends TreeMap {
     /**
      * Get the highest posterior (confidence) stored in this set.
      *
-     * @return the highes posterior
+     * @return the highest posterior
      */
     public double getBestPosterior() {
         return ((Double) lastKey()).doubleValue();
@@ -100,10 +102,8 @@ public class ConfusionSet extends TreeMap {
      * @return whether fillers are found
      */
     public boolean containsFiller() {
-        for (Iterator i = values().iterator(); i.hasNext();) {
-            Set wordSet = (Set) i.next();
-            for (Iterator r = wordSet.iterator(); r.hasNext();) {
-                WordResult wordResult = (WordResult) r.next();
+        for (Set<WordResult> wordSet : values()) {
+            for (WordResult wordResult : wordSet) {
                 if (wordResult.isFiller()) {
                     return true;
                 }
@@ -120,10 +120,8 @@ public class ConfusionSet extends TreeMap {
      * @return the WordResult for the given word, or null if no WordResult for the given word is found
      */
     public WordResult getWordResult(String word) {
-        for (Iterator i = values().iterator(); i.hasNext();) {
-            Set wordSet = (Set) i.next();
-            for (Iterator r = wordSet.iterator(); r.hasNext();) {
-                WordResult wordResult = (WordResult) r.next();
+        for (Set<WordResult> wordSet : values()) {
+            for (WordResult wordResult : wordSet) {                
                 String resultSpelling = wordResult.toString();
                 //= wordResult.getPronunciation().getWord().getSpelling();
                 if (resultSpelling.equals(word)) {
@@ -142,9 +140,9 @@ public class ConfusionSet extends TreeMap {
      */
     public void dump(String name) {
         System.out.print(name + " :");
-        for (Iterator i = values().iterator(); i.hasNext();) {
-            Set wordSet = (Set) i.next();
-            for (Iterator r = wordSet.iterator(); r.hasNext();) {
+        for (Iterator<Set<WordResult>> i = values().iterator(); i.hasNext();) {
+            Set<WordResult> wordSet = i.next();
+            for (Iterator<WordResult> r = wordSet.iterator(); r.hasNext();) {
                 WordResult wordResult = (WordResult) r.next();
                 System.out.print
                         (" " +
@@ -157,12 +155,12 @@ public class ConfusionSet extends TreeMap {
 
     public String toString() {
         StringBuffer b = new StringBuffer();
-        Iterator i = keySet().iterator();
+        Iterator<Double> i = keySet().iterator();
         while (i.hasNext()) {
-            Double p = (Double) i.next();
-            Set words = (Set) get(p);
+            Double p = i.next();
+            Set<WordResult> words = get(p);
             b.append(p.toString()).append(":");
-            Iterator j = words.iterator();
+            Iterator<WordResult> j = words.iterator();
             while (j.hasNext()) {
                 b.append(j.next());
                 if (j.hasNext()) {

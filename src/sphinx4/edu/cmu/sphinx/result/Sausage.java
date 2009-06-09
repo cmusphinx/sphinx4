@@ -28,7 +28,7 @@ import java.util.*;
 
 public class Sausage implements ConfidenceResult {
 
-    protected List confusionSets;
+    protected List<ConfusionSet> confusionSets;
 
 
     /**
@@ -37,7 +37,7 @@ public class Sausage implements ConfidenceResult {
      * @param size The number of word slots in the sausage
      */
     public Sausage(int size) {
-        confusionSets = new Vector(size);
+        confusionSets = new Vector<ConfusionSet>(size);
         for (int i = 0; i < size; i++) {
             confusionSets.add(new ConfusionSet());
         }
@@ -50,7 +50,7 @@ public class Sausage implements ConfidenceResult {
      *
      * @return an iterator that steps through confusion sets
      */
-    public Iterator confusionSetIterator() {
+    public Iterator<ConfusionSet> confusionSetIterator() {
         return confusionSets.listIterator();
     }
 
@@ -62,7 +62,7 @@ public class Sausage implements ConfidenceResult {
      * @param i the index to start the iterator off at
      * @return an iterator that steps through confusion sets
      */
-    public Iterator confusionSetIterator(int i) {
+    public Iterator<ConfusionSet> confusionSetIterator(int i) {
         return confusionSets.listIterator(i);
     }
 
@@ -73,12 +73,12 @@ public class Sausage implements ConfidenceResult {
      * @param logMath the log math object to use for probability computations
      */
     public void fillInBlanks(LogMath logMath) {
-        for (ListIterator i = confusionSets.listIterator(); i.hasNext();) {
+        for (ListIterator<ConfusionSet> i = confusionSets.listIterator(); i.hasNext();) {
             int index = i.nextIndex();
             ConfusionSet set = (ConfusionSet) i.next();
             float sum = LogMath.getLogZero();
-            for (Iterator j = set.keySet().iterator(); j.hasNext();) {
-                sum = logMath.addAsLinear(sum, ((Double) j.next()).floatValue());
+            for (Iterator<Double> j = set.keySet().iterator(); j.hasNext();) {
+                sum = logMath.addAsLinear(sum, j.next().floatValue());
             }
             if (sum < LogMath.getLogOne() - 10) {
                 float remainder = logMath.subtractAsLinear
@@ -86,8 +86,8 @@ public class Sausage implements ConfidenceResult {
                 addWordHypothesis(index, "<noop>", remainder, logMath);
             } else {
                 ConfusionSet newSet = new ConfusionSet();
-                for (Iterator j = set.keySet().iterator(); j.hasNext();) {
-                    Double oldProb = (Double) j.next();
+                for (Iterator<Double> j = set.keySet().iterator(); j.hasNext();) {
+                    Double oldProb = j.next();
                     Double newProb = oldProb.doubleValue() - sum;
                     newSet.put(newProb, set.get(oldProb));
                 }
@@ -139,7 +139,7 @@ public class Sausage implements ConfidenceResult {
      */
     protected Path getBestHypothesis(boolean wantFiller) {
         WordResultPath path = new WordResultPath();
-        Iterator i = confusionSetIterator();
+        Iterator<ConfusionSet> i = confusionSetIterator();
         while (i.hasNext()) {
             ConfusionSet cs = (ConfusionSet) i.next();
             WordResult wr = cs.getBestHypothesis();
@@ -156,16 +156,16 @@ public class Sausage implements ConfidenceResult {
      * of removing fillers.
      */
     public void removeFillers() {
-        Iterator c = confusionSetIterator();
+        Iterator<ConfusionSet> c = confusionSetIterator();
         while (c.hasNext()) {
             ConfusionSet cs = (ConfusionSet) c.next();
-            Iterator j = cs.keySet().iterator();
+            Iterator<Double> j = cs.keySet().iterator();
             while (j.hasNext()) {
                 Double p = (Double) j.next();
-                Set words = (Set) cs.get(p);
-                Iterator w = words.iterator();
+                Set<WordResult> words = cs.get(p);
+                Iterator<WordResult> w = words.iterator();
                 while (w.hasNext()) {
-                    WordResult word = (WordResult) w.next();
+                    WordResult word = w.next();
                     if (word.isFiller()) {
                         w.remove();
                     }
@@ -198,9 +198,9 @@ public class Sausage implements ConfidenceResult {
      * @param pos the word slot to look at
      * @return the word with the highest posterior in the slot
      */
-    public Set getBestWordHypothesis(int pos) {
+    public Set<WordResult> getBestWordHypothesis(int pos) {
         ConfusionSet set = (ConfusionSet) confusionSets.get(pos);
-        return (Set) set.get(set.lastKey());
+        return set.get(set.lastKey());
     }
 
 
@@ -230,11 +230,12 @@ public class Sausage implements ConfidenceResult {
 
     public int countWordHypotheses() {
         int count = 0;
-        Iterator i = confusionSetIterator();
+        Iterator<ConfusionSet> i = confusionSetIterator();
         while (i.hasNext()) {
-            Iterator j = ((ConfusionSet) i.next()).keySet().iterator();
+        	ConfusionSet cs = i.next();
+            Iterator<Double> j = cs.keySet().iterator();
             while (j.hasNext()) {
-                count += ((Set) j.next()).size();
+                count += cs.get(j.next()).size();
             }
         }
         return count;
@@ -265,17 +266,17 @@ public class Sausage implements ConfidenceResult {
             f.write("title: \"" + title + "\"\n");
             f.write("display_edge_labels: yes\n");
             f.write("orientation: left_to_right\n");
-            ListIterator i = confusionSets.listIterator();
+            ListIterator<ConfusionSet> i = confusionSets.listIterator();
             while (i.hasNext()) {
                 int index = i.nextIndex();
                 ConfusionSet set = (ConfusionSet) i.next();
-                Iterator j = set.keySet().iterator();
+                Iterator<Double> j = set.keySet().iterator();
                 f.write("node: { title: \"" + index + "\" label: \"" + index + "\"}\n");
                 while (j.hasNext()) {
                     Double prob = (Double) j.next();
                     String word = "";
-                    Set wordSet = (Set) set.get(prob);
-                    for (Iterator w = wordSet.iterator(); w.hasNext();) {
+                    Set<WordResult> wordSet = set.get(prob);
+                    for (Iterator<WordResult> w = wordSet.iterator(); w.hasNext();) {
                         word += w.next();
                         if (w.hasNext()) {
                             word += "/";

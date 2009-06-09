@@ -40,7 +40,7 @@ public interface ConfidenceResult {
      *
      * @return confusion set iterator
      */
-    public Iterator confusionSetIterator();
+    public Iterator<ConfusionSet> confusionSetIterator();
 
 
     /**

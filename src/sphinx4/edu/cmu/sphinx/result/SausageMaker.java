@@ -61,14 +61,12 @@ public class SausageMaker extends AbstractSausageMaker {
      * @param cluster the cluster to examine
      * @return the latest begin time
      */
-    private int getLatestBeginTime(List cluster) {
+    private int getLatestBeginTime(List<Node> cluster) {
         if (cluster.size() == 0) {
             return -1;
         }
         int startTime = 0;
-        Iterator i = cluster.iterator();
-        while (i.hasNext()) {
-            Node n = (Node) i.next();
+        for (Node n : cluster) {
             if (n.getBeginTime() > startTime) {
                 startTime = n.getBeginTime();
             }
@@ -83,14 +81,12 @@ public class SausageMaker extends AbstractSausageMaker {
      * @param cluster the cluster to examine
      * @return the earliest end time
      */
-    private int getEarliestEndTime(List cluster) {
+    private int getEarliestEndTime(List<Node> cluster) {
         if (cluster.size() == 0) {
             return -1;
         }
         int endTime = Integer.MAX_VALUE;
-        Iterator i = cluster.iterator();
-        while (i.hasNext()) {
-            Node n = (Node) i.next();
+        for (Node n : cluster) {
             if (n.getEndTime() < endTime) {
                 endTime = n.getEndTime();
             }
@@ -135,8 +131,9 @@ public class SausageMaker extends AbstractSausageMaker {
 
 
     /**
-     * Find the string edit distance between to lists of objects. Objects are compared using .equals() TODO: could be
-     * moved to a general utility class
+     * Find the string edit distance between to lists of objects. 
+     * Objects are compared using .equals() 
+     * TODO: could be moved to a general utility class
      *
      * @param p1 the first list
      * @param p2 the second list

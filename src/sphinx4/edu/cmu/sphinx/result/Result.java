@@ -37,7 +37,7 @@ import java.util.List;
 public class Result {
 
     private ActiveList activeList;
-    private List resultList;
+    private List<Token> resultList;
     private AlternateHypothesisManager alternateHypothesisManager;
     private boolean isFinal = false;
     private int currentFrameNumber;
@@ -54,7 +54,7 @@ public class Result {
      * @param isFinal     if true, the result is a final result
      */
     public Result(AlternateHypothesisManager alternateHypothesisManager,
-                  ActiveList activeList, List resultList, int frameNumber,
+                  ActiveList activeList, List<Token> resultList, int frameNumber,
                   boolean isFinal, LogMath logMath) {
         this(activeList, resultList, frameNumber, isFinal, logMath);
         this.alternateHypothesisManager = alternateHypothesisManager;
@@ -70,7 +70,7 @@ public class Result {
      * @param isFinal     if true, the result is a final result. This means that the last frame in the speech segment
      *                    has been decoded. 
      */
-    public Result(ActiveList activeList, List resultList, int frameNumber,
+    public Result(ActiveList activeList, List<Token> resultList, int frameNumber,
                   boolean isFinal, LogMath logMath) {
         this.activeList = activeList;
         this.resultList = resultList;
@@ -129,7 +129,7 @@ public class Result {
      * @return a list containing the final result tokens for this result
      * @see Token
      */
-    public List getResultTokens() {
+    public List<Token> getResultTokens() {
         return resultList;
     }
 
@@ -162,8 +162,7 @@ public class Result {
      */
     public Token getBestFinalToken() {
         Token bestToken = null;
-        for (Iterator i = resultList.iterator(); i.hasNext();) {
-            Token token = (Token) i.next();
+        for (Token token : resultList) {
             if (bestToken == null || token.getScore() > bestToken.getScore()) {
                 bestToken = token;
             }
@@ -198,7 +197,7 @@ public class Result {
     public Token getBestActiveToken() {
         Token bestToken = null;
         if (activeList != null) {
-            for (Iterator i = activeList.iterator(); i.hasNext();) {
+            for (Iterator<Token> i = activeList.iterator(); i.hasNext();) {
                 Token token = (Token) i.next();
                 if (bestToken == null || token.getScore() > bestToken.getScore()) {
                     bestToken = token;
@@ -217,8 +216,7 @@ public class Result {
      */
     public Token findToken(String text) {
         text = text.trim();
-        for (Iterator i = resultList.iterator(); i.hasNext();) {
-            Token token = (Token) i.next();
+        for (Token token : resultList) {
             if (text.equals(token.getWordPathNoFiller())) {
                 return token;
             }
@@ -236,7 +234,7 @@ public class Result {
     public List<Token> findPartialMatchingTokens(String text) {
         List<Token> list = new ArrayList<Token>();
         text = text.trim();
-        for (Iterator i = activeList.iterator(); i.hasNext();) {
+        for (Iterator<Token> i = activeList.iterator(); i.hasNext();) {
             Token token = (Token) i.next();
             if (text.startsWith(token.getWordPathNoFiller())) {
                 list.add(token);
@@ -525,8 +523,8 @@ public class Result {
      */
     public boolean validate() {
         boolean valid = true;
-        for (Iterator i = activeList.iterator(); i.hasNext();) {
-            Token token = (Token) i.next();
+        for (Iterator<Token> i = activeList.iterator(); i.hasNext();) {
+            Token token = i.next();
             if (!token.validate()) {
                 valid = false;
                 token.dumpTokenPath();

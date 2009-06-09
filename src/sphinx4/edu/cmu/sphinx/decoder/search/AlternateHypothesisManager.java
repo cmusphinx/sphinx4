@@ -15,14 +15,14 @@ package edu.cmu.sphinx.decoder.search;
 
 import java.util.*;
 
-
 /**
- * Created by IntelliJ IDEA. User: woelfel Date: Jun 16, 2003 Time: 11:45:05 AM To change this template use Options |
- * File Templates.
+ * Manager for pruned hypothesis
+ * 
+ * @author Joe Woelfel
  */
 public class AlternateHypothesisManager {
 
-    private Map<Object, List<Token>> viterbiLoserMap = new HashMap<Object, List<Token>>();
+    private Map<Token, List<Token>> viterbiLoserMap = new HashMap<Token, List<Token>>();
     private int maxEdges;
 
 
@@ -66,13 +66,11 @@ public class AlternateHypothesisManager {
 
 
     /** Purge all but max number of alternate preceding token hypotheses. */
-    @SuppressWarnings({"unchecked"})
     public void purge() {
 
         int max = maxEdges - 1;
-        Iterator<Object> iterator = viterbiLoserMap.keySet().iterator();
 
-        for (Object key : viterbiLoserMap.keySet()) {
+        for (Token key : viterbiLoserMap.keySet()) {
             List<Token> list = viterbiLoserMap.get(key);
             Collections.sort(list, Token.COMPARATOR);
             List<Token> newList = list.subList(0, list.size() > max ? max : list.size());
@@ -82,7 +80,7 @@ public class AlternateHypothesisManager {
 
 
     /**
-     * Chantge the successor from one token to another
+     * Change the successor from one token to another
      *
      * @param newSuccessor the new successor token
      * @param oldSuccessor the old successor token

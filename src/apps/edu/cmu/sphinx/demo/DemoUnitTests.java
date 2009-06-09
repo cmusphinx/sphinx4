@@ -41,7 +41,6 @@ public class DemoUnitTests {
 
 
     @Test
-//    @Ignore(value = "because this test relies on files available only from within CMU")
     public void testLatticeDemo() {
         try {
             Lattice.main(new String[]{});

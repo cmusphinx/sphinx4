@@ -78,8 +78,7 @@ public class TokenGraphDumper {
         gdl += ("title: \"" + title + "\"\n");
         gdl += ("display_edge_labels: yes\n");
 
-        for (Iterator i = result.getResultTokens().iterator(); i.hasNext();) {
-            Token token = (Token) i.next();
+        for (Token token : result.getResultTokens()) {
             gdl += dumpTokenGDL(token);
         }
 

@@ -1,7 +1,3 @@
-/*
- * Created on Nov 23, 2004
- *
- */
 package edu.cmu.sphinx.result;
 
 import java.util.Iterator;
@@ -16,12 +12,12 @@ import java.util.ListIterator;
  * decomposition, Hakkani-Tur, D.   Riccardi, G., AT&T Labs.-Res., USA;, This paper appears in: 2003 IEEE International
  * Conference on Acoustics, Speech, and Signal Processing, 2003. Proceedings. (ICASSP '03).
  *
- * @author pgorniak
+ * @author P. Gorniak
  */
 public class PivotSausageMaker extends AbstractSausageMaker {
 
-    protected List sortedNodes;
-    protected List clusters;
+    protected List<Node> sortedNodes;
+    protected List<Cluster> clusters;
 
 
     /**
@@ -30,9 +26,7 @@ public class PivotSausageMaker extends AbstractSausageMaker {
      * @return the sausage producing by collapsing the lattice.
      */
     public Sausage makeSausage() {
-        Iterator i = sortedNodes.iterator();
-        while (i.hasNext()) {
-            Node node = (Node) i.next();
+         for (Node node : sortedNodes) {
             int slot = findMostOverlappingSlot(node);
             Cluster targetCluster = getCluster(slot);
             if (!containsAncestor(targetCluster, node)) {
@@ -68,9 +62,7 @@ public class PivotSausageMaker extends AbstractSausageMaker {
      * @return whether and ancestor was found
      */
     protected boolean containsAncestor(Cluster c, Node n) {
-        Iterator i = c.getElements().iterator();
-        while (i.hasNext()) {
-            Node cNode = (Node) i.next();
+        for (Node cNode : c.getElements()) {
             if (cNode.isAncestorOf(n)) {
                 return true;
             }
@@ -88,7 +80,7 @@ public class PivotSausageMaker extends AbstractSausageMaker {
     protected int findMostOverlappingSlot(Node n) {
         int maxOverlap = Integer.MIN_VALUE;
         int bestCluster = -1;
-        ListIterator i = clusters.listIterator();
+        ListIterator<Cluster> i = clusters.listIterator();
         i.next(); //never cluster anything with the <s> node
         while (i.hasNext()) {
             int index = i.nextIndex();
@@ -113,11 +105,11 @@ public class PivotSausageMaker extends AbstractSausageMaker {
         LatticeOptimizer lop = new LatticeOptimizer(lattice);
         lop.optimize();
         lattice.computeNodePosteriors(languageWeight);
-        List seedPath = lattice.getViterbiPath();
+        List<Node> seedPath = lattice.getViterbiPath();
         sortedNodes = lattice.sortNodes();
         sortedNodes.removeAll(seedPath);
-        clusters = new LinkedList();
-        Iterator i = seedPath.iterator();
+        clusters = new LinkedList<Cluster>();
+        Iterator<Node> i = seedPath.iterator();
         while (i.hasNext()) {
             clusters.add(new Cluster((Node) i.next()));
         }

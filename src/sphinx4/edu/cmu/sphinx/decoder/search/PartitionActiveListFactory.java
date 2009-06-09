@@ -178,7 +178,7 @@ public class PartitionActiveListFactory extends ActiveListFactory {
 
             // a sanity check
             if (false) {
-                for (Iterator i = iterator(); i.hasNext();) {
+                for (Iterator<Token> i = iterator(); i.hasNext();) {
                     Token t = (Token) i.next();
                     if (t.getScore() > bestScore) {
                         System.out.println("GBS: found better score "

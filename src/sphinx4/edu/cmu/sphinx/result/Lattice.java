@@ -28,7 +28,7 @@ import java.util.*;
  * <p/>
  * Lattices describe all theories considered by the Recognizer that have not been pruned out.  Lattices are a directed
  * graph containing {@link edu.cmu.sphinx.result.Node Nodes} and {@link edu.cmu.sphinx.result.Edge Edges}. A Node that
- * correponds to a theory that a word was spoken over a particular period of time.  An Edge that corresponds to the
+ * corresponds to a theory that a word was spoken over a particular period of time.  An Edge that corresponds to the
  * score of one word following another.  The usual result transcript is the sequence of Nodes though the Lattice with
  * the best scoring path. Lattices are a useful tool for analyzing "alternate results". </p>
  * <p/>
@@ -126,7 +126,7 @@ public class Lattice {
             loserManager.purge();
         }
 
-        Iterator tokenIter;
+        Iterator<Token> tokenIter;
         if (result.getBestFinalToken() != null) {
             tokenIter = result.getResultTokens().iterator();
         } else {
@@ -194,14 +194,10 @@ public class Lattice {
         collapseWordPath(getNode(token), token.getPredecessor(),
                 token.getAcousticScore(), token.getLanguageScore());
         if (loserManager != null) {
-            List list = loserManager.getAlternatePredecessors(token);
-            if (list != null) {
-                for (Iterator i = list.iterator(); i.hasNext();) {
-                    Token loser = (Token) i.next();
-                    collapseWordPath(getNode(token), loser,
-                            token.getAcousticScore(),
-                            token.getLanguageScore());
-                }
+            for (Token loser : loserManager.getAlternatePredecessors(token)) {
+                 collapseWordPath(getNode(token), loser,
+                          token.getAcousticScore(),
+                          token.getLanguageScore());
             }
         }
     }
@@ -245,14 +241,10 @@ public class Lattice {
 
             /* Traverse the path(s) for the loser token(s). */
             if (loserManager != null) {
-                List list = loserManager.getAlternatePredecessors(token);
-                if (list != null) {
-                    for (Iterator i = list.iterator(); i.hasNext();) {
-                        Token loser = (Token) i.next();
-                        collapseWordPath(parentWordNode, loser,
-                                acousticScore, languageScore);
-                    }
-                }
+                 for (Token loser : loserManager.getAlternatePredecessors(token)) {
+                      collapseWordPath(parentWordNode, loser,
+                            acousticScore, languageScore);
+                 }
             }
         }
     }
@@ -598,14 +590,12 @@ public class Lattice {
     protected void removeNodeAndEdges(Node n) {
 
         //System.err.println("Removing node " + n + " and associated edges");
-        for (Iterator i = n.getLeavingEdges().iterator(); i.hasNext();) {
-            Edge e = (Edge) (i.next());
+        for (Edge e : n.getLeavingEdges()) {
             e.getToNode().removeEnteringEdge(e);
             //System.err.println( "\tRemoving " + e );
             edges.remove(e);
         }
-        for (Iterator i = n.getEnteringEdges().iterator(); i.hasNext();) {
-            Edge e = (Edge) (i.next());
+        for (Edge e : n.getEnteringEdges()) {
             e.getFromNode().removeLeavingEdge(e);
             //System.err.println( "\tRemoving " + e );
             edges.remove(e);
@@ -632,10 +622,8 @@ public class Lattice {
      */
     protected void removeNodeAndCrossConnectEdges(Node n) {
         System.err.println("Removing node " + n + " and cross connecting edges");
-        for (Iterator i = n.getEnteringEdges().iterator(); i.hasNext();) {
-            Edge ei = (Edge) (i.next());
-            for (Iterator j = n.getLeavingEdges().iterator(); j.hasNext();) {
-                Edge ej = (Edge) (j.next());
+        for (Edge ei : n.getEnteringEdges()) {
+            for (Edge ej : n.getLeavingEdges()) {
                 addEdge(ei.getFromNode(), ej.getToNode(),
                         ei.getAcousticScore(), ei.getLMScore());
             }
@@ -743,8 +731,7 @@ public class Lattice {
         if (n == terminalNode) {
             l.add(p);
         } else {
-            for (Iterator i = n.getLeavingEdges().iterator(); i.hasNext();) {
-                Edge e = (Edge) i.next();
+            for (Edge e : n.getLeavingEdges()) {
                 l.addAll(allPathsFrom(p, e.getToNode()));
             }
         }
@@ -753,17 +740,14 @@ public class Lattice {
 
 
     boolean checkConsistency() {
-        for (Iterator<Node> i = nodes.values().iterator(); i.hasNext();) {
-            Node n = i.next();
-            for (Iterator j = n.getEnteringEdges().iterator(); j.hasNext();) {
-                Edge e = (Edge) j.next();
+        for (Node n : nodes.values()) {
+            for (Edge e : n.getEnteringEdges()) {
                 if (!hasEdge(e)) {
                     throw new Error("Lattice has NODE with missing FROM edge: "
                             + n + "," + e);
                 }
             }
-            for (Iterator j = n.getLeavingEdges().iterator(); j.hasNext();) {
-                Edge e = (Edge) j.next();
+            for (Edge e : n.getLeavingEdges()) {
                 if (!hasEdge(e)) {
                     throw new Error("Lattice has NODE with missing TO edge: " +
                             n + "," + e);
@@ -798,9 +782,8 @@ public class Lattice {
         if (n == null) {
             throw new Error("Node is null");
         }
-        Iterator e = n.getLeavingEdges().iterator();
-        while (e.hasNext()) {
-            sortHelper(((Edge) e.next()).getToNode(), sorted, visited);
+        for (Edge e : n.getLeavingEdges()) {
+            sortHelper(e.getToNode(), sorted, visited);
         }
         sorted.add(n);
     }
@@ -811,7 +794,7 @@ public class Lattice {
      *
      * @return Topologically sorted list of nodes in this lattice.
      */
-    public List sortNodes() {
+    public List<Node> sortNodes() {
         Vector<Node> sorted = new Vector<Node>(nodes.size());
         sortHelper(initialNode, sorted, new HashSet<Node>());
         Collections.reverse(sorted);
@@ -849,14 +832,10 @@ public class Lattice {
         //forward
         initialNode.setForwardScore(LogMath.getLogOne());
         initialNode.setViterbiScore(LogMath.getLogOne());
-        List sortedNodes = sortNodes();
+        List<Node> sortedNodes = sortNodes();
         assert sortedNodes.get(0) == initialNode;
-        ListIterator n = sortedNodes.listIterator();
-        while (n.hasNext()) {
-            Node currentNode = (Node) n.next();
-            Collection currentEdges = currentNode.getLeavingEdges();
-            for (Iterator i = currentEdges.iterator(); i.hasNext();) {
-                Edge edge = (Edge) i.next();
+        for (Node currentNode : sortedNodes) {
+            for (Edge edge : currentNode.getLeavingEdges()) {
                 double forwardProb = edge.getFromNode().getForwardScore();
                 double edgeScore = computeEdgeScore
                         (edge, languageModelWeight, useAcousticScoresOnly);
@@ -878,12 +857,11 @@ public class Lattice {
         //backward
         terminalNode.setBackwardScore(LogMath.getLogOne());
         assert sortedNodes.get(sortedNodes.size() - 1) == terminalNode;
-        n = sortedNodes.listIterator(sortedNodes.size() - 1);
+        ListIterator<Node> n = sortedNodes.listIterator(sortedNodes.size() - 1);
         while (n.hasPrevious()) {
             Node currentNode = (Node) n.previous();
-            Collection currentEdges = currentNode.getLeavingEdges();
-            for (Iterator i = currentEdges.iterator(); i.hasNext();) {
-                Edge edge = (Edge) i.next();
+            Collection<Edge> currentEdges = currentNode.getLeavingEdges();
+            for (Edge edge : currentEdges) {
                 double backwardProb = edge.getToNode().getBackwardScore();
                 backwardProb += computeEdgeScore
                         (edge, languageModelWeight, useAcousticScoresOnly);
@@ -962,17 +940,14 @@ public class Lattice {
 
         boolean equivalent = n1.isEquivalent(n2);
         if (equivalent) {
-            Collection leavingEdges = n1.getCopyOfLeavingEdges();
-            Collection leavingEdges2 = n2.getCopyOfLeavingEdges();
+            Collection<Edge> leavingEdges = n1.getCopyOfLeavingEdges();
+            Collection<Edge> leavingEdges2 = n2.getCopyOfLeavingEdges();
 
             System.out.println("# edges: " + leavingEdges.size() + " " +
                     leavingEdges2.size());
 
-            for (Iterator i = leavingEdges.iterator(); i.hasNext();) {
-
-                Edge edge = (Edge) i.next();
-
-                /* find an equivalent edge from n2 for this edge */
+            for (Edge edge : leavingEdges) {
+            	/* find an equivalent edge from n2 for this edge */
                 Edge e2 = n2.findEquivalentLeavingEdge(edge);
 
                 if (e2 == null) {
@@ -1005,8 +980,6 @@ public class Lattice {
         }
         return equivalent;
     }
-
-
     /**
      * Self test for Lattices.  Test loading, saving, dynamically creating and optimizing Lattices
      *
@@ -1040,15 +1013,15 @@ public class Lattice {
             Node n3 = lattice.addNode("3", "3", 0, 0);
             Node n4 = lattice.addNode("4", "4", 0, 0);
 
-            Edge e01 = lattice.addEdge(n0, n1, -1, 0);
-            Edge e01a = lattice.addEdge(n0, n1a, -1, 0);
-            Edge e14 = lattice.addEdge(n1, n4, -1, 0);
-            Edge e1a2a = lattice.addEdge(n1a, n2a, -1, 0);
-            Edge e2a4 = lattice.addEdge(n2a, n4, -1, 0);
-            Edge e02 = lattice.addEdge(n0, n2, -1, 0);
-            Edge e23 = lattice.addEdge(n2, n3, -1, 0);
-            Edge e13 = lattice.addEdge(n1, n3, -1, 0);
-            Edge e34 = lattice.addEdge(n3, n4, -1, 0);
+            lattice.addEdge(n0, n1, -1, 0);
+            lattice.addEdge(n0, n1a, -1, 0);
+            lattice.addEdge(n1, n4, -1, 0);
+            lattice.addEdge(n1a, n2a, -1, 0);
+            lattice.addEdge(n2a, n4, -1, 0);
+            lattice.addEdge(n0, n2, -1, 0);
+            lattice.addEdge(n2, n3, -1, 0);
+            lattice.addEdge(n1, n3, -1, 0);
+            lattice.addEdge(n3, n4, -1, 0);
 
             lattice.setInitialNode(n0);
             lattice.setTerminalNode(n4);

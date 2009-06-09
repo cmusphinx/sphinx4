@@ -23,7 +23,7 @@ import java.util.Vector;
 /**
  * An implementation of a result Path that computes scores and confidences on the fly.
  *
- * @author pgorniak
+ * @author P. Gorniak
  */
 public class WordResultPath implements Path {
 
@@ -48,9 +48,7 @@ public class WordResultPath implements Path {
     /** @see edu.cmu.sphinx.result.Path#getScore() */
     public double getScore() {
         double score = LogMath.getLogOne();
-        Iterator i = path.iterator();
-        while (i.hasNext()) {
-            WordResult wr = (WordResult) i.next();
+        for (WordResult wr : path) {
             score += wr.getScore();
         }
         return score;
@@ -60,9 +58,7 @@ public class WordResultPath implements Path {
     /** @see edu.cmu.sphinx.result.Path#getConfidence() */
     public double getConfidence() {
         double confidence = LogMath.getLogOne();
-        Iterator i = path.iterator();
-        while (i.hasNext()) {
-            WordResult wr = (WordResult) i.next();
+        for (WordResult wr : path) {
             confidence += wr.getConfidence();
         }
         return confidence;
@@ -75,7 +71,7 @@ public class WordResultPath implements Path {
      * @return the LogMath of the scores
      */
     public LogMath getLogMath() {
-        Iterator i = path.iterator();
+        Iterator<WordResult> i = path.iterator();
         if (i.hasNext()) {
             WordResult wr = (WordResult) i.next();
             return wr.getLogMath();
@@ -94,7 +90,7 @@ public class WordResultPath implements Path {
     /** @see edu.cmu.sphinx.result.Path#getTranscription() */
     public String getTranscription() {
         StringBuffer sb = new StringBuffer();
-        Iterator i = path.iterator();
+        Iterator<WordResult> i = path.iterator();
         while (i.hasNext()) {
             WordResult wr = (WordResult) i.next();
             sb.append(wr.toString());

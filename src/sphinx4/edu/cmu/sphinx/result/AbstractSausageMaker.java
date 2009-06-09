@@ -25,7 +25,7 @@ import java.util.*;
 /**
  * Parent to all sausage makers.
  *
- * @author pgorniak
+ * @author P. Gorniak
  */
 public abstract class AbstractSausageMaker implements ConfidenceScorer, Configurable {
 
@@ -41,7 +41,7 @@ public abstract class AbstractSausageMaker implements ConfidenceScorer, Configur
 
         public int startTime;
         public int endTime;
-        private List elements = new LinkedList();
+        private List<Node> elements = new LinkedList<Node>();
 
 
         public Cluster(Node n) {
@@ -79,7 +79,7 @@ public abstract class AbstractSausageMaker implements ConfidenceScorer, Configur
         }
 
 
-        public Iterator iterator() {
+        public Iterator<Node> iterator() {
             return elements.iterator();
         }
 
@@ -87,7 +87,7 @@ public abstract class AbstractSausageMaker implements ConfidenceScorer, Configur
         public String toString() {
             StringBuffer sb = new StringBuffer();
             sb.append("s: ").append(startTime).append(" e: ").append(endTime).append("[");
-            Iterator i = elements.iterator();
+            Iterator<Node> i = elements.iterator();
             while (i.hasNext()) {
                 sb.append(i.next());
                 if (i.hasNext()) {
@@ -100,18 +100,18 @@ public abstract class AbstractSausageMaker implements ConfidenceScorer, Configur
 
 
         /** @return Returns the elements. */
-        public List getElements() {
+        public List<Node> getElements() {
             return elements;
         }
 
 
         /** @param elements The elements to set. */
-        public void setElements(List elements) {
+        public void setElements(List<Node> elements) {
             this.elements = elements;
         }
     }
 
-    class ClusterComparator implements Comparator {
+    class ClusterComparator implements Comparator<Cluster> {
 
         /**
          * Compares to clusters according to their topological relationship. Relies on strong assumptions about the
@@ -120,13 +120,11 @@ public abstract class AbstractSausageMaker implements ConfidenceScorer, Configur
          * @param o1 the first cluster (must be a List)
          * @param o2 the second cluster (must be a List)
          */
-        public int compare(Object o1, Object o2) {
-            Cluster cluster1 = (Cluster) o1;
-            Cluster cluster2 = (Cluster) o2;
-            Iterator i = cluster1.iterator();
+        public int compare(Cluster cluster1, Cluster cluster2) {
+            Iterator<Node> i = cluster1.iterator();
             while (i.hasNext()) {
                 Node n1 = (Node) i.next();
-                Iterator i2 = cluster2.iterator();
+                Iterator<Node> i2 = cluster2.iterator();
                 while (i2.hasNext()) {
                     Node n2 = (Node) i2.next();
                     if (n1.isAncestorOf(n2)) {
@@ -188,7 +186,7 @@ public abstract class AbstractSausageMaker implements ConfidenceScorer, Configur
      * @param word    the word to subcluster by
      * @return the log probability mass of the subcluster formed by the word
      */
-    protected double wordSubClusterProbability(List cluster, String word) {
+    protected double wordSubClusterProbability(List<Node> cluster, String word) {
         return clusterProbability(makeWordSubCluster(cluster, word));
     }
 
@@ -212,11 +210,11 @@ public abstract class AbstractSausageMaker implements ConfidenceScorer, Configur
      * @param cluster the cluster to sum over
      * @return the probability sum
      */
-    protected double clusterProbability(List cluster) {
+    protected double clusterProbability(List<Node> cluster) {
         float p = LogMath.getLogZero();
-        Iterator i = cluster.iterator();
+        Iterator<Node> i = cluster.iterator();
         while (i.hasNext()) {
-            p = lattice.getLogMath().addAsLinear(p, (float) ((Node) i.next()).getPosterior());
+            p = lattice.getLogMath().addAsLinear(p, (float) i.next().getPosterior());
         }
         return p;
     }
@@ -240,11 +238,9 @@ public abstract class AbstractSausageMaker implements ConfidenceScorer, Configur
      * @param word    the word to cluster by
      * @return the subcluster.
      */
-    protected List makeWordSubCluster(List cluster, String word) {
-        Vector sub = new Vector();
-        Iterator i = cluster.iterator();
-        while (i.hasNext()) {
-            Node n = (Node) i.next();
+    protected List<Node> makeWordSubCluster(List<Node> cluster, String word) {
+        Vector<Node> sub = new Vector<Node>();
+        for (Node n : cluster) {
             if (n.getWord().getSpelling().equals(word)) {
                 sub.add(n);
             }
@@ -261,7 +257,7 @@ public abstract class AbstractSausageMaker implements ConfidenceScorer, Configur
      * @return the subcluster.
      */
     protected Cluster makeWordSubCluster(Cluster cluster, String word) {
-        List l = makeWordSubCluster(cluster.elements, word);
+        List<Node> l = makeWordSubCluster(cluster.elements, word);
         Cluster c = new Cluster(cluster.startTime, cluster.endTime);
         c.elements = l;
         return c;
@@ -273,8 +269,8 @@ public abstract class AbstractSausageMaker implements ConfidenceScorer, Configur
      *
      * @param clusters
      */
-    protected void printClusters(List clusters) {
-        ListIterator i = clusters.listIterator();
+    protected void printClusters(List<Cluster> clusters) {
+        ListIterator<Cluster> i = clusters.listIterator();
         while (i.hasNext()) {
             System.out.print("----cluster " + i.nextIndex() + " : ");
             System.out.println(i.next());
@@ -289,14 +285,14 @@ public abstract class AbstractSausageMaker implements ConfidenceScorer, Configur
      * @param clusters the list of node clusters in topologically correct order
      * @return the Sausage corresponding to the cluster list
      */
-    protected Sausage sausageFromClusters(List clusters) {
+    protected Sausage sausageFromClusters(List<Cluster> clusters) {
         Sausage sausage = new Sausage(clusters.size());
-        ListIterator c1 = clusters.listIterator();
+        ListIterator<Cluster> c1 = clusters.listIterator();
         while (c1.hasNext()) {
-            HashSet seenWords = new HashSet();
+            HashSet<String> seenWords = new HashSet<String>();
             int index = c1.nextIndex();
             Cluster cluster = ((Cluster) c1.next());
-            Iterator c2 = cluster.iterator();
+            Iterator<Node> c2 = cluster.iterator();
             while (c2.hasNext()) {
                 Node node = (Node) c2.next();
                 Word word = node.getWord();
