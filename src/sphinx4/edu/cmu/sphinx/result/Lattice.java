@@ -191,14 +191,18 @@ public class Lattice {
             return;
         }
         visitedWordTokens.add(token);
+        System.out.println ("Number of tokens visited + " + visitedWordTokens.size());
         collapseWordPath(getNode(token), token.getPredecessor(),
                 token.getAcousticScore(), token.getLanguageScore());
         if (loserManager != null) {
-            for (Token loser : loserManager.getAlternatePredecessors(token)) {
-                 collapseWordPath(getNode(token), loser,
-                          token.getAcousticScore(),
-                          token.getLanguageScore());
-            }
+        	List<Token> predecessors = loserManager.getAlternatePredecessors(token);
+        	if (predecessors != null) {
+        			for (Token loser : predecessors) {
+        					collapseWordPath(getNode(token), loser,
+        								token.getAcousticScore(),
+        								token.getLanguageScore());
+        			}
+        	}
         }
     }
 
@@ -241,10 +245,13 @@ public class Lattice {
 
             /* Traverse the path(s) for the loser token(s). */
             if (loserManager != null) {
-                 for (Token loser : loserManager.getAlternatePredecessors(token)) {
-                      collapseWordPath(parentWordNode, loser,
+            	  List<Token> predecessors = loserManager.getAlternatePredecessors(token);
+            	  if (predecessors != null) {
+            		  for (Token loser : predecessors) {
+            			  collapseWordPath(parentWordNode, loser,
                             acousticScore, languageScore);
-                 }
+            		  }
+            	  }
             }
         }
     }
