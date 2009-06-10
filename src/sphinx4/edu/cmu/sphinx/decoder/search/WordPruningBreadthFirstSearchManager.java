@@ -106,7 +106,7 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
 
     /** Sphinx4 property that specifies the relative beam width */
     @S4Double(defaultValue = 0.0)
-    // todo this should be a more meaningful defaul e.g. the common 1E-80
+    // todo this should be a more meaningful default e.g. the common 1E-80
     public final static String PROP_RELATIVE_BEAM_WIDTH = "relativeBeamWidth";
 
     // TODO: since the token stacks are permanently disabled,
@@ -129,7 +129,7 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
     private boolean showTokenCount;
     private boolean checkStateOrder;
     private boolean buildWordLattice;
-    private boolean keepAllTokens = false;
+    private boolean keepAllTokens = true;
     private int growSkipInterval = 0;
     private float relativeBeamWidth;
     private float acousticLookaheadFrames = 0.0f;
@@ -362,7 +362,6 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
      */
     protected void growBranches() {
         growTimer.start();
-        Iterator iterator = activeList.iterator();
         float relativeBeamThreshold = activeList.getBeamThreshold();
         if (logger.isLoggable(Level.FINE)) {
             logger.fine("Frame: " + currentFrameNumber
@@ -370,8 +369,7 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
                     + activeList.getBestScore() + " tok "
                     + activeList.getBestToken());
         }
-        while (iterator.hasNext()) {
-            Token token = (Token) iterator.next();
+        for (Token token : activeList.getTokens()) {
             if (token.getScore() >= relativeBeamThreshold && skewPrune(token)) {
                 collectSuccessorTokens(token);
             }
@@ -390,8 +388,7 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
         if (acousticLookaheadFrames > 0F) {
             growTimer.start();
             float bestScore = -Float.MAX_VALUE;
-            for (Iterator i = activeList.iterator(); i.hasNext();) {
-                Token t = (Token) i.next();
+            for (Token t : activeList.getTokens()) {
                 float score = t.getScore() + t.getAcousticScore()
                         * acousticLookaheadFrames;
                 if (score > bestScore) {
@@ -401,8 +398,7 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
             }
             float relativeBeamThreshold = bestScore + relativeBeamWidth;
 
-            for (Iterator i = activeList.iterator(); i.hasNext();) {
-                Token t = (Token) i.next();
+            for (Token t : activeList.getTokens()) {
                 if (t.getWorkingScore() >= relativeBeamThreshold) {
                     collectSuccessorTokens(t);
                 }
@@ -416,9 +412,9 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
 
     /** Grow the non-emitting ActiveLists, until the tokens reach an emitting state. */
     private void growNonEmittingLists() {
-        for (Iterator i = activeListManager.getNonEmittingListIterator(); i
+        for (Iterator<ActiveList> i = activeListManager.getNonEmittingListIterator(); i
                 .hasNext();) {
-            activeList = (ActiveList) i.next();
+            activeList = i.next();
             if (activeList != null) {
                 i.remove();
                 pruneBranches();
@@ -464,8 +460,7 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
     private void monitorWords(ActiveList activeList) {
         WordTracker tracker = new WordTracker(currentFrameNumber);
 
-        for (Iterator i = activeList.iterator(); i.hasNext();) {
-            Token t = (Token) i.next();
+        for (Token t : activeList.getTokens()) {
             tracker.add(t);
         }
         tracker.dump();
@@ -620,7 +615,7 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
     /**
      * Collects the next set of emitting tokens from a token and accumulates them in the active or result lists
      *
-     * @param token the token to collect successors from be immediately expaned are placed. Null if we should always
+     * @param token the token to collect successors from be immediately expanded are placed. Null if we should always
      *              expand all nodes.
      */
     protected void collectSuccessorTokens(Token token) {
@@ -831,13 +826,11 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
         return keep;
     }
 
-
     /** Counts all the tokens in the active list (and displays them). This is an expensive operation. */
     private void showTokenCount() {
         Set<Token> tokenSet = new HashSet<Token>();
 
-        for (Iterator i = activeList.iterator(); i.hasNext();) {
-            Token token = (Token) i.next();
+        for (Token token : activeList.getTokens()) {
             while (token != null) {
                 tokenSet.add(token);
                 token = token.getPredecessor();
@@ -1091,11 +1084,9 @@ class TokenHeap {
 
 
     /** Orders the heap after an insert */
-    @SuppressWarnings({"unchecked"})
     private void fixupInsert() {
         Arrays.sort(tokens, 0, curSize - 1, Token.COMPARATOR);
     }
-
 
     /**
      * returns a token on the heap that matches the given search state
@@ -1152,12 +1143,11 @@ class WordTracker {
 
 
     /** Dumps the word histories in the tracker */
-    @SuppressWarnings({"unchecked"})
     void dump() {
         dumpSummary();
-        Object[] stats = statMap.values().toArray();
-        Arrays.sort(stats, WordStats.COMPARATOR);
-        for (Object stat : stats) {
+        List<WordStats> stats = new ArrayList<WordStats>(statMap.values());
+        Collections.sort(stats, WordStats.COMPARATOR);
+        for (WordStats stat : stats) {
             System.out.println("   " + stat);
         }
     }
@@ -1196,11 +1186,8 @@ class WordTracker {
 
 class WordStats {
 
-    public final static Comparator COMPARATOR = new Comparator() {
-        public int compare(Object o1, Object o2) {
-            WordStats ws1 = (WordStats) o1;
-            WordStats ws2 = (WordStats) o2;
-
+    public final static Comparator<WordStats> COMPARATOR = new Comparator<WordStats>() {
+        public int compare(WordStats ws1, WordStats ws2) {
             if (ws1.maxScore > ws2.maxScore) {
                 return -1;
             } else if (ws1.maxScore == ws2.maxScore) {
@@ -1215,7 +1202,6 @@ class WordStats {
     private float maxScore;
     private float minScore;
     private WordSequence ws;
-
 
     /**
      * Creates a word stat for the given sequence
@@ -1322,7 +1308,7 @@ class TokenTypeTracker {
 
 
     /**
-     * Utility method for generating iteger percents
+     * Utility method for generating integer percents
      *
      * @param num the value to be converted into percent
      * @return a string representation as a percent

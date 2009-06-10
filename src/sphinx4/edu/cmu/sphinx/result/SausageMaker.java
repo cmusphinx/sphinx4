@@ -50,7 +50,7 @@ public class SausageMaker extends AbstractSausageMaker {
      *
      * @param clusters the current cluster set
      */
-    protected void interWordCluster(List clusters) {
+    protected void interWordCluster(List<Cluster> clusters) {
         while (interWordClusterStep(clusters)) ;
     }
 
@@ -100,19 +100,19 @@ public class SausageMaker extends AbstractSausageMaker {
      *
      * @param clusters the current cluster set
      */
-    protected boolean interWordClusterStep(List clusters) {
+    protected boolean interWordClusterStep(List<Cluster> clusters) {
         Cluster toBeMerged1 = null;
         Cluster toBeMerged2 = null;
         double maxSim = Double.NEGATIVE_INFINITY;
-        ListIterator i = clusters.listIterator();
+        ListIterator<Cluster> i = clusters.listIterator();
         while (i.hasNext()) {
-            Cluster c1 = (Cluster) i.next();
+            Cluster c1 = i.next();
             if (!i.hasNext()) {
                 break;
             }
-            ListIterator j = clusters.listIterator(i.nextIndex());
+            ListIterator<Cluster> j = clusters.listIterator(i.nextIndex());
             while (j.hasNext()) {
-                Cluster c2 = (Cluster) j.next();
+                Cluster c2 = j.next();
                 double sim = interClusterDistance(c1, c2);
                 if (sim > maxSim && hasOverlap(c1, c2)) {
                     maxSim = sim;
@@ -198,20 +198,16 @@ public class SausageMaker extends AbstractSausageMaker {
         }
         float totalSim = LogMath.getLogZero();
         float wordPairCount = (float) 0.0;
-        HashSet wordsSeen1 = new HashSet();
+        HashSet<String> wordsSeen1 = new HashSet<String>();
 
-        Iterator i1 = c1.iterator();
-        while (i1.hasNext()) {
-            Node node1 = (Node) i1.next();
+        for (Node node1 : c1.getElements()) {
             String word1 = node1.getWord().getSpelling();
             if (wordsSeen1.contains(word1)) {
                 continue;
             }
             wordsSeen1.add(word1);
-            HashSet wordsSeen2 = new HashSet();
-            Iterator i2 = c2.iterator();
-            while (i2.hasNext()) {
-                Node node2 = (Node) i2.next();
+            HashSet<String> wordsSeen2 = new HashSet<String>();
+            for (Node node2 : c2.getElements()) {
                 String word2 = node2.getWord().getSpelling();
                 if (wordsSeen2.contains(word2)) {
                     continue;
@@ -238,12 +234,9 @@ public class SausageMaker extends AbstractSausageMaker {
      * @return true if the clusters are related
      */
     protected boolean areClustersInRelation(Cluster cluster1, Cluster cluster2) {
-        Iterator i = cluster1.iterator();
-        while (i.hasNext()) {
-            Iterator j = cluster2.iterator();
-            Node n1 = (Node) i.next();
-            while (j.hasNext()) {
-                if (n1.hasAncestralRelationship((Node) j.next())) {
+        for (Node n1: cluster1.getElements()) {
+            for (Node n2: cluster2.getElements()) {
+                if (n1.hasAncestralRelationship(n2)) {
                     return true;
                 }
             }
@@ -258,17 +251,13 @@ public class SausageMaker extends AbstractSausageMaker {
      *
      * @param cluster1 the first cluster
      * @param cluster2 the second cluster
-     * @return The intra cluster distance, or Double.NEGATIVE_INFINITY if the clusters should never be clustered
+     * @return The intra-cluster distance, or Double.NEGATIVE_INFINITY if the clusters should never be clustered
      *         together.
      */
     protected double intraClusterDistance(Cluster cluster1, Cluster cluster2) {
         double maxSim = Double.NEGATIVE_INFINITY;
-        Iterator i1 = cluster1.iterator();
-        while (i1.hasNext()) {
-            Node node1 = (Node) i1.next();
-            Iterator i2 = cluster2.iterator();
-            while (i2.hasNext()) {
-                Node node2 = (Node) i2.next();
+        for (Node node1 : cluster1.getElements()) {
+            for (Node node2 : cluster2.getElements()) {
                 if (!node1.getWord().getSpelling().equals(node2.getWord().getSpelling())) {
                     return Double.NEGATIVE_INFINITY;
                 }
@@ -294,7 +283,7 @@ public class SausageMaker extends AbstractSausageMaker {
      *
      * @param clusters the current list of clusters
      */
-    protected void intraWordCluster(List clusters) {
+    protected void intraWordCluster(List<Cluster> clusters) {
         while (intraWordClusterStep(clusters)) ;
     }
 
@@ -305,17 +294,17 @@ public class SausageMaker extends AbstractSausageMaker {
      * @param clusters the current list of clusters
      * @return did two clusters get merged?
      */
-    protected boolean intraWordClusterStep(List clusters) {
+    protected boolean intraWordClusterStep(List<Cluster> clusters) {
         Cluster toBeMerged1 = null;
         Cluster toBeMerged2 = null;
         double maxSim = Double.NEGATIVE_INFINITY;
-        ListIterator i = clusters.listIterator();
+        ListIterator<Cluster> i = clusters.listIterator();
         while (i.hasNext()) {
-            Cluster c1 = (Cluster) i.next();
+            Cluster c1 = i.next();
             if (!i.hasNext()) {
                 break;
             }
-            ListIterator j = clusters.listIterator(i.nextIndex());
+            ListIterator<Cluster> j = clusters.listIterator(i.nextIndex());
             while (j.hasNext()) {
                 Cluster c2 = (Cluster) j.next();
                 double sim = intraClusterDistance(c1, c2);
@@ -341,11 +330,9 @@ public class SausageMaker extends AbstractSausageMaker {
      * @return the sausage producing by collapsing the lattice.
      */
     public Sausage makeSausage() {
-        List clusters = new Vector(lattice.getNodes().size());
-        Collection nodes = lattice.nodes.values();
-        Iterator i = nodes.iterator();
-        while (i.hasNext()) {
-            Node n = (Node) i.next();
+        List<Cluster> clusters = new Vector<Cluster>(lattice.getNodes().size());
+        Collection<Node> nodes = lattice.nodes.values();
+        for (Node n : nodes) {
             n.cacheDescendants();
             Cluster bucket = new Cluster(n);
             clusters.add(bucket);
@@ -374,9 +361,9 @@ public class SausageMaker extends AbstractSausageMaker {
      * @param clusters the list of clusters to be topologically sorted
      * @return a topologically sorted list of clusters
      */
-    private List topologicalSort(List clusters) {
-        Comparator comparator = new ClusterComparator();
-        Vector sorted = new Vector(clusters.size());
+    private List<Cluster> topologicalSort(List<Cluster> clusters) {
+        Comparator<Cluster> comparator = new ClusterComparator();
+        Vector<Cluster> sorted = new Vector<Cluster>(clusters.size());
         while (clusters.size() > 0) {
             Cluster cluster = (Cluster) Collections.min(clusters, comparator);
             clusters.remove(cluster);

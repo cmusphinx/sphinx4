@@ -523,8 +523,7 @@ public class Result {
      */
     public boolean validate() {
         boolean valid = true;
-        for (Iterator<Token> i = activeList.iterator(); i.hasNext();) {
-            Token token = i.next();
+        for (Token token : activeList.getTokens()) {
             if (!token.validate()) {
                 valid = false;
                 token.dumpTokenPath();

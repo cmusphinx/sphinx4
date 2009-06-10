@@ -1,6 +1,17 @@
+/*
+ * Copyright 1999-2002 Carnegie Mellon University.
+ * Portions Copyright 2002 Sun Microsystems, Inc.
+ * Portions Copyright 2002 Mitsubishi Electric Research Laboratories.
+ * All Rights Reserved.  Use is subject to license terms.
+ *
+ * See the file "license.terms" for information on usage and
+ * redistribution of this file, and for a DISCLAIMER OF ALL
+ * WARRANTIES.
+ *
+ * Created on Nov 23, 2004
+ */
 package edu.cmu.sphinx.result;
 
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
@@ -9,7 +20,7 @@ import java.util.ListIterator;
 /**
  * This is an implementation of an alternative sausage making algorithm as described in the following paper. Runs in
  * less time than the SausageMaker, but will also build different sausages. A general algorithm for word graph matrix
- * decomposition, Hakkani-Tur, D.   Riccardi, G., AT&T Labs.-Res., USA;, This paper appears in: 2003 IEEE International
+ * decomposition, Hakkani-Tur, D. Riccardi, G., AT&T Labs.-Res., USA;, This paper appears in: 2003 IEEE International
  * Conference on Acoustics, Speech, and Signal Processing, 2003. Proceedings. (ICASSP '03).
  *
  * @author P. Gorniak
@@ -19,14 +30,13 @@ public class PivotSausageMaker extends AbstractSausageMaker {
     protected List<Node> sortedNodes;
     protected List<Cluster> clusters;
 
-
     /**
      * Turn the lattice contained in this sausage maker into a sausage object.
      *
      * @return the sausage producing by collapsing the lattice.
      */
     public Sausage makeSausage() {
-         for (Node node : sortedNodes) {
+        for (Node node : sortedNodes) {
             int slot = findMostOverlappingSlot(node);
             Cluster targetCluster = getCluster(slot);
             if (!containsAncestor(targetCluster, node)) {
@@ -109,9 +119,8 @@ public class PivotSausageMaker extends AbstractSausageMaker {
         sortedNodes = lattice.sortNodes();
         sortedNodes.removeAll(seedPath);
         clusters = new LinkedList<Cluster>();
-        Iterator<Node> i = seedPath.iterator();
-        while (i.hasNext()) {
-            clusters.add(new Cluster((Node) i.next()));
+        for (Node n : seedPath) {
+            clusters.add(new Cluster(n));
         }
         return makeSausage();
     }

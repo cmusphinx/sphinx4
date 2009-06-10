@@ -137,7 +137,7 @@ public class Lattice {
             while (token != null && !token.isWord()) {
                 token = token.getPredecessor();
             }
-            assert token.getWord().isSentenceEndWord();
+            assert token != null && token.getWord().isSentenceEndWord();
             if (terminalNode == null) {
                 terminalNode = new Node(getNodeID(result.getBestToken()),
                         token.getWord(), -1, -1);
@@ -191,70 +191,80 @@ public class Lattice {
             return;
         }
         visitedWordTokens.add(token);
-        System.out.println ("Number of tokens visited + " + visitedWordTokens.size());
         collapseWordPath(getNode(token), token.getPredecessor(),
                 token.getAcousticScore(), token.getLanguageScore());
-        if (loserManager != null) {
-        	List<Token> predecessors = loserManager.getAlternatePredecessors(token);
-        	if (predecessors != null) {
-        			for (Token loser : predecessors) {
-        					collapseWordPath(getNode(token), loser,
-        								token.getAcousticScore(),
-        								token.getLanguageScore());
-        			}
-        	}
+        if (loserManager != null && loserManager.hasAlternatePredecessors(token)) {
+            for (Token loser : loserManager.getAlternatePredecessors(token)) {
+                 collapseWordPath(getNode(token), loser,
+                          token.getAcousticScore(),
+                          token.getLanguageScore());
+            }
         }
     }
 
 
     /**
-     * @param parentWordNode the 'toNode' of the returned edge
-     * @param token          the predecessor token of the token represented by the parentWordNode
-     * @param acousticScore  the acoustic score until and including the parent of token
-     * @param languageScore  the language score until and including the parent of token
-     */
-    private void collapseWordPath(Node parentWordNode, Token token,
-                                  float acousticScore, float languageScore) {
-        if (token.isWord()) {
-            /*
-             * If this is a word, create a Node for it, and then create an
-             * edge from the Node to the parentWordNode
-             */
-            Node fromNode = getNode(token);
-            addEdge(fromNode, parentWordNode,
-                    (double) acousticScore, (double) languageScore);
+	 * @param parentWordNode
+	 *            the 'toNode' of the returned edge
+	 * @param token
+	 *            the predecessor token of the token represented by the
+	 *            parentWordNode
+	 * @param acousticScore
+	 *            the acoustic score until and including the parent of token
+	 * @param languageScore
+	 *            the language score until and including the parent of token
+	 */
+	private void collapseWordPath(Node parentWordNode, Token token,
+			float acousticScore, float languageScore) {
 
-            if (token.getPredecessor() != null) {
-                /* Collapse the token sequence ending in this token. */
-                collapseWordToken(token);
-            } else {
-                /* we've reached the sentence start token */
-                assert token.getWord().isSentenceStartWord();
-                initialNode = fromNode;
-            }
-        } else {
-            /*
-             * If a non-word token, just add the acoustic and language
-             * scores to the current totals, and then move on to the
-             * predecessor token.
-             */
-            acousticScore += token.getAcousticScore();
-            languageScore += token.getLanguageScore();
-            collapseWordPath(parentWordNode, token.getPredecessor(),
-                    acousticScore, languageScore);
+		if (token.isWord()) {
+			/*
+			 * If this is a word, create a Node for it, and then create an edge
+			 * from the Node to the parentWordNode
+			 */
+			Node fromNode = getNode(token);
+			addEdge(fromNode, parentWordNode, (double) acousticScore,
+					(double) languageScore);
 
-            /* Traverse the path(s) for the loser token(s). */
-            if (loserManager != null) {
-            	  List<Token> predecessors = loserManager.getAlternatePredecessors(token);
-            	  if (predecessors != null) {
-            		  for (Token loser : predecessors) {
-            			  collapseWordPath(parentWordNode, loser,
-                            acousticScore, languageScore);
-            		  }
-            	  }
-            }
-        }
-    }
+			if (token.getPredecessor() != null) {
+				/* Collapse the token sequence ending in this token. */
+				collapseWordToken(token);
+			} else {
+				/* we've reached the sentence start token */
+				assert token.getWord().isSentenceStartWord();
+				initialNode = fromNode;
+			}
+			return;
+		}
+		
+		/*
+		 * If a non-word token, just add the acoustic and language scores to the
+		 * current totals, and then move on to the predecessor token. Fast
+		 * forward through the not so interesting states to save stack space.
+		 */
+		while (true) {
+			acousticScore += token.getAcousticScore();
+			languageScore += token.getLanguageScore();
+
+			Token preToken = token.getPredecessor();
+			if (preToken.isWord()
+					|| (loserManager != null && loserManager
+							.hasAlternatePredecessors(token)))
+				break;
+			token = preToken;
+		}
+
+		collapseWordPath(parentWordNode, token.getPredecessor(), acousticScore,
+				languageScore);
+		
+		/* Traverse the path(s) for the loser token(s). */
+		if (loserManager != null && loserManager.hasAlternatePredecessors(token)) {
+			for (Token loser : loserManager.getAlternatePredecessors(token)) {
+				collapseWordPath(parentWordNode, loser, acousticScore,
+						languageScore);
+			}
+		}
+	}
 
 
     /**
@@ -682,7 +692,7 @@ public class Lattice {
 
 
     /**
-     * Edge scores are usually log-likelyhood.  Get the log base.
+     * Edge scores are usually log-likelihood.  Get the log base.
      *
      * @return the log base
      */

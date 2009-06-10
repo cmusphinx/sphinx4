@@ -61,7 +61,7 @@ public interface ActiveListManager extends Configurable {
      *
      * @return an Iterator of non-emitting ActiveLists
      */
-    public Iterator<Token> getNonEmittingListIterator();
+    public Iterator<ActiveList> getNonEmittingListIterator();
 
 
     /**

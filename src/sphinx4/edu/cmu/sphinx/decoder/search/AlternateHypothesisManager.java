@@ -90,5 +90,10 @@ public class AlternateHypothesisManager {
         viterbiLoserMap.put(newSuccessor, list);
         viterbiLoserMap.remove(oldSuccessor);
     }
+
+
+	public boolean hasAlternatePredecessors(Token token) {
+		return viterbiLoserMap.containsKey(token);
+	}
 }
 

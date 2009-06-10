@@ -66,7 +66,7 @@ public class Edge {
         }
 
         Node toNode = lattice.getNode(to);
-        if (fromNode == null) {
+        if (toNode == null) {
             throw new Error("Edge toNode \"" + to + "\" does not exist");
         }
 
