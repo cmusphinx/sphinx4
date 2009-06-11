@@ -117,8 +117,8 @@ public abstract class AbstractSausageMaker implements ConfidenceScorer, Configur
          * Compares to clusters according to their topological relationship. Relies on strong assumptions about the
          * possible constituents of clusters which will only be valid during the sausage creation process.
          *
-         * @param o1 the first cluster (must be a List)
-         * @param o2 the second cluster (must be a List)
+         * @param cluster1 the first cluster
+         * @param cluster2 the second cluster
          */
         public int compare(Cluster cluster1, Cluster cluster2) {
             Iterator<Node> i = cluster1.iterator();
