@@ -14,11 +14,12 @@ import java.io.*;
 
 /**
  * Stores audio data into numbered (MS-)wav files.
+ * TODO: currently the WavWriter is only able to write data in bigEndian, 
+ * support for littleEndian would be nice
+ * TODO: currently the WavWriter buffers all audio data until a DataEndSignal occurs.
  *
  * @author Holger Brandl
  */
-//todo currently the WavWriter is only able to write data in bigEndian; support for littleEndian would be nice
-//todo currently the WavWriter buffers all audio data until a DataEndSignal occurs.
 public class WavWriter extends BaseDataProcessor {
 
     /**
@@ -58,16 +59,14 @@ public class WavWriter extends BaseDataProcessor {
     @S4Boolean(defaultValue = false)
     public static final String PROP_CAPTURE_UTTERANCES = "captureUtterances";
     /** The default value of PROP_SIGNED_DATA. */
-    private boolean captureUtts = false;
-
+    protected boolean captureUtts = false;
 
     private ByteArrayOutputStream baos;
     private DataOutputStream dos;
 
     private int sampleRate;
     private boolean isInSpeech;
-
-
+    
     public Data getData() throws DataProcessingException {
         Data data = getPredecessor().getData();
 
@@ -81,28 +80,14 @@ public class WavWriter extends BaseDataProcessor {
 
 
         if ((data instanceof DataEndSignal && !captureUtts) || (data instanceof SpeechEndSignal && captureUtts)) {
-            AudioFormat wavFormat = new AudioFormat(sampleRate, bitsPerSample, 1, isSigned, true);
-            AudioFileFormat.Type outputType = getTargetType("wav");
-
+        	
             String wavName;
             if (isCompletePath)
                 wavName = dumpFilePath;
             else
                 wavName = dumpFilePath + getNextFreeIndex(dumpFilePath) + ".wav";
 
-            byte[] abAudioData = baos.toByteArray();
-            ByteArrayInputStream bais = new ByteArrayInputStream(abAudioData);
-            AudioInputStream ais = new AudioInputStream(bais, wavFormat, abAudioData.length / wavFormat.getFrameSize());
-
-            File outWavFile = new File(wavName);
-
-            if (AudioSystem.isFileTypeSupported(outputType, ais)) {
-                try {
-                    AudioSystem.write(ais, outputType, outWavFile);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
+            writeFile(wavName);
 
             isInSpeech = false;
         }
@@ -113,12 +98,6 @@ public class WavWriter extends BaseDataProcessor {
         if ((data instanceof DoubleData || data instanceof FloatData) && (isInSpeech || !captureUtts)) {
             DoubleData dd = data instanceof DoubleData ? (DoubleData) data : DataUtil.FloatData2DoubleData((FloatData) data);
             double[] values = dd.getValues();
-
-//            if (isBigEndian) {
-//                doubleData = DataUtil.bytesToValues(samplesBuffer, 0, totalRead, bytesPerValue, signedData);
-//            } else {
-//                doubleData = DataUtil.littleEndianBytesToValues(samplesBuffer, 0, totalRead, bytesPerValue, signedData);
-//            }
 
             for (double value : values) {
                 try {
@@ -235,17 +214,11 @@ public class WavWriter extends BaseDataProcessor {
         byte[] abAudioData = baos.toByteArray();
         ByteArrayInputStream bais = new ByteArrayInputStream(abAudioData);
 
-//        try {
-//            AudioSystem.write(ais, getTargetType("wav"), new File("segment.wav"));
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-
         return new AudioInputStream(bais, wavFormat, abAudioData.length / wavFormat.getFrameSize());
     }
 
 
-    /** Writes a given double array  into a wav file (given the sample rate of the signal). */
+    /** Writes a given double array into a wav file (given the sample rate of the signal). */
     public static void writeWavFile(double[] signal, int sampleRate, File targetFile) {
         AudioInputStream ais = WavWriter.convertDoublesToAudioStream(signal, sampleRate);
         AudioFileFormat.Type outputType = getTargetType("wav");
@@ -256,4 +229,30 @@ public class WavWriter extends BaseDataProcessor {
             e.printStackTrace();
         }
     }
+
+    /**
+    * Writes the current stream to disc; override this method if you want to take 
+    * additional action on file writes
+    *
+    * @param wavName name of the file to be written
+    */
+    protected void writeFile(String wavName) {
+        AudioFormat wavFormat = new AudioFormat(sampleRate, bitsPerSample, 1, isSigned, true);
+        AudioFileFormat.Type outputType = getTargetType("wav");
+
+        byte[] abAudioData = baos.toByteArray();
+        ByteArrayInputStream bais = new ByteArrayInputStream(abAudioData);
+        AudioInputStream ais = new AudioInputStream(bais, wavFormat, abAudioData.length / wavFormat.getFrameSize());
+
+        File outWavFile = new File(wavName);
+
+        if (AudioSystem.isFileTypeSupported(outputType, ais)) {
+            try {
+                AudioSystem.write(ais, outputType, outWavFile);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }   	
+    }
+
 }
