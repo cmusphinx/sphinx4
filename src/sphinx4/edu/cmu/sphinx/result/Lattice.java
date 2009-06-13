@@ -141,6 +141,7 @@ public class Lattice {
             if (terminalNode == null) {
                 terminalNode = new Node(getNodeID(result.getBestToken()),
                         token.getWord(), -1, -1);
+                initialNode = terminalNode; 
                 addNode(terminalNode);
             }
             collapseWordToken(token);
@@ -181,90 +182,100 @@ public class Lattice {
 
 
     /**
-     * Collapse the given word-ending token. This means collapsing all the unit and HMM tokens that correspond to the
-     * word represented by this token into an edge of the lattice.
-     *
-     * @param token the word-ending token to collapse
+     * Collapse the given word-ending token. This means collapsing all the unit
+     * and HMM tokens that correspond to the word represented by this token into
+     * an edge of the lattice.
+     * 
+     * @param token
+     *            the word-ending token to collapse
      */
     private void collapseWordToken(Token token) {
+        assert token != null;
         if (visitedWordTokens.contains(token)) {
             return;
         }
         visitedWordTokens.add(token);
-        collapseWordPath(getNode(token), token.getPredecessor(),
-                token.getAcousticScore(), token.getLanguageScore());
-        if (loserManager != null && loserManager.hasAlternatePredecessors(token)) {
+
+        collapseWordPath(getNode(token), token.getPredecessor(), token
+                .getAcousticScore(), token.getLanguageScore());
+
+        if (loserManager != null
+                && loserManager.hasAlternatePredecessors(token)) {
             for (Token loser : loserManager.getAlternatePredecessors(token)) {
-                 collapseWordPath(getNode(token), loser,
-                          token.getAcousticScore(),
-                          token.getLanguageScore());
+                collapseWordPath(getNode(token), loser, token
+                        .getAcousticScore(), token.getLanguageScore());
             }
         }
     }
 
-
     /**
-	 * @param parentWordNode
-	 *            the 'toNode' of the returned edge
-	 * @param token
-	 *            the predecessor token of the token represented by the
-	 *            parentWordNode
-	 * @param acousticScore
-	 *            the acoustic score until and including the parent of token
-	 * @param languageScore
-	 *            the language score until and including the parent of token
-	 */
-	private void collapseWordPath(Node parentWordNode, Token token,
-			float acousticScore, float languageScore) {
+     * @param parentWordNode
+     *            the 'toNode' of the returned edge
+     * @param token
+     *            the predecessor token of the token represented by the
+     *            parentWordNode
+     * @param acousticScore
+     *            the acoustic score until and including the parent of token
+     * @param languageScore
+     *            the language score until and including the parent of token
+     */
+    private void collapseWordPath(Node parentWordNode, Token token,
+            float acousticScore, float languageScore) {
 
-		if (token.isWord()) {
-			/*
-			 * If this is a word, create a Node for it, and then create an edge
-			 * from the Node to the parentWordNode
-			 */
-			Node fromNode = getNode(token);
-			addEdge(fromNode, parentWordNode, (double) acousticScore,
-					(double) languageScore);
+        if (token == null)
+            return;
 
-			if (token.getPredecessor() != null) {
-				/* Collapse the token sequence ending in this token. */
-				collapseWordToken(token);
-			} else {
-				/* we've reached the sentence start token */
-				assert token.getWord().isSentenceStartWord();
-				initialNode = fromNode;
-			}
-			return;
-		}
-		
-		/*
-		 * If a non-word token, just add the acoustic and language scores to the
-		 * current totals, and then move on to the predecessor token. Fast
-		 * forward through the not so interesting states to save stack space.
-		 */
-		while (true) {
-			acousticScore += token.getAcousticScore();
-			languageScore += token.getLanguageScore();
+        if (token.isWord()) {
+            /*
+             * If this is a word, create a Node for it, and then create an edge
+             * from the Node to the parentWordNode
+             */
+            Node fromNode = getNode(token);
+            addEdge(fromNode, parentWordNode, (double) acousticScore,
+                    (double) languageScore);
+            if (token.getPredecessor() != null) {
+                /* Collapse the token sequence ending in this token. */
+                collapseWordToken(token);
+            } else {
+                /* we've reached the sentence start token */
+                assert token.getWord().isSentenceStartWord();
+                initialNode = fromNode;
+            }
+            return;
+        }
 
-			Token preToken = token.getPredecessor();
-			if (preToken.isWord()
-					|| (loserManager != null && loserManager
-							.hasAlternatePredecessors(token)))
-				break;
-			token = preToken;
-		}
+        /*
+         * If a non-word token, just add the acoustic and language scores to the
+         * current totals, and then move on to the predecessor token. Fast
+         * forward through the not so interesting states to save stack space.
+         */
+        while (true) {
+            acousticScore += token.getAcousticScore();
+            languageScore += token.getLanguageScore();
+            Token preToken = token.getPredecessor();
 
-		collapseWordPath(parentWordNode, token.getPredecessor(), acousticScore,
-				languageScore);
-		
-		/* Traverse the path(s) for the loser token(s). */
-		if (loserManager != null && loserManager.hasAlternatePredecessors(token)) {
-			for (Token loser : loserManager.getAlternatePredecessors(token)) {
-				collapseWordPath(parentWordNode, loser, acousticScore,
-						languageScore);
-			}
-		}
-	}
+            if (preToken == null)
+                return;
+
+            if (preToken.isWord()
+                    || (loserManager != null && loserManager
+                            .hasAlternatePredecessors(token)))
+                break;
+            token = preToken;
+        }
+
+        collapseWordPath(parentWordNode, token.getPredecessor(), acousticScore,
+                languageScore);
+
+        /* Traverse the path(s) for the loser token(s). */
+        if (loserManager != null
+                && loserManager.hasAlternatePredecessors(token)) {
+            for (Token loser : loserManager.getAlternatePredecessors(token)) {
+                collapseWordPath(parentWordNode, loser, acousticScore,
+                        languageScore);
+            }
+        }
+    }
 
 
     /**
@@ -846,6 +857,8 @@ public class Lattice {
      */
     public void computeNodePosteriors(float languageModelWeight,
                                       boolean useAcousticScoresOnly) {
+        if (initialNode == null)
+                return;
         //forward
         initialNode.setForwardScore(LogMath.getLogOne());
         initialNode.setViterbiScore(LogMath.getLogOne());
