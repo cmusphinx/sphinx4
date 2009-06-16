@@ -15,6 +15,8 @@ package edu.cmu.sphinx.decoder.search;
 import java.util.Iterator;
 import java.util.List;
 
+import edu.cmu.sphinx.decoder.scorer.Scoreable;
+
 /**
  * An active list is maintained as a sorted list
  * <p/>
@@ -101,7 +103,6 @@ public interface ActiveList {
      * @return the set of tokens
      */
     public List<Token> getTokens();
-
 
     /**
      * gets the beam threshold best upon the best scoring token

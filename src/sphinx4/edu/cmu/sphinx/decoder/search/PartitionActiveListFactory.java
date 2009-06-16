@@ -229,7 +229,6 @@ public class PartitionActiveListFactory extends ActiveListFactory {
             return Arrays.asList(tokenList).subList(0, size);
         }
 
-
         /**
          * Returns the number of tokens on this active list
          *

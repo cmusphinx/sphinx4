@@ -24,5 +24,5 @@ public interface ScoreNormalizer extends Configurable {
      * @return The best token after the all <code>Token</code>s have been normalized. In most cases normalization won't
      *         change the order but to keep the API open for any kind of approach it seemed reasonable to include this.
      */
-    Scoreable normalize(List<Token> scoreableList, Scoreable bestToken);
+    Scoreable normalize(List<? extends Scoreable> scoreableList, Scoreable bestToken);
 }

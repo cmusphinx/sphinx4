@@ -12,6 +12,7 @@
  */
 package edu.cmu.sphinx.decoder.search;
 
+import edu.cmu.sphinx.decoder.scorer.Scoreable;
 import edu.cmu.sphinx.util.props.PropertyException;
 import edu.cmu.sphinx.util.props.PropertySheet;
 
@@ -200,7 +201,6 @@ public class SortingActiveListFactory extends ActiveListFactory {
         public List<Token> getTokens() {
             return tokenList;
         }
-
 
         /**
          * Returns the number of tokens on this active list

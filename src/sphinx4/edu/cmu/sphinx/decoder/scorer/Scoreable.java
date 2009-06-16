@@ -15,7 +15,7 @@ package edu.cmu.sphinx.decoder.scorer;
 import edu.cmu.sphinx.frontend.Data;
 
 /** Represents an entity that can be scored against a data */
-public interface Scoreable {
+public interface Scoreable extends Data {
 
     /**
      * Calculates a score against the given data. The score can be retreived with get score

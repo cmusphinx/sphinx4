@@ -50,7 +50,7 @@ public abstract class AbstractScorer extends ConfigurableAdapter implements Acou
      * @param scoreableList A list containing scoreable objects to be scored
      * @return The best scoring scoreable, or <code>null</code> if there are no more features to score
      */
-    public Scoreable calculateScores(List<Token> scoreableList) {
+    public Data calculateScores(List<? extends Scoreable> scoreableList) {
         if (scoreableList.size() <= 0) {
             return null;
         }
@@ -71,11 +71,11 @@ public abstract class AbstractScorer extends ConfigurableAdapter implements Acou
             if (data instanceof DoubleData)
                 data = DataUtil.DoubleData2FloatData((DoubleData) data);
 
-            Scoreable bestToken = doScoring(scoreableList, data);
+            Data bestToken = doScoring(scoreableList, data);
 
             // apply optional score normalization
-            if (scoreNormalizer != null)
-                bestToken = scoreNormalizer.normalize(scoreableList, bestToken);
+            if (scoreNormalizer != null && bestToken instanceof Token)
+                bestToken = scoreNormalizer.normalize(scoreableList, (Token)bestToken);
 
             return bestToken;
         } catch (DataProcessingException dpe) {
@@ -154,7 +154,7 @@ public abstract class AbstractScorer extends ConfigurableAdapter implements Acou
      * @param data          The <code>Data</code>-object to be used for scoring.
      * @return the best scoring <code>Token</code> or <code>null</code> if the list of tokens was empty.
      */
-    protected abstract Scoreable doScoring(List<Token> scoreableList, Data data);
+    protected abstract Data doScoring(List<? extends Scoreable> scoreableList, Data data);
 
 
     // Even if we don't do any meaningful allocation here, we implement the methods because

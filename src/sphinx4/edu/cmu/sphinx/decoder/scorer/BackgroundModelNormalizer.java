@@ -35,7 +35,7 @@ public class BackgroundModelNormalizer implements ScoreNormalizer {
     }
 
 
-    public Scoreable normalize(List<Token> scoreableList, Scoreable bestToken) {
+    public Scoreable normalize(List<? extends Scoreable> scoreableList, Scoreable bestToken) {
         if (activeListProvider == null) {
             return bestToken;
         }
@@ -46,8 +46,10 @@ public class BackgroundModelNormalizer implements ScoreNormalizer {
 
         float normScore = normToken.getScore();
 
-        for (Token token : scoreableList) {
-            token.normalizeScore(normScore);
+        for (Scoreable scoreable : scoreableList) {
+            if (scoreable instanceof Token) {
+                scoreable.normalizeScore(normScore);
+            }
         }
 
         return bestToken;

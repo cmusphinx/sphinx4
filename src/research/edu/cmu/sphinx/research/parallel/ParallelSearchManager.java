@@ -19,6 +19,7 @@ import edu.cmu.sphinx.decoder.search.ActiveList;
 import edu.cmu.sphinx.decoder.search.ActiveListFactory;
 import edu.cmu.sphinx.decoder.search.SearchManager;
 import edu.cmu.sphinx.decoder.search.Token;
+import edu.cmu.sphinx.frontend.Data;
 import edu.cmu.sphinx.linguist.Linguist;
 import edu.cmu.sphinx.linguist.SearchState;
 import edu.cmu.sphinx.linguist.SearchStateArc;
@@ -268,10 +269,13 @@ public class ParallelSearchManager implements SearchManager {
         scoreTimer.start();
         debugPrint("Scoring");
         boolean moreFeatures = false;
-        for (Iterator i = linguist.getFeatureStreams(); i.hasNext();) {
-            FeatureStream stream = (FeatureStream) i.next();
-            Scoreable scoreable =
+        for (Iterator<FeatureStream> i = linguist.getFeatureStreams(); i.hasNext();) {
+            FeatureStream stream = i.next();
+            Data data =
                     scorer.calculateScores(stream.getActiveList().getTokens());
+            Scoreable scoreable = null;
+            if (data instanceof Scoreable)
+                    scoreable = (Scoreable) data; 
             moreFeatures = (scoreable != null);
         }
         debugPrint(" done Scoring");

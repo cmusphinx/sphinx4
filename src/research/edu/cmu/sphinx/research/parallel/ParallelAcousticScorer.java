@@ -40,18 +40,17 @@ public class ParallelAcousticScorer extends AbstractScorer {
      * @param scoreableList a list containing StateToken objects to be scored
      * @return the best scoring scorable, or null if there are no more frames to score
      */
-    public Scoreable calculateScores(List<Token> scoreableList) {
+    public Data calculateScores(List<? extends Scoreable> scoreableList) {
         frontEnd = getFrontEnd(scoreableList);
         return super.calculateScores(scoreableList);
     }
 
 
-    protected Scoreable doScoring(List<Token> scoreableList, Data data) {
+    protected Data doScoring(List<? extends Scoreable> scoreableList, Data data) {
         float logMaxScore = -Float.MAX_VALUE;
         Scoreable bestScoreable = null;
 
-        for (Iterator i = scoreableList.iterator(); i.hasNext();) {
-            Scoreable scoreable = (Scoreable) i.next();
+        for (Scoreable scoreable : scoreableList) {
             float logScore = scoreable.calculateScore(data);
             if (logScore > logMaxScore) {
                 logMaxScore = logScore;

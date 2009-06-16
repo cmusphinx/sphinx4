@@ -13,6 +13,7 @@ package edu.cmu.sphinx.decoder.search;
 
 import edu.cmu.sphinx.decoder.pruner.Pruner;
 import edu.cmu.sphinx.decoder.scorer.AcousticScorer;
+import edu.cmu.sphinx.decoder.scorer.Scoreable;
 import edu.cmu.sphinx.frontend.Data;
 import edu.cmu.sphinx.linguist.Linguist;
 import edu.cmu.sphinx.linguist.SearchState;
@@ -315,9 +316,13 @@ public class SimpleBreadthFirstSearchManager implements SearchManager {
         boolean hasMoreFrames = false;
 
         scoreTimer.start();
-        Token bestToken = (Token) scorer.calculateScores(activeList.getTokens());
+        Data data = scorer.calculateScores(activeList.getTokens());
         scoreTimer.stop();
-
+        
+        Token bestToken = null;
+        if (data instanceof Token) 
+            bestToken = (Token)data;
+        
         if (bestToken != null) {
             hasMoreFrames = true;
             activeList.setBestToken(bestToken);

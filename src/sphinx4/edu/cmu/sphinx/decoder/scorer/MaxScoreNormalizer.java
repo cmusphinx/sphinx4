@@ -18,8 +18,8 @@ public class MaxScoreNormalizer implements ScoreNormalizer {
     }
 
 
-    public Scoreable normalize(List<Token> scoreableList, Scoreable bestToken) {
-        for (Token scoreable : scoreableList) {
+    public Scoreable normalize(List<? extends Scoreable> scoreableList, Scoreable bestToken) {
+        for (Scoreable scoreable : scoreableList) {
             scoreable.normalizeScore(bestToken.getScore());
         }
 

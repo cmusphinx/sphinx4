@@ -26,11 +26,11 @@ import java.util.List;
 public class SimpleAcousticScorer extends AbstractScorer {
 
 
-    protected Scoreable doScoring(List<Token> scoreableList, Data data) {
+    protected Data doScoring(List<? extends Scoreable> scoreableList, Data data) {
         Scoreable best;
         best = scoreableList.get(0);
 
-        for (Token scoreable : scoreableList) {
+        for (Scoreable scoreable : scoreableList) {
             if (scoreable.calculateScore(data) >
                     best.getScore()) {
                 best = scoreable;

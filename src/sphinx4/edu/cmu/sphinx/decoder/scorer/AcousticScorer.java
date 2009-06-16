@@ -13,6 +13,7 @@
 package edu.cmu.sphinx.decoder.scorer;
 
 import edu.cmu.sphinx.decoder.search.Token;
+import edu.cmu.sphinx.frontend.Data;
 import edu.cmu.sphinx.util.props.Configurable;
 
 import java.util.List;
@@ -24,7 +25,7 @@ public interface AcousticScorer extends Configurable {
     public void allocate();
 
 
-    /** Deallocates resouces for this scorer */
+    /** Deallocates resources for this scorer */
     public void deallocate();
 
 
@@ -38,10 +39,10 @@ public interface AcousticScorer extends Configurable {
     /**
      * Scores the given set of states
      *
-     * @param scorableList a list containing Scorable objects to be scored
-     * @return the best scoring scorable, or null if there are no more frames to score
+     * @param scorableList a list containing Scoreable objects to be scored
+     * @return the best scoring scoreable, or null if there are no more frames to score
      */
-    public Scoreable calculateScores(List<Token> scorableList);
+    public Data calculateScores(List<? extends Scoreable> scorableList);
 
 }
 

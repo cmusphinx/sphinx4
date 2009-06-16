@@ -16,6 +16,7 @@ package edu.cmu.sphinx.decoder.search;
 
 import edu.cmu.sphinx.decoder.pruner.Pruner;
 import edu.cmu.sphinx.decoder.scorer.AcousticScorer;
+import edu.cmu.sphinx.frontend.Data;
 import edu.cmu.sphinx.linguist.*;
 import edu.cmu.sphinx.linguist.acoustic.HMM;
 import edu.cmu.sphinx.linguist.acoustic.HMMPosition;
@@ -431,10 +432,13 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
      */
     protected boolean scoreTokens() {
         boolean moreTokens;
-        Token bestToken;
         scoreTimer.start();
-        bestToken = (Token) scorer.calculateScores(activeList.getTokens());
+        Data data = scorer.calculateScores(activeList.getTokens());
         scoreTimer.stop();
+
+        Token bestToken = null;
+        if (data instanceof Token)
+            bestToken  = (Token) data;
 
         moreTokens = (bestToken != null);
         activeList.setBestToken(bestToken);

@@ -29,7 +29,9 @@ import java.util.logging.Logger;
  */
 public class ScorerTests {
 
-    Token testToken = new Token(1.f, 1.f, null) {
+    Scoreable testToken = new Token(1.f, 1.f, null) {
+
+        private static final long serialVersionUID = 1L;
 
         @Override
         public float calculateScore(Data feature) {
@@ -61,9 +63,9 @@ public class ScorerTests {
             scorer.allocate();
             scorer.startRecognition();
 
-//            Assert.assertTrue(dummyFrontEnd.getBufferSize() < (startBufferSize - 100));
+//          Assert.assertTrue(dummyFrontEnd.getBufferSize() < (startBufferSize - 100));
 
-            List<Token> dummyTokens = Arrays.asList(testToken);
+            List<Scoreable> dummyTokens = Arrays.asList(testToken);
 
             scorer.calculateScores(dummyTokens);
             Assert.assertTrue(dummyFrontEnd.getBufferSize() < (startBufferSize - 100));
@@ -108,7 +110,7 @@ public class ScorerTests {
         scorer.allocate();
         scorer.startRecognition();
 
-        List<Token> dummyTokens = Arrays.asList(testToken);
+        List<Scoreable> dummyTokens = Arrays.asList(testToken);
 
         // score around a little
         scorer.calculateScores(dummyTokens);

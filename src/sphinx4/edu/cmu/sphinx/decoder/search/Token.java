@@ -34,6 +34,8 @@ import java.util.*;
  */
 public class Token implements Scoreable {
 
+    private static final long serialVersionUID = 1L;
+
     /** a token comparator that is used to order tokens in descending order */
     public final static Comparator<Token> COMPARATOR = new Comparator<Token>() {
         public int compare(Token t1, Token t2) {

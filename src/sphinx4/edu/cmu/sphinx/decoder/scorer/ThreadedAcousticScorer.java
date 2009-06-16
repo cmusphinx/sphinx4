@@ -12,7 +12,6 @@
 
 package edu.cmu.sphinx.decoder.scorer;
 
-import edu.cmu.sphinx.decoder.search.Token;
 import edu.cmu.sphinx.frontend.Data;
 import edu.cmu.sphinx.util.props.PropertyException;
 import edu.cmu.sphinx.util.props.PropertySheet;
@@ -153,7 +152,7 @@ public class ThreadedAcousticScorer extends AbstractScorer {
     }
 
 
-    protected Scoreable doScoring(List<Token> scoreableList, Data data) {
+    protected Data doScoring(List<? extends Scoreable> scoreableList, Data data) {
         Scoreable best;
 
         currentData = data;
@@ -212,7 +211,7 @@ public class ThreadedAcousticScorer extends AbstractScorer {
             end = listSize;
         }
 
-        ListIterator<Token> iterator = job.getListIterator();
+        ListIterator<? extends Scoreable> iterator = job.getListIterator();
 
         for (int i = job.getStart(); i < end; i++) {
             Scoreable scoreable = iterator.next();
@@ -375,7 +374,7 @@ class Semaphore {
 
 class ScoreableJob {
 
-    private List<Token> scoreables;
+    private List<? extends Scoreable> scoreables;
     private int start;
     private int size;
 
@@ -387,7 +386,7 @@ class ScoreableJob {
      * @param start      the starting point for this job
      * @param size       the number of scoreables in this job
      */
-    ScoreableJob(List<Token> scoreables, int start, int size) {
+    ScoreableJob(List<? extends Scoreable> scoreables, int start, int size) {
         this.scoreables = scoreables;
         this.start = start;
         this.size = size;
@@ -429,7 +428,7 @@ class ScoreableJob {
      *
      * @return the list of scoreables
      */
-    List<Token> getScoreables() {
+    List<? extends Scoreable> getScoreables() {
         return scoreables;
     }
 
@@ -439,7 +438,7 @@ class ScoreableJob {
      *
      * @return a ListIterator for this job.
      */
-    ListIterator<Token> getListIterator() {
+    ListIterator<? extends Scoreable> getListIterator() {
         return scoreables.listIterator(start);
     }
 
