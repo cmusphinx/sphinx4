@@ -49,6 +49,9 @@ public class LDA extends BaseDataProcessor {
 		}
 		transformMatrix = loader.getTransformMatrix();
 		
+		if (transformMatrix == null)
+			throw new RuntimeException("Model doesn't include transformation matrix");
+	                
 		rows = transformMatrix.length;
 		values = transformMatrix[0].length;
 	}
