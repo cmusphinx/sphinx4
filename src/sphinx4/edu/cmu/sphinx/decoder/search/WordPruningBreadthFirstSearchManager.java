@@ -43,31 +43,31 @@ import java.util.logging.Logger;
 
 public class WordPruningBreadthFirstSearchManager implements SearchManager {
 
-    /** Sphinx property that defines the name of the linguist to be used by this search manager. */
+    /** A property that defines the name of the linguist to be used by this search manager. */
     @S4Component(type = Linguist.class)
     public final static String PROP_LINGUIST = "linguist";
 
-    /** Sphinx property that defines the name of the linguist to be used by this search manager. */
+    /** A property that defines the name of the linguist to be used by this search manager. */
     @S4Component(type = Pruner.class)
     public final static String PROP_PRUNER = "pruner";
 
-    /** Sphinx property that defines the name of the scorer to be used by this search manager. */
+    /** A property that defines the name of the scorer to be used by this search manager. */
     @S4Component(type = AcousticScorer.class)
     public final static String PROP_SCORER = "scorer";
 
-    /** Sphinx property that defines the name of the logmath to be used by this search manager. */
+    /** A property that defines the name of the logmath to be used by this search manager. */
     @S4Component(type = LogMath.class)
     public final static String PROP_LOG_MATH = "logMath";
 
     /**
-     * A sphinx property than, when set to <code>true</code> will cause the recognizer to count up all the tokens in the
+     * A property than, when set to <code>true</code> will cause the recognizer to count up all the tokens in the
      * active list after every frame.
      */
     @S4Boolean(defaultValue = false)
     public final static String PROP_SHOW_TOKEN_COUNT = "showTokenCount";
 
     /**
-     * A sphinx property that controls the number of frames processed for every time the decode growth step is skipped.
+     * A property that controls the number of frames processed for every time the decode growth step is skipped.
      * Setting this property to zero disables grow skipping. Setting this number to a small integer will increase the
      * speed of the decoder but will also decrease its accuracy. The higher the number, the less often the grow code is
      * skipped.
@@ -75,39 +75,39 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
     @S4Integer(defaultValue = 0)
     public final static String PROP_GROW_SKIP_INTERVAL = "growSkipInterval";
 
-    /** Sphinx property that defines the type of active list to use */
+    /** Property that defines the type of active list to use */
     @S4Component(type = ActiveListManager.class)
     public final static String PROP_ACTIVE_LIST_MANAGER = "activeListManager";
 
-    /** Sphinx property for checking if the order of states is valid. */
+    /** Property for checking if the order of states is valid. */
     @S4Boolean(defaultValue = false)
     public final static String PROP_CHECK_STATE_ORDER = "checkStateOrder";
 
-    /** Sphinx property that specifies whether to build a word lattice. */
+    /** Property that specifies whether to build a word lattice. */
     @S4Boolean(defaultValue = true)
     public final static String PROP_BUILD_WORD_LATTICE = "buildWordLattice";
 
-    /** Sphinx property that specifies the maximum lattice edges */
+    /** Property that specifies the maximum lattice edges */
     @S4Integer(defaultValue = 100)
     public final static String PROP_MAX_LATTICE_EDGES = "maxLatticeEdges";
 
     /**
-     * A sphinx property that controls the amount of simple acoustic lookahead performed. Setting the property to zero
+     * A property that controls the amount of simple acoustic lookahead performed. Setting the property to zero
      * (the default) disables simple acoustic lookahead. The lookahead need not be an integer.
      */
     @S4Double(defaultValue = 0)
     public final static String PROP_ACOUSTIC_LOOKAHEAD_FRAMES = "acousticLookaheadFrames";
 
     /**
-     * A sphinx property that controls whether or not we keep all tokens. If this is set to false, only word tokens are
+     * A property that controls whether or not we keep all tokens. If this is set to false, only word tokens are
      * retained, otherwise all tokens are retained.
      */
-    @S4Boolean(defaultValue = true)
+    @S4Boolean(defaultValue = false)
     public final static String PROP_KEEP_ALL_TOKENS = "keepAllTokens";
 
     /** Sphinx4 property that specifies the relative beam width */
     @S4Double(defaultValue = 0.0)
-    // todo this should be a more meaningful default e.g. the common 1E-80
+    // TODO: this should be a more meaningful default e.g. the common 1E-80
     public final static String PROP_RELATIVE_BEAM_WIDTH = "relativeBeamWidth";
 
     // TODO: since the token stacks are permanently disabled,
@@ -161,7 +161,7 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
     // private TokenTracker tokenTracker;
     // private TokenTypeTracker tokenTypeTracker;
     private Map<SearchState, Token> skewMap;
-
+    private boolean streamEnd; 
 
     /*
     * (non-Javadoc)
@@ -246,7 +246,8 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
      */
     public Result recognize(int nFrames) {
         boolean done = false;
-        Result result;
+        Result result = null;
+        streamEnd = false;
 
         try {
 
@@ -283,14 +284,11 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
             System.gc();
             System.out.println("OutOfMemoryError: Aborting recognition");
         }
-
-        result = new Result(loserManager, activeList, resultList,
-                currentFrameNumber, done, logMath);
-
-	if ((result.getDataFrames() == null) ||
-	    (result.getDataFrames().isEmpty())) {
-	    result = null;
-	}
+        
+        if (!streamEnd) {
+        	result = new Result(loserManager, activeList, resultList,
+        					    currentFrameNumber, done, logMath);
+        }
 
         // tokenTypeTracker.show();
         if (showTokenCount) {
@@ -437,16 +435,19 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
         scoreTimer.stop();
 
         Token bestToken = null;
-        if (data instanceof Token)
-            bestToken  = (Token) data;
-
+        if (data instanceof Token) {
+            bestToken = (Token)data;
+        } else if (data == null) {
+            streamEnd = true;
+        }
+ 
         moreTokens = (bestToken != null);
         activeList.setBestToken(bestToken);
 
         // monitorWords(activeList);
         monitorStates(activeList);
 
-//            System.out.println("BEST " + bestToken);
+        // System.out.println("BEST " + bestToken);
 
         curTokensScored.value += activeList.size();
         totalTokensScored.value += activeList.size();

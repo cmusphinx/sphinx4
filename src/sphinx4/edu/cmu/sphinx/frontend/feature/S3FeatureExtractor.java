@@ -209,7 +209,7 @@ public class S3FeatureExtractor extends BaseDataProcessor {
     private int replicateLastCepstrum() {
         DoubleData last = null;
         if (bufferPosition > 0) {
-            last = this.cepstraBuffer[bufferPosition - 1];
+            last = cepstraBuffer[bufferPosition - 1];
         } else if (bufferPosition == 0) {
             last = cepstraBuffer[cepstraBuffer.length - 1];
         } else {

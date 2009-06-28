@@ -13,7 +13,6 @@ package edu.cmu.sphinx.decoder.search;
 
 import edu.cmu.sphinx.decoder.pruner.Pruner;
 import edu.cmu.sphinx.decoder.scorer.AcousticScorer;
-import edu.cmu.sphinx.decoder.scorer.Scoreable;
 import edu.cmu.sphinx.frontend.Data;
 import edu.cmu.sphinx.linguist.Linguist;
 import edu.cmu.sphinx.linguist.SearchState;
@@ -45,28 +44,28 @@ import java.io.IOException;
 // TODO - need to add in timing code.
 public class SimpleBreadthFirstSearchManager implements SearchManager {
 
-    /** Sphinx property that defines the name of the linguist to be used by this search manager. */
+    /** Property that defines the name of the linguist to be used by this search manager. */
     @S4Component(type = Linguist.class)
     public final static String PROP_LINGUIST = "linguist";
 
-    /** Sphinx property that defines the name of the linguist to be used by this search manager. */
+    /** Property that defines the name of the linguist to be used by this search manager. */
     @S4Component(type = Pruner.class)
     public final static String PROP_PRUNER = "pruner";
 
-    /** Sphinx property that defines the name of the scorer to be used by this search manager. */
+    /** Property that defines the name of the scorer to be used by this search manager. */
     @S4Component(type = AcousticScorer.class)
     public final static String PROP_SCORER = "scorer";
 
-    /** Sphinx property that defines the name of the logmath to be used by this search manager. */
+    /** Property that defines the name of the logmath to be used by this search manager. */
     @S4Component(type = LogMath.class)
     public final static String PROP_LOG_MATH = "logMath";
 
-    /** Sphinx property that defines the name of the active list factory to be used by this search manager. */
+    /** Property that defines the name of the active list factory to be used by this search manager. */
     @S4Component(type = ActiveListFactory.class)
     public final static String PROP_ACTIVE_LIST_FACTORY = "activeListFactory";
 
     /**
-     * A sphinx property than, when set to <code>true</code> will cause the recognizer to count up all the tokens in the
+     * A property than, when set to <code>true</code> will cause the recognizer to count up all the tokens in the
      * active list after every frame.
      */
     @S4Boolean(defaultValue = false)
@@ -80,14 +79,14 @@ public class SimpleBreadthFirstSearchManager implements SearchManager {
     public final static String PROP_RELATIVE_WORD_BEAM_WIDTH = "relativeWordBeamWidth";
 
     /**
-     * A sphinx property that controls whether or not relative beam pruning will be performed on the entry into a
+     * A property that controls whether or not relative beam pruning will be performed on the entry into a
      * state.
      */
     @S4Boolean(defaultValue = false)
     public final static String PROP_WANT_ENTRY_PRUNING = "wantEntryPruning";
 
     /**
-     * A sphinx property that controls the number of frames processed for every time the decode growth step is skipped.
+     * A property that controls the number of frames processed for every time the decode growth step is skipped.
      * Setting this property to zero disables grow skipping. Setting this number to a small integer will increase the
      * speed of the decoder but will also decrease its accuracy. The higher the number, the less often the grow code is
      * skipped.
@@ -110,6 +109,7 @@ public class SimpleBreadthFirstSearchManager implements SearchManager {
     // ------------------------------------
     // monitoring data
     // ------------------------------------
+
     private Timer scoreTimer; // TODO move these timers out
     private Timer pruneTimer;
     private Timer growTimer;
@@ -119,6 +119,10 @@ public class SimpleBreadthFirstSearchManager implements SearchManager {
     private StatisticsVariable tokensCreated;
     private StatisticsVariable viterbiPruned;
     private StatisticsVariable beamPruned;
+
+    // ------------------------------------
+    // Working data
+    // ------------------------------------
 
     private boolean showTokenCount;
     private boolean wantEntryPruning;
@@ -130,7 +134,7 @@ public class SimpleBreadthFirstSearchManager implements SearchManager {
     private float wordThreshold;
     private int growSkipInterval = 0;
     private ActiveListFactory activeListFactory;
-
+    private boolean streamEnd;
 
     public void newProperties(PropertySheet ps) throws PropertyException {
         logger = ps.getLogger();
@@ -174,6 +178,7 @@ public class SimpleBreadthFirstSearchManager implements SearchManager {
     public Result recognize(int nFrames) {
         boolean done = false;
         Result result = null;
+        streamEnd = false;
         for (int i = 0; i < nFrames && !done; i++) {
             done = recognize();
         }
@@ -185,12 +190,10 @@ public class SimpleBreadthFirstSearchManager implements SearchManager {
             // to make the current result as correct as possible we undo the last search graph expansion here
             ActiveList fixedList = undoLastGrowStep();
 
-            // now create the restult using the fixed active-list
-            result = new Result(fixedList, resultList, currentFrameNumber, done, logMath);
-
-            List<Data> dataFrames = result.getDataFrames();
-            if (dataFrames == null || dataFrames.isEmpty())
-                result = null;
+            if (!streamEnd) {
+           		// now create the result using the fixed active-list
+           		result = new Result(fixedList, resultList, currentFrameNumber, done, logMath);
+            }
         }
 
         if (showTokenCount) {
@@ -212,7 +215,7 @@ public class SimpleBreadthFirstSearchManager implements SearchManager {
         for (Token token : activeList.getTokens()) {
             Token curToken = token.getPredecessor();
 
-            // remove the final states that are not the real final ones because they're just hide prior  final tokens:
+            // remove the final states that are not the real final ones because they're just hide prior final tokens:
             while (curToken.getPredecessor() != null && (
                     (curToken.isFinal() && curToken.getPredecessor() != null && !curToken.getPredecessor().isFinal())
                             || (curToken.isEmitting() && curToken.getData() == null) // the so long not scored tokens
@@ -287,7 +290,7 @@ public class SimpleBreadthFirstSearchManager implements SearchManager {
         growTimer.start();
         bestTokenMap = new HashMap<SearchState, Token>(mapSize);
         ActiveList oldActiveList = activeList;
-        Iterator oldListIterator = activeList.iterator();
+        Iterator<Token> oldListIterator = activeList.iterator();
         resultList = new LinkedList<Token>();
         activeList = activeListFactory.newInstance();
         threshold = oldActiveList.getBeamThreshold();
@@ -320,8 +323,11 @@ public class SimpleBreadthFirstSearchManager implements SearchManager {
         scoreTimer.stop();
         
         Token bestToken = null;
-        if (data instanceof Token) 
+        if (data instanceof Token) {
             bestToken = (Token)data;
+        } else if (data == null) {
+        	streamEnd = true;
+    	}
         
         if (bestToken != null) {
             hasMoreFrames = true;
@@ -494,7 +500,7 @@ public class SimpleBreadthFirstSearchManager implements SearchManager {
     private void showTokenCount() {
         if (logger.isLoggable(Level.INFO)) {
             Set<Token> tokenSet = new HashSet<Token>();
-            for (Iterator i = activeList.iterator(); i.hasNext();) {
+            for (Iterator<Token> i = activeList.iterator(); i.hasNext();) {
                 Token token = (Token) i.next();
                 while (token != null) {
                     tokenSet.add(token);

@@ -51,22 +51,23 @@ public abstract class AbstractScorer extends ConfigurableAdapter implements Acou
      * @return The best scoring scoreable, or <code>null</code> if there are no more features to score
      */
     public Data calculateScores(List<? extends Scoreable> scoreableList) {
-        if (scoreableList.size() <= 0) {
-            return null;
-        }
 
-        try {
+    	try {
             Data data = getNextData();
             while (data instanceof Signal) {
-                if (data instanceof SpeechEndSignal)
-                    return null; // this will indicate the end of the segment to be scored to the search manager
+                if (data instanceof SpeechEndSignal || data instanceof DataEndSignal) {
+                    return data;
+                }
 
                 data = getNextData();
             }
 
             if (data == null)
-                return null;
+            	return null;
 
+            if (scoreableList.size() <= 0)
+            	return null;
+            
             // convert the data to FloatData if not yet done
             if (data instanceof DoubleData)
                 data = DataUtil.DoubleData2FloatData((DoubleData) data);
