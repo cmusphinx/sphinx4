@@ -21,7 +21,6 @@ import edu.cmu.sphinx.util.props.S4Component;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -66,11 +65,10 @@ public class LMGrammar extends Grammar {
         if (languageModel.getMaxDepth() > 2) {
             System.out.println("Warning: LMGrammar  limited to bigrams");
         }
-        List nodes = new ArrayList();
-        Set words = languageModel.getVocabulary();
+        List<GrammarNode> nodes = new ArrayList<GrammarNode>();
+        Set<String> words = languageModel.getVocabulary();
         // create all of the word nodes
-        for (Iterator i = words.iterator(); i.hasNext();) {
-            String word = (String) i.next();
+        for (String word : words) {
             GrammarNode node = createGrammarNode(word);
             if (node != null && !node.isEmpty()) {
                 if (node.getWord().equals(
@@ -86,14 +84,12 @@ public class LMGrammar extends Grammar {
         if (firstNode == null) {
             throw new Error("No sentence start found in language model");
         }
-        for (Iterator i = nodes.iterator(); i.hasNext();) {
-            GrammarNode prevNode = (GrammarNode) i.next();
+        for (GrammarNode prevNode : nodes) {
             // don't add any branches out of the final node
             if (prevNode.isFinalNode()) {
                 continue;
             }
-            for (Iterator j = nodes.iterator(); j.hasNext();) {
-                GrammarNode nextNode = (GrammarNode) j.next();
+            for (GrammarNode nextNode : nodes) {
                 String prevWord = prevNode.getWord().getSpelling();
                 String nextWord = nextNode.getWord().getSpelling();
                 Word[] wordArray = {getDictionary().getWord(prevWord),

@@ -25,10 +25,8 @@ public class BatchForcedAlignerGrammar extends ForcedAlignerGrammar implements G
     public final static String PROP_REF_FILE = "refFile";
 
     protected String refFile;
-    protected Hashtable grammars;
+    protected Hashtable<String, GrammarNode> grammars;
     protected String currentUttName = "";
-    protected Grammar currentGrammar = null;
-
 
     /*
     * (non-Javadoc)
@@ -39,8 +37,7 @@ public class BatchForcedAlignerGrammar extends ForcedAlignerGrammar implements G
         super.newProperties(ps);
 
         refFile = ps.getString(PROP_REF_FILE);
-        grammars = new Hashtable();
-        currentGrammar = (Grammar) grammars.get(currentUttName);
+        grammars = new Hashtable<String,GrammarNode>();
     }
 
 

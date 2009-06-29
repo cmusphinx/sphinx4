@@ -96,23 +96,22 @@ import java.util.*;
  * <p/>
  * </ol>
  */
-@SuppressWarnings({"UnnecessaryLocalVariable"})
 public class FSTGrammar extends Grammar {
 
-    /** The SphinxProperty for the location of the FST n-gram file. */
+    /** A property for the location of the FST n-gram file. */
     @S4String(defaultValue = "default.arpa_gram")
     public final static String PROP_PATH = "path";
 
-    /** Sphinx property that defines the logMath component. */
+    /** A property that defines the logMath component. */
     @S4Component(type = LogMath.class)
     public final static String PROP_LOG_MATH = "logMath";
 
     // TODO: If this property turns out to be worthwhile, turn this
-    // into a full fledged sphinx property
+    // into a full fledged property
     private boolean addInitialSilenceNode = false;
 
     // TODO: If this property turns out to be worthwhile, turn this
-    // into a full fledged sphinx property
+    // into a full fledged property
 
     // ------------------------------
     // Configuration data
@@ -123,8 +122,8 @@ public class FSTGrammar extends Grammar {
     private String path;
     private LogMath logMath;
 
-    private Map nodes = new HashMap();
-    private Set expandedNodes = new HashSet();
+    private Map<String, GrammarNode> nodes = new HashMap<String, GrammarNode>();
+    private Set<GrammarNode> expandedNodes = new HashSet<GrammarNode>();
 
 
     /**
@@ -344,10 +343,9 @@ public class FSTGrammar extends Grammar {
      * @return the last (or maximum) node ID
      */
     private int expandWordNodes(int maxNodeID) {
-        Collection allNodes = nodes.values();
+        Collection<GrammarNode> allNodes = nodes.values();
         String[][] silence = {{Dictionary.SILENCE_SPELLING}};
-        for (Iterator i = allNodes.iterator(); i.hasNext();) {
-            GrammarNode node = (GrammarNode) i.next();
+        for (GrammarNode node :allNodes) {
             // if it has at least one word, then expand the node
             if (node.getNumAlternatives() > 0) {
                 GrammarNode endNode = createGrammarNode(++maxNodeID, false);

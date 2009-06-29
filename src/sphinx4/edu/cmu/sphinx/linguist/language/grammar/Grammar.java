@@ -33,7 +33,6 @@ import java.util.logging.Logger;
  * <p/>
  * Note that all grammar probabilities are maintained in LogMath log domain.
  */
-@SuppressWarnings({"UnnecessaryLocalVariable"})
 public abstract class Grammar implements Configurable, GrammarInterface {
 
     /** Property to control the the dumping of the grammar */
@@ -173,7 +172,7 @@ public abstract class Grammar implements Configurable, GrammarInterface {
      */
     public void dumpRandomSentences(String path, int count) {
         try {
-            Set set = new HashSet();
+            Set<String> set = new HashSet<String>();
             PrintWriter out = new PrintWriter(new FileOutputStream(path));
             for (int i = 0; i < count; i++) {
                 String s = getRandomSentence();
@@ -197,14 +196,14 @@ public abstract class Grammar implements Configurable, GrammarInterface {
      *              grammar.
      */
     public void dumpRandomSentences(int count) {
-        Set<String> set = new HashSet();
+        Set<String> set = new HashSet<String>();
         for (int i = 0; i < count; i++) {
             String s = getRandomSentence();
             if (!set.contains(s)) {
                 set.add(s);
             }
         }
-        List<String> sampleList = new ArrayList(set);
+        List<String> sampleList = new ArrayList<String>(set);
         Collections.sort(sampleList);
 
         for (String sentence : sampleList) {
@@ -533,7 +532,7 @@ public abstract class Grammar implements Configurable, GrammarInterface {
      * @return the set of inter-word fillers
      */
     private Word[] getInterWordFillers() {
-        List fillerList = new ArrayList();
+        List<Word> fillerList = new ArrayList<Word>();
         Word[] fillers = dictionary.getFillerWords();
 
         for (Word fillerWord : fillers) {

@@ -129,7 +129,7 @@ public class KeywordOptimizerModel implements LanguageModel {
      *
      * @return the unmodifiable set of words
      */
-    public Set getVocabulary() {
+    public Set<String> getVocabulary() {
         return parent.getVocabulary();
     }
 }

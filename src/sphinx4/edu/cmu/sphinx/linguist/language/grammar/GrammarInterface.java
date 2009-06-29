@@ -16,5 +16,5 @@ public interface GrammarInterface {
     GrammarNode getInitialNode();
 
 
-    Set getGrammarNodes();
+    Set<GrammarNode> getGrammarNodes();
 }

@@ -101,7 +101,7 @@ public interface LanguageModel extends Configurable {
      *
      * @return the unmodifiable set of words
      */
-    public Set getVocabulary();
+    public Set<String> getVocabulary();
 
 
     /**

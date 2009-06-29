@@ -543,6 +543,10 @@ public class BinaryLoader {
 
             // read unigram ID, unigram probability, unigram backoff weight
             int unigramID = readInt(stream, bigEndian);
+            
+            /* sphinx3_lm_convert doesn't store ID's in unigrams */
+            if (unigramID < 1) 
+            	unigramID = i;
 
             // if we're not reading the sentinel unigram at the end,
             // make sure that the unigram IDs are consecutive

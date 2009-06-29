@@ -35,7 +35,7 @@ public class GrammarNode {
     private boolean isFinal;            // is this the final node?
 
     private Word[][] alternatives;              // ordered words at this node
-    private List arcList = new ArrayList();      // arcs to successors
+    private List<GrammarArc> arcList = new ArrayList<GrammarArc>();      // arcs to successors
 
 
     /**
@@ -97,8 +97,8 @@ public class GrammarNode {
         // now remove all self-looping empty arcs
 
         if (this.isEmpty()) {
-            for (ListIterator i = arcList.listIterator(); i.hasNext();) {
-                GrammarArc arc = (GrammarArc) i.next();
+            for (ListIterator<GrammarArc> i = arcList.listIterator(); i.hasNext();) {
+                GrammarArc arc = i.next();
                 if (this == arc.getGrammarNode()) {
                     i.remove();
                 }
@@ -229,7 +229,7 @@ public class GrammarNode {
      * @param visitedNodes the set of visited nodes
      * @param logProb      the probability of the transition (in logMath log domain)
      */
-    private String traverse(int level, Set visitedNodes, float logProb) {
+    private String traverse(int level, Set<GrammarNode> visitedNodes, float logProb) {
         String dump = "";
 
         for (int i = 0; i < level; i++) {
@@ -284,7 +284,7 @@ public class GrammarNode {
      * @param visitedNodes the set of visited nodes
      * @throws IOException if an error occurs while writing the file
      */
-    private void traverseGDL(PrintWriter out, Set visitedNodes)
+    private void traverseGDL(PrintWriter out, Set<GrammarNode> visitedNodes)
             throws IOException {
 
         // Visit the children nodes if this node has never been visited.
@@ -371,7 +371,7 @@ public class GrammarNode {
             out.println("graph: {");
             out.println("    orientation: left_to_right");
             out.println("    layout_algorithm: dfs");
-            traverseGDL(out, new HashSet());
+            traverseGDL(out, new HashSet<GrammarNode>());
             out.println("}");
             out.close();
         } catch (FileNotFoundException fnfe) {
@@ -384,7 +384,7 @@ public class GrammarNode {
 
     /** Dumps the grammar */
     public void dump() {
-        System.out.println(traverse(0, new HashSet(), 1.0f));
+        System.out.println(traverse(0, new HashSet<GrammarNode>(), 1.0f));
     }
 
 
@@ -398,7 +398,7 @@ public class GrammarNode {
     GrammarNode splitNode(int id) {
         GrammarNode branchNode = new GrammarNode(id, false);
         branchNode.arcList = arcList;
-        this.arcList = new ArrayList();
+        arcList = new ArrayList<GrammarArc>();
         add(branchNode, 0.0f);
         return branchNode;
     }

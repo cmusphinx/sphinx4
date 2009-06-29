@@ -157,12 +157,10 @@ public class SimpleNGramModel implements LanguageModel {
         } else {
             logProbability = prob.logProbability;
         }
-        if (false) {
-            System.out.println("Search: " + wordSequence + " : "
-                    + logProbability + " "
-                    + logMath.logToLinear(logProbability));
-        }
-        return logProbability;
+         //    System.out.println("Search: " + wordSequence + " : "
+         //           + logProbability + " "
+         //           + logMath.logToLinear(logProbability));
+         return logProbability;
     }
 
 
@@ -208,7 +206,7 @@ public class SimpleNGramModel implements LanguageModel {
      *
      * @return the unmodifiable set of words
      */
-    public Set getVocabulary() {
+    public Set<String> getVocabulary() {
         return Collections.unmodifiableSet(vocabulary);
     }
 
@@ -230,10 +228,11 @@ public class SimpleNGramModel implements LanguageModel {
      * @param wordList the wordList
      * @return the string
      */
-    private String listToString(List wordList) {
+    @SuppressWarnings("unused")
+	private String listToString(List<Word> wordList) {
         StringBuffer sb = new StringBuffer();
-        for (Iterator i = wordList.iterator(); i.hasNext();) {
-            sb.append(i.next().toString());
+        for (Word word : wordList) {
+            sb.append(word.toString());
             sb.append(" ");
         }
         return sb.toString();
@@ -256,7 +255,8 @@ public class SimpleNGramModel implements LanguageModel {
      * @param wordList the list of words
      * @return a string representation of the word list
      */
-    private String getRepresentation(List<String> wordList) {
+    @SuppressWarnings("unused")
+	private String getRepresentation(List<String> wordList) {
         StringBuffer sb = new StringBuffer();
         for (Iterator<String> i = wordList.iterator(); i.hasNext();) {
             String s = i.next();
@@ -346,14 +346,12 @@ public class SimpleNGramModel implements LanguageModel {
                     float p1 = logProb + logUnigramWeight;
                     float p2 = logUniformProbability + inverseLogUnigramWeight;
                     logProb = logMath.addAsLinear(p1, p2);
-                    if (false) {
-                        System.out
-                                .println("p1 " + p1 + " p2 " + p2 + " luw "
-                                        + logUnigramWeight + " iluw "
-                                        + inverseLogUnigramWeight + " lup "
-                                        + logUniformProbability + " logprog "
-                                        + logProb);
-                    }
+//                    System.out
+//                    .println("p1 " + p1 + " p2 " + p2 + " luw "
+//                    		+ logUnigramWeight + " iluw "
+//                    		+ inverseLogUnigramWeight + " lup "
+//                    		+ logUniformProbability + " logprog "
+//                    		+ logProb);
                 }
                 put(wordSequence, logProb, logBackoff);
             }
@@ -375,10 +373,8 @@ public class SimpleNGramModel implements LanguageModel {
      * @param logBackoff   the backoff probability in log math base
      */
     private void put(WordSequence wordSequence, float logProb, float logBackoff) {
-        if (false) {
-            System.out.println("Putting " + wordSequence + " p " + logProb
-                    + " b " + logBackoff);
-        }
+//        System.out.println("Putting " + wordSequence + " p " + logProb
+//                            + " b " + logBackoff);
         map.put(wordSequence, new Probability(logProb, logBackoff));
     }
 

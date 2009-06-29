@@ -95,7 +95,7 @@ public class SimpleWordListGrammar extends Grammar implements Configurable {
         GrammarNode branchNode = createGrammarNode(false);
         GrammarNode finalNode = createGrammarNode("<sil>");
         finalNode.setFinalNode(true);
-        List wordGrammarNodes = new LinkedList();
+        List<GrammarNode> wordGrammarNodes = new LinkedList<GrammarNode>();
         while (!tok.isEOF()) {
             String word;
             while ((word = tok.getString()) != null) {
