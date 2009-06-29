@@ -39,7 +39,7 @@ public class CombineToken extends Token {
                         SentenceHMMState state,
                         int frameNumber) {
         super(predecessor, state, 0.0f, 0.0f, 0.0f, frameNumber);
-        this.tokens = new HashMap();
+        this.tokens = new HashMap<Object, ParallelToken>();
     }
 
 
@@ -110,7 +110,7 @@ public class CombineToken extends Token {
      *
      * @return a Collection of all the parallel tokens
      */
-    public Collection getParallelTokens() {
+    public Collection<ParallelToken> getParallelTokens() {
         return tokens.values();
     }
 

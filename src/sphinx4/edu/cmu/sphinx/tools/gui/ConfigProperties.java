@@ -14,12 +14,9 @@
 
 package edu.cmu.sphinx.tools.gui;
 
-import java.net.URL;
 import java.util.Map;
-import java.util.List;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 
 /**
  * This class stores all the configuration information to be written to output

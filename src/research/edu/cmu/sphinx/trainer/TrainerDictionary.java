@@ -17,8 +17,6 @@ import edu.cmu.sphinx.linguist.dictionary.Dictionary;
 import edu.cmu.sphinx.linguist.dictionary.FullDictionary;
 import edu.cmu.sphinx.linguist.dictionary.Pronunciation;
 
-import java.io.IOException;
-
 /** Dummy trainer dictionary. */
 public class TrainerDictionary extends FullDictionary {
 

@@ -45,7 +45,7 @@ public class ActionTagsParser {
             context.setLanguageVersion(Context.VERSION_1_2);
             global = (ImporterTopLevel)
                     context.initStandardObjects(new ImporterTopLevel(), false);
-            undefined = context.getUndefinedValue();
+            undefined = Context.getUndefinedValue();
             String[] names = {"print", "debug"};
             global.defineFunctionProperties(names,
                     ActionTagsParser.class,
@@ -57,8 +57,6 @@ public class ActionTagsParser {
                     null);
         } catch (JavaScriptException jse) {
             jse.printStackTrace();
-        } catch (PropertyException pe) {
-            pe.printStackTrace();
         }
     }
 

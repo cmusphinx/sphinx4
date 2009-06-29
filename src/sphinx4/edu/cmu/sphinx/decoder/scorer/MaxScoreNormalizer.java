@@ -1,6 +1,5 @@
 package edu.cmu.sphinx.decoder.scorer;
 
-import edu.cmu.sphinx.decoder.search.Token;
 import edu.cmu.sphinx.util.props.PropertyException;
 import edu.cmu.sphinx.util.props.PropertySheet;
 

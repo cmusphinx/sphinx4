@@ -14,8 +14,6 @@
 
 package edu.cmu.sphinx.tools.gui.util;
 
-import java.util.StringTokenizer;
-
 /**
  * This is a helper class to retrieve the javadoc information of 
  * Sphinx classes

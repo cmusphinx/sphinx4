@@ -21,8 +21,6 @@ import edu.cmu.sphinx.util.Utilities;
 import edu.cmu.sphinx.util.props.*;
 
 import java.io.*;
-import java.net.URL;
-import java.net.URI;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Properties;

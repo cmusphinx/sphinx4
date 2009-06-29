@@ -111,9 +111,8 @@ class HMMTree {
                     resultMap.put(hmm, hmmNode);
                 }
                 hmmNode.addRC(rc);
-                for (Iterator j = endNode.getSuccessors().iterator();
-                     j.hasNext();) {
-                    WordNode wordNode = (WordNode) j.next();
+                for (Node node : endNode.getSuccessors()) {
+                    WordNode wordNode = (WordNode) node;
                     hmmNode.addSuccessor(wordNode);
                 }
             }
@@ -140,11 +139,11 @@ class HMMTree {
     }
 
 
-    private Object getKey(EndNode endNode) {
-        Unit base = endNode.getBaseUnit();
-        Unit lc = endNode.getLeftContext();
-        return null;
-    }
+//    private Object getKey(EndNode endNode) {
+//        Unit base = endNode.getBaseUnit();
+//        Unit lc = endNode.getLeftContext();
+//        return null;
+//    }
 
 
     /** Compiles the vocabulary into an HMM Tree */
@@ -178,9 +177,7 @@ class HMMTree {
             dupNode.put(node, node);
             System.out.println(Utilities.pad(level * 1) + node);
             if (!(node instanceof WordNode)) {
-                Collection next = node.getSuccessors();
-                for (Iterator i = next.iterator(); i.hasNext();) {
-                    Node nextNode = (Node) i.next();
+                for (Node nextNode : node.getSuccessors()) {
                     dumpTree(level + 1, nextNode, dupNode);
                 }
             }
@@ -364,9 +361,7 @@ class HMMTree {
     private Set<Word> getAllWords() {
         if (allWords == null) {
             allWords = new HashSet<Word>();
-            Collection words = lm.getVocabulary();
-            for (Iterator i = words.iterator(); i.hasNext();) {
-                String spelling = (String) i.next();
+            for (String spelling : lm.getVocabulary()) {
                 Word word = dictionary.getWord(spelling);
                 if (word != null) {
                     allWords.add(word);
@@ -554,10 +549,9 @@ class HMMTree {
         private Collection<Unit> getEntryPointRC() {
             if (rcSet == null) {
                 rcSet = new HashSet<Unit>();
-                for (Iterator i = baseNode.getSuccessors().iterator();
-                     i.hasNext();) {
-                    UnitNode node = (UnitNode) i.next();
-                    rcSet.add(node.getBaseUnit());
+                for (Node node : baseNode.getSuccessors()) {
+                    UnitNode unitNode = (UnitNode) node;
+                    rcSet.add(unitNode.getBaseUnit());
                 }
             }
             return rcSet;
@@ -664,9 +658,8 @@ class HMMTree {
          * @param rc     the next unit
          */
         private void connectEntryPointNode(Node epNode, Unit rc) {
-            for (Iterator i = baseNode.getSuccessors().iterator();
-                 i.hasNext();) {
-                UnitNode successor = (UnitNode) i.next();
+            for (Node node : baseNode.getSuccessors()) {
+                UnitNode successor = (UnitNode) node;
                 if (successor.getBaseUnit() == rc) {
                     epNode.addSuccessor(successor);
                 }
@@ -728,11 +721,9 @@ class Node {
     Node(float probability) {
         logUnigramProbability = probability;
         nodeCount++;
-        if (false) {
-            if ((nodeCount % 10000) == 0) {
-                System.out.println("NC " + nodeCount);
-            }
-        }
+//        if ((nodeCount % 10000) == 0) {
+//             System.out.println("NC " + nodeCount);
+//        }
     }
 
 
@@ -798,7 +789,7 @@ class Node {
 
     /** Freeze the node. Convert the successor map into an array list */
     void freeze() {
-        if (successors instanceof Map) {
+        if (successors instanceof Map<?,?>) {
             Map<Object, Node> map = getSuccessorMap();
             List<Node> frozenSuccessors = new ArrayList<Node>(map.values().size());
             successors = null; // avoid recursive death spiral
@@ -1123,12 +1114,12 @@ class HMMNode extends UnitNode {
 
     // There can potentially be a large number of nodes (millions),
     // therefore it is important to conserve space as much as
-    // possible.  While building the HMMNOdes, we keep right contexts
+    // possible.  While building the HMMNodes, we keep right contexts
     // in a set to allow easy pruning of duplicates.  Once the tree is
     // entirely built, we no longer need to manage the right contexts
     // as a set, a simple array will do. The freeze method converts
     // the set to the array of units.  This rcSet object holds the set
-    // during contruction and the array after the freeze.
+    // during construction and the array after the freeze.
 
     private Object rcSet;
 
@@ -1241,7 +1232,7 @@ class HMMNode extends UnitNode {
      * @return the set of right contexts
      */
     Unit[] getRC() {
-        if (rcSet instanceof HashSet) {
+        if (rcSet instanceof HashSet<?>) {
             freeze();
         }
         return (Unit[]) rcSet;

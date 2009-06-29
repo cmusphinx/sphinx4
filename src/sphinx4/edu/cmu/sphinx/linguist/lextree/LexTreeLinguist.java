@@ -609,12 +609,11 @@ public class LexTreeLinguist implements Linguist {
          * @return a list of SearchState objects
          */
         protected SearchStateArc[] getSuccessors(Node theNode) {
-            Collection nodes = theNode.getSuccessors();
+            Collection<Node> nodes = theNode.getSuccessors();
             SearchStateArc[] arcs = new SearchStateArc[nodes.size()];
-            Iterator iter = nodes.iterator();
             // System.out.println("Arc: "+ this);
-            for (int i = 0; i < arcs.length; i++) {
-                Node nextNode = (Node) iter.next();
+            int i = 0;
+            for (Node nextNode : nodes) {
                 //  System.out.println(" " + nextNode);
                 if (nextNode instanceof WordNode) {
                     arcs[i] = createWordStateArc((WordNode) nextNode,
@@ -624,6 +623,7 @@ public class LexTreeLinguist implements Linguist {
                 } else {
                     arcs[i] = createUnitStateArc((HMMNode) nextNode, this);
                 }
+                i++;
             }
             return arcs;
         }
@@ -767,7 +767,6 @@ public class LexTreeLinguist implements Linguist {
          *
          * @param arcs the arcs to cache.
          */
-        @SuppressWarnings({"unchecked"})
         void putCachedArcs(SearchStateArc[] arcs) {
             if (cacheEnabled) {
                 arcCache.put(this, arcs);
@@ -852,7 +851,7 @@ public class LexTreeLinguist implements Linguist {
             if (o == this) {
                 return true;
             } else if (o instanceof LexTreeEndUnitState) {
-                LexTreeEndUnitState other = (LexTreeEndUnitState) o;
+                //LexTreeEndUnitState other = (LexTreeEndUnitState) o;
                 return super.equals(o);
             } else {
                 return false;
@@ -1385,7 +1384,7 @@ public class LexTreeLinguist implements Linguist {
                     // add a link to every possible entry point as well
                     // as link to the </s> node
                     arcs = new SearchStateArc[list.size() + 1];
-                    for (Iterator i = list.iterator(); i.hasNext();) {
+                    for (Iterator<Node> i = list.iterator(); i.hasNext();) {
                         HMMNode node = (HMMNode) i.next();
                         arcs[index++] = createUnitStateArc(node, this);
                     }
@@ -1505,9 +1504,11 @@ public class LexTreeLinguist implements Linguist {
     }
 
 
-    class ArcCache extends LinkedHashMap {
+    class ArcCache extends LinkedHashMap<LexTreeState, SearchStateArc[]> {
 
-        protected boolean removeEldestEntry(Map.Entry eldest) {
+		private static final long serialVersionUID = 1L;
+
+		protected boolean removeEldestEntry(Map.Entry<LexTreeState, SearchStateArc[]> eldest) {
             return size() > maxArcCacheSize;
         }
     }

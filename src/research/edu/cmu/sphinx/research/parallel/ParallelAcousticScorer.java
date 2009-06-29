@@ -14,7 +14,6 @@ package edu.cmu.sphinx.research.parallel;
 
 import edu.cmu.sphinx.decoder.scorer.AbstractScorer;
 import edu.cmu.sphinx.decoder.scorer.Scoreable;
-import edu.cmu.sphinx.decoder.search.Token;
 import edu.cmu.sphinx.frontend.Data;
 import edu.cmu.sphinx.frontend.FrontEnd;
 import edu.cmu.sphinx.util.props.PropertyException;

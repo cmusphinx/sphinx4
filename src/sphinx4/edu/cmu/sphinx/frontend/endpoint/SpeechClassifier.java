@@ -23,8 +23,6 @@ import edu.cmu.sphinx.util.props.S4Integer;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
-import java.util.logging.Logger;
-
 
 /**
  * Implements a level tracking endpointer invented by Bent Schmidt Nielsen.

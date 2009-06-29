@@ -20,7 +20,7 @@ import java.util.*;
  * last combine time</b>, combine their scores, and choose the one with the highest combined score.
  * <p/>
  * For example, if tokens T1 and T2 from feature F1 had time stamps (i.e., the last combine time) t1 and t2, and tokens
- * Ta and Tb from feature F2 had time stampes t1 and t2, we must compare combinedScore(T1,Ta)  and combineScore(T2,Tb),
+ * Ta and Tb from feature F2 had time stamps t1 and t2, we must compare combinedScore(T1,Ta)  and combineScore(T2,Tb),
  * and retain the one for which the combined score is higher.
  * <p/>
  * All scores are maintained internally in the LogMath logbase
@@ -29,15 +29,13 @@ public class SameTimeScoreCombiner implements ScoreCombiner {
 
     private SameTimeTokensReader reader;
 
-    private static Comparator combineTimeComparator;
+    private static Comparator<ParallelToken> combineTimeComparator;
 
 
-    private static Comparator getCombineTimeComparator() {
+    private static Comparator<ParallelToken> getCombineTimeComparator() {
         if (combineTimeComparator == null) {
-            combineTimeComparator = new Comparator() {
-                public int compare(Object o1, Object o2) {
-                    ParallelToken t1 = (ParallelToken) o1;
-                    ParallelToken t2 = (ParallelToken) o2;
+            combineTimeComparator = new Comparator<ParallelToken>() {
+                public int compare(ParallelToken t1, ParallelToken t2) {
 
                     if (t1.getLastCombineTime() < t2.getLastCombineTime()) {
                         return -1;
@@ -76,19 +74,18 @@ public class SameTimeScoreCombiner implements ScoreCombiner {
         // sort all the parallel tokens in the CombineToken
         // according to their last combine time
 
-        List tokenList = Arrays.asList
-                (combineToken.getParallelTokens().toArray());
+        List<ParallelToken> tokenList = new ArrayList<ParallelToken>(combineToken.getParallelTokens());
         Collections.sort(tokenList, getCombineTimeComparator());
 
         // System.out.println("TokenList size: " + tokenList.size());
 
         double logHighestCombinedScore = Double.NEGATIVE_INFINITY;
-        List highestList = null;
+        List<ParallelToken> highestList = null;
 
         reader.reset(tokenList);
 
         while (reader.hasMoreTokens()) {
-            List sameTimeList = reader.readNextSameTimeTokens();
+            List<ParallelToken> sameTimeList = reader.readNextSameTimeTokens();
             // checkSameTime(sameTimeList);
             double logCombinedScore = getCombinedScore(sameTimeList);
             // System.out.println("logCombinedScore = " + logCombinedScore);
@@ -102,8 +99,7 @@ public class SameTimeScoreCombiner implements ScoreCombiner {
         assert highestList != null && highestList.size() > 0;
         // System.out.println("Highest TokenList size: " + highestList.size());
 
-        for (Iterator i = highestList.iterator(); i.hasNext();) {
-            ParallelToken token = (ParallelToken) i.next();
+        for (ParallelToken token : highestList) {
             token.setCombinedScore((float) logHighestCombinedScore);
         }
 
@@ -121,20 +117,18 @@ public class SameTimeScoreCombiner implements ScoreCombiner {
      * @param sameTimeTokenList the token list
      * @return the combined log score
      */
-    private double getCombinedScore(List sameTimeTokenList) {
-        Map uniqueMap = new HashMap();
-        int combineTime = -1;
+    private double getCombinedScore(List<ParallelToken> sameTimeTokenList) {
+        Map<String, ParallelToken> uniqueMap = new HashMap<String, ParallelToken>();
+
+//      int combineTime = -1;
 
         // first retain the highest scoring token from each stream 
-        for (Iterator i = sameTimeTokenList.iterator(); i.hasNext();) {
-            ParallelToken token = (ParallelToken) i.next();
-            /*
-	    if (combineTime == -1) {
-		combineTime = token.getLastCombineTime();
-	    } else {
-		assert token.getLastCombineTime() == combineTime;
-	    }
-            */
+        for (ParallelToken token : sameTimeTokenList) {
+//	    	if (combineTime == -1) {
+//					combineTime = token.getLastCombineTime();
+//	    	} else {
+//					assert token.getLastCombineTime() == combineTime;
+//	    	}
             String modelName = token.getModelName();
             ParallelToken tokenInMap =
                     (ParallelToken) uniqueMap.get(modelName);
@@ -154,8 +148,7 @@ public class SameTimeScoreCombiner implements ScoreCombiner {
         // now calculate the combinedScore
         double logTotalScore = 0;
 
-        for (Iterator i = uniqueMap.values().iterator(); i.hasNext();) {
-            ParallelToken pToken = (ParallelToken) i.next();
+        for (ParallelToken pToken : uniqueMap.values()) {
             // System.out.println("Highest: " + tokenToString(pToken));
             sameTimeTokenList.add(pToken);
 
@@ -174,10 +167,10 @@ public class SameTimeScoreCombiner implements ScoreCombiner {
     }
 
 
-    private void checkSameTime(List tokenList) {
+    @SuppressWarnings("unused")
+	private void checkSameTime(List<ParallelToken> tokenList) {
         System.out.print("SameTimeList: ");
-        for (Iterator i = tokenList.iterator(); i.hasNext();) {
-            ParallelToken token = (ParallelToken) i.next();
+        for (ParallelToken token : tokenList) {
             System.out.print(tokenToString(token));
         }
         System.out.println();
@@ -194,7 +187,7 @@ public class SameTimeScoreCombiner implements ScoreCombiner {
 
 class SameTimeTokensReader {
 
-    private ListIterator listIterator;
+    private ListIterator<ParallelToken> listIterator;
     private int timeDifference;
 
 
@@ -204,7 +197,7 @@ class SameTimeTokensReader {
     }
 
 
-    public void reset(List tokenList) {
+    public void reset(List<ParallelToken> tokenList) {
         this.listIterator = tokenList.listIterator();
     }
 
@@ -219,8 +212,8 @@ class SameTimeTokensReader {
     }
 
 
-    public List readNextSameTimeTokens() {
-        List subList = new LinkedList();
+    public List<ParallelToken> readNextSameTimeTokens() {
+        List<ParallelToken> subList = new LinkedList<ParallelToken>();
 
         if (listIterator.hasNext()) {
 

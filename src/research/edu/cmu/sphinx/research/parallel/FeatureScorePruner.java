@@ -14,13 +14,8 @@ package edu.cmu.sphinx.research.parallel;
 
 import edu.cmu.sphinx.decoder.search.Token;
 
-import java.util.Comparator;
-
 /** Prunes an ActiveList of ParallelTokens based on their FeatureScore. */
 public class FeatureScorePruner extends TokenScorePruner {
-
-    private static Comparator tokenComparator = null;
-
 
     /**
      * Returns the score that we use to compare this ParallelToken with other ParallelTokens.

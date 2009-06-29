@@ -14,18 +14,13 @@
 
 package edu.cmu.sphinx.tools.gui;
 
-import javax.swing.JPanel;
-import javax.swing.JLabel;
-import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.ListSelectionModel;
 import javax.swing.JOptionPane;
 
-import java.awt.GridLayout;
 import java.util.Vector;
 import java.util.Map;
 import java.util.HashMap;
-import java.util.Set;
 import java.util.Iterator;
 
 /**

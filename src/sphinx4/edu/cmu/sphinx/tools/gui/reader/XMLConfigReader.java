@@ -17,15 +17,10 @@ package edu.cmu.sphinx.tools.gui.reader;
 import edu.cmu.sphinx.tools.gui.ConfigProperties;
 
 import java.io.File;
-import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
-import java.io.FileNotFoundException;
 import java.net.URL;
-import java.net.URI;
 import java.util.Map;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 
 /**
  * This class implements the process of reading from XML file .config.xml

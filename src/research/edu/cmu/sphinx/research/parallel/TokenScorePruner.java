@@ -54,7 +54,7 @@ public abstract class TokenScorePruner implements Pruner {
     private LogMath logMath;
     private ActiveListFactory activeListFactory;
 
-    private static Comparator tokenComparator = null;
+    private static Comparator<Token> tokenComparator = null;
 
 
     /* (non-Javadoc)
@@ -87,13 +87,10 @@ public abstract class TokenScorePruner implements Pruner {
      *
      * @return a ParallelTokenComparator
      */
-    protected Comparator getTokenComparator() {
+    protected Comparator<Token> getTokenComparator() {
         if (tokenComparator == null) {
-            tokenComparator = new Comparator() {
-                public int compare(Object o1, Object o2) {
-                    Token t1 = (Token) o1;
-                    Token t2 = (Token) o2;
-
+            tokenComparator = new Comparator<Token>() {
+                public int compare(Token t1, Token t2) {
                     if (getTokenScore(t1) > getTokenScore(t2)) {
                         return -1;
                     } else if (getTokenScore(t1) == getTokenScore(t2)) {
@@ -118,36 +115,31 @@ public abstract class TokenScorePruner implements Pruner {
 
         ActiveList newList = activeListFactory.newInstance();
 
-        List tokenList = activeList.getTokens();
+        List<Token> tokenList = activeList.getTokens();
         Collections.sort(tokenList, getTokenComparator());
 
         if (tokenList.size() > 0) {
             Token bestToken = (Token) tokenList.get(0);
             float highestScore = getTokenScore(bestToken);
             float pruneScore = highestScore + relativeBeamWidth;
-
-            int count = 0;  // the number of tokens included so far
-            float lastScore = highestScore;
             float thisScore = highestScore;
 
-            Iterator i = tokenList.iterator();
+            Iterator<Token> i = tokenList.iterator();
 
             // do the pruning
             while (i.hasNext() && newList.size() < absoluteBeamWidth) {
 
-                Token token = (Token) i.next();
+                Token token = i.next();
                 thisScore = getTokenScore(token);
 
                 if (doRelativePruning) {
                     if (thisScore > pruneScore) {
                         newList.add(token);
-                        lastScore = thisScore;
                     } else {
                         break;
                     }
                 } else {
                     newList.add(token);
-                    lastScore = thisScore;
                 }
             }
         }

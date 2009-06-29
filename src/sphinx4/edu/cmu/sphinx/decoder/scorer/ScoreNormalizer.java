@@ -1,6 +1,5 @@
 package edu.cmu.sphinx.decoder.scorer;
 
-import edu.cmu.sphinx.decoder.search.Token;
 import edu.cmu.sphinx.util.props.Configurable;
 
 import java.util.List;

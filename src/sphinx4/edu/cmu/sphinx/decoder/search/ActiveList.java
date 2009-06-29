@@ -15,8 +15,6 @@ package edu.cmu.sphinx.decoder.search;
 import java.util.Iterator;
 import java.util.List;
 
-import edu.cmu.sphinx.decoder.scorer.Scoreable;
-
 /**
  * An active list is maintained as a sorted list
  * <p/>
