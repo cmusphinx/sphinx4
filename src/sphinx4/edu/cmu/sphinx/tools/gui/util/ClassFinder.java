@@ -62,14 +62,13 @@ public class ClassFinder {
      * @throws ClassNotFoundException the class we're looking for is not found
      * @throws FileNotFoundException  the folder does not exist
      */
-    public static List findFolder(String startDir) throws
+    public static List<String> findFolder(String startDir) throws
             ClassNotFoundException, FileNotFoundException {
-        List folderList = new ArrayList();
+        List<String> folderList = new ArrayList<String>();
 
         File tempDir = getStartingDir(startDir);
         validateDirectory(tempDir);
         File[] myFilesDirs = tempDir.listFiles();
-        String tempFile = null;
 
         for (int i = 0; i < myFilesDirs.length; i++) {
             if (myFilesDirs[i].isDirectory()) {

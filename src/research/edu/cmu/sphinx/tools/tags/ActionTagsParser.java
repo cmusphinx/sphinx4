@@ -57,6 +57,8 @@ public class ActionTagsParser {
                     null);
         } catch (JavaScriptException jse) {
             jse.printStackTrace();
+        } catch (Exception e) {
+        	e.printStackTrace();
         }
     }
 

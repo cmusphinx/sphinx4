@@ -68,7 +68,7 @@ public interface AcousticModel extends Configurable {
      * @return an iterator that can be used to iterate through all HMMs in the model. The iterator returns objects of
      *         type <code>HMM</code>.
      */
-    public Iterator getHMMIterator();
+    public Iterator<HMM> getHMMIterator();
 
 
     /**

@@ -172,8 +172,8 @@ public class FrontEnd extends BaseDataProcessor {
     */
     public void initialize() {
         super.initialize();
-        for (Iterator i = frontEndList.iterator(); i.hasNext();) {
-            DataProcessor dp = (DataProcessor) i.next();
+        for (Iterator<DataProcessor> i = frontEndList.iterator(); i.hasNext();) {
+            DataProcessor dp = i.next();
             dp.initialize();
         }
     }
@@ -250,9 +250,8 @@ public class FrontEnd extends BaseDataProcessor {
      * @param signal the signal that occurred
      */
     protected void fireSignalListeners(Signal signal) {
-        Vector copy = (Vector) signalListeners.clone();
-        for (Iterator i = copy.iterator(); i.hasNext();) {
-            SignalListener listener = (SignalListener) i.next();
+        Vector<SignalListener> copy = new Vector<SignalListener>(signalListeners);
+        for (SignalListener listener : copy) {
             listener.signalOccurred(signal);
         }
     }

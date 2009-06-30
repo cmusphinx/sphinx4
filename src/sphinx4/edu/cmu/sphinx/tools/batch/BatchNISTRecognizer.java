@@ -203,7 +203,7 @@ public class BatchNISTRecognizer extends BatchModeRecognizer {
         }
     }
 
-    protected class CTLIterator implements Iterator {
+    protected class CTLIterator implements Iterator<CTLUtterance> {
 
         CTLUtterance utterance;
         LineNumberReader ctlReader;
@@ -236,7 +236,7 @@ public class BatchNISTRecognizer extends BatchModeRecognizer {
         }
 
 
-        public Object next() {
+        public CTLUtterance next() {
             CTLUtterance u = utterance;
             utterance = nextUtterance();
             return u;
@@ -271,8 +271,8 @@ public class BatchNISTRecognizer extends BatchModeRecognizer {
             DataOutputStream ctm = new DataOutputStream(new FileOutputStream(ctmFile));
             recognizer.allocate();
 
-            for (Iterator i = new CTLIterator(); i.hasNext();) {
-                CTLUtterance utt = (CTLUtterance) i.next();
+            for (Iterator<CTLUtterance> i = new CTLIterator(); i.hasNext();) {
+                CTLUtterance utt = i.next();
                 setInputStream(utt);
                 Result result = recognizer.recognize();
                 System.out.println("Utterance " + utteranceId + ": " + utt.getName());

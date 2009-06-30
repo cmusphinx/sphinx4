@@ -15,6 +15,7 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -48,7 +49,9 @@ public class ScorerTests {
 
     @Test
     public void waitUntilSpeechStart() {
-        List<Class<? extends AbstractScorer>> scorerClasses = Arrays.asList(SimpleAcousticScorer.class, ThreadedAcousticScorer.class);
+        List<Class<? extends AbstractScorer>> scorerClasses = new ArrayList<Class<? extends AbstractScorer>>(); 
+        scorerClasses.add(SimpleAcousticScorer.class);
+        scorerClasses.add(ThreadedAcousticScorer.class);
 
         for (Class<? extends AbstractScorer> scorerClass : scorerClasses) {
             System.err.println("testing: " + scorerClass.getSimpleName());

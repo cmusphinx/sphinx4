@@ -294,7 +294,7 @@ public class TiedStateAcousticModel implements AcousticModel {
      * @return an iterator that can be used to iterate through all HMMs in the model. The iterator returns objects of
      *         type <code>HMM</code>.
      */
-    public Iterator getHMMIterator() {
+    public Iterator<HMM> getHMMIterator() {
         return loader.getHMMManager().getIterator();
     }
 
@@ -337,7 +337,7 @@ public class TiedStateAcousticModel implements AcousticModel {
         List<SenoneSequence> senoneSequenceList = new ArrayList<SenoneSequence>();
 
         // collect all senone sequences that match the pattern
-        for (Iterator i = getHMMIterator(); i.hasNext();) {
+        for (Iterator<HMM> i = getHMMIterator(); i.hasNext();) {
             SenoneHMM hmm = (SenoneHMM) i.next();
             if (hmm.getPosition() == position) {
                 Unit hmmUnit = hmm.getUnit();
@@ -477,9 +477,9 @@ public class TiedStateAcousticModel implements AcousticModel {
     private SenoneHMM getHMMAtAnyPosition(Unit unit) {
         SenoneHMM hmm = null;
         HMMManager mgr = loader.getHMMManager();
-        for (Iterator i = HMMPosition.iterator();
+        for (Iterator<HMMPosition> i = HMMPosition.iterator();
              hmm == null && i.hasNext();) {
-            HMMPosition pos = (HMMPosition) i.next();
+            HMMPosition pos = i.next();
             hmm = (SenoneHMM) mgr.get(pos, unit);
         }
         return hmm;
