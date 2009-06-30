@@ -29,6 +29,11 @@ public class HMMManager {
     private List<HMM> allHMMs = new ArrayList<HMM>();
     private ArrayList<Map<Unit, HMM>> hmmsPerPosition = new ArrayList<Map<Unit,HMM>>(HMMPosition.MAX_POSITIONS);
 
+    public HMMManager () {
+    	for (int i = 0; i < HMMPosition.MAX_POSITIONS; i++) {
+    		hmmsPerPosition.add(new HashMap<Unit, HMM>());
+    	}
+    }
 
     /**
      * Put an HMM into this manager
