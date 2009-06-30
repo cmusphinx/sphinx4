@@ -26,8 +26,8 @@ import java.util.logging.Logger;
  */
 public class HMMManager {
 
-    private List allHMMs = new ArrayList();
-    private Map[] hmmsPerPosition = new Map[HMMPosition.MAX_POSITIONS];
+    private List<HMM> allHMMs = new ArrayList<HMM>();
+    private ArrayList<Map<Unit, HMM>> hmmsPerPosition = new ArrayList<Map<Unit,HMM>>(HMMPosition.MAX_POSITIONS);
 
 
     /**
@@ -36,7 +36,7 @@ public class HMMManager {
      * @param hmm the hmm to manage
      */
     public void put(HMM hmm) {
-        Map hmmMap = getHMMMap(hmm.getPosition());
+        Map<Unit, HMM> hmmMap = getHMMMap(hmm.getPosition());
         hmmMap.put(hmm.getUnit(), hmm);
         allHMMs.add(hmm);
     }
@@ -50,7 +50,7 @@ public class HMMManager {
      * @return the HMM for the unit at the given position or null if no HMM at the position could be found
      */
     public HMM get(HMMPosition position, Unit unit) {
-        Map hmmMap = getHMMMap(position);
+        Map<Unit, HMM> hmmMap = getHMMMap(position);
         return (HMM) hmmMap.get(unit);
     }
 
@@ -60,7 +60,7 @@ public class HMMManager {
      *
      * @return an iterator that iterates through all HMMs
      */
-    public Iterator getIterator() {
+    public Iterator<HMM> getIterator() {
         return allHMMs.iterator();
     }
 
@@ -71,11 +71,11 @@ public class HMMManager {
      * @param pos the position of interest
      * @return the map of HMMs for the given position.
      */
-    private Map getHMMMap(HMMPosition pos) {
-        Map hmmMap = hmmsPerPosition[pos.getIndex()];
+    private Map<Unit, HMM> getHMMMap(HMMPosition pos) {
+        Map<Unit, HMM> hmmMap = hmmsPerPosition.get(pos.getIndex());
         if (hmmMap == null) {
-            hmmMap = new LinkedHashMap();
-            hmmsPerPosition[pos.getIndex()] = hmmMap;
+            hmmMap = new LinkedHashMap<Unit, HMM>();
+            hmmsPerPosition.set(pos.getIndex(),hmmMap);
         }
         return hmmMap;
     }
@@ -89,8 +89,7 @@ public class HMMManager {
     private int getNumHMMs() {
         int count = 0;
 
-        for (int i = 0; i < hmmsPerPosition.length; i++) {
-            Map map = hmmsPerPosition[i];
+        for (Map<Unit, HMM> map : hmmsPerPosition) {
             if (map != null) {
                 count += map.size();
             }

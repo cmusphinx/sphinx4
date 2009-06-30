@@ -24,7 +24,8 @@ import java.util.Map;
  */
 public class HMMPosition implements Serializable {
 
-    private static Map map = new LinkedHashMap();
+	private static final long serialVersionUID = 1L;
+	private static Map<String, HMMPosition> map = new LinkedHashMap<String, HMMPosition>();
     private String name;
     private int index;
 
@@ -113,7 +114,7 @@ public class HMMPosition implements Serializable {
      *
      * @return an iterator that iterates through all positions
      */
-    public static Iterator iterator() {
+    public static Iterator<HMMPosition> iterator() {
         return map.values().iterator();
     }
 

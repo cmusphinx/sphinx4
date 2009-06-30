@@ -261,20 +261,19 @@ public class Sphinx3Loader implements Loader {
         useCDUnits = ps.getBoolean(PROP_USE_CD_UNITS);
     }
 
-    // This function is a bit different from ConfigurationManagerUtils.getResource
-    // for compatibility reasons. By default it looks for the resources, not
-    // for the files.
-    private InputStream getDataStream (String location) {
-	
-	InputStream stream;
-	
-	if (location.startsWith ("file:")) {
-	    try {
-    	        return new FileInputStream (location.substring(5));
-	    } catch (Exception e) {
-		return null;
-	    }
-	}
+	// This function is a bit different from
+	// ConfigurationManagerUtils.getResource
+	// for compatibility reasons. By default it looks for the resources, not
+	// for the files.
+	private InputStream getDataStream(String location) {
+
+		if (location.startsWith("file:")) {
+			try {
+				return new FileInputStream(location.substring(5));
+			} catch (Exception e) {
+				return null;
+			}
+		}
 	
 	return getClass().getResourceAsStream(location);
     }
