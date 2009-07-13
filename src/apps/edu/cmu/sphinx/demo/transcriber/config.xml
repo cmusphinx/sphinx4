@@ -169,18 +169,12 @@
 
     <component name="dataBlocker" type="edu.cmu.sphinx.frontend.DataBlocker"/>
     
-    <component name="speechClassifier" 
-               type="edu.cmu.sphinx.frontend.endpoint.SpeechClassifier">
-        <property name="threshold" value="13"/>
-    </component>
+    <component name="speechClassifier" type="edu.cmu.sphinx.frontend.endpoint.SpeechClassifier"/>
     
     <component name="nonSpeechDataFilter" 
                type="edu.cmu.sphinx.frontend.endpoint.NonSpeechDataFilter"/>
     
-    <component name="speechMarker" 
-               type="edu.cmu.sphinx.frontend.endpoint.SpeechMarker" >
-        <property name="speechTrailer" value="50"/>
-    </component>
+    <component name="speechMarker" type="edu.cmu.sphinx.frontend.endpoint.SpeechMarker" />
         
     <component name="preemphasizer"
                type="edu.cmu.sphinx.frontend.filter.Preemphasizer"/>

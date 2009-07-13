@@ -40,20 +40,18 @@ import java.util.logging.Level;
  *
  * @see SpeechMarker
  */
-@SuppressWarnings({"UnnecessaryLocalVariable"})
 public class SpeechClassifier extends BaseDataProcessor {
 
-    /** The SphinxProperty specifying the endpointing frame length in milliseconds. */
+    /** A property specifying the endpointing frame length in milliseconds. */
     @S4Integer(defaultValue = 10)
     public static final String PROP_FRAME_LENGTH_MS = "frameLengthInMs";
 
-    /** The SphinxProperty specifying the minimum signal level used to update the background signal level. */
+    /** A property specifying the minimum signal level used to update the background signal level. */
     @S4Double(defaultValue = 0)
     public static final String PROP_MIN_SIGNAL = "minSignal";
 
-
     /**
-     * The SphinxProperty specifying the threshold. If the current signal level is greater than the background level by
+     * A property specifying the threshold. If the current signal level is greater than the background level by
      * this threshold, then the current signal is marked as speech. Therefore, a lower threshold will make the
      * endpointer more sensitive, that is, mark more audio as speech. A higher threshold will make the endpointer less
      * sensitive, that is, mark less audio as speech.
@@ -61,7 +59,7 @@ public class SpeechClassifier extends BaseDataProcessor {
     @S4Double(defaultValue = 10)
     public static final String PROP_THRESHOLD = "threshold";
 
-    /** The SphinxProperty specifying the adjustment. */
+    /** A property specifying the adjustment. */
     @S4Double(defaultValue = 0.003)
     public static final String PROP_ADJUSTMENT = "adjustment";
 
@@ -75,7 +73,6 @@ public class SpeechClassifier extends BaseDataProcessor {
 
     protected List<Data> outputQueue = new LinkedList<Data>();
 
-
     @Override
     public void newProperties(PropertySheet ps) throws PropertyException {
         super.newProperties(ps);
@@ -87,7 +84,7 @@ public class SpeechClassifier extends BaseDataProcessor {
         minSignal = ps.getDouble(PROP_MIN_SIGNAL);
 
         logger = ps.getLogger();
-
+ 
         initialize();
     }
 

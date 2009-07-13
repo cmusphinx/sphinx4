@@ -12,6 +12,7 @@
 package edu.cmu.sphinx.frontend.util;
 
 import edu.cmu.sphinx.frontend.*;
+import edu.cmu.sphinx.frontend.endpoint.SpeechClassifiedData;
 import edu.cmu.sphinx.util.props.*;
 
 import java.text.DecimalFormat;
@@ -104,6 +105,19 @@ public class DataDumper extends BaseDataProcessor {
             DoubleData dd = (DoubleData) input;
             double[] values = dd.getValues();
             System.out.print("Frame " + values.length);
+            for (int i = 0; i < values.length; i++) {
+                System.out.print(" " + formatter.format(values[i]));
+            }
+            System.out.println();
+        } else if (input instanceof SpeechClassifiedData) {
+            SpeechClassifiedData dd = (SpeechClassifiedData) input;
+            double[] values = dd.getValues();
+            System.out.print("Frame ");
+            if (dd.isSpeech())
+            	System.out.print('*');
+            else
+            	System.out.print(' ');
+            System.out.print(" " + values.length);
             for (int i = 0; i < values.length; i++) {
                 System.out.print(" " + formatter.format(values[i]));
             }

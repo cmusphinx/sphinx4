@@ -42,27 +42,35 @@ import java.util.ListIterator;
 public class SpeechMarker extends BaseDataProcessor {
 
     /**
-     * The Sphinx4 roperty for the minimum amount of time in speech (in milliseconds) to be considered as utterance
-     * start.
+     * A property for the minimum amount of time in speech (in milliseconds) to be considered 
+     * as utterance start.
      */
     @S4Integer(defaultValue = 200)
     public static final String PROP_START_SPEECH = "startSpeech";
     private int startSpeechTime;
 
 
-    /** The SphinxProperty for the amount of time in silence (in milliseconds) to be considered as utterance end. */
+    /** A property for the amount of time in silence (in milliseconds) to be 
+     * considered as utterance end. */
     @S4Integer(defaultValue = 500)
     public static final String PROP_END_SILENCE = "endSilence";
     private int endSilenceTime;
 
 
-    /** The SphinxProperty for the amount of time (in milliseconds) before speech start to be included as speech data. */
+    /** A property for the amount of time (in milliseconds) before speech start 
+     * to be included as speech data. */
     @S4Integer(defaultValue = 100)
     public static final String PROP_SPEECH_LEADER = "speechLeader";
     private int speechLeader;
 
+    /** A property for number of frames to keep in buffer. Should be enough to let
+     * insert the SpeechStartSignal. */
+    @S4Integer(defaultValue = 20)
+    public static final String PROP_SPEECH_LEADER_FRAMES = "speechLeaderFrames";
+    private int speechLeaderFrames;
 
-    /** The SphinxProperty for the amount of time (in milliseconds) after speech ends to be included as speech data. */
+    /** A property for the amount of time (in milliseconds) after speech ends to be 
+     * included as speech data. */
     @S4Integer(defaultValue = 100)
     public static final String PROP_SPEECH_TRAILER = "speechTrailer";
     private int speechTrailer;
@@ -79,6 +87,7 @@ public class SpeechMarker extends BaseDataProcessor {
         startSpeechTime = ps.getInt(PROP_START_SPEECH);
         endSilenceTime = ps.getInt(PROP_END_SILENCE);
         speechLeader = ps.getInt(PROP_SPEECH_LEADER);
+        speechLeaderFrames = ps.getInt(PROP_SPEECH_LEADER_FRAMES);
         speechTrailer = ps.getInt(PROP_SPEECH_TRAILER);
     }
 
@@ -104,7 +113,7 @@ public class SpeechMarker extends BaseDataProcessor {
      * @throws DataProcessingException if a data processing error occurs
      */
     public Data getData() throws DataProcessingException {
-        if (outputQueue.size() == 0) {
+        while (outputQueue.size() < speechLeaderFrames) {
             Data audio = readData();
 
             if (audio != null) {
@@ -116,7 +125,6 @@ public class SpeechMarker extends BaseDataProcessor {
                         if (data.isSpeech()) {
                             boolean speechStarted = handleFirstSpeech(data);
                             if (speechStarted) {
-                                // System.out.println("Speech started !!!");
                                 addSpeechStart();
                                 inSpeech = true;
                             }
@@ -138,8 +146,11 @@ public class SpeechMarker extends BaseDataProcessor {
                         throw new Error("Got DataStartSignal while in speech");
                     }
                 }
+            } else {
+            	break;
             }
         }
+
         if (outputQueue.size() > 0) {
             Data audio = outputQueue.remove(0);
             if (audio instanceof SpeechClassifiedData) {
@@ -192,7 +203,7 @@ public class SpeechMarker extends BaseDataProcessor {
         // System.out.println("Entering handleFirstSpeech()");
         // try to read more that 'startSpeechTime' amount of
         // audio that is labeled as speech (the condition for speech start)
-
+        
         while (speechTime < startSpeechTime) {
             Data next = readData();
 
@@ -227,7 +238,6 @@ public class SpeechMarker extends BaseDataProcessor {
                 SpeechClassifiedData data = (SpeechClassifiedData) current;
                 if (data.isSpeech()) {
                     initalSpeechLength += getAudioTime(data);
-//                    silenceLength = 0; // why? we want to add a preceeding trailer before the detected utterance start
                 } else {
                     silenceLength += getAudioTime(data);
                 }
@@ -344,8 +354,6 @@ public class SpeechMarker extends BaseDataProcessor {
             }
             i.add(new SpeechEndSignal(nextCollectTime));
         }
-
-        // System.out.println("Speech ended !!!");
         return true;
     }
 
