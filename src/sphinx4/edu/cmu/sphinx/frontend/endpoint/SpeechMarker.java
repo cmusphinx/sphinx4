@@ -79,7 +79,6 @@ public class SpeechMarker extends BaseDataProcessor {
     private List<Data> outputQueue;  // Audio objects are added to the end
     private boolean inSpeech;
 
-
     @Override
     public void newProperties(PropertySheet ps) throws PropertyException {
         super.newProperties(ps);
@@ -357,4 +356,7 @@ public class SpeechMarker extends BaseDataProcessor {
         return true;
     }
 
+    public boolean inSpeech () {
+    	return inSpeech;
+    }
 }
