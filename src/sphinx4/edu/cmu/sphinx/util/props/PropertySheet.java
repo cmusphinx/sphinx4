@@ -67,7 +67,7 @@ public class PropertySheet implements Cloneable {
      * Registers a new property which type and default value are defined by the given sphinx property.
      *
      * @param propName The name of the property to be registered.
-     * @param property The property annoation masked by a proxy.
+     * @param property The property annotation masked by a proxy.
      */
     private void registerProperty(String propName, S4PropWrapper property) {
         if (property == null || propName == null)
@@ -281,7 +281,7 @@ public class PropertySheet implements Cloneable {
             }
 
             if (configurable != null && !expectedType.isInstance(configurable))
-                throw new InternalConfigurationException(getInstanceName(), name, "mismatch between annoation and component type");
+                throw new InternalConfigurationException(getInstanceName(), name, "mismatch between annotation and component type");
 
             if (configurable == null) {
                 Class<? extends Configurable> defClass;
@@ -354,14 +354,14 @@ public class PropertySheet implements Cloneable {
         List components = (List) propValues.get(name);
 
         assert registeredProperties.get(name).getAnnotation() instanceof S4ComponentList;
-        S4ComponentList annoation = (S4ComponentList) registeredProperties.get(name).getAnnotation();
+        S4ComponentList annotation = (S4ComponentList) registeredProperties.get(name).getAnnotation();
 
         // no componets names are available and no comp-list was yet loaded
-        // therefore load the default list of components from the annoation
+        // therefore load the default list of components from the annotation
         if (components == null) {
-            List<Class<? extends Configurable>> defClasses = Arrays.asList(annoation.defaultList());
+            List<Class<? extends Configurable>> defClasses = Arrays.asList(annotation.defaultList());
 
-//            if (annoation.mandatory() && defClasses.isEmpty())
+//            if (annotation.mandatory() && defClasses.isEmpty())
 //                throw new InternalConfigurationException(getInstanceName(), name, "mandatory property is not set!");
 
             components = new ArrayList();
@@ -382,7 +382,7 @@ public class PropertySheet implements Cloneable {
 
                 if (configurable != null) {
                     list.add(configurable);
-                } else if (!annoation.beTolerant()) {
+                } else if (!annotation.beTolerant()) {
                     throw new InternalConfigurationException(name, (String) componentName,
                             "lookup of list-element '" + componentName + "' failed!");
                 }
