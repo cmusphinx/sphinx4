@@ -59,10 +59,15 @@ public class DiscreteFourierTransform extends BaseDataProcessor {
     @S4Integer(defaultValue = -1)
     public static final String PROP_NUMBER_FFT_POINTS = "numberFftPoints";
 
+    /** The name of the SphinxProperty for the invert transform. */
+    @S4Boolean(defaultValue = false)
+    public static final String PROP_INVERT = "invert";
+
     private boolean isNumberFftPointsSet;
     private int numberFftPoints;
     private int logBase2NumberFftPoints;
     private int numberDataPoints;
+    private boolean invert = false;
 
     private Complex[] weightFft;
     private Complex[] inputFrame;
@@ -85,6 +90,7 @@ public class DiscreteFourierTransform extends BaseDataProcessor {
         logger = ps.getLogger();
         numberFftPoints = ps.getInt(PROP_NUMBER_FFT_POINTS);
         isNumberFftPointsSet = (numberFftPoints != -1);
+        invert = ps.getBoolean(PROP_INVERT);
     }
 
 
@@ -110,7 +116,7 @@ public class DiscreteFourierTransform extends BaseDataProcessor {
          * we need only return values between 0 and 255.
          */
         computeLogBase2(numberFftPoints);
-        createWeightFft(numberFftPoints, false);
+        createWeightFft(numberFftPoints, invert);
         initComplexArrays();
         weightFftTimesFrom2 = new Complex();
         tempComplex = new Complex();
@@ -180,7 +186,7 @@ public class DiscreteFourierTransform extends BaseDataProcessor {
         /**
          * Start Fast Fourier Transform recursion
          */
-        recurseFft(inputFrame, outputSpectrum, numberFftPoints, false);
+        recurseFft(inputFrame, outputSpectrum, numberFftPoints, invert);
 
         /**
          * Return the power spectrum

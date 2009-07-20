@@ -65,7 +65,7 @@ public class SpeechMarker extends BaseDataProcessor {
 
     /** A property for number of frames to keep in buffer. Should be enough to let
      * insert the SpeechStartSignal. */
-    @S4Integer(defaultValue = 20)
+    @S4Integer(defaultValue = 50)
     public static final String PROP_SPEECH_LEADER_FRAMES = "speechLeaderFrames";
     private int speechLeaderFrames;
 
@@ -94,7 +94,6 @@ public class SpeechMarker extends BaseDataProcessor {
     /** Initializes this SpeechMarker */
     public void initialize() {
         super.initialize();
-        this.outputQueue = new ArrayList<Data>();
         reset();
     }
 
@@ -102,6 +101,7 @@ public class SpeechMarker extends BaseDataProcessor {
     /** Resets this SpeechMarker to a starting state. */
     private void reset() {
         inSpeech = false;
+        this.outputQueue = new ArrayList<Data>();
     }
 
 
@@ -117,10 +117,12 @@ public class SpeechMarker extends BaseDataProcessor {
 
             if (audio != null) {
                 if (!inSpeech) {
-                    sendToQueue(audio);
 
                     if (audio instanceof SpeechClassifiedData) {
                         SpeechClassifiedData data = (SpeechClassifiedData) audio;
+
+            	        sendToQueue(audio);
+
                         if (data.isSpeech()) {
                             boolean speechStarted = handleFirstSpeech(data);
                             if (speechStarted) {
@@ -128,6 +130,11 @@ public class SpeechMarker extends BaseDataProcessor {
                                 inSpeech = true;
                             }
                         }
+                    } else if (audio instanceof DataStartSignal) {
+                	reset();
+                	sendToQueue(audio);
+                    } else {
+                    	sendToQueue(audio);
                     }
                 } else {
                     if (audio instanceof SpeechClassifiedData) {
@@ -142,7 +149,8 @@ public class SpeechMarker extends BaseDataProcessor {
                         sendToQueue(audio);
                         inSpeech = false;
                     } else if (audio instanceof DataStartSignal) {
-                        throw new Error("Got DataStartSignal while in speech");
+			reset();
+			sendToQueue(audio);
                     }
                 }
             } else {

@@ -70,6 +70,7 @@ public class SpeechClassifier extends BaseDataProcessor {
     protected double minSignal;           // minimum valid signal level
     protected double threshold;
     protected float frameLengthSec;
+    protected boolean isSpeech;
 
     protected List<Data> outputQueue = new LinkedList<Data>();
 
@@ -84,6 +85,7 @@ public class SpeechClassifier extends BaseDataProcessor {
         minSignal = ps.getDouble(PROP_MIN_SIGNAL);
 
         logger = ps.getLogger();
+        //logger.setLevel(Level.FINEST);
  
         initialize();
     }
@@ -131,7 +133,7 @@ public class SpeechClassifier extends BaseDataProcessor {
     protected void classify(DoubleData audio) {
         double current = logRootMeanSquare(audio.getValues());
         // System.out.println("current: " + current);
-        boolean isSpeech = false;
+        isSpeech = false;
         if (current >= minSignal) {
             level = ((level * averageNumber) + current) / (averageNumber + 1);
             if (current < background) {
@@ -196,5 +198,9 @@ public class SpeechClassifier extends BaseDataProcessor {
         } else {
             return null;
         }
+    }
+    
+    public boolean isSpeech() {
+    	return isSpeech;
     }
 }
