@@ -16,6 +16,8 @@ import edu.cmu.sphinx.frontend.endpoint.SpeechClassifiedData;
 import edu.cmu.sphinx.util.props.*;
 
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.util.Locale;
 import java.util.logging.Logger;
 
 
@@ -60,7 +62,7 @@ public class DataDumper extends BaseDataProcessor {
 
         enable = ps.getBoolean(PROP_ENABLE);
         String format = ps.getString(PROP_OUTPUT_FORMAT);
-        formatter = new DecimalFormat(format);
+        formatter = new DecimalFormat(format, new DecimalFormatSymbols(Locale.US));
         outputSignals = ps.getBoolean(PROP_OUTPUT_SIGNALS);
     }
 
