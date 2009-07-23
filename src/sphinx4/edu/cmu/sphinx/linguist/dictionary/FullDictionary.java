@@ -59,7 +59,7 @@ public class FullDictionary implements Dictionary {
     // configuration variables
     // ----------------------------------
     private Logger logger;
-    private boolean addSilEndingPronunciation;
+    protected boolean addSilEndingPronunciation;
     private boolean allowMissingWords;
     private boolean createMissingWords;
     private String wordReplacement;
@@ -138,7 +138,7 @@ public class FullDictionary implements Dictionary {
      * @throws java.io.IOException if there is an error reading the dictionary
      */
     @SuppressWarnings({"unchecked"})
-    private Map<String, Object> loadDictionary(InputStream inputStream, boolean isFillerDict)
+    protected Map<String, Object> loadDictionary(InputStream inputStream, boolean isFillerDict)
             throws IOException {
         Map<String, Object> dictionary = new HashMap<String, Object>();
         ExtendedStreamTokenizer est = new ExtendedStreamTokenizer(inputStream,
@@ -184,7 +184,7 @@ public class FullDictionary implements Dictionary {
      * @param isFillerDict if true this is a filler dictionary
      */
     @SuppressWarnings({"unchecked"})
-    private void createWords(Map<String, Object> dictionary, boolean isFillerDict) {
+    protected void createWords(Map<String, Object> dictionary, boolean isFillerDict) {
         Set<String> spellings = dictionary.keySet();
         for (Iterator<String> s = spellings.iterator(); s.hasNext();) {
             String spelling = s.next();
@@ -209,7 +209,7 @@ public class FullDictionary implements Dictionary {
      * @param isFiller if true, the unit is a filler unit
      * @return the unit
      */
-    private Unit getCIUnit(String name, boolean isFiller) {
+    protected Unit getCIUnit(String name, boolean isFiller) {
         return unitManager.getUnit(name, isFiller, Context.EMPTY_CONTEXT);
     }
 
@@ -228,7 +228,7 @@ public class FullDictionary implements Dictionary {
      *  @return the given word but with all characters from the first
      *  open parentheses removed
      */
-    private String removeParensFromWord(String word) {
+    protected String removeParensFromWord(String word) {
         if (word.charAt(word.length() - 1) == ')') {
             int index = word.lastIndexOf('(');
             if (index > 0) {

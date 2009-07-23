@@ -36,7 +36,7 @@ public class Pronunciation {
      * @param wordClassification the classification for this word
      * @param probability        the probability of this pronunciation occurring
      */
-    Pronunciation(Unit[] units,
+    protected Pronunciation(Unit[] units,
                   String tag,
                   WordClassification wordClassification,
                   float probability) {
