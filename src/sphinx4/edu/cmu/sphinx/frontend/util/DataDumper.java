@@ -27,18 +27,14 @@ public class DataDumper extends BaseDataProcessor {
     /** The Sphinx property that specifies whether data dumping is enabled */
     @S4Boolean(defaultValue = true)
     public final static String PROP_ENABLE = "enable";
-    /** The default value of PROP_ENABLE. */
-    public final static boolean PROP_ENABLE_DEFAULT = true;
+
     /** The Sphinx property that specifies the format of the output. */
     @S4String(defaultValue = "0.00000E00;-0.00000E00")
     public final static String PROP_OUTPUT_FORMAT = "outputFormat";
-    /** The default value of PROP_OUTPUT_FORMAT. */
-    public final static String PROP_OUTPUT_FORMAT_DEFAULT = "0.00000E00;-0.00000E00";
+
     /** The Sphinx property that enables the output of signals. */
     @S4Boolean(defaultValue = true)
     public final static String PROP_OUTPUT_SIGNALS = "outputSignals";
-    /** The default value of PROP_OUTPUT_SIGNALS. */
-    public final static boolean PROP_OUTPUT_SIGNALS_DEFAULT = true;
 
     // --------------------------
     // Configuration data

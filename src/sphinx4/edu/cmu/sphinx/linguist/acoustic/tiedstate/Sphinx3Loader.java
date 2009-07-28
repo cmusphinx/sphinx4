@@ -114,72 +114,49 @@ public class Sphinx3Loader implements Loader {
     public final static String PROP_UNIT_MANAGER = "unitManager";
 
     /** Specifies whether the model to be loaded is in ASCII or binary format */
-    @S4Boolean(defaultValue = true, isNotDefined = true)
+    @S4Boolean(defaultValue = true)
     public final static String PROP_IS_BINARY = "isBinary";
 
-    /** The default value of PROP_IS_BINARY */
-    public final static boolean PROP_IS_BINARY_DEFAULT = true;
-
     /** The name of the model definition file (contains the HMM data) */
-    @S4String(mandatory = false)
+    @S4String(mandatory = false, defaultValue="mdef")
     public final static String PROP_MODEL = "modelDefinition";
 
-    /** The default value of PROP_MODEL. */
-    public final static String PROP_MODEL_DEFAULT = "model.mdef";
-
     /** Subdirectory where the acoustic model can be found */
-    @S4String(mandatory = false)
+    @S4String(mandatory = false, defaultValue="data")
     public final static String PROP_DATA_LOCATION = "dataLocation";
-
-    /** The default value of PROP_DATA_LOCATION. */
-    public final static String PROP_DATA_LOCATION_DEFAULT = "data";
 
     /** The SphinxProperty for the name of the acoustic properties file. */
     @S4String(defaultValue = "model.props")
     public final static String PROP_PROPERTIES_FILE = "propertiesFile";
 
-    /** The default value of PROP_PROPERTIES_FILE. */
-    public final static String PROP_PROPERTIES_FILE_DEFAULT = "model.props";
-
     /** The SphinxProperty for the length of feature vectors. */
-    @S4Integer(defaultValue = -1)
+    @S4Integer(defaultValue = 39)
     public final static String PROP_VECTOR_LENGTH = "vectorLength";
-
-    /** The default value of PROP_VECTOR_LENGTH. */
-    public final static int PROP_VECTOR_LENGTH_DEFAULT = 39;
 
     /**
      * The SphinxProperty specifying whether the transition matrices of the acoustic model is in sparse form, i.e.,
      * omitting the zeros of the non-transitioning states.
      */
-    @S4Boolean(defaultValue = true, isNotDefined = true)
+    @S4Boolean(defaultValue = true)
     public final static String PROP_SPARSE_FORM = "sparseForm";
 
-    /** The default value of PROP_SPARSE_FORM. */
-    public final static boolean PROP_SPARSE_FORM_DEFAULT = true;
-
     /** The SphinxProperty specifying whether context-dependent units should be used. */
-    public final static boolean PROP_USE_CD_UNITS_DEFAULT = true;
-    @S4Boolean(defaultValue = PROP_USE_CD_UNITS_DEFAULT)
+    @S4Boolean(defaultValue = true)
     public final static String PROP_USE_CD_UNITS = "useCDUnits";
 
 
     /** Mixture component score floor. */
-    public final static float PROP_MC_FLOOR_DEFAULT = 0.0f;
-    @S4Double(defaultValue = PROP_MC_FLOOR_DEFAULT)
+    @S4Double(defaultValue = 0.0f)
     public final static String PROP_MC_FLOOR = "MixtureComponentScoreFloor";
 
     /** Variance floor. */
-    public final static float PROP_VARIANCE_FLOOR_DEFAULT = 0.0001f;
-    @S4Double(defaultValue = PROP_VARIANCE_FLOOR_DEFAULT)
+    @S4Double(defaultValue = 0.0001f)
     public final static String PROP_VARIANCE_FLOOR = "varianceFloor";
 
     /** Mixture weight floor. */
-    public final static float PROP_MW_FLOOR_DEFAULT = 1e-7f;
-    @S4Double(defaultValue = PROP_MW_FLOOR_DEFAULT)
+    @S4Double(defaultValue = 1e-7f)
     public final static String PROP_MW_FLOOR = "mixtureWeightFloor";
-
-
+    
 
     protected final static String NUM_SENONES = "num_senones";
     protected final static String NUM_GAUSSIANS_PER_STATE = "num_gaussians";
@@ -237,44 +214,45 @@ public class Sphinx3Loader implements Loader {
         logger = ps.getLogger();
 
         propsFile = ps.getString(PROP_PROPERTIES_FILE);
+	loadProperties();
+	
         logMath = (LogMath) ps.getComponent(PROP_LOG_MATH);
         unitManager = (UnitManager) ps.getComponent(PROP_UNIT_MANAGER);
 
-        Boolean isBinary = ps.getBoolean(PROP_IS_BINARY);
-        binary = isBinary != null ? isBinary : getIsBinaryDefault();
+	String isBinary = (String) properties.get(PROP_IS_BINARY);
+        binary = isBinary != null ? Boolean.valueOf(isBinary).equals(Boolean.TRUE) : ps.getBoolean(PROP_IS_BINARY);
 
-        Boolean isSparse = ps.getBoolean(PROP_IS_BINARY);
-        sparseForm = isSparse != null ? isSparse : getSparseFormDefault();
+	String isSparse = (String) properties.get(PROP_SPARSE_FORM);
+        sparseForm = isSparse != null ? Boolean.valueOf(isSparse).equals(Boolean.TRUE) : ps.getBoolean(PROP_SPARSE_FORM);
+	
+	String length = (String) properties.get(PROP_VECTOR_LENGTH);
+        vectorLength = length != null? Integer.parseInt(length) : ps.getInt(PROP_VECTOR_LENGTH);
+	
+	String mdef = (String) properties.get(PROP_MODEL);
+	model = mdef != null ? mdef : ps.getString(PROP_MODEL);
 
-        vectorLength = ps.getInt(PROP_VECTOR_LENGTH);
-        vectorLength = vectorLength > 0 ? vectorLength : getVectorLengthDefault();
-
-        model = ps.getString(PROP_MODEL);
-        model = model == null ? getModelDefault() : model;
-
-        dataDir = ps.getString(PROP_DATA_LOCATION);
-        dataDir = (dataDir == null ? getDataLocationDefault() : dataDir) + "/";
-
-        distFloor = ps.getFloat(PROP_MC_FLOOR);
+	String dataLocation = (String) properties.get(PROP_DATA_LOCATION);
+	dataDir = dataLocation != null ? dataLocation : ps.getString(PROP_DATA_LOCATION);
+        
+	distFloor = ps.getFloat(PROP_MC_FLOOR);
         mixtureWeightFloor = ps.getFloat(PROP_MW_FLOOR);
         varianceFloor = ps.getFloat(PROP_VARIANCE_FLOOR);
         useCDUnits = ps.getBoolean(PROP_USE_CD_UNITS);
     }
 
-	// This function is a bit different from
-	// ConfigurationManagerUtils.getResource
-	// for compatibility reasons. By default it looks for the resources, not
-	// for the files.
-	private InputStream getDataStream(String location) {
+    // This function is a bit different from
+    // ConfigurationManagerUtils.getResource
+    // for compatibility reasons. By default it looks for the resources, not
+    // for the files.
+    private InputStream getDataStream(String location) {
 
-		if (location.startsWith("file:")) {
-			try {
-				return new FileInputStream(location.substring(5));
-			} catch (Exception e) {
-				return null;
-			}
-		}
-	
+	if (location.startsWith("file:")) {
+    	    try {
+		return new FileInputStream(location.substring(5));
+	    } catch (Exception e) {
+		return null;
+	    }
+	}	
 	return getClass().getResourceAsStream(location);
     }
 
@@ -288,83 +266,6 @@ public class Sphinx3Loader implements Loader {
             }
         }
     }
-
-
-    /**
-     * Returns whether the models are binary by default
-     *
-     * @return true if the models are binary by default
-     */
-    private boolean getIsBinaryDefault() {
-        loadProperties();
-        String binary = (String) properties.get(PROP_IS_BINARY);
-        if (binary != null) {
-            return (Boolean.valueOf(binary).equals(Boolean.TRUE));
-        } else {
-            return PROP_IS_BINARY_DEFAULT;
-        }
-    }
-
-
-    /**
-     * Returns whether the matrices are in sparse form by default.
-     *
-     * @return true if the matrices are in sparse form by default
-     */
-    private boolean getSparseFormDefault() {
-        loadProperties();
-        String sparse = (String) properties.get(PROP_SPARSE_FORM);
-        if (sparse != null) {
-            return (Boolean.valueOf(binary).equals(Boolean.TRUE));
-        } else {
-            return PROP_SPARSE_FORM_DEFAULT;
-        }
-    }
-
-
-    /** Returns the default vector length. */
-    private int getVectorLengthDefault() {
-        loadProperties();
-        String length = (String) properties.get(PROP_VECTOR_LENGTH);
-        if (length != null) {
-            return Integer.parseInt(length);
-        } else {
-            return PROP_VECTOR_LENGTH_DEFAULT;
-        }
-    }
-
-
-    /**
-     * Returns the default model definition file.
-     *
-     * @return the default model definition file
-     */
-    private String getModelDefault() {
-        loadProperties();
-        String mdef = (String) properties.get(PROP_MODEL);
-        if (mdef != null) {
-            return mdef;
-        } else {
-            return PROP_MODEL_DEFAULT;
-        }
-    }
-
-
-    /**
-     * Returns the default data location.
-     *
-     * @return the default data location
-     */
-    private String getDataLocationDefault() {
-        loadProperties();
-        String location = (String) properties.get(PROP_DATA_LOCATION);
-        if (location != null) {
-            return location;
-        } else {
-            return PROP_DATA_LOCATION_DEFAULT;
-        }
-    }
-
 
     public void load() throws IOException {
         if (!loaded) {
@@ -451,24 +352,24 @@ public class Sphinx3Loader implements Loader {
 
         if (binary) {
             meansPool = loadDensityFileBinary
-                    (dataDir + "means", -Float.MAX_VALUE);
+                    (dataDir + File.separator + "means", -Float.MAX_VALUE);
             variancePool = loadDensityFileBinary
-                    (dataDir + "variances", varianceFloor);
+                    (dataDir + File.separator + "variances", varianceFloor);
             mixtureWeightsPool = loadMixtureWeightsBinary
-                    (dataDir + "mixture_weights", mixtureWeightFloor);
+                    (dataDir + File.separator + "mixture_weights", mixtureWeightFloor);
             matrixPool = loadTransitionMatricesBinary
-                    (dataDir + "transition_matrices");
+                    (dataDir + File.separator + "transition_matrices");
             transformMatrix = loadTransformMatrix
-                    (dataDir + "feature_transform");
+                    (dataDir + File.separator + "feature_transform");
         } else {
             meansPool = loadDensityFileAscii
-                    (dataDir + "means.ascii", -Float.MAX_VALUE);
+                    (dataDir + File.separator + "means.ascii", -Float.MAX_VALUE);
             variancePool = loadDensityFileAscii
-                    (dataDir + "variances.ascii", varianceFloor);
+                    (dataDir + File.separator + "variances.ascii", varianceFloor);
             mixtureWeightsPool = loadMixtureWeightsAscii
-                    (dataDir + "mixture_weights.ascii", mixtureWeightFloor);
+                    (dataDir + File.separator + "mixture_weights.ascii", mixtureWeightFloor);
             matrixPool = loadTransitionMatricesAscii
-                    (dataDir + "transition_matrices.ascii");
+                    (dataDir + File.separator + "transition_matrices.ascii");
         }
         senonePool = createSenonePool(distFloor, varianceFloor);
         // load the HMM model file

@@ -43,8 +43,6 @@ public class AudioFileDataSource extends BaseDataProcessor {
     /** SphinxProperty for the number of bytes to read from the InputStream each time. */
     @S4Integer(defaultValue = 3200)
     public static final String PROP_BYTES_PER_READ = "bytesPerRead";
-    /** Default value for PROP_BYTES_PER_READ. */
-    public static final int PROP_BYTES_PER_READ_DEFAULT = 3200;
 
     @S4ComponentList(type = Configurable.class)
     public static final String AUDIO_FILE_LISTENERS = "audioFileListners";

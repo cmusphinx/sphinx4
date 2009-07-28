@@ -16,6 +16,4 @@ public @interface S4Boolean {
 
     boolean defaultValue();
 
-
-    boolean isNotDefined() default false;
 }

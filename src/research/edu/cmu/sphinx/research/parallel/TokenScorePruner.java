@@ -33,12 +33,8 @@ public abstract class TokenScorePruner implements Pruner {
     @S4Integer(defaultValue = 2000)
     public static final String PROP_ABSOLUTE_BEAM_WIDTH = "absoluteBeamWidth";
 
-    public static final int PROP_ABSOLUTE_BEAM_WIDTH_DEFAULT = 2000;
-
     @S4Integer(defaultValue = 0)
     public static final String PROP_RELATIVE_BEAM_WIDTH = "relativeBeamWidth";
-
-    public static final double PROP_RELATIVE_BEAM_WIDTH_DEFAULT = 0;
 
     /** Sphinx property that defines the name of the logmath to be used by this search manager. */
     @S4Component(type = LogMath.class)

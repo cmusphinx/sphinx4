@@ -19,9 +19,6 @@ public class ExcessiveNonSpeechPruner extends BaseDataProcessor {
     @S4Integer(defaultValue = Integer.MAX_VALUE)
     public static final String PROP_MAX_NON_SPEECH_TIME_MS = "maxNonSpeechTimeMs";
 
-    /** The default value of PROP_MAX_NON_SPEECH_TIME. The default is chosen to prune nothing. */
-    public static final int PROP_MAX_NON_SPEECH_TIME_DEFAULT = Integer.MAX_VALUE;
-
     private int maxNonSpeechTime;
     private boolean inSpeech;
     private int nonSpeechCounter = 0;

@@ -30,20 +30,13 @@ public interface LanguageModel extends Configurable {
     @S4String(defaultValue = "arpa")
     public final static String PROP_FORMAT = "format";
 
-    /** The default value of PROP_FORMAT. */
-    public final static String PROP_FORMAT_DEFAULT = "arpa";
-
     /** The Sphinx Property specifying the location of the language model. */
     @S4String(defaultValue = ".")
     public final static String PROP_LOCATION = "location";
-    /** The default value of PROP_LOCATION. */
-    public final static String PROP_LOCATION_DEFAULT = ".";
 
     /** The Sphinx Property specifying the unigram weight */
     @S4Double(defaultValue = 1.0)
     public final static String PROP_UNIGRAM_WEIGHT = "unigramWeight";
-    /** The default value for PROP_UNIGRAM_WEIGHT */
-    public final static float PROP_UNIGRAM_WEIGHT_DEFAULT = 1.0f;
     /**
      * The Sphinx Property specifying the maximum depth reported by the language model (from a getMaxDepth()) call. If
      * this property is set to (-1) (the default) the language model reports the implicit depth of the model. This
@@ -53,9 +46,6 @@ public interface LanguageModel extends Configurable {
      */
     @S4Integer(defaultValue = -1)
     public final static String PROP_MAX_DEPTH = "maxDepth";
-    /** The default value for PROP_MAX_DEPTH. */
-    public final static int PROP_MAX_DEPTH_DEFAULT = -1;
-
 
     /** The Sphinx Property specifying the dictionary to use */
     @S4Component(type = Dictionary.class)

@@ -31,28 +31,22 @@ public class StreamDataSource extends BaseDataProcessor {
     /** SphinxProperty for the sample rate. */
     @S4Integer(defaultValue = 16000)
     public static final String PROP_SAMPLE_RATE = "sampleRate";
-    /** Default value for PROP_SAMPLE_RATE. */
-    public static final int PROP_SAMPLE_RATE_DEFAULT = 16000;
+
     /** SphinxProperty for the number of bytes to read from the InputStream each time. */
     @S4Integer(defaultValue = 3200)
     public static final String PROP_BYTES_PER_READ = "bytesPerRead";
-    /** Default value for PROP_BYTES_PER_READ. */
-    public static final int PROP_BYTES_PER_READ_DEFAULT = 3200;
+
     /** SphinxProperty for the number of bits per value. */
     @S4Integer(defaultValue = 16)
     public static final String PROP_BITS_PER_SAMPLE = "bitsPerSample";
-    /** Default value for PROP_BITS_PER_SAMPLE. */
-    public static final int PROP_BITS_PER_SAMPLE_DEFAULT = 16;
+
     /** The SphinxProperty specifying whether the input data is big-endian. */
     @S4Boolean(defaultValue = true)
     public static final String PROP_BIG_ENDIAN_DATA = "bigEndianData";
-    /** The default value for PROP_IS_DATA_BIG_ENDIAN. */
-    public static final boolean PROP_BIG_ENDIAN_DATA_DEFAULT = true;
+
     /** The SphinxProperty specifying whether the input data is signed. */
     @S4Boolean(defaultValue = true)
     public static final String PROP_SIGNED_DATA = "signedData";
-    /** The default value of PROP_SIGNED_DATA. */
-    public static final boolean PROP_SIGNED_DATA_DEFAULT = true;
 
     private InputStream dataStream;
     protected int sampleRate;

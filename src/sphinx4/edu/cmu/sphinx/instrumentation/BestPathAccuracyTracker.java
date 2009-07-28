@@ -23,11 +23,7 @@ public class BestPathAccuracyTracker extends AccuracyTracker {
     @S4Boolean(defaultValue = false)
     public final static String PROP_SHOW_FULL_PATH = "showFullPath";
 
-    /** The default setting of PROP_SHOW_FULL_PATH */
-    public final static boolean PROP_SHOW_FULL_PATH_DEFAULT = false;
-
     private boolean showFullPath;
-
 
     /*
     * (non-Javadoc)

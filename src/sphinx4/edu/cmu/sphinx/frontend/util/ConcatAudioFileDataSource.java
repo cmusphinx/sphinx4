@@ -32,18 +32,6 @@ public class ConcatAudioFileDataSource extends AudioFileDataSource implements Re
 
     List<URL> batchFiles;
 
-
-    public ConcatAudioFileDataSource() {
-        this(PROP_BYTES_PER_READ_DEFAULT);
-    }
-
-
-    public ConcatAudioFileDataSource(int bytesPerRead) {
-        assert bytesPerRead > 0;
-        this.bytesPerRead = bytesPerRead;
-    }
-
-
     /** Initializes a ConcatFileDataSource. */
     public void initialize() {
         super.initialize();

@@ -34,28 +34,22 @@ public class StreamCepstrumSource extends BaseDataProcessor {
     /** The SphinxProperty specifying whether the input is in binary. */
     @S4Boolean(defaultValue = true)
     public final static String PROP_BINARY = "binary";
-    /** The default value for PROP_BINARY. */
-    public final static boolean PROP_BINARY_DEFAULT = true;
+
     /** The sphinx property  name for frame size in milliseconds. */
     @S4Double(defaultValue = 25.625)
     public static final String PROP_FRAME_SIZE_MS = "frameSizeInMs";
-    /** The default value for PROP_FRAME_SIZE_MS. */
-    public static final float PROP_FRAME_SIZE_MS_DEFAULT = 25.625f;
+
     /** The sphinx property  name for frame shift in milliseconds, which has a default value of 10F. */
     @S4Double(defaultValue = 10.0)
     public static final String PROP_FRAME_SHIFT_MS = "frameShiftInMs";
-    /** The default value for PROP_FRAME_SHIFT_MS. */
-    public static final float PROP_FRAME_SHIFT_MS_DEFAULT = 10.0f;
+
     /** The sphinx property  specifying the length of the cepstrum data. */
     @S4Integer(defaultValue = 13)
     public static final String PROP_CEPSTRUM_LENGTH = "cepstrumLength";
-    /** The default value of PROP_CEPSTRUM_LENGTH. */
-    public static final int PROP_CEPSTRUM_LENGTH_DEFAULT = 13;
+
     /** The sphinx property that defines the sample rate */
     @S4Integer(defaultValue = 16000)
     public static final String PROP_SAMPLE_RATE = "sampleRate";
-    /** The default value for PROP_SAMPLE_RATE */
-    public static final int PROP_SAMPLE_RATE_DEFAULT = 16000;
 
     private boolean binary;
     private ExtendedStreamTokenizer est; // for ASCII files

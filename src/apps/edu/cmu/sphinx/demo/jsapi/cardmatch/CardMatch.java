@@ -50,29 +50,17 @@ public class CardMatch implements Recorder, Configurable {
     @S4Integer(defaultValue = 6)
     public static final String PROP_NUM_CARDS = "numberOfCards";
 
-    /** The default value of PROP_NUM_CARDS. */
-    public static final int PROP_NUM_CARDS_DEFAULT = 6;
-
     /** The SphinxProperty for the image files. */
     @S4String(defaultValue = "")
     public static final String PROP_IMAGE_FILES = "imageFiles";
-
-    /** The default value of PROP_IMAGE_FILES. */
-    public static final String PROP_IMAGE_FILES_DEFAULT = null;
 
     /** The SphinxProperty specifying whether to do endpointing. */
     @S4Boolean(defaultValue = false)
     public static final String PROP_DO_ENDPOINTING = "doEndpointing";
 
-    /** The default value of PROP_DO_ENDPOINTING. */
-    public static final boolean PROP_DO_ENDPOINTING_DEFAULT = false;
-
     /** The SphinxProperty specifying whether to use a voice. */
     @S4Boolean(defaultValue = false)
     public static final String PROP_USE_VOICE = "useVoice";
-
-    /** The default value of PROP_USE_VOICE. */
-    public static final boolean PROP_USE_VOICE_DEFAULT = false;
 
     // ------------------------------
     // Configuration data

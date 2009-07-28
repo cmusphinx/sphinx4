@@ -245,7 +245,7 @@ public class PropertySheet implements Cloneable {
         S4PropWrapper s4PropWrapper = getProperty(name, S4Boolean.class);
         S4Boolean s4Boolean = (S4Boolean) s4PropWrapper.getAnnotation();
 
-        if (propValues.get(name) == null && !s4Boolean.isNotDefined())
+        if (propValues.get(name) == null)
             propValues.put(name, s4Boolean.defaultValue());
 
         Object propValue = propValues.get(name);

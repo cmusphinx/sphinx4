@@ -39,21 +39,16 @@ public class TrainerAcousticModel extends TiedStateAcousticModel {
     private Saver saver;
 
 
-    @S4Double(defaultValue = Sphinx3Loader.PROP_VARIANCE_FLOOR_DEFAULT)
+    @S4Double(defaultValue = 0.0001f)
     public final static String PROP_VARIANCE_FLOOR = "varianceFloor";
 
     /** Mixture component score floor. */
-    @S4Double(defaultValue = Sphinx3Loader.PROP_MC_FLOOR_DEFAULT)
+    @S4Double(defaultValue = 0.0)
     public final static String PROP_MC_FLOOR = "MixtureComponentScoreFloor";
 
     /** Mixture weight floor. */
-    @S4Double(defaultValue = Sphinx3Loader.PROP_MW_FLOOR_DEFAULT)
+    @S4Double(defaultValue = 1e-7f)
     public final static String PROP_MW_FLOOR = "mixtureWeightFloor";
-
-
-    /** The default value of PROP_LOCATION_SAVE. */
-    public final static String PROP_LOCATION_SAVE_DEFAULT = ".";
-
 
     /**
      * The save format for the acoustic model data. Current supported formats are:

@@ -73,10 +73,6 @@ public class TiedStateAcousticModel implements AcousticModel {
     @S4Boolean(defaultValue = true)
     public final static String PROP_USE_COMPOSITES = "useComposites";
 
-    /** The default value of PROP_USE_COMPOSITES. */
-    public final static boolean PROP_USE_COMPOSITES_DEFAULT = true;
-
-
     /** Model load timer */
     protected final static String TIMER_LOAD = "AM_Load";
 

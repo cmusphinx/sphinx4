@@ -39,24 +39,14 @@ public class PLPCepstrumProducer extends BaseDataProcessor {
     @S4Integer(defaultValue = 32)
     public static final String PROP_NUMBER_FILTERS = "numberFilters";
 
-    /** The default value of PROP_NUMBER_FILTERS. */
-    public static final int PROP_NUMBER_FILTERS_DEFAULT = 32;
-
     /** The SphinxProperty specifying the length of the cepstrum data. */
     @S4Integer(defaultValue = 13)
     public static final String PROP_CEPSTRUM_LENGTH
             = "cepstrumLength";
 
-    /** The default value of PROP_CEPSTRUM_LENGTH. */
-    public static final int PROP_CEPSTRUM_LENGTH_DEFAULT = 13;
-
     /** The SphinxProperty specifying the LPC order. */
     @S4Integer(defaultValue = 14)
     public static final String PROP_LPC_ORDER = "lpcOrder";
-
-    /** The default value of PROP_LPC_ORDER. */
-    public static final int PROP_LPC_ORDER_DEFAULT = 14;
-
 
     private int cepstrumSize;       // size of a Cepstrum
     private int LPCOrder;           // LPC Order to compute cepstrum

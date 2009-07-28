@@ -67,16 +67,10 @@ public class FlatLinguist implements Linguist, Configurable {
     /** Sphinx property used to determine whether or not the gstates are dumped. */
     @S4Boolean(defaultValue = false)
     public final static String PROP_DUMP_GSTATES = "dumpGstates";
-    /** The default value for the PROP_DUMP_GSTATES property */
-    public final static boolean PROP_DUMP_GSTATES_DEFAULT = false;
 
     /** Sphinx property that specifies whether to add a branch for detecting out-of-grammar utterances. */
     @S4Boolean(defaultValue = false)
     public final static String PROP_ADD_OUT_OF_GRAMMAR_BRANCH = "addOutOfGrammarBranch";
-
-    /** Default value of PROP_ADD_OUT_OF_GRAMMAR_BRANCH. */
-    public final static boolean PROP_ADD_OUT_OF_GRAMMAR_BRANCH_DEFAULT = false;
-
 
     /** Sphinx property for the probability of entering the out-of-grammar branch. */
     @S4Double(defaultValue = 1.0)
@@ -90,7 +84,6 @@ public class FlatLinguist implements Linguist, Configurable {
     @S4Double(defaultValue = 1.0)
     public static final String PROP_PHONE_INSERTION_PROBABILITY = "phoneInsertionProbability";
 
-
     /**
      * Property to control whether compilation progress is displayed on stdout. If this property is true, a 'dot' is
      * displayed for every 1000 search states added to the search space
@@ -102,12 +95,6 @@ public class FlatLinguist implements Linguist, Configurable {
     @S4Boolean(defaultValue = false)
     public final static String PROP_SPREAD_WORD_PROBABILITIES_ACROSS_PRONUNCIATIONS =
             "spreadWordProbabilitiesAcrossPronunciations";
-
-    /** Default value for PROP_PHONE_INSERTION_PROBABILITY */
-    public static final double PROP_PHONE_INSERTION_PROBABILITY_DEFAULT = 1.0;
-
-    /** The default value for PROP_OUT_OF_GRAMMAR_PROBABILITY. */
-    public final static double PROP_OUT_OF_GRAMMAR_PROBABILITY_DEFAULT = 1.0;
 
     protected final static float logOne = LogMath.getLogOne();
 

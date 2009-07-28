@@ -24,18 +24,18 @@ import java.io.IOException;
 /** Generic interface for a saver of acoustic models */
 public interface Saver extends Configurable {
 
-    @S4Double(defaultValue = Sphinx3Loader.PROP_VARIANCE_FLOOR_DEFAULT)
+    @S4Double(defaultValue = 0.0001f)
     public final static String PROP_VARIANCE_FLOOR = "varianceFloor";
 
     /** Mixture component score floor. */
-    @S4Double(defaultValue = Sphinx3Loader.PROP_MC_FLOOR_DEFAULT)
+    @S4Double(defaultValue = 0.0f)
     public final static String PROP_MC_FLOOR = "MixtureComponentScoreFloor";
 
     /** Mixture weight floor. */
-    @S4Double(defaultValue = Sphinx3Loader.PROP_MW_FLOOR_DEFAULT)
+    @S4Double(defaultValue = 1e-7f)
     public final static String PROP_MW_FLOOR = "mixtureWeightFloor";
 
-    @S4Boolean(defaultValue = true, isNotDefined = true)
+    @S4Boolean(defaultValue = true)
     public final static String PROP_SPARSE_FORM = "sparseForm";
 
     /**

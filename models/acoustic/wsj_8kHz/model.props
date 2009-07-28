@@ -36,20 +36,17 @@
 #       5-7 iterations per step.
 #
 description = Wall Street Journal 8kHz acoustic models
-modelClass = edu.cmu.sphinx.model.acoustic.WSJ_8gau_13dCep_8kHz_31mel_200Hz_3500Hz.Model
-modelLoader = edu.cmu.sphinx.model.acoustic.WSJ_8gau_13dCep_8kHz_31mel_200Hz_3500Hz.ModelLoader
 
 isBinary = true
+sparseForm = false
+dataLocation = cd_continuous_8gau
+modelDefinition = etc/WSJ_8gau_13dCep_8kHz_31mel_200Hz_3500Hz.4000.mdef
+
 featureType = 1s_c_d_dd
 vectorLength = 39
-sparseForm = false
-
 numberFftPoints = 512
 numberFilters = 31
 gaussians = 8
 minimumFrequency = 200
 maximumFrequency = 3500
 sampleRate = 8000
-
-dataLocation = cd_continuous_8gau
-modelDefinition = etc/WSJ_8gau_13dCep_8kHz_31mel_200Hz_3500Hz.4000.mdef

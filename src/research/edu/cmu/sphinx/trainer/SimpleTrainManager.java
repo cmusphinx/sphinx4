@@ -49,10 +49,6 @@ class SimpleTrainManager implements TrainManager {
     @S4Boolean(defaultValue = false)
     public final static String DUMP_MEMORY_INFO = PROP_PREFIX + "dumpMemoryInfo";
 
-
-    /** The default value for the property PROP_DUMP_MEMORY_INFO. */
-    public final static boolean PROP_DUMP_MEMORY_INFO_DEFAULT = false;
-
     private int maxIteration;
     private float minimumImprovement;
 

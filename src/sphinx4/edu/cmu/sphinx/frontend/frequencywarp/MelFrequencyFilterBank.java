@@ -68,18 +68,14 @@ public class MelFrequencyFilterBank extends BaseDataProcessor {
     /** The name of the Sphinx Property for the number of filters in the filterbank. */
     @S4Integer(defaultValue = 40)
     public static final String PROP_NUMBER_FILTERS = "numberFilters";
-    /** The default value for PROP_NUMBER_FILTERS. */
-    public static final int PROP_NUMBER_FILTERS_DEFAULT = 40;
+
     /** The name of the Sphinx Property for the minimum frequency covered by the filterbank. */
     @S4Double(defaultValue = 130.0)
     public static final String PROP_MIN_FREQ = "minimumFrequency";
-    /** The default value of PROP_MIN_FREQ. */
-    public static final double PROP_MIN_FREQ_DEFAULT = 130.0;
+
     /** The name of the Sphinx Property for the maximum frequency covered by the filterbank. */
     @S4Double(defaultValue = 6800.0)
     public static final String PROP_MAX_FREQ = "maximumFrequency";
-    /** The default value of PROP_MAX_FREQ. */
-    public static final double PROP_MAX_FREQ_DEFAULT = 6800.0;
 
     // ----------------------------------
     // Configuration data

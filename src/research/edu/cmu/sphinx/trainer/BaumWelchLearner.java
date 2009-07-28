@@ -48,12 +48,6 @@ public class BaumWelchLearner implements Learner {
     public static final String DATA_SOURCE = "dataSource";
     private StreamDataSource dataSource;
 
-
-    /** The default value of PROP_FRONT_END. */
-    public final static String PROP_FRONT_END_DEFAULT
-            = "edu.cmu.sphinx.frontend.SimpleFrontEnd";
-
-
     /*
      * The logger for this class
      */

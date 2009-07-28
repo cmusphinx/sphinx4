@@ -27,7 +27,7 @@ import java.io.*;
 public class BinaryLoader {
 
     private static final String DARPA_LM_HEADER = "Darpa Trigram LM";
-    private static final int LOG2_BIGRAM_SEGMENT_SIZE_DEFAULT = 9;
+    private static final int LOG2_BIGRAM_SEGMENT_SIZE = 9;
     private static final float MIN_PROBABILITY = -99.0f;
     private static final int MAX_PROB_TABLE_SIZE = 65536;
 
@@ -353,7 +353,7 @@ public class BinaryLoader {
         bytesRead += stream.skipBytes(fileNameLength);
 
         numberUnigrams = 0;
-        logBigramSegmentSize = LOG2_BIGRAM_SEGMENT_SIZE_DEFAULT;
+        logBigramSegmentSize = LOG2_BIGRAM_SEGMENT_SIZE;
 
         // read version number, if present. it must be <= 0.
 

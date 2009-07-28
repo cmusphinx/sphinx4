@@ -31,34 +31,27 @@ abstract public class AccuracyTracker
     /** A Sphinx property that defines which recognizer to monitor */
     @S4Component(type = Recognizer.class)
     public final static String PROP_RECOGNIZER = "recognizer";
+
     /** A sphinx property that define whether summary accuracy information is displayed */
     @S4Boolean(defaultValue = true)
     public final static String PROP_SHOW_SUMMARY = "showSummary";
-    /** The default setting of PROP_SHOW_SUMMARY */
-    public final static boolean PROP_SHOW_SUMMARY_DEFAULT = true;
+
     /** A sphinx property that define whether detailed accuracy information is displayed */
     @S4Boolean(defaultValue = true)
     public final static String PROP_SHOW_DETAILS = "showDetails";
-    /** The default setting of PROP_SHOW_DETAILS */
-    public final static boolean PROP_SHOW_DETAILS_DEFAULT = true;
+
     /** A sphinx property that define whether recognition results should be displayed. */
     @S4Boolean(defaultValue = true)
     public final static String PROP_SHOW_RESULTS = "showResults";
-    /** The default setting of PROP_SHOW_DETAILS */
-    public final static boolean PROP_SHOW_RESULTS_DEFAULT = true;
 
 
     /** A sphinx property that define whether recognition results should be displayed. */
     @S4Boolean(defaultValue = true)
     public final static String PROP_SHOW_ALIGNED_RESULTS = "showAlignedResults";
-    /** The default setting of PROP_SHOW_ALIGNED_RESULTS */
-    public final static boolean PROP_SHOW_ALIGNED_RESULTS_DEFAULT = true;
 
     /** A sphinx property that define whether recognition results should be displayed. */
     @S4Boolean(defaultValue = true)
     public final static String PROP_SHOW_RAW_RESULTS = "showRawResults";
-    /** The default setting of PROP_SHOW_RAW_RESULTS */
-    public final static boolean PROP_SHOW_RAW_RESULTS_DEFAULT = true;
 
     // ------------------------------
     // Configuration data

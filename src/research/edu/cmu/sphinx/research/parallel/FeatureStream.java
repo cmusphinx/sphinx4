@@ -39,12 +39,8 @@ public class FeatureStream implements Configurable {
     public static final String PROP_FRONT_END = "frontEnd";
 
     /** Property for the eta value of this feature stream. */
-    @S4Double(defaultValue = 1.0)
+    @S4Double(defaultValue = 1.0f)
     public static final String PROP_ETA = "eta";
-
-    /** Default value of PROP_ETA. */
-    public static final float PROP_ETA_DEFAULT = 1.0f;
-
 
     private String name;
     private AcousticModel model;

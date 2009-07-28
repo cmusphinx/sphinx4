@@ -41,21 +41,20 @@ class Sphinx3Saver implements Saver {
     public final static String PROP_SPARSE_FORM = "sparseForm";
     protected boolean sparseForm;
 
-    @S4Boolean(defaultValue = Sphinx3Loader.PROP_USE_CD_UNITS_DEFAULT)
+    @S4Boolean(defaultValue = true)
     public final static String PROP_USE_CD_UNITS = "useCDUnits";
 
-    @S4Double(defaultValue = Sphinx3Loader.PROP_MC_FLOOR_DEFAULT)
+    @S4Double(defaultValue = 0.0f)
     public final static String PROP_MC_FLOOR = "MixtureComponentScoreFloor";
 
 
     @S4Component(type = Loader.class)
     public static final String LOADER = "loader";
 
-    @S4Integer(defaultValue = Sphinx3Loader.PROP_VECTOR_LENGTH_DEFAULT)
+    @S4Integer(defaultValue = 39)
     public final static String PROP_VECTOR_LENGTH = "vectorLength";
 
     protected Logger logger;
-
 
     protected final static String NUM_SENONES = "num_senones";
     protected final static String NUM_GAUSSIANS_PER_STATE = "num_gaussians";
@@ -100,15 +99,15 @@ class Sphinx3Saver implements Saver {
     @S4String(defaultValue = ".")
     public static final String SAVE_LOCATION = "location.save";
 
-    @S4String(defaultValue = Sphinx3Loader.PROP_DATA_LOCATION_DEFAULT)
+    @S4String(defaultValue = "data")
     public String DATA_LOCATION = "data_location";
     public String dataDir;
 
-    @S4String(defaultValue = Sphinx3Loader.PROP_PROPERTIES_FILE_DEFAULT)
+    @S4String(defaultValue = "mdef")
     public String DEF_FILE = "definition_file";
     public String modelDef;
 
-    @S4String(defaultValue = Sphinx3Loader.PROP_PROPERTIES_FILE_DEFAULT)
+    @S4String(defaultValue = "model.props")
     public String PROPERTY_FILE = "properties_file";
     public String propsFile;
     public boolean useCDUnits;

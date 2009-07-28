@@ -26,17 +26,10 @@ public interface ActiveListManager extends Configurable {
     public final static String PROP_ABSOLUTE_WORD_BEAM_WIDTH =
             "absoluteWordBeamWidth";
 
-    /** Sphinx4 property that specifies the default value for the absolute word beam width */
-    public final static int PROP_ABSOLUTE_WORD_BEAM_WIDTH_DEFAULT = 2000;
-
     /** Sphinx4 property that specifies the relative word beam width */
     @S4Double(defaultValue = 0.0)
     public final static String PROP_RELATIVE_WORD_BEAM_WIDTH =
             "relativeWordBeamWidth";
-
-    /** Sphinx4 property that specifies the default value for the relative word beam width */
-    public final static float PROP_RELATIVE_WORD_BEAM_WIDTH_DEFAULT = 0.0f;
-
 
     /**
      * Adds the given token to the list

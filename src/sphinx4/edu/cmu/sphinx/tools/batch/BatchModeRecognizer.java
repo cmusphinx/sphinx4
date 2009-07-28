@@ -60,21 +60,13 @@ public class BatchModeRecognizer implements Configurable {
     @S4Integer(defaultValue = 0)
     public final static String PROP_SKIP = "skip";
 
-    /** The default value for the property PROP_SKIP. */
-    public final static int PROP_SKIP_DEFAULT = 0;
-
     /** The SphinxProperty name for how many utterances to process */
     @S4Integer(defaultValue = 1000000)
     public final static String PROP_COUNT = "count";
-    /** The default value for the property PROP_COUNT. */
-    public final static int PROP_COUNT_DEFAULT = 1000000;
 
     /** The SphinxProperty that specified which batch job is to be run. */
     @S4Integer(defaultValue = 0)
     public final static String PROP_WHICH_BATCH = "whichBatch";
-
-    /** The default value for the property PROP_WHICH_BATCH. */
-    public final static int PROP_WHICH_BATCH_DEFAULT = 0;
 
     /**
      * The SphinxProperty for the total number of batch jobs the decoding run is being divided into.
@@ -85,15 +77,9 @@ public class BatchModeRecognizer implements Configurable {
     @S4Integer(defaultValue = 1)
     public final static String PROP_TOTAL_BATCHES = "totalBatches";
 
-    /** The default value for the property PROP_TOTAL_BATCHES. */
-    public final static int PROP_TOTAL_BATCHES_DEFAULT = 1;
-
     /** The SphinxProperty that defines whether or not the decoder should use the pooled batch manager */
     @S4Boolean(defaultValue = false)
     public final static String PROP_USE_POOLED_BATCH_MANAGER = "usePooledBatchManager";
-
-    /** The default value for the property PROP_USE_POOLED_BATCH_MANAGER. */
-    public final static boolean PROP_USE_POOLED_BATCH_MANAGER_DEFAULT = false;
 
     /** The Sphinx property that specifies the recognizer to use */
     @S4Component(type = Recognizer.class)

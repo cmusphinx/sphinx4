@@ -72,19 +72,17 @@ class HMMPoolManager {
         mixtureWeightsPool = loader.getMixtureWeightPool();
         matrixPool = loader.getTransitionMatrixPool();
         senonePool = loader.getSenonePool();
-//	logMath = LogMath.getLogMath(props.getContext());
+
+//	logMath = LogMath.getLogMath();
 //        float mixtureWeightFloor =
-//	    props.getFloat(TiedStateAcousticModel.PROP_MW_FLOOR,
-//			   TiedStateAcousticModel.PROP_MW_FLOOR_DEFAULT);
+//	    props.getFloat(TiedStateAcousticModel.PROP_MW_FLOOR);
 //	logMixtureWeightFloor = logMath.linearToLog(mixtureWeightFloor);
 //        float transitionProbabilityFloor =
-//	    props.getFloat(TiedStateAcousticModel.PROP_TP_FLOOR,
-//			   TiedStateAcousticModel.PROP_TP_FLOOR_DEFAULT);
+//	    props.getFloat(TiedStateAcousticModel.PROP_TP_FLOOR);
 //	logTransitionProbabilityFloor =
 //	    logMath.linearToLog(transitionProbabilityFloor);
 //        varianceFloor =
-//	    props.getFloat(TiedStateAcousticModel.PROP_VARIANCE_FLOOR,
-//			   TiedStateAcousticModel.PROP_VARIANCE_FLOOR_DEFAULT);
+//	    props.getFloat(TiedStateAcousticModel.PROP_VARIANCE_FLOOR);
 
         createBuffers();
         logLikelihood = 0.0f;

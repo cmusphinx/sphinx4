@@ -77,10 +77,10 @@ class ModelInitializerLoader implements Loader {
     @S4String(defaultValue = "phonelist")
     public static final String PHONE_LIST = "phones";
 
-    @S4String(defaultValue = Sphinx3Loader.PROP_DATA_LOCATION_DEFAULT)
+    @S4String(defaultValue = "data")
     public static final String DATA_DIR = "dataDir";
 
-    @S4String(defaultValue = Sphinx3Loader.PROP_PROPERTIES_FILE_DEFAULT)
+    @S4String(defaultValue = "model.props")
     public static final String PROP_FILE = "propsFile";
 
     @S4Component(type = LogMath.class)
@@ -90,15 +90,15 @@ class ModelInitializerLoader implements Loader {
     @S4Boolean(defaultValue = false)
     public final static String PROP_USE_CD_UNITS = "useCDUnits";
 
-    @S4Double(defaultValue = Sphinx3Loader.PROP_VARIANCE_FLOOR_DEFAULT)
+    @S4Double(defaultValue = 0.0001f)
     public final static String PROP_VARIANCE_FLOOR = "varianceFloor";
 
     /** Mixture component score floor. */
-    @S4Double(defaultValue = Sphinx3Loader.PROP_MC_FLOOR_DEFAULT)
+    @S4Double(defaultValue = 0.0)
     public final static String PROP_MC_FLOOR = "MixtureComponentScoreFloor";
 
     /** Mixture weight floor. */
-    @S4Double(defaultValue = Sphinx3Loader.PROP_MW_FLOOR_DEFAULT)
+    @S4Double(defaultValue = 1e-7f)
     public final static String PROP_MW_FLOOR = "mixtureWeightFloor";
 
     private Logger logger;
@@ -376,9 +376,7 @@ class ModelInitializerLoader implements Loader {
         float distFloor = ps.getFloat(PROP_MC_FLOOR);
         float mixtureWeightFloor = ps.getFloat(PROP_MW_FLOOR);
         float transitionProbabilityFloor = 0;
-//                ps.getFloat(Sphinx3Loader.PROP_TP_FLOOR, Sphinx3Loader.PROP_TP_FLOOR_DEFAULT);
         float varianceFloor = ps.getFloat(PROP_VARIANCE_FLOOR);
-
 
         logger.info("Loading phone list file from: ");
         logger.info(path);

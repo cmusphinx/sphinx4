@@ -34,16 +34,9 @@ public class RejectionTracker implements
     @S4Boolean(defaultValue = true)
     public final static String PROP_SHOW_SUMMARY = "showSummary";
 
-    /** The default setting of PROP_SHOW_SUMMARY */
-    public final static boolean PROP_SHOW_SUMMARY_DEFAULT = true;
-
     /** A sphinx property that define whether detailed accuracy information is displayed */
     @S4Boolean(defaultValue = true)
     public final static String PROP_SHOW_DETAILS = "showDetails";
-
-    /** The default setting of PROP_SHOW_DETAILS */
-    public final static boolean PROP_SHOW_DETAILS_DEFAULT = true;
-
 
     // ------------------------------
     // Configuration data

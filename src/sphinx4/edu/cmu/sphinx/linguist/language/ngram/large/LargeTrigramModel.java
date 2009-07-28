@@ -219,7 +219,8 @@ public class LargeTrigramModel implements LanguageModel {
         trigramSegmentTable = loader.getTrigramSegments();
         buildUnigramIDMap(dictionary);
         loadedBigramBuffers = new BigramBuffer[unigrams.length];
-        if (maxDepth == LanguageModel.PROP_MAX_DEPTH_DEFAULT) {
+
+	if (maxDepth > loader.getMaxDepth()) {
             maxDepth = loader.getMaxDepth();
         } else if (maxDepth == 0) {
             throw new Error("Invalid LM max-depth: " + maxDepth);

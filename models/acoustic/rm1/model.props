@@ -8,16 +8,14 @@
 # WARRANTIES.
 
 description = RM1 acoustic models
-modelClass = edu.cmu.sphinx.model.acoustic.RM1_8gau_13dCep_16k_40mel_130Hz_6800Hz.Model
-modelLoader = edu.cmu.sphinx.model.acoustic.RM1_8gau_13dCep_16k_40mel_130Hz_6800Hz.ModelLoader
+
 dataLocation = cd_continuous_8gau
 modelDefinition = etc/RM1_clean_13dCep_16k_40mel_130Hz_6800Hz.1800.mdef
-
 isBinary = true
-featureType = 1s_c_d_dd
 vectorLength = 39
 sparseForm = false
 
+featureType = 1s_c_d_dd
 numberFftPoints = 512
 numberFilters = 40
 gaussians = 8

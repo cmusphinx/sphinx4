@@ -36,10 +36,7 @@ public class SimpleActiveListManager implements ActiveListManager {
      */
     @S4Boolean(defaultValue = false)
     public static final String PROP_CHECK_PRIOR_LISTS_EMPTY = "checkPriorListsEmpty";
-
-    /** The default value of PROP_CHECK_PRIOR_LISTS_EMPTY. */
-    public static final boolean PROP_CHECK_PRIOR_LISTS_EMPTY_DEFAULT = false;
-
+    
     /** Sphinx property that defines the name of the active list factory to be used by this search manager. */
     @S4ComponentList(type = ActiveListFactory.class)
     public final static String PROP_ACTIVE_LIST_FACTORIES = "activeListFactories";

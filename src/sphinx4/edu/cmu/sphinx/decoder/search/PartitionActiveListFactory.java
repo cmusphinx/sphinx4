@@ -69,7 +69,7 @@ public class PartitionActiveListFactory extends ActiveListFactory {
                                    float logRelativeBeamWidth) {
             this.absoluteBeamWidth = absoluteBeamWidth;
             this.logRelativeBeamWidth = logRelativeBeamWidth;
-            int listSize = PROP_ABSOLUTE_BEAM_WIDTH_DEFAULT;
+            int listSize = 2000;
             if (absoluteBeamWidth > 0) {
                 listSize = absoluteBeamWidth / 3;
             }

@@ -25,18 +25,14 @@ public class GDLDumper extends LinguistDumper {
     /** The SphinxProperty specifying whether to skip HMMs during dumping. */
     @S4Boolean(defaultValue = true)
     public static final String PROP_SKIP_HMMS = "skipHMMs";
-    /** The default value for PROP_SKIP_HMMS. */
-    public static final boolean PROP_SKIP_HMMS_DEFAULT = true;
+
     /** The SphinxProperty to specify whether to use vertical graph layout. */
     @S4Boolean(defaultValue = false)
     public static final String PROP_VERTICAL_LAYOUT = "verticalLayout";
-    /** The default value for PROP_VERTICAL_LAYOUT. */
-    public static final boolean PROP_VERTICAL_LAYOUT_DEFAULT = false;
+
     /** The SphinxProperty to specify whether to dump arc labels. */
     @S4Boolean(defaultValue = true)
     public static final String PROP_DUMP_ARC_LABELS = "dumpArcLabels";
-    /** The default value for PROP_DUMP_ARC_LABELS. */
-    public static final boolean PROP_DUMP_ARC_LABELS_DEFAULT = true;
 
     /** The SphinxProperty to specify the log math */
     @S4Component(type = LogMath.class)

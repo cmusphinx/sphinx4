@@ -41,25 +41,18 @@ public class SpeedTracker
     /** A sphinx property that define whether summary accuracy information is displayed */
     @S4Boolean(defaultValue = true)
     public final static String PROP_SHOW_SUMMARY = "showSummary";
-    /** The default setting of PROP_SHOW_SUMMARY */
-    public final static boolean PROP_SHOW_SUMMARY_DEFAULT = true;
+
     /** A sphinx property that define whether detailed accuracy information is displayed */
     @S4Boolean(defaultValue = true)
     public final static String PROP_SHOW_DETAILS = "showDetails";
-    /** The default setting of PROP_SHOW_DETAILS */
-    public final static boolean PROP_SHOW_DETAILS_DEFAULT = true;
 
     /** A sphinx property that define whether detailed response information is displayed */
     @S4Boolean(defaultValue = false)
     public final static String PROP_SHOW_RESPONSE_TIME = "showResponseTime";
-    /** The default setting of PROP_SHOW_RESPONSE */
-    public final static boolean PROP_SHOW_RESPONSE_TIME_DEFAULT = false;
 
     /** A sphinx property that define whether detailed timer information is displayed */
     @S4Boolean(defaultValue = false)
     public final static String PROP_SHOW_TIMERS = "showTimers";
-    /** The default setting of PROP_SHOW_DETAILS */
-    public final static boolean PROP_SHOW_TIMERS_DEFAULT = false;
 
     private static DecimalFormat timeFormat = new DecimalFormat("0.00");
 

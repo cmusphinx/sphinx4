@@ -33,18 +33,10 @@ public class FrameDropper extends BaseDataProcessor {
     public static final String PROP_DROP_EVERY_NTH_FRAME
             = "dropEveryNthFrame";
 
-    /** The default value of PROP_DROP_EVERY_NTH_FRAME. */
-    public static final int PROP_DROP_EVERY_NTH_FRAME_DEFAULT = -1;
-
     /** The SphinxProperty that specifies whether to replace the Nth frame with the previous frame. */
     @S4Boolean(defaultValue = false)
     public static final String PROP_REPLACE_NTH_WITH_PREVIOUS
             = "replaceNthWithPrevious";
-
-    /** The default value of PROP_REPLACE_NTH_WITH_PREVIOUS. */
-    public static final boolean PROP_REPLACE_NTH_WITH_PREVIOUS_DEFAULT
-            = false;
-
 
     private Data lastFeature;
     private boolean replaceNthWithPrevious;

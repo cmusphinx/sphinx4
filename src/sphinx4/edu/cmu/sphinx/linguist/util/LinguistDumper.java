@@ -28,8 +28,7 @@ public class LinguistDumper extends LinguistProcessor {
     /** A sphinx property name for the destination of the LinguistDumper */
     @S4String(defaultValue = "linguistDump.txt")
     public final static String PROP_FILENAME = "filename";
-    /** The default value for PROP_FILENAME. */
-    public final static String PROP_FILENAME_DEFAULT = "linguistDump.txt";
+
     // ------------------------------
     // Configuration data
     // -------------------------------
@@ -71,17 +70,6 @@ public class LinguistDumper extends LinguistProcessor {
     protected void setDepthFirst(boolean depthFirst) {
         this.depthFirst = depthFirst;
     }
-
-
-    /**
-     * Retreives the default name for the destination dump. This method is typically overridden by derived classes
-     *
-     * @return the default name for the file.
-     */
-    protected String getDefaultName() {
-        return PROP_FILENAME_DEFAULT;
-    }
-
 
     /**
      * Called at the start of the dump

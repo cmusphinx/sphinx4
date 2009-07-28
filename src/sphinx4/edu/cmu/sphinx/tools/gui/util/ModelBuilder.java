@@ -530,12 +530,12 @@ public class ModelBuilder implements GUIFileActionListener {
             String fieldname = publicFields[i].getName();
             //System.out.println("*** checking field "+fieldname);
             if (Modifier.isPublic(m) && Modifier.isStatic(m) && Modifier.isFinal(m)) {
-                if (fieldname.startsWith("PROP_") && !fieldname.trim().endsWith("_DEFAULT")) {
-                    //name of property
-//                    String propname = new String((String) publicFields[i].get(null));
-                    //create the configurable property
-                    //System.out.println("***** create ConfigurableProperty " + 
-                    //       (String)publicFields[i].get(null));
+                if (fieldname.startsWith("PROP_")) {
+                    // Name of property
+		    // String propname = new String((String) publicFields[i].get(null));
+                    // Create the configurable property
+                    // System.out.println("***** create ConfigurableProperty " + 
+                    // 			  (String)publicFields[i].get(null));
                     ConfigurableProperty cp = createProperty(c, publicFields[i]);
                     cc.addProperty(cp);
                 }
@@ -641,20 +641,6 @@ public class ModelBuilder implements GUIFileActionListener {
 //                        System.out.println(" *** class type : " + _classtype );
 //                        System.out.println(" *** default value : " + _defval);
                     }
-                }
-            }
-
-            // if we find no annotation for the default field, 
-            // we try to look for a property with same name 
-            // that ends with '_DEFAULT'
-            if (_defval == null) {
-                try {
-                    Field tempField = _class.getField(_fieldname.trim() + "_DEFAULT");
-                    if (tempField.get(null) != null) {// with default value
-                        _defval = tempField.get(null).toString().trim();
-                    }
-                } catch (NoSuchFieldException e) {
-                    // do nothing
                 }
             }
         } // end processAnnotation
