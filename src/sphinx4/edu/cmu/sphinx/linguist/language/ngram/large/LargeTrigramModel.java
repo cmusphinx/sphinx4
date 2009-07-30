@@ -21,6 +21,7 @@ import edu.cmu.sphinx.util.TimerPool;
 import edu.cmu.sphinx.util.props.*;
 
 import java.io.*;
+import java.net.URL;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -156,7 +157,10 @@ public class LargeTrigramModel implements LanguageModel {
         logger = ps.getLogger();
         format = ps.getString(LanguageModel.PROP_FORMAT
         );
-        location = new File(ps.getString(PROP_LOCATION));
+             
+        URL urlLocation = ConfigurationManagerUtils.getResource(PROP_LOCATION, ps);
+        location = new File (urlLocation.getFile());
+        
         ngramLogFile = ps.getString(PROP_QUERY_LOG_FILE
         );
         maxTrigramCacheSize = ps.getInt(PROP_TRIGRAM_CACHE_SIZE

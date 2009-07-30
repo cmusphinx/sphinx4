@@ -260,7 +260,9 @@ public class Sphinx3Loader implements Loader {
         if (properties == null) {
             properties = new Properties();
             try {
-                properties.load(getDataStream(propsFile));
+                InputStream stream = getDataStream(propsFile);
+                if (stream != null)
+            	    properties.load(getDataStream(propsFile));
             } catch (IOException ioe) {
                 ioe.printStackTrace();
             }
