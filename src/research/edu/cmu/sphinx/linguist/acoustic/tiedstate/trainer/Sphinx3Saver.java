@@ -37,7 +37,7 @@ class Sphinx3Saver implements Saver {
      * The SphinxProperty specifying whether the transition matrices of the acoustic model is in sparse form, i.e.,
      * omitting the zeros of the non-transitioning states.
      */
-    @S4Boolean(defaultValue = true, isNotDefined = true)
+    @S4Boolean(defaultValue = true)
     public final static String PROP_SPARSE_FORM = "sparseForm";
     protected boolean sparseForm;
 
