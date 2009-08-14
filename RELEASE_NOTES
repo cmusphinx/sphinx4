@@ -1,10 +1,37 @@
 Sphinx-4 Speech Recognition System
 -------------------------------------------------------------------
+-------------------------------------------------------------------
+
+Version:       1.0Beta3
+Release Date:  August 2009
+
+-------------------------------------------------------------------
+
+New Features and Improvements:
+
+    * BatchAGC frontend component
+    * Completed transition to defaults in annotations
+    * ConcatFeatureExtrator to cooperate with cepwin models
+    * End of stream signals are passed to the decoder to fix cancellation
+    * Timer API improvement
+    * Threading policy is changed to TAS
+
+Bug fixes:
+
+    * Fixes reading UTF-8 from language model dump.
+    * Huge memory optimization of the lattice compression
+    * More stable fronend work with DataStart and DataEnd and optional
+      SpeechStart/SpeechEnd
+    
+Thanks:
+
+    Yaniv Kunda, Michele Alessandrini, Holger Brandl, Timo Baumann,
+    Evandro Gouvea
 
 -------------------------------------------------------------------
 
 Version:       1.0Beta2
-Release Date:  Febryary 2008
+Release Date:  February 2009
 
 -------------------------------------------------------------------
 
