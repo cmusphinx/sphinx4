@@ -275,7 +275,7 @@ class Sphinx4Loader extends Sphinx3Loader {
     protected Pool loadTransitionMatricesAscii(String path)
             throws FileNotFoundException, IOException {
 
-        String location = super.getLocation();
+        String location = "";
         InputStream inputStream = StreamFactory.getInputStream(location, path);
 
         LogMath logMath = ConfigurationManager.getInstance(LogMath.class);
@@ -351,8 +351,7 @@ class Sphinx4Loader extends Sphinx3Loader {
 
 
         Properties props = new Properties();
-        String location = super.getLocation();
-        DataInputStream dis = readS3BinaryHeader(location, path, props);
+        DataInputStream dis = readS3BinaryHeader(path, props);
 
         String version = props.getProperty("version");
         boolean doCheckSum;
