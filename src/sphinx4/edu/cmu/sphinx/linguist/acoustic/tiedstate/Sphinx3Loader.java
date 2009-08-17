@@ -603,8 +603,6 @@ public class Sphinx3Loader implements Loader {
      * Reads the S3 binary header from the given location + path. Adds header
      * information to the given set of properties.
      * 
-     * @param location
-     *            the location of the file
      * @param path
      *            the name of the file
      * @param props

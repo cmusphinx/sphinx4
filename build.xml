@@ -592,7 +592,7 @@
                  destdir="${javadoc_check_dir}"
                  overview="${src_dir}/sphinx4/overview.html"
                  doclet="com.sun.tools.doclets.doccheck.DocCheck"
-                 docletpath="/lab/speech/java/doccheck1.2b2/doccheck.jar"
+                 docletpath="lib/doccheck.jar"
                  access="${javadoc_level}">
             <classpath refid="libs"/>
         </javadoc>
