@@ -30,7 +30,7 @@ public class SpeechClassifiedData implements Data {
      * @param doubleData the DoubleData
      * @param isSpeech   indicates whether the DoubleData is speech
      */
-    protected SpeechClassifiedData(DoubleData doubleData, boolean isSpeech) {
+    public SpeechClassifiedData(DoubleData doubleData, boolean isSpeech) {
         this.data = doubleData;
         this.isSpeech = isSpeech;
     }
