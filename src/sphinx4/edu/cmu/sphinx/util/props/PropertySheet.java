@@ -9,7 +9,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * A property sheet which  defines a collection of properties for a single component in the system.
+ * A property sheet which defines a collection of properties for a single component in the system.
  *
  * @author Holger Brandl
  */
@@ -118,15 +118,15 @@ public class PropertySheet implements Cloneable {
                 if (!isDefDefined)
                     throw new InternalConfigurationException(getInstanceName(), name, "mandatory property is not set!");
             }
-//            else if(!isDefDefined)
-//                throw new InternalConfigurationException(getInstanceName(), name, "no default value for non-mandatory property");
+	    // else if(!isDefDefined)
+	    //     throw new InternalConfigurationException(getInstanceName(), name, "no default value for non-mandatory property");
 
             propValues.put(name, isDefDefined ? s4String.defaultValue() : null);
         }
 
         String propValue = flattenProp(name);
 
-        //check range
+        // Check range
         List<String> range = Arrays.asList(s4String.range());
         if (!range.isEmpty() && !range.contains(propValue))
             throw new InternalConfigurationException(getInstanceName(), name, " is not in range (" + range + ")");
@@ -217,10 +217,14 @@ public class PropertySheet implements Cloneable {
         }
 
         Object propObject = propValues.get(name);
-        if (propObject instanceof Integer)
-            propObject = new Double((Integer) propObject);
-
-        Double propValue = propObject instanceof Double ? (Double) propObject : Double.valueOf(flattenProp(name));
+        Double propValue;
+	
+        if (propObject instanceof Double)
+    	    propValue = (Double) propObject;
+        else if (propObject instanceof Integer)
+            propValue = new Double((Integer) propObject);
+        else
+    	    propValue = Double.valueOf(flattenProp(name));
 
         double[] range = s4Double.range();
         if (range.length != 2)
@@ -246,15 +250,18 @@ public class PropertySheet implements Cloneable {
         S4Boolean s4Boolean = (S4Boolean) s4PropWrapper.getAnnotation();
 
         if (propValues.get(name) == null)
-            propValues.put(name, s4Boolean.defaultValue());
-
-        Object propValue = propValues.get(name);
-        if (propValue instanceof String)
-            propValue = Boolean.valueOf((String) propValue);
-
-        return (Boolean) propValue;
+            propValues.put(name, (Boolean)s4Boolean.defaultValue());
+ 
+        Object propObject = propValues.get(name);
+        Boolean propValue;
+        
+        if (propObject instanceof Boolean)
+            propValue = (Boolean) propObject;
+        else
+            propValue = Boolean.valueOf(flattenProp(name));
+    
+        return propValue;
     }
-
 
     /**
      * Gets a component associated with the given parameter name
@@ -361,8 +368,8 @@ public class PropertySheet implements Cloneable {
         if (components == null) {
             List<Class<? extends Configurable>> defClasses = Arrays.asList(annotation.defaultList());
 
-//            if (annotation.mandatory() && defClasses.isEmpty())
-//                throw new InternalConfigurationException(getInstanceName(), name, "mandatory property is not set!");
+	// if (annotation.mandatory() && defClasses.isEmpty())
+	//      throw new InternalConfigurationException(getInstanceName(), name, "mandatory property is not set!");
 
             components = new ArrayList();
 
@@ -480,13 +487,12 @@ public class PropertySheet implements Cloneable {
     void setConfigurableClass(Class<? extends Configurable> confClass) {
         ownerClass = confClass;
 
-        // don't allow changes of the class if the configurable has already been instantiated
+        // Don't allow changes of the class if the configurable has already been instantiated
         if (isInstanciated())
             throw new RuntimeException("class is already instantiated");
 
         // clean up the properties if necessary
-//        registeredProperties.clear();
-
+	// registeredProperties.clear();
 
         final Collection<String> classProperties = new HashSet<String>();
         final Map<Field, Annotation> classProps = parseClass(ownerClass);

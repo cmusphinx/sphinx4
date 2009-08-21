@@ -23,6 +23,9 @@ public class DummyComp implements Configurable {
     @S4Boolean(defaultValue = true)
     public static final String PROP_USE_FOOBAR = "useFooBar";
 
+    @S4Boolean(defaultValue = true)
+    public static final String PROP_USE_FOOBAZ = "useFooBaz";
+
     /** doc of frontend. */
     @S4Component(type = DummyFrontEnd.class, defaultClass = AnotherDummyFrontEnd.class)
     public static final String PROP_FRONTEND = "frontend";
@@ -39,6 +42,7 @@ public class DummyComp implements Configurable {
     private DummyFrontEnd frontEnd;
     private String bestAsr;
     private double alpha;
+    private boolean useFooBaz;
 
     private Logger logger;
 
@@ -73,6 +77,7 @@ public class DummyComp implements Configurable {
         beamWidth = ps.getInt(PROP_BEAM_WIDTH);
         bestAsr = ps.getString(PROP_BEST_ASR);
         alpha = ps.getDouble(PROP_ALPHA);
+        useFooBaz = ps.getBoolean(PROP_USE_FOOBAZ);
 
         logger = ps.getLogger();
     }
@@ -89,6 +94,7 @@ public class DummyComp implements Configurable {
 
         Assert.assertEquals(4, dc.getBeamWidth());
         Assert.assertEquals(1.3, dc.getAlpha(), 1E-10);
+        Assert.assertEquals (false, useFooBaz);
 
         DummyFrontEnd fe = dc.getFrontEnd();
         Assert.assertTrue(fe != null);
