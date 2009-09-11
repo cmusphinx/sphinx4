@@ -104,7 +104,7 @@ public class FlatLinguist implements Linguist, Configurable {
     // Subcomponents that are configured
     // by the property sheet
     // -----------------------------------
-    private Grammar grammar;
+    protected Grammar grammar;
     private AcousticModel acousticModel;
     private UnitManager unitManager;
     protected LogMath logMath;
@@ -132,9 +132,9 @@ public class FlatLinguist implements Linguist, Configurable {
     // -----------------------------------
     // Data for monitoring performance
     // ------------------------------------
-    private StatisticsVariable totalStates;
-    private StatisticsVariable totalArcs;
-    private StatisticsVariable actualArcs;
+    protected StatisticsVariable totalStates;
+    protected StatisticsVariable totalArcs;
+    protected StatisticsVariable actualArcs;
     private transient int totalStateCounter = 0;
     private final static boolean tracing = false;
 
@@ -390,9 +390,17 @@ public class FlatLinguist implements Linguist, Configurable {
     // TODO: Currently the FlatLinguist requires that the initial
     // grammar node returned by the Grammar contains a "sil" word
     protected void addStartingPath() {
+        addStartingPath( grammar.getInitialNode() );
+    }
+
+    /**
+     * Start the search at the indicated node
+     * @param initialNode
+     */
+    protected void addStartingPath(GrammarNode initialNode) {
         // guarantees a starting path into the initial node by
         // adding an empty left context to the starting gstate
-        GrammarNode node = grammar.getInitialNode();
+        GrammarNode node = initialNode;
         GState gstate = getGState(node);
         gstate.addLeftContext(UnitContext.SILENCE);
     }
@@ -403,7 +411,7 @@ public class FlatLinguist implements Linguist, Configurable {
      *
      * @return true if the grammar has changed
      */
-    private boolean grammarHasChanged() {
+    protected boolean grammarHasChanged() {
         return initialGrammarState == null ||
                 initialGrammarState != grammar.getInitialNode();
     }
@@ -453,13 +461,13 @@ public class FlatLinguist implements Linguist, Configurable {
      * @param node the grammar node
      * @return the grammar state associated with the node
      */
-    private GState getGState(GrammarNode node) {
+    protected GState getGState(GrammarNode node) {
         return nodeStateMap.get(node);
     }
 
 
     /** The search graph that is produced by the flat linguist. */
-    class FlatSearchGraph implements SearchGraph {
+    protected class FlatSearchGraph implements SearchGraph {
 
         /** An array of classes that represents the order in which the states will be returned. */
         private SearchState initialState;
@@ -470,7 +478,7 @@ public class FlatLinguist implements Linguist, Configurable {
          *
          * @param initialState the initial state
          */
-        FlatSearchGraph(SearchState initialState) {
+        public FlatSearchGraph(SearchState initialState) {
             this.initialState = initialState;
         }
 
@@ -758,14 +766,14 @@ public class FlatLinguist implements Linguist, Configurable {
          * Collects the right contexts for this node and pushes this nodes ending context into the next next set of
          * nodes.
          */
-        void collectContexts() {
+        public void collectContexts() {
             pullRightContexts();
             pushLeftContexts();
         }
 
 
         /** Expands each GState into the sentence HMM States */
-        void expand() {
+        public void expand() {
             // for each left context/starting context pair create a list
             // of starting states.
             for (UnitContext leftContext : leftContexts) {
@@ -1270,7 +1278,7 @@ public class FlatLinguist implements Linguist, Configurable {
          * Note that for a task with 1000 words this will involve checking on the order of 35,000,000 connections and
          * making about 2,000,000 connections
          */
-        void connect() {
+        public void connect() {
             GrammarArc[] arcs = getSuccessors();
             // T("Connecting " + node.getWord());
             for (GrammarArc arc : arcs) {

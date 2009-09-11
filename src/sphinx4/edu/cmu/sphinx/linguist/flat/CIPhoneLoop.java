@@ -34,9 +34,9 @@ import java.util.Map;
  */
 public class CIPhoneLoop {
 
-    private AcousticModel model;
+    public AcousticModel model;
     private float logPhoneInsertionProbability;
-    private float logOne = LogMath.getLogOne();
+    public float logOne = LogMath.getLogOne();
 
 
     /**
@@ -63,10 +63,10 @@ public class CIPhoneLoop {
     }
 
 
-    class PhoneLoopSearchGraph implements SearchGraph {
+    protected class PhoneLoopSearchGraph implements SearchGraph {
 
-        private Map<String, SearchState> existingStates;
-        private SentenceHMMState firstState;
+        protected Map<String, SearchState> existingStates;
+        protected SentenceHMMState firstState;
 
 
         /** Constructs a phone loop search graph. */
@@ -144,7 +144,7 @@ public class CIPhoneLoop {
          *
          * @param state the state to add
          */
-        private void addStateToCache(SentenceHMMState state) {
+        protected void addStateToCache(SentenceHMMState state) {
             existingStates.put(state.getSignature(), state);
         }
 
@@ -156,7 +156,7 @@ public class CIPhoneLoop {
          * @param tree   the tree to expand
          * @return the final state in the tree
          */
-        private HMMStateState expandHMMTree(UnitState parent,
+        protected HMMStateState expandHMMTree(UnitState parent,
                                             HMMStateState tree) {
             HMMStateState retState = tree;
             HMMStateArc[] arcs = tree.getHMMState().getSuccessors();
