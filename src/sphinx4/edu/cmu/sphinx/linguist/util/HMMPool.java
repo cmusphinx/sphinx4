@@ -62,9 +62,9 @@ public class HMMPool {
 
         // count CI units:
 
-        for (Iterator i = model.getContextIndependentUnitIterator();
+        for (Iterator<Unit> i = model.getContextIndependentUnitIterator();
              i.hasNext();) {
-            Unit unit = (Unit) i.next();
+            Unit unit = i.next();
             logger.fine("CI unit " + unit);
             if (unit.getBaseID() > maxCIUnits) {
                 maxCIUnits = unit.getBaseID();
@@ -75,8 +75,8 @@ public class HMMPool {
 
         unitTable = new Unit[numCIUnits * numCIUnits * numCIUnits];
 
-        for (Iterator i = model.getHMMIterator(); i.hasNext();) {
-            HMM hmm = (HMM) i.next();
+        for (Iterator<HMM> i = model.getHMMIterator(); i.hasNext();) {
+            HMM hmm = i.next();
             Unit unit = hmm.getUnit();
             int id = getID(unit);
             unitTable[id] = unit;
@@ -89,8 +89,8 @@ public class HMMPool {
         hmmTable = new
                 HMM[HMMPosition.MAX_POSITIONS][unitTable.length];
 
-        for (Iterator i = HMMPosition.iterator(); i.hasNext();) {
-            HMMPosition position = (HMMPosition) i.next();
+        for (Iterator <HMMPosition> i = HMMPosition.iterator(); i.hasNext();) {
+            HMMPosition position = i.next();
             int index = position.getIndex();
             for (int j = 1; j < unitTable.length; j++) {
                 Unit unit = unitTable[j];
@@ -235,8 +235,8 @@ public class HMMPool {
      * @return the id for the context dependent unit
      */
     public int buildID(int unitID, int leftID, int rightID) {
-        // special case ... if the unitID is assoicated with
-        // silence than we have no context ... so use the CI
+        // special case ... if the unitID is associated with
+        // filler than we have no context ... so use the CI
         // form
 
         if (unitTable[unitID] == null) {
@@ -244,7 +244,7 @@ public class HMMPool {
         }
 
         int id;
-        if (unitTable[unitID].isSilence()) {
+        if (unitTable[unitID].isFiller()) {
             id = unitID;
         } else {
             id = unitID * (numCIUnits * numCIUnits)
@@ -281,7 +281,7 @@ public class HMMPool {
 
 
     /**
-     * Given a unit id extract the centeral unit id
+     * Given a unit id extract the central unit id
      *
      * @param id the unit id
      * @return the central unit id
