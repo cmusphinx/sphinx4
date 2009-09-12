@@ -123,6 +123,7 @@ public class FlatLinguist implements Linguist, Configurable {
     // ------------------------------------
     private float logWordInsertionProbability;
     private float logSilenceInsertionProbability;
+    private float logFillerInsertionProbability;
     private float logUnitInsertionProbability;
     private boolean showCompilationProgress = true;
     private boolean spreadWordProbabilitiesAcrossPronunciations;
@@ -176,6 +177,7 @@ public class FlatLinguist implements Linguist, Configurable {
         // get the rest of the configuration data
         logWordInsertionProbability = logMath.linearToLog(ps.getDouble(PROP_WORD_INSERTION_PROBABILITY));
         logSilenceInsertionProbability = logMath.linearToLog(ps.getDouble(PROP_SILENCE_INSERTION_PROBABILITY));
+        logFillerInsertionProbability = logMath.linearToLog(ps.getDouble(PROP_FILLER_INSERTION_PROBABILITY));
         logUnitInsertionProbability = logMath.linearToLog(ps.getDouble(PROP_UNIT_INSERTION_PROBABILITY));
         languageWeight = ps.getFloat(Linguist.PROP_LANGUAGE_WEIGHT);
         dumpGStates = ps.getBoolean(PROP_DUMP_GSTATES);
@@ -995,8 +997,10 @@ public class FlatLinguist implements Linguist, Configurable {
                     .isFiller(), context);
             UnitState unitState = new ExtendedUnitState(parent, which, cdUnit);
             float logInsertionProbability;
-            if (unitState.getUnit().isFiller()) {
+            if (unitState.getUnit().isSilence()) {
                 logInsertionProbability = logSilenceInsertionProbability;
+            } else if (unitState.getUnit().isFiller()) {
+                logInsertionProbability = logFillerInsertionProbability;
             } else if (unitState.getWhich() == 0) {
                 logInsertionProbability = logWordInsertionProbability;
             } else {
