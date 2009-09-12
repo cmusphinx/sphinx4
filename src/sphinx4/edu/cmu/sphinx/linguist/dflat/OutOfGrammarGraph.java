@@ -151,10 +151,10 @@ public class OutOfGrammarGraph {
 
         /** Creates the first branch state */
         FirstBranchState() {
-            List successorList = new ArrayList();
-            for (Iterator i = acousticModel.getContextIndependentUnitIterator();
+            List<OogHMM> successorList = new ArrayList<OogHMM>();
+            for (Iterator<Unit> i = acousticModel.getContextIndependentUnitIterator();
                  i.hasNext();) {
-                Unit unit = (Unit) i.next();
+                Unit unit = i.next();
                 OogHMM hmm = new OogHMM(unit);
                 successorList.add(hmm);
             }
@@ -606,18 +606,5 @@ public class OutOfGrammarGraph {
         public float getInsertionProbability() {
             return LogMath.getLogOne();
         }
-
-
-        /**
-         * Simple debugging output
-         *
-         * @param msg the debug message
-         */
-        void debug(String msg) {
-            if (false) {
-                System.out.println(msg);
-            }
-        }
-
     }
 }

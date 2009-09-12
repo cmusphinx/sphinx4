@@ -69,12 +69,12 @@ public class LinguistTimer {
         totalTimer.start();
         for (int runs = 0; runs < numRuns; runs++) {
             int level = 0;
-            List activeList = new ArrayList();
+            List<SearchState> activeList = new ArrayList<SearchState>();
             activeList.add(linguist.getSearchGraph().getInitialState());
             linguist.startRecognition();
             for (int i = 0; i < numFrames; i++) {
-                List oldList = activeList;
-                activeList = new ArrayList(maxBeam * 10);
+                List<SearchState> oldList = activeList;
+                activeList = new ArrayList<SearchState>(maxBeam * 10);
                 frameTimer.start();
                 for (int j = 0; j < oldList.size(); j++) {
                     SearchState nextStates = (SearchState) oldList.get(j);
@@ -106,7 +106,7 @@ public class LinguistTimer {
      * @param activeList where next states are placed
      * @param state      the search state to expand
      */
-    private void expandState(int level, List activeList, SearchState state) {
+    private void expandState(int level, List<SearchState> activeList, SearchState state) {
         SearchStateArc[] newStates = state.getSuccessors();
         totalStates++;
         // System.out.println(Utilities.pad(level * 2) + state);
@@ -121,7 +121,7 @@ public class LinguistTimer {
             } else if (!ns.isFinal()) {
                 totalNonEmittingStates++;
                 activeList.add(ns);
-                if (false && details && ns.isFinal()) {
+                if (details && ns.isFinal()) {
                     System.out.println("result " + ns.toPrettyString());
                 }
                 expandState(level + 1, activeList, ns);

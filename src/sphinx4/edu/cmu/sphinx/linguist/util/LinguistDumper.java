@@ -131,8 +131,8 @@ public class LinguistDumper extends LinguistProcessor {
      * @param startingState the initial state of the search space
      */
     private void dumpSearchGraph(PrintStream out, SearchState startingState) {
-        List queue = new LinkedList();
-        Set visitedStates = new HashSet();
+        List<StateLevel> queue = new LinkedList<StateLevel>();
+        Set<String> visitedStates = new HashSet<String>();
         startDump(out);
         queue.add(new StateLevel(startingState, 0));
         while (queue.size() > 0) {
@@ -161,8 +161,8 @@ public class LinguistDumper extends LinguistProcessor {
     }
 
 
-    Map eqStates = new HashMap();
-    Map eqSigs = new HashMap();
+    Map<SearchState, SearchState> eqStates = new HashMap<SearchState, SearchState>();
+    Map<String, SearchState> eqSigs = new HashMap<String, SearchState>();
 
 
     /**
@@ -171,6 +171,7 @@ public class LinguistDumper extends LinguistProcessor {
      *
      * @param state the state to check
      */
+    @SuppressWarnings("unused")
     private void equalCheck(SearchState state) {
         SearchState eqState = (SearchState) eqStates.get(state);
         SearchState eqSig = (SearchState) eqSigs.get(state.getSignature());

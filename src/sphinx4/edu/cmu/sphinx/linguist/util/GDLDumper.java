@@ -169,7 +169,7 @@ public class GDLDumper extends LinguistDumper {
      */
     protected void dumpArc(PrintStream out, SearchState from,
                            SearchStateArc arc, int level) {
-        List arcList = new ArrayList();
+        List<SearchStateArc> arcList = new ArrayList<SearchStateArc>();
 
         if (skipHMMs) {
             if (from instanceof HMMSearchState) {
@@ -182,8 +182,7 @@ public class GDLDumper extends LinguistDumper {
         } else {
             arcList.add(arc);
         }
-        for (Iterator i = arcList.iterator(); i.hasNext();) {
-            SearchStateArc nextArc = (SearchStateArc) i.next();
+        for (SearchStateArc nextArc : arcList) {
             String label = "";
             String color = getArcColor(nextArc);
             if (dumpArcLabels) {
@@ -211,9 +210,9 @@ public class GDLDumper extends LinguistDumper {
      * @param arc     the arc to start the search at
      * @param results the resulting arcs are placed on this list
      */
-    private void findNextNonHMMArc(SearchStateArc arc, List results) {
-        Set visited = new HashSet();
-        List queue = new ArrayList();
+    private void findNextNonHMMArc(SearchStateArc arc, List<SearchStateArc> results) {
+        Set<SearchStateArc> visited = new HashSet<SearchStateArc>();
+        List<SearchStateArc> queue = new ArrayList<SearchStateArc>();
         queue.add(arc);
         while (queue.size() > 0) {
             SearchStateArc nextArc = (SearchStateArc) queue.remove(0);

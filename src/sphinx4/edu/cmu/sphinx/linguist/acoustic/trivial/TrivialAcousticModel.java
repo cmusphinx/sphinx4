@@ -27,10 +27,7 @@ import java.util.Properties;
 /** Represents the generic interface to the Acoustic Model for sphinx4 */
 public class TrivialAcousticModel implements AcousticModel {
 
-    private final static String PREFIX =
-            "edu.cmu.sphinx.linguist.acoustic.trivial.TrivialAcousticModel";
-
-    /** Sphinx property that defines the left context size */
+    /** Defines the left context size */
     @S4Integer(defaultValue = 1)
     public final static String LEFT_CONTEXT_SIZE ="leftContextSize";
 
@@ -44,8 +41,6 @@ public class TrivialAcousticModel implements AcousticModel {
 
 
     public void newProperties(PropertySheet ps) throws PropertyException {
-         this.name = name;
-
         // get acoustic model configuration data from the sphinx
         // properties
 
@@ -116,7 +111,7 @@ public class TrivialAcousticModel implements AcousticModel {
      * @return an iterator that can be used to iterate through all HMMs in the model. The iterator returns objects of
      *         type <code>HMM</code>.
      */
-    public Iterator getHMMIterator() {
+    public Iterator<HMM> getHMMIterator() {
         return hmmMap.values().iterator();
     }
 

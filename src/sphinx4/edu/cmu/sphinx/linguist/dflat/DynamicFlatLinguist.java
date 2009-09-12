@@ -243,10 +243,9 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
     private void compileGrammar() {
         // iterate through the grammar nodes
 
-        Set nodeSet = grammar.getGrammarNodes();
+        Set<GrammarNode> nodeSet = grammar.getGrammarNodes();
 
-        for (Object aNodeSet : nodeSet) {
-            GrammarNode node = (GrammarNode) aNodeSet;
+        for (GrammarNode node : nodeSet) {
             initUnitMaps(node);
         }
         searchGraph = new DynamicFlatSearchGraph();
@@ -707,34 +706,32 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
          * @param nextBase the ID of the desired initial unit
          */
         Pronunciation[] filter(Pronunciation[] p, int nextBase) {
-            if (true) {
-                return p;
-            }
-            if (nextBase == ANY) {
-                return p;
-            } else {
-                int count = 0;
-                for (int i = 0; i < p.length; i++) {
-                    Unit[] units = p[i].getUnits();
-                    if (units[0].getBaseID() == nextBase) {
-                        count++;
-                    }
-                }
-
-                if (count == p.length) {
-                    return p;
-                } else {
-                    Pronunciation[] filteredP = new Pronunciation[count];
-                    int index = 0;
-                    for (int i = 0; i < p.length; i++) {
-                        Unit[] units = p[i].getUnits();
-                        if (units[0].getBaseID() == nextBase) {
-                            filteredP[index++] = p[i];
-                        }
-                    }
-                    return filteredP;
-                }
-            }
+            return p;
+//            if (nextBase == ANY) {
+//                return p;
+//            } else {
+//                int count = 0;
+//                for (int i = 0; i < p.length; i++) {
+//                    Unit[] units = p[i].getUnits();
+//                    if (units[0].getBaseID() == nextBase) {
+//                        count++;
+//                    }
+//                }
+//
+//                if (count == p.length) {
+//                    return p;
+//                } else {
+//                    Pronunciation[] filteredP = new Pronunciation[count];
+//                    int index = 0;
+//                    for (int i = 0; i < p.length; i++) {
+//                        Unit[] units = p[i].getUnits();
+//                        if (units[0].getBaseID() == nextBase) {
+//                            filteredP[index++] = p[i];
+//                        }
+//                    }
+//                    return filteredP;
+//                }
+//            }
         }
 
 
@@ -1213,25 +1210,6 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
             return 3;
         }
 
-
-        /**
-         * Determines the insertion probability based upon the type of unit
-         *
-         * @return the insertion probability
-         */
-        private float calcInsertionProbability() {
-            Unit unit = hmm.getBaseUnit();
-
-            if (unit.isSilence()) {
-                return logSilenceInsertionProbability;
-            } else if (unit.isFiller()) {
-                return logFillerInsertionProbability;
-            } else {
-                return logUnitInsertionProbability;
-            }
-        }
-
-
         /**
          * Returns a unique string representation of the state. This string is suitable (and typically used) for a label
          * for a GDL node
@@ -1242,7 +1220,6 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
             return "HSS " + pState.getGrammarState().getGrammarNode() +
                     pState.getPronunciation() + index + "-" + rc + "-" + lc;
         }
-
 
         /**
          * Returns the ID of the right context for this state

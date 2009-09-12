@@ -22,12 +22,12 @@ public class LeftRightContext extends Context {
     Unit[] leftContext = null;
     Unit[] rightContext = null;
     private static boolean CACHING_CONTEXTS = true;
-    private static Map cache;
+    private static Map<String, LeftRightContext> cache;
 
 
     static {
         if (CACHING_CONTEXTS) {
-            cache = new HashMap();
+            cache = new HashMap<String, LeftRightContext>();
         }
     }
 
