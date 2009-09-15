@@ -16,6 +16,11 @@ import edu.cmu.sphinx.frontend.*;
 import edu.cmu.sphinx.frontend.endpoint.SpeechEndSignal;
 import edu.cmu.sphinx.frontend.endpoint.SpeechStartSignal;
 import edu.cmu.sphinx.result.Result;
+import edu.cmu.sphinx.decoder.search.SearchManager;
+import edu.cmu.sphinx.util.props.Configurable;
+
+import java.util.logging.Logger;
+import java.util.List;
 
 
 /**
@@ -30,6 +35,9 @@ public class FrameDecoder extends AbstractDecoder implements DataProcessor {
     private boolean isRecognizing;
     private Result result;
 
+    public FrameDecoder( String name, Logger logger, SearchManager searchManager, boolean fireNonFinalResults, boolean autoAllocate, List<? extends Configurable> listeners) {
+        super(name,logger,searchManager,fireNonFinalResults,autoAllocate,listeners);
+    }    
 
     /**
      * Decode a single frame.
@@ -40,7 +48,6 @@ public class FrameDecoder extends AbstractDecoder implements DataProcessor {
     public Result decode(String referenceText) {
         return searchManager.recognize(1);
     }
-
 
     public Data getData() throws DataProcessingException {
         Data d = getPredecessor().getData();

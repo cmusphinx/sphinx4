@@ -16,6 +16,11 @@ import edu.cmu.sphinx.result.Result;
 import edu.cmu.sphinx.util.props.PropertyException;
 import edu.cmu.sphinx.util.props.PropertySheet;
 import edu.cmu.sphinx.util.props.S4Integer;
+import edu.cmu.sphinx.util.props.Configurable;
+import edu.cmu.sphinx.decoder.search.SearchManager;
+
+import java.util.logging.Logger;
+import java.util.List;
 
 /** The primary decoder class */
 public class Decoder extends AbstractDecoder {
@@ -25,15 +30,20 @@ public class Decoder extends AbstractDecoder {
     public final static String PROP_FEATURE_BLOCK_SIZE = "featureBlockSize";
     private int featureBlockSize;
 
+    public Decoder() {
 
-    @Override
+    }
+    
     public void newProperties(PropertySheet ps) throws PropertyException {
         super.newProperties(ps);
-
         featureBlockSize = ps.getInt(PROP_FEATURE_BLOCK_SIZE);
     }
 
-
+    public Decoder( String name, Logger logger, SearchManager searchManager, boolean fireNonFinalResults, boolean autoAllocate, List<? extends Configurable> resultListener, int featureBlockSize) {
+        super( name, logger, searchManager, fireNonFinalResults, autoAllocate, resultListener);
+        this.featureBlockSize = featureBlockSize;
+    }
+    
     /**
      * Decode frames until recognition is complete.
      *

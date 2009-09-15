@@ -36,6 +36,9 @@ public abstract class AbstractDecoder implements ResultProducer, Configurable {
     private String name;
     protected Logger logger;
 
+    public AbstractDecoder() {
+    }
+
     /**
      * Decode frames until recognition is complete
      *
@@ -44,19 +47,26 @@ public abstract class AbstractDecoder implements ResultProducer, Configurable {
      */
     public abstract Result decode(String referenceText);
 
-
     public void newProperties(PropertySheet ps) throws PropertyException {
-        name = ps.getInstanceName();
-        logger = ps.getLogger();
+        init( ps.getInstanceName(), ps.getLogger(), (SearchManager) ps.getComponent(PROP_SEARCH_MANAGER), ps.getBoolean(FIRE_NON_FINAL_RESULTS), ps.getBoolean(AUTO_ALLOCATE), ps.getComponentList(PROP_RESULT_LISTENERS));
+    }
 
-        searchManager = (SearchManager) ps.getComponent(PROP_SEARCH_MANAGER);
-        fireNonFinalResults = ps.getBoolean(FIRE_NON_FINAL_RESULTS);
+    public AbstractDecoder( String name, Logger logger, SearchManager searchManager, boolean fireNonFinalResults, boolean autoAllocate, List<? extends Configurable> listeners) {
+        init(name, logger, searchManager, fireNonFinalResults, autoAllocate, listeners);
+    }
 
-        if (ps.getBoolean(AUTO_ALLOCATE)) {
+    private void init(String name, Logger logger, SearchManager searchManager, boolean fireNonFinalResults, boolean autoAllocate, List<? extends Configurable> listeners) {
+        this.name = name;
+        this.logger = logger;
+
+        this.searchManager = searchManager;
+        this.fireNonFinalResults = fireNonFinalResults;
+
+        if (autoAllocate) {
             searchManager.allocate();
         }
 
-        for (Configurable configurable : ps.getComponentList(PROP_RESULT_LISTENERS)) {
+        for (Configurable configurable : listeners) {
             addResultListener((ResultListener) configurable);
         }
     }

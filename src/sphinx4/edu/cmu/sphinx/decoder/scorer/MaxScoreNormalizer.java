@@ -16,6 +16,9 @@ public class MaxScoreNormalizer implements ScoreNormalizer {
     public void newProperties(PropertySheet ps) throws PropertyException {
     }
 
+    public MaxScoreNormalizer() {
+    }
+
 
     public Scoreable normalize(List<? extends Scoreable> scoreableList, Scoreable bestToken) {
         for (Scoreable scoreable : scoreableList) {

@@ -26,15 +26,23 @@ public class BackgroundModelNormalizer implements ScoreNormalizer {
 
     private Logger logger;
 
+    public BackgroundModelNormalizer() {       
+    }
 
     public void newProperties(PropertySheet ps) throws PropertyException {
-        activeListProvider = (SimpleBreadthFirstSearchManager) ps.getComponent(ACTIVE_LIST_PROVIDER);
-        logger = ps.getLogger();
+        this.activeListProvider = (SimpleBreadthFirstSearchManager) ps.getComponent(ACTIVE_LIST_PROVIDER);
+        this.logger = ps.getLogger();
 
         logger.warning("no active list set.");
     }
 
+    public BackgroundModelNormalizer(SimpleBreadthFirstSearchManager activeListProvider, Logger logger) {
+        this.activeListProvider = activeListProvider;
+        this.logger = logger;
 
+        logger.warning("no active list set.");
+    }
+    
     public Scoreable normalize(List<? extends Scoreable> scoreableList, Scoreable bestToken) {
         if (activeListProvider == null) {
             return bestToken;

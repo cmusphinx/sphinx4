@@ -12,6 +12,7 @@ import edu.cmu.sphinx.util.props.S4Component;
 
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 /**
  * Implements some basic scorer functionality but keeps specific scoring open for sub-classes.
@@ -35,12 +36,21 @@ public abstract class AbstractScorer extends ConfigurableAdapter implements Acou
 
     private Boolean useSpeechSignals;
 
+    public AbstractScorer() {
+    }
 
     public void newProperties(PropertySheet ps) throws PropertyException {
         super.newProperties(ps);
 
-        frontEnd = (BaseDataProcessor) ps.getComponent(FEATURE_FRONTEND);
-        scoreNormalizer = (ScoreNormalizer) ps.getComponent(SCORE_NORMALIZER);
+        this.frontEnd = (BaseDataProcessor) ps.getComponent(FEATURE_FRONTEND);
+        this.scoreNormalizer = (ScoreNormalizer) ps.getComponent(SCORE_NORMALIZER);
+    }
+
+    public AbstractScorer(String name, Logger logger, BaseDataProcessor frontEnd, ScoreNormalizer scoreNormalizer) {
+        super(name,logger);
+
+        this.frontEnd = frontEnd;
+        this.scoreNormalizer = scoreNormalizer;
     }
 
 

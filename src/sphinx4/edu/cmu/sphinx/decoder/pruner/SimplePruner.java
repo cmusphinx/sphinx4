@@ -26,9 +26,11 @@ public class SimplePruner implements Pruner {
      * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
      */
     public void newProperties(PropertySheet ps) throws PropertyException {
-
     }
 
+
+    public SimplePruner() {
+    }
 
     /* (non-Javadoc)
      * @see edu.cmu.sphinx.util.props.Configurable#getName()

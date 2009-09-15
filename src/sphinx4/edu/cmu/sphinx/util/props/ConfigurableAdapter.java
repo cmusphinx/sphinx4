@@ -13,16 +13,24 @@ public abstract class ConfigurableAdapter implements Configurable{
     private String name;
     protected Logger logger;
 
-
+    public ConfigurableAdapter() {
+    }
 
     public void newProperties(PropertySheet ps) throws PropertyException {
-        name = ps.getInstanceName();
-        logger = ps.getLogger();
+        init( ps.getInstanceName(), ps.getLogger());
+    }
+
+    public ConfigurableAdapter(String name, Logger logger) {
+        init(name, logger);
+    }
+
+    private void init(String name, Logger logger) {
+        this.name = name;
+        this.logger = logger;
 
         // fix null names
         name =  name != null ? name : getClass().getSimpleName();
     }
-
 
     /** Retunrs the configuration name this {@code Configurable}. */
     public String getName() {

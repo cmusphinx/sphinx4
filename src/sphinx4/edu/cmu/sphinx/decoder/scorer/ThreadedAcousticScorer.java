@@ -13,6 +13,7 @@
 package edu.cmu.sphinx.decoder.scorer;
 
 import edu.cmu.sphinx.frontend.Data;
+import edu.cmu.sphinx.frontend.BaseDataProcessor;
 import edu.cmu.sphinx.util.props.PropertyException;
 import edu.cmu.sphinx.util.props.PropertySheet;
 import edu.cmu.sphinx.util.props.S4Boolean;
@@ -20,6 +21,7 @@ import edu.cmu.sphinx.util.props.S4Integer;
 
 import java.util.List;
 import java.util.ListIterator;
+import java.util.logging.Logger;
 
 /**
  * An acoustic scorer that breaks the scoring up into a configurable number of separate threads.
@@ -70,7 +72,13 @@ public class ThreadedAcousticScorer extends AbstractScorer {
     private Semaphore semaphore;    // join after call
     private Data currentData;       // current feature being processed
 
+    public ThreadedAcousticScorer(String name, Logger logger, BaseDataProcessor frontEnd, ScoreNormalizer scoreNormalizer) {
+        super(name, logger, frontEnd, scoreNormalizer);
+    }
 
+    public ThreadedAcousticScorer() {
+    }
+    
     @Override
     public void newProperties(PropertySheet ps) throws PropertyException {
         super.newProperties(ps);

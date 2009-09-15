@@ -13,8 +13,10 @@
 package edu.cmu.sphinx.decoder.scorer;
 
 import edu.cmu.sphinx.frontend.Data;
+import edu.cmu.sphinx.frontend.BaseDataProcessor;
 
 import java.util.List;
+import java.util.logging.Logger;
 
 
 /**
@@ -23,7 +25,10 @@ import java.util.List;
  * Note that all scores are maintained in LogMath log base.
  */
 public class SimpleAcousticScorer extends AbstractScorer {
-
+    
+    public SimpleAcousticScorer(String name, Logger logger, BaseDataProcessor frontEnd, ScoreNormalizer scoreNormalizer) {
+        super(name, logger, frontEnd, scoreNormalizer);
+    }
 
     protected Data doScoring(List<? extends Scoreable> scoreableList, Data data) {
         Scoreable best;
