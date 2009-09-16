@@ -70,11 +70,11 @@ public class AlternateHypothesisManager {
 
         int max = maxEdges - 1;
 
-        for (Token key : viterbiLoserMap.keySet()) {
-            List<Token> list = viterbiLoserMap.get(key);
+        for (Map.Entry<Token, List<Token>> entry : viterbiLoserMap.entrySet()) {
+            List<Token> list = entry.getValue();
             Collections.sort(list, Token.COMPARATOR);
             List<Token> newList = list.subList(0, list.size() > max ? max : list.size());
-            viterbiLoserMap.put(key, newList);
+            viterbiLoserMap.put(entry.getKey(), newList);
         }
     }
 

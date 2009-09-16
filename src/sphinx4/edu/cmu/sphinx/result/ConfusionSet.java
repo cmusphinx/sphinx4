@@ -11,10 +11,7 @@
  */
 package edu.cmu.sphinx.result;
 
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
-import java.util.TreeMap;
+import java.util.*;
 
 /**
  * A confusion set is a set of words with their associated posteriors. In Java terms it's a SortedMap from posteriors to
@@ -155,12 +152,9 @@ public class ConfusionSet extends TreeMap<Double, Set<WordResult>> {
 
     public String toString() {
         StringBuffer b = new StringBuffer();
-        Iterator<Double> i = keySet().iterator();
-        while (i.hasNext()) {
-            Double p = i.next();
-            Set<WordResult> words = get(p);
-            b.append(p.toString()).append(":");
-            Iterator<WordResult> j = words.iterator();
+        for (Map.Entry<Double, Set<WordResult>> entry : entrySet()) {
+            b.append(entry.getKey()).append(":");
+            Iterator<WordResult> j = entry.getValue().iterator();
             while (j.hasNext()) {
                 b.append(j.next());
                 if (j.hasNext()) {

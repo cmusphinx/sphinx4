@@ -807,8 +807,9 @@ public class FlatLinguist implements Linguist, Configurable {
                 // incoming left contexts and outgoing right contexts
                 // the 'entryPoint' table already consists of such
                 // pairs so we can use that
-                for (ContextPair cp : entryPoints.keySet()) {
-                    List<SearchState> epList = entryPoints.get(cp);
+                for (Map.Entry<ContextPair, List<SearchState>> entry : entryPoints.entrySet()) {
+                    ContextPair cp = entry.getKey();
+                    List<SearchState> epList = entry.getValue();
                     SentenceHMMState bs = new BranchState(cp.getLeftContext().toString(),
                             cp.getRightContext().toString(), node.getID());
                     epList.add(bs);
@@ -831,7 +832,8 @@ public class FlatLinguist implements Linguist, Configurable {
          */
         private void addEmptyEntryPoints() {
             Map<ContextPair, List<SearchState>> emptyEntryPoints = new HashMap<ContextPair, List<SearchState>>();
-            for (ContextPair cp : entryPoints.keySet()) {
+            for (Map.Entry<ContextPair, List<SearchState>> entry : entryPoints.entrySet()) {
+                ContextPair cp = entry.getKey();
                 if (needsEmptyVersion(cp)) {
                     ContextPair emptyContextPair = ContextPair.get(cp
                             .getLeftContext(), UnitContext.EMPTY);
@@ -840,7 +842,7 @@ public class FlatLinguist implements Linguist, Configurable {
                         epList = new ArrayList<SearchState>();
                         emptyEntryPoints.put(emptyContextPair, epList);
                     }
-                    epList.addAll(entryPoints.get(cp));
+                    epList.addAll(entry.getValue());
                 }
             }
             entryPoints.putAll(emptyEntryPoints);

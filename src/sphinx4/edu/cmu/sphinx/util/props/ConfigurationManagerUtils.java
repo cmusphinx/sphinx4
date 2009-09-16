@@ -248,13 +248,13 @@ public final class ConfigurationManagerUtils {
         Pattern pattern = Pattern.compile("\\$\\{(\\w+)\\}");
 
         GlobalProperties globalProps = cm.getGlobalProperties();
-        for (String propName : globalProps.keySet()) {
-            String propVal = globalProps.get(propName).toString();
+        for (Map.Entry<String, GlobalProperty> entry : globalProps.entrySet()) {
+            String propName = entry.getKey();
 
             Matcher matcher = pattern.matcher(propName);
             propName = matcher.matches() ? matcher.group(1) : propName;
 
-            sb.append("\n\t<property name=\"" + propName + "\" value=\"" + propVal + "\"/>");
+            sb.append("\n\t<property name=\"" + propName + "\" value=\"" + entry.getValue() + "\"/>");
         }
 
         Collection<String> allInstances = cm.getComponentNames();
@@ -450,11 +450,11 @@ public final class ConfigurationManagerUtils {
 
         // it might be possible that the component is the value of a global property
         GlobalProperties globalProps = cm.getGlobalProperties();
-        for (String propName : globalProps.keySet()) {
-            String propVal = globalProps.get(propName).toString();
+        for (Map.Entry<String, GlobalProperty> entry : globalProps.entrySet()) {
+            String propVal = entry.getValue().toString();
 
             if (propVal.equals(oldName))
-                cm.setGlobalProperty(propName, newName);
+                cm.setGlobalProperty(entry.getKey(), newName);
         }
     }
 
@@ -600,19 +600,19 @@ public final class ConfigurationManagerUtils {
 
         // print non-ambiguous props first
         System.out.println("\nUnambiguous properties = ");
-        for (String propName : allProps.keySet()) {
-            if (allProps.get(propName).size() == 1)
-                System.out.print(propName + ", ");
+        for (Map.Entry<String, List<PropertySheet>> entry : allProps.entrySet()) {
+            if (entry.getValue().size() == 1)
+                System.out.print(entry.getKey() + ", ");
         }
 
         // now print ambiguous properties (including the associated components
         System.out.println("\n\nAmbiguous properties: ");
-        for (String propName : allProps.keySet()) {
-            if (allProps.get(propName).size() == 1)
+        for (Map.Entry<String, List<PropertySheet>> entry : allProps.entrySet()) {
+            if (entry.getValue().size() == 1)
                 continue;
 
-            System.out.print(propName + "=");
-            for (PropertySheet ps : allProps.get(propName)) {
+            System.out.print(entry.getKey() + "=");
+            for (PropertySheet ps : entry.getValue()) {
                 System.out.print(ps.getInstanceName() + ", ");
             }
             System.out.println();

@@ -185,10 +185,9 @@ public class FullDictionary implements Dictionary {
      */
     @SuppressWarnings({"unchecked"})
     protected void createWords(Map<String, Object> dictionary, boolean isFillerDict) {
-        Set<String> spellings = dictionary.keySet();
-        for (Iterator<String> s = spellings.iterator(); s.hasNext();) {
-            String spelling = s.next();
-            List<Pronunciation> pronunciations = (List<Pronunciation>) dictionary.get(spelling);
+        for (Map.Entry<String, Object> entry : dictionary.entrySet()) {
+            String spelling = entry.getKey();
+            List<Pronunciation> pronunciations = (List<Pronunciation>)entry.getValue();
             Pronunciation[] pros = new Pronunciation[pronunciations.size()];
             for (int i = 0; i < pros.length; i++) {
                 pros[i] = pronunciations.get(i);

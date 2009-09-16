@@ -86,10 +86,10 @@ public class Sausage implements ConfidenceResult {
                 addWordHypothesis(index, "<noop>", remainder, logMath);
             } else {
                 ConfusionSet newSet = new ConfusionSet();
-                for (Iterator<Double> j = set.keySet().iterator(); j.hasNext();) {
-                    Double oldProb = j.next();
+                for (Map.Entry<Double, Set<WordResult>> entry : set.entrySet()) {
+                    Double oldProb = entry.getKey();
                     Double newProb = oldProb.doubleValue() - sum;
-                    newSet.put(newProb, set.get(oldProb));
+                    newSet.put(newProb, entry.getValue());
                 }
                 confusionSets.set(index, newSet);
             }
@@ -159,10 +159,8 @@ public class Sausage implements ConfidenceResult {
         Iterator<ConfusionSet> c = confusionSetIterator();
         while (c.hasNext()) {
             ConfusionSet cs = (ConfusionSet) c.next();
-            Iterator<Double> j = cs.keySet().iterator();
-            while (j.hasNext()) {
-                Double p = (Double) j.next();
-                Set<WordResult> words = cs.get(p);
+            for (Iterator<Set<WordResult>> j = cs.values().iterator(); j.hasNext();) {
+                Set<WordResult> words = j.next();
                 Iterator<WordResult> w = words.iterator();
                 while (w.hasNext()) {
                     WordResult word = w.next();
@@ -233,9 +231,8 @@ public class Sausage implements ConfidenceResult {
         Iterator<ConfusionSet> i = confusionSetIterator();
         while (i.hasNext()) {
         	ConfusionSet cs = i.next();
-            Iterator<Double> j = cs.keySet().iterator();
-            while (j.hasNext()) {
-                count += cs.get(j.next()).size();
+            for (Set<WordResult> words : cs.values()) {
+                count += words.size();
             }
         }
         return count;
@@ -270,12 +267,11 @@ public class Sausage implements ConfidenceResult {
             while (i.hasNext()) {
                 int index = i.nextIndex();
                 ConfusionSet set = (ConfusionSet) i.next();
-                Iterator<Double> j = set.keySet().iterator();
                 f.write("node: { title: \"" + index + "\" label: \"" + index + "\"}\n");
-                while (j.hasNext()) {
-                    Double prob = (Double) j.next();
+                for (Map.Entry<Double, Set<WordResult>> entry : set.entrySet()) {
+                    Double prob = entry.getKey();
                     String word = "";
-                    Set<WordResult> wordSet = set.get(prob);
+                    Set<WordResult> wordSet = entry.getValue();
                     for (Iterator<WordResult> w = wordSet.iterator(); w.hasNext();) {
                         word += w.next();
                         if (w.hasNext()) {

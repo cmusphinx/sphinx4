@@ -397,13 +397,12 @@ public class FastDictionary implements Dictionary {
      */
     public String toString() {
 
-        SortedMap sorted = new TreeMap<String, Object>(dictionary);
+        SortedMap<String, Object> sorted = new TreeMap<String, Object>(dictionary);
         String result = "";
 
-        for (Iterator i = sorted.keySet().iterator(); i.hasNext();) {
-            String word = (String) i.next();
-            List pronunciations = (List) sorted.get(word);
-            result += (word + "\n");
+        for (Map.Entry<String, Object> entry : sorted.entrySet()) {
+            List pronunciations = (List)entry.getValue();
+            result += (entry.getKey() + "\n");
             for (Iterator p = pronunciations.iterator(); p.hasNext();) {
                 Pronunciation pronunciation = (Pronunciation) p.next();
                 result += ("   " + pronunciation.toString() + "\n");

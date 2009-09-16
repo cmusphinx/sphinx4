@@ -241,11 +241,8 @@ public class SimpleNGramModel implements LanguageModel {
 
     /** Dumps the language model */
     public void dump() {
-        for (Iterator<WordSequence> i = map.keySet().iterator(); i.hasNext();) {
-            WordSequence ws = i.next();
-            Probability prob = map.get(ws);
-            System.out.println(ws.toString() + " " + prob);
-        }
+        for (Map.Entry<WordSequence, Probability> entry : map.entrySet())
+            System.out.println(entry.getKey() + " " + entry.getValue());
     }
 
 

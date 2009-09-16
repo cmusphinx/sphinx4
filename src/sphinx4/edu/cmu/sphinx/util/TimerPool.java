@@ -50,8 +50,8 @@ public class TimerPool {
     /** Returns the number of currently caches {@code Timer} instances. */
     public static int getNumCachedTimers() {
         int counter = 0;
-        for (Object o : weakRefTimerPool.keySet()) {
-            counter += weakRefTimerPool.get(o).size();
+        for (List<Timer> timers : weakRefTimerPool.values()) {
+            counter += timers.size();
         }
 
         return counter;
@@ -62,8 +62,8 @@ public class TimerPool {
     public static void dumpAll() {
         showTimesShortTitle();
 
-        for (Object owner : weakRefTimerPool.keySet()) {
-            for (Timer timer : weakRefTimerPool.get(owner)) {
+        for (List<Timer> timers : weakRefTimerPool.values()) {
+            for (Timer timer : timers) {
                 timer.dump();
             }
         }
@@ -90,8 +90,8 @@ public class TimerPool {
 
     /** Resets all timers */
     public static void resetAll() {
-        for (Object owner : weakRefTimerPool.keySet()) {
-            for (Timer timer : weakRefTimerPool.get(owner)) {
+        for (List<Timer> timers : weakRefTimerPool.values()) {
+            for (Timer timer : timers) {
                 timer.reset();
             }
         }

@@ -1,6 +1,7 @@
 package edu.cmu.sphinx.util.props;
 
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A collection of global properties used within a sphinx4-system configuration
@@ -16,8 +17,8 @@ public class GlobalProperties extends HashMap<String, GlobalProperty> {
 
 
     public GlobalProperties(GlobalProperties globalProperties) {
-        for (String key : globalProperties.keySet()) {
-            put(key, new GlobalProperty(globalProperties.get(key)));
+        for (Map.Entry<String, GlobalProperty> entry : globalProperties.entrySet()) {
+            put(entry.getKey(), new GlobalProperty(entry.getValue()));
         }
     }
 

@@ -102,14 +102,14 @@ public class RawPropertyData {
     public RawPropertyData flatten(ConfigurationManager cm) {
         RawPropertyData copyRPD = new RawPropertyData(name, className);
 
-        for (String propName : properties.keySet()) {
-            Object propVal = properties.get(propName);
+        for (Map.Entry<String, Object> entry : properties.entrySet()) {
+            Object propVal = entry.getValue();
             if (propVal instanceof String) {
                 if (((String) propVal).startsWith("${"))
                     propVal = cm.getGloPropReference(ConfigurationManagerUtils.stripGlobalSymbol((String) propVal));
             }
 
-            copyRPD.properties.put(propName, propVal);
+            copyRPD.properties.put(entry.getKey(), propVal);
         }
 
         return copyRPD;

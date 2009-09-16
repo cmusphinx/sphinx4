@@ -496,15 +496,15 @@ public class PropertySheet implements Cloneable {
 
         final Collection<String> classProperties = new HashSet<String>();
         final Map<Field, Annotation> classProps = parseClass(ownerClass);
-        for (Field field : classProps.keySet()) {
+        for (Map.Entry<Field, Annotation> entry : classProps.entrySet()) {
             try {
-                String propertyName = (String) field.get(null);
+                String propertyName = (String)entry.getKey().get(null);
 
                 // make sure that there is not already another property with this name
                 assert !classProperties.contains(propertyName) :
                         "duplicate property-name for different properties: " + propertyName;
 
-                registerProperty(propertyName, new S4PropWrapper((Proxy) classProps.get(field)));
+                registerProperty(propertyName, new S4PropWrapper((Proxy)entry.getValue()));
                 classProperties.add(propertyName);
             } catch (IllegalAccessException e) {
                 e.printStackTrace();

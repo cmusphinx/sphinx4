@@ -70,9 +70,7 @@ public class LinguistStats extends LinguistProcessor {
 
     /** Dumps all of the class counts */
     private void dumpStateTypeCounts() {
-        for (Class clazz  : stateCountByType.keySet()) {
-            System.out.println("# " + clazz + ": "
-                    + stateCountByType.get(clazz));
-        }
+        for (Map.Entry<Class, Integer> entry : stateCountByType.entrySet())
+            System.out.println("# " + entry.getKey() + ": " + entry.getValue());
     }
 }

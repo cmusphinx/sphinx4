@@ -497,8 +497,8 @@ public class ConfigurationManager implements Cloneable {
 
         cloneCM.changeListeners = new ArrayList<ConfigurationChangeListener>();
         cloneCM.symbolTable = new LinkedHashMap<String, PropertySheet>();
-        for (String compName : symbolTable.keySet()) {
-            cloneCM.symbolTable.put(compName, (PropertySheet) symbolTable.get(compName).clone());
+        for (Map.Entry<String, PropertySheet> entry : symbolTable.entrySet()) {
+            cloneCM.symbolTable.put(entry.getKey(), (PropertySheet)entry.getValue().clone());
         }
 
         cloneCM.globalProperties = new GlobalProperties(globalProperties);
@@ -549,13 +549,13 @@ public class ConfigurationManager implements Cloneable {
     private static PropertySheet getPropSheetInstanceFromClass(Class<? extends Configurable> targetClass, Map<String, Object> defaultProps, String componentName, ConfigurationManager cm) {
         RawPropertyData rpd = new RawPropertyData(componentName, targetClass.getName());
 
-        for (String confName : defaultProps.keySet()) {
-            Object property = defaultProps.get(confName);
+        for (Map.Entry<String, Object> entry : defaultProps.entrySet()) {
+            Object property = entry.getValue();
 
             if (property instanceof Class)
                 property = ((Class) property).getName();
 
-            rpd.getProperties().put(confName, property);
+            rpd.getProperties().put(entry.getKey(), property);
         }
 
         return new PropertySheet(targetClass, componentName, cm, rpd);
