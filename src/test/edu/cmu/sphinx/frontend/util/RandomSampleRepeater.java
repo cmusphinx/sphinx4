@@ -11,7 +11,7 @@ import java.util.logging.Logger;
 
 /**
  * A DataProcessor which inserts short speech snippets with variable length into a speech stream. The snippets are takes
- * from the local neighborhood of the insertion point. The insertion behavior satisfys a unifomrm distribution with a
+ * from the local neighborhood of the insertion point. The insertion behavior satisfies a uniform distribution with a
  * user defined width. Additionally a insertion of can be enforced at the beginning of the stream.
  *
  * The purpose of this component is to randomize data to blow a small set of data up to a larger one.
@@ -41,8 +41,8 @@ public class RandomSampleRepeater extends BaseDataProcessor {
 
 
     /**
-     * The name of the sphinx property about the width of the uniform distirbution which determines the distance beween
-     * differenct repeated-sample-insertion-points.
+     * Property about the width of the uniform distribution which determines the distance between
+     * different repeated-sample-insertion-points.
      */
     @S4Double(defaultValue = 100.0)
     public static final String PROP_UNIFORM_DIST_WIDTH = "uDistWidthSec";
@@ -51,8 +51,8 @@ public class RandomSampleRepeater extends BaseDataProcessor {
 
 
     /**
-     * The name of the sphinx property about using random seed or not for the randomization process. if not the stream
-     * will be ranomized every time in the same manner.
+     * Property about using random seed or not for the randomization process. if not the stream
+     * will be randomized every time in the same manner.
      */
     @S4Boolean(defaultValue = true)
     public static final String PROP_USE_RANDSEED = "useRandSeed";
