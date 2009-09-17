@@ -30,6 +30,10 @@ public class SimpleAcousticScorer extends AbstractScorer {
         super(name, logger, frontEnd, scoreNormalizer);
     }
 
+    public SimpleAcousticScorer() {
+        
+    }
+
     protected Data doScoring(List<? extends Scoreable> scoreableList, Data data) {
         Scoreable best;
         best = scoreableList.get(0);
