@@ -60,7 +60,7 @@ public class DemoUnitTests {
             Assert.fail();
         }
 
-        List<String> expResults = Arrays.asList("zero zero zero", "nine oh two one oh", "zero one eight zero three");
+        List<String> expResults = Arrays.asList("one zero zero zero one", "nine oh two one oh", "zero one eight zero three");
         Assert.assertTrue(Transcriber.unitTestBuffer.size() == expResults.size());
         for (int i = 0; i < expResults.size(); i++) {
             String recogResult = Transcriber.unitTestBuffer.get(i).getBestResultNoFiller();
