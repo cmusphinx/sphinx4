@@ -158,7 +158,7 @@ public class OutOfGrammarGraph {
                 OogHMM hmm = new OogHMM(unit);
                 successorList.add(hmm);
             }
-            successors = (SearchStateArc[]) successorList.toArray(EMPTY_ARCS);
+            successors = successorList.toArray(new SearchStateArc[successorList.size()]);
         }
 
 

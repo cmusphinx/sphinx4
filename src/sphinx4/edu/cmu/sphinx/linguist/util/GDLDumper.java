@@ -223,11 +223,7 @@ public class GDLDumper extends LinguistDumper {
                 if (!(nextArc.getState() instanceof HMMSearchState)) {
                     results.add(nextArc);
                 } else {
-                    SearchStateArc[] nextArcs = nextArc.getState()
-                            .getSuccessors();
-                    for (int i = 0; i < nextArcs.length; i++) {
-                        queue.add(nextArcs[i]);
-                    }
+                    queue.addAll(Arrays.asList(nextArc.getState().getSuccessors()));
                 }
             }
         }

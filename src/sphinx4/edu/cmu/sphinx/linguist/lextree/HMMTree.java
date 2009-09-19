@@ -369,10 +369,7 @@ class HMMTree {
             }
 
             if (addFillerWords) {
-                Word[] fillerWords = dictionary.getFillerWords();
-                for (int i = 0; i < fillerWords.length; i++) {
-                    allWords.add(fillerWords[i]);
-                }
+                allWords.addAll(Arrays.asList(dictionary.getFillerWords()));
             } else if (addSilenceWord) {
                 allWords.add(dictionary.getSilenceWord());
             }

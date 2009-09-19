@@ -83,7 +83,7 @@ public class WordResultPath implements Path {
 
     /** @see edu.cmu.sphinx.result.Path#getWords() */
     public WordResult[] getWords() {
-        return path.toArray(new WordResult[0]);
+        return path.toArray(new WordResult[path.size()]);
     }
 
 

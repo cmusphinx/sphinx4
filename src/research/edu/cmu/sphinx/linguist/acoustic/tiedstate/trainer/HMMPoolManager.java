@@ -508,9 +508,7 @@ class HMMPoolManager {
      */
     private void copyVector(float[] in, float[] out) {
         assert in.length == out.length;
-        for (int i = 0; i < in.length; i++) {
-            out[i] = in[i];
-        }
+        System.arraycopy(in, 0, out, 0, in.length);
     }
 
 
