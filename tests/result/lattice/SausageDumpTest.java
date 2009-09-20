@@ -70,7 +70,7 @@ public class SausageDumpTest {
             /* print out the results */
             if (result != null) {
                 System.out.println
-		    ("\nRESULT: " +result.getBestFinalResultNoFiller() + "\n");
+		    ("\nRESULT: " +result.getBestFinalResultNoFiller() + '\n');
                 Lattice lattice = new Lattice(result);
 		LatticeOptimizer lo = new LatticeOptimizer(lattice);
 		lo.optimize();
@@ -89,7 +89,7 @@ public class SausageDumpTest {
 		    Sausage sausage = sm.makeSausage();
 		    System.out.println
 			("best sausage hypothesis: \""
-			 + sausage.getBestHypothesisString() + "\"");
+			 + sausage.getBestHypothesisString() + '\"');
 		    sausage.dumpAISee("sausage.gdl", "sausage decode");
 		    System.out.println("dumped sausage");
 		} catch (Exception e) {

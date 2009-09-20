@@ -168,14 +168,12 @@ public class ResultAnalyzer {
      * @return a space separated string
      */
     private String toString(List<String> list) {
-        StringBuffer sb = new StringBuffer();
-
-        for (Iterator<String> i = list.iterator(); i.hasNext();) {
-            sb.append(i.next());
-            if (i.hasNext()) {
-                sb.append(" ");
-            }
-        }
+        if (list.isEmpty())
+            return "";        
+        StringBuilder sb = new StringBuilder();
+        for (Iterator<String> i = list.iterator(); i.hasNext();)
+            sb.append(i.next()).append(' ');
+        sb.setLength(sb.length() - 1);
         return sb.toString();
     }
 
@@ -190,8 +188,8 @@ public class ResultAnalyzer {
         insertionErrors++;
         String word = hypList.remove(0);
 
-        refOutput.append(" ").append(pad(word.length()));
-        hypOutput.append(" ").append(word.toUpperCase());
+        refOutput.append(' ').append(pad(word.length()));
+        hypOutput.append(' ').append(word.toUpperCase());
     }
 
 
@@ -205,8 +203,8 @@ public class ResultAnalyzer {
         deletionErrors++;
         String word = refList.remove(0);
 
-        refOutput.append(" ").append(word.toUpperCase());
-        hypOutput.append(" ").append(pad(word.length()));
+        refOutput.append(' ').append(word.toUpperCase());
+        hypOutput.append(' ').append(pad(word.length()));
     }
 
 
@@ -222,8 +220,8 @@ public class ResultAnalyzer {
         String hyp = hypList.remove(0);
         int length = Math.max(ref.length(), hyp.length());
 
-        refOutput.append(" ").append(pad(ref.toUpperCase(), length));
-        hypOutput.append(" ").append(pad(hyp.toUpperCase(), length));
+        refOutput.append(' ').append(pad(ref.toUpperCase(), length));
+        hypOutput.append(' ').append(pad(hyp.toUpperCase(), length));
     }
 
 
@@ -237,8 +235,8 @@ public class ResultAnalyzer {
         numMatchingWords++;
         String ref = refList.remove(0);
         String hyp = hypList.remove(0);
-        refOutput.append(" ").append(ref);
-        hypOutput.append(" ").append(hyp);
+        refOutput.append(' ').append(ref);
+        hypOutput.append(' ').append(hyp);
     }
 
 
@@ -298,9 +296,9 @@ public class ResultAnalyzer {
      * @return the string
      */
     private String pad(int length) {
-        StringBuffer result = new StringBuffer(length);
+        StringBuilder result = new StringBuilder(length);
         for (int i = 0; i < length; i++) {
-            result.append("*");
+            result.append('*');
         }
         return result.toString();
     }
@@ -314,10 +312,10 @@ public class ResultAnalyzer {
      * @return the padded string
      */
     private String pad(String s, int length) {
-        StringBuffer result = new StringBuffer(length);
+        StringBuilder result = new StringBuilder(length);
         result.append(s);
         for (int i = s.length(); i < length; i++) {
-            result.append(" ");
+            result.append(' ');
         }
         return result.toString();
     }
@@ -366,7 +364,7 @@ public class ResultAnalyzer {
             System.out.println("    Errors: " + totalErrors +
                     "  (Sub: " + recognitionErrors +
                     "  Ins: " + insertionErrors +
-                    "  Del: " + deletionErrors + ")");
+                    "  Del: " + deletionErrors + ')');
             System.out.println("   Words: " + numRefWords +
                     "   Matches: " + numMatchingWords +
                     "    WER: " + percent.format(wordErrorRate));

@@ -60,12 +60,10 @@ public class SphinxLogFormatter extends Formatter {
      */
     public String format(LogRecord record) {
         if (terse) {
-            return record.getMessage() + "\n";
+            return record.getMessage() + '\n';
         } else {
             String date = DATE_FORMATTER.format(new Date(record.getMillis()));
-            StringBuffer sbuf = new StringBuffer();
-            sbuf.append(date);
-            sbuf.append(" ");
+            StringBuilder sb = new StringBuilder().append(date).append(' ');
 
             String loggerName = record.getLoggerName();
             String source;
@@ -76,14 +74,12 @@ public class SphinxLogFormatter extends Formatter {
                 source = loggerName;
             }
 
-            sbuf.append(Utilities.pad(record.getLevel().getName() + " " + source, 24));
-            sbuf.append("  ");
-            sbuf.append(record.getMessage());
-            sbuf.append("\n");
+            sb.append(Utilities.pad(record.getLevel().getName() + ' ' + source, 24));
+            sb.append("  ").append(record.getMessage()).append('\n');
 //            if (record.getLevel().equals(Level.WARNING) || record.getLevel().equals(Level.SEVERE)) {
-//                sbuf.append("                   in ").append(record.getSourceClassName()).append(":").append(record.getSourceMethodName()).append("-").append(record.getLoggerName()).append("\n");
+//                sb.append("                   in ").append(record.getSourceClassName()).append(':').append(record.getSourceMethodName()).append('-').append(record.getLoggerName()).append('\n');
 //            }
-            return sbuf.toString();
+            return sb.toString();
         }
     }
 

@@ -74,9 +74,9 @@ public class FullDictionaryTest {
 	    System.out.println("Different # pronunciations for " + word);
 	} else {
 	    for (int i = 0; i < p1.length; i++) {
-		System.out.println(p1[i].toString());
-                System.out.println(p2[i].toString());
-                compareUnits(word, p1[i].getUnits(), p2[i].getUnits());
+    		System.out.println(p1[i]);
+            System.out.println(p2[i]);
+            compareUnits(word, p1[i].getUnits(), p2[i].getUnits());
 	    }
 	}
     }
@@ -96,7 +96,7 @@ public class FullDictionaryTest {
                     errorMessage += ("Unit " + i + " of word `" + word + 
                                      "' in FullDictionary is null.");
                 }
-                if (errorMessage.length() > 0) { 
+                if (!errorMessage.isEmpty()) { 
                     throw new Error(errorMessage);
                 }
                 String name1 = u1[i].getName();

@@ -204,7 +204,7 @@ public class FastDictionary implements Dictionary {
         String line;
 
         while ((line = br.readLine()) != null) {
-            if (line.length() > 0) {
+            if (!line.isEmpty()) {
                 int spaceIndex = line.indexOf(' ');
                 int spaceIndexTab = line.indexOf('\t');
                 if (spaceIndex == -1) {
@@ -341,7 +341,7 @@ public class FastDictionary implements Dictionary {
             count++;
             String lookupWord = word;
             if (count > 1) {
-                lookupWord = lookupWord + "(" + count + ")";
+                lookupWord = lookupWord + '(' + count + ')';
             }
             line = (String) dictionary.get(lookupWord);
             if (line != null) {
@@ -398,18 +398,18 @@ public class FastDictionary implements Dictionary {
     public String toString() {
 
         SortedMap<String, Object> sorted = new TreeMap<String, Object>(dictionary);
-        String result = "";
+        StringBuilder result = new StringBuilder();
 
         for (Map.Entry<String, Object> entry : sorted.entrySet()) {
             List pronunciations = (List)entry.getValue();
-            result += (entry.getKey() + "\n");
+            result.append(entry.getKey()).append('\n');
             for (Iterator p = pronunciations.iterator(); p.hasNext();) {
                 Pronunciation pronunciation = (Pronunciation) p.next();
-                result += ("   " + pronunciation.toString() + "\n");
+                result.append("   ").append(pronunciation).append('\n');
             }
         }
 
-        return result;
+        return result.toString();
     }
 
 

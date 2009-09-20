@@ -64,7 +64,7 @@ public class LiveMAPConfidenceTest {
                     /* print out the results */
                     if (result != null) {
 
-                        System.out.println("Best result: " + result.toString());
+                        System.out.println("Best result: " + result);
                         ConfidenceScorer cs = (ConfidenceScorer) cm.lookup
                             ("confidenceScorer");
                         ConfidenceResult cr = cs.score(result);
@@ -81,7 +81,7 @@ public class LiveMAPConfidenceTest {
                                 (wr.getPronunciation().getWord().getSpelling());
                             System.out.println
                                 ("   (confidence: " +
-                                 wr.getLogMath().logToLinear((float)wr.getConfidence()) + ")");
+                                 wr.getLogMath().logToLinear((float)wr.getConfidence()) + ')');
                         }
                         System.out.println();
 
@@ -89,7 +89,7 @@ public class LiveMAPConfidenceTest {
                         System.out.println(best.getTranscription());
                         System.out.println
                             ("   (confidence: " +
-                             best.getLogMath().logToLinear((float)best.getConfidence()) + ")");
+                             best.getLogMath().logToLinear((float)best.getConfidence()) + ')');
                         System.out.println();
                     }
                 }

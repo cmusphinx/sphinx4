@@ -230,11 +230,11 @@ public class DataUtil {
      * @return a string representation of the short array
      */
     public static String shortArrayToString(short[] data) {
-        String dump = String.valueOf(data.length);
+        StringBuilder dump = new StringBuilder().append(data.length);
         for (int i = 0; i < data.length; i++) {
-            dump += (" " + data[i]);
+            dump.append(' ').append(data[i]);
         }
-        return dump;
+        return dump.toString();
     }
 
 
@@ -266,22 +266,22 @@ public class DataUtil {
      * @return a string representation of the double array
      */
     private static String doubleArrayToString(double[] data, int format) {
-        String dump = String.valueOf(data.length);
+        StringBuilder dump = new StringBuilder().append(data.length);
 
         for (int i = 0; i < data.length; i++) {
             if (format == DECIMAL) {
-                dump += (" " + formatDouble
+                dump.append(' ').append(formatDouble
                         (data[i], decimalIntegerDigits,
                                 decimalFractionDigits));
             } else if (format == HEXADECIMAL) {
                 long binary = Double.doubleToRawLongBits(data[i]);
-                dump += (" 0x" + Long.toHexString(binary));
+                dump.append(" 0x").append(Long.toHexString(binary));
             } else if (format == SCIENTIFIC) {
-                dump += (" " + Utilities.doubleToScientificString
+                dump.append(' ').append(Utilities.doubleToScientificString
                         (data[i], doubleScientificFractionDigits));
             }
         }
-        return dump;
+        return dump.toString();
     }
 
 
@@ -311,23 +311,23 @@ public class DataUtil {
      * @return a string of the given float array
      */
     private static String floatArrayToString(float[] data, int format) {
-        String dump = String.valueOf(data.length);
+        StringBuilder dump = new StringBuilder().append(data.length);
 
         for (int i = 0; i < data.length; i++) {
 
             if (format == DECIMAL) {
-                dump += (" " + formatDouble
+                dump.append(' ').append(formatDouble
                         ((double) data[i],
                                 decimalIntegerDigits, decimalFractionDigits));
             } else if (format == HEXADECIMAL) {
                 int binary = Float.floatToRawIntBits(data[i]);
-                dump += (" 0x" + Integer.toHexString(binary));
+                dump.append(" 0x").append(Integer.toHexString(binary));
             } else if (format == SCIENTIFIC) {
-                dump += (" " + Utilities.doubleToScientificString
+                dump.append(' ').append(Utilities.doubleToScientificString
                         ((double) data[i], floatScientificFractionDigits));
             }
         }
-        return dump;
+        return dump.toString();
     }
 
 
@@ -346,12 +346,12 @@ public class DataUtil {
      */
     public static String formatDouble(double number, int integerDigits,
                                       int fractionDigits) {
-        String formatter = "0.";
+        StringBuilder formatter = new StringBuilder(2 + fractionDigits).append("0.");
         for (int i = 0; i < fractionDigits; i++) {
-            formatter += "0";
+            formatter.append('0');
         }
 
-        format.applyPattern(formatter);
+        format.applyPattern(formatter.toString());
         String formatted = format.format(number);
 
         // pad preceding spaces before the number
@@ -360,12 +360,12 @@ public class DataUtil {
             formatted += ".";
             dotIndex = formatted.length() - 1;
         }
-        String result = "";
+        StringBuilder result = new StringBuilder();
         for (int i = dotIndex; i < integerDigits; i++) {
-            result += " ";
+            result.append(' ');
         }
-        result += formatted;
-        return result;
+        result.append(formatted);
+        return result.toString();
     }
 
 

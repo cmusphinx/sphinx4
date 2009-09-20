@@ -131,7 +131,7 @@ public class FilenameDialog extends JDialog {
 
         String filename = dialog.getFilename();
         System.out.println("Filename: " + filename
-                + " (length = " + filename.length() + ")");
+                + " (length = " + filename.length() + ')');
         System.exit(0);
     }
 }

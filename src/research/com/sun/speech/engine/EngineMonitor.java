@@ -132,15 +132,9 @@ public class EngineMonitor {
      */
     protected void handleEvent(EngineEvent e) {
         if (eventPanel != null) {
-            eventPanel.addText(new Date().toString() + ": "
-                    + e.toString()
-                    + "\n");
-            eventPanel.addText("   Old state: "
-                    + engineStateString(e.getOldEngineState())
-                    + "\n");
-            eventPanel.addText("   New state: "
-                    + engineStateString(e.getNewEngineState())
-                    + "\n");
+            eventPanel.addText(new Date() + ": " + e + '\n');
+            eventPanel.addText("   Old state: " + engineStateString(e.getOldEngineState()) + '\n');
+            eventPanel.addText("   New state: " + engineStateString(e.getNewEngineState()) + '\n');
         }
         updateGUIComponents();
     }
@@ -178,35 +172,36 @@ public class EngineMonitor {
      * @return a <code>String</code> representing the <code>state</code>
      */
     protected String engineStateString(long state) {
-        StringBuffer buf = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
 
         if ((state & Engine.DEALLOCATED) != 0)
-            appendBuffer(buf, "DEALLOCATED");
+            appendBuilder(sb, "DEALLOCATED");
         if ((state & Engine.ALLOCATING_RESOURCES) != 0)
-            appendBuffer(buf, "ALLOCATING_RESOURCES");
+            appendBuilder(sb, "ALLOCATING_RESOURCES");
         if ((state & Engine.ALLOCATED) != 0)
-            appendBuffer(buf, "ALLOCATED");
+            appendBuilder(sb, "ALLOCATED");
         if ((state & Engine.DEALLOCATING_RESOURCES) != 0)
-            appendBuffer(buf, "DEALLOCATING_RESOURCES");
+            appendBuilder(sb, "DEALLOCATING_RESOURCES");
 
         if ((state & Engine.PAUSED) != 0)
-            appendBuffer(buf, "PAUSED");
+            appendBuilder(sb, "PAUSED");
         if ((state & Engine.RESUMED) != 0)
-            appendBuffer(buf, "RESUMED");
+            appendBuilder(sb, "RESUMED");
 
-        return buf.toString();
+        return sb.toString();
     }
 
 
     /**
-     * Adds a <code>String</code> to a buffer, with each <code>String</code> being separated by a ":".
+     * Adds a <code>String</code> to a <code>StringBuilder</code>,
+     * with each <code>String</code> being separated by a ":".
      *
-     * @param b the buffer to which to append <code>s</code to
+     * @param b the <code>StringBuilder</code> to which to append <code>s</code to
      * @param s the <code>String</code> to append to <code>b</code>
      */
-    protected void appendBuffer(StringBuffer b, String s) {
+    protected void appendBuilder(StringBuilder b, String s) {
         if (b.length() > 0)
-            b.append(":");
+            b.append(':');
         b.append(s);
     }
 

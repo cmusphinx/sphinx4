@@ -91,7 +91,7 @@ public class FeatureValueDemo {
                     (Double) parser.get("item.toppings.length");
                 for (int i = 0; i < numToppings.intValue(); i++) {
                     String topping = (String)
-                        parser.get("item.toppings[" + i + "]");
+                        parser.get("item.toppings[" + i + ']');
                     pizza.addTopping(topping);
                 }
             }
@@ -104,7 +104,7 @@ public class FeatureValueDemo {
                     (Double) parser.get("item.toppings.length");
                 for (int i = 0; i < numToppings.intValue(); i++) {
                     String topping = (String)
-                        parser.get("item.toppings[" + i + "]");
+                        parser.get("item.toppings[" + i + ']');
                     burger.addTopping(topping);
                 }
             }
@@ -114,7 +114,7 @@ public class FeatureValueDemo {
                     (Double) parser.get("item.condiments.length");
                 for (int i = 0; i < numCondiments.intValue(); i++) {
                     String condiment = (String)
-                        parser.evaluateString("item.condiments[" + i + "]");
+                        parser.evaluateString("item.condiments[" + i + ']');
                     burger.addCondiment(condiment);
                 }
             }

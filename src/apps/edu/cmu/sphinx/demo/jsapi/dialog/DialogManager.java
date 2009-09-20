@@ -166,7 +166,7 @@ public class DialogManager implements Configurable {
                         lastNode = curNode;
                     } 
                     String nextStateName  = curNode.recognize();
-                    if (nextStateName == null || nextStateName.length() == 0) {
+                    if (nextStateName == null || nextStateName.isEmpty()) {
                         continue;
                     } else {
                         DialogNode node = (DialogNode) nodeMap.get(nextStateName);
@@ -183,10 +183,10 @@ public class DialogManager implements Configurable {
             }
         } catch (GrammarException ge) {
             error("grammar problem in state " + curNode.getName() 
-                    + " " + ge);
+                    + ' ' + ge);
         } catch (IOException ioe) {
             error("problem loading grammar in state " + curNode.getName() 
-                    + " " + ioe);
+                    + ' ' + ioe);
         }
     }
 
@@ -453,20 +453,16 @@ class DialogNodeBehavior {
      * result
      */
     String getTagString(Result result) throws GrammarException {
-        String tagString = null;
         RuleParse ruleParse = getRuleParse(result);
-        if (ruleParse != null) {
-            String[] tags = ruleParse.getTags();
-            StringBuffer sb = new StringBuffer();
-            for (int i = 0; tags != null && i < tags.length; i++) {
-                sb.append(tags[i]);
-                if (i < tags.length -1) {
-                    sb.append(" ");
-                }
-            }
-            tagString = sb.toString().trim();
-        }
-        return tagString;
+        if (ruleParse == null)
+            return null;
+        String[] tags = ruleParse.getTags();
+        if (tags == null)
+            return "";
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < tags.length; i++)
+            sb.append(tags[i]).append(' ');
+        return sb.toString().trim();
     }
 
     /**

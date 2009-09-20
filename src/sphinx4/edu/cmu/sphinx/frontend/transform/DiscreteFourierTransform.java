@@ -287,7 +287,7 @@ public class DiscreteFourierTransform extends BaseDataProcessor {
                     if (idealFftPoints != numberFftPoints) {
                         logger.warning("User set numberFftPoints (" +
                                 numberFftPoints + ") is not ideal (" +
-                                idealFftPoints + ")");
+                                idealFftPoints + ')');
                     }
                 }
             }

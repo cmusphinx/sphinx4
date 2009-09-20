@@ -43,8 +43,8 @@ public class Edge {
 
 
     public String toString() {
-        return "Edge(" + fromNode + "-->" + toNode + "[" + acousticScore
-                + "," + lmScore + "])";
+        return "Edge(" + fromNode + "-->" + toNode + '[' + acousticScore
+                + ',' + lmScore + "])";
     }
 
 
@@ -81,8 +81,8 @@ public class Edge {
      * @throws IOException
      */
     void dump(PrintWriter f) throws IOException {
-        f.println("edge: " + fromNode.getId() + " " + toNode.getId() + " "
-                + acousticScore + " " + lmScore);
+        f.println("edge: " + fromNode.getId() + ' ' + toNode.getId() + ' '
+                + acousticScore + ' ' + lmScore);
     }
 
 
@@ -95,7 +95,7 @@ public class Edge {
     void dumpAISee(FileWriter f) throws IOException {
         f.write("edge: { sourcename: \"" + fromNode.getId()
                 + "\" targetname: \"" + toNode.getId()
-                + "\" label: \"" + acousticScore + "," + lmScore + "\" }\n");
+                + "\" label: \"" + acousticScore + ',' + lmScore + "\" }\n");
     }
 
 

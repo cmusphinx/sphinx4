@@ -77,7 +77,7 @@ public class ParallelHMMStateState extends HMMStateState
      * @return the name of this ParallelHMMStateState
      */
     public String getName() {
-        return (super.getName() + "." + stream.getName());
+        return (super.getName() + '.' + stream.getName());
     }
 
 

@@ -75,7 +75,7 @@ class Sphinx4Saver extends Sphinx3Saver {
             tmat = (float[][]) pool.get(i);
             numStates = tmat[0].length;
 
-            pw.println("tmat [" + i + "]");
+            pw.println("tmat [" + i + ']');
             pw.println("nstate " + (numStates - 1));
             for (int j = 0; j < numStates; j++) {
                 for (int k = 0; k < numStates; k++) {

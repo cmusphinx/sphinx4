@@ -141,7 +141,7 @@ public class SaxLoader {
                 }
                 curItem = new StringBuffer();
             } else {
-                throw new SAXParseException("Unknown element '" + qName + "'",
+                throw new SAXParseException("Unknown element '" + qName + '\'',
                         locator);
             }
         }

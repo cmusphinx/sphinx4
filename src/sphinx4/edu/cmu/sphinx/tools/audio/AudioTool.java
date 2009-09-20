@@ -112,7 +112,7 @@ public class AudioTool {
         for (int i = 0; i < mixerInfo.length; i++) {
             Mixer mixer = AudioSystem.getMixer(mixerInfo[i]);
             System.out.println("Mixer[" + i + "]: \""
-                    + mixerInfo[i].getName() + "\"");
+                    + mixerInfo[i].getName() + '\"');
             System.out.println("    Description: "
                     + mixerInfo[i].getDescription());
 
@@ -299,7 +299,7 @@ public class AudioTool {
         menuItem.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 getFilename("Open...", JFileChooser.OPEN_DIALOG);
-                if ((filename == null) || (filename.length() == 0)) {
+                if (filename == null || filename.isEmpty()) {
                     return;
                 }
                 try {
@@ -316,7 +316,7 @@ public class AudioTool {
         saveMenuItem.setEnabled(false);
         saveMenuItem.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
-                if ((filename != null) && (filename.length() > 0)) {
+                if (filename != null && !filename.isEmpty()) {
                     try {
                         Utils.writeRawFile(audio, filename);
                         saveMenuItem.setEnabled(false);
@@ -333,7 +333,7 @@ public class AudioTool {
         menuItem.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 getFilename("Save As...", JFileChooser.SAVE_DIALOG);
-                if ((filename == null) || (filename.length() == 0)) {
+                if (filename == null || filename.isEmpty()) {
                     return;
                 }
                 try {

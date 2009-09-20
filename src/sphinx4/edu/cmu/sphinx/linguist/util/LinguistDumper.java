@@ -57,7 +57,7 @@ public class LinguistDumper extends LinguistProcessor {
             dumpSearchGraph(out, firstState);
             out.close();
         } catch (FileNotFoundException fnfe) {
-            System.out.println("Can't dump to file " + filename + " " + fnfe);
+            System.out.println("Can't dump to file " + filename + ' ' + fnfe);
         }
     }
 
@@ -259,7 +259,7 @@ class StateLevel {
      * @return a string representation
      */
     public String toString() {
-        return "" + level + " " + state.getSignature() + " 1 "
+        return String.valueOf(level) + ' ' + state.getSignature() + " 1 "
                 + getTypeLabel(state);
     }
 

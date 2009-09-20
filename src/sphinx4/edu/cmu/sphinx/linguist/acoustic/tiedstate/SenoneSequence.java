@@ -100,7 +100,7 @@ public class SenoneSequence implements Serializable {
      * @param msg a string annotation
      */
     public void dump(String msg) {
-        System.out.println(" SenoneSequence " + msg + ":");
+        System.out.println(" SenoneSequence " + msg + ':');
         for (int i = 0; i < senones.length; i++) {
             senones[i].dump("  seq:");
         }

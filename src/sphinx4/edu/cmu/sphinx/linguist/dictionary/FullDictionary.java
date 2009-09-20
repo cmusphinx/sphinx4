@@ -358,18 +358,18 @@ public class FullDictionary implements Dictionary {
 
     private String dumpToString() {
         SortedMap<String, Object> sorted = new TreeMap<String, Object>(wordDictionary);
-        String result = "";
+        StringBuilder result = new StringBuilder();
         sorted.putAll(fillerDictionary);
         for (Object o : sorted.keySet()) {
             String text = (String) o;
             Word word = getWord(text);
             Pronunciation[] pronunciations = word.getPronunciations(null);
-            result += (word + "\n");
+            result.append(word).append('\n');
             for (Pronunciation pronunciation : pronunciations) {
-                result += ("   " + pronunciation.toString() + "\n");
+                result.append("   ").append(pronunciation).append('\n');
             }
         }
-        return result;
+        return result.toString();
     }
 
 

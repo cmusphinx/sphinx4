@@ -122,7 +122,7 @@ public class GDLDumper extends LinguistDumper {
             out.println("    node: {" + "title: " + qs(getUniqueName(state))
                     + " label: " + qs(state.toPrettyString()) + " color: "
                     + color + " shape: " + shape + " vertical_order: " + level
-                    + "}");
+                    + '}');
         }
     }
 
@@ -193,13 +193,13 @@ public class GDLDumper extends LinguistDumper {
                 double insert = logMath.logToLinear(nextArc
                         .getInsertionProbability());
                 label = " label: "
-                        + qs("(" + formatEdgeLabel(acoustic) + ","
-                        + formatEdgeLabel(language) + ","
-                        + formatEdgeLabel(insert) + ")");
+                        + qs('(' + formatEdgeLabel(acoustic) + ','
+                        + formatEdgeLabel(language) + ','
+                        + formatEdgeLabel(insert) + ')');
             }
             out.println("   edge: { sourcename: " + qs(getUniqueName(from))
                     + " targetname: " + qs(getUniqueName(nextArc.getState()))
-                    + label + " color: " + color + "}");
+                    + label + " color: " + color + '}');
         }
     }
 
@@ -292,7 +292,7 @@ public class GDLDumper extends LinguistDumper {
      * @return the quoted string
      */
     private String qs(String s) {
-        return "\"" + s + "\"";
+        return '\"' + s + '\"';
     }
 
 

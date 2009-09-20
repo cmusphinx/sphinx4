@@ -41,7 +41,7 @@ import java.util.Iterator;
      * Creates new form PanelGlobal, only accessible to this package
      */
     PanelGlobal(String title,GUIMediator gm) {
-        _title = new String(title);
+        _title = title;
         initComponents();
         _gm = gm;
         _gm.registerPanel(this); // register as listener to the GUI Mediator
@@ -198,8 +198,8 @@ import java.util.Iterator;
         String propName = TextFieldPropName.getText();
         String propVal =TextFieldPropVal.getText();
         
-        if ( (propName == null) || (propName.trim().equalsIgnoreCase("")) ||
-             (propVal == null) || (propVal.trim().equalsIgnoreCase("")))
+        if (propName == null || propName.trim().isEmpty() ||
+            propVal == null || propVal.trim().isEmpty())
         {
             //if either property name or value is empty
             displayError("Please complete the property name and value first");
@@ -314,10 +314,10 @@ import java.util.Iterator;
      */
     private int validateProp(String propName, String propVal)
     {
-         if( propName == null || propName.trim().equalsIgnoreCase("") )
+         if (propName == null || propName.trim().isEmpty())
          {
              // if the name is empty, then value must be empty too
-             if(propVal == null || propVal.trim().equalsIgnoreCase("") )
+             if (propVal == null || propVal.trim().isEmpty())
                  return MODE_SKIP;
              else
                  return MODE_ERROR;
@@ -325,9 +325,9 @@ import java.util.Iterator;
          else // name is not empty, check the prop value 
          {
              // name is not empty, must check if it's a one word name
-             if( propName.trim().indexOf(" ") == -1 ){
+             if( propName.trim().indexOf(' ') == -1 ){
                 //no space in propName, check propValue
-                if( propVal!= null && propVal.trim().indexOf(" ") == -1 )
+                if( propVal!= null && propVal.trim().indexOf(' ') == -1 )
                     return MODE_OK;
                 else
                     return MODE_ERROR;

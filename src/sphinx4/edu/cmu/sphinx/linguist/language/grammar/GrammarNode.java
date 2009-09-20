@@ -230,26 +230,26 @@ public class GrammarNode {
      * @param logProb      the probability of the transition (in logMath log domain)
      */
     private String traverse(int level, Set<GrammarNode> visitedNodes, float logProb) {
-        String dump = "";
+        StringBuilder dump = new StringBuilder();
 
         for (int i = 0; i < level; i++) {
-            dump += ("    ");
+            dump.append("    ");
         }
 
-        dump += "N(" + getID() + "):";
-        dump += "p:" + logProb;
+        dump.append("N(").append(getID()).append("):");
+        dump.append("p:").append(logProb);
 
         if (isFinalNode()) {
-            dump += (" !");
+            dump.append(" !");
         }
 
         Word[][] alternatives = getAlternatives();
         for (int i = 0; i < alternatives.length; i++) {
             for (int j = 0; j < alternatives[i].length; j++) {
-                dump += (" " + alternatives[i][j].getSpelling());
+                dump.append(' ').append(alternatives[i][j].getSpelling());
             }
             if (i < alternatives.length - 1) {
-                dump += "|";
+                dump.append('|');
             }
         }
 
@@ -273,7 +273,7 @@ public class GrammarNode {
             visitedNodes.add(this);
         }
 
-        return dump;
+        return dump.toString();
     }
 
 
@@ -294,7 +294,7 @@ public class GrammarNode {
             out.println("   node: { title: " + getGDLID(this) +
                     " label: " + getGDLLabel(this) +
                     " shape: " + getGDLShape(this) +
-                    " color: " + getGDLColor(this) + "}");
+                    " color: " + getGDLColor(this) + '}');
             GrammarArc[] arcs = getSuccessors();
             for (int i = 0; i < arcs.length; i++) {
                 GrammarNode child = arcs[i].getGrammarNode();
@@ -316,7 +316,7 @@ public class GrammarNode {
      * @return the GDL id
      */
     String getGDLID(GrammarNode node) {
-        return "\"" + node.getID() + "\"";
+        return "\"" + node.getID() + '\"';
     }
 
 
@@ -328,7 +328,7 @@ public class GrammarNode {
      */
     String getGDLLabel(GrammarNode node) {
         String label = node.isEmpty() ? "" : node.getWord().getSpelling();
-        return "\"" + label + "\"";
+        return '\"' + label + '\"';
     }
 
 
@@ -375,9 +375,9 @@ public class GrammarNode {
             out.println("}");
             out.close();
         } catch (FileNotFoundException fnfe) {
-            System.out.println("Can't write to " + path + " " + fnfe);
+            System.out.println("Can't write to " + path + ' ' + fnfe);
         } catch (IOException ioe) {
-            System.out.println("Trouble writing to " + path + " " + ioe);
+            System.out.println("Trouble writing to " + path + ' ' + ioe);
         }
     }
 

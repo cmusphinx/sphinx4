@@ -317,8 +317,7 @@ public class Model implements AcousticModel {
         compositeSenoneSequence = compositeSenoneSequenceCache.get(unit.toString());
 
         if (logger.isLoggable(Level.FINE)) {
-            logger.fine("getCompositeSenoneSequence: " + unit.toString()
-                    + ((compositeSenoneSequence != null) ? "Cached" : ""));
+            logger.fine("getCompositeSenoneSequence: " + unit + (compositeSenoneSequence == null ? "" : "Cached"));
         }
         if (compositeSenoneSequence != null) {
             return compositeSenoneSequence;
@@ -337,7 +336,7 @@ public class Model implements AcousticModel {
                 Unit hmmUnit = hmm.getUnit();
                 if (hmmUnit.isPartialMatch(unit.getName(), context)) {
                     if (logger.isLoggable(Level.FINE)) {
-                        logger.fine("collected: " + hmm.getUnit().toString());
+                        logger.fine("collected: " + hmm.getUnit());
                     }
                     senoneSequenceList.add(hmm.getSenoneSequence());
                 }
@@ -392,8 +391,7 @@ public class Model implements AcousticModel {
                 compositeSenoneSequence);
 
         if (logger.isLoggable(Level.FINE)) {
-            logger.fine(unit.toString() + " consists of " +
-                    compositeSenones.size() + " composite senones");
+            logger.fine(unit + " consists of " + compositeSenones.size() + " composite senones");
             if (logger.isLoggable(Level.FINEST)) {
                 compositeSenoneSequence.dump("am");
             }
@@ -442,13 +440,7 @@ public class Model implements AcousticModel {
      * @return the tag associated with the composite senone sequence
      */
     private String makeTag(Unit base, Context context) {
-        StringBuffer sb = new StringBuffer();
-        sb.append("(");
-        sb.append(base.getName());
-        sb.append("-");
-        sb.append(context.toString());
-        sb.append(")");
-        return sb.toString();
+        return '(' + base.getName() + '-' + context + ')';
     }
 
 

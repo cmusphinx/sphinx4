@@ -381,18 +381,13 @@ public class Token implements Scoreable {
      * @return the string representation of this object
      */
     public String toString() {
-        String appString = "";
-
-        if (tokenProps != null) {
-            appString = " " + tokenProps.toString();
-        }
         return
-                numFmt.format(getFrameNumber()) + " " +
-                        scoreFmt.format(getScore()) + " " +
-                        scoreFmt.format(getAcousticScore()) + " " +
-                        scoreFmt.format(getLanguageScore()) + " " +
-                        scoreFmt.format(getInsertionProbability())
-                        + " " + getSearchState() + appString;
+            numFmt.format(getFrameNumber()) + ' ' +
+            scoreFmt.format(getScore()) + ' ' +
+            scoreFmt.format(getAcousticScore()) + ' ' +
+            scoreFmt.format(getLanguageScore()) + ' ' +
+            scoreFmt.format(getInsertionProbability()) + ' ' +
+            getSearchState() + (tokenProps == null ? "" : " " + tokenProps);
     }
 
 
@@ -434,7 +429,7 @@ public class Token implements Scoreable {
      * @return the word path
      */
     public String getWordPath(boolean wantFiller, boolean wantPronunciations) {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         Token token = this;
 
         while (token != null) {
@@ -448,16 +443,16 @@ public class Token implements Scoreable {
 
                 if (wantFiller || !word.isFiller()) {
                     if (wantPronunciations) {
-                        sb.insert(0, "]");
+                        sb.insert(0, ']');
                         Unit[] u = pron.getUnits();
                         for (int i = u.length - 1; i >= 0; i--) {
-                            if (i < u.length - 1) sb.insert(0, ",");
+                            if (i < u.length - 1) sb.insert(0, ',');
                             sb.insert(0, u[i].getName());
                         }
-                        sb.insert(0, "[");
+                        sb.insert(0, '[');
                     }
                     sb.insert(0, word.getSpelling());
-                    sb.insert(0, " ");
+                    sb.insert(0, ' ');
                 }
             }
             token = token.getPredecessor();
@@ -492,7 +487,7 @@ public class Token implements Scoreable {
      * @return the string of words and units
      */
     public String getWordUnitPath() {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         Token token = this;
 
         while (token != null) {
@@ -500,11 +495,11 @@ public class Token implements Scoreable {
             if (searchState instanceof WordSearchState) {
                 WordSearchState wordState = (WordSearchState) searchState;
                 Word word = wordState.getPronunciation().getWord();
-                sb.insert(0, " " + word.getSpelling());
+                sb.insert(0, ' ' + word.getSpelling());
             } else if (searchState instanceof UnitSearchState) {
                 UnitSearchState unitState = (UnitSearchState) searchState;
                 Unit unit = unitState.getUnit();
-                sb.insert(0, " " + unit.getName());
+                sb.insert(0, ' ' + unit.getName());
             }
             token = token.getPredecessor();
         }

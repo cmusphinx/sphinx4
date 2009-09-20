@@ -67,7 +67,7 @@ public class LatticeDemo {
                 optimizer.optimize();
                 lattice.dumpAllPaths();
                 String resultText = result.getBestResultNoFiller();
-                System.out.println("I heard: " + resultText + "\n");
+                System.out.println("I heard: " + resultText + '\n');
             } else {
                 done = true;
             }

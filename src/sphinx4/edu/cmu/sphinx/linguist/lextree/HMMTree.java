@@ -1295,7 +1295,7 @@ class EndNode extends UnitNode {
      * @return a string representation
      */
     public String toString() {
-        return "EndNode base:" + baseUnit + " lc " + leftContext + " " + key;
+        return "EndNode base:" + baseUnit + " lc " + leftContext + ' ' + key;
     }
 
 

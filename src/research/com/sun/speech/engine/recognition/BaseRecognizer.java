@@ -226,12 +226,14 @@ public class BaseRecognizer extends BaseEngine
         // Append a slash and the converted grammar name to the base URL
         // Append the ".gram" suffix
         grammarName = grammarName.replace('.', '/');
-        String urlstr = "";
-        if (baseURL != null) urlstr = baseURL.toString();
-        urlstr = urlstr.concat(((urlstr.lastIndexOf((int) '/')
-                == (urlstr.length() - 1))
-                ? ""
-                : "/") + grammarName + ".gram");
+        StringBuilder sb = new StringBuilder();
+        if (baseURL != null) {
+            sb.append(baseURL);
+            if (sb.charAt(sb.length() - 1) != '/')
+                sb.append('/');
+        }
+        sb.append(grammarName).append(".gram");
+        String urlstr = sb.toString();
 
         URL grammarURL = null;
         try {
@@ -972,7 +974,7 @@ public class BaseRecognizer extends BaseEngine
             for (int j = 0; j < rnames.length; j++) {
                 String ruleName = rnames[j];
                 if (G[i].isEnabled(ruleName)) {
-                    enabled.addElement(gname + "_" + ruleName);
+                    enabled.addElement(gname + '_' + ruleName);
                 }
                 if (!haveChanges
                         || (!JG.isRuleChanged(ruleName) && !reloadAll)) {
@@ -1095,14 +1097,14 @@ public class BaseRecognizer extends BaseEngine
             //check for rule-Tokens
             int index = 0;
             while (index < rule.length()) {
-                index = rule.indexOf("<", index);
+                index = rule.indexOf('<', index);
                 if (index < 0) {
                     index = rule.length();
                 } else {
                     //extract rulename
                     RuleName rn = new RuleName(rule.substring(
-                            index + 1, rule.indexOf(">", index + 1)).trim());
-                    index = rule.indexOf(">", index) + 1;
+                            index + 1, rule.indexOf('>', index + 1)).trim());
+                    index = rule.indexOf('>', index) + 1;
                     //check for fullqualified rulename
                     if (rn.getFullGrammarName() != null) {
                         String gname = rn.getFullGrammarName();

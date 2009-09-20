@@ -46,9 +46,9 @@ public class JavadocExtractor {
 //                } else { // only one or zero token available                    
 //                    new_class_path = new String ("\""+class_path+"\"");
 //                }
-                String commandLine = new String("javadoc -docletpath \""+ class_path +
-                        "\" -doclet edu.cmu.sphinx.tools.gui.util.DocletHelper \""+
-                        source_path.trim()+ source_file.trim()+"\"");        
+                String commandLine = "javadoc -docletpath \"" + class_path +
+                    "\" -doclet edu.cmu.sphinx.tools.gui.util.DocletHelper \"" +
+                    source_path.trim() + source_file.trim() + '\"';
 //                System.out.println("commandLine :" + commandLine);
                 SysCommandExecutor cmdExecutor = SysCommandExecutor.getInstance(); 		   		
                 int exitStatus = cmdExecutor.runCommand(commandLine);
@@ -80,7 +80,7 @@ public class JavadocExtractor {
     {
         String allcomment;
         
-        if(source_path == null || source_path.trim().equals("")){// no path to source code
+        if (source_path == null || source_path.trim().isEmpty()) { // no path to source code
             return null;
         }
         

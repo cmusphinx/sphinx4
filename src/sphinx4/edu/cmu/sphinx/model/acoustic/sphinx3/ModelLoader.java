@@ -773,7 +773,7 @@ public class ModelLoader implements Loader {
      * @throws java.io.IOException on error
      */
     String readWord(DataInputStream dis) throws IOException {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         char c;
         // skip leading whitespace
         do {
@@ -1055,7 +1055,7 @@ public class ModelLoader implements Loader {
 
             if (useCDUnits) {
                 Unit unit;
-                String unitName = (name + " " + left + " " + right);
+                String unitName = (name + ' ' + left + ' ' + right);
 
                 if (unitName.equals(lastUnitName)) {
                     unit = lastUnit;
@@ -1266,7 +1266,7 @@ public class ModelLoader implements Loader {
         // read in the matrices
         for (int i = 0; i < numMatrices; i++) {
             est.expectString("tmat");
-            est.expectString("[" + i + "]");
+            est.expectString("[" + i + ']');
             float[][] tmat = new float[numStates][numStates];
             for (int j = 0; j < numStates; j++) {
                 for (int k = 0; k < numStates; k++) {

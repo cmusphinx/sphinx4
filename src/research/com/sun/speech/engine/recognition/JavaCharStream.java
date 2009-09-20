@@ -291,7 +291,7 @@ public class JavaCharStream {
             }
             catch (java.io.IOException e) {
                 throw new Error("Invalid escape character at line " + line +
-                        " column " + column + ".");
+                        " column " + column + '.');
             }
 
             if (backSlashCnt == 1)

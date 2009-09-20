@@ -618,7 +618,7 @@ public class PanelConfigurable extends javax.swing.JPanel {
                     Arrays.asList(((DefaultListModel)jListPropVal.getModel()).toArray()));
             newlist.add(newval);
 
-            if ( !newval.equalsIgnoreCase("") && (classname != null) &&
+            if ( !newval.isEmpty() && (classname != null) &&
                     ( setname != null) && (prop != null) )
             {
                 try {
@@ -690,7 +690,7 @@ public class PanelConfigurable extends javax.swing.JPanel {
             String prop = (String)jListInner.getSelectedValue();
             String setname = (String)jComboName.getSelectedItem();
 
-            if ( !newval.equalsIgnoreCase("") && (classname != null) &&
+            if ( !newval.isEmpty() && (classname != null) &&
                     ( setname != null) && (prop != null) ){
                 try {
                     if ( _pm.allowChangePropertyValue(classname, setname, prop, newval) )
@@ -802,8 +802,7 @@ public class PanelConfigurable extends javax.swing.JPanel {
                                          JOptionPane.PLAIN_MESSAGE);
 
                 //If a string was returned, say so.               
-                if ((s != null) && (s.length() > 0) &&
-                        !s.trim().equalsIgnoreCase("") ) {
+                if (s != null && !s.isEmpty() && !s.trim().isEmpty() ) {
                     s = s.trim();
                     if ( checkSetName(s) ){ // is it a valid name?
 
@@ -1324,7 +1323,7 @@ public class PanelConfigurable extends javax.swing.JPanel {
             ConfigurableProperty cp = getProperty(classname,prop);
             if(cp != null){
                 String classtype = cp.getClassType();
-                if(classtype != null && !classtype.equalsIgnoreCase("")){
+                if(classtype != null && !classtype.isEmpty()){
                     // class type is an existing class
                     // get list of clases that are / subclass of this type
                     // return mymap that contains name of class 
@@ -1340,8 +1339,7 @@ public class PanelConfigurable extends javax.swing.JPanel {
                             String localname = fullname.substring(index+1);
                             String packagename = fullname.substring(0,index);
                             // format the output to be "setname-classname"
-                            String myitem = new String
-                                    (setname+"-"+localname+"("+packagename+")");
+                            String myitem = setname + '-' + localname + '(' + packagename + ')';
                             // System.out.println("item $$ "+myitem);                            
                             myreturn.add(myitem);
                         }

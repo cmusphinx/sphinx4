@@ -301,14 +301,14 @@ public class HMMPool {
         int leftID = getLeftUnitID(id);
         int rightID = getRightUnitID(id);
 
-        String cs = unitTable[centralID] == null ? "(" + centralID + ")" :
+        String cs = unitTable[centralID] == null ? "(" + centralID + ')' :
                 unitTable[centralID].toString();
-        String ls = unitTable[leftID] == null ? ("(" + leftID + ")") :
+        String ls = unitTable[leftID] == null ? ("(" + leftID + ')') :
                 unitTable[leftID].toString();
-        String rs = unitTable[rightID] == null ? "(" + rightID + ")" :
+        String rs = unitTable[rightID] == null ? "(" + rightID + ')' :
                 unitTable[rightID].toString();
 
-        return cs + "[" + ls + "," + rs + "]";
+        return cs + '[' + ls + ',' + rs + ']';
     }
 
 
@@ -319,7 +319,7 @@ public class HMMPool {
 
         if (logger.isLoggable(Level.FINER)) {
             for (int i = 0; i < unitTable.length; i++) {
-                logger.finer("" + i + " " + unitTable[i]);
+                logger.finer(String.valueOf(i) + ' ' + unitTable[i]);
             }
         }
     }

@@ -427,7 +427,7 @@ public class ParallelSearchManager implements SearchManager {
 
         /*
         debugPrint("Entering growParallelToken: " + 
-                   token.getSearchState().toString());
+                   token.getSearchState());
         */
 
         // If this is a final state, add it to the result list.
@@ -449,7 +449,7 @@ public class ParallelSearchManager implements SearchManager {
             SearchStateArc arc = arcs[i];
             SentenceHMMState nextState = (SentenceHMMState) arc.getState();
 
-            // debugPrint("  Entering " + nextState.toString());
+            // debugPrint("  Entering " + nextState);
 
             float logEntryScore = token.getScore() + arc.getProbability();
             Token oldNextToken = getBestToken(nextState);
@@ -534,7 +534,7 @@ public class ParallelSearchManager implements SearchManager {
                 throw new IllegalStateException
                         ("Color of state " + nextState.getName() +
                                 " not RED or GREEN, its " +
-                                nextState.getColor().toString() + "!");
+                                nextState.getColor() + '!');
             }
         }
     }
@@ -589,7 +589,7 @@ public class ParallelSearchManager implements SearchManager {
             SentenceHMMStateArc arc = (SentenceHMMStateArc) arcs[a];
             SentenceHMMState nextState = (SentenceHMMState) arc.getState();
 
-            // debugPrint("Entering " + nextState.toString());
+            // debugPrint("Entering " + nextState);
 
             Token oldNextToken = getBestToken(nextState);
 

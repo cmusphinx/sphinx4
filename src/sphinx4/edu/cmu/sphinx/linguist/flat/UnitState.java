@@ -94,7 +94,7 @@ public class UnitState extends SentenceHMMState implements UnitSearchState {
      * @return the name for this state
      */
     public String getName() {
-        return super.getName() + "<" + unit + ">";
+        return super.getName() + '<' + unit + '>';
     }
 
 

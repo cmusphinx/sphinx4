@@ -59,7 +59,7 @@ public class StatisticsVariable {
      */
     static public StatisticsVariable getStatisticsVariable(
             String instanceName, String statName) {
-        return getStatisticsVariable(instanceName + "." + statName);
+        return getStatisticsVariable(instanceName + '.' + statName);
     }
 
 
@@ -132,7 +132,7 @@ public class StatisticsVariable {
     /** Dumps this StatisticsVariable. */
     public void dump() {
         if (isEnabled()) {
-            System.out.println(name + " " + value);
+            System.out.println(name + ' ' + value);
         }
     }
 

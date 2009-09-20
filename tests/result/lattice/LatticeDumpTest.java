@@ -81,7 +81,7 @@ public class LatticeDumpTest {
             /* print out the results */
             if (result != null) {
                 System.out.println("\nRESULT: " + 
-                                   result.getBestFinalResultNoFiller() + "\n");
+                                   result.getBestFinalResultNoFiller() + '\n');
                 Lattice lattice = new Lattice(result);
 		LatticeOptimizer lo = new LatticeOptimizer(lattice);
 		lo.optimize();

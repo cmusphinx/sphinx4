@@ -114,12 +114,12 @@ public class BatchNISTRecognizer extends BatchModeRecognizer {
 
         logger.info(
                 "BatchNISTRecognizer:\n" +
-                        "  dataDirectory=" + dataDir + "\n" +
-                        "  ctlFile=" + ctlFile + "\n" +
-                        "  bitsPerSample=" + bitsPerSample + "\n" +
-                        "  channelCount=" + channelCount + "\n" +
-                        "  samplesPerSecond=" + samplesPerSecond + "\n" +
-                        "  framesPerSecond=" + framesPerSecond + "\n");
+                        "  dataDirectory=" + dataDir + '\n' +
+                        "  ctlFile=" + ctlFile + '\n' +
+                        "  bitsPerSample=" + bitsPerSample + '\n' +
+                        "  channelCount=" + channelCount + '\n' +
+                        "  samplesPerSecond=" + samplesPerSecond + '\n' +
+                        "  framesPerSecond=" + framesPerSecond + '\n');
     }
 
 
@@ -164,7 +164,7 @@ public class BatchNISTRecognizer extends BatchModeRecognizer {
             if (i >= 0) {
                 file = file.substring(0, i);
             }
-            file = dataDir + "/" + file + ".raw";
+            file = dataDir + '/' + file + ".raw";
             try {
                 InputStream dataStream = new FileInputStream(file);
                 dataStream.skip(startOffset * bytesPerFrame);
@@ -312,8 +312,8 @@ public class BatchNISTRecognizer extends BatchModeRecognizer {
             String spelling = word.getSpelling();
             if (!spelling.startsWith("<")) {
                 String[] names = utt.name.split("_");
-                String id = names[0] + "_" + names[1] + "_" + names[2];
-                out.write((id + " 1 " + (utt.startOffset + startFrame) / 100.0 + " " + (endFrame - startFrame) / 100.0 + " ").getBytes());
+                out.write((names[0] + '_' + names[1] + '_' + names[2]
+                    + " 1 " + (utt.startOffset + startFrame) / 100.0 + ' ' + (endFrame - startFrame) / 100.0 + ' ').getBytes());
                 out.write(hex2Binary(spelling));
                 out.write(" 0.700000\n".getBytes());
             }

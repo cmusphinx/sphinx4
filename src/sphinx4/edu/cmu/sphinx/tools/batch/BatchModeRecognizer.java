@@ -492,7 +492,7 @@ public class BatchModeRecognizer implements Configurable {
                     try {
                         setBatchFile(args[1]);
                     } catch (IOException ioe) {
-                        ci.putResponse("Can't load " + args[1] + " " + ioe);
+                        ci.putResponse("Can't load " + args[1] + ' ' + ioe);
                     }
                 }
                 return "";

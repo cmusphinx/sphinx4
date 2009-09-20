@@ -230,11 +230,9 @@ public class SimpleNGramModel implements LanguageModel {
      */
     @SuppressWarnings("unused")
 	private String listToString(List<Word> wordList) {
-        StringBuffer sb = new StringBuffer();
-        for (Word word : wordList) {
-            sb.append(word.toString());
-            sb.append(" ");
-        }
+        StringBuilder sb = new StringBuilder();
+        for (Word word : wordList)
+            sb.append(word).append(' ');
         return sb.toString();
     }
 
@@ -254,14 +252,12 @@ public class SimpleNGramModel implements LanguageModel {
      */
     @SuppressWarnings("unused")
 	private String getRepresentation(List<String> wordList) {
-        StringBuffer sb = new StringBuffer();
-        for (Iterator<String> i = wordList.iterator(); i.hasNext();) {
-            String s = i.next();
-            sb.append(s);
-            if (i.hasNext()) {
-                sb.append("+");
-            }
-        }
+        if (wordList.isEmpty())
+            return "";
+        StringBuilder sb = new StringBuilder();
+        for (Iterator<String> i = wordList.iterator(); i.hasNext();)
+            sb.append(i.next()).append('+');
+        sb.setLength(sb.length() - 1);
         return sb.toString();
     }
 
@@ -293,7 +289,7 @@ public class SimpleNGramModel implements LanguageModel {
             if (line.startsWith("ngram")) {
                 StringTokenizer st = new StringTokenizer(line, " \t\n\r\f=");
                 if (st.countTokens() != 3) {
-                    corrupt("corrupt ngram field " + line + " "
+                    corrupt("corrupt ngram field " + line + ' '
                             + st.countTokens());
                 }
                 st.nextToken();
@@ -441,7 +437,7 @@ public class SimpleNGramModel implements LanguageModel {
      */
     private void corrupt(String why) throws IOException {
         throw new IOException("Corrupt Language Model " + fileName
-                + " at line " + lineNumber + ":" + why);
+                + " at line " + lineNumber + ':' + why);
     }
 }
 
@@ -471,6 +467,6 @@ class Probability {
      * @return the string form of this object
      */
     public String toString() {
-        return "Prob: " + logProbability + " " + logBackoff;
+        return "Prob: " + logProbability + ' ' + logBackoff;
     }
 }

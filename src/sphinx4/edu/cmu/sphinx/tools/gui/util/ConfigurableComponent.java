@@ -68,9 +68,9 @@ public class ConfigurableComponent {
      * @return string description of model
      */
     public String toString(){
-        String output = new String("Section :" + _sectionName+'\n');        
+        String output = "Section :" + _sectionName + '\n';
         output = output.concat(" Class Name : " + _componentClassName+'\n');
-        if ( !_componentDesc.equalsIgnoreCase("") ) {
+        if (!_componentDesc.isEmpty()) {
             output = output.concat(" Desc : "+ _componentDesc+'\n');
         }
         if( !_propList.isEmpty() ){
@@ -287,7 +287,7 @@ public class ConfigurableComponent {
             if( !rpd.contains(propname) ){
                 ConfigurableProperty prop = (ConfigurableProperty)propentry.getValue();
                 String defaultVal = prop.getDefault();
-                if( defaultVal != null && !defaultVal.trim().equalsIgnoreCase("")){
+                if (defaultVal != null && !defaultVal.trim().isEmpty()) {
                     rpd.add(propname,defaultVal);
                     // System.out.println("***** add prop "+propname);
                 }
@@ -306,7 +306,7 @@ public class ConfigurableComponent {
      * @param setname Name of new configuration set
      */
     public void createNewSet(String setname){
-        // System.out.println("*****" + this.toString());
+        // System.out.println("*****" + this);
         // the set name given should have been checked by GUI
         RawPropertyData newrpd = new RawPropertyData(setname,_componentClassName);        
         addDefaultProps(newrpd); // fill them up with default properties

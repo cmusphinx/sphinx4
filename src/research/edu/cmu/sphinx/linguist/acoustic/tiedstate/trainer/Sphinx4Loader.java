@@ -219,7 +219,7 @@ class Sphinx4Loader extends Sphinx3Loader {
 
             if (useCDUnits) {
                 Unit unit = null;
-                String unitName = (name + " " + left + " " + right);
+                String unitName = (name + ' ' + left + ' ' + right);
 
                 if (unitName.equals(lastUnitName)) {
                     unit = lastUnit;
@@ -295,7 +295,7 @@ class Sphinx4Loader extends Sphinx3Loader {
 
         for (int i = 0; i < numMatrices; i++) {
             est.expectString("tmat");
-            est.expectString("[" + i + "]");
+            est.expectString("[" + i + ']');
             est.expectString("nstate");
             // Number of emitting states + 1, final non-emitting state
             numStates = est.getInt("numStates") + 1;

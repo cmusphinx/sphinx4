@@ -500,9 +500,9 @@ public class BaseResult
 
     /** Concatenate the best tokens in the Result. */
     public String toString() {
-        StringBuffer sb = new StringBuffer(getBestToken(0).getWrittenText());
+        StringBuilder sb = new StringBuilder(getBestToken(0).getWrittenText());
         for (int i = 1; i < numTokens(); i++)
-            sb.append(" " + getBestToken(i).getWrittenText());
+            sb.append(' ').append(getBestToken(i).getWrittenText());
         return sb.toString();
     }
 

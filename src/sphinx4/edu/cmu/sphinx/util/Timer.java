@@ -227,7 +227,7 @@ public class Timer {
      * @return a string representation of the time.
      */
     private String fmtTime(double time) {
-        return Utilities.pad(timeFormatter.format(time) + "s", 10);
+        return Utilities.pad(timeFormatter.format(time) + 's', 10);
     }
 
 
@@ -245,11 +245,11 @@ public class Timer {
         }
 
         if (notReliable) {
-            System.out.print(Utilities.pad(name, 15) + " ");
+            System.out.print(Utilities.pad(name, 15) + ' ');
             System.out.println("Not reliable.");
         } else {
-            System.out.print(Utilities.pad(name, 15) + " ");
-            System.out.print(Utilities.pad("" + count, 8));
+            System.out.print(Utilities.pad(name, 15) + ' ');
+            System.out.print(Utilities.pad(String.valueOf(count), 8));
             System.out.print(fmtTime(curTime));
             System.out.print(fmtTime(minTime));
             System.out.print(fmtTime(maxTime));

@@ -73,7 +73,7 @@ public class Confidence {
                                 ("     (confidence: " +
                                         format.format(best.getLogMath().logToLinear
                                                 ((float) best.getConfidence()))
-                                        + ")");
+                                        + ')');
                         System.out.println();
 
                         /*
@@ -107,12 +107,12 @@ public class Confidence {
     private static void printInstructions() {
         System.out.println
                 ("Sample sentences:\n" +
-                        "\n" +
+                    '\n' +
                         "the green one right in the middle\n" +
                         "the purple one on the lower right side\n" +
                         "the closest purple one on the far left side\n" +
                         "the only one left on the left\n" +
-                        "\n" +
+                    '\n' +
                         "Refer to the file confidence.test for a complete list.\n");
     }
 
@@ -138,6 +138,6 @@ public class Confidence {
         System.out.println
                 (" (confidence: " +
                         format.format
-                                (wr.getLogMath().logToLinear((float) wr.getConfidence())) + ")");
+                                (wr.getLogMath().logToLinear((float) wr.getConfidence())) + ')');
     }
 }

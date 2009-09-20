@@ -44,7 +44,7 @@ public class FileReferenceSource implements ReferenceSource {
                             break;
                         }
                     }
-                    fromIndex = line.indexOf(" ", fromIndex) + 1;
+                    fromIndex = line.indexOf(' ', fromIndex) + 1;
                 }
                 if (!isSilence) {
                     String reference = line.substring(fromIndex).trim();

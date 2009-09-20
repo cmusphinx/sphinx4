@@ -54,11 +54,11 @@ public class BatchForcedAlignerGrammar extends ForcedAlignerGrammar implements G
         try {
             LineNumberReader in = new LineNumberReader(new FileReader(refFile));
             String line;
-            while (!(line = in.readLine()).equals("")) {
+            while (!(line = in.readLine()).isEmpty()) {
                 int i = line.indexOf('(');
                 String uttName = line.substring(i + 1, line.indexOf(')'));
                 String transcript = line.substring(0, i).trim();
-                if (!transcript.equals("")) {
+                if (!transcript.isEmpty()) {
                     initialNode = createGrammarNode(Dictionary.SILENCE_SPELLING);
                     createForcedAlignerGrammar(initialNode, finalNode, transcript);
                     grammars.put(uttName, initialNode);

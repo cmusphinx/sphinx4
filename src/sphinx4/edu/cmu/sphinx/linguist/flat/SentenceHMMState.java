@@ -404,9 +404,9 @@ public abstract class SentenceHMMState implements Serializable, SearchState {
     /** Returns the string representation of this object */
     public String toString() {
         if (cachedName == null) {
-            StringBuffer sb = new StringBuffer();
+            StringBuilder sb = new StringBuilder();
             if (isEmitting()) {
-                sb.append("*");
+                sb.append('*');
             }
             sb.append(getName());
 
@@ -414,12 +414,12 @@ public abstract class SentenceHMMState implements Serializable, SearchState {
                     + getWhich() + (isFinal() ? "!" : "");
 
             if (parent != null) {
-                sb.append("_");
-                sb.append(parent.toString());
+                sb.append('_');
+                sb.append(parent);
             }
 
             if (isFinal()) {
-                sb.append("!");
+                sb.append('!');
             }
             cachedName = sb.toString();
         }
@@ -448,7 +448,7 @@ public abstract class SentenceHMMState implements Serializable, SearchState {
             if (parent == null) {
                 fullName = getName();
             } else {
-                fullName = getName() + "." + parent.getFullName();
+                fullName = getName() + '.' + parent.getFullName();
             }
         }
 
@@ -472,7 +472,7 @@ public abstract class SentenceHMMState implements Serializable, SearchState {
      * @return the title
      */
     public String getTitle() {
-        return getFullName() + ":" + stateNumber;
+        return getFullName() + ':' + stateNumber;
         // return getSignature() + ":" + stateNumber;
     }
 

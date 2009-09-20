@@ -255,7 +255,7 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar, Seriali
 
         // Check simple case: a local rule reference
         if (fullGrammarName == null && this.getRule(simpleName) != null) {
-            return new RuleName(myName + "." + simpleName);
+            return new RuleName(myName + '.' + simpleName);
         }
 
         // Check for fully-qualified reference
@@ -264,7 +264,7 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar, Seriali
             if (g != null) {
                 if (g.getRule(simpleName) != null) {
                     // we have a successful resolution
-                    return new RuleName(fullGrammarName + "." + simpleName);
+                    return new RuleName(fullGrammarName + '.' + simpleName);
                 }
             }
         }
@@ -336,7 +336,7 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar, Seriali
                     if (gref.getRule(simpleName) != null) {
                         // import <pkg.gram.*> matches <pkg.gram.rulename>
                         matches.addElement(
-                                new RuleName(iFullGrammarName + "." + simpleName));
+                                new RuleName(iFullGrammarName + '.' + simpleName));
                     }
                     continue;
                 } else {
@@ -346,7 +346,7 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar, Seriali
                     if (iSimpleName.equals(simpleName)) {
                         // import <pkg.gram.rulename> exact match for <???.gram.rulename>
                         matches.addElement(new RuleName(iFullGrammarName +
-                                "." + simpleName));
+                            '.' + simpleName));
                     }
                     continue;
                 }
@@ -365,7 +365,7 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar, Seriali
                 if (gref.getRule(simpleName) != null) {
                     // import <pkg.gram.*> matches <simpleName>
                     matches.addElement(new RuleName(iFullGrammarName +
-                            "." + simpleName));
+                        '.' + simpleName));
                 }
                 continue;
             }
@@ -375,7 +375,7 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar, Seriali
 
             if (iSimpleName.equals(simpleName)) {
                 matches.addElement(new RuleName(iFullGrammarName +
-                        "." + simpleName));
+                    '.' + simpleName));
                 continue;
             }
         }
@@ -388,9 +388,8 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar, Seriali
             return null;
         } else if (matches.size() > 1) {
             // Throw exception if ambiguous reference
-            StringBuffer b = new StringBuffer();
-            b.append("Warning: ambiguous reference " + rn + " in " +
-                    getName() + " to ");
+            StringBuilder b = new StringBuilder();
+            b.append("Warning: ambiguous reference ").append(rn).append(" in ").append(getName()).append(" to ");
             for (int i = 0; i < matches.size(); i++) {
                 RuleName tmp = (RuleName) (matches.elementAt(i));
                 if (i > 0) {
@@ -526,7 +525,7 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar, Seriali
             str.append(entry.ruleName);
             str.append("> = ");
             Rule rule = entry.rule;
-            str.append(rule.toString());
+            str.append(rule);
             str.append(';');
             str.append(LINE_SEPARATOR);
         }
@@ -548,7 +547,7 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar, Seriali
     /** Resolve and linkup all rule references contained in all rules. */
     protected void resolveAllRules()
             throws GrammarException {
-        StringBuffer b = new StringBuffer();
+        StringBuilder b = new StringBuilder();
 
         // First make sure that all imports are resolvable
         RuleName imports[] = listImports();
@@ -558,8 +557,7 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar, Seriali
                 String gname = imports[i].getFullGrammarName();
                 RuleGrammar GI = myRec.getRuleGrammar(gname);
                 if (GI == null) {
-                    b.append("Undefined grammar " + gname +
-                            " imported in " + getName() + "\n");
+                    b.append("Undefined grammar ").append(gname).append(" imported in ").append(getName()).append('\n');
                 }
             }
         }
@@ -626,9 +624,7 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar, Seriali
             RuleName resolved = resolve(rn);
 
             if (resolved == null) {
-                throw new GrammarException(
-                        "Unresolvable rulename in grammar " +
-                                getName() + ": " + rn.toString(), null);
+                throw new GrammarException("Unresolvable rulename in grammar " + getName() + ": " + rn, null);
             } else {
                 //[[[WDW - This forces all rule names to be fully resolved.
                 //This should be changed.]]]

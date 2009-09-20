@@ -92,7 +92,7 @@ public class ZipRecognizer implements Runnable {
         microphone.stopRecording();
         if (result != null) {
             String resultText = result.getBestFinalResultNoFiller();
-            if (resultText.length() > 0) {
+            if (!resultText.isEmpty()) {
                 String zip = convertResultToZip(resultText);
                 fireListeners(zip);
             } else {
@@ -109,7 +109,7 @@ public class ZipRecognizer implements Runnable {
      * @return the zip string in a digits form
      */
     private String convertResultToZip(String zipstring) {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         StringTokenizer st = new StringTokenizer(zipstring);
         while (st.hasMoreTokens()) {
             String word = st.nextToken();

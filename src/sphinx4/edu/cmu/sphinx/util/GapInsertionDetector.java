@@ -60,7 +60,7 @@ public class GapInsertionDetector {
         int gaps = 0;
         boolean done = false;
         ReferenceUtterance reference = referenceFile.nextUtterance();
-        String log = "";
+        StringBuilder log = new StringBuilder();
         while (!done) {
             HypothesisWord word = hypothesisFile.nextWord();
             if (word != null) {
@@ -94,18 +94,15 @@ public class GapInsertionDetector {
                 if (hasGapError) {
                     gaps++;
                     if (showGapInsertions) {
-                        log += "GapInsError: Utterance: " +
-                                hypothesisFile.getUtteranceCount() +
-                                " Word: " + word.getText() + " (" +
-                                word.getStartTime() + "," + word.getEndTime() +
-                                "). ";
+                        log.append("GapInsError: Utterance: ").append(hypothesisFile.getUtteranceCount())
+                            .append(" Word: ").append(word.getText()).append(" (")
+                            .append(word.getStartTime()).append(',').append(word.getEndTime()).append("). ");
                         if (reference != null) {
                             assert reference.isSilenceGap();
-                            log += ("Reference: <sil> (" +
-                                    reference.getStartTime() + "," +
-                                    reference.getEndTime() + ")");
+                            log.append("Reference: <sil> (").append(reference.getStartTime())
+                                .append(',').append(reference.getEndTime()).append(')');
                         }
-                        log += "\n";
+                        log.append('\n');
                     }
                 }
             } else {

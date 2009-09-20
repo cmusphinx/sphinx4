@@ -49,8 +49,8 @@ public class ConfigurableProperty {
         _original_name = original;
         _classtype = null;
     
-        System.out.println(" ***** not component property " + name + "_" + defaultval + "_" + 
-                type + "_" + desc + "_" + original);
+        System.out.println(" ***** not component property " + name + '_' + defaultval + '_' +
+                type + '_' + desc + '_' + original);
     }
     
     /** 
@@ -73,8 +73,8 @@ public class ConfigurableProperty {
         _original_name = original;
         _classtype = class_type;
         
-        System.out.println(" ***** component property " + name + "_" + defaultval + "_" + 
-                type + "_" + desc + "_" + original + "_" + class_type);
+        System.out.println(" ***** component property " + name + '_' + defaultval + '_' +
+                type + '_' + desc + '_' + original + '_' + class_type);
     }
     
     /**
@@ -84,12 +84,12 @@ public class ConfigurableProperty {
      * @return Description of this property
      */
     public String toString(){
-        String output = new String("\nProperty name: "+_name+" ");
-        if ( _default != null && !_default.equalsIgnoreCase("") )
-            output = output.concat(" Default value : "+_default+" ");     
-        if ( !_desc.equalsIgnoreCase("") )
-            output = output.concat("\nDescription: " +_desc+" ");
-        output = output.concat( "Original name : " + _original_name + "\n");
+        String output = "\nProperty name: " + _name + ' ';
+        if (_default != null && !_default.isEmpty())
+            output = output.concat(" Default value : "+_default+ ' ');
+        if (!_desc.isEmpty())
+            output = output.concat("\nDescription: " +_desc+ ' ');
+        output = output.concat( "Original name : " + _original_name + '\n');
         return output;
     }
 

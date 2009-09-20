@@ -155,6 +155,6 @@ public class Complex {
 
     /** Returns this complex number as a string in the format (real, imaginary). */
     public String toString() {
-        return ("(" + this.real + ", " + this.imaginary + ")");
+        return ("(" + this.real + ", " + this.imaginary + ')');
     }
 }

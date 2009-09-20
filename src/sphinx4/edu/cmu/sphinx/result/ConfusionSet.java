@@ -142,7 +142,7 @@ public class ConfusionSet extends TreeMap<Double, Set<WordResult>> {
             for (Iterator<WordResult> r = wordSet.iterator(); r.hasNext();) {
                 WordResult wordResult = (WordResult) r.next();
                 System.out.print
-                        (" " +
+                        (' ' +
                                 wordResult.getPronunciation().getWord().getSpelling());
             }
         }
@@ -151,16 +151,15 @@ public class ConfusionSet extends TreeMap<Double, Set<WordResult>> {
 
 
     public String toString() {
-        StringBuffer b = new StringBuffer();
+        StringBuilder b = new StringBuilder();
         for (Map.Entry<Double, Set<WordResult>> entry : entrySet()) {
-            b.append(entry.getKey()).append(":");
+            b.append(entry.getKey()).append(':');
             Iterator<WordResult> j = entry.getValue().iterator();
-            while (j.hasNext()) {
-                b.append(j.next());
-                if (j.hasNext()) {
-                    b.append(",");
-                }
-            }
+            while (j.hasNext())
+                b.append(j.next()).append(',');
+            if (!entry.getValue().isEmpty())
+                b.setLength(b.length() - 1);
+
         }
         return b.toString();
     }

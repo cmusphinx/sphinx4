@@ -373,6 +373,6 @@ class TokenRank {
      * @return the string representation of this object
      */
     public String toString() {
-        return "Rank[" + absoluteRank + "," + relativeRank + "]";
+        return "Rank[" + absoluteRank + ',' + relativeRank + ']';
     }
 }

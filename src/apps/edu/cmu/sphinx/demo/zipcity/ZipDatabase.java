@@ -59,12 +59,12 @@ public class ZipDatabase {
                                     latitude, longitude));
                     } catch (NumberFormatException nfe) {
                         throw new IOException("Bad zip format, line " + line
-                                + "(" + input + ")");
+                                + '(' + input + ')');
                     }
 
                 } else {
                     throw new IOException("Bad zip format, line " + line
-                                + "(" + input + ")");
+                                + '(' + input + ')');
                 }
             }
         } finally {
@@ -102,7 +102,7 @@ public class ZipDatabase {
      */
     private String fixupCase(String s) {
         boolean nextIsUpper = true;
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
 
         for (int i = 0; i < s.length(); i++) {
             char c = s.charAt(i);
@@ -220,6 +220,6 @@ class ZipInfo {
         return "Zip: " + getZip() +
               " City: " + getCity() +
               " State: " + getState() +
-              "  " + getLatitude() + "," + getLongitude();
+              "  " + getLatitude() + ',' + getLongitude();
     }
 }

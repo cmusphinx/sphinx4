@@ -45,7 +45,7 @@ public class CardMatchVoice {
 		    "Make sure that there is a \"speech.properties\" file " +
 		    "at either of these locations: \n";
 		message += "user.home    : " + 
-		    System.getProperty("user.home") + "\n";
+		    System.getProperty("user.home") + '\n';
 		message += "java.home/lib: " + System.getProperty("java.home")
 		    + File.separator + "lib\n";
 		

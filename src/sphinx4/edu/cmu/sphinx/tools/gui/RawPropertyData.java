@@ -123,7 +123,7 @@ public class RawPropertyData {
     * @return Description of object
     */
    public String toString(){
-       String output = new String("name : " + name);
+       String output = "name : " + name;
        for(Iterator it=properties.entrySet().iterator();it.hasNext();){            
             Map.Entry entry = (Map.Entry) it.next();            
             String groupname = (String)entry.getKey();            

@@ -224,7 +224,7 @@ public abstract class PropertyType {
                 // if it doesn't have a protocol spec
                 // add a "file:" to it, to make it a URL
 
-                if (loc.indexOf(":") == -1) {
+                if (loc.indexOf(':') == -1) {
                     loc = "file:" + loc;
                 }
                 // Check to see if it is a URL

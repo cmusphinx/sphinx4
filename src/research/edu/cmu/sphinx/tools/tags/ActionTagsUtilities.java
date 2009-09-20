@@ -150,7 +150,7 @@ public class ActionTagsUtilities {
      * @see #getClassDefinitions
      */
     static public String getScript(RuleParse ruleParse) {
-        StringBuffer script = new StringBuffer();
+        StringBuilder script = new StringBuilder();
         parseTags(ruleParse, script, null, "", true);
         return script.toString();
     }
@@ -164,26 +164,24 @@ public class ActionTagsUtilities {
      * @return a printable String containing the flattened parse tree of a RuleParse instance.
      */
     static public String getParseTree(RuleParse ruleParse) {
-        StringBuffer parseTree = new StringBuffer();
+        StringBuilder parseTree = new StringBuilder();
         parseTags(ruleParse, null, parseTree, "", true);
         return parseTree.toString();
     }
 
 
     /**
-     * Method that returns the debug script for a tag.
+     * Method that appends the debug script for a tag to a StringBuilder.
      *
      * @see #isDebugging
      * @see #setDebugging
      */
-    static protected String getDebugScript(String indent, String tag) {
-        StringBuffer script = new StringBuffer();
-
+    static protected void appendDebugScript(StringBuilder script, String indent, String tag) {
         /* Convert all quotes in the tag to escaped quotes.  Otherwise,
         * ECMAScript will treat them as quotes.
         */
         StringTokenizer st = new StringTokenizer(tag.trim(), "\"");
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         if (st.hasMoreTokens()) {
             sb.append(st.nextToken());
             while (st.hasMoreTokens()) {
@@ -191,47 +189,33 @@ public class ActionTagsUtilities {
                 sb.append(st.nextToken());
             }
         }
-        script.append(indent + "//vvvvvvvvvvvvvv DEBUG vvvvvvvvvvvvvv//\n");
+        script.append(indent).append("//vvvvvvvvvvvvvv DEBUG vvvvvvvvvvvvvv//\n");
         //[[[WDW - cannot break lines apart easily because block statements
         //do not get handled properly.]]]
         //
         st = new StringTokenizer(sb.toString(), "\n");
-        sb = new StringBuffer();
+        sb = new StringBuilder();
         sb.append(st.nextToken());
         while (st.hasMoreTokens()) {
             sb.append("\\n");
             sb.append(st.nextToken());
         }
-        //String line = sb.toString().replace('\n',' ');
-        String line = sb.toString();
-        script.append(
-                indent
-                        + "var dbgStr = debug(\"<\" + this.$name + \"> "
-                        + line + "\");\n");
-        script.append(indent + "while (dbgStr != null) {\n");
-        script.append(indent + INDENT + "print(\"dbgStr = \" + dbgStr);\n");
-        script.append(indent + INDENT
-                + "if (dbgStr == \"skip\") {\n");
-        script.append(indent + INDENT + INDENT
-                + "dbgStr = null;\n");
-        script.append(indent + INDENT
-                + "} else if (dbgStr == \"step\") {\n");
-        script.append(indent + INDENT + INDENT
-                + "//vvvvvvvvvv FROM GRAMMAR vvvvvvvvvv\n");
-        script.append(indent + INDENT + INDENT
-                + tag.trim() + "\n");
-        script.append(indent + INDENT + INDENT
-                + "//^^^^^^^^^^ FROM GRAMMAR ^^^^^^^^^^\n");
-        script.append(indent + INDENT + INDENT
-                + "dbgStr = null;\n");
-        script.append(indent + INDENT
-                + "} else {\n");
-        script.append(indent + INDENT + INDENT
-                + "dbgStr = debug(eval(dbgStr));\n");
-        script.append(indent + INDENT + "}\n");
-        script.append(indent + "}\n");
-        script.append(indent + "//^^^^^^^^^^^^^^ DEBUG ^^^^^^^^^^^^^^//\n");
-        return script.toString();
+        //sb = new StringBuilder(sb.toString().replace('\n',' '));
+        script.append(indent).append("var dbgStr = debug(\"<\" + this.$name + \"> ").append(sb).append("\");\n");
+        script.append(indent).append("while (dbgStr != null) {\n");
+        script.append(indent).append(INDENT + "print(\"dbgStr = \" + dbgStr);\n");
+        script.append(indent).append(INDENT + "if (dbgStr == \"skip\") {\n");
+        script.append(indent).append(INDENT + INDENT + "dbgStr = null;\n");
+        script.append(indent).append(INDENT + "} else if (dbgStr == \"step\") {\n");
+        script.append(indent).append(INDENT + INDENT + "//vvvvvvvvvv FROM GRAMMAR vvvvvvvvvv\n");
+        script.append(indent).append(INDENT + INDENT).append(tag.trim()).append('\n');
+        script.append(indent).append(INDENT + INDENT + "//^^^^^^^^^^ FROM GRAMMAR ^^^^^^^^^^\n");
+        script.append(indent).append(INDENT + INDENT + "dbgStr = null;\n");
+        script.append(indent).append(INDENT + "} else {\n");
+        script.append(indent).append(INDENT + INDENT + "dbgStr = debug(eval(dbgStr));\n");
+        script.append(indent).append(INDENT + "}\n");
+        script.append(indent).append("}\n");
+        script.append(indent).append("//^^^^^^^^^^^^^^ DEBUG ^^^^^^^^^^^^^^//\n");
     }
 
 
@@ -246,8 +230,8 @@ public class ActionTagsUtilities {
      * @param root      is this the top level object?
      */
     static protected void parseTags(Rule rule,
-                                    StringBuffer script,
-                                    StringBuffer parseTree,
+                                    StringBuilder script,
+                                    StringBuilder parseTree,
                                     String indent,
                                     boolean root) {
         if (rule instanceof RuleParse) {
@@ -257,46 +241,32 @@ public class ActionTagsUtilities {
             String objName = RULE_PREFIX + simpleRuleName;
 
             if (parseTree != null) {
-                parseTree.append(indent + "<" + ruleName + ">\n");
+                parseTree.append(indent).append('<').append(ruleName).append(">\n");
             }
 
             if (script != null) {
-                script.append(
-                        indent
-                                + "var " + LAST_RULE + ";\n");
-                script.append(
-                        indent
-                                + "var " + objName + " = new " + CLASS_NAME + "();\n");
-                script.append(
-                        indent
-                                + objName + "." + METHOD_NAME + " = function() {\n");
-                script.append(
-                        indent + INDENT
-                                + "this.$name = \"" + objName + "\";\n");
+                script.append(indent).append("var " + LAST_RULE + ";\n");
+                script.append(indent).append("var ").append(objName).append(" = new " + CLASS_NAME + "();\n");
+                script.append(indent).append(objName).append('.' + METHOD_NAME + " = function() {\n");
+                script.append(indent).append(INDENT + "this.$name = \"").append(objName).append("\";\n");
             }
 
             parseTags(p.getRule(), script, parseTree, indent + INDENT, false);
 
             if (script != null) {
-                script.append(
-                        indent + "    if (this.$value == undefined) {\n");
-                script.append(
-                        indent + "        this.$value = this.getPhrase();\n");
-                script.append(
-                        indent + "    }\n");
+                script.append(indent).append(INDENT + "if (this.$value == undefined) {\n");
+                script.append(indent).append(INDENT + INDENT + "this.$value = this.getPhrase();\n");
+                script.append(indent).append(INDENT + "}\n");
 
-                script.append(indent + "}\n");
-                script.append(indent + objName + "." + METHOD_NAME + "();\n");
-                script.append(indent + LAST_RULE + " = " + objName + ";\n");
+                script.append(indent).append("}\n");
+                script.append(indent).append(objName).append('.' + METHOD_NAME + "();\n");
+                script.append(indent).append(LAST_RULE + " = ").append(objName).append(";\n");
 
                 if (!root) {
-                    script.append(indent + "this.addTokens("
-                            + LAST_RULE + ".getTokens(), "
-                            + LAST_RULE + ".getPhrase()"
-                            + ");\n");
+                    script.append(indent).append("this.addTokens(" + LAST_RULE + ".getTokens(), " + LAST_RULE + ".getPhrase()" + ");\n");
                 } else {
                     //script.append(indent + objName + " = undefined;\n");
-                    script.append(indent + "delete " + objName + ";\n");
+                    script.append(indent).append("delete ").append(objName).append(";\n");
                 }
             }
         } else if ((rule instanceof RuleSequence)
@@ -313,37 +283,34 @@ public class ActionTagsUtilities {
                 }
             }
         } else if (rule instanceof RuleToken) {
-            String t = "'" + ((RuleToken) rule).getText() + "'";
+            String t = '\'' + ((RuleToken) rule).getText() + '\'';
             if (parseTree != null) {
-                parseTree.append(indent + t + "\n");
+                parseTree.append(indent).append(t).append('\n');
             }
             if (script != null) {
-                script.append(
-                        indent + "this.addTokens(" + t + "," + t + ");\n");
+                script.append(indent).append("this.addTokens(").append(t).append(',').append(t).append(");\n");
             }
         } else if (rule instanceof RuleTag) {
             parseTags(((RuleTag) rule).getRule(),
                     script, parseTree, indent, false);
             String tag = ((RuleTag) rule).getTag();
             if (parseTree != null) {
-                parseTree.append(indent + "{" + tag + "}\n");
+                parseTree.append(indent).append('{').append(tag).append("}\n");
             }
             if (script != null) {
                 if (isDebugging()) {
-                    script.append(getDebugScript(indent, tag));
+                    appendDebugScript(script, indent, tag);
                 } else {
-                    script.append(indent + INDENT
-                            + "//vvvvvvvvvv FROM GRAMMAR vvvvvvvvvv\n");
-                    script.append(indent + "{" + tag + "}\n");
-                    script.append(indent + INDENT
-                            + "//^^^^^^^^^^ FROM GRAMMAR ^^^^^^^^^^\n");
+                    script.append(indent).append(INDENT + "//vvvvvvvvvv FROM GRAMMAR vvvvvvvvvv\n");
+                    script.append(indent).append('{').append(tag).append("}\n");
+                    script.append(indent).append(INDENT + "//^^^^^^^^^^ FROM GRAMMAR ^^^^^^^^^^\n");
                 }
             }
         } else if (rule instanceof RuleName) {
             if (parseTree != null) {
                 String name = ((RuleName) rule).getRuleName();
                 if (!name.equals("NULL") && !name.equals("VOID")) {
-                    parseTree.append(indent + name + "\n");
+                    parseTree.append(indent).append(name).append('\n');
                 }
             }
         } else {

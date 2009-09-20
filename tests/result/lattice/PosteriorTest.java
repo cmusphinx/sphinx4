@@ -73,10 +73,10 @@ public class PosteriorTest {
 		 "  (manual: 1.0)");
 	    System.out.println
 		("B: " + logMath.logToLinear((float) b.getPosterior()) +
-		 "  (manual: " + bPosterior + ")");
+		 "  (manual: " + bPosterior + ')');
 	    System.out.println
 		("C: " + logMath.logToLinear((float) c.getPosterior()) +
-		 "  (manual: " + cPosterior + ")");
+		 "  (manual: " + cPosterior + ')');
 	    System.out.println
 		("D: " + logMath.logToLinear((float) d.getPosterior()) +
 		 "  (manual: 1.0)");

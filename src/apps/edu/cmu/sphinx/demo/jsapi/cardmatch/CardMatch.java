@@ -145,7 +145,7 @@ public class CardMatch implements Recorder, Configurable {
             StringTokenizer tokenizer = new StringTokenizer(files);
             while (tokenizer.hasMoreTokens()) {
                 String name = tokenizer.nextToken();
-                if (name.length() > 0) {
+                if (!name.isEmpty()) {
                     fileList.add(name);
                 }
             }

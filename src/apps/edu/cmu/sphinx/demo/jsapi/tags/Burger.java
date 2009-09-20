@@ -32,7 +32,7 @@ public class Burger implements OrderItem {
         if (numToppings == 0) {
             return "plain burger.";
         } else {
-            StringBuffer sb = new StringBuffer("burger with ");
+            StringBuilder sb = new StringBuilder("burger with ");
             for (int i = 0; i < numToppings; i++) {
                 sb.append(allToppings.elementAt(i));
                 if (numToppings > 1) {
@@ -43,7 +43,7 @@ public class Burger implements OrderItem {
                     }
                 }
             }
-            sb.append(".");
+            sb.append('.');
             return sb.toString();
         }
     }

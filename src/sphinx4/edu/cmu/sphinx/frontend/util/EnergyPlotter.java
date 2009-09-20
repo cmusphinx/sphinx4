@@ -82,7 +82,7 @@ public class EnergyPlotter implements Configurable {
                 plot[plot.length - 1] = (char) ('0' + (energy - 10));
             }
         }
-        return ("+" + new String(plot));
+        return ('+' + new String(plot));
     }
 
 
@@ -97,7 +97,7 @@ public class EnergyPlotter implements Configurable {
                 int energy = (int) ((DoubleData) cepstrum).getValues()[0];
                 System.out.println(getPlot(energy));
             } else {
-                System.out.println(cepstrum.toString());
+                System.out.println(cepstrum);
             }
         }
     }

@@ -74,16 +74,16 @@ public class TokenGraphDumper {
      * @return the GDL output string
      */
     public String dumpGDL(String title) {
-        String gdl = "graph: {\n";
-        gdl += ("title: \"" + title + "\"\n");
-        gdl += ("display_edge_labels: yes\n");
+        StringBuilder gdl = new StringBuilder("graph: {\n");
+        gdl.append("title: \"").append(title).append("\"\n");
+        gdl.append("display_edge_labels: yes\n");
 
         for (Token token : result.getResultTokens()) {
-            gdl += dumpTokenGDL(token);
+            gdl.append(dumpTokenGDL(token));
         }
 
-        gdl += ("}\n");
-        return gdl;
+        gdl.append("}\n");
+        return gdl.toString();
     }
 
 
@@ -98,8 +98,8 @@ public class TokenGraphDumper {
         if (dumpedTokens.contains(token)) {
             return "";
         } else {
-            String label = ("[" + token.getAcousticScore() + "," +
-                    token.getLanguageScore() + "]");
+            String label = ("[" + token.getAcousticScore() + ',' +
+                    token.getLanguageScore() + ']');
             if (token.isWord()) {
                 label = token.getWord().getSpelling() + label;
             }
@@ -110,25 +110,21 @@ public class TokenGraphDumper {
                 color = getColor(token.getSearchState());
             }
 
-            String gdl =
-                    ("node: { title: \"" + getTokenID(token).intValue() +
-                            "\" label: \"" + label + "\" color: ");
+            StringBuilder gdl = new StringBuilder().append("node: { title: \"").append(getTokenID(token))
+                .append("\" label: \"").append(label).append("\" color: ");
             if (color != null) {
-                gdl += (color + " }");
+                gdl.append(color).append(" }");
             } else {
-                gdl += " }";
+                gdl.append(" }");
             }
-            gdl += "\n";
+            gdl.append('\n');
 
             dumpedTokens.add(token);
 
             if (token.getPredecessor() != null) {
-                gdl +=
-                        ("edge: { sourcename: \"" + getTokenID(token) +
-                                "\" targetname: \"" + getTokenID(token.getPredecessor())
-                                + "\" }");
-                gdl += "\n";
-                gdl += dumpTokenGDL(token.getPredecessor());
+                gdl.append("edge: { sourcename: \"").append(getTokenID(token))
+                    .append("\" targetname: \"").append(getTokenID(token.getPredecessor()))
+                    .append("\" }").append('\n').append(dumpTokenGDL(token.getPredecessor()));
             }
 
             if (loserManager != null) {
@@ -136,15 +132,13 @@ public class TokenGraphDumper {
                 if (list != null) {
                     for (Iterator<Token> i = list.iterator(); i.hasNext();) {
                         Token loser = i.next();
-                        gdl += ("edge: { sourcename: \"" + getTokenID(token)
-                                + "\" targetname: \"" + getTokenID(loser) +
-                                "\" }");
-                        gdl += "\n";
-                        gdl += dumpTokenGDL(loser);
+                        gdl.append("edge: { sourcename: \"").append(getTokenID(token))
+                            .append("\" targetname: \"").append(getTokenID(loser))
+                            .append("\" }").append('\n').append(dumpTokenGDL(loser));
                     }
                 }
             }
-            return gdl;
+            return gdl.toString();
         }
     }
 

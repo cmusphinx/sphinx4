@@ -46,27 +46,27 @@ public class BestConfidenceAccuracyTracker extends AccuracyTracker {
 
     /** Gets the transcription with no fillers and no "<unk>". */
     protected String getTranscriptionNoFiller(Path path) {
-        StringBuffer buf = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         WordResult[] words = path.getWords();
         for (int i = 0; i < words.length; i++) {
             Word word = words[i].getPronunciation().getWord();
             if (!word.isFiller() && !word.getSpelling().equals("<unk>")) {
-                buf.append(word.getSpelling()).append(" ");
+                sb.append(word.getSpelling()).append(' ');
             }
         }
-        return (buf.toString().trim());
+        return sb.toString().trim();
     }
 
 
     /** Gets the raw transcription */
     protected String getTranscriptionRaw(Path path) {
-        StringBuffer buf = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         WordResult[] words = path.getWords();
         for (int i = 0; i < words.length; i++) {
             Word word = words[i].getPronunciation().getWord();
-            buf.append(word.getSpelling()).append(" ");
+            sb.append(word.getSpelling()).append(' ');
         }
-        return (buf.toString().trim());
+        return sb.toString().trim();
     }
 
 

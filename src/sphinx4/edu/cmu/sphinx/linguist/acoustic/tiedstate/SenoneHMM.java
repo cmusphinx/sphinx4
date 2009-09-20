@@ -205,7 +205,7 @@ public class SenoneHMM implements HMM {
      */
     public String toString() {
         String name = isComposite() ? "HMM@" : "HMM";
-        return name + "(" + unit + "):" + position;
+        return name + '(' + unit + "):" + position;
     }
 
 

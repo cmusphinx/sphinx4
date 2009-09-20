@@ -75,7 +75,7 @@ public class XMLConfigReader implements GUIReader {
        *            and reading from file.
        */
       public ConfigProperties read(File fFile) throws GUIReaderException {        
-        if ( fFile == null || fFile.getName().trim().equalsIgnoreCase("") )  /*no filename for input */
+        if (fFile == null || fFile.getName().trim().isEmpty()) /* no filename for input */
         {
             throw new GUIReaderException
                     ("No input filename specified",GUIReaderException.EXCEPTION_NO_FILENAME);

@@ -47,7 +47,7 @@ public class LeftRightContext extends Context {
     /** Provides a string representation of a context */
     public String toString() {
         if (stringRepresentation == null) {
-            stringRepresentation = getContextName(leftContext) + "," +
+            stringRepresentation = getContextName(leftContext) + ',' +
                     getContextName(rightContext);
         }
         return stringRepresentation;
@@ -64,7 +64,7 @@ public class LeftRightContext extends Context {
     public static LeftRightContext get(Unit[] leftContext, Unit[] rightContext) {
         LeftRightContext context = null;
         if (CACHING_CONTEXTS) {
-            String name = getContextName(leftContext) + "," +
+            String name = getContextName(leftContext) + ',' +
                     getContextName(rightContext);
 
             context = (LeftRightContext) cache.get(name);
@@ -106,9 +106,9 @@ public class LeftRightContext extends Context {
      * @return the context name
      */
     public static String getContextName(Unit[] context) {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         if (context == null) {
-            sb.append("*");
+            sb.append('*');
         } else if (context.length == 0) {
             sb.append("(empty)");
         } else {
@@ -119,7 +119,7 @@ public class LeftRightContext extends Context {
                 }
                 sb.append(name);
                 if (i < context.length - 1) {
-                    sb.append(".");
+                    sb.append('.');
                 }
             }
         }

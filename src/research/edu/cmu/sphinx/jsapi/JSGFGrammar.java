@@ -265,7 +265,7 @@ public class JSGFGrammar extends Grammar {
         GrammarGraph result;
 
         if (rule != null) {
-            debugPrintln("parseRule: " + rule.toString());
+            debugPrintln("parseRule: " + rule);
         }
 
         if (rule instanceof RuleAlternatives) {
@@ -282,10 +282,9 @@ public class JSGFGrammar extends Grammar {
             result = parseRuleToken((RuleToken) rule);
         } else if (rule instanceof RuleParse) {
             throw new IllegalArgumentException(
-                    "Unsupported Rule type: RuleParse: " + rule.toString());
+                    "Unsupported Rule type: RuleParse: " + rule);
         } else {
-            throw new IllegalArgumentException("Unsupported Rule type: "
-                    + rule.toString());
+            throw new IllegalArgumentException("Unsupported Rule type: " + rule);
         }
         return result;
     }
@@ -299,7 +298,7 @@ public class JSGFGrammar extends Grammar {
      */
     private GrammarGraph parseRuleName(RuleName initialRuleName)
             throws GrammarException {
-        debugPrintln("parseRuleName: " + initialRuleName.toString());
+        debugPrintln("parseRuleName: " + initialRuleName);
         GrammarGraph result = (GrammarGraph) ruleStack.contains(initialRuleName
                 .getRuleName());
 
@@ -382,7 +381,7 @@ public class JSGFGrammar extends Grammar {
      */
     private GrammarGraph parseRuleAlternatives(RuleAlternatives ruleAlternatives)
             throws GrammarException {
-        debugPrintln("parseRuleAlternatives: " + ruleAlternatives.toString());
+        debugPrintln("parseRuleAlternatives: " + ruleAlternatives);
         GrammarGraph result = new GrammarGraph();
 
         Rule[] rules = ruleAlternatives.getRules();
@@ -396,7 +395,7 @@ public class JSGFGrammar extends Grammar {
             if (weights != null) {
                 weight = weights[i];
             }
-            debugPrintln("Alternative: " + rule.toString());
+            debugPrintln("Alternative: " + rule);
             GrammarGraph newNodes = parseRule(rule);
             result.getStartNode().add(newNodes.getStartNode(), weight);
             newNodes.getEndNode().add(result.getEndNode(), 0.0f);
@@ -571,7 +570,7 @@ public class JSGFGrammar extends Grammar {
             dumpGrammarException(ge);
             throw new IOException("GrammarException: " + ge);
         } catch (MalformedURLException mue) {
-            throw new IOException("bad base grammar url " + baseURL + " "
+            throw new IOException("bad base grammar url " + baseURL + ' '
                     + mue);
         }
     }
@@ -609,7 +608,7 @@ public class JSGFGrammar extends Grammar {
 
         for (int i = 0; i < imports.length; i++) {
             System.out
-                    .println("  Import " + i + " " + imports[i].getRuleName());
+                    .println("  Import " + i + ' ' + imports[i].getRuleName());
         }
         System.out.println("}");
 
@@ -617,7 +616,7 @@ public class JSGFGrammar extends Grammar {
         String[] names = ruleGrammar.listRuleNames();
 
         for (int i = 0; i < names.length; i++) {
-            System.out.println("  Name " + i + " " + names[i]);
+            System.out.println("  Name " + i + ' ' + names[i]);
         }
         System.out.println("}");
     }

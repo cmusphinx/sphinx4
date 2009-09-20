@@ -296,7 +296,7 @@ public class Graph {
             int outgoing = node.outgoingEdgesSize();
             if (incoming < 1) {
                 if (!isInitialNode(node)) {
-                    System.out.println("No incoming edge: " + node.toString());
+                    System.out.println("No incoming edge: " + node);
                     passed = false;
                 }
             }
@@ -306,7 +306,7 @@ public class Graph {
             }
             if (outgoing < 1) {
                 if (!isFinalNode(node)) {
-                    System.out.println("No outgoing edge: " + node.toString());
+                    System.out.println("No outgoing edge: " + node);
                     passed = false;
                 }
             }

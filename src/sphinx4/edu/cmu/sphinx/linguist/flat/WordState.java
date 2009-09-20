@@ -39,7 +39,7 @@ public class WordState extends SentenceHMMState {
      * @return a pretty name for this state
      */
     public String getPrettyName() {
-        return getName() + "(" + getWord().getSpelling() + ")";
+        return getName() + '(' + getWord().getSpelling() + ')';
     }
 
 

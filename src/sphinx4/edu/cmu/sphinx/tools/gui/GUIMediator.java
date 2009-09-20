@@ -207,12 +207,10 @@ public class GUIMediator {
     public void action(String command, javax.swing.JTextArea outputJTextArea) 
         throws GUIWriterException, GUIReaderException
     {
-       String output = new String();
-       
-       ConfigProperties cp = new ConfigProperties(); 
+       ConfigProperties cp = new ConfigProperties();
         if( readList(cp) )
         {
-            output = _xmlWriter.getOutput(cp);             
+            String output = _xmlWriter.getOutput(cp);
             outputJTextArea.setText(output);
         }
     }

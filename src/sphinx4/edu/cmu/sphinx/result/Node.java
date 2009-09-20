@@ -89,7 +89,7 @@ public class Node {
         if (endTime != -1) {
             if (beginTime > endTime) {
                 throw new Error("Begin time (" + beginTime +
-                        ") later than end time (" + endTime + ")");
+                        ") later than end time (" + endTime + ')');
             }
         }
         this.forwardScore = LogMath.getLogZero();
@@ -353,8 +353,8 @@ public class Node {
      * @return a description of this Node
      */
     public String toString() {
-        return ("Node(" + word.getSpelling() + "," + getBeginTime() + "|" +
-                getEndTime() + ")");
+        return ("Node(" + word.getSpelling() + ',' + getBeginTime() + '|' +
+                getEndTime() + ')');
     }
 
 
@@ -365,12 +365,12 @@ public class Node {
      * @throws IOException
      */
     void dumpAISee(FileWriter f) throws IOException {
-        String posterior = "" + getPosterior();
+        String posterior = String.valueOf(getPosterior());
         if (getPosterior() == LogMath.getLogZero()) {
             posterior = "log zero";
         }
         f.write("node: { title: \"" + id + "\" label: \""
-                + getWord() + "[" + getBeginTime() + "," + getEndTime() +
+                + getWord() + '[' + getBeginTime() + ',' + getEndTime() +
                 " p:" + posterior + "]\" }\n");
     }
 
@@ -382,7 +382,7 @@ public class Node {
      * @throws IOException
      */
     void dump(PrintWriter f) throws IOException {
-        f.println("node: " + id + " " + word.getSpelling() +
+        f.println("node: " + id + ' ' + word.getSpelling() +
                 //" a:" + getForwardProb() + " b:" + getBackwardProb()
                 " p:" + getPosterior());
     }

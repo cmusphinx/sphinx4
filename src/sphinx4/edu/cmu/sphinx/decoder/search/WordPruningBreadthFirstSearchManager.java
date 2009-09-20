@@ -606,11 +606,11 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
 
         if (fromState.getOrder() > toState.getOrder()) {
             throw new Error("IllegalState order: from "
-                    + fromState.getClass().getName() + " "
+                    + fromState.getClass().getName() + ' '
                     + fromState.toPrettyString()
                     + " order: " + fromState.getOrder()
                     + " to "
-                    + toState.getClass().getName() + " "
+                    + toState.getClass().getName() + ' '
                     + toState.toPrettyString()
                     + " order: " + toState.getOrder());
         }
@@ -1243,7 +1243,7 @@ class WordStats {
      * @return a string representation
      */
     public String toString() {
-        return "states:" + size + " max:" + maxScore + " min:" + minScore + " "
+        return "states:" + size + " max:" + maxScore + " min:" + minScore + ' '
                 + ws;
     }
 }

@@ -771,8 +771,7 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
          * @return a string representation
          */
         public String toString() {
-            return node + "[" + hmmPool.getUnit(lc) + "," +
-                    hmmPool.getUnit(nextBaseID) + "]";
+            return node + "[" + hmmPool.getUnit(lc) + ',' + hmmPool.getUnit(nextBaseID) + ']';
         }
 
 
@@ -975,7 +974,7 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
          * @return the signature
          */
         public String getSignature() {
-            return "PS " + gs.getSignature() + "-" + pronunciation;
+            return "PS " + gs.getSignature() + '-' + pronunciation;
         }
 
 
@@ -1218,7 +1217,7 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
          */
         public String getSignature() {
             return "HSS " + pState.getGrammarState().getGrammarNode() +
-                    pState.getPronunciation() + index + "-" + rc + "-" + lc;
+                    pState.getPronunciation() + index + '-' + rc + '-' + lc;
         }
 
         /**
@@ -1386,7 +1385,7 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
          * @return the signature
          */
         public String getSignature() {
-            return "HSSS " + fullHMMSearchState.getSignature() + "-" + hmmState;
+            return "HSSS " + fullHMMSearchState.getSignature() + '-' + hmmState;
         }
 
 

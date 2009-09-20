@@ -111,7 +111,7 @@ public class IncludingConfigHandler extends ConfigHandler {
             curItem = new StringBuffer();
 
         } else {
-            throw new SAXParseException("Unknown element '" + qName + "'", locator);
+            throw new SAXParseException("Unknown element '" + qName + '\'', locator);
         }
     }
 
@@ -128,7 +128,7 @@ public class IncludingConfigHandler extends ConfigHandler {
             SaxLoader saxLoader = new SaxLoader(fileURL, globalProperties, rpdMap, replaceDuplicates);
             saxLoader.load();
         } catch (IOException e) {
-            throw new RuntimeException("Error while processing <include file=\"" + configFileName + "\">: " + e.toString(), e);
+            throw new RuntimeException("Error while processing <include file=\"" + configFileName + "\">: " + e, e);
         } catch (URISyntaxException e) {
             e.printStackTrace();
         }

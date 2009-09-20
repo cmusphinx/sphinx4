@@ -183,8 +183,7 @@ public abstract class Grammar implements Configurable, GrammarInterface {
             }
             out.close();
         } catch (IOException ioe) {
-            logger.severe("Can't write random sentences to " + path + " "
-                    + ioe);
+            logger.severe("Can't write random sentences to " + path + ' ' + ioe);
         }
     }
 
@@ -218,17 +217,13 @@ public abstract class Grammar implements Configurable, GrammarInterface {
      * @return a random sentence that fits this grammar
      */
     public String getRandomSentence() {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         GrammarNode node = getInitialNode();
         while (!node.isFinalNode()) {
             if (!node.isEmpty()) {
                 Word word = node.getWord();
-                if (!word.isFiller()) {
-                    if (sb.length() > 0) {
-                        sb.append(" ");
-                    }
-                    sb.append(word.getSpelling());
-                }
+                if (!word.isFiller())
+                    sb.append(word.getSpelling()).append(' ');
             }
             node = selectRandomSuccessor(node);
         }

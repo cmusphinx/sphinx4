@@ -108,7 +108,7 @@ public class ConfigMonitor implements Configurable, Runnable, Monitor {
             try {
                 HTMLDumper.showConfigAsHTML(cm, "foo.html");
             } catch (IOException e) {
-                logger.warning("Can't open " + htmlPath + " " + e);
+                logger.warning("Can't open " + htmlPath + ' ' + e);
             }
         }
 
@@ -116,7 +116,7 @@ public class ConfigMonitor implements Configurable, Runnable, Monitor {
             try {
                 GDLDumper.showConfigAsGDL(cm, gdlPath);
             } catch (IOException e) {
-                logger.warning("Can't open " + gdlPath + " " + e);
+                logger.warning("Can't open " + gdlPath + ' ' + e);
             }
         }
 

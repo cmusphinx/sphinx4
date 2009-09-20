@@ -38,7 +38,7 @@ public class WavFile {
             configURL = WavFile.class.getResource("config.xml");
         }
 
-        System.out.println("Loading Recognizer as defined in '" + configURL.toString() + "'...\n");
+        System.out.println("Loading Recognizer as defined in '" + configURL + "'...\n");
         ConfigurationManager cm = new ConfigurationManager(configURL);
 
         // look up the recognizer (which will also lookup all its dependencies

@@ -614,7 +614,7 @@ abstract public class BaseEngine implements Engine, SpeechEventDispatcher {
             throw new EngineStateError
                     ("Invalid EngineState: expected=("
                             + stateToString(state) + ") current state=("
-                            + stateToString(currentState) + ")");
+                            + stateToString(currentState) + ')');
         }
     }
 
@@ -627,20 +627,20 @@ abstract public class BaseEngine implements Engine, SpeechEventDispatcher {
      * @return a <code>String</code> containing the names of all the states set in <code>state</code>
      */
     protected String stateToString(long state) {
-        StringBuffer buf = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         if ((state & Engine.DEALLOCATED) != 0)
-            buf.append(" DEALLOCATED ");
+            sb.append(" DEALLOCATED ");
         if ((state & Engine.ALLOCATING_RESOURCES) != 0)
-            buf.append(" ALLOCATING_RESOURCES ");
+            sb.append(" ALLOCATING_RESOURCES ");
         if ((state & Engine.ALLOCATED) != 0)
-            buf.append(" ALLOCATED ");
+            sb.append(" ALLOCATED ");
         if ((state & Engine.DEALLOCATING_RESOURCES) != 0)
-            buf.append(" DEALLOCATING_RESOURCES ");
+            sb.append(" DEALLOCATING_RESOURCES ");
         if ((state & Engine.PAUSED) != 0)
-            buf.append(" PAUSED ");
+            sb.append(" PAUSED ");
         if ((state & Engine.RESUMED) != 0)
-            buf.append(" RESUMED ");
-        return buf.toString();
+            sb.append(" RESUMED ");
+        return sb.toString();
     }
 
 
@@ -690,6 +690,6 @@ abstract public class BaseEngine implements Engine, SpeechEventDispatcher {
      */
     public String toString() {
         return getEngineModeDesc().getEngineName() +
-                ":" + getEngineModeDesc().getModeName();
+            ':' + getEngineModeDesc().getModeName();
     }
 }

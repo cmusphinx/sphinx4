@@ -142,7 +142,7 @@ public class BuildTranscriptHMM {
                     String wordAlternate
                             = pronunciations[i].getWord().getSpelling();
                     if (i > 0) {
-                        wordAlternate += "(" + i + ")";
+                        wordAlternate += "(" + i + ')';
                     }
                     pronNode[i] = new Node(NodeType.WORD, wordAlternate);
                     graph.linkNodes(dummyWordBeginNode, pronNode[i]);

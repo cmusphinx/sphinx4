@@ -141,7 +141,7 @@ public class LiveCMN extends BaseDataProcessor {
         if (cepstrum.length != sum.length) {
             throw new Error("Data length (" + cepstrum.length +
                     ") not equal sum array length (" +
-                    sum.length + ")");
+                    sum.length + ')');
         }
 
         for (int j = 0; j < cepstrum.length; j++) {

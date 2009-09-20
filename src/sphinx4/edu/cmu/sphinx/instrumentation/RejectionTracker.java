@@ -154,7 +154,7 @@ public class RejectionTracker implements
                             numCorrectInGrammarUtterances)) /
                     ((float) numUtterances) * 100f;
             System.out.println
-                    ("   Rejection Accuracy: " + correctPercent + "%");
+                    ("   Rejection Accuracy: " + correctPercent + '%');
         }
         if (showDetails) {
             System.out.println

@@ -60,7 +60,7 @@ public class XMLConfigWriter implements GUIWriter{
        * @throws GUIWriterException writing error
        */
     public boolean writeOutput(ConfigProperties configProp, File fFile) throws GUIWriterException{
-        if ( fFile == null || fFile.getName().trim().equalsIgnoreCase("") )  /*no filename for output */
+        if (fFile == null || fFile.getName().trim().isEmpty()) /* no filename for output */
         {
             throw new GUIWriterException
                     ("No output filename specified",GUIWriterException.EXCEPTION_NO_FILENAME);
@@ -70,9 +70,9 @@ public class XMLConfigWriter implements GUIWriter{
             
             try{
                 ConfigConverter cc = ConfigConverter.getInstance();
-                StringBuffer sb = cc.writeOutput(configProp);
+                StringBuilder sb = cc.writeOutput(configProp);
                 PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(fFile)));                
-                pw.print(sb.toString());
+                pw.print(sb);
                 pw.flush();
                 pw.close();
                 return true;
@@ -95,7 +95,7 @@ public class XMLConfigWriter implements GUIWriter{
        */
    public String getOutput(ConfigProperties configProp) throws GUIWriterException{
         ConfigConverter cc = ConfigConverter.getInstance();
-        StringBuffer sb = cc.writeOutput(configProp);
+        StringBuilder sb = cc.writeOutput(configProp);
         return sb.toString();
    }
     

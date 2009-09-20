@@ -85,7 +85,7 @@ public class MAPConfidenceTest {
                         (wr.getPronunciation().getWord().getSpelling());
                     System.out.println
                         ("   (confidence: " +
-                         wr.getLogMath().logToLinear((float)wr.getConfidence()) + ")");
+                         wr.getLogMath().logToLinear((float)wr.getConfidence()) + ')');
                 }
 
                 System.out.println();
@@ -94,7 +94,7 @@ public class MAPConfidenceTest {
                 System.out.println(best.getTranscription());
                 System.out.println
                     ("   (confidence: " +
-                     best.getLogMath().logToLinear((float)best.getConfidence()) + ")");
+                     best.getLogMath().logToLinear((float)best.getConfidence()) + ')');
             }
         } catch (IOException e) {
             System.err.println("Problem when loading MAPConfidenceTest: " + e);

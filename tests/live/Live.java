@@ -318,7 +318,7 @@ public class Live {
     private void parseDecoderListFile(String decoderListFile)
             throws  IOException,  LineUnavailableException {
 
-        info("Parsing file " + decoderListFile + " ");
+        info("Parsing file " + decoderListFile + ' ');
 
         Properties properties = new Properties();
         properties.load(new FileInputStream(decoderListFile));
@@ -362,7 +362,7 @@ public class Live {
             info(".");
         }
 
-        info("done parsing " + decoderListFile + "\n");
+        info("done parsing " + decoderListFile + '\n');
     }
 
 

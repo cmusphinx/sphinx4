@@ -61,7 +61,7 @@ public class StatePath {
      * @return the string representation
      */
     public String toString() {
-        return state.toString() + " " + context.toString();
+        return state.toString() + ' ' + context;
     }
 }
 

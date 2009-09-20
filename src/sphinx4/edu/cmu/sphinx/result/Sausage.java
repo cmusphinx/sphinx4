@@ -270,17 +270,17 @@ public class Sausage implements ConfidenceResult {
                 f.write("node: { title: \"" + index + "\" label: \"" + index + "\"}\n");
                 for (Map.Entry<Double, Set<WordResult>> entry : set.entrySet()) {
                     Double prob = entry.getKey();
-                    String word = "";
+                    StringBuilder edge = new StringBuilder();
+                    edge.append("edge: { sourcename: \"").append(index)
+                        .append("\" targetname: \"").append(index + 1)
+                        .append("\" label: \"");
                     Set<WordResult> wordSet = entry.getValue();
-                    for (Iterator<WordResult> w = wordSet.iterator(); w.hasNext();) {
-                        word += w.next();
-                        if (w.hasNext()) {
-                            word += "/";
-                        }
-                    }
-                    f.write("edge: { sourcename: \"" + index
-                            + "\" targetname: \"" + (index + 1)
-                            + "\" label: \"" + word + ":" + prob + "\" }\n");
+                    for (Iterator<WordResult> w = wordSet.iterator(); w.hasNext();)
+                        edge.append(w.next()).append('/');
+                    if (!wordSet.isEmpty())
+                        edge.setLength(edge.length() - 1);
+                    edge.append(':').append(prob).append("\" }\n");
+                    f.write(edge.toString());
                 }
             }
             f.write("node: { title: \"" + size() + "\" label: \"" + size() + "\"}\n");

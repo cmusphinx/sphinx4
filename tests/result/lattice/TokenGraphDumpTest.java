@@ -80,7 +80,7 @@ public class TokenGraphDumpTest {
             /* print out the results */
             if (result != null) {
                 System.out.println("\nRESULT: " + 
-                                   result.getBestFinalResultNoFiller() + "\n");
+                                   result.getBestFinalResultNoFiller() + '\n');
                 TokenGraphDumper dumper = new TokenGraphDumper(result);
                 dumper.dumpGDL("Full Token Graph", "tokengraph.gdl");
             } else {

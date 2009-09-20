@@ -30,7 +30,7 @@ public class JSGFParser implements JSGFParserConstants {
             try {
                 URL codeBase;
                 File f = new File(".");
-                String path = f.getAbsolutePath() + "/" + args[0];
+                String path = f.getAbsolutePath() + '/' + args[0];
                 try {
                     codeBase = new URL("file:" + path);
                 } catch (MalformedURLException e) {
@@ -42,7 +42,7 @@ public class JSGFParser implements JSGFParserConstants {
                 Object a[] = getJSGFEncoding(i);
                 Reader rdr;
                 if ((a != null) && (a[1] != null)) {
-                    System.out.println("Grammar Character Encoding \"" + a[1] + "\"");
+                    System.out.println("Grammar Character Encoding \"" + a[1] + '\"');
                     rdr = new InputStreamReader(i, (String) a[1]);
                 } else {
                     if (a == null) System.out.println("WARNING: Grammar missing self identifying header");
@@ -257,7 +257,7 @@ public class JSGFParser implements JSGFParserConstants {
         Object a[] = getJSGFEncoding(i);
         Reader rdr;
         if ((a != null) && (a[1] != null)) {
-            System.out.println("Grammar Character Encoding \"" + a[1] + "\"");
+            System.out.println("Grammar Character Encoding \"" + a[1] + '\"');
             rdr = new InputStreamReader(i, (String) a[1]);
         } else {
             if (a == null) System.out.println("WARNING: Grammar missing self identifying header");
@@ -472,7 +472,7 @@ public class JSGFParser implements JSGFParserConstants {
 
     final public String Name() throws ParseException {
         Token t1, t2;
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         switch ((jj_ntk == -1) ? jj_ntk() : jj_ntk) {
             case IDENTIFIER:
                 t1 = jj_consume_token(IDENTIFIER);

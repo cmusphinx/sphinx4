@@ -194,12 +194,9 @@ public final class WordSequence {
      * @return the string
      */
     public String toString() {
-        StringBuffer sb = new StringBuffer();
-        for (Word word : words) {
-            sb.append("[");
-            sb.append(word.toString());
-            sb.append("]");
-        }
+        StringBuilder sb = new StringBuilder();
+        for (Word word : words)
+            sb.append('[').append(word).append(']');
         return sb.toString();
     }
 

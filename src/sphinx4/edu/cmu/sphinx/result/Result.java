@@ -401,7 +401,7 @@ public class Result {
      * @return the string of words
      */
     private String getTimedWordPath(Token token, boolean wantFiller) {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
 
         // get to the first emitting token
         while (token != null && !token.isEmitting()) {
@@ -441,7 +441,7 @@ public class Result {
      * @return the string of words, each with the starting sample number
      */
     private String getTimedWordTokenLastPath(Token token, boolean wantFiller) {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         Word word = null;
         Data lastFeature = null;
         Data lastWordFirstFeature = null;
@@ -474,24 +474,24 @@ public class Result {
 
 
     /**
-     * Adds the given word into the given string buffer with the start and end times from the given features.
+     * Adds the given word into the given string builder with the start and end times from the given features.
      *
-     * @param sb           the StringBuffer into which the word is added
+     * @param sb           the StringBuilder into which the word is added
      * @param word         the word to add
      * @param startFeature the starting feature
      * @param endFeature   tne ending feature
      */
-    private void addWord(StringBuffer sb, Word word,
+    private void addWord(StringBuilder sb, Word word,
                          FloatData startFeature, FloatData endFeature) {
         float startTime = startFeature == null ? -1 : ((float) startFeature.getFirstSampleNumber() /
                 startFeature.getSampleRate());
         float endTime = endFeature == null ? -1 : ((float) endFeature.getFirstSampleNumber() /
                 endFeature.getSampleRate());
         if (sb.length() > 0) {
-            sb.insert(0, " ");
+            sb.insert(0, ' ');
         }
-        sb.insert(0, (word.getSpelling() + "(" + startTime + "," +
-                endTime + ")"));
+        sb.insert(0, (word.getSpelling() + '(' + startTime + ',' +
+                endTime + ')'));
     }
 
 

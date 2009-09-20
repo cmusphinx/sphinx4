@@ -725,8 +725,8 @@ public class LexTreeLinguist implements Linguist {
          * @return the string representation
          */
         public String toString() {
-            return "lt-" + node + " " + getProbability() + "{" + wordSequence
-                    + "}";
+            return "lt-" + node + ' ' + getProbability() + '{' + wordSequence
+                    + '}';
         }
 
 
@@ -753,7 +753,7 @@ public class LexTreeLinguist implements Linguist {
                 }
                 if (++cacheTrys % 1000000 == 0) {
                     System.out.println("Hits: " + cacheHits
-                            + " of " + cacheTrys + " " +
+                            + " of " + cacheTrys + ' ' +
                             ((float) cacheHits) / cacheTrys * 100f);
                 }
                 return arcs;

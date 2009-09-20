@@ -106,7 +106,7 @@ public class RuleParser {
         if (r instanceof RuleName) {
             RuleName rn = (RuleName) r;
             if (rn.getFullGrammarName() == null) {
-                rn.setRuleName(G.getName() + "." + rn.getSimpleRuleName());
+                rn.setRuleName(G.getName() + '.' + rn.getSimpleRuleName());
             }
             String simpleName = rn.getSimpleRuleName();
             if (simpleName.equals("VOID")) return null;
@@ -124,7 +124,7 @@ public class RuleParser {
             if (ruleref == null) {
                 String gname = rn.getFullGrammarName();
                 //System.out.println("gname=" + gname);
-                if ((gname != null) && (gname.length() > 0)) {
+                if (gname != null && !gname.isEmpty()) {
                     RuleGrammar RG1 = theRec.getRuleGrammar(gname);
                     if (RG1 != null) {
                         //System.out.println("simpleName=" + simpleName);
@@ -137,7 +137,7 @@ public class RuleParser {
                     }
                 }
                 if (ruleref == null) {
-                    System.out.println("ERROR: UNKNOWN RULE NAME " + rn.getRuleName() + " " + rn);
+                    System.out.println("ERROR: UNKNOWN RULE NAME " + rn.getRuleName() + ' ' + rn);
                     //Thread.dumpStack();
                     return null;
                 }

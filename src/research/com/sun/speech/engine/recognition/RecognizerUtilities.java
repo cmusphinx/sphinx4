@@ -36,7 +36,7 @@ public class RecognizerUtilities {
                 try {
                     gramTo = recTo.newRuleGrammar(name);
                 } catch (IllegalArgumentException gse) {
-                    throw new GrammarException("copyGrammars: " + gse.toString(), null);
+                    throw new GrammarException("copyGrammars: " + gse, null);
                 }
             }
             copyGrammar(gramFrom[i], gramTo);
@@ -110,7 +110,7 @@ public class RecognizerUtilities {
                 Rule r = grams[i].getRule(names[j]);
 
                 // Build a fully-qualified RuleName for rule name[j] in gram[i]
-                RuleName rn = new RuleName(grams[i].getName() + "." + names[j]);
+                RuleName rn = new RuleName(grams[i].getName() + '.' + names[j]);
 
                 // Identify all rules referenced in r
                 Vector<RuleName> refs = new Vector<RuleName>();
@@ -137,8 +137,7 @@ public class RecognizerUtilities {
                         h.put(rn.toString().intern(), "dummy");
                         xrefs.put(fullref.toString().intern(), h);
                     } else {
-                        debugMessageOut("Warning: unresolved rule " + ref.toString() +
-                                " in grammar " + grams[i].getName());
+                        debugMessageOut("Warning: unresolved rule " + ref + " in grammar " + grams[i].getName());
                     }
                 }
             }
@@ -150,7 +149,7 @@ public class RecognizerUtilities {
     static public RuleName[] getRefsToRuleName(RuleGrammar g, RuleName r) {
         // Ensure we have a fully qualified rulename
         // (that's how the xref table works)
-        r = new RuleName(g.getName() + "." + r.getSimpleRuleName());
+        r = new RuleName(g.getName() + '.' + r.getSimpleRuleName());
 
         if (xrefs == null) {
             return null;
@@ -507,7 +506,7 @@ public class RecognizerUtilities {
         } catch (Exception e1) {
             System.out.println("GRAMMAR ERROR: In grammar " + args[0]
                     + ", or its imports, at URL base " + u
-                    + " " + e1);
+                    + ' ' + e1);
             e1.printStackTrace();
             return;
         }
@@ -542,7 +541,7 @@ public class RecognizerUtilities {
             System.out.println("Grammar: " + NRG[j].getName());
             String rnames[] = NRG[j].listRuleNames();
             for (int k = 0; k < rnames.length; k++) {
-                System.out.print("<" + rnames[k] + "> = ");
+                System.out.print('<' + rnames[k] + "> = ");
                 Rule r = NRG[j].getRuleInternal(rnames[k]);
                 System.out.println(r);
             }

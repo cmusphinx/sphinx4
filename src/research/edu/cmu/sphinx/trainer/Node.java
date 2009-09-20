@@ -233,7 +233,7 @@ public class Node {
     /** Prints out this node. */
     public void print() {
         System.out.print("ID: " + nodeId);
-        System.out.print(" Type: " + nodeType.toString() + " | ");
+        System.out.print(" Type: " + nodeType + " | ");
         for (startIncomingEdgeIterator();
              hasMoreIncomingEdges();) {
             System.out.print(nextIncomingEdge() + " ");

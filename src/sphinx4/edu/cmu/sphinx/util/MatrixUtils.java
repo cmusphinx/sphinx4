@@ -9,11 +9,11 @@ public class MatrixUtils {
 
 
     public static String toString(double[][] m) {
-        StringBuffer s = new StringBuffer("[");
+        StringBuilder s = new StringBuilder("[");
 
         for (int r = 0; r < m.length; r++) {
             s.append(toString(m[r]));
-            s.append("\n");
+            s.append('\n');
         }
 
         return s.append(" ]").toString();
@@ -21,10 +21,10 @@ public class MatrixUtils {
 
 
     public static String toString(double[] m) {
-        StringBuffer s = new StringBuffer("[");
+        StringBuilder s = new StringBuilder("[");
 
         for (int r = 0; r < m.length; r++) {
-            s.append(" ").append(df.format(m[r]));
+            s.append(' ').append(df.format(m[r]));
         }
 
         return s.append(" ]").toString();

@@ -115,7 +115,7 @@ public class LiveModeRecognizer implements Configurable {
             resultList.add(resultText);
 
             hypothesisTranscript.write(result.getTimedBestResult(false, true)
-                    + "\n");
+                    + '\n');
             hypothesisTranscript.flush();
 
             if (alignInterval > 0 && (numUtterances % alignInterval == 0)) {
@@ -224,9 +224,9 @@ public class LiveModeRecognizer implements Configurable {
      * @return a string which is a concatenation of the strings in the list, separated by a space character
      */
     private String listToString(List<String> resultList) {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         for (String result : resultList) {
-            sb.append(result).append(" ");
+            sb.append(result).append(' ');
         }
         return sb.toString();
     }

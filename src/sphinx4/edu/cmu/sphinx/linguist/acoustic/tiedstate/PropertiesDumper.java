@@ -30,7 +30,7 @@ public class PropertiesDumper {
         try {
             PropertiesDumper dumper = new PropertiesDumper("model.props");
             System.out.println();
-            System.out.println(dumper.toString());
+            System.out.println(dumper);
         } catch (IOException ioe) {
             ioe.printStackTrace();
         }
@@ -64,16 +64,16 @@ public class PropertiesDumper {
      * @return a string of the properties
      */
     public String toString() {
-        String result = props.get("description") + "\n";
+        StringBuilder result = new StringBuilder().append(props.get("description")).append('\n');
         List list = Collections.list(props.propertyNames());
         Collections.sort(list);
         for (Iterator i = list.iterator(); i.hasNext();) {
             String key = (String) i.next();
             String value = (String) props.get(key);
-            result += ("\n\t" + key + ": " + value);
+            result.append("\n\t").append(key).append(": ").append(value);
         }
-        result += "\n";
-        return result;
+        result.append('\n');
+        return result.toString();
     }
 
 
@@ -84,21 +84,19 @@ public class PropertiesDumper {
      * @return a readable form of strings like "thisIsAString"
      */
     private String getReadableForm(String original) {
-        if (original.length() > 0) {
-            StringBuffer sb = new StringBuffer(original.length() * 2);
-            int i = 0;
-            sb.append(Character.toUpperCase(original.charAt(i++)));
-            for (; i < original.length(); i++) {
-                char c = original.charAt(i);
-                if (Character.isUpperCase(c)) {
-                    sb.append(" ");
-                }
-                sb.append(c);
-            }
-            return sb.toString();
-        } else {
+        if (original.isEmpty())
             return original;
+        StringBuilder sb = new StringBuilder(original.length() * 2);
+        int i = 0;
+        sb.append(Character.toUpperCase(original.charAt(i++)));
+        for (; i < original.length(); i++) {
+            char c = original.charAt(i);
+            if (Character.isUpperCase(c)) {
+                sb.append(' ');
+            }
+            sb.append(c);
         }
+        return sb.toString();
     }
 }
 

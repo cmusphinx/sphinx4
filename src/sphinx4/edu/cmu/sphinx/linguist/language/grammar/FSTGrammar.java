@@ -254,7 +254,7 @@ public class FSTGrammar extends Grammar {
                         continue;
                     }
                     /*
-                    * System.out.println(nextNode.toString() + ": " + output);
+                    * System.out.println(nextNode + ": " + output);
                     */
                     assert hasWord(nextNode);
                 }
@@ -322,8 +322,7 @@ public class FSTGrammar extends Grammar {
                     if (!word2.equals(",")) {
                         /*
                          * if (!word2.toLowerCase().equals(getWord(node))) {
-                         * System.out.println(node.toString() + ": " + word2 + " " +
-                         * getWord(node)); }
+                         * System.out.println(node + ": " + word2 + ' ' + getWord(node)); }
                          */
                         assert (word2.toLowerCase().equals(getWord(node)));
                     }

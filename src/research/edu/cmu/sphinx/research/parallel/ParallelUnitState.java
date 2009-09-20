@@ -82,7 +82,7 @@ public class ParallelUnitState extends UnitState implements ParallelState {
      */
     public String getName() {
         String name = super.getName();
-        return name + "." + stream.getName();
+        return name + '.' + stream.getName();
     }
 
 
@@ -92,7 +92,7 @@ public class ParallelUnitState extends UnitState implements ParallelState {
      * @return the pretty name
      */
     public String getPrettyName() {
-        return super.getPrettyName() + "." + stream.getName();
+        return super.getPrettyName() + '.' + stream.getName();
     }
 
 
@@ -102,7 +102,7 @@ public class ParallelUnitState extends UnitState implements ParallelState {
      * @return the title
      */
     public String getTitle() {
-        return super.getTitle() + "." + stream.getName();
+        return super.getTitle() + '.' + stream.getName();
     }
 
 
@@ -112,7 +112,7 @@ public class ParallelUnitState extends UnitState implements ParallelState {
      * @return the value signature
      */
     public String getValueSignature() {
-        return super.getValueSignature() + "." + stream.getName();
+        return super.getValueSignature() + '.' + stream.getName();
     }
 
 

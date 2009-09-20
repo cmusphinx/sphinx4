@@ -48,7 +48,7 @@ public class BatchFile {
         String line = null;
 
         while ((line = reader.readLine()) != null) {
-            if (line.length() > 0) {
+            if (!line.isEmpty()) {
                 if (++curCount >= skip) {
                     list.add(line);
                     curCount = 0;
@@ -66,7 +66,7 @@ public class BatchFile {
      * @return the file name portion of a line in a batch file.
      */
     public static String getFilename(String batchFileLine) {
-        int firstSpace = batchFileLine.indexOf(" ");
+        int firstSpace = batchFileLine.indexOf(' ');
         return batchFileLine.substring(0, firstSpace).trim();
     }
 
@@ -78,7 +78,7 @@ public class BatchFile {
      * @return the reference string portion of a line in a batch file.
      */
     public static String getReference(String batchFileLine) {
-        int firstSpace = batchFileLine.indexOf(" ");
+        int firstSpace = batchFileLine.indexOf(' ');
         return batchFileLine.substring(firstSpace + 1).trim();
     }
 }

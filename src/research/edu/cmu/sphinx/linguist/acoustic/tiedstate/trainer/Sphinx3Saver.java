@@ -480,7 +480,7 @@ class Sphinx3Saver implements Saver {
         for (Enumeration e = props.keys(); e.hasMoreElements();) {
             String name = (String) e.nextElement();
             String value = props.getProperty(name);
-            writeWord(dos, name + " " + value + "\n");
+            writeWord(dos, name + ' ' + value + '\n');
         }
         writeWord(dos, "endhdr\n");
 
@@ -620,7 +620,7 @@ class Sphinx3Saver implements Saver {
     private void dumpData(String name, float[] data) {
         System.out.println(" ----- " + name + " -----------");
         for (int i = 0; i < data.length; i++) {
-            System.out.println(name + " " + i + ": " + data[i]);
+            System.out.println(name + ' ' + i + ": " + data[i]);
         }
     }
 
@@ -748,20 +748,20 @@ class Sphinx3Saver implements Saver {
             Unit unit = hmm.getUnit();
 
             String name = unit.getName();
-            pw.print(name + "\t");
+            pw.print(name + '\t');
             String left = "-";
             pw.print(left + "   ");
             String right = "-";
-            pw.print(right + " ");
+            pw.print(right + ' ');
             String position = hmm.getPosition().toString();
-            pw.print(position + "\t");
+            pw.print(position + '\t');
             String attribute;
             if (unit.isFiller()) {
                 attribute = FILLER;
             } else {
                 attribute = "n/a";
             }
-            pw.print(attribute + "\t");
+            pw.print(attribute + '\t');
             int tmat = matrixPool.indexOf(hmm.getTransitionMatrix());
             assert tmat < numTiedTransitionMatrices;
             pw.print(tmat + "\t");
@@ -796,13 +796,13 @@ class Sphinx3Saver implements Saver {
             assert leftContext.length == 1 && rightContext.length == 1;
 
             String name = unit.getName();
-            pw.print(name + "\t");
+            pw.print(name + '\t');
             String left = leftContext[0].getName();
             pw.print(left + "   ");
             String right = rightContext[0].getName();
-            pw.print(right + " ");
+            pw.print(right + ' ');
             String position = hmm.getPosition().toString();
-            pw.print(position + "\t");
+            pw.print(position + '\t');
             String attribute;
             if (unit.isFiller()) {
                 attribute = FILLER;
@@ -810,7 +810,7 @@ class Sphinx3Saver implements Saver {
                 attribute = "n/a";
             }
             assert attribute.equals("n/a");
-            pw.print(attribute + "\t");
+            pw.print(attribute + '\t');
             int tmat = matrixPool.indexOf(hmm.getTransitionMatrix());
             assert tmat < numTiedTransitionMatrices;
             pw.print(tmat + "\t");
@@ -998,10 +998,10 @@ class Sphinx3Saver implements Saver {
         tmat = (float[][]) pool.get(0);
         numStates = tmat[0].length;
 
-        pw.println("tmat " + numMatrices + " " + numStates);
+        pw.println("tmat " + numMatrices + ' ' + numStates);
 
         for (int i = 0; i < numMatrices; i++) {
-            pw.println("tmat [" + i + "]");
+            pw.println("tmat [" + i + ']');
 
             tmat = (float[][]) pool.get(i);
             for (int j = 0; j < numStates; j++) {

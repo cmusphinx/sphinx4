@@ -75,7 +75,7 @@ public final class ConfigurationManagerUtils {
             System.out.println("No component: " + name);
             return;
         }
-        System.out.println(name + ":");
+        System.out.println(name + ':');
 
         Collection<String> propertyNames = ps.getRegisteredProperties();
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -97,7 +97,7 @@ public final class ConfigurationManagerUtils {
                 while (!done) {
                     System.out.print("  " + propertyName + " [" + svalue + "]: ");
                     String in = br.readLine();
-                    if (in.length() == 0) {
+                    if (in.isEmpty()) {
                         done = true;
                     } else if (in.equals(".")) {
                         return;
@@ -118,7 +118,7 @@ public final class ConfigurationManagerUtils {
     public static String getLogPrefix(ConfigurationManager cm) {
         if (cm.getConfigURL() != null)
             // remark: the replacement of xml/sxl suffix is not necessary and just done to improve readability
-            return new File(cm.getConfigURL().getFile()).getName().replace(".sxl", "").replace(".xml", "") + ".";
+            return new File(cm.getConfigURL().getFile()).getName().replace(".sxl", "").replace(".xml", "") + '.';
         else
 //            return "S4CM"+ cm.hashCode() + ".";
             return "S4CM.";
@@ -239,7 +239,7 @@ public final class ConfigurationManagerUtils {
      * Note: This methods will not instantiate configurables.
      */
     public static String toXML(ConfigurationManager cm) {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n");
         sb.append("\n<!--    Sphinx-4 Configuration file--> \n\n");
 
@@ -254,7 +254,7 @@ public final class ConfigurationManagerUtils {
             Matcher matcher = pattern.matcher(propName);
             propName = matcher.matches() ? matcher.group(1) : propName;
 
-            sb.append("\n\t<property name=\"" + propName + "\" value=\"" + entry.getValue() + "\"/>");
+            sb.append("\n\t<property name=\"").append(propName).append("\" value=\"").append(entry.getValue()).append("\"/>");
         }
 
         Collection<String> allInstances = cm.getComponentNames();
@@ -267,8 +267,8 @@ public final class ConfigurationManagerUtils {
 
 
     private static String propSheet2XML(String instanceName, PropertySheet ps) {
-        StringBuffer sb = new StringBuffer();
-        sb.append("\t<component name=\"" + instanceName + "\" type=\"" + ps.getConfigurableClass().getName() + "\">");
+        StringBuilder sb = new StringBuilder();
+        sb.append("\t<component name=\"").append(instanceName).append("\" type=\"").append(ps.getConfigurableClass().getName()).append("\">");
 
         for (String propName : ps.getRegisteredProperties()) {
             String predec = "\n\t\t<property name=\"" + propName + "\" ";
@@ -278,14 +278,14 @@ public final class ConfigurationManagerUtils {
             switch (ps.getType(propName)) {
 
                 case COMPLIST:
-                    sb.append("\n\t\t<propertylist name=\"" + propName + "\">");
+                    sb.append("\n\t\t<propertylist name=\"").append(propName).append("\">");
                     List<String> compNames = (List<String>) ps.getRawNoReplacement(propName);
                     for (String compName : compNames)
-                        sb.append("\n\t\t\t<item>" + compName + "</item>");
+                        sb.append("\n\t\t\t<item>").append(compName).append("</item>");
                     sb.append("\n\t\t</propertylist>");
                     break;
                 default:
-                    sb.append(predec + "value=\"" + ps.getRawNoReplacement(propName) + "\"/>");
+                    sb.append(predec).append("value=\"").append(ps.getRawNoReplacement(propName)).append("\"/>");
             }
         }
 
@@ -296,7 +296,7 @@ public final class ConfigurationManagerUtils {
 
     public static void save(ConfigurationManager cm, File cmLocation) {
         if (!cmLocation.getName().endsWith(CM_FILE_SUFFIX))
-            System.err.println("WARNING: Serialized s4-configuration should have the suffix '" + CM_FILE_SUFFIX + "'");
+            System.err.println("WARNING: Serialized s4-configuration should have the suffix '" + CM_FILE_SUFFIX + '\'');
 
         assert cm != null;
         try {
@@ -332,7 +332,7 @@ public final class ConfigurationManagerUtils {
             System.out.println("No component: " + name);
             return;
         }
-        System.out.println(name + ":");
+        System.out.println(name + ':');
 
         PropertySheet properties = cm.getPropertySheet(name);
 
@@ -390,7 +390,7 @@ public final class ConfigurationManagerUtils {
                     throw new InternalConfigurationException(compName, param,
                             "System property attempting to set parameter "
                                     + " for unknown component " + compName
-                                    + " (" + param + ")");
+                                    + " (" + param + ')');
                 }
             }
 
@@ -494,7 +494,7 @@ public final class ConfigurationManagerUtils {
                         // jar:file:/foo.jar!/a/b/c/HelloWorld.class
                         // after the ! with the resource name
                         String urlString = url.toString();
-                        urlString = urlString.replaceAll("/" + classPath, resourceName);
+                        urlString = urlString.replaceAll('/' + classPath, resourceName);
                         try {
                             url = new URL(urlString);
                         } catch (MalformedURLException mfe) {
@@ -511,7 +511,7 @@ public final class ConfigurationManagerUtils {
                 throw new InternalConfigurationException(cnfe, name, name, "Can't locate resource:/" + className);
             }
         } else {
-            if (location.indexOf(":") == -1) {
+            if (location.indexOf(':') == -1) {
                 location = "file:" + location;
             }
 
@@ -611,7 +611,7 @@ public final class ConfigurationManagerUtils {
             if (entry.getValue().size() == 1)
                 continue;
 
-            System.out.print(entry.getKey() + "=");
+            System.out.print(entry.getKey() + '=');
             for (PropertySheet ps : entry.getValue()) {
                 System.out.print(ps.getInstanceName() + ", ");
             }

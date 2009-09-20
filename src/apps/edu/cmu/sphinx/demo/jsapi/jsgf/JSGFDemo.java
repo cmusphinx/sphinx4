@@ -132,7 +132,7 @@ public class JSGFDemo {
             RuleGrammar ruleGrammar = jsgfGrammarManager.getRuleGrammar();
             RuleParse ruleParse = ruleGrammar.parse(bestResult, null);
             if (ruleParse != null) {
-                System.out.println("\n  " + bestResult + "\n");
+                System.out.println("\n  " + bestResult + '\n');
                 done = isExit(ruleParse);
             } 
         }

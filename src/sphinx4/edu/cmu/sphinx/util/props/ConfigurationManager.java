@@ -95,11 +95,11 @@ public class ConfigurationManager implements Cloneable {
                     symbolTable.put(instanceName, propertySheet);
 
                 } catch (ClassNotFoundException e) {
-                    System.err.println("class not found !" + e.toString());
+                    System.err.println("class not found !" + e);
                 } catch (ClassCastException e) {
-                    System.err.println("can not cast class !" + e.toString());
+                    System.err.println("can not cast class !" + e);
                 } catch (ExceptionInInitializerError e) {
-                    System.err.println("couldn't load class !" + e.toString());
+                    System.err.println("couldn't load class !" + e);
                 }
             }
         }

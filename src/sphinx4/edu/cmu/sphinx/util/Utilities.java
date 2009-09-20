@@ -35,7 +35,7 @@ public class Utilities {
      */
     public static String pad(int padding) {
         if (padding > 0) {
-            StringBuffer sb = new StringBuffer(padding);
+            StringBuilder sb = new StringBuilder(padding);
             for (int i = 0; i < padding; i++) {
                 sb.append(' ');
             }
@@ -73,7 +73,7 @@ public class Utilities {
      * @return a string of length conntaining string padded with whitespace or truncated
      */
     public static String pad(int val, int minLength) {
-        return pad("" + val, minLength);
+        return pad(String.valueOf(val), minLength);
     }
 
 
@@ -85,7 +85,7 @@ public class Utilities {
      * @return a string of length conntaining string padded with whitespace or truncated
      */
     public static String pad(double val, int minLength) {
-        return pad("" + val, minLength);
+        return pad(String.valueOf(val), minLength);
     }
 
 
@@ -111,7 +111,7 @@ public class Utilities {
     public static void objectTracker(String name, int count) {
         if (TRACKING_OBJECTS) {
             if (count % 1000 == 0) {
-                System.out.println("OT: " + name + " " + count);
+                System.out.println("OT: " + name + ' ' + count);
             }
         }
     }
@@ -163,18 +163,18 @@ public class Utilities {
                                                   int fractionDigits) {
         DecimalFormat format = new DecimalFormat();
 
-        String formatter = "0.";
+        StringBuilder formatter = new StringBuilder(5 + fractionDigits).append("0.");
         for (int i = 0; i < fractionDigits; i++) {
-            formatter += "0";
+            formatter.append('0');
         }
-        formatter += "E00";
+        formatter.append("E00");
 
-        format.applyPattern(formatter);
+        format.applyPattern(formatter.toString());
         String formatted = format.format(number);
 
         int index = formatted.indexOf('E');
         if (formatted.charAt(index + 1) != '-') {
-            return formatted.substring(0, index + 1) + "+" +
+            return formatted.substring(0, index + 1) + '+' +
                     formatted.substring(index + 1);
         } else {
             return formatted;

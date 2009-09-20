@@ -78,7 +78,7 @@ public class LatticeCompTest {
 
             /* print out the results */
             System.out.println("\nRESULT: " + 
-                               result.getBestFinalResultNoFiller() + "\n");
+                               result.getBestFinalResultNoFiller() + '\n');
             Lattice lattice = new Lattice(result);
             lattice.dumpAISee("lattice.gdl", "lattice");
             
@@ -105,7 +105,7 @@ public class LatticeCompTest {
             Result allResult = allRecognizer.recognize();
 
             System.out.println("\nRESULT: " +
-                               allResult.getBestFinalResultNoFiller() + "\n");
+                               allResult.getBestFinalResultNoFiller() + '\n');
             Lattice allLattice = new Lattice(allResult);
             allLattice.dumpAISee("allLattice.gdl", "All Lattice");
             

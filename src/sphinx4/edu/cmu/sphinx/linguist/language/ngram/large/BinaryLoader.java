@@ -627,14 +627,14 @@ public class BinaryLoader {
      */
     private final String readString(DataInputStream stream, int length)
             throws IOException {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder builder = new StringBuilder();
         byte[] bytes = new byte[length];
         bytesRead += stream.read(bytes);
 
         for (int i = 0; i < length; i++) {
-            buffer.append((char) bytes[i]);
+            builder.append((char) bytes[i]);
         }
-        return buffer.toString();
+        return builder.toString();
     }
 
 

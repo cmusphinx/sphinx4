@@ -131,7 +131,7 @@ class MyBehavior extends NewGrammarDialogNodeBehavior {
 
         if (tag != null) {
             System.out.println("\n "
-                    + result.getBestFinalResultNoFiller() + "\n");
+                    + result.getBestFinalResultNoFiller() + '\n');
             if (tag.equals("exit")) {
                 System.out.println("Goodbye! Thanks for visiting!\n");
                 System.exit(0);
@@ -226,7 +226,7 @@ class MyMusicBehavior extends MyBehavior {
             String song;
 
             while ((song = br.readLine()) != null) {
-                if (song.length() > 0) {
+                if (!song.isEmpty()) {
                     songList.add(song);
                 }
             }
@@ -281,8 +281,8 @@ class MyMusicBehavior extends MyBehavior {
 
         for (int i = 0; i < ruleNames.length; i++) {
             String enabled = rg.isEnabled(ruleNames[i]) ? "ON" : "OFF";
-            System.out.println("Rule: " + ruleNames[i] + " " +
-                    rg.getRule(ruleNames[i]) + " " + enabled);
+            System.out.println("Rule: " + ruleNames[i] + ' ' +
+                    rg.getRule(ruleNames[i]) + ' ' + enabled);
         }
     }
 }

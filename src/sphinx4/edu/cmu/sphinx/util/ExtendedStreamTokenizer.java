@@ -215,7 +215,7 @@ public class ExtendedStreamTokenizer {
         String line = getString();
         if (!line.equals(expecting)) {
             corrupt("error matching expected string '" + expecting +
-                    "' in line: '" + line + "'");
+                    "' in line: '" + line + '\'');
         }
     }
 

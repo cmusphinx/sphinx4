@@ -178,7 +178,7 @@ public class ModelBuilder implements GUIFileActionListener {
         try {
             String completename = classname.trim().replace('.', '/');
             if (!_source_path.trim().endsWith("/")) // add  '/' at the end of path
-                completename = _source_path.trim().concat("/" + completename);
+                completename = _source_path.trim().concat('/' + completename);
             else
                 completename = _source_path.trim().concat(completename);
 
@@ -212,8 +212,7 @@ public class ModelBuilder implements GUIFileActionListener {
         try {
             Class searchclass = Class.forName(classtype);
             Map<String, String> myreturn = new HashMap<String, String>();
-            if (_classes != null && classtype != null &&
-                    !classtype.trim().equalsIgnoreCase("")) {
+            if (_classes != null && classtype != null && !classtype.trim().isEmpty()) {
                 for (Object o : _classes.values()) {
                     ConfigurableComponent cc = (ConfigurableComponent) o;
                     Class c = cc.getComponentClass();
@@ -309,7 +308,7 @@ public class ModelBuilder implements GUIFileActionListener {
             if (!propertyMap.containsKey(propname)) {
                 ConfigurableProperty prop = (ConfigurableProperty) propentry.getValue();
                 String defaultVal = prop.getDefault();
-                if (defaultVal != null && !defaultVal.trim().equalsIgnoreCase("")) {
+                if (defaultVal != null && !defaultVal.trim().isEmpty()) {
                     propertyMap.put(propname, defaultVal);
                     //  System.out.println("***** add prop "+propname);
                 } else {
@@ -360,12 +359,12 @@ public class ModelBuilder implements GUIFileActionListener {
             Set groupmembers = (Set) entry.getValue();
             System.out.println("Group : " + groupname);
             for (Object groupmember : groupmembers) {
-                System.out.println("-" + ((ConfigurableComponent) groupmember).getName());
+                System.out.println('-' + ((ConfigurableComponent) groupmember).getName());
             }
         }
         for (Object o : _classes.values()) {
             ConfigurableComponent cc = (ConfigurableComponent) o;
-            System.out.print(cc.toString());
+            System.out.print(cc);
 
         }
         System.out.println();

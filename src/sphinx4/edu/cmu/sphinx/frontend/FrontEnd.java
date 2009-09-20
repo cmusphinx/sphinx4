@@ -17,9 +17,7 @@ import edu.cmu.sphinx.util.props.PropertyException;
 import edu.cmu.sphinx.util.props.PropertySheet;
 import edu.cmu.sphinx.util.props.S4ComponentList;
 
-import java.util.Iterator;
-import java.util.List;
-import java.util.Vector;
+import java.util.*;
 
 /**
  * FrontEnd is a wrapper class for the chain of front end processors. It provides methods for manipulating and
@@ -270,16 +268,16 @@ public class FrontEnd extends BaseDataProcessor {
      * @return a description of this FrontEnd
      */
     public String toString() {
-        String description = "";
-        DataProcessor current = last;
-        while (current != null) {
-            description = (current + description);
-            current = current.getPredecessor();
-            if (current != null) {
-                description = (", " + description);
-            }
-        }
-        return (super.toString() + " {" + description + "}");
+        if (last == null)
+            return super.toString() + " {}";
+        LinkedList<DataProcessor> list = new LinkedList<DataProcessor>();
+        for (DataProcessor current = last; current != null; current = current.getPredecessor())
+            list.addFirst(current); // add processors in their correct order
+        StringBuilder description = new StringBuilder(super.toString()).append(" {");
+        for (DataProcessor dp : list)
+            description.append(dp).append(", ");
+        description.setLength(description.length() - 2);
+        return description.append('}').toString();
     }
 
 }

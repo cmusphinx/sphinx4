@@ -150,8 +150,8 @@ public class SpeedTracker
     /** Shows the audio usage data */
     protected void showAudioUsage() {
         System.out.print("   This  Time Audio: " + timeFormat.format(audioTime)
-                + "s");
-        System.out.print("  Proc: " + timeFormat.format(processingTime) + "s");
+                + 's');
+        System.out.print("  Proc: " + timeFormat.format(processingTime) + 's');
         System.out.println("  Speed: " + timeFormat.format(getSpeed())
                 + " X real time");
         showAudioSummary();
@@ -161,9 +161,9 @@ public class SpeedTracker
     /** Shows the audio summary data */
     protected void showAudioSummary() {
         System.out.print("   Total Time Audio: "
-                + timeFormat.format(totalAudioTime) + "s");
+                + timeFormat.format(totalAudioTime) + 's');
         System.out.print("  Proc: " + timeFormat.format(totalProcessingTime)
-                + "s");
+                + 's');
         System.out.println("  Speed: "
                 + timeFormat.format(getCumulativeSpeed()) + " X real time");
 
@@ -171,9 +171,9 @@ public class SpeedTracker
             float avgResponseTime =
                     (float) totalResponseTime / (numUtteranceStart * 1000);
             System.out.println
-                    ("   Response Time:  Avg: " + avgResponseTime + "s" +
+                    ("   Response Time:  Avg: " + avgResponseTime + 's' +
                             "  Max: " + ((float) maxResponseTime / 1000) +
-                            "s  Min: " + ((float) minResponseTime / 1000) + "s");
+                            "s  Min: " + ((float) minResponseTime / 1000) + 's');
         }
     }
 

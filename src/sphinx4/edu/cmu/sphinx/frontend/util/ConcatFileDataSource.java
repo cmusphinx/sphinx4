@@ -366,8 +366,8 @@ public class ConcatFileDataSource extends StreamDataSource implements ReferenceS
                 float start = getSeconds(totalBytes);
                 totalBytes += file.length();
                 float end = getSeconds(totalBytes);
-                transcript.write(context + " 1 " + fileName + " " + start +
-                        " " + end + "  " + reference + "\n");
+                transcript.write(context + " 1 " + fileName + ' ' + start +
+                    ' ' + end + "  " + reference + '\n');
                 transcript.flush();
             } catch (IOException ioe) {
                 ioe.printStackTrace();
@@ -381,8 +381,8 @@ public class ConcatFileDataSource extends StreamDataSource implements ReferenceS
                 float start = getSeconds(totalBytes);
                 totalBytes += silenceFileLength;
                 float end = getSeconds(totalBytes);
-                transcript.write(context + " 1 " + GAP_LABEL + " " +
-                        start + " " + end + " \n");
+                transcript.write(context + " 1 " + GAP_LABEL + ' ' +
+                        start + ' ' + end + " \n");
                 transcript.flush();
             } catch (IOException ioe) {
                 ioe.printStackTrace();

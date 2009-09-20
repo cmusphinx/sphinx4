@@ -28,7 +28,7 @@ public class GDLDumper {
     public static void dumpComponentAsGDL(ConfigurationManager cm, PrintStream out, String name) {
 
         out.println("node: {title: \"" + name + "\" color: " + getColor(cm, name)
-                + "}");
+                + '}');
 
         PropertySheet ps = cm.getPropertySheet(name);
         Collection<String> propertyNames = ps.getRegisteredProperties();

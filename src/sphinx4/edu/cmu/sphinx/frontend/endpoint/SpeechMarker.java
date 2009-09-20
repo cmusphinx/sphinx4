@@ -298,7 +298,7 @@ public class SpeechMarker extends BaseDataProcessor {
                 readTrailer = false;
                 break;
             } else if (next instanceof Signal) {
-                throw new Error("Illegal signal: " + next.toString());
+                throw new Error("Illegal signal: " + next);
             }
         }
 
@@ -324,7 +324,7 @@ public class SpeechMarker extends BaseDataProcessor {
                     sendToQueue(next);
                     speechEndAdded = true;
                 } else {
-                    throw new Error("Illegal signal: " + next.toString());
+                    throw new Error("Illegal signal: " + next);
                 }
             }
         }

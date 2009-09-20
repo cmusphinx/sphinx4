@@ -178,8 +178,8 @@ public class SameTimeScoreCombiner implements ScoreCombiner {
 
 
     private String tokenToString(ParallelToken token) {
-        return (" (" + token.getLastCombineTime() + "," +
-                token.getModelName() + "," +
+        return (" (" + token.getLastCombineTime() + ',' +
+                token.getModelName() + ',' +
                 token.getFeatureScore() + ") ");
     }
 }

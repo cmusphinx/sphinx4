@@ -103,7 +103,7 @@ public class LargeTrigramModelTest {
         s = 0;
         for (Iterator<WordSequence> i = wordSequences.iterator(); i.hasNext(); ) {
             WordSequence ws = (WordSequence) i.next();
-            outStream.println(Utilities.pad(logScores[s++], 10) + " "+
+            outStream.println(Utilities.pad(logScores[s++], 10) + ' ' +
                               getString(ws));
         }
         
@@ -120,11 +120,11 @@ public class LargeTrigramModelTest {
     }
 
     public static String getString(WordSequence ws) {
-        String line = ws.getWord(0).getSpelling();
-        for (int i = 1; i < ws.size(); i++) {
-            line += (" " + ws.getWord(i).getSpelling());
-        }
-        return line.toUpperCase();
+        StringBuilder line = new StringBuilder();
+        for (int i = 0; i < ws.size(); i++)
+            line.append(ws.getWord(i).getSpelling()).append(' ');
+        line.setLength(line.length() - 1);
+        return line.toString().toUpperCase();
     }
 }
 

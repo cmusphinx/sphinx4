@@ -85,16 +85,14 @@ public abstract class AbstractSausageMaker implements ConfidenceScorer, Configur
 
 
         public String toString() {
-            StringBuffer sb = new StringBuffer();
-            sb.append("s: ").append(startTime).append(" e: ").append(endTime).append("[");
+            StringBuilder sb = new StringBuilder();
+            sb.append("s: ").append(startTime).append(" e: ").append(endTime).append('[');
             Iterator<Node> i = elements.iterator();
-            while (i.hasNext()) {
-                sb.append(i.next());
-                if (i.hasNext()) {
-                    sb.append(",");
-                }
-            }
-            sb.append("]");
+            while (i.hasNext())
+                sb.append(i.next()).append(',');
+            if (!elements.isEmpty())
+                sb.setLength(sb.length() - 1);
+            sb.append(']');
             return sb.toString();
         }
 

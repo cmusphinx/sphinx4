@@ -375,7 +375,7 @@ public class ZipCity extends JFrame {
          */
         void drawZipInfo( ZipInfo zi) {
             int x, y;
-            String label = zi.getCity() + ", " + zi.getState() + " " +
+            String label = zi.getCity() + ", " + zi.getState() + ' ' +
                 zi.getZip();
             Dimension d = getStringDimension(g, label);
 

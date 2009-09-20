@@ -318,7 +318,7 @@ public class Lattice {
                         logBase = Double.parseDouble(tokens.nextToken());
                     } else {
                         throw new Error("SYNTAX ERROR: " + fileName +
-                                "[" + in.getLineNumber() + "] " + line);
+                            '[' + in.getLineNumber() + "] " + line);
                     }
                 }
             }
@@ -754,7 +754,7 @@ public class Lattice {
      * @return a list of lists of Nodes
      */
     protected List<String> allPathsFrom(String path, Node n) {
-        String p = path + " " + n.getWord();
+        String p = path + ' ' + n.getWord();
         List<String> l = new LinkedList<String>();
         if (n == terminalNode) {
             l.add(p);
@@ -772,13 +772,13 @@ public class Lattice {
             for (Edge e : n.getEnteringEdges()) {
                 if (!hasEdge(e)) {
                     throw new Error("Lattice has NODE with missing FROM edge: "
-                            + n + "," + e);
+                            + n + ',' + e);
                 }
             }
             for (Edge e : n.getLeavingEdges()) {
                 if (!hasEdge(e)) {
                     throw new Error("Lattice has NODE with missing TO edge: " +
-                            n + "," + e);
+                            n + ',' + e);
                 }
             }
         }
@@ -973,7 +973,7 @@ public class Lattice {
             Collection<Edge> leavingEdges = n1.getCopyOfLeavingEdges();
             Collection<Edge> leavingEdges2 = n2.getCopyOfLeavingEdges();
 
-            System.out.println("# edges: " + leavingEdges.size() + " " +
+            System.out.println("# edges: " + leavingEdges.size() + ' ' +
                     leavingEdges2.size());
 
             for (Edge edge : leavingEdges) {

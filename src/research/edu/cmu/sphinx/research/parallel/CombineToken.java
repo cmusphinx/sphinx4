@@ -144,19 +144,16 @@ public class CombineToken extends Token {
      * @return the string representation of this object
      */
     public String toString() {
-        String parallelTokenScores = "";
+        StringBuilder parallelTokenScores = new StringBuilder("CombinedToken: ")
+            .append("Frame: ").append(getNumberFormat().format(getFrameNumber()))
+            .append(", score: ").append(getScoreFormat().format(getScore())).append('\n');
         int t = 0;
         for (Iterator i = getTokenIterator(); i.hasNext(); t++) {
             ParallelToken token = (ParallelToken) i.next();
-            parallelTokenScores += ("   ParallelToken " + t) +
-                    ", " + token.getModelName() + ", feature: " +
-                    getScoreFormat().format(token.getFeatureScore()) +
-                    ", combined: " +
-                    getScoreFormat().format(token.getCombinedScore()) + "\n";
+            parallelTokenScores.append("   ParallelToken ").append(t).append(", ").append(token.getModelName())
+                .append(", feature: ").append(getScoreFormat().format(token.getFeatureScore()))
+                .append(", combined: ").append(getScoreFormat().format(token.getCombinedScore())).append('\n');
         }
-        return "CombinedToken: " +
-                "Frame: " + getNumberFormat().format(getFrameNumber()) +
-                ", score: " + getScoreFormat().format(getScore()) + "\n" +
-                parallelTokenScores;
+        return parallelTokenScores.toString();
     }
 }

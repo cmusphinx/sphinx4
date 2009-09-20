@@ -129,12 +129,12 @@ public class Pronunciation {
      * @return a string of this Pronunciation
      */
     public String toString() {
-        String result = (word + "(");
+        StringBuilder result = new StringBuilder().append(word).append('(');
         for (int i = 0; i < units.length; i++) {
-            result += (units[i] + " ");
+            result.append(units[i]).append(' ');
         }
-        result += ")";
-        return result;
+        result.append(')');
+        return result.toString();
     }
 
 
@@ -144,14 +144,14 @@ public class Pronunciation {
      * @return a string of this Pronunciation
      */
     public String toDetailedString() {
-        String result = (word + " ");
+        StringBuilder result = new StringBuilder().append(word).append(' ');
         for (int i = 0; i < units.length; i++) {
-            result += (units[i] + " ");
+            result.append(units[i]).append(' ');
         }
-        result += ("\n   class: " + wordClassification +
-                " tag: " + tag + " prob: " + probability);
+        result.append("\n   class: ").append(wordClassification)
+            .append(" tag: ").append(tag).append(" prob: ").append(probability);
 
-        return result;
+        return result.toString();
     }
 }
 

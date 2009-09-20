@@ -259,7 +259,7 @@ public class Sphinx3Loader implements Loader {
         String dataLocation = (String) properties.get(PROP_DATA_LOCATION);
         dataDir = dataLocation != null ? dataLocation : ps
                 .getString(PROP_DATA_LOCATION);
-        dataDir = dataDir + "/";
+        dataDir = dataDir + '/';
 
         distFloor = ps.getFloat(PROP_MC_FLOOR);
         mixtureWeightFloor = ps.getFloat(PROP_MW_FLOOR);
@@ -657,7 +657,7 @@ public class Sphinx3Loader implements Loader {
      *             on error
      */
     String readWord(DataInputStream dis) throws IOException {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         char c;
         // skip leading whitespace
         do {
@@ -953,7 +953,7 @@ public class Sphinx3Loader implements Loader {
 
             if (useCDUnits) {
                 Unit unit;
-                String unitName = (name + " " + left + " " + right);
+                String unitName = (name + ' ' + left + ' ' + right);
 
                 if (unitName.equals(lastUnitName)) {
                     unit = lastUnit;
@@ -1175,7 +1175,7 @@ public class Sphinx3Loader implements Loader {
         // read in the matrices
         for (int i = 0; i < numMatrices; i++) {
             est.expectString("tmat");
-            est.expectString("[" + i + "]");
+            est.expectString("[" + i + ']');
             float[][] tmat = new float[numStates][numStates];
             for (int j = 0; j < numStates; j++) {
                 for (int k = 0; k < numStates; k++) {

@@ -77,7 +77,7 @@ public class TimerPool {
                 "# ----------------------------- " + title +
                         "----------------------------------------------------------- ";
         System.out.println(Utilities.pad(titleBar, 78));
-        System.out.print(Utilities.pad("# Name", 15) + " ");
+        System.out.print(Utilities.pad("# Name", 15) + ' ');
         System.out.print(Utilities.pad("Count", 8));
         System.out.print(Utilities.pad("CurTime", 10));
         System.out.print(Utilities.pad("MinTime", 10));

@@ -943,8 +943,8 @@ public class FlatLinguist implements Linguist, Configurable {
             UnitContext startingContext = getStartingContext(pronunciation);
             // Add the pronunciation state to the entry point list
             // (based upon its left and right context)
-            String pname = "P(" + pronunciation.getWord() + "[" + leftContext
-                    + "," + startingContext + "])-G" + getNode().getID();
+            String pname = "P(" + pronunciation.getWord() + '[' + leftContext
+                    + ',' + startingContext + "])-G" + getNode().getID();
             PronunciationState ps = new PronunciationState(pname,
                     pronunciation, which);
             T("     Expanding " + ps.getPronunciation() + " for lc "
@@ -1469,7 +1469,7 @@ public class FlatLinguist implements Linguist, Configurable {
         private void dumpCollection(String name, Collection collection) {
             System.out.println("     " + name);
             for (Object aCollection : collection) {
-                System.out.println("         " + aCollection.toString());
+                System.out.println("         " + aCollection);
             }
         }
 

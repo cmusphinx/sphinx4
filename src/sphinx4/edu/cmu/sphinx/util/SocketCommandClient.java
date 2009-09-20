@@ -241,12 +241,11 @@ public class SocketCommandClient {
                     SocketCommandClient("localhost", 7890);
             ci.add("s", new CommandInterface() {
                 public String execute(CommandInterpreter ci, String[] args) {
-                    String cmd = "";
+                    StringBuilder cmd = new StringBuilder();
                     for (int i = 1; i < args.length; i++) {
-                        cmd += args[i];
-                        cmd += " ";
+                        cmd.append(args[i]).append(' ');
                     }
-                    sci.sendCommand(cmd);
+                    sci.sendCommand(cmd.toString());
                     return "";
                 }
 
@@ -272,12 +271,11 @@ public class SocketCommandClient {
 
             ci.add("sr", new CommandInterface() {
                 public String execute(CommandInterpreter ci, String[] args) {
-                    String cmd = "";
+                    StringBuilder cmd = new StringBuilder();
                     for (int i = 1; i < args.length; i++) {
-                        cmd += args[i];
-                        cmd += " ";
+                        cmd.append(args[i]).append(' ');
                     }
-                    ci.putResponse(sci.sendCommandGetResponse(cmd));
+                    ci.putResponse(sci.sendCommandGetResponse(cmd.toString()));
                     while (sci.isResponse()) {
                         ci.putResponse(sci.getResponse());
                     }

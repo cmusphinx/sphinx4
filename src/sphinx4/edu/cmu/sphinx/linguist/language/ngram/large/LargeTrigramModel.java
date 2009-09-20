@@ -823,7 +823,7 @@ public class LargeTrigramModel implements LanguageModel {
             R0 += p * logp * logp;
         }
 
-        System.out.println("R0 S0 " + R0 + " " + S0);
+        System.out.println("R0 S0 " + R0 + ' ' + S0);
 
         for (int i = 0; i < loadedBigramBuffers.length; i++) {
             BigramBuffer bigram = getBigramBuffer(i);
@@ -930,20 +930,20 @@ public class LargeTrigramModel implements LanguageModel {
 			int j, float logugprob, float logbgprob, double ugprob,
 			double bgprob, double backoffbgprob, double logbackoffbgprob) {
 
-		System.out.println("ubo " + ugprob + " " + bgprob + " " +
+		System.out.println("ubo " + ugprob + ' ' + bgprob + ' ' +
 		            backoffbgprob);
 		    System.out.println("logubo " + logugprob
-		            + " " + logbgprob + " " + logbackoffbgprob);
-		    System.out.println("n/d " + j + " "
-		            + ugNumerator[i] + " " + ugDenominator[i]);
+		            + ' ' + logbgprob + ' ' + logbackoffbgprob);
+		    System.out.println("n/d " + j + ' '
+		            + ugNumerator[i] + ' ' + ugDenominator[i]);
 
 		    
-		    System.out.print(ugprob + " " + bgprob + " "
+		    System.out.print(ugprob + " " + bgprob + ' '
 		            + backoffbgprob);
-		    System.out.print(" " + logugprob + " "
-		            + logbgprob + " " + logbackoffbgprob);
+		    System.out.print(" " + logugprob + ' '
+		            + logbgprob + ' ' + logbackoffbgprob);
 		    System.out.println("  " + ugNumerator[i]
-		            + " " + ugDenominator[i]);
+		            + ' ' + ugDenominator[i]);
 	}
 
 

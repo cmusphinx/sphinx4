@@ -415,7 +415,7 @@ public class NISTAlign {
                     "    Errors: " + getTotalWordErrors()
                             + "  (Sub: " + totalSubstitutions
                             + "  Ins: " + totalInsertions
-                            + "  Del: " + totalDeletions + ")");
+                            + "  Del: " + totalDeletions + ')');
             System.out.println(
                     "   Words: " + totalReferenceWords
                             + "   Matches: " + totalWordsCorrect
@@ -438,13 +438,13 @@ public class NISTAlign {
 
         System.out.print("REF: " + toString(alignedReferenceWords));
         if (referenceAnnotation != null) {
-            System.out.print(" " + referenceAnnotation);
+            System.out.print(' ' + referenceAnnotation);
         }
         System.out.println();
 
         System.out.print("HYP: " + toString(alignedReferenceWords));
         if (referenceAnnotation != null) {
-            System.out.print(" " + referenceAnnotation);
+            System.out.print(' ' + referenceAnnotation);
         }
         System.out.println();
 
@@ -464,7 +464,7 @@ public class NISTAlign {
                 + padLeft(5, correct)
                 + "   ("
                 + padLeft(6, totalWordsCorrect)
-                + ")");
+                + ')');
         System.out.println("Errors           = "
                 + toPercentage("##0.0%",
                 sentenceErrors,
@@ -472,7 +472,7 @@ public class NISTAlign {
                 + padLeft(5, sentenceErrors)
                 + "   ("
                 + padLeft(6, totalSentencesWithErrors)
-                + ")");
+                + ')');
 
         System.out.println();
         System.out.println(HRULE);
@@ -492,23 +492,23 @@ public class NISTAlign {
         System.out.println(
                 "  correct                  "
                         + toPercentage("##0.0%", totalSentencesCorrect, totalSentences)
-                        + " (" + padLeft(4, totalSentencesCorrect) + ")");
+                        + " (" + padLeft(4, totalSentencesCorrect) + ')');
         System.out.println(
                 "  with error(s)            "
                         + toPercentage("##0.0%", totalSentencesWithErrors, totalSentences)
-                        + " (" + padLeft(4, totalSentencesWithErrors) + ")");
+                        + " (" + padLeft(4, totalSentencesWithErrors) + ')');
         System.out.println(
                 "    with substitutions(s)  "
                         + toPercentage("##0.0%", totalSentencesWithSubtitutions, totalSentences)
-                        + " (" + padLeft(4, totalSentencesWithSubtitutions) + ")");
+                        + " (" + padLeft(4, totalSentencesWithSubtitutions) + ')');
         System.out.println(
                 "    with insertion(s)      "
                         + toPercentage("##0.0%", totalSentencesWithInsertions, totalSentences)
-                        + " (" + padLeft(4, totalSentencesWithInsertions) + ")");
+                        + " (" + padLeft(4, totalSentencesWithInsertions) + ')');
         System.out.println(
                 "    with deletions(s)      "
                         + toPercentage("##0.0%", totalSentencesWithDeletions, totalSentences)
-                        + " (" + padLeft(4, totalSentencesWithDeletions) + ")");
+                        + " (" + padLeft(4, totalSentencesWithDeletions) + ')');
 
         System.out.println();
         System.out.println();
@@ -518,23 +518,23 @@ public class NISTAlign {
         System.out.println(
                 "Correct           = "
                         + toPercentage("##0.0%", totalWordsCorrect, totalReferenceWords)
-                        + " (" + padLeft(6, totalWordsCorrect) + ")");
+                        + " (" + padLeft(6, totalWordsCorrect) + ')');
         System.out.println(
                 "Substitutions     = "
                         + toPercentage("##0.0%", totalSubstitutions, totalReferenceWords)
-                        + " (" + padLeft(6, totalSubstitutions) + ")");
+                        + " (" + padLeft(6, totalSubstitutions) + ')');
         System.out.println(
                 "Deletions         = "
                         + toPercentage("##0.0%", totalDeletions, totalReferenceWords)
-                        + " (" + padLeft(6, totalDeletions) + ")");
+                        + " (" + padLeft(6, totalDeletions) + ')');
         System.out.println(
                 "Insertions        = "
                         + toPercentage("##0.0%", totalInsertions, totalReferenceWords)
-                        + " (" + padLeft(6, totalInsertions) + ")");
+                        + " (" + padLeft(6, totalInsertions) + ')');
         System.out.println(
                 "Errors            = "
                         + toPercentage("##0.0%", getTotalWordErrors(), totalReferenceWords)
-                        + " (" + padLeft(6, getTotalWordErrors()) + ")");
+                        + " (" + padLeft(6, getTotalWordErrors()) + ')');
 
         System.out.println();
 
@@ -551,7 +551,7 @@ public class NISTAlign {
                         + toPercentage("##0.000%", totalWordsCorrect, totalReferenceWords)
                         + " ("
                         + padLeft(5, totalWordsCorrect)
-                        + "/"
+                        + '/'
                         + padLeft(5, totalReferenceWords)
                         + ")  ERRORS= "
                         + toPercentage("##0.000%",
@@ -559,9 +559,9 @@ public class NISTAlign {
                         totalReferenceWords)
                         + " ("
                         + padLeft(5, getTotalWordErrors())
-                        + "/"
+                        + '/'
                         + padLeft(5, totalReferenceWords)
-                        + ")");
+                        + ')');
 
         System.out.println();
     }
@@ -890,19 +890,14 @@ public class NISTAlign {
      * @return a space separated string
      */
     private String toString(LinkedList<String> list) {
-        if (list != null) {
-            StringBuffer sb = new StringBuffer();
-            ListIterator<String> iterator = list.listIterator();
-            while (iterator.hasNext()) {
-                sb.append(iterator.next());
-                if (iterator.hasNext()) {
-                    sb.append(" ");
-                }
-            }
-            return sb.toString();
-        } else {
+        if (list == null || list.isEmpty())
             return "";
-        }
+        StringBuilder sb = new StringBuilder();
+        ListIterator<String> iterator = list.listIterator();
+        while (iterator.hasNext())
+            sb.append(iterator.next()).append(' ');
+        sb.setLength(sb.length() - 1);
+        return sb.toString();
     }
 
 

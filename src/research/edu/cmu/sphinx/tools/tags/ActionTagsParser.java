@@ -122,7 +122,7 @@ public class ActionTagsParser {
      * @see #parseTags
      */
     public Object getGlobal(String name) {
-        return evaluateString(name + ";");
+        return evaluateString(name + ';');
     }
 
 
@@ -136,7 +136,7 @@ public class ActionTagsParser {
      * @see #parseTags
      */
     public Object get(String name) {
-        return evaluateString("$." + name + ";");
+        return evaluateString("$." + name + ';');
     }
 
 
@@ -178,31 +178,31 @@ public class ActionTagsParser {
 
     /** Recurse through the properties in the context/scope of this parser and generate a String from them. */
     public String toString() {
-        StringBuffer buffer = new StringBuffer();
-        printScriptable(global, buffer, null);
-        return buffer.toString();
+        StringBuilder builder = new StringBuilder();
+        printScriptable(global, builder, null);
+        return builder.toString();
     }
 
 
     /** A debug utility to show the result value after a RuleParse has been parsed with the parseTags method. */
     public String showValue() {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder builder = new StringBuilder();
         try {
-            printScriptable((Scriptable) global.get("$", global), buffer, null);
+            printScriptable((Scriptable) global.get("$", global), builder, null);
         } catch (Exception e) {
-            buffer.append("$: unknown (" + e.toString() + ")\n");
+            builder.append("$: unknown (").append(e).append(")\n");
             e.printStackTrace();
         }
-        return buffer.toString();
+        return builder.toString();
     }
 
 
     /** Helper method for toString and showValue. */
     protected void printScriptable(Scriptable scriptable,
-                                   StringBuffer buffer,
+                                   StringBuilder builder,
                                    String prefix) {
         if (scriptable == undefined) {
-            buffer.append(prefix + ": undefined\n");
+            builder.append(prefix).append(": undefined\n");
             return;
         }
 
@@ -212,7 +212,7 @@ public class ActionTagsParser {
             if (prefix == null) {
                 idStr = ids[i].toString();
             } else {
-                idStr = prefix + "." + ids[i].toString();
+                idStr = prefix + '.' + ids[i];
             }
             try {
                 Object o;
@@ -224,14 +224,14 @@ public class ActionTagsParser {
                             scriptable);
                 }
                 if (o instanceof Function) {
-                    //buffer.append(idStr + ": function\n");
+                    //builder.append(idStr + ": function\n");
                 } else if (o instanceof Scriptable) {
-                    printScriptable((Scriptable) o, buffer, idStr);
+                    printScriptable((Scriptable) o, builder, idStr);
                 } else {
-                    buffer.append(idStr + ": " + o.toString() + "\n");
+                    builder.append(idStr).append(": ").append(o).append('\n');
                 }
             } catch (Exception e) {
-                buffer.append(idStr + ": unknown (" + e.toString() + ")\n");
+                builder.append(idStr).append(": unknown (").append(e).append(")\n");
                 e.printStackTrace();
             }
         }
@@ -246,7 +246,7 @@ public class ActionTagsParser {
             System.err.println("ECMAScript warning in " + sourceName);
             System.err.println("    line #:  " + line);
             System.err.println("    source:  " + lineSource);
-            System.err.println("    message: " + message + "\n");
+            System.err.println("    message: " + message + '\n');
         }
 
 
@@ -255,7 +255,7 @@ public class ActionTagsParser {
             System.err.println("ECMAScript error in " + sourceName);
             System.err.println("    line #:  " + line);
             System.err.println("    source:  " + lineSource);
-            System.err.println("    message: " + message + "\n");
+            System.err.println("    message: " + message + '\n');
             throw new EvaluatorException(message);
         }
 

@@ -155,7 +155,7 @@ public class SpeechClassifier extends BaseDataProcessor {
                 speech = "*";
 
             System.out.println("Bkg: " + background + ", level: " + level +
-                    ", current: " + current + " " + speech);
+                    ", current: " + current + ' ' + speech);
         }
 
         outputQueue.add(labeledAudio);

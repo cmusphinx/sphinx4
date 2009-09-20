@@ -110,7 +110,7 @@ public class StreamFactory {
             if (scheme == null) {
                 absoluteLocation = absoluteURI.getSchemeSpecificPart();
             } else {
-                absoluteLocation = scheme + ":" +
+                absoluteLocation = scheme + ':' +
                         absoluteURI.getSchemeSpecificPart();
             }
         }

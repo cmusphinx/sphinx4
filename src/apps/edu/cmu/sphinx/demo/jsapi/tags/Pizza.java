@@ -25,7 +25,7 @@ public class Pizza implements OrderItem {
         if (numToppings == 0) {
             return "plain pizza.";
         } else {
-            StringBuffer sb = new StringBuffer("pizza with ");
+            StringBuilder sb = new StringBuilder("pizza with ");
             for (int i = 0; i < numToppings; i++) {
                 sb.append(toppings.elementAt(i));
                 if (numToppings > 1) {
@@ -36,7 +36,7 @@ public class Pizza implements OrderItem {
                     }
                 }
             }
-            sb.append(".");
+            sb.append('.');
             return sb.toString();
         }
     }

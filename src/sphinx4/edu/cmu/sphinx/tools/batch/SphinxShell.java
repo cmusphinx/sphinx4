@@ -34,7 +34,7 @@ public class SphinxShell {
 
         File configFile = new File(args[0]);
         if (!configFile.isFile())
-            throw new FileNotFoundException("Can not open '" + configFile.toString() + "'");
+            throw new FileNotFoundException("Can not open '" + configFile + '\'');
 
         ConfigurationManager cm = new ConfigurationManager(configFile.toURI().toURL());
 

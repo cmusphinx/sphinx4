@@ -259,7 +259,7 @@ public class ThreadedAcousticScorer extends AbstractScorer {
             while (true) {
                 ScoreableJob scoreableJob = mailbox.pend();
                 if (scoreableJob == null) {
-                    logger.finer("scorer thread " + this.toString() + "registered to " + ThreadedAcousticScorer.this.toString() + "dies ...");
+                    logger.finer("scorer thread " + this + "registered to " + ThreadedAcousticScorer.this + "dies ...");
                     break;  // this will happen when the scorer becomes deallocated
                 }
 

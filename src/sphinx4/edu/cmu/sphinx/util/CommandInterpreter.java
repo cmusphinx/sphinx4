@@ -152,11 +152,11 @@ public class CommandInterpreter extends Thread {
 
         add("echo", new CommandInterface() {
             public String execute(CommandInterpreter ci, String[] args) {
-                StringBuffer b = new StringBuffer(80);
+                StringBuilder b = new StringBuilder(80);
 
                 for (int i = 1; i < args.length; i++) {
                     b.append(args[i]);
-                    b.append(" ");
+                    b.append(' ');
                 }
                 putResponse(b.toString());
                 return "";
@@ -171,12 +171,12 @@ public class CommandInterpreter extends Thread {
         if (false) {
             add("argtest", new CommandInterface() {
                 public String execute(CommandInterpreter ci, String[] args) {
-                    StringBuffer b = new StringBuffer(80);
+                    StringBuilder b = new StringBuilder(80);
 
                     System.out.println("arg length is " + args.length);
                     for (int i = 0; i < args.length; i++) {
                         b.append(args[i]);
-                        b.append("\n");
+                        b.append('\n');
                     }
                     putResponse(b.toString());
                     return "";
@@ -447,7 +447,7 @@ public class CommandInterpreter extends Thread {
      */
 
     public synchronized void putResponse(String response) {
-        if (response != null && response.length() > 0) {
+        if (response != null && !response.isEmpty()) {
             out.println(response);
             out.flush();
             if (trace) {
@@ -557,7 +557,7 @@ public class CommandInterpreter extends Thread {
                         System.out.println("In : " + message);
                     }
                     message = message.trim();
-                    if (message.length() > 0) {
+                    if (!message.isEmpty()) {
                         putResponse(execute(message));
                     }
                 }
@@ -643,7 +643,7 @@ public class CommandInterpreter extends Thread {
             return "";
         }
 
-        if (message.length() > 0) {
+        if (!message.isEmpty()) {
             history.add(message);
         }
 

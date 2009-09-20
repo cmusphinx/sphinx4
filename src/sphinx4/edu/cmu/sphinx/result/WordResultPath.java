@@ -89,15 +89,14 @@ public class WordResultPath implements Path {
 
     /** @see edu.cmu.sphinx.result.Path#getTranscription() */
     public String getTranscription() {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         Iterator<WordResult> i = path.iterator();
         while (i.hasNext()) {
             WordResult wr = (WordResult) i.next();
-            sb.append(wr.toString());
-            if (i.hasNext()) {
-                sb.append(" ");
-            }
+            sb.append(wr).append(' ');
         }
+        if (!path.isEmpty())
+            sb.setLength(sb.length() - 1);
         return sb.toString();
     }
 
