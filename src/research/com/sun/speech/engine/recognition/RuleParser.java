@@ -222,15 +222,14 @@ public class RuleParser {
         //System.out.println("seq sz" + p.size());
         for (tokenPos tp : p) {
             //System.out.println("seq  " + p.get(j));
-            Rule rule0 = (Rule)tp;
             int nPos = tp.getPos();
             if (rarry.length == 1) {
-                if (rule0 instanceof emptyToken) {
-                    res.add((emptyToken)rule0);
+                if (tp instanceof emptyToken) {
+                    res.add(tp);
                     continue;
                 }
                 try {
-                    res.add(new jsgfRuleSequence(new Rule[] { rule0 }, tp.getPos()));
+                    res.add(new jsgfRuleSequence(new Rule[] { (Rule)tp }, tp.getPos()));
                 } catch (IllegalArgumentException e) {
                     System.out.println(e);
                 }
@@ -246,26 +245,25 @@ public class RuleParser {
             //System.out.println("2 seq sz " + p.size());
             for (tokenPos tp1 : q) {
                 //System.out.println("2 seq  " + q.get(k));
-                Rule r1 = (Rule)tp1;
-                //System.out.println("rule0 " + rule0);
-                //System.out.println("r1 " + r1);
-                if (r1 instanceof emptyToken) {
-                    res.add((emptyToken)rule0);
+                //System.out.println("tp " + tp);
+                //System.out.println("tp1 " + tp1);
+                if (tp1 instanceof emptyToken) {
+                    res.add(tp);
                     continue;
                 }       
-                if (rule0 instanceof emptyToken) {
-                    res.add((emptyToken)r1);
+                if (tp instanceof emptyToken) {
+                    res.add(tp1);
                     continue;
                 }
                 Rule[] ra;
-                if (r1 instanceof RuleSequence) {
-                    RuleSequence r2 = (RuleSequence)r1;
+                if (tp1 instanceof RuleSequence) {
+                    RuleSequence r2 = (RuleSequence)tp1;
                     Rule[] r2r = r2.getRules();
                     ra = new Rule[r2r.length + 1];
-                    ra[0] = rule0;
+                    ra[0] = (Rule)tp;
                     System.arraycopy(r2r, 0, ra, 1, r2r.length);
                 } else {
-                    ra = new Rule[] { rule0, r1 };
+                    ra = new Rule[] { (Rule)tp, (Rule)tp1 };
                 }
                 try {
                     res.add(new jsgfRuleSequence(ra, tp1.getPos()));
