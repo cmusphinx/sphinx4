@@ -50,22 +50,10 @@ public class Sausage implements ConfidenceResult {
      *
      * @return an iterator that steps through confusion sets
      */
-    public Iterator<ConfusionSet> confusionSetIterator() {
-        return confusionSets.listIterator();
+    @Override
+    public Iterator<ConfusionSet> iterator() {
+        return confusionSets.iterator();
     }
-
-
-    /**
-     * Get an iterator for the sausage. The iterator will return SortedMaps, which are confusion sets mapping Double
-     * posteriors to Sets of word Strings.
-     *
-     * @param i the index to start the iterator off at
-     * @return an iterator that steps through confusion sets
-     */
-    public Iterator<ConfusionSet> confusionSetIterator(int i) {
-        return confusionSets.listIterator(i);
-    }
-
 
     /**
      * Adds skip elements for each word slot in which the word posteriors do not add up to linear 1.
@@ -139,7 +127,7 @@ public class Sausage implements ConfidenceResult {
      */
     protected Path getBestHypothesis(boolean wantFiller) {
         WordResultPath path = new WordResultPath();
-        Iterator<ConfusionSet> i = confusionSetIterator();
+        Iterator<ConfusionSet> i = iterator();
         while (i.hasNext()) {
             ConfusionSet cs = (ConfusionSet) i.next();
             WordResult wr = cs.getBestHypothesis();
@@ -156,7 +144,7 @@ public class Sausage implements ConfidenceResult {
      * of removing fillers.
      */
     public void removeFillers() {
-        Iterator<ConfusionSet> c = confusionSetIterator();
+        Iterator<ConfusionSet> c = iterator();
         while (c.hasNext()) {
             ConfusionSet cs = (ConfusionSet) c.next();
             for (Iterator<Set<WordResult>> j = cs.values().iterator(); j.hasNext();) {
@@ -228,7 +216,7 @@ public class Sausage implements ConfidenceResult {
 
     public int countWordHypotheses() {
         int count = 0;
-        Iterator<ConfusionSet> i = confusionSetIterator();
+        Iterator<ConfusionSet> i = iterator();
         while (i.hasNext()) {
         	ConfusionSet cs = i.next();
             for (Set<WordResult> words : cs.values()) {

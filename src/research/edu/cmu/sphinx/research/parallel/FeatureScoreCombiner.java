@@ -36,7 +36,7 @@ public class FeatureScoreCombiner implements ScoreCombiner {
     public void combineScore(CombineToken token) {
         double logTotalScore = 0.0f;
 
-        for (Iterator i = token.getTokenIterator(); i.hasNext();) {
+        for (Iterator i = token.iterator(); i.hasNext();) {
             ParallelToken pToken = (ParallelToken) i.next();
 
             // in linear domain, the following expression is:
@@ -53,7 +53,7 @@ public class FeatureScoreCombiner implements ScoreCombiner {
         token.setCombinedScore((float) logTotalScore);
 
         // set the combined score of all ParallelTokens in this CombineToken
-        for (Iterator i = token.getTokenIterator(); i.hasNext();) {
+        for (Iterator i = token.iterator(); i.hasNext();) {
             ParallelToken parallelToken = (ParallelToken) i.next();
             parallelToken.setCombinedScore((float) logTotalScore);
         }

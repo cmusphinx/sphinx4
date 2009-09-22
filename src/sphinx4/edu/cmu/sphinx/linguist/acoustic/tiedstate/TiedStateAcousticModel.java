@@ -291,7 +291,7 @@ public class TiedStateAcousticModel implements AcousticModel {
      *         type <code>HMM</code>.
      */
     public Iterator<HMM> getHMMIterator() {
-        return loader.getHMMManager().getIterator();
+        return loader.getHMMManager().iterator();
     }
 
 

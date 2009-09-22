@@ -711,7 +711,7 @@ class Sphinx3Saver implements Saver {
         numTri = 0;
         numContextIndependentTiedState = 0;
         numStateMap = 0;
-        for (Iterator i = hmmManager.getIterator(); i.hasNext();) {
+        for (Iterator i = hmmManager.iterator(); i.hasNext();) {
             SenoneHMM hmm = (SenoneHMM) i.next();
             numStateMap += hmm.getOrder() + 1;
             if (hmm.isContextDependent()) {
@@ -739,7 +739,7 @@ class Sphinx3Saver implements Saver {
         numStatePerHMM = numStateMap / (numTri + numBase);
 
         // Save the base phones
-        for (Iterator i = hmmManager.getIterator(); i.hasNext();) {
+        for (Iterator i = hmmManager.iterator(); i.hasNext();) {
             SenoneHMM hmm = (SenoneHMM) i.next();
             if (hmm.isContextDependent()) {
                 continue;
@@ -783,7 +783,7 @@ class Sphinx3Saver implements Saver {
 
         // Save the context dependent phones.
 
-        for (Iterator i = hmmManager.getIterator(); i.hasNext();) {
+        for (Iterator i = hmmManager.iterator(); i.hasNext();) {
             SenoneHMM hmm = (SenoneHMM) i.next();
             if (!hmm.isContextDependent()) {
                 continue;

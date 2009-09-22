@@ -17,7 +17,7 @@ import java.util.Iterator;
  * <p/>
  * Shows the confidence information about a Result. </p>
  */
-public interface ConfidenceResult {
+public interface ConfidenceResult extends Iterable<ConfusionSet> {
 
     /**
      * Returns the best hypothesis of the result.
@@ -26,22 +26,12 @@ public interface ConfidenceResult {
      */
     public Path getBestHypothesis();
 
-
     /**
      * Get the number of word slots contained in this result
      *
      * @return length of the result
      */
     public int size();
-
-
-    /**
-     * Iterator through the confusion sets in this result.
-     *
-     * @return confusion set iterator
-     */
-    public Iterator<ConfusionSet> confusionSetIterator();
-
 
     /**
      * Get the nth confusion set in this result

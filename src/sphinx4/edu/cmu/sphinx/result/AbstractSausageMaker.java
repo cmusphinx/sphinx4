@@ -37,7 +37,7 @@ public abstract class AbstractSausageMaker implements ConfidenceScorer, Configur
      * @see Sausage
      * @see SausageMaker
      */
-    class Cluster {
+    class Cluster implements Iterable<Node> {
 
         public int startTime;
         public int endTime;
@@ -78,7 +78,7 @@ public abstract class AbstractSausageMaker implements ConfidenceScorer, Configur
             elements.addAll(c.getElements());
         }
 
-
+        @Override
         public Iterator<Node> iterator() {
             return elements.iterator();
         }

@@ -21,7 +21,7 @@ import edu.cmu.sphinx.util.props.*;
  * <p/>
  * Note that all scores are represented in LogMath logbase
  */
-public interface ActiveList {
+public interface ActiveList extends Iterable<Token> {
 
     /**
      * property that sets the desired (or target) size for this active list.  This is sometimes referred to as the beam
@@ -69,14 +69,6 @@ public interface ActiveList {
      * @return a purged active list
      */
     public ActiveList purge();
-
-
-    /**
-     * Returns an iterator over the elements in this active list
-     *
-     * @return an iterator
-     */
-    public Iterator<Token> iterator();
 
 
     /**

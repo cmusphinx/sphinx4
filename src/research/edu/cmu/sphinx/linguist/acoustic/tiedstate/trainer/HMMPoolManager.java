@@ -398,7 +398,7 @@ class HMMPoolManager {
         if (indexHmm == TrainerAcousticModel.ALL_MODELS) {
             // Well, special case... we want to add an amount to all
             // the states in all models
-            for (Iterator i = hmmManager.getIterator();
+            for (Iterator i = hmmManager.iterator();
                  i.hasNext();) {
                 SenoneHMM hmm = (SenoneHMM) i.next();
                 for (int j = 0; j < hmm.getOrder(); j++) {

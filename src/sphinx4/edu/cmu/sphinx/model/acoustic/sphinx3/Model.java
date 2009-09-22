@@ -289,7 +289,7 @@ public class Model implements AcousticModel {
      *         type <code>HMM</code>.
      */
     public Iterator getHMMIterator() {
-        return loader.getHMMManager().getIterator();
+        return loader.getHMMManager().iterator();
     }
 
 

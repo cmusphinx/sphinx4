@@ -23,7 +23,7 @@ import java.util.*;
  * the combined score. A combined token carries a parallel token for each feature stream, so that scores pertaining to
  * each stream can be propagated.
  */
-public class CombineToken extends Token {
+public class CombineToken extends Token implements Iterable {
 
     private Map tokens;     // the list of parallel tokens
 
@@ -100,7 +100,8 @@ public class CombineToken extends Token {
      *
      * @return an Iterator for the ParallelToken(s)
      */
-    public Iterator getTokenIterator() {
+    @Override
+    public Iterator iterator() {
         return tokens.values().iterator();
     }
 
@@ -131,7 +132,7 @@ public class CombineToken extends Token {
      * @param frameNumber the last combine time
      */
     public void setLastCombineTime(int frameNumber) {
-        for (Iterator i = getTokenIterator(); i.hasNext();) {
+        for (Iterator i = iterator(); i.hasNext();) {
             ParallelToken pToken = (ParallelToken) i.next();
             pToken.setLastCombineTime(frameNumber);
         }
@@ -148,7 +149,7 @@ public class CombineToken extends Token {
             .append("Frame: ").append(getNumberFormat().format(getFrameNumber()))
             .append(", score: ").append(getScoreFormat().format(getScore())).append('\n');
         int t = 0;
-        for (Iterator i = getTokenIterator(); i.hasNext(); t++) {
+        for (Iterator i = iterator(); i.hasNext(); t++) {
             ParallelToken token = (ParallelToken) i.next();
             parallelTokenScores.append("   ParallelToken ").append(t).append(", ").append(token.getModelName())
                 .append(", feature: ").append(getScoreFormat().format(token.getFeatureScore()))

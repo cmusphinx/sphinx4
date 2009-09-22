@@ -177,8 +177,9 @@ public class MAPConfidenceScorer implements ConfidenceScorer, Configurable {
          *
          * @return confusion set iterator
          */
-        public Iterator<ConfusionSet> confusionSetIterator() {
-            return sausage.confusionSetIterator();
+        @Override
+        public Iterator<ConfusionSet> iterator() {
+            return sausage.iterator();
         }
 
 

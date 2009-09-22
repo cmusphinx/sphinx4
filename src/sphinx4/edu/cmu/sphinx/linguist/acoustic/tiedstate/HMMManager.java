@@ -24,7 +24,7 @@ import java.util.logging.Logger;
  * Manages HMMs. This HMMManager groups {@link edu.cmu.sphinx.linguist.acoustic.HMM HMMs} together by their {@link
  * edu.cmu.sphinx.linguist.acoustic.HMMPosition position} with the word.
  */
-public class HMMManager {
+public class HMMManager implements Iterable<HMM> {
 
     private List<HMM> allHMMs = new ArrayList<HMM>();
     private Map<HMMPosition, Map<Unit, HMM>> hmmsPerPosition = new EnumMap<HMMPosition, Map<Unit, HMM>>(HMMPosition.class);
@@ -62,7 +62,8 @@ public class HMMManager {
      *
      * @return an iterator that iterates through all HMMs
      */
-    public Iterator<HMM> getIterator() {
+    @Override
+    public Iterator<HMM> iterator() {
         return allHMMs.iterator();
     }
 

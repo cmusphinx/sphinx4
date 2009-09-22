@@ -683,7 +683,7 @@ public class ParallelSearchManager implements SearchManager {
                                           float transitionScore) {
         // propagate the individual ParallelTokens, taking
         // into account the new transition scores
-        for (Iterator i = oldToken.getTokenIterator(); i.hasNext();) {
+        for (Iterator i = oldToken.iterator(); i.hasNext();) {
 
             ParallelToken pToken = (ParallelToken) i.next();
             ParallelToken newParallelToken = new ParallelToken
