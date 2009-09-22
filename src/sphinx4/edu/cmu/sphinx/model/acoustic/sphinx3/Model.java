@@ -463,14 +463,13 @@ public class Model implements AcousticModel {
      * @return hmm the hmm or null if it was not found
      */
     private SenoneHMM getHMMAtAnyPosition(Unit unit) {
-        SenoneHMM hmm = null;
         HMMManager mgr = loader.getHMMManager();
-        for (Iterator i = HMMPosition.iterator();
-             hmm == null && i.hasNext();) {
-            HMMPosition pos = (HMMPosition) i.next();
-            hmm = (SenoneHMM) mgr.get(pos, unit);
+        for (HMMPosition pos : HMMPosition.values()) {
+            SenoneHMM hmm = (SenoneHMM)mgr.get(pos, unit);
+            if (hmm != null)
+                return hmm;
         }
-        return hmm;
+        return null;
     }
 
 

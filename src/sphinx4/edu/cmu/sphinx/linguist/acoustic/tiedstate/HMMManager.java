@@ -27,12 +27,11 @@ import java.util.logging.Logger;
 public class HMMManager {
 
     private List<HMM> allHMMs = new ArrayList<HMM>();
-    private ArrayList<Map<Unit, HMM>> hmmsPerPosition = new ArrayList<Map<Unit,HMM>>(HMMPosition.MAX_POSITIONS);
+    private Map<HMMPosition, Map<Unit, HMM>> hmmsPerPosition = new EnumMap<HMMPosition, Map<Unit, HMM>>(HMMPosition.class);
 
     public HMMManager () {
-    	for (int i = 0; i < HMMPosition.MAX_POSITIONS; i++) {
-    		hmmsPerPosition.add(new HashMap<Unit, HMM>());
-    	}
+        for (HMMPosition pos : HMMPosition.values())
+            hmmsPerPosition.put(pos, new HashMap<Unit, HMM>());
     }
 
     /**
@@ -41,8 +40,7 @@ public class HMMManager {
      * @param hmm the hmm to manage
      */
     public void put(HMM hmm) {
-        Map<Unit, HMM> hmmMap = getHMMMap(hmm.getPosition());
-        hmmMap.put(hmm.getUnit(), hmm);
+        hmmsPerPosition.get(hmm.getPosition()).put(hmm.getUnit(), hmm);
         allHMMs.add(hmm);
     }
 
@@ -55,8 +53,7 @@ public class HMMManager {
      * @return the HMM for the unit at the given position or null if no HMM at the position could be found
      */
     public HMM get(HMMPosition position, Unit unit) {
-        Map<Unit, HMM> hmmMap = getHMMMap(position);
-        return (HMM) hmmMap.get(unit);
+        return hmmsPerPosition.get(position).get(unit);
     }
 
 
@@ -71,22 +68,6 @@ public class HMMManager {
 
 
     /**
-     * Gets the map associated with the given position. Creates the map as necessary.
-     *
-     * @param pos the position of interest
-     * @return the map of HMMs for the given position.
-     */
-    private Map<Unit, HMM> getHMMMap(HMMPosition pos) {
-        Map<Unit, HMM> hmmMap = hmmsPerPosition.get(pos.getIndex());
-        if (hmmMap == null) {
-            hmmMap = new LinkedHashMap<Unit, HMM>();
-            hmmsPerPosition.set(pos.getIndex(),hmmMap);
-        }
-        return hmmMap;
-    }
-
-
-    /**
      * Returns the number of HMMS in this manager
      *
      * @return the number of HMMs
@@ -94,7 +75,7 @@ public class HMMManager {
     private int getNumHMMs() {
         int count = 0;
 
-        for (Map<Unit, HMM> map : hmmsPerPosition) {
+        for (Map<Unit, HMM> map : hmmsPerPosition.values()) {
             if (map != null) {
                 count += map.size();
             }

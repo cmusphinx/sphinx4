@@ -1283,14 +1283,11 @@ class TokenTypeTracker {
         } else if (s instanceof HMMSearchState) {
             numHMMs++;
             HMM hmm = ((HMMSearchState) s).getHMMState().getHMM();
-            if (hmm.getPosition() == HMMPosition.BEGIN) {
-                numHMMBegin++;
-            } else if (hmm.getPosition() == HMMPosition.END) {
-                numHMMEnd++;
-            } else if (hmm.getPosition() == HMMPosition.SINGLE) {
-                numHMMSingle++;
-            } else if (hmm.getPosition() == HMMPosition.INTERNAL) {
-                numHMMInternal++;
+            switch (hmm.getPosition()) {
+                case BEGIN: numHMMBegin++; break;
+                case END: numHMMEnd++; break;
+                case SINGLE: numHMMSingle++; break;
+                case INTERNAL: numHMMInternal++; break;
             }
         } else {
             numOthers++;

@@ -12,54 +12,34 @@
 
 package edu.cmu.sphinx.linguist.acoustic;
 
-import java.io.ObjectStreamException;
-import java.io.Serializable;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 /**
  * Defines possible positions of HMMs. Note that even though the positions are defined to be within words, some
  * recognizers may classify positions in terms of other elements besides words.
  */
-public class HMMPosition implements Serializable {
+public enum HMMPosition {
 
-	private static final long serialVersionUID = 1L;
-	private static Map<String, HMMPosition> map = new LinkedHashMap<String, HMMPosition>();
-    private String name;
-    private int index;
+    BEGIN     ('b'), // HMM is at the beginning position of the word
+    END       ('e'), // HMM is at the end position of the word
+    SINGLE    ('s'), // HMM is at the beginning and the end of the word
+    INTERNAL  ('i'), // HMM is completely internal to the word
+    UNDEFINED ('-'); // HMM is at an undefined position in the word
 
-
-    /** HMM is at the beginning position of the word */
-    public final static HMMPosition BEGIN = new HMMPosition("b", 0);
-
-    /** HMM is at the end position of the word */
-    public final static HMMPosition END = new HMMPosition("e", 1);
-
-    /** HMM is at the beginning and the end of the word */
-    public final static HMMPosition SINGLE = new HMMPosition("s", 2);
-
-    /** HMM is completely internal to the word */
-    public final static HMMPosition INTERNAL = new HMMPosition("i", 3);
-
-    /** HMM is at an undefined position n the word */
-    public final static HMMPosition UNDEFINED = new HMMPosition("-", 4);
-
-    /** The maximum number of HMM positions */
-    public final static int MAX_POSITIONS = 5;
-
-
-    /**
-     * Creates and HMMPosition. No public construction is allowed
-     *
-     * @param rep the representation for this position
-     */
-    private HMMPosition(String rep, int index) {
-        this.name = rep;
-        this.index = index;
-        map.put(rep, this);
+	private static final HMMPosition[] posByRep;
+    static {
+        int maxChar = 0;
+        for (HMMPosition pos : values()) // determine max char to use as index
+            if (pos.rep.charAt(0) > maxChar)
+                maxChar = pos.rep.charAt(0);
+        posByRep = new HMMPosition[maxChar + 1];
+        for (HMMPosition pos : values()) // cache HMMPositions according to rep
+            posByRep[pos.rep.charAt(0)] = pos;
     }
 
+    private String rep;
+
+    private HMMPosition(char rep) {
+        this.rep = String.valueOf(rep);
+    }
 
     /**
      * Looks up an HMMPosition baed upon its representation
@@ -68,20 +48,8 @@ public class HMMPosition implements Serializable {
      * @return the HMMPosition represented by rep or null if not found
      */
     public static HMMPosition lookup(String rep) {
-        return (HMMPosition) map.get(rep);
+        return rep == null || rep.isEmpty() ? null : posByRep[rep.charAt(0)];
     }
-
-
-    /**
-     * Returns the index for this position.  Each HMMPosition maintains a unique index. This allows arrays of hmm
-     * positions to be easily maintained
-     *
-     * @return the index
-     */
-    public int getIndex() {
-        return index;
-    }
-
 
     /**
      * Determines if this position is an end word position
@@ -92,7 +60,6 @@ public class HMMPosition implements Serializable {
         return this == SINGLE || this == END;
     }
 
-
     /**
      * Determines if this position is word beginning position
      *
@@ -102,29 +69,12 @@ public class HMMPosition implements Serializable {
         return this == SINGLE || this == BEGIN;
     }
 
-
-    /** Returns the canonical object for the HMMPosition */
-    private Object readResolve() throws ObjectStreamException {
-        return map.get(name);
-    }
-
-
-    /**
-     * Returns an iterator for all HMMPositions
-     *
-     * @return an iterator that iterates through all positions
-     */
-    public static Iterator<HMMPosition> iterator() {
-        return map.values().iterator();
-    }
-
-
     /**
      * Returns a string representation of this object
      *
      * @return the string representation
      */
     public String toString() {
-        return name;
+        return rep;
     }
 }

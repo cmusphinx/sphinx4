@@ -17,6 +17,8 @@ import edu.cmu.sphinx.linguist.acoustic.*;
 import edu.cmu.sphinx.util.TimerPool;
 
 import java.util.Iterator;
+import java.util.Map;
+import java.util.EnumMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -31,7 +33,7 @@ public class HMMPool {
 
     private AcousticModel model;
     private Unit[] unitTable;
-    private HMM hmmTable[][];
+    private Map<HMMPosition, HMM[]> hmmTable;
     private int numCIUnits;
     private Logger logger;
     private UnitManager unitManager;
@@ -86,21 +88,18 @@ public class HMMPool {
         }
 
         // build up the hmm table to allow quick access to the hmms
-        hmmTable = new
-                HMM[HMMPosition.MAX_POSITIONS][unitTable.length];
-
-        for (Iterator <HMMPosition> i = HMMPosition.iterator(); i.hasNext();) {
-            HMMPosition position = i.next();
-            int index = position.getIndex();
+        hmmTable = new EnumMap<HMMPosition, HMM[]>(HMMPosition.class);
+        for (HMMPosition position : HMMPosition.values()) {
+            HMM[] hmms = new HMM[unitTable.length];
+            hmmTable.put(position, hmms);
             for (int j = 1; j < unitTable.length; j++) {
                 Unit unit = unitTable[j];
                 if (unit == null) {
                     unit = synthesizeUnit(j);
                 }
                 if (unit != null) {
-                    hmmTable[index][j] =
-                            model.lookupNearestHMM(unit, position, false);
-                    assert hmmTable[index][j] != null;
+                    hmms[j] = model.lookupNearestHMM(unit, position, false);
+                    assert hmms[j] != null;
                 }
             }
         }
@@ -183,7 +182,7 @@ public class HMMPool {
      * @return the hmm associated with the unit/position
      */
     public HMM getHMM(int unitID, HMMPosition position) {
-        return hmmTable[position.getIndex()][unitID];
+        return hmmTable.get(position)[unitID];
     }
 
 
