@@ -84,13 +84,13 @@ public class ConfigurableProperty {
      * @return Description of this property
      */
     public String toString(){
-        String output = "\nProperty name: " + _name + ' ';
+        StringBuilder output = new StringBuilder("\nProperty name: ").append(_name).append(' ');
         if (_default != null && !_default.isEmpty())
-            output = output.concat(" Default value : "+_default+ ' ');
+            output.append(" Default value : ").append(_default).append(' ');
         if (!_desc.isEmpty())
-            output = output.concat("\nDescription: " +_desc+ ' ');
-        output = output.concat( "Original name : " + _original_name + '\n');
-        return output;
+            output.append("\nDescription: ").append(_desc).append(' ');
+        output.append("Original name : ").append(_original_name).append('\n');
+        return output.toString();
     }
 
     /**

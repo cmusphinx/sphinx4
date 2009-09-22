@@ -171,7 +171,7 @@ public class ModelBuilder implements GUIFileActionListener {
      * @param classname Name of class to be searched
      */
     public String getSourceCode(String classname) {
-        String text = "";
+        StringBuilder text = new StringBuilder();
         if (_source_path == null) {
             return "== Source code not available ==";
         }
@@ -189,7 +189,7 @@ public class ModelBuilder implements GUIFileActionListener {
             BufferedReader br = new BufferedReader(new FileReader(completename));
             String thisline;
             while ((thisline = br.readLine()) != null) {
-                text = text.concat(thisline + '\n');
+                text.append(thisline).append('\n');
             }
             br.close();
 
@@ -198,7 +198,7 @@ public class ModelBuilder implements GUIFileActionListener {
         } catch (IOException e) {
             return null;
         }
-        return text;
+        return text.toString();
     }
 
 

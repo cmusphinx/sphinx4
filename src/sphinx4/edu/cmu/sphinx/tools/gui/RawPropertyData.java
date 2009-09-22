@@ -123,20 +123,20 @@ public class RawPropertyData {
     * @return Description of object
     */
    public String toString(){
-       String output = "name : " + name;
+       StringBuilder output = new StringBuilder().append("name : ").append(name);
        for(Iterator it=properties.entrySet().iterator();it.hasNext();){            
             Map.Entry entry = (Map.Entry) it.next();            
             String groupname = (String)entry.getKey();            
             if (entry.getValue() != null ){
                 if (entry.getValue() instanceof String) {
-                    output = output.concat("value string : "+ (String)entry.getValue());
+                    output.append("value string : ").append(entry.getValue());
                 }
                 else    { // is a list
-                    output = output.concat(((List)entry.getValue()).toString());
+                    output.append(entry.getValue());
                 }
             }
        }
-        return output;
+        return output.toString();
    }
    
     /**

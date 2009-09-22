@@ -68,24 +68,24 @@ public class ConfigurableComponent {
      * @return string description of model
      */
     public String toString(){
-        String output = "Section :" + _sectionName + '\n';
-        output = output.concat(" Class Name : " + _componentClassName+'\n');
+        StringBuilder output = new StringBuilder("Section :").append(_sectionName).append('\n');
+        output.append(" Class Name : " + _componentClassName+'\n');
         if (!_componentDesc.isEmpty()) {
-            output = output.concat(" Desc : "+ _componentDesc+'\n');
+            output.append(" Desc : ").append(_componentDesc).append('\n');
         }
         if( !_propList.isEmpty() ){
-            output = output.concat(" Property list : \n");
+            output.append(" Property list : \n");
             for (Iterator it = _propList.values().iterator();it.hasNext();){
-                output = output.concat(((ConfigurableProperty)it.next()).toString());
+                output.append(it.next());
             }
         }        
         if ( !_confProp.isEmpty()){
-            output = output.concat(" Configuration values : ***** \n");
+            output.append(" Configuration values : ***** \n");
             for (Iterator it = _confProp.values().iterator();it.hasNext();){
-                output = output.concat(((RawPropertyData)it.next()).toString());
+                output.append(it.next());
             }
         }
-        return output;
+        return output.toString();
     }
        
     /**
