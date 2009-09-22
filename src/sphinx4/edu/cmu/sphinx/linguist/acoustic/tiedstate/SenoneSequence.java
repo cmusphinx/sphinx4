@@ -27,9 +27,8 @@ public class SenoneSequence implements Serializable {
      * @param senoneList the list of senones
      * @return a composite senone
      */
-    public static SenoneSequence create(List senoneList) {
-        return new SenoneSequence(
-                (Senone[]) senoneList.toArray(new Senone[senoneList.size()]));
+    public static SenoneSequence create(List<CompositeSenone> senoneList) {
+        return new SenoneSequence(senoneList.toArray(new Senone[senoneList.size()]));
     }
 
 
@@ -60,8 +59,8 @@ public class SenoneSequence implements Serializable {
      */
     public int hashCode() {
         int hashCode = 31;
-        for (int i = 0; i < senones.length; i++) {
-            hashCode = hashCode * 91 + senones[i].hashCode();
+        for (Senone senone : senones) {
+            hashCode = hashCode * 91 + senone.hashCode();
         }
         return hashCode;
     }
@@ -101,8 +100,8 @@ public class SenoneSequence implements Serializable {
      */
     public void dump(String msg) {
         System.out.println(" SenoneSequence " + msg + ':');
-        for (int i = 0; i < senones.length; i++) {
-            senones[i].dump("  seq:");
+        for (Senone senone : senones) {
+            senone.dump("  seq:");
         }
     }
 }

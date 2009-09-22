@@ -18,9 +18,9 @@ import java.util.Map;
 /** Represents  the context for a unit */
 public class LeftRightContext extends Context {
 
-    String stringRepresentation = null;
-    Unit[] leftContext = null;
-    Unit[] rightContext = null;
+    String stringRepresentation;
+    Unit[] leftContext;
+    Unit[] rightContext;
     private static boolean CACHING_CONTEXTS = true;
     private static Map<String, LeftRightContext> cache;
 
@@ -67,7 +67,7 @@ public class LeftRightContext extends Context {
             String name = getContextName(leftContext) + ',' +
                     getContextName(rightContext);
 
-            context = (LeftRightContext) cache.get(name);
+            context = cache.get(name);
             if (context == null) {
                 context = new LeftRightContext(leftContext, rightContext);
                 cache.put(name, context);

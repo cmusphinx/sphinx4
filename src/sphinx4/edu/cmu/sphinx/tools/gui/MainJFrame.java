@@ -16,6 +16,7 @@ package edu.cmu.sphinx.tools.gui;
 import edu.cmu.sphinx.tools.gui.reader.GUIReaderException;
 import edu.cmu.sphinx.tools.gui.writer.GUIWriterException;
 import edu.cmu.sphinx.tools.gui.util.ConfigurableUtilException;
+import edu.cmu.sphinx.tools.gui.util.ConfigurableComponent;
 
 import javax.swing.JOptionPane;
 import javax.swing.JFileChooser;
@@ -24,7 +25,6 @@ import javax.swing.filechooser.FileFilter;
 import java.awt.Component;
 
 import java.io.File;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -38,7 +38,7 @@ import java.util.Set;
     
     
     /** Creates new form MainJFrame, only accessible for the classes in this package  */
-     MainJFrame(GUIMediator gm, Iterator groups) {
+     MainJFrame(GUIMediator gm, Map<String, Set<ConfigurableComponent>> groups) {
         super("Sphinx-4 Configuration");
         _gm = gm;
         
@@ -314,7 +314,7 @@ import java.util.Set;
     
     /* this private method is going to one more panel into the Main frame */
    private void addTabPanel(String title, Component comp,int tabindex){
-       int c = (int)(tabindex + '1');
+       int c = tabindex + '1';
        TabPanel.addTab(title, comp);
        TabPanel.setMnemonicAt(tabindex, c);       
    }
@@ -340,16 +340,15 @@ import java.util.Set;
     * helper method to create tab panels based on the groups 
     * that are given, one TabPanel for one group
     */
-   public void addTextPanels(Iterator groups){
+   public void addTextPanels(Map<String, Set<ConfigurableComponent>> groups){
         int tempi=1;
-        for ( Iterator it = groups; it.hasNext();){            
-            Map.Entry propentry = (Map.Entry)it.next();
-            String grpname = (String)propentry.getKey();
-            Set grp = (Set)propentry.getValue();              
-            _pConfigurable = new PanelConfigurable(_gm,grpname,grp);               
-            addTabPanel(grpname.substring(1+grpname.lastIndexOf('.')).toUpperCase(),
-                    _pConfigurable,tempi++);       
-        }
+       for (Map.Entry<String, Set<ConfigurableComponent>> propentry : groups.entrySet()) {
+           String grpname = propentry.getKey();
+           Set<ConfigurableComponent> grp = propentry.getValue();
+           _pConfigurable = new PanelConfigurable(_gm, grpname, grp);
+           addTabPanel(grpname.substring(1 + grpname.lastIndexOf('.')).toUpperCase(),
+               _pConfigurable, tempi++);
+       }
     }
     
     // inner class that is the FileFilter for choosing file types

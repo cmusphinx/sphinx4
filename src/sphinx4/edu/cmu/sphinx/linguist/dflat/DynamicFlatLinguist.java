@@ -270,8 +270,8 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
             Set<Unit> unitSet = new HashSet<Unit>();
 
             GrammarArc[] arcs = node.getSuccessors();
-            for (int i = 0; i < arcs.length; i++) {
-                GrammarNode nextNode = arcs[i].getGrammarNode();
+            for (GrammarArc arc : arcs) {
+                GrammarNode nextNode = arc.getGrammarNode();
                 collectNextUnits(nextNode, vistedNodes, unitSet);
             }
             int[] nextUnits = new int[unitSet.size()];
@@ -313,13 +313,13 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
         } else if (!thisNode.isEmpty()) {
             Word word = thisNode.getWord();
             Pronunciation[] pronunciations = word.getPronunciations();
-            for (int j = 0; j < pronunciations.length; j++) {
-                unitSet.add(pronunciations[j].getUnits()[0]);
+            for (Pronunciation pronunciation : pronunciations) {
+                unitSet.add(pronunciation.getUnits()[0]);
             }
         } else {
             GrammarArc[] arcs = thisNode.getSuccessors();
-            for (int i = 0; i < arcs.length; i++) {
-                GrammarNode nextNode = arcs[i].getGrammarNode();
+            for (GrammarArc arc : arcs) {
+                GrammarNode nextNode = arc.getGrammarNode();
                 collectNextUnits(nextNode, vistedNodes, unitSet);
             }
         }
@@ -675,10 +675,10 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
         GrammarArc[] filter(GrammarArc[] arcs, int nextBase) {
             if (nextBase != ANY) {
                 List<GrammarArc> list = new ArrayList<GrammarArc>();
-                for (int i = 0; i < arcs.length; i++) {
-                    GrammarNode node = arcs[i].getGrammarNode();
+                for (GrammarArc arc : arcs) {
+                    GrammarNode node = arc.getGrammarNode();
                     if (hasEntryContext(node, nextBase)) {
-                        list.add(arcs[i]);
+                        list.add(arc);
                     }
                 }
                 arcs = list.toArray(new GrammarArc[list.size()]);

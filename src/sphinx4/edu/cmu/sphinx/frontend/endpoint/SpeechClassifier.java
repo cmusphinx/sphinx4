@@ -114,8 +114,7 @@ public class SpeechClassifier extends BaseDataProcessor {
     public static double logRootMeanSquare(double[] samples) {
         assert samples.length > 0;
         double sumOfSquares = 0.0f;
-        for (int i = 0; i < samples.length; i++) {
-            double sample = samples[i];
+        for (double sample : samples) {
             sumOfSquares += sample * sample;
         }
         double rootMeanSquare = Math.sqrt
@@ -169,7 +168,7 @@ public class SpeechClassifier extends BaseDataProcessor {
      * @throws DataProcessingException if a data processing error occurs
      */
     public Data getData() throws DataProcessingException {
-        if (outputQueue.size() == 0) {
+        if (outputQueue.isEmpty()) {
             Data audio = getPredecessor().getData();
 
             if (audio instanceof DataStartSignal)
@@ -192,7 +191,7 @@ public class SpeechClassifier extends BaseDataProcessor {
                 }
             }
         }
-        if (outputQueue.size() > 0) {
+        if (!outputQueue.isEmpty()) {
             Data audio = outputQueue.remove(0);
             return audio;
         } else {

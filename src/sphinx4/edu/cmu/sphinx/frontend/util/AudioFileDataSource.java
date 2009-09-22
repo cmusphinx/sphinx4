@@ -56,9 +56,9 @@ public class AudioFileDataSource extends BaseDataProcessor {
     private long totalValuesRead;
     protected boolean bigEndian;
     protected boolean signedData;
-    private boolean streamEndReached = false;
-    private boolean utteranceEndSent = false;
-    private boolean utteranceStarted = false;
+    private boolean streamEndReached;
+    private boolean utteranceEndSent;
+    private boolean utteranceStarted;
 
     private File curAudioFile;
 

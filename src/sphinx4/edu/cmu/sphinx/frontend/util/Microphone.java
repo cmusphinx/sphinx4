@@ -103,13 +103,13 @@ public class Microphone extends BaseDataProcessor {
 
 
     private AudioFormat finalFormat;
-    private AudioInputStream audioStream = null;
-    private TargetDataLine audioLine = null;
+    private AudioInputStream audioStream;
+    private TargetDataLine audioLine;
     private DataList audioList;
     private Utterance currentUtterance;
-    private boolean doConversion = false;
+    private boolean doConversion;
     private int audioBufferSize = 160000;
-    private volatile boolean recording = false;
+    private volatile boolean recording;
     private volatile boolean utteranceEndReached = true;
     private RecordingThread recorder;
 
@@ -391,9 +391,9 @@ public class Microphone extends BaseDataProcessor {
     /** This Thread records audio, and caches them in an audio buffer. */
     class RecordingThread extends Thread {
 
-        private boolean done = false;
-        private volatile boolean started = false;
-        private long totalSamplesRead = 0;
+        private boolean done;
+        private volatile boolean started;
+        private long totalSamplesRead;
         private final Object lock = new Object();
 
 
@@ -702,7 +702,7 @@ class DataList {
      */
     public synchronized Data remove() {
         try {
-            while (list.size() == 0) {
+            while (list.isEmpty()) {
                 // System.out.println("Waiting...");
                 wait();
             }

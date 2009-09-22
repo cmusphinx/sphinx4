@@ -23,7 +23,7 @@ public class SimpleTranscript implements Transcript {
     private String transcript;              // the transcript
     private Dictionary dictionary;   // the dictionary
     boolean isExact;                        // is exact transcription?
-    private boolean wasInitialized = false; // Has this object been initialized?
+    private boolean wasInitialized; // Has this object been initialized?
     private StringTokenizer words;          // string tokenizer for current transcription.
     private String wordSeparator;           // word separators
 
@@ -160,7 +160,7 @@ public class SimpleTranscript implements Transcript {
      * @return next word in the transcription.
      */
     public String nextWord() {
-        return (String) words.nextToken();
+        return words.nextToken();
     }
 
 

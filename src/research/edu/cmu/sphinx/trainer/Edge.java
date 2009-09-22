@@ -40,7 +40,7 @@ public class Edge {
     * Constructor given no id.
     */
     Edge(Node source, Node destination) {
-        this(source, destination, (String) null);
+        this(source, destination, null);
     }
 
 

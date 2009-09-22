@@ -395,8 +395,8 @@ public class LatticeOptimizer {
                 } else if (n == lattice.getTerminalNode()) {
 
                 } else {
-                    if (n.getLeavingEdges().size() == 0
-                            || n.getEnteringEdges().size() == 0) {
+                    if (n.getLeavingEdges().isEmpty()
+                            || n.getEnteringEdges().isEmpty()) {
                         lattice.removeNodeAndEdges(n);
                         removeHangingNodes();
                         return;

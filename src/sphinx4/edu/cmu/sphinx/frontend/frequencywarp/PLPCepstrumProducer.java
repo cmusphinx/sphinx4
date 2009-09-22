@@ -84,8 +84,7 @@ public class PLPCepstrumProducer extends BaseDataProcessor {
             double frequency = 2 * Math.PI * (double) i / period;
 
             for (int j = 0; j < numberPLPFilters; j++) {
-                cosine[i][j] = Math.cos
-                        ((double) (frequency * (j + 0.5)));
+                cosine[i][j] = Math.cos(frequency * (j + 0.5));
             }
         }
     }

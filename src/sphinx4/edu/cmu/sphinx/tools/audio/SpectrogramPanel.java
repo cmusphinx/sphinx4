@@ -32,10 +32,10 @@ import java.util.ArrayList;
 public class SpectrogramPanel extends JPanel {
 
     /** Where the spectrogram will live. */
-    protected BufferedImage spectrogram = null;
+    protected BufferedImage spectrogram;
 
     /** A scaled version of the spectrogram image. */
-    protected Image scaledSpectrogram = null;
+    protected Image scaledSpectrogram;
 
     /** The zooming factor. */
     protected float zoom = 1.0f;

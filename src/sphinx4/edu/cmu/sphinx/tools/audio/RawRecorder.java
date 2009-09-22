@@ -21,11 +21,11 @@ import java.io.IOException;
 public class RawRecorder {
 
     Object lock = new Object();
-    RecordThread recorder = null;
+    RecordThread recorder;
     AudioFormat inFormat;
     AudioFormat outFormat;
-    TargetDataLine microphone = null;
-    boolean downsample = false;
+    TargetDataLine microphone;
+    boolean downsample;
 
 
     /**
@@ -121,7 +121,7 @@ public class RawRecorder {
 
     class RecordThread extends Thread {
 
-        boolean done = false;
+        boolean done;
         Object lock = new Object();
         ByteArrayOutputStream out;
 

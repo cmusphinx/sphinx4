@@ -97,8 +97,7 @@ public class MelFrequencyFilterBank extends BaseDataProcessor {
         super.newProperties(ps);
         minFreq = ps.getDouble(PROP_MIN_FREQ);
         maxFreq = ps.getDouble(PROP_MAX_FREQ);
-        numberFilters = ps.getInt(PROP_NUMBER_FILTERS
-        );
+        numberFilters = ps.getInt(PROP_NUMBER_FILTERS);
     }
 
 

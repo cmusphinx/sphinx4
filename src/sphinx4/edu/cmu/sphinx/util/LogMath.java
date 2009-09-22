@@ -40,7 +40,7 @@ public final class LogMath implements Configurable, Serializable {
 
 
     private static float logZero = -Float.MAX_VALUE;
-    private static float logOne = 0.0f;
+    private static float logOne;
 
     // -------------------------------
     // Configuration data

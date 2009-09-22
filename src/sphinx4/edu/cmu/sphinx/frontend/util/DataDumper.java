@@ -103,8 +103,8 @@ public class DataDumper extends BaseDataProcessor {
             DoubleData dd = (DoubleData) input;
             double[] values = dd.getValues();
             System.out.print("Frame " + values.length);
-            for (int i = 0; i < values.length; i++) {
-                System.out.print(' ' + formatter.format(values[i]));
+            for (double val : values) {
+                System.out.print(' ' + formatter.format(val));
             }
             System.out.println();
         } else if (input instanceof SpeechClassifiedData) {
@@ -116,16 +116,16 @@ public class DataDumper extends BaseDataProcessor {
             else
             	System.out.print(' ');
             System.out.print(" " + values.length);
-            for (int i = 0; i < values.length; i++) {
-                System.out.print(' ' + formatter.format(values[i]));
+            for (double val : values) {
+                System.out.print(' ' + formatter.format(val));
             }
             System.out.println();
         } else if (input instanceof FloatData) {
             FloatData fd = (FloatData) input;
             float[] values = fd.getValues();
             System.out.print("Frame " + values.length);
-            for (int i = 0; i < values.length; i++) {
-                System.out.print(' ' + formatter.format(values[i]));
+            for (float val : values) {
+                System.out.print(' ' + formatter.format(val));
             }
             System.out.println();
         }

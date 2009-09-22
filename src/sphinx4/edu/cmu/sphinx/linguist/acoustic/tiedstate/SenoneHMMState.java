@@ -152,7 +152,7 @@ public class SenoneHMMState implements HMMState {
      */
     public HMMStateArc[] getSuccessors() {
         if (arcs == null) {
-            List list = new ArrayList();
+            List<HMMStateArc> list = new ArrayList<HMMStateArc>();
             float[][] transitionMatrix = hmm.getTransitionMatrix();
 
             // dumpMatrix("arc", transitionMatrix);
@@ -163,7 +163,7 @@ public class SenoneHMMState implements HMMState {
                     list.add(arc);
                 }
             }
-            arcs = (HMMStateArc[]) list.toArray(new HMMStateArc[list.size()]);
+            arcs = list.toArray(new HMMStateArc[list.size()]);
         }
         return arcs;
     }
@@ -177,9 +177,9 @@ public class SenoneHMMState implements HMMState {
      */
     private void dumpMatrix(String title, float[][] matrix) {
         System.out.println(" -- " + title + " --- ");
-        for (int i = 0; i < matrix.length; i++) {
-            for (int j = 0; j < matrix[i].length; j++) {
-                System.out.print(" " + matrix[i][j]);
+        for (float[] row : matrix) {
+            for (float val : row) {
+                System.out.print(" " + val);
             }
             System.out.println();
         }

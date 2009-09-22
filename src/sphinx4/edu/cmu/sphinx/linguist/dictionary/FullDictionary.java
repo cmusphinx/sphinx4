@@ -65,7 +65,7 @@ public class FullDictionary implements Dictionary {
     private String wordReplacement;
     private URL wordDictionaryFile;
     private URL fillerDictionaryFile;
-    private boolean allocated = false;
+    private boolean allocated;
     private UnitManager unitManager;
 
 
@@ -193,8 +193,8 @@ public class FullDictionary implements Dictionary {
                 pros[i] = pronunciations.get(i);
             }
             Word word = new Word(spelling, pros, isFillerDict);
-            for (int i = 0; i < pros.length; i++) {
-                pros[i].setWord(word);
+            for (Pronunciation pro : pros) {
+                pro.setWord(word);
             }
             dictionary.put(spelling, word);
         }
@@ -360,8 +360,7 @@ public class FullDictionary implements Dictionary {
         SortedMap<String, Object> sorted = new TreeMap<String, Object>(wordDictionary);
         StringBuilder result = new StringBuilder();
         sorted.putAll(fillerDictionary);
-        for (Object o : sorted.keySet()) {
-            String text = (String) o;
+        for (String text : sorted.keySet()) {
             Word word = getWord(text);
             Pronunciation[] pronunciations = word.getPronunciations(null);
             result.append(word).append('\n');

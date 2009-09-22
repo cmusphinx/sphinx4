@@ -55,9 +55,9 @@ public class StreamDataSource extends BaseDataProcessor {
     private long totalValuesRead;
     private boolean bigEndian;
     private boolean signedData;
-    private boolean streamEndReached = false;
-    private boolean utteranceEndSent = false;
-    private boolean utteranceStarted = false;
+    private boolean streamEndReached;
+    private boolean utteranceEndSent;
+    private boolean utteranceStarted;
     protected int bitsPerSample;
 
 

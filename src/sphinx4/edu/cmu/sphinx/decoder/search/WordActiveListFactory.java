@@ -113,10 +113,9 @@ public class WordActiveListFactory extends ActiveListFactory {
             Map<Word, Integer> countMap = new HashMap<Word, Integer>();
             Collections.sort(tokenList, Token.COMPARATOR);
             // remove word duplicates
-            for (ListIterator i = tokenList.listIterator(); i.hasNext();) {
-                Token token = (Token) i.next();
-                WordSearchState wordState =
-                        (WordSearchState) token.getSearchState();
+            for (Iterator<Token> i = tokenList.iterator(); i.hasNext();) {
+                Token token = i.next();
+                WordSearchState wordState = (WordSearchState)token.getSearchState();
 
                 Word word = wordState.getPronunciation().getWord();
 

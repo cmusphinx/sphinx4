@@ -31,12 +31,12 @@ public class Node {
     private NodeType nodeType;
 
     /** The list of incoming edges to this node. */
-    private List incomingEdges;
-    private Iterator incomingEdgeIterator;
+    private List<Edge> incomingEdges;
+    private Iterator<Edge> incomingEdgeIterator;
 
     /** The list of outgoing edges from this node */
-    private List outgoingEdges;
-    private Iterator outgoingEdgeIterator;
+    private List<Edge> outgoingEdges;
+    private Iterator<Edge> outgoingEdgeIterator;
 
 
     /**
@@ -46,8 +46,8 @@ public class Node {
      * @param nodeSymbol the symbol for this type.
      */
     Node(NodeType nodeType, String nodeSymbol) {
-        incomingEdges = new ArrayList();
-        outgoingEdges = new ArrayList();
+        incomingEdges = new ArrayList<Edge>();
+        outgoingEdges = new ArrayList<Edge>();
         this.nodeId = nodeSymbol;
         this.nodeType = nodeType;
         this.object = null;
@@ -60,7 +60,7 @@ public class Node {
      * @param nodeType the type of node.
      */
     Node(NodeType nodeType) {
-        this(nodeType, (String) null);
+        this(nodeType, null);
     }
 
 
@@ -117,7 +117,7 @@ public class Node {
      * @return the next edge incoming edge
      */
     public Edge nextIncomingEdge() {
-        return (Edge) incomingEdgeIterator.next();
+        return incomingEdgeIterator.next();
     }
 
 
@@ -164,7 +164,7 @@ public class Node {
      * @return the next outgoing edge
      */
     public Edge nextOutgoingEdge() {
-        return (Edge) outgoingEdgeIterator.next();
+        return outgoingEdgeIterator.next();
     }
 
 

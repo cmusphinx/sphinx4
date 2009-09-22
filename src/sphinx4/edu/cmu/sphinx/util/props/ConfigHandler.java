@@ -13,10 +13,10 @@ import java.util.Map;
 /** A SAX XML Handler implementation that builds up the map of raw property data objects */
 class ConfigHandler extends DefaultHandler {
 
-    protected RawPropertyData rpd = null;
+    protected RawPropertyData rpd;
     protected Locator locator;
-    protected List<String> itemList = null;
-    protected String itemListName = null;
+    protected List<String> itemList;
+    protected String itemListName;
     protected StringBuffer curItem;
 
     protected Map<String, RawPropertyData> rpdMap;

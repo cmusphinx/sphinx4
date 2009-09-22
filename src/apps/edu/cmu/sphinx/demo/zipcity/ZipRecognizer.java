@@ -29,7 +29,7 @@ public class ZipRecognizer implements Runnable {
 
     private Microphone microphone;
     private Recognizer recognizer;
-    private List zipListeners = new ArrayList();
+    private List<ZipListener> zipListeners = new ArrayList<ZipListener>();
 
 
     /**
@@ -123,7 +123,7 @@ public class ZipRecognizer implements Runnable {
     }
 
 
-    private static Map digitMap = new HashMap();
+    private static Map<String, String> digitMap = new HashMap<String, String>();
 
 
     static {
@@ -148,7 +148,7 @@ public class ZipRecognizer implements Runnable {
      * @return digit the digit form of the word (or null)
      */
     private String lookupDigit(String word) {
-        return (String) digitMap.get(word);
+        return digitMap.get(word);
     }
 
 
@@ -178,10 +178,8 @@ public class ZipRecognizer implements Runnable {
      * @param zipcode the recognized zip code
      */
     private synchronized void fireListeners(String zipcode) {
-        for (Iterator i = zipListeners.iterator(); i.hasNext();) {
-            ZipListener zl = (ZipListener) i.next();
+        for (ZipListener zl : zipListeners)
             zl.notify(zipcode);
-        }
     }
 }
 

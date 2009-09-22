@@ -117,7 +117,7 @@ public class Utilities {
     }
 
 
-    static long maxUsed = 0L;
+    static long maxUsed;
 
 
     /**

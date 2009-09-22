@@ -58,7 +58,7 @@ public class PartitionerTest {
             assert (r == (tokenListSize - 1));
         }
 
-        List firstList = new LinkedList();
+        List<Token> firstList = new LinkedList<Token>();
         if (r >= 0) {
             float lowestScore = tokens[r].getScore();
             
@@ -72,14 +72,13 @@ public class PartitionerTest {
         
             Collections.sort(firstList, Token.COMPARATOR);
             
-            List secondList = Arrays.asList(tokens);
+            List<Token> secondList = Arrays.asList(tokens);
             Collections.sort(secondList, Token.COMPARATOR);
             
-            for (Iterator i1 = firstList.iterator(), 
-                     i2 = secondList.iterator();
+            for (Iterator<Token> i1 = firstList.iterator(), i2 = secondList.iterator();
                  i1.hasNext() && i2.hasNext(); ) {
-                Token t1 = (Token) i1.next();
-                Token t2 = (Token) i2.next();
+                Token t1 = i1.next();
+                Token t2 = i2.next();
                 assert (t1 == t2);
             }
         }

@@ -12,9 +12,6 @@
 
 package edu.cmu.sphinx.research.parallel;
 
-import java.util.Iterator;
-
-
 /**
  * Combines the various unit feature stream scores in a CombineToken. Each feature stream is represented as a {@link
  * ParallelToken ParallelToken} in a CombineToken. Suppose that the CombineToken has two ParallelTokens, P1 and P2, then
@@ -36,9 +33,7 @@ public class FeatureScoreCombiner implements ScoreCombiner {
     public void combineScore(CombineToken token) {
         double logTotalScore = 0.0f;
 
-        for (Iterator i = token.iterator(); i.hasNext();) {
-            ParallelToken pToken = (ParallelToken) i.next();
-
+        for (ParallelToken pToken : token) {
             // in linear domain, the following expression is:
             // score = pToken.getFeatureScore()^pToken.getEta()
 
@@ -53,8 +48,7 @@ public class FeatureScoreCombiner implements ScoreCombiner {
         token.setCombinedScore((float) logTotalScore);
 
         // set the combined score of all ParallelTokens in this CombineToken
-        for (Iterator i = token.iterator(); i.hasNext();) {
-            ParallelToken parallelToken = (ParallelToken) i.next();
+        for (ParallelToken parallelToken : token) {
             parallelToken.setCombinedScore((float) logTotalScore);
         }
     }

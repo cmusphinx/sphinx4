@@ -14,6 +14,7 @@ package edu.cmu.sphinx.linguist.acoustic.tiedstate.trainer;
 
 import edu.cmu.sphinx.linguist.acoustic.LeftRightContext;
 import edu.cmu.sphinx.linguist.acoustic.Unit;
+import edu.cmu.sphinx.linguist.acoustic.HMM;
 import edu.cmu.sphinx.linguist.acoustic.tiedstate.*;
 import edu.cmu.sphinx.util.LogMath;
 import edu.cmu.sphinx.util.StreamFactory;
@@ -88,7 +89,7 @@ class Sphinx3Saver implements Saver {
     private Map contextIndependentUnits;
     private HMMManager hmmManager;
     private LogMath logMath;
-    private boolean binary = false;
+    private boolean binary;
     private String location;
     private boolean swap;
 
@@ -599,8 +600,8 @@ class Sphinx3Saver implements Saver {
      */
     private void normalize(float[] data) {
         float sum = 0;
-        for (int i = 0; i < data.length; i++) {
-            sum += data[i];
+        for (float val : data) {
+            sum += val;
         }
 
         if (sum != 0.0f) {
@@ -663,8 +664,8 @@ class Sphinx3Saver implements Saver {
     protected void writeFloatArray(DataOutputStream dos, float[] data)
             throws IOException {
 
-        for (int i = 0; i < data.length; i++) {
-            writeFloat(dos, data[i]);
+        for (float val : data) {
+            writeFloat(dos, val);
         }
     }
 
@@ -711,10 +712,9 @@ class Sphinx3Saver implements Saver {
         numTri = 0;
         numContextIndependentTiedState = 0;
         numStateMap = 0;
-        for (Iterator i = hmmManager.iterator(); i.hasNext();) {
-            SenoneHMM hmm = (SenoneHMM) i.next();
+        for (HMM hmm : hmmManager) {
             numStateMap += hmm.getOrder() + 1;
-            if (hmm.isContextDependent()) {
+            if (((SenoneHMM)hmm).isContextDependent()) {
                 numTri++;
             } else {
                 numBase++;
@@ -739,8 +739,8 @@ class Sphinx3Saver implements Saver {
         numStatePerHMM = numStateMap / (numTri + numBase);
 
         // Save the base phones
-        for (Iterator i = hmmManager.iterator(); i.hasNext();) {
-            SenoneHMM hmm = (SenoneHMM) i.next();
+        for (HMM hmm0 : hmmManager) {
+            SenoneHMM hmm = (SenoneHMM)hmm0;
             if (hmm.isContextDependent()) {
                 continue;
             }
@@ -768,8 +768,8 @@ class Sphinx3Saver implements Saver {
 
             SenoneSequence ss = hmm.getSenoneSequence();
             Senone[] senones = ss.getSenones();
-            for (int j = 0; j < senones.length; j++) {
-                int index = senonePool.indexOf(senones[j]);
+            for (Senone senone : senones) {
+                int index = senonePool.indexOf(senone);
                 assert index >= 0 && index < numContextIndependentTiedState;
                 pw.print(index + "\t");
             }
@@ -783,14 +783,14 @@ class Sphinx3Saver implements Saver {
 
         // Save the context dependent phones.
 
-        for (Iterator i = hmmManager.iterator(); i.hasNext();) {
-            SenoneHMM hmm = (SenoneHMM) i.next();
+        for (HMM hmm0 : hmmManager) {
+            SenoneHMM hmm = (SenoneHMM)hmm0;
             if (!hmm.isContextDependent()) {
                 continue;
             }
 
             Unit unit = hmm.getUnit();
-            LeftRightContext context = (LeftRightContext) unit.getContext();
+            LeftRightContext context = (LeftRightContext)unit.getContext();
             Unit[] leftContext = context.getLeftContext();
             Unit[] rightContext = context.getRightContext();
             assert leftContext.length == 1 && rightContext.length == 1;
@@ -817,8 +817,8 @@ class Sphinx3Saver implements Saver {
 
             SenoneSequence ss = hmm.getSenoneSequence();
             Senone[] senones = ss.getSenones();
-            for (int j = 0; j < senones.length; j++) {
-                int index = senonePool.indexOf(senones[j]);
+            for (Senone senone : senones) {
+                int index = senonePool.indexOf(senone);
                 assert index >= 0 && index < numTiedState;
                 pw.print(index + "\t");
             }

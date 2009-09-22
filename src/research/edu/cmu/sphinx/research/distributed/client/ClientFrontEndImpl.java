@@ -48,7 +48,7 @@ public class ClientFrontEndImpl implements Configurable{
     private StreamDataSource streamAudioSource;
     private FrontEnd frontend;
 
-    private boolean inUtterance = false;
+    private boolean inUtterance;
 
 
 
@@ -147,8 +147,8 @@ public class ClientFrontEndImpl implements Configurable{
                     if (cepstrum instanceof DoubleData) {
                         // send the cepstrum data
                         double[] data = ((DoubleData) cepstrum).getValues();
-                        for (int i = 0; i < data.length; i++) {
-                            dataWriter.writeDouble(data[i]);
+                        for (double val : data) {
+                            dataWriter.writeDouble(val);
                         }
                     } else if (cepstrum instanceof DataEndSignal) {
                         // send a DataEndSignal

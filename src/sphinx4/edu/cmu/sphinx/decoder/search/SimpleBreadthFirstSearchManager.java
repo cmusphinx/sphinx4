@@ -129,10 +129,10 @@ public class SimpleBreadthFirstSearchManager implements SearchManager {
     private Map<SearchState, Token> bestTokenMap;
     private float logRelativeWordBeamWidth;
     private int totalHmms;
-    private double startTime = 0;
+    private double startTime;
     private float threshold;
     private float wordThreshold;
-    private int growSkipInterval = 0;
+    private int growSkipInterval;
     private ActiveListFactory activeListFactory;
     private boolean streamEnd;
 
@@ -290,14 +290,12 @@ public class SimpleBreadthFirstSearchManager implements SearchManager {
         growTimer.start();
         bestTokenMap = new HashMap<SearchState, Token>(mapSize);
         ActiveList oldActiveList = activeList;
-        Iterator<Token> oldListIterator = activeList.iterator();
         resultList = new LinkedList<Token>();
         activeList = activeListFactory.newInstance();
         threshold = oldActiveList.getBeamThreshold();
         wordThreshold = oldActiveList.getBestScore() + logRelativeWordBeamWidth;
 
-        while (oldListIterator.hasNext()) {
-            Token token = (Token) oldListIterator.next();
+        for (Token token : oldActiveList) {
             collectSuccessorTokens(token);
         }
         growTimer.stop();
@@ -500,8 +498,7 @@ public class SimpleBreadthFirstSearchManager implements SearchManager {
     private void showTokenCount() {
         if (logger.isLoggable(Level.INFO)) {
             Set<Token> tokenSet = new HashSet<Token>();
-            for (Iterator<Token> i = activeList.iterator(); i.hasNext();) {
-                Token token = (Token) i.next();
+            for (Token token : activeList) {
                 while (token != null) {
                     tokenSet.add(token);
                     token = token.getPredecessor();

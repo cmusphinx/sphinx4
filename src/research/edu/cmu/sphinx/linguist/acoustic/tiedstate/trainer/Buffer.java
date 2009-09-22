@@ -181,8 +181,8 @@ class Buffer {
     void normalizeToSum() {
         assert !isLog;
         float den = 0.0f;
-        for (int i = 0; i < numerator.length; i++) {
-            den += numerator[i];
+        for (double val : numerator) {
+            den += val;
         }
         float invDenominator = (float) (1.0 / den);
         for (int i = 0; i < numerator.length; i++) {
@@ -202,9 +202,9 @@ class Buffer {
         assert isLog;
         float logZero = LogMath.getLogZero();
         float den = logZero;
-        for (int i = 0; i < numerator.length; i++) {
-            if (numerator[i] != logZero) {
-                den = logMath.addAsLinear(den, (float) numerator[i]);
+        for (double val : numerator) {
+            if (val != logZero) {
+                den = logMath.addAsLinear(den, (float)val);
             }
         }
         for (int i = 0; i < numerator.length; i++) {

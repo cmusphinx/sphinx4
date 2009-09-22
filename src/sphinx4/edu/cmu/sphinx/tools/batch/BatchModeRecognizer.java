@@ -185,8 +185,7 @@ public class BatchModeRecognizer implements Configurable {
      * @throws IOException if an error occurs
      */
     void setInputStream(String filename) throws IOException {
-        for (Object inputDataProcessor : inputDataProcessors) {
-            DataProcessor dataSource = (DataProcessor) inputDataProcessor;
+        for (DataProcessor dataSource : inputDataProcessors) {
             InputStream is;
             try {
                 File file = new File(filename);

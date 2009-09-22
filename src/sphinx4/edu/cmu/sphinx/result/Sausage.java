@@ -61,26 +61,26 @@ public class Sausage implements ConfidenceResult {
      * @param logMath the log math object to use for probability computations
      */
     public void fillInBlanks(LogMath logMath) {
-        for (ListIterator<ConfusionSet> i = confusionSets.listIterator(); i.hasNext();) {
-            int index = i.nextIndex();
-            ConfusionSet set = (ConfusionSet) i.next();
+        int index = 0;
+        for (ConfusionSet set : confusionSets) {
             float sum = LogMath.getLogZero();
-            for (Iterator<Double> j = set.keySet().iterator(); j.hasNext();) {
-                sum = logMath.addAsLinear(sum, j.next().floatValue());
+            for (Double val : set.keySet()) {
+                sum = logMath.addAsLinear(sum, val.floatValue());
             }
             if (sum < LogMath.getLogOne() - 10) {
                 float remainder = logMath.subtractAsLinear
-                        (LogMath.getLogOne(), sum);
+                    (LogMath.getLogOne(), sum);
                 addWordHypothesis(index, "<noop>", remainder, logMath);
             } else {
                 ConfusionSet newSet = new ConfusionSet();
                 for (Map.Entry<Double, Set<WordResult>> entry : set.entrySet()) {
                     Double oldProb = entry.getKey();
-                    Double newProb = oldProb.doubleValue() - sum;
+                    Double newProb = oldProb - sum;
                     newSet.put(newProb, entry.getValue());
                 }
                 confusionSets.set(index, newSet);
             }
+            index++;
         }
     }
 
@@ -127,9 +127,7 @@ public class Sausage implements ConfidenceResult {
      */
     protected Path getBestHypothesis(boolean wantFiller) {
         WordResultPath path = new WordResultPath();
-        Iterator<ConfusionSet> i = iterator();
-        while (i.hasNext()) {
-            ConfusionSet cs = (ConfusionSet) i.next();
+        for (ConfusionSet cs : this) {
             WordResult wr = cs.getBestHypothesis();
             if (wantFiller || !wr.isFiller()) {
                 path.add(cs.getBestHypothesis());
@@ -144,9 +142,8 @@ public class Sausage implements ConfidenceResult {
      * of removing fillers.
      */
     public void removeFillers() {
-        Iterator<ConfusionSet> c = iterator();
-        while (c.hasNext()) {
-            ConfusionSet cs = (ConfusionSet) c.next();
+        for (Iterator<ConfusionSet> c = iterator(); c.hasNext();) {
+            ConfusionSet cs = c.next();
             for (Iterator<Set<WordResult>> j = cs.values().iterator(); j.hasNext();) {
                 Set<WordResult> words = j.next();
                 Iterator<WordResult> w = words.iterator();
@@ -156,11 +153,11 @@ public class Sausage implements ConfidenceResult {
                         w.remove();
                     }
                 }
-                if (words.size() == 0) {
+                if (words.isEmpty()) {
                     j.remove();
                 }
             }
-            if (cs.size() == 0) {
+            if (cs.isEmpty()) {
                 c.remove();
             }
         }
@@ -185,7 +182,7 @@ public class Sausage implements ConfidenceResult {
      * @return the word with the highest posterior in the slot
      */
     public Set<WordResult> getBestWordHypothesis(int pos) {
-        ConfusionSet set = (ConfusionSet) confusionSets.get(pos);
+        ConfusionSet set = confusionSets.get(pos);
         return set.get(set.lastKey());
     }
 
@@ -198,8 +195,7 @@ public class Sausage implements ConfidenceResult {
      */
 
     public double getBestWordHypothesisPosterior(int pos) {
-        ConfusionSet set = (ConfusionSet) confusionSets.get(pos);
-        return ((Double) set.lastKey()).doubleValue();
+        return confusionSets.get(pos).lastKey();
     }
 
 
@@ -210,7 +206,7 @@ public class Sausage implements ConfidenceResult {
      * @return a map from Double posteriors to Sets of String words, sorted from lowest to highest.
      */
     public ConfusionSet getConfusionSet(int pos) {
-        return (ConfusionSet) confusionSets.get(pos);
+        return confusionSets.get(pos);
     }
 
 
@@ -251,10 +247,8 @@ public class Sausage implements ConfidenceResult {
             f.write("title: \"" + title + "\"\n");
             f.write("display_edge_labels: yes\n");
             f.write("orientation: left_to_right\n");
-            ListIterator<ConfusionSet> i = confusionSets.listIterator();
-            while (i.hasNext()) {
-                int index = i.nextIndex();
-                ConfusionSet set = (ConfusionSet) i.next();
+            int index = 0;
+            for (ConfusionSet set : confusionSets) {
                 f.write("node: { title: \"" + index + "\" label: \"" + index + "\"}\n");
                 for (Map.Entry<Double, Set<WordResult>> entry : set.entrySet()) {
                     Double prob = entry.getKey();
@@ -263,13 +257,14 @@ public class Sausage implements ConfidenceResult {
                         .append("\" targetname: \"").append(index + 1)
                         .append("\" label: \"");
                     Set<WordResult> wordSet = entry.getValue();
-                    for (Iterator<WordResult> w = wordSet.iterator(); w.hasNext();)
-                        edge.append(w.next()).append('/');
+                    for (WordResult wordResult : wordSet)
+                        edge.append(wordResult).append('/');
                     if (!wordSet.isEmpty())
                         edge.setLength(edge.length() - 1);
                     edge.append(':').append(prob).append("\" }\n");
                     f.write(edge.toString());
                 }
+                index++;
             }
             f.write("node: { title: \"" + size() + "\" label: \"" + size() + "\"}\n");
             f.write("}\n");

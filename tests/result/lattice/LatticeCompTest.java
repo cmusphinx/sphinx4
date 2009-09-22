@@ -18,7 +18,6 @@ import edu.cmu.sphinx.recognizer.Recognizer;
 
 import edu.cmu.sphinx.result.Result;
 import edu.cmu.sphinx.result.Lattice;
-import edu.cmu.sphinx.result.LatticeOptimizer;
 
 import edu.cmu.sphinx.util.props.ConfigurationManager;
 import edu.cmu.sphinx.util.props.PropertyException;
@@ -27,7 +26,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 
-import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.UnsupportedAudioFileException;

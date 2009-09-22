@@ -19,7 +19,6 @@ import edu.cmu.sphinx.decoder.scorer.AcousticScorer;
 import edu.cmu.sphinx.frontend.Data;
 import edu.cmu.sphinx.linguist.*;
 import edu.cmu.sphinx.linguist.acoustic.HMM;
-import edu.cmu.sphinx.linguist.acoustic.HMMPosition;
 import edu.cmu.sphinx.linguist.dictionary.Word;
 import edu.cmu.sphinx.result.Result;
 import edu.cmu.sphinx.util.LogMath;
@@ -131,9 +130,9 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
     private boolean checkStateOrder;
     private boolean buildWordLattice;
     private boolean keepAllTokens = true;
-    private int growSkipInterval = 0;
+    private int growSkipInterval;
     private float relativeBeamWidth;
-    private float acousticLookaheadFrames = 0.0f;
+    private float acousticLookaheadFrames;
     private int maxTokenHeapSize = 3;
     private int maxLatticeEdges = 100;
 
@@ -146,8 +145,8 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
     private StatisticsVariable totalTokensScored;
     private StatisticsVariable curTokensScored;
     private StatisticsVariable tokensCreated;
-    private long tokenSum = 0;
-    private int tokenCount = 0;
+    private long tokenSum;
+    private int tokenCount;
 
     // -----------------------------------
     // Working data
@@ -411,8 +410,7 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
 
     /** Grow the non-emitting ActiveLists, until the tokens reach an emitting state. */
     private void growNonEmittingLists() {
-        for (Iterator<ActiveList> i = activeListManager.getNonEmittingListIterator(); i
-                .hasNext();) {
+        for (Iterator<ActiveList> i = activeListManager.getNonEmittingListIterator(); i.hasNext();) {
             activeList = i.next();
             if (activeList != null) {
                 i.remove();
@@ -1012,7 +1010,7 @@ class SinglePathThroughHMMKey {
 class TokenHeap {
 
     Token[] tokens;
-    int curSize = 0;
+    int curSize;
 
 
     /**
@@ -1328,7 +1326,7 @@ class TokenTracker {
 
     private Map<Object, TokenStats> stateMap;
     private boolean enabled;
-    private int frame = 0;
+    private int frame;
 
     private int utteranceStateCount;
     private int utteranceMaxStates;
@@ -1440,13 +1438,13 @@ class TokenTracker {
             utteranceStateCount += stateMap.size();
 
             float avgStates = 0f;
-            if (stateMap.size() > 0) {
+            if (!stateMap.isEmpty()) {
                 avgStates = ((float) sumStates) / stateMap.size();
             }
             System.out.print("# Frame " + frame);
             System.out.print(" States: " + stateMap.size());
 
-            if (stateMap.size() > 0) {
+            if (!stateMap.isEmpty()) {
                 System.out.print(" Paths: " + sumStates);
                 System.out.print(" Max: " + maxStates);
                 System.out.print(" Avg: " + avgStates);

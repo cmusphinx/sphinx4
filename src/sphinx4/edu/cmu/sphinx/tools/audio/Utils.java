@@ -207,8 +207,8 @@ public class Utils {
                 true);    // big endian
         RawWriter writer = new RawWriter(outputStream, format);
         short[] samples = audio.getAudioData();
-        for (int i = 0; i < samples.length; i++) {
-            writer.writeSample(samples[i]);
+        for (short sample : samples) {
+            writer.writeSample(sample);
         }
         outputStream.flush();
         outputStream.close();

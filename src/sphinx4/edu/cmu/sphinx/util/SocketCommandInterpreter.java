@@ -33,7 +33,7 @@ public class SocketCommandInterpreter extends Thread {
 
     private int port;
     private Map<String, CommandInterface> commandList;
-    private boolean trace = false;
+    private boolean trace;
     private boolean acceptConnections = true;
 
 

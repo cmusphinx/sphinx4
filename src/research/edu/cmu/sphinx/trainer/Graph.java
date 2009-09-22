@@ -19,10 +19,10 @@ import java.util.Iterator;
 
 public class Graph {
 
-    private ArrayList edges; // The list of edges.
-    private ArrayList nodes; // The list of nodes.
-    private Iterator edgeIterator; // The iterator for the list of edges.
-    private Iterator nodeIterator; // The iterator for the list of nodes.
+    private ArrayList<Edge> edges; // The list of edges.
+    private ArrayList<Node> nodes; // The list of nodes.
+    private Iterator<Edge> edgeIterator; // The iterator for the list of edges.
+    private Iterator<Node> nodeIterator; // The iterator for the list of nodes.
 
     /** The initial node in the graph. This has no incoming edges. */
     private Node initialNode;
@@ -35,8 +35,8 @@ public class Graph {
 
     /** Constructor for class. Creates lists of edges and nodes. */
     public Graph() {
-        edges = new ArrayList();
-        nodes = new ArrayList();
+        edges = new ArrayList<Edge>();
+        nodes = new ArrayList<Node>();
     }
 
 
@@ -89,7 +89,7 @@ public class Graph {
      * @return the item
      */
     public Node getNode(int index) {
-        return (Node) nodes.get(index);
+        return nodes.get(index);
     }
 
 
@@ -98,8 +98,8 @@ public class Graph {
      *
      * @return an array of nodes
      */
-    public Object[] nodeToArray() {
-        return nodes.toArray();
+    public Node[] nodeToArray() {
+        return nodes.toArray(new Node[nodes.size()]);
     }
 
 
@@ -198,7 +198,7 @@ public class Graph {
 
     /** Returns next node. */
     public Node nextNode() {
-        return (Node) nodeIterator.next();
+        return nodeIterator.next();
     }
 
 
@@ -216,7 +216,7 @@ public class Graph {
 
     /** Returns next edge. */
     public Edge nextEdge() {
-        return (Edge) edgeIterator.next();
+        return edgeIterator.next();
     }
 
 
@@ -227,7 +227,7 @@ public class Graph {
      */
     public void copyGraph(Graph graph) {
         // Make sure the current graph is empty
-        assert ((nodes.size() == 0) && (edges.size() == 0));
+        assert ((nodes.isEmpty()) && (edges.isEmpty()));
         for (graph.startNodeIterator();
              graph.hasMoreNodes();) {
             addNode(graph.nextNode());

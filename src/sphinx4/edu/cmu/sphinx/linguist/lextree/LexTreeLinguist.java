@@ -201,12 +201,12 @@ public class LexTreeLinguist implements Linguist {
     // ------------------------------------
     private Logger logger;
     private boolean fullWordHistories = true;
-    protected boolean addFillerWords = false;
-    private boolean generateUnitStates = false;
+    protected boolean addFillerWords;
+    private boolean generateUnitStates;
     private boolean wantUnigramSmear = true;
     private float unigramSmearWeight = 1.0f;
-    private boolean cacheEnabled = false;
-    private int maxArcCacheSize = 0;
+    private boolean cacheEnabled;
+    private int maxArcCacheSize;
 
     protected float languageWeight;
     private float logWordInsertionProbability;
@@ -584,7 +584,7 @@ public class LexTreeLinguist implements Linguist {
         }
 
 
-        public Object getLexState() {
+        public Node getLexState() {
             return node;
         }
 
@@ -747,7 +747,7 @@ public class LexTreeLinguist implements Linguist {
          */
         SearchStateArc[] getCachedArcs() {
             if (cacheEnabled) {
-                SearchStateArc[] arcs = (SearchStateArc[]) arcCache.get(this);
+                SearchStateArc[] arcs = arcCache.get(this);
                 if (arcs != null) {
                     cacheHits++;
                 }
@@ -919,7 +919,7 @@ public class LexTreeLinguist implements Linguist {
 
         private float logInsertionProbability;
         private float logLanguageProbability;
-        private Node parentNode = null;
+        private Node parentNode;
         private int hashCode = -1;
 
 
@@ -1377,17 +1377,16 @@ public class LexTreeLinguist implements Linguist {
                     Unit[] rc = lastNode.getRC();
                     Unit left = wordNode.getLastUnit();
 
-                    for (int i = 0; i < rc.length; i++) {
-                        Collection<Node> epList = hmmTree.getEntryPoint(left, rc[i]);
+                    for (Unit unit : rc) {
+                        Collection<Node> epList = hmmTree.getEntryPoint(left, unit);
                         list.addAll(epList);
                     }
 
                     // add a link to every possible entry point as well
                     // as link to the </s> node
                     arcs = new SearchStateArc[list.size() + 1];
-                    for (Iterator<Node> i = list.iterator(); i.hasNext();) {
-                        HMMNode node = (HMMNode) i.next();
-                        arcs[index++] = createUnitStateArc(node, this);
+                    for (Node node : list) {
+                         arcs[index++] = createUnitStateArc((HMMNode)node, this);
                     }
 
                     // now add the link to the end of sentence arc:

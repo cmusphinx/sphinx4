@@ -36,8 +36,8 @@ import edu.cmu.sphinx.tools.gui.RawPropertyData;
  */
 public class SaxLoader {
     private URL url;
-    private Map rpdMap;
-    private Map globalProperties;
+    private Map<String, RawPropertyData> rpdMap;
+    private Map<String, String> globalProperties;
     /**
      * Creates a loader that will load from the given location
      * 
@@ -46,7 +46,7 @@ public class SaxLoader {
      * @param globalProperties
      *             the map of global properties
      */
-    public SaxLoader(URL url, Map globalProperties) {
+    public SaxLoader(URL url, Map<String, String> globalProperties) {
         this.url = url;
         this.globalProperties = globalProperties;
     }
@@ -57,8 +57,8 @@ public class SaxLoader {
      * @throws IOException
      *             if an I/O or parse error occurs
      */
-    public Map load() throws IOException {
-        rpdMap = new HashMap();
+    public Map<String, RawPropertyData> load() throws IOException {
+        rpdMap = new HashMap<String, RawPropertyData>();
         try {
             SAXParserFactory factory = SAXParserFactory.newInstance();
             XMLReader xr = factory.newSAXParser().getXMLReader();
@@ -86,10 +86,10 @@ public class SaxLoader {
      *  
      */
     class ConfigHandler extends DefaultHandler {
-        RawPropertyData rpd = null;
+        RawPropertyData rpd;
         Locator locator;
-        List itemList = null;
-        String itemListName = null;
+        List<String> itemList;
+        String itemListName;
         StringBuffer curItem;
         
         
@@ -133,7 +133,7 @@ public class SaxLoader {
                     throw new SAXParseException("list element must only have "
                             + "the 'name'  attribute", locator);
                 }
-                itemList = new ArrayList();
+                itemList = new ArrayList<String>();
             } else if (qName.equals("item")) {
                 if (attributes.getLength() != 0) {
                     throw new SAXParseException("unknown 'item' attribute",

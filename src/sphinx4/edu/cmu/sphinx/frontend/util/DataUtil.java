@@ -231,8 +231,8 @@ public class DataUtil {
      */
     public static String shortArrayToString(short[] data) {
         StringBuilder dump = new StringBuilder().append(data.length);
-        for (int i = 0; i < data.length; i++) {
-            dump.append(' ').append(data[i]);
+        for (short val : data) {
+            dump.append(' ').append(val);
         }
         return dump.toString();
     }
@@ -268,17 +268,17 @@ public class DataUtil {
     private static String doubleArrayToString(double[] data, int format) {
         StringBuilder dump = new StringBuilder().append(data.length);
 
-        for (int i = 0; i < data.length; i++) {
+        for (double val : data) {
             if (format == DECIMAL) {
                 dump.append(' ').append(formatDouble
-                        (data[i], decimalIntegerDigits,
-                                decimalFractionDigits));
+                    (val, decimalIntegerDigits,
+                        decimalFractionDigits));
             } else if (format == HEXADECIMAL) {
-                long binary = Double.doubleToRawLongBits(data[i]);
+                long binary = Double.doubleToRawLongBits(val);
                 dump.append(" 0x").append(Long.toHexString(binary));
             } else if (format == SCIENTIFIC) {
                 dump.append(' ').append(Utilities.doubleToScientificString
-                        (data[i], doubleScientificFractionDigits));
+                    (val, doubleScientificFractionDigits));
             }
         }
         return dump.toString();
@@ -313,18 +313,17 @@ public class DataUtil {
     private static String floatArrayToString(float[] data, int format) {
         StringBuilder dump = new StringBuilder().append(data.length);
 
-        for (int i = 0; i < data.length; i++) {
-
+        for (float val : data) {
             if (format == DECIMAL) {
                 dump.append(' ').append(formatDouble
-                        ((double) data[i],
-                                decimalIntegerDigits, decimalFractionDigits));
+                    ((double)val,
+                        decimalIntegerDigits, decimalFractionDigits));
             } else if (format == HEXADECIMAL) {
-                int binary = Float.floatToRawIntBits(data[i]);
+                int binary = Float.floatToRawIntBits(val);
                 dump.append(" 0x").append(Integer.toHexString(binary));
             } else if (format == SCIENTIFIC) {
                 dump.append(' ').append(Utilities.doubleToScientificString
-                        ((double) data[i], floatScientificFractionDigits));
+                    ((double)val, floatScientificFractionDigits));
             }
         }
         return dump.toString();
@@ -445,22 +444,20 @@ public class DataUtil {
         AudioFormat nativeFormat = null;
 
         // find a usable target line
-        for (int i = 0; i < lineInfos.length; i++) {
+        for (Line.Info info : lineInfos) {
 
-            AudioFormat[] formats =
-                    ((TargetDataLine.Info) lineInfos[i]).getFormats();
+            AudioFormat[] formats = ((TargetDataLine.Info)info).getFormats();
 
-            for (int j = 0; j < formats.length; j++) {
+            for (AudioFormat thisFormat : formats) {
 
                 // for now, just accept downsampling, not checking frame
                 // size/rate (encoding assumed to be PCM)
 
-                AudioFormat thisFormat = formats[j];
                 if (thisFormat.getEncoding() == format.getEncoding()
-                        && thisFormat.isBigEndian() == format.isBigEndian()
-                        && thisFormat.getSampleSizeInBits() ==
-                        format.getSampleSizeInBits()
-                        && thisFormat.getSampleRate() >= format.getSampleRate()) {
+                    && thisFormat.isBigEndian() == format.isBigEndian()
+                    && thisFormat.getSampleSizeInBits() ==
+                    format.getSampleSizeInBits()
+                    && thisFormat.getSampleRate() >= format.getSampleRate()) {
                     nativeFormat = thisFormat;
                     break;
                 }

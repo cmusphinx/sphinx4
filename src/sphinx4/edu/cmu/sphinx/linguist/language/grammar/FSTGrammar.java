@@ -108,7 +108,7 @@ public class FSTGrammar extends Grammar {
 
     // TODO: If this property turns out to be worthwhile, turn this
     // into a full fledged property
-    private boolean addInitialSilenceNode = false;
+    private boolean addInitialSilenceNode;
 
     // TODO: If this property turns out to be worthwhile, turn this
     // into a full fledged property
@@ -117,7 +117,7 @@ public class FSTGrammar extends Grammar {
     // Configuration data
     // -------------------------------
 
-    private boolean addOptionalSilence = false;
+    private boolean addOptionalSilence;
     private boolean ignoreUnknownTransitions = true;
     private String path;
     private LogMath logMath;
@@ -310,7 +310,7 @@ public class FSTGrammar extends Grammar {
                 String word2 = tok.getString(); // get word
                 tok.getString(); // toss probability
                 String nodeName = "G" + id;
-                GrammarNode node = (GrammarNode) nodes.get(nodeName);
+                GrammarNode node = nodes.get(nodeName);
                 if (node == null) {
                     if (word2.equals(",")) {
                         node = createGrammarNode(id, false);
@@ -383,7 +383,7 @@ public class FSTGrammar extends Grammar {
      */
     private GrammarNode get(int id) {
         String name = "G" + id;
-        GrammarNode grammarNode = (GrammarNode) nodes.get(name);
+        GrammarNode grammarNode = nodes.get(name);
         if (grammarNode == null) {
             grammarNode = createGrammarNode(id, false);
             nodes.put(name, grammarNode);

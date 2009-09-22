@@ -127,8 +127,8 @@ public class ConcatFileDataSource extends StreamDataSource implements ReferenceS
     private int bytesPerSecond;
     private long totalBytes;
     private long silenceFileLength;
-    private String silenceFileName = null;
-    private String nextFile = null;
+    private String silenceFileName;
+    private String nextFile;
     private String context;
     private String transcriptFile;
     private List<String> referenceList;

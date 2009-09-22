@@ -24,7 +24,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -56,8 +55,8 @@ public class CardMatchFrame extends JFrame {
     private Recorder recorder;
     
     private Game game;
-    private List cards;
-    private Map buttonMap;
+    private List<Card> cards;
+    private Map<Card, JToggleButton> buttonMap;
     private CardMatchVoice voice;
 
     private String[] goodGuessText =
@@ -118,8 +117,8 @@ public class CardMatchFrame extends JFrame {
      */
     public CardMatchFrame(String title, Recorder recorder, Game game,
                           boolean useVoice) {
-	super(title);
-	this.recorder = recorder;
+        super(title);
+        this.recorder = recorder;
         this.game = game;
         this.cards = game.getCards();
 
@@ -131,14 +130,14 @@ public class CardMatchFrame extends JFrame {
                 e.printStackTrace();
             }
         }
-	setSize(dimension);
-	getContentPane().add(createMainPanel(), BorderLayout.CENTER);
+        setSize(dimension);
+        getContentPane().add(createMainPanel(), BorderLayout.CENTER);
 
-	// add a listener for closing this JFrame and quitting the program
+        // add a listener for closing this JFrame and quitting the program
         addWindowListener(new WindowAdapter() {
-		public void windowClosing(WindowEvent e) {
-		    System.exit(0);
-		}
+            public void windowClosing(WindowEvent e) {
+                System.exit(0);
+            }
 	    });
         startNewGame(game);
     }
@@ -148,10 +147,9 @@ public class CardMatchFrame extends JFrame {
      */
     private void newCardPanel() {
         cardPanel.removeAll();
-        buttonMap = new HashMap();
+        buttonMap = new HashMap<Card, JToggleButton>();
         // add the check-boxes
-        for (Iterator i = cards.iterator(); i.hasNext(); ) {
-            Card card = (Card) i.next();
+        for (Card card : cards) {
             cardPanel.add(createCardButton(card));
         }
         validate();
@@ -210,17 +208,15 @@ public class CardMatchFrame extends JFrame {
      * @return the button associated with the card
      */
     private JToggleButton getCardButton(Card card) {
-        return (JToggleButton) buttonMap.get(card);
+        return buttonMap.get(card);
     }
 
     /**
      * Updates all of the cards
      */
     private void updateAllCards() {
-        for (Iterator i = cards.iterator(); i.hasNext(); ) {
-            Card card = (Card) i.next();
+        for (Card card : cards)
             updateCard(card);
-        }
     }
 
     /**
@@ -246,7 +242,7 @@ public class CardMatchFrame extends JFrame {
     private JPanel getJPanel(LayoutManager manager) {
         JPanel panel = new JPanel();
         panel.setBackground(backgroundColor);
-	panel.setLayout(manager);
+	    panel.setLayout(manager);
         return panel;
     }
 
@@ -276,10 +272,10 @@ public class CardMatchFrame extends JFrame {
      * @return the main panel
      */
     private JPanel createMainPanel() {
-	JPanel mainPanel = getJPanel(new BorderLayout());
-	mainPanel.add(createCardPanel(), BorderLayout.CENTER);
-	mainPanel.add(createResultsPanel(), BorderLayout.SOUTH);
-	return mainPanel;
+        JPanel mainPanel = getJPanel(new BorderLayout());
+        mainPanel.add(createCardPanel(), BorderLayout.CENTER);
+        mainPanel.add(createResultsPanel(), BorderLayout.SOUTH);
+        return mainPanel;
     }
 
 
@@ -289,7 +285,7 @@ public class CardMatchFrame extends JFrame {
      * @return the card panel
      */
     private JPanel createCardPanel() {
-	cardPanel = getJPanel(new GridLayout(2, 3));
+	    cardPanel = getJPanel(new GridLayout(2, 3));
         assert cards.size() == 6;
         newCardPanel();
      	return cardPanel;
@@ -300,12 +296,12 @@ public class CardMatchFrame extends JFrame {
      * Handles the pressing of the "Speak" button.
      */
     private void speakButtonPressed() {
-	if (!recorder.isRecording()) {
-	    if (!recorder.startRecording()) {
-		System.out.println("Error turning microphone on.");
-                speakButton.setSelected(false);
-	    }
-	}
+        if (!recorder.isRecording()) {
+            if (!recorder.startRecording()) {
+            System.out.println("Error turning microphone on.");
+                    speakButton.setSelected(false);
+            }
+        }
     }
 
 
@@ -313,11 +309,11 @@ public class CardMatchFrame extends JFrame {
      * Handles the pressing of the "Stop" button.
      */
     private void stopButtonPressed() {
-	if (recorder.isRecording()) {
-	    if (!recorder.stopRecording()) {
-		System.out.println("Error turning microphone off.");
-	    }
-	}
+        if (recorder.isRecording()) {
+            if (!recorder.stopRecording()) {
+                System.out.println("Error turning microphone off.");
+            }
+        }
     }
 
 
@@ -327,42 +323,42 @@ public class CardMatchFrame extends JFrame {
      * @return the panel
      */
     private JPanel createResultsPanel() {
-	JPanel resultsPanel = getJPanel(new BorderLayout());
-	JTextArea textArea = getTextArea("You said: ");
+        JPanel resultsPanel = getJPanel(new BorderLayout());
+        JTextArea textArea = getTextArea("You said: ");
 	
        	resultsTextField = new JTextField();
 
-	resultsPanel.add(textArea, BorderLayout.WEST);
-	resultsPanel.add(resultsTextField, BorderLayout.CENTER);
+        resultsPanel.add(textArea, BorderLayout.WEST);
+        resultsPanel.add(resultsTextField, BorderLayout.CENTER);
 
         JPanel buttonsPanel = getJPanel(new FlowLayout());
         
-	speakButton = new JToggleButton("Speak");
+    	speakButton = new JToggleButton("Speak");
         speakButton.requestFocus();
-	speakButton.addActionListener(new ActionListener() {
+	    speakButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (speakButton.isSelected()) {
                     speakButtonPressed();
-		} else {
+		        } else {
                     stopButtonPressed();
                 }
-	    }
+	        }
         });
 
         newGameButton = new JButton("New Game");
         newGameButton.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    stopButtonPressed();
-                    startNewGame(game);
-                }
-            });
+            public void actionPerformed(ActionEvent e) {
+                stopButtonPressed();
+                startNewGame(game);
+            }
+        });
 
         buttonsPanel.add(speakButton);
         buttonsPanel.add(newGameButton);
 
         resultsPanel.add(buttonsPanel, BorderLayout.EAST);
 
-	return resultsPanel;
+	    return resultsPanel;
     }
 
 
@@ -375,8 +371,8 @@ public class CardMatchFrame extends JFrame {
         if (voice != null) {
             voice.speak(text);
         } else {
-	    System.out.println("Speak: " + text);
-	}
+	        System.out.println("Speak: " + text);
+	    }
     }
 
     /**

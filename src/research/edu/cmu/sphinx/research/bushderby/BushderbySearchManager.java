@@ -90,14 +90,14 @@ public class BushderbySearchManager extends SimpleBreadthFirstSearchManager {
     protected void growBranches() {
         getGrowTimer().start();
 
-        setBestTokenMap(new HashMap(getActiveList().size() * 10));
+        setBestTokenMap(new HashMap<SearchState, Token>(getActiveList().size() * 10));
 
         int pass = 0;
         boolean moreTokensToExpand = true;
 
         ActiveList oldActiveList = getActiveList();
 
-        Iterator iterator = getActiveList().iterator();
+        Iterator<Token> iterator = getActiveList().iterator();
 
         //todo fixme!!
 //        setResultList(new LinkedList());
@@ -105,15 +105,15 @@ public class BushderbySearchManager extends SimpleBreadthFirstSearchManager {
 
         while (moreTokensToExpand) {
             pass++;
-            List delayedExpansionList = new ArrayList();
+            List<Token> delayedExpansionList = new ArrayList<Token>();
 
             while (iterator.hasNext()) {
-                Token token = (Token) iterator.next();
+                Token token = iterator.next();
                 collectSuccessorTokens(token, delayedExpansionList);
             }
 
             if (delayedExpansionList != null &&
-                    delayedExpansionList.size() > 0) {
+                !delayedExpansionList.isEmpty()) {
                 finalizeBushderby(delayedExpansionList.iterator());
                 iterator = delayedExpansionList.iterator();
                 if (false) {
@@ -132,10 +132,10 @@ public class BushderbySearchManager extends SimpleBreadthFirstSearchManager {
 
 
     /** Chase through the list, find all Green nodes and convert the scores to the final bushderby score */
-    private void finalizeBushderby(Iterator iterator) {
+    private void finalizeBushderby(Iterator<Token> iterator) {
 
         while (iterator.hasNext()) {
-            Token token = (Token) iterator.next();
+            Token token = iterator.next();
             SearchState state = token.getSearchState();
             if (isGreenState(state)) {
                 float logNewScore = (float)
@@ -169,7 +169,7 @@ public class BushderbySearchManager extends SimpleBreadthFirstSearchManager {
      *                             should always expand all nodes.
      */
     private void collectSuccessorTokens(Token token,
-                                        List delayedExpansionList) {
+                                        List<Token> delayedExpansionList) {
 
         // System.out.println("Entering cst...");
 
@@ -191,8 +191,7 @@ public class BushderbySearchManager extends SimpleBreadthFirstSearchManager {
         // If the token is an emitting token add it to the list,
         // othewise recursively collect the new tokens successors.
 
-        for (int i = 0; i < arcs.length; i++) {
-            SearchStateArc arc = arcs[i];
+        for (SearchStateArc arc : arcs) {
             SearchState nextState = arc.getState();
 
             if (filterSuccessors && !isValidTransition(token, nextState)) {
@@ -204,15 +203,15 @@ public class BushderbySearchManager extends SimpleBreadthFirstSearchManager {
             // We're actually multiplying the variables, but since
             // these come in log(), multiply gets converted to add
             float logCurrentScore = token.getScore() +
-                    logLanguageProbability +
-                    arc.getAcousticProbability() +
-                    arc.getInsertionProbability();
+                logLanguageProbability +
+                arc.getAcousticProbability() +
+                arc.getInsertionProbability();
 
             boolean firstToken = (getBestToken(nextState) == null);
             boolean greenToken = isGreenState(nextState);
 
             float logWorkingScore = firstToken ? LogMath.getLogZero() :
-                    getBestToken(nextState).getWorkingScore();
+                getBestToken(nextState).getWorkingScore();
 
             if (firstToken || getBestToken(nextState).getScore() <= logCurrentScore) {
 
@@ -220,11 +219,11 @@ public class BushderbySearchManager extends SimpleBreadthFirstSearchManager {
                 if (greenToken) {
 
                     Token newToken = token.child(
-                            nextState,         // the SentenceHMMState
-                            logCurrentScore,         // the score on entry
-                            logLanguageProbability,     // entry lang score
-                            arc.getInsertionProbability(), // insertion prob
-                            getCurrentFrameNumber()     // the frame number
+                        nextState,         // the SentenceHMMState
+                        logCurrentScore,         // the score on entry
+                        logLanguageProbability,     // entry lang score
+                        arc.getInsertionProbability(), // insertion prob
+                        getCurrentFrameNumber()     // the frame number
                     );
                     getTokensCreated().value++;
 
@@ -235,9 +234,9 @@ public class BushderbySearchManager extends SimpleBreadthFirstSearchManager {
                     if (!newToken.isEmitting()) {
                         if (greenToken && delayedExpansionList != null) {
                             if (oldBestToken != null &&
-                                    oldBestToken.getScore() <= logCurrentScore) {
+                                oldBestToken.getScore() <= logCurrentScore) {
                                 int oldTokenIdx =
-                                        delayedExpansionList.indexOf(oldBestToken);
+                                    delayedExpansionList.indexOf(oldBestToken);
                                 if (oldTokenIdx >= 0)
                                     delayedExpansionList.remove(oldTokenIdx);
                             }
@@ -245,7 +244,7 @@ public class BushderbySearchManager extends SimpleBreadthFirstSearchManager {
                         } else {
                             // System.out.println("Recursing into cst...");
                             collectSuccessorTokens(newToken,
-                                    delayedExpansionList);
+                                delayedExpansionList);
                         }
                     } else if (firstToken) {
                         getActiveList().add(newToken);
@@ -269,13 +268,13 @@ public class BushderbySearchManager extends SimpleBreadthFirstSearchManager {
                 Token bestToken = getBestToken(nextState);
                 if (bestToken != null) {
                     logWorkingScore = logMath.addAsLinear(
-                            logWorkingScore,
-                            (float) (logCurrentScore * bushderbyEta));
+                        logWorkingScore,
+                        (float)(logCurrentScore * bushderbyEta));
                     bestToken.setWorkingScore(logWorkingScore);
                 }
                 if (false) {
                     System.out.println("CS: " + logCurrentScore +
-                            " WS: " + logWorkingScore);
+                        " WS: " + logWorkingScore);
                 }
             }
         }
@@ -439,15 +438,12 @@ public class BushderbySearchManager extends SimpleBreadthFirstSearchManager {
             Word word = state.getPronunciation().getWord();
 
             if (isWord(word)) {
-                List wordList = new ArrayList(depth);
+                List<Word> wordList = new ArrayList<Word>(depth);
                 wordList.add(word);
                 while (token != null && wordList.size() < depth) {
-                    if (token.getSearchState()
-                            instanceof WordSearchState) {
-                        WordSearchState prevWord =
-                                (WordSearchState) token.getSearchState();
-                        Word prevWordObject =
-                                prevWord.getPronunciation().getWord();
+                    if (token.getSearchState() instanceof WordSearchState) {
+                        WordSearchState prevWord = (WordSearchState) token.getSearchState();
+                        Word prevWordObject = prevWord.getPronunciation().getWord();
                         if (isWord(prevWordObject)) {
                             wordList.add(prevWordObject);
                         }
@@ -464,8 +460,7 @@ public class BushderbySearchManager extends SimpleBreadthFirstSearchManager {
                     // null));
                 }
                 Collections.reverse(wordList);
-                logProbability = languageModel.getProbability
-                        (new WordSequence((List<Word>) wordList));
+                logProbability = languageModel.getProbability(new WordSequence(wordList));
             }
         }
         return logProbability;

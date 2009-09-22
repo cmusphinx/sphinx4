@@ -22,8 +22,8 @@ package edu.cmu.sphinx.tools.gui.util;
  */
 public class JavadocExtractor {
     
-    private static String _last_class = null;
-    private static String _last_comment = null;
+    private static String _last_class;
+    private static String _last_comment;
     
     /** execute the javadoc command to command line and get the result String */
     private static String extractJavadocComment(

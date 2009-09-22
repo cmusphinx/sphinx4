@@ -187,9 +187,9 @@ public class MathTest {
 
     public void logTest() {
 	for (int i = 0; i < maxIterations; i++) {
-	    for (int j = 0; j < d1Values.length; j++) {
-		Math.log(d1Values[j]);
-	    }
+        for (double d1Value : d1Values) {
+            Math.log(d1Value);
+        }
 	}
     }
 

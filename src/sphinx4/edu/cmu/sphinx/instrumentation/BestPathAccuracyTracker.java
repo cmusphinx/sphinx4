@@ -32,8 +32,7 @@ public class BestPathAccuracyTracker extends AccuracyTracker {
     */
     public void newProperties(PropertySheet ps) throws PropertyException {
         super.newProperties(ps);
-        showFullPath = ps.getBoolean(PROP_SHOW_FULL_PATH
-        );
+        showFullPath = ps.getBoolean(PROP_SHOW_FULL_PATH);
     }
 
 

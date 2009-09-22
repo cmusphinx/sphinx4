@@ -122,7 +122,7 @@ public class LargeTrigramModel implements LanguageModel {
     private int bigramMisses;
     private int trigramMisses;
     private int trigramHit;
-    private int smearTermCount = 0;
+    private int smearTermCount;
 
     // -------------------------------
     // subcomponents
@@ -155,35 +155,22 @@ public class LargeTrigramModel implements LanguageModel {
     */
     public void newProperties(PropertySheet ps) throws PropertyException {
         logger = ps.getLogger();
-        format = ps.getString(LanguageModel.PROP_FORMAT
-        );
+        format = ps.getString(LanguageModel.PROP_FORMAT);
              
         URL urlLocation = ConfigurationManagerUtils.getResource(PROP_LOCATION, ps);
         location = new File (urlLocation.getFile());
         
-        ngramLogFile = ps.getString(PROP_QUERY_LOG_FILE
-        );
-        maxTrigramCacheSize = ps.getInt(PROP_TRIGRAM_CACHE_SIZE
-        );
-        maxBigramCacheSize = ps.getInt(PROP_BIGRAM_CACHE_SIZE
-        );
-        clearCacheAfterUtterance = ps.getBoolean(
-                PROP_CLEAR_CACHES_AFTER_UTTERANCE
-        );
-        maxDepth = ps.getInt(LanguageModel.PROP_MAX_DEPTH
-        );
+        ngramLogFile = ps.getString(PROP_QUERY_LOG_FILE);
+        maxTrigramCacheSize = ps.getInt(PROP_TRIGRAM_CACHE_SIZE);
+        maxBigramCacheSize = ps.getInt(PROP_BIGRAM_CACHE_SIZE);
+        clearCacheAfterUtterance = ps.getBoolean(PROP_CLEAR_CACHES_AFTER_UTTERANCE);
+        maxDepth = ps.getInt(LanguageModel.PROP_MAX_DEPTH);
         logMath = (LogMath) ps.getComponent(PROP_LOG_MATH);
-        dictionary = (Dictionary) ps.getComponent(PROP_DICTIONARY
-        );
-        applyLanguageWeightAndWip = ps.getBoolean(
-                PROP_APPLY_LANGUAGE_WEIGHT_AND_WIP
-        );
-        languageWeight = ps.getFloat(PROP_LANGUAGE_WEIGHT
-        );
-        wip = ps.getDouble(PROP_WORD_INSERTION_PROBABILITY
-        );
-        unigramWeight = ps.getFloat(PROP_UNIGRAM_WEIGHT
-        );
+        dictionary = (Dictionary) ps.getComponent(PROP_DICTIONARY);
+        applyLanguageWeightAndWip = ps.getBoolean(PROP_APPLY_LANGUAGE_WEIGHT_AND_WIP);
+        languageWeight = ps.getFloat(PROP_LANGUAGE_WEIGHT);
+        wip = ps.getDouble(PROP_WORD_INSERTION_PROBABILITY);
+        unigramWeight = ps.getFloat(PROP_UNIGRAM_WEIGHT);
 
         fullSmear = ps.getBoolean(PROP_FULL_SMEAR);
     }
@@ -376,7 +363,7 @@ public class LargeTrigramModel implements LanguageModel {
      * @return the UnigramProbability, or null if this language model does not have the unigram
      */
     private UnigramProbability getUnigram(Word unigram) {
-        return (UnigramProbability) unigramIDMap.get(unigram);
+        return unigramIDMap.get(unigram);
     }
 
 
@@ -449,7 +436,7 @@ public class LargeTrigramModel implements LanguageModel {
                 if (st == null) {
                     smearTerm = unigramSmearTerm[wordID2];
                 } else {
-                    smearTerm = st.floatValue();
+                    smearTerm = st;
                     smearBigramHit++;
                 }
             }
@@ -508,8 +495,7 @@ public class LargeTrigramModel implements LanguageModel {
      */
     private BigramProbability findBigram(WordSequence ws) {
 
-        BigramProbability bigramProbability = (BigramProbability) bigramCache
-                .get(ws);
+        BigramProbability bigramProbability = bigramCache.get(ws);
 
         if (bigramProbability == null) {
             int firstWordID = getWordID(ws.getWord(0));
@@ -610,7 +596,7 @@ public class LargeTrigramModel implements LanguageModel {
             return getBigramProbability(wordSequence.getNewest());
         }
 
-        Float probability = (Float) trigramCache.get(wordSequence);
+        Float probability = trigramCache.get(wordSequence);
 
         if (probability == null) {
             float score = 0.0f;
@@ -634,7 +620,7 @@ public class LargeTrigramModel implements LanguageModel {
             trigramCache.put(wordSequence, probability);
         }
 
-        return probability.floatValue();
+        return probability;
     }
 
 
@@ -649,8 +635,7 @@ public class LargeTrigramModel implements LanguageModel {
         int trigram = -1;
 
         WordSequence oldest = wordSequence.getOldest();
-        TrigramBuffer trigramBuffer = (TrigramBuffer) loadedTrigramBuffer
-                .get(oldest);
+        TrigramBuffer trigramBuffer = loadedTrigramBuffer.get(oldest);
 
         if (trigramBuffer == null) {
 
@@ -816,8 +801,8 @@ public class LargeTrigramModel implements LanguageModel {
 
         unigramSmearTerm = new float[unigrams.length];
 
-        for (int i = 0; i < unigrams.length; i++) {
-            float logp = unigrams[i].getLogProbability();
+        for (UnigramProbability unigram : unigrams) {
+            float logp = unigram.getLogProbability();
             double p = logMath.logToLinear(logp);
             S0 += p * logp;
             R0 += p * logp * logp;
@@ -1054,7 +1039,7 @@ public class LargeTrigramModel implements LanguageModel {
      */
     private Float getSmearTerm(int word1, int word2) {
         long bigramID = (((long) word1) << 32) | word2;
-        return (Float) bigramSmearMap.get(bigramID);
+        return bigramSmearMap.get(bigramID);
     }
 
 

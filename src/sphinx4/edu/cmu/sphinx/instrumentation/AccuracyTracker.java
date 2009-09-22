@@ -73,8 +73,7 @@ abstract public class AccuracyTracker
     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
     */
     public void newProperties(PropertySheet ps) throws PropertyException {
-        Recognizer newRecognizer = (Recognizer) ps.getComponent(PROP_RECOGNIZER
-        );
+        Recognizer newRecognizer = (Recognizer) ps.getComponent(PROP_RECOGNIZER);
 
         if (recognizer == null) {
             recognizer = newRecognizer;
@@ -88,17 +87,12 @@ abstract public class AccuracyTracker
             recognizer.addStateListener(this);
         }
 
-        showSummary = ps.getBoolean(PROP_SHOW_SUMMARY
-        );
-        showDetails = ps.getBoolean(PROP_SHOW_DETAILS
-        );
-        showResults = ps.getBoolean(PROP_SHOW_RESULTS
-        );
-        showAlignedResults = ps.getBoolean(PROP_SHOW_ALIGNED_RESULTS
-        );
+        showSummary = ps.getBoolean(PROP_SHOW_SUMMARY);
+        showDetails = ps.getBoolean(PROP_SHOW_DETAILS);
+        showResults = ps.getBoolean(PROP_SHOW_RESULTS);
+        showAlignedResults = ps.getBoolean(PROP_SHOW_ALIGNED_RESULTS);
 
-        showRaw = ps.getBoolean(PROP_SHOW_RAW_RESULTS
-        );
+        showRaw = ps.getBoolean(PROP_SHOW_RAW_RESULTS);
 
         aligner.setShowResults(showResults);
         aligner.setShowAlignedResults(showAlignedResults);

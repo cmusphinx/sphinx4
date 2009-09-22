@@ -255,7 +255,7 @@ class HypothesisFile {
 
     private BufferedReader reader;
     private Iterator<HypothesisWord> iterator;
-    private int utteranceCount = 0;
+    private int utteranceCount;
 
 
     /**
@@ -346,7 +346,7 @@ class HypothesisUtterance {
                 nfe.printStackTrace();
             }
         }
-        if (words.size() > 0) {
+        if (!words.isEmpty()) {
             HypothesisWord firstWord = words.get(0);
             startTime = firstWord.getStartTime();
             HypothesisWord lastWord =

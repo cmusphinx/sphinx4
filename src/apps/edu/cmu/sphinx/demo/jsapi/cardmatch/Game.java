@@ -14,7 +14,6 @@
 package edu.cmu.sphinx.demo.jsapi.cardmatch;
 
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -22,7 +21,7 @@ import java.util.List;
  * A CardMatch Game.
  */
 public class Game {
-    private List cards;
+    private List<Card> cards;
 
 
     /**
@@ -31,7 +30,7 @@ public class Game {
      * @param numberOfCards the number of cards to use in the game
      * @param imageFile the array of image file for the cards
      */
-    public Game(int numberOfCards, List imageFiles) {
+    public Game(int numberOfCards, List<String> imageFiles) {
         cards = createCards(numberOfCards, imageFiles);
         startOver();
     }
@@ -42,7 +41,7 @@ public class Game {
      *
      * @return the list of Cards
      */
-    public List getCards() {
+    public List<Card> getCards() {
         return cards;
     }
 
@@ -55,11 +54,11 @@ public class Game {
      *
      * @return a list of cards
      */
-    private List createCards(int numberOfCards, List imageFiles) {
-        List list = new LinkedList();
+    private List<Card> createCards(int numberOfCards, List<String> imageFiles) {
+        List<Card> list = new LinkedList<Card>();
         for (int i = 0; i < numberOfCards; i++) {
             int whichImage = i % imageFiles.size();
-            Card card = new Card((String) imageFiles.get(whichImage));
+            Card card = new Card(imageFiles.get(whichImage));
             list.add(card);
         }
         return list;
@@ -72,10 +71,10 @@ public class Game {
     public void startOver() {
         Collections.shuffle(cards);
         int id = 1;
-        for (Iterator i = cards.iterator(); i.hasNext(); id++) {
-            Card card = (Card) i.next();
-            card.setID(String.valueOf(id));
-            card.setDefaultImageFile(id + ".gif");
+        for (Card card : cards) {
+            String idStr = String.valueOf(id++);
+            card.setID(idStr);
+            card.setDefaultImageFile(idStr + ".gif");
             card.setMatched(false);
             card.setSelected(false);
         }
@@ -89,8 +88,7 @@ public class Game {
      * @return the Card of the given ID
      */
     public Card getCard(String id) {
-        for (Iterator i = cards.iterator(); i.hasNext(); ) {
-            Card card = (Card) i.next();
+        for (Card card : cards) {
             if (card.getID().equals(id)) {
                 return card;
             }
@@ -105,8 +103,7 @@ public class Game {
      * @param id the card id
      */
     public void unsetMatch(Card card) {
-        for (Iterator i = cards.iterator(); i.hasNext(); ) {
-            Card otherCard = (Card) i.next();
+        for (Card otherCard : cards) {
             if (card.isMatch(otherCard)) {
                 otherCard.setMatched(false);
             }
@@ -168,8 +165,7 @@ public class Game {
      */
     private Card findUnmatchedCard(int which) {
         int count = 0;
-        for (Iterator i = cards.iterator(); i.hasNext(); ) {
-            Card card = (Card) i.next();
+        for (Card card : cards) {
             if (card.isSelected() && !card.isMatched()) {
                 if (count == which) {
                     return card;
@@ -186,8 +182,7 @@ public class Game {
      * Turn back the last two cards that were guessed.
      */
     public void turnGuessedCards() {
-        for (Iterator i = cards.iterator(); i.hasNext(); ) {
-            Card card = (Card) i.next();
+        for (Card card : cards) {
             if (!card.isMatched()) {
                 card.setSelected(false);
             }
@@ -202,10 +197,9 @@ public class Game {
      */
     public int getNumSelected() {
         int numSelected = 0;
-        for (Iterator i = cards.iterator(); i.hasNext(); ) {
-            Card card = (Card) i.next();
+        for (Card card : cards) {
             if (card.isSelected() && !card.isMatched()) {
-                numSelected ++;
+                numSelected++;
             }
         }
         return numSelected;
@@ -218,8 +212,7 @@ public class Game {
      * @return true if this game has been won
      */
     public boolean hasWon() {
-        for (Iterator i = cards.iterator(); i.hasNext(); ) {
-            Card card = (Card) i.next();
+        for (Card card : cards) {
             if (!card.isMatched()) {
                 return false;
             }

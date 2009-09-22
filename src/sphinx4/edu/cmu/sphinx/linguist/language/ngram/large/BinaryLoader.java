@@ -39,7 +39,7 @@ public class BinaryLoader {
     private boolean bigEndian = true;
     private boolean applyLanguageWeightAndWip;
 
-    private int bytesRead = 0;
+    private int bytesRead;
 
     private UnigramProbability[] unigrams;
     private String[] words;

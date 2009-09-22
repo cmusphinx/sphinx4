@@ -29,7 +29,6 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 import java.net.URL;
-import java.util.Iterator;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -59,7 +58,7 @@ public class ZipCity extends JFrame {
     private ZipInfo currentInfo;
     private ZipRecognizer zipRecognizer;
     private ZipDatabase zipDB;
-    private boolean continuousMode = false;
+    private boolean continuousMode;
 
     /**
      * Constructs a ZipCity with the given title.
@@ -337,8 +336,7 @@ public class ZipCity extends JFrame {
             super.paintComponent(g);
             if (zipDB != null) {
                 g.setColor(NORM_COLOR);
-                for (Iterator i = zipDB.iterator();  i.hasNext(); ) {
-                    ZipInfo zi = (ZipInfo) i.next();
+                for (ZipInfo zi : zipDB) {
                     plot(zi, false);
                 }
                 if (currentInfo != null) {
@@ -505,8 +503,8 @@ public class ZipCity extends JFrame {
     public static void main(String[] args) {
         boolean continuous = false;
 
-        for (int i = 0; i < args.length; i++) {
-            if (args[i].equals("-continuous")) {
+        for (String arg : args) {
+            if (arg.equals("-continuous")) {
                 continuous = true;
             } else {
                 usage();

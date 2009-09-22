@@ -49,8 +49,8 @@ import javax.swing.UIManager;
 public class LiveFrame extends JFrame {
 
     private Live live;
-    private boolean debug = false;
-    private boolean handsFree = false;
+    private boolean debug;
+    private boolean handsFree;
     
     // Dimension of this LiveFrame
     private Dimension dimension = new Dimension(500, 700);
@@ -795,9 +795,9 @@ public class LiveFrame extends JFrame {
                          "TextArea.font", "TextField.font",
                          "TitledBorder.font", "ToggleButton.font",
                          "ToolTip.font"};
-        
-        for (int i = 0; i < guis.length; i++) {
-            UIManager.put(guis[i], globalFont);
+
+        for (String gui : guis) {
+            UIManager.put(gui, globalFont);
         }
 
         setFont(globalFont);

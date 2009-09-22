@@ -46,11 +46,11 @@ public abstract class TokenScorePruner implements Pruner {
     private String name;
     private int absoluteBeamWidth;
     private float relativeBeamWidth;
-    private boolean doRelativePruning = false;
+    private boolean doRelativePruning;
     private LogMath logMath;
     private ActiveListFactory activeListFactory;
 
-    private static Comparator<Token> tokenComparator = null;
+    private static Comparator<Token> tokenComparator;
 
 
     /* (non-Javadoc)
@@ -60,13 +60,9 @@ public abstract class TokenScorePruner implements Pruner {
         logMath = (LogMath) ps.getComponent(PROP_LOG_MATH);
         setAbsoluteBeamWidth(ps.getInt(PROP_ABSOLUTE_BEAM_WIDTH
         ));
-        double linearRelativeBeamWidth =
-                ps.getDouble(PROP_RELATIVE_BEAM_WIDTH
-                );
-        setRelativeBeamWidth
-                ((float) logMath.linearToLog(linearRelativeBeamWidth));
-        activeListFactory = (ActiveListFactory) ps.getComponent
-                (PROP_ACTIVE_LIST_FACTORY);
+        double linearRelativeBeamWidth = ps.getDouble(PROP_RELATIVE_BEAM_WIDTH);
+        setRelativeBeamWidth(logMath.linearToLog(linearRelativeBeamWidth));
+        activeListFactory = (ActiveListFactory)ps.getComponent(PROP_ACTIVE_LIST_FACTORY);
     }
 
 
@@ -114,8 +110,8 @@ public abstract class TokenScorePruner implements Pruner {
         List<Token> tokenList = activeList.getTokens();
         Collections.sort(tokenList, getTokenComparator());
 
-        if (tokenList.size() > 0) {
-            Token bestToken = (Token) tokenList.get(0);
+        if (!tokenList.isEmpty()) {
+            Token bestToken = tokenList.get(0);
             float highestScore = getTokenScore(bestToken);
             float pruneScore = highestScore + relativeBeamWidth;
             float thisScore = highestScore;

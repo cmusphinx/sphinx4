@@ -15,7 +15,6 @@ package edu.cmu.sphinx.linguist.acoustic.tiedstate.trainer;
 import edu.cmu.sphinx.linguist.acoustic.tiedstate.Loader;
 import edu.cmu.sphinx.linguist.acoustic.tiedstate.Saver;
 import edu.cmu.sphinx.linguist.acoustic.tiedstate.TiedStateAcousticModel;
-import edu.cmu.sphinx.linguist.acoustic.tiedstate.Sphinx3Loader;
 import edu.cmu.sphinx.util.TimerPool;
 import edu.cmu.sphinx.util.props.*;
 

@@ -11,8 +11,8 @@ public class MatrixUtils {
     public static String toString(double[][] m) {
         StringBuilder s = new StringBuilder("[");
 
-        for (int r = 0; r < m.length; r++) {
-            s.append(toString(m[r]));
+        for (double[] row : m) {
+            s.append(toString(row));
             s.append('\n');
         }
 
@@ -23,8 +23,8 @@ public class MatrixUtils {
     public static String toString(double[] m) {
         StringBuilder s = new StringBuilder("[");
 
-        for (int r = 0; r < m.length; r++) {
-            s.append(' ').append(df.format(m[r]));
+        for (double val : m) {
+            s.append(' ').append(df.format(val));
         }
 
         return s.append(" ]").toString();

@@ -16,7 +16,7 @@ package edu.cmu.sphinx.trainer;
 /** Indicates node types such as beginning, end, containing word etc. */
 public class NodeType {
 
-    private String name = null;
+    private String name;
 
     /** NodeType to indicate dummy node. */
     public static final NodeType DUMMY = new NodeType("DUMMY");

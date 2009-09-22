@@ -67,8 +67,7 @@ public class ParallelSimpleLinguist extends FlatLinguist {
      */
     public void newProperties(PropertySheet ps) throws PropertyException {
         super.newProperties(ps);
-        tokenStackCapacity = ps.getInt(PROP_STACK_CAPACITY
-        );
+        tokenStackCapacity = ps.getInt(PROP_STACK_CAPACITY);
         tieLevel = ps.getString(PROP_TIE_LEVEL);
     }
 
@@ -80,25 +79,21 @@ public class ParallelSimpleLinguist extends FlatLinguist {
      */
     protected void setupAcousticModel(PropertySheet ps)
             throws PropertyException {
-        List componentList = ps.getComponentList(PROP_FEATURE_STREAMS);
-		featureStreams = componentList;
+        featureStreams = (List)ps.getComponentList(PROP_FEATURE_STREAMS);
     }
 
 
     /** Allocates the acoustic model(s). */
     protected void allocateAcousticModel() throws IOException {
-        for (Object featureStream : featureStreams) {
-            FeatureStream stream = (FeatureStream) featureStream;
+        for (FeatureStream stream : featureStreams)
             stream.getAcousticModel().allocate();
-        }
     }
 
 
     /** Frees the acoustic model(s) used. */
     protected void freeAcousticModels() {
-        for (Object featureStream : featureStreams) {
-            ((FeatureStream) featureStream).freeAcousticModel();
-        }
+        for (FeatureStream stream : featureStreams)
+            stream.freeAcousticModel();
     }
 
 
@@ -145,7 +140,7 @@ public class ParallelSimpleLinguist extends FlatLinguist {
          * @return the size of the left context
          */
         protected int getLeftContextSize() {
-            FeatureStream stream = (FeatureStream) featureStreams.get(0);
+            FeatureStream stream = featureStreams.get(0);
             return stream.getAcousticModel().getLeftContextSize();
         }
 
@@ -156,7 +151,7 @@ public class ParallelSimpleLinguist extends FlatLinguist {
          * @return the size of the right context
          */
         protected int getRightContextSize() {
-            FeatureStream stream = (FeatureStream) featureStreams.get(0);
+            FeatureStream stream = featureStreams.get(0);
             return stream.getAcousticModel().getRightContextSize();
         }
 
@@ -202,9 +197,7 @@ public class ParallelSimpleLinguist extends FlatLinguist {
                     (unitState.getParent(), unitState.getWhich());
 
             // create an HMM branch for each acoustic model            
-            for (Object featureStream : featureStreams) {
-
-                FeatureStream stream = (FeatureStream) featureStream;
+            for (FeatureStream stream : featureStreams) {
                 AcousticModel model = stream.getAcousticModel();
 
                 HMM hmm = model.lookupNearestHMM
@@ -225,7 +218,7 @@ public class ParallelSimpleLinguist extends FlatLinguist {
                         logOne);
 
                 // expand the HMM and connect the lastState w/ the combineState
-                Map hmmStates = new HashMap();
+                Map<HMMState, ParallelHMMStateState> hmmStates = new HashMap<HMMState, ParallelHMMStateState>();
                 hmmStates.put(firstHMMState.getHMMState(), firstHMMState);
 
                 SentenceHMMState lastState =
@@ -251,14 +244,13 @@ public class ParallelSimpleLinguist extends FlatLinguist {
          */
         private SentenceHMMState expandParallelHMMTree
                 (ParallelHMMStateState hmmStateState, FeatureStream stream,
-                 Map expandedStates) {
+                 Map<HMMState, ParallelHMMStateState> expandedStates) {
 
             SentenceHMMState lastState = hmmStateState;
 
             HMMState hmmState = hmmStateState.getHMMState();
-            HMMStateArc[] arcs = hmmState.getSuccessors();
 
-            for (HMMStateArc arc : arcs) {
+            for (HMMStateArc arc : hmmState.getSuccessors()) {
 
                 HMMState nextHmmState = arc.getHMMState();
 
@@ -274,8 +266,7 @@ public class ParallelSimpleLinguist extends FlatLinguist {
                     ParallelHMMStateState nextState;
 
                     if (expandedStates.containsKey(nextHmmState)) {
-                        nextState = (ParallelHMMStateState)
-                                expandedStates.get(nextHmmState);
+                        nextState = expandedStates.get(nextHmmState);
                     } else {
                         nextState = new ParallelHMMStateState
                                 (hmmStateState.getParent(), stream,
@@ -313,8 +304,7 @@ public class ParallelSimpleLinguist extends FlatLinguist {
 
             int s = 0;
             // create an HMM branch for each feature stream
-            for (Iterator<FeatureStream> i = featureStreams.iterator(); i.hasNext(); s++) {
-                FeatureStream stream = (FeatureStream) i.next();
+            for (FeatureStream stream : featureStreams) {
                 hmms[s] = stream.getAcousticModel().lookupNearestHMM
                         (unitState.getUnit(), unitState.getPosition(), false);
             }
@@ -350,7 +340,7 @@ public class ParallelSimpleLinguist extends FlatLinguist {
             //
             for (int i = 0; i < hmms.length; i++) {
                 HMMState hmmState = hmms[i].getInitialState();
-                FeatureStream stream = (FeatureStream) featureStreams.get(i);
+                FeatureStream stream = featureStreams.get(i);
 
                 ParallelHMMStateState firstHMMState = new ParallelHMMStateState
                         (unitState, stream, hmmState, tokenStackCapacity);
@@ -398,7 +388,7 @@ public class ParallelSimpleLinguist extends FlatLinguist {
                 for (int a = 0; a < arcs.length; a++) {
                     HMMStateArc arc = arcs[a];
                     HMMState hmmState = arc.getHMMState();
-                    FeatureStream stream = (FeatureStream) featureStreams.get(a);
+                    FeatureStream stream = featureStreams.get(a);
 
                     ParallelHMMStateState hmmStateState =
                             new ParallelHMMStateState
@@ -441,8 +431,7 @@ public class ParallelSimpleLinguist extends FlatLinguist {
 
         /** Returns the self-transitioning HMMStateArc of the given HMMState. */
         private HMMStateArc getSelfTransition(HMMState hmmState) {
-            HMMStateArc[] arcs = hmmState.getSuccessors();
-            for (HMMStateArc arc : arcs) {
+            for (HMMStateArc arc : hmmState.getSuccessors()) {
                 HMMState nextHmmState = arc.getHMMState();
                 if (nextHmmState == hmmState) {
                     return arc;
@@ -454,8 +443,7 @@ public class ParallelSimpleLinguist extends FlatLinguist {
 
         /** Returns the HMMStateArc that transitioin to the next HMMState. */
         private HMMStateArc getTransitionToNextState(HMMState hmmState) {
-            HMMStateArc[] arcs = hmmState.getSuccessors();
-            for (HMMStateArc arc : arcs) {
+            for (HMMStateArc arc : hmmState.getSuccessors()) {
                 HMMState nextHmmState = arc.getHMMState();
                 if (nextHmmState != hmmState) {
                     return arc;

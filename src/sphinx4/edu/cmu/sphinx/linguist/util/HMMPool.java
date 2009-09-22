@@ -64,8 +64,7 @@ public class HMMPool {
 
         // count CI units:
 
-        for (Iterator<Unit> i = model.getContextIndependentUnitIterator();
-             i.hasNext();) {
+        for (Iterator<Unit> i = model.getContextIndependentUnitIterator(); i.hasNext();) {
             Unit unit = i.next();
             logger.fine("CI unit " + unit);
             if (unit.getBaseID() > maxCIUnits) {

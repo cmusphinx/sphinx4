@@ -86,10 +86,8 @@ public class RejectionTracker implements
             recognizer.addStateListener(this);
         }
 
-        showSummary = ps.getBoolean(PROP_SHOW_SUMMARY
-        );
-        showDetails = ps.getBoolean(PROP_SHOW_DETAILS
-        );
+        showSummary = ps.getBoolean(PROP_SHOW_SUMMARY);
+        showDetails = ps.getBoolean(PROP_SHOW_DETAILS);
     }
 
 

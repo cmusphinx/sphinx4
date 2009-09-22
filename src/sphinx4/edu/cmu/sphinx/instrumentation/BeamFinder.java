@@ -103,10 +103,8 @@ public class BeamFinder implements ResultListener,
 
         logMath = (LogMath) ps.getComponent(PROP_LOG_MATH);
 
-        showSummary = ps.getBoolean(PROP_SHOW_SUMMARY
-        );
-        showDetails = ps.getBoolean(PROP_SHOW_DETAILS
-        );
+        showSummary = ps.getBoolean(PROP_SHOW_SUMMARY);
+        showDetails = ps.getBoolean(PROP_SHOW_DETAILS);
         enabled = ps.getBoolean(PROP_ENABLED);
     }
 
@@ -176,7 +174,7 @@ public class BeamFinder implements ResultListener,
             collectStatistics(result);
         } else {
             List<Token> tokenList = result.getActiveTokens().getTokens();
-            if (tokenList.size() > 0) {
+            if (!tokenList.isEmpty()) {
                 Collections.sort(tokenList, Token.COMPARATOR);
                 Token bestToken = tokenList.get(0);
                 int rank = 0;

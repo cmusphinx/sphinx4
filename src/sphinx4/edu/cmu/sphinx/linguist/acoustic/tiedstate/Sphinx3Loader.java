@@ -16,7 +16,6 @@ package edu.cmu.sphinx.linguist.acoustic.tiedstate;
 import edu.cmu.sphinx.linguist.acoustic.*;
 import edu.cmu.sphinx.util.ExtendedStreamTokenizer;
 import edu.cmu.sphinx.util.LogMath;
-import edu.cmu.sphinx.util.StreamFactory;
 import edu.cmu.sphinx.util.Utilities;
 import edu.cmu.sphinx.util.props.*;
 
@@ -223,7 +222,7 @@ public class Sphinx3Loader implements Loader {
     private float mixtureWeightFloor;
     private float varianceFloor;
     private boolean useCDUnits;
-    private boolean loaded = false;
+    private boolean loaded;
 
     /*
      * (non-Javadoc)
@@ -774,8 +773,8 @@ public class Sphinx3Loader implements Loader {
      */
     protected void normalize(float[] data) {
         float sum = 0;
-        for (int i = 0; i < data.length; i++) {
-            sum += data[i];
+        for (float val : data) {
+            sum += val;
         }
         if (sum != 0.0f) {
             for (int i = 0; i < data.length; i++) {

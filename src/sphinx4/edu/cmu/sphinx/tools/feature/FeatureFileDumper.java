@@ -19,7 +19,6 @@ import edu.cmu.sphinx.util.props.PropertyException;
 
 import java.io.*;
 import java.net.URL;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -120,17 +119,16 @@ public class FeatureFileDumper {
                 outputFile));
         outStream.writeInt(getNumberDataPoints());
 
-        for (Iterator i = allFeatures.iterator(); i.hasNext();) {
-            Object data = i.next();
+        for (Object data : allFeatures) {
             if (data instanceof double[]) {
-                double[] feature = (double[]) data;
-                for (int d = 0; d < feature.length; d++) {
-                    outStream.writeFloat((float) feature[d]);
+                double[] feature = (double[])data;
+                for (double val : feature) {
+                    outStream.writeFloat((float)val);
                 }
             } else if (data instanceof float[]) {
-                float[] feature = (float[]) data;
-                for (int d = 0; d < feature.length; d++) {
-                    outStream.writeFloat(feature[d]);
+                float[] feature = (float[])data;
+                for (float val : feature) {
+                    outStream.writeFloat(val);
                 }
             }
         }
@@ -149,18 +147,17 @@ public class FeatureFileDumper {
         ps.print(getNumberDataPoints());
         ps.print(' ');
 
-        for (Iterator i = allFeatures.iterator(); i.hasNext();) {
-            Object data = i.next();
+        for (Object data : allFeatures) {
             if (data instanceof double[]) {
-                double[] feature = (double[]) data;
-                for (int d = 0; d < feature.length; d++) {
-                    ps.print(feature[d]);
+                double[] feature = (double[])data;
+                for (double val : feature) {
+                    ps.print(val);
                     ps.print(' ');
                 }
             } else if (data instanceof float[]) {
-                float[] feature = (float[]) data;
-                for (int d = 0; d < feature.length; d++) {
-                    ps.print(feature[d]);
+                float[] feature = (float[])data;
+                for (float val : feature) {
+                    ps.print(val);
                     ps.print(' ');
                 }
             }

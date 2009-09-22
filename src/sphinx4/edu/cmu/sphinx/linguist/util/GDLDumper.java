@@ -56,8 +56,7 @@ public class GDLDumper extends LinguistDumper {
         super.newProperties(ps);
         verticalLayout = ps.getBoolean(
                 PROP_VERTICAL_LAYOUT);
-        skipHMMs = ps.getBoolean(PROP_SKIP_HMMS
-        );
+        skipHMMs = ps.getBoolean(PROP_SKIP_HMMS);
         dumpArcLabels = ps.getBoolean(
                 PROP_DUMP_ARC_LABELS);
         setDepthFirst(false); // breadth first traversal
@@ -214,11 +213,9 @@ public class GDLDumper extends LinguistDumper {
         Set<SearchStateArc> visited = new HashSet<SearchStateArc>();
         List<SearchStateArc> queue = new ArrayList<SearchStateArc>();
         queue.add(arc);
-        while (queue.size() > 0) {
-            SearchStateArc nextArc = (SearchStateArc) queue.remove(0);
-            if (visited.contains(nextArc)) {
-                continue;
-            } else {
+        while (!queue.isEmpty()) {
+            SearchStateArc nextArc = queue.remove(0);
+            if (!visited.contains(nextArc)) {
                 visited.add(nextArc);
                 if (!(nextArc.getState() instanceof HMMSearchState)) {
                     results.add(nextArc);

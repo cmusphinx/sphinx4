@@ -70,8 +70,8 @@ public final class WordSequence {
 
 
     private void check() {
-        for (int i = 0; i < words.length; i++) {
-            if (words[i] == null) {
+        for (Word word : words) {
+            if (word == null) {
                 throw new Error("WordSequence should not have null Words.");
             }
         }

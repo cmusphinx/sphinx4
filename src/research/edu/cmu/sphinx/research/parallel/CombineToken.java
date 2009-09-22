@@ -23,9 +23,9 @@ import java.util.*;
  * the combined score. A combined token carries a parallel token for each feature stream, so that scores pertaining to
  * each stream can be propagated.
  */
-public class CombineToken extends Token implements Iterable {
+public class CombineToken extends Token implements Iterable<ParallelToken> {
 
-    private Map tokens;     // the list of parallel tokens
+    private Map<Object, ParallelToken> tokens;     // the list of parallel tokens
 
 
     /**
@@ -71,7 +71,7 @@ public class CombineToken extends Token implements Iterable {
      */
     public ParallelToken addParallelToken(Object key,
                                           ParallelToken parallelToken) {
-        return (ParallelToken) tokens.put(key, parallelToken);
+        return tokens.put(key, parallelToken);
     }
 
 
@@ -81,11 +81,9 @@ public class CombineToken extends Token implements Iterable {
      *
      * @param tokenList the list of ParallelTokens
      */
-    public void addAll(List tokenList) {
-        for (Iterator i = tokenList.iterator(); i.hasNext();) {
-            ParallelToken token = (ParallelToken) i.next();
+    public void addAll(List<ParallelToken> tokenList) {
+        for (ParallelToken token : tokenList)
             tokens.put(token.getFeatureStream(), token);
-        }
     }
 
 
@@ -101,7 +99,7 @@ public class CombineToken extends Token implements Iterable {
      * @return an Iterator for the ParallelToken(s)
      */
     @Override
-    public Iterator iterator() {
+    public Iterator<ParallelToken> iterator() {
         return tokens.values().iterator();
     }
 
@@ -122,7 +120,7 @@ public class CombineToken extends Token implements Iterable {
      * @return the parallel token of the given parallel stream
      */
     public ParallelToken getParallelToken(FeatureStream stream) {
-        return (ParallelToken) tokens.get(stream);
+        return tokens.get(stream);
     }
 
 
@@ -132,10 +130,8 @@ public class CombineToken extends Token implements Iterable {
      * @param frameNumber the last combine time
      */
     public void setLastCombineTime(int frameNumber) {
-        for (Iterator i = iterator(); i.hasNext();) {
-            ParallelToken pToken = (ParallelToken) i.next();
+        for (ParallelToken pToken : this)
             pToken.setLastCombineTime(frameNumber);
-        }
     }
 
 
@@ -149,8 +145,7 @@ public class CombineToken extends Token implements Iterable {
             .append("Frame: ").append(getNumberFormat().format(getFrameNumber()))
             .append(", score: ").append(getScoreFormat().format(getScore())).append('\n');
         int t = 0;
-        for (Iterator i = iterator(); i.hasNext(); t++) {
-            ParallelToken token = (ParallelToken) i.next();
+        for (ParallelToken token : this) {
             parallelTokenScores.append("   ParallelToken ").append(t).append(", ").append(token.getModelName())
                 .append(", feature: ").append(getScoreFormat().format(token.getFeatureScore()))
                 .append(", combined: ").append(getScoreFormat().format(token.getCombinedScore())).append('\n');

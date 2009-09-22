@@ -158,7 +158,7 @@ public class SpeechMarker extends BaseDataProcessor {
             }
         }
 
-        if (outputQueue.size() > 0) {
+        if (!outputQueue.isEmpty()) {
             Data audio = outputQueue.remove(0);
             if (audio instanceof SpeechClassifiedData) {
                 SpeechClassifiedData data = (SpeechClassifiedData) audio;

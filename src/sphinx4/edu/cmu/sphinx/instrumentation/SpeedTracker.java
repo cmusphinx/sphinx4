@@ -76,7 +76,7 @@ public class SpeedTracker
     private int numUtteranceStart;
     private long maxResponseTime = Long.MIN_VALUE;
     private long minResponseTime = Long.MAX_VALUE;
-    private long totalResponseTime = 0L;
+    private long totalResponseTime;
 
 
     /*
@@ -100,8 +100,7 @@ public class SpeedTracker
         }
 
 
-        FrontEnd newFrontEnd = (FrontEnd) ps.getComponent(PROP_FRONTEND
-        );
+        FrontEnd newFrontEnd = (FrontEnd) ps.getComponent(PROP_FRONTEND);
         if (frontEnd == null) {
             frontEnd = newFrontEnd;
             frontEnd.addSignalListener(this);
@@ -110,12 +109,9 @@ public class SpeedTracker
             frontEnd = newFrontEnd;
             frontEnd.addSignalListener(this);
         }
-        showSummary = ps.getBoolean(PROP_SHOW_SUMMARY
-        );
-        showDetails = ps.getBoolean(PROP_SHOW_DETAILS
-        );
-        showResponseTime = ps.getBoolean(PROP_SHOW_RESPONSE_TIME
-        );
+        showSummary = ps.getBoolean(PROP_SHOW_SUMMARY);
+        showDetails = ps.getBoolean(PROP_SHOW_DETAILS);
+        showResponseTime = ps.getBoolean(PROP_SHOW_RESPONSE_TIME);
         showTimers = ps.getBoolean(PROP_SHOW_TIMERS);
     }
 

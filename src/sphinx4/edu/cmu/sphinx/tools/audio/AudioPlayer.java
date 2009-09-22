@@ -21,7 +21,7 @@ import javax.sound.sampled.SourceDataLine;
 public class AudioPlayer extends Thread {
 
     private AudioData audio;
-    private SourceDataLine line = null;
+    private SourceDataLine line;
     private int selectionStart;
     private int selectionEnd;
 

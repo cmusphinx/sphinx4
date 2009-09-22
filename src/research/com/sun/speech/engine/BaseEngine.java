@@ -31,13 +31,13 @@ abstract public class BaseEngine implements Engine, SpeechEventDispatcher {
     protected final List<EngineListener> engineListeners = new ArrayList<EngineListener>();
 
     /** The <code>AudioManager</code> for this <code>Engine</code>. */
-    protected AudioManager audioManager = null;
+    protected AudioManager audioManager;
 
     /** The <code>EngineModeDesc</code> for this <code>Engine</code>. */
-    protected EngineModeDesc engineModeDesc = null;
+    protected EngineModeDesc engineModeDesc;
 
     /** The <code>EngineProperties</code> for this <code>Engine</code>. */
-    protected EngineProperties engineProperties = null;
+    protected EngineProperties engineProperties;
 
     /** Utility state for clearing the <code>engineState</code>. */
     protected final static long CLEAR_ALL_STATE = ~(0L);

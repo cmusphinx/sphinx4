@@ -18,9 +18,9 @@ public class VUMeterPanel extends JPanel {
     }
 
 
-    VUMeter vu = null;
-    boolean quit = false;
-    Thread thread = null;
+    VUMeter vu;
+    boolean quit;
+    Thread thread;
 
 
     public void start() {

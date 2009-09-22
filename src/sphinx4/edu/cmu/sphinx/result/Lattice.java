@@ -126,14 +126,10 @@ public class Lattice {
             loserManager.purge();
         }
 
-        Iterator<Token> tokenIter;
-        if (result.getBestFinalToken() != null) {
-            tokenIter = result.getResultTokens().iterator();
-        } else {
-            tokenIter = result.getActiveTokens().iterator();
-        }
-        while (tokenIter.hasNext()) {
-            Token token = (Token) tokenIter.next();
+        Iterable<Token> tokens = result.getBestFinalToken() == null
+            ? result.getActiveTokens() 
+            : result.getResultTokens();
+        for (Token token : tokens) {
             while (token != null && !token.isWord()) {
                 token = token.getPredecessor();
             }
@@ -561,11 +557,11 @@ public class Lattice {
             f.write( "yspace: 10\n");
             */
 
-            for (Iterator<Node> i = nodes.values().iterator(); i.hasNext();) {
-                ((i.next())).dumpAISee(f);
+            for (Node node : nodes.values()) {
+                node.dumpAISee(f);
             }
-            for (Iterator<Edge> i = edges.iterator(); i.hasNext();) {
-                ((i.next())).dumpAISee(f);
+            for (Edge edge : edges) {
+                edge.dumpAISee(f);
             }
             f.write("}\n");
             f.close();
@@ -583,11 +579,11 @@ public class Lattice {
      */
     protected void dump(PrintWriter out) throws IOException {
         //System.err.println( "Dumping to " + out );
-        for (Iterator<Node> i = nodes.values().iterator(); i.hasNext();) {
-            ((i.next())).dump(out);
+        for (Node node : nodes.values()) {
+            node.dump(out);
         }
-        for (Iterator<Edge> i = edges.iterator(); i.hasNext();) {
-            ((i.next())).dump(out);
+        for (Edge edge : edges) {
+            edge.dump(out);
         }
         out.println("initialNode: " + initialNode.getId());
         out.println("terminalNode: " + terminalNode.getId());
@@ -730,8 +726,8 @@ public class Lattice {
 
     /** Dump all paths through this Lattice.  Used for debugging. */
     public void dumpAllPaths() {
-        for (Iterator<String> i = allPaths().iterator(); i.hasNext();) {
-            System.out.println(i.next());
+        for (String path : allPaths()) {
+            System.out.println(path);
         }
     }
 
@@ -782,11 +778,10 @@ public class Lattice {
                 }
             }
         }
-        for (Iterator<Edge> i = edges.iterator(); i.hasNext();) {
-            Edge e = i.next();
+        for (Edge e : edges) {
             if (!hasNode(e.getFromNode())) {
                 throw new Error("Lattice has EDGE with missing FROM node: " +
-                        e);
+                    e);
             }
             if (!hasNode(e.getToNode())) {
                 throw new Error("Lattice has EDGE with missing TO node: " + e);
@@ -889,7 +884,7 @@ public class Lattice {
         assert sortedNodes.get(sortedNodes.size() - 1) == terminalNode;
         ListIterator<Node> n = sortedNodes.listIterator(sortedNodes.size() - 1);
         while (n.hasPrevious()) {
-            Node currentNode = (Node) n.previous();
+            Node currentNode = n.previous();
             Collection<Edge> currentEdges = currentNode.getLeavingEdges();
             for (Edge edge : currentEdges) {
                 double backwardProb = edge.getToNode().getBackwardScore();
@@ -903,10 +898,9 @@ public class Lattice {
 
         //inner
         double normalizationFactor = terminalNode.getForwardScore();
-        for (Iterator<Node> i = nodes.values().iterator(); i.hasNext();) {
-            Node node = i.next();
+        for (Node node : nodes.values()) {
             node.setPosterior((node.getForwardScore() +
-                    node.getBackwardScore()) - normalizationFactor);
+                node.getBackwardScore()) - normalizationFactor);
         }
     }
 
@@ -1003,7 +997,7 @@ public class Lattice {
                     }
                 }
             }
-            if (leavingEdges2.size() != 0) {
+            if (!leavingEdges2.isEmpty()) {
                 System.out.println("One lattice has too many edges.");
                 return false;
             }

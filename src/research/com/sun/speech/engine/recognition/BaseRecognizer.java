@@ -46,17 +46,17 @@ public class BaseRecognizer extends BaseEngine
     protected final List<ResultListener> resultListeners = new ArrayList<ResultListener>();
     protected Map<String, RuleGrammar> grammarList = new HashMap<String, RuleGrammar>();
     protected boolean caseSensitiveGrammarNames = true;
-    protected boolean hasModalGrammars = false;
+    protected boolean hasModalGrammars;
 
     protected boolean supportsNULL = true;
     protected boolean supportsVOID = true;
 
     // used when printing grammars
-    public RuleGrammar currentGrammar = null;
+    public RuleGrammar currentGrammar;
 
     // Set to true if recognizer cannot handle partial
     // grammar loading.
-    protected boolean reloadAll = false;
+    protected boolean reloadAll;
 
 //////////////////////
 // Begin Constructors
@@ -188,8 +188,7 @@ public class BaseRecognizer extends BaseEngine
             throws GrammarException, IOException, EngineStateError {
         checkEngineState(DEALLOCATED | DEALLOCATING_RESOURCES);
 
-        RuleGrammar G = JSGFParser.newGrammarFromJSGF(JSGFinput,
-                (Recognizer) this);
+        RuleGrammar G = JSGFParser.newGrammarFromJSGF(JSGFinput, this);
         if (G == null) {
             throw new IOException();    // Should never happen
         }
@@ -478,7 +477,7 @@ public class BaseRecognizer extends BaseEngine
             RecognizerUtilities.debugMessageOut("ERROR: readVendorGrammar: " +
                     e);
         }
-        return (Grammar) G;
+        return G;
     }
 
 
@@ -509,7 +508,7 @@ public class BaseRecognizer extends BaseEngine
             RecognizerUtilities.debugMessageOut("ERROR: readVendorResult: " +
                     e);
         }
-        return (FinalResult) res;
+        return res;
     }
 
 
@@ -679,11 +678,7 @@ public class BaseRecognizer extends BaseEngine
 
     /** Retrieve a grammar from the grammar list. */
     protected RuleGrammar retrieveGrammar(String name) {
-        if (caseSensitiveGrammarNames) {
-            return (RuleGrammar) grammarList.get(name);
-        } else {
-            return (RuleGrammar) grammarList.get(name.toLowerCase());
-        }
+        return grammarList.get(caseSensitiveGrammarNames ? name : name.toLowerCase());
     }
 
 
@@ -694,8 +689,7 @@ public class BaseRecognizer extends BaseEngine
     public RuleGrammar loadJSGF(InputStream JSGFinput)
             throws GrammarException, IOException, EngineStateError {
         checkEngineState(DEALLOCATED | DEALLOCATING_RESOURCES);
-        RuleGrammar G = JSGFParser.newGrammarFromJSGF(JSGFinput,
-                (Recognizer) this);
+        RuleGrammar G = JSGFParser.newGrammarFromJSGF(JSGFinput, this);
         if ((G != null) && (G.getName() != null)) {
             storeGrammar(G);
         }
@@ -883,8 +877,8 @@ public class BaseRecognizer extends BaseEngine
                 return;
             }
         }
-        for (int i = 0; i < G.length; i++) {
-            BaseRuleGrammar JG = (BaseRuleGrammar) G[i];
+        for (RuleGrammar grammar : G) {
+            BaseRuleGrammar JG = (BaseRuleGrammar)grammar;
             if (JG.grammarChanged) {
                 haveChanges = true;
                 break;
@@ -895,27 +889,26 @@ public class BaseRecognizer extends BaseEngine
             startGrammarChanges();
         }
         // find and output rules that have changes
-        for (int i = 0; i < G.length; i++) {
-            String gname = G[i].getName();
-            BaseRuleGrammar JG = (BaseRuleGrammar) G[i];
-            String rnames[] = G[i].listRuleNames();
-            for (int j = 0; j < rnames.length; j++) {
-                String ruleName = rnames[j];
-                if (G[i].isEnabled(ruleName)) {
+        for (RuleGrammar grammar : G) {
+            String gname = grammar.getName();
+            BaseRuleGrammar JG = (BaseRuleGrammar)grammar;
+            String rnames[] = grammar.listRuleNames();
+            for (String ruleName : rnames) {
+                if (grammar.isEnabled(ruleName)) {
                     enabled.add(gname + '_' + ruleName);
                 }
                 if (!haveChanges
-                        || (!JG.isRuleChanged(ruleName) && !reloadAll)) {
+                    || (!JG.isRuleChanged(ruleName) && !reloadAll)) {
                     continue;
                 }
                 JG.setRuleChanged(ruleName, false);
                 boolean isPublic = false;
                 try {
-                    isPublic = G[i].isRulePublic(ruleName);
+                    isPublic = grammar.isRulePublic(ruleName);
                 } catch (IllegalArgumentException nse) {
                 }
-                Rule rule = G[i].getRule(ruleName);
-                currentGrammar = G[i];
+                Rule rule = grammar.getRule(ruleName);
+                currentGrammar = grammar;
                 changeRule(gname, ruleName, rule, isPublic);
             }
             JG.grammarChanged = false;
@@ -955,8 +948,8 @@ public class BaseRecognizer extends BaseEngine
     static public void loadAllImports(Recognizer R)
             throws GrammarException, IOException {
         RuleGrammar rlist[] = R.listRuleGrammars();
-        for (int i = 0; i < rlist.length; i++) {
-            loadImports(R, rlist[i], null, false, false, null);
+        for (RuleGrammar grammar : rlist) {
+            loadImports(R, grammar, null, false, false, null);
         }
     }
 
@@ -973,15 +966,15 @@ public class BaseRecognizer extends BaseEngine
         RuleName imports[] = G.listImports();
 
         if (imports != null) {
-            for (int i = 0; i < imports.length; i++) {
+            for (RuleName ruleName : imports) {
                 //RecognizerUtilities.debugMessageOut("Checking import " +
                 //                                   imports[i].getRuleName());
-                String gname = imports[i].getFullGrammarName();
+                String gname = ruleName.getFullGrammarName();
                 RuleGrammar GI = R.getRuleGrammar(gname);
 
                 if (GI == null) {
                     URL grammarURL = gnameToURL(
-                            context, imports[i].getFullGrammarName());
+                        context, ruleName.getFullGrammarName());
                     G2 = JSGFParser.newGrammarFromJSGF(grammarURL, R);
                     if (G2 != null) {
                         if (grams != null) {
@@ -1020,8 +1013,8 @@ public class BaseRecognizer extends BaseEngine
 
         String[] ruleNames = g.listRuleNames();
         //go through every rule
-        for (int i = 0; i < ruleNames.length; i++) {
-            String rule = g.getRuleInternal(ruleNames[i]).toString();
+        for (String ruleName : ruleNames) {
+            String rule = g.getRuleInternal(ruleName).toString();
             //check for rule-Tokens
             int index = 0;
             while (index < rule.length()) {
@@ -1031,7 +1024,7 @@ public class BaseRecognizer extends BaseEngine
                 } else {
                     //extract rulename
                     RuleName rn = new RuleName(rule.substring(
-                            index + 1, rule.indexOf('>', index + 1)).trim());
+                        index + 1, rule.indexOf('>', index + 1)).trim());
                     index = rule.indexOf('>', index) + 1;
                     //check for fullqualified rulename
                     if (rn.getFullGrammarName() != null) {
@@ -1040,7 +1033,7 @@ public class BaseRecognizer extends BaseEngine
                         if (GI == null) {
                             URL grammarURL = gnameToURL(context, gname);
                             RuleGrammar G2 = JSGFParser.newGrammarFromJSGF(
-                                    grammarURL, r);
+                                grammarURL, r);
 
                             if (G2 != null) {
                                 if (grams != null) {
@@ -1048,11 +1041,11 @@ public class BaseRecognizer extends BaseEngine
                                 }
                                 if (recurse) {
                                     loadImports(r,
-                                            G2,
-                                            context,
-                                            recurse,
-                                            relo,
-                                            grams);
+                                        G2,
+                                        context,
+                                        recurse,
+                                        relo,
+                                        grams);
                                 }
                             }
                         }
@@ -1066,8 +1059,8 @@ public class BaseRecognizer extends BaseEngine
     /** Resolve and linkup all rule references contained in all rules in all grammars. */
     protected void linkGrammars() throws GrammarException {
         RuleGrammar rlist[] = listRuleGrammars();
-        for (int i = 0; i < rlist.length; i++) {
-            ((BaseRuleGrammar) (rlist[i])).resolveAllRules();
+        for (RuleGrammar grammar : rlist) {
+            ((BaseRuleGrammar)(grammar)).resolveAllRules();
         }
     }
 

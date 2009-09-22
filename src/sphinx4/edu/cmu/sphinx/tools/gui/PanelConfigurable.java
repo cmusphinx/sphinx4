@@ -36,7 +36,7 @@ public class PanelConfigurable extends javax.swing.JPanel {
     private static final int COMBO_NEUTRAL = 1;
 
     /** Creates new form PanelConfigurable */
-    public PanelConfigurable(GUIMediator gm, String name, Set groupset) {
+    public PanelConfigurable(GUIMediator gm, String name, Set<ConfigurableComponent> groupset) {
         initComponents(); // create the GUI components
 
         _pm = new PanelMediator(name,groupset,gm,this);
@@ -70,7 +70,7 @@ public class PanelConfigurable extends javax.swing.JPanel {
     /**
      * change the data set
      */
-    public void setPanelClassSet(Set ccset){
+    public void setPanelClassSet(Set<ConfigurableComponent> ccset){
         _pm.setGroupMap(ccset);
     }
 
@@ -101,8 +101,8 @@ public class PanelConfigurable extends javax.swing.JPanel {
 
 
         DefaultListModel outerlistModel= new DefaultListModel();
-        for ( Iterator it = _pm.getGroupMap().keySet().iterator(); it.hasNext();){
-            outerlistModel.addElement(it.next());
+        for (String s : _pm.getGroupMap().keySet()) {
+            outerlistModel.addElement(s);
         }
         jListOuter.setModel(outerlistModel);
         jListInner.setModel(new DefaultListModel());
@@ -179,13 +179,12 @@ public class PanelConfigurable extends javax.swing.JPanel {
 
         Component[] carray = jRightPanel.getComponents();
         // the array will contain the upper top right panel components only
-        for( int i = 0; i < carray.length; i++){
-           if (carray[i] instanceof java.awt.TextComponent ){
-               ((TextComponent)carray[i]).setText("");
-           }
-           else if (carray[i] instanceof javax.swing.JComboBox){
-               ((JComboBox)carray[i]).removeAllItems();
-           }
+        for (Component component : carray) {
+            if (component instanceof TextComponent) {
+                ((TextComponent)component).setText("");
+            } else if (component instanceof JComboBox) {
+                ((JComboBox)component).removeAllItems();
+            }
         }
 
         jListInner.clearSelection();
@@ -586,7 +585,7 @@ public class PanelConfigurable extends javax.swing.JPanel {
         if ( delval != null && (classname != null) &&
                 ( setname != null) && (prop != null) )
         {
-            List newlist = new ArrayList(
+            List<String> newlist = new ArrayList(
                     Arrays.asList(((DefaultListModel)jListPropVal.getModel()).toArray()));
             if( newlist.remove(delval) ){
                 try {
@@ -614,7 +613,7 @@ public class PanelConfigurable extends javax.swing.JPanel {
             String prop = (String)jListInner.getSelectedValue();
             String setname = (String)jComboName.getSelectedItem();
 
-            List newlist = new ArrayList(
+            List<String> newlist = new ArrayList(
                     Arrays.asList(((DefaultListModel)jListPropVal.getModel()).toArray()));
             newlist.add(newval);
 
@@ -758,10 +757,10 @@ public class PanelConfigurable extends javax.swing.JPanel {
                     setVisibleComponentInput(true);
                     // addComponent to jComboComponent
                     // System.out.println("$$$ is a component");
-                    List mylist = _pm.getComponentList(classname,prop);
+                    List<String> mylist = _pm.getComponentList(classname,prop);
                     if(mylist != null && !mylist.isEmpty()){
-                        for(Iterator it=mylist.iterator();it.hasNext();){
-                            jComboComponent.addItem((String)it.next());
+                        for (String item : mylist) {
+                            jComboComponent.addItem(item);
                         }
                     }
                 }else
@@ -796,7 +795,7 @@ public class PanelConfigurable extends javax.swing.JPanel {
 
             else if (jComboName.getSelectedIndex() == 0){
                 //selected item is 'create new set'               
-                String s = (String)JOptionPane.showInputDialog(this,
+                String s = JOptionPane.showInputDialog(this,
                          "Please enter the name of new config",
                                          "Create New Configuration Set",
                                          JOptionPane.PLAIN_MESSAGE);
@@ -845,18 +844,17 @@ public class PanelConfigurable extends javax.swing.JPanel {
             jComboName.setEnabled(true);
             jTextClass.setText(classname.substring(classname.lastIndexOf('.')+1));
             // fill up combo with config set names
-            Set config = _pm.getConfigurationSet((String)jListOuter.getSelectedValue());
+            Set<String> config = _pm.getConfigurationSet((String)jListOuter.getSelectedValue());
             if ( config != null){
-                for ( Iterator it = config.iterator();it.hasNext();){
-                    jComboName.addItem((String)it.next());
+                for (String configItem : config) {
+                    jComboName.addItem(configItem);
                 }
             }
             // fill up jList with configurable property names
-            Set prop = _pm.getPropertySet((String)jListOuter.getSelectedValue());
+            Set<String> prop = _pm.getPropertySet((String)jListOuter.getSelectedValue());
             if ( prop != null ){
                 DefaultListModel innerlistModel= (DefaultListModel)jListInner.getModel();
-                for ( Iterator it = prop.iterator();it.hasNext();){
-                    String propItem = (String)it.next();
+                for (String propItem : prop) {
                     //  ListItem li = new ListItem(false, propItem );
                     innerlistModel.addElement(propItem);
                 }
@@ -926,7 +924,7 @@ public class PanelConfigurable extends javax.swing.JPanel {
      */
     private class PanelMediator implements GUIFileActionListener {
 
-        private Map _ccmap ; // ConfigurableComponent map based on component classname
+        private Map<String, ConfigurableComponent> _ccmap ; // ConfigurableComponent map based on component classname
         private String _sectionName ;
         private GUIMediator _gmediator;
         private PanelConfigurable _panel;
@@ -934,12 +932,12 @@ public class PanelConfigurable extends javax.swing.JPanel {
         /**
          * Creates a new instance of PanelMediator
          */
-        private PanelMediator(String name, Set grpset, GUIMediator gmediator,
+        private PanelMediator(String name, Set<ConfigurableComponent> grpset, GUIMediator gmediator,
             PanelConfigurable panel) {
             _gmediator = gmediator;
             _panel = panel;
             _sectionName = name;
-            _ccmap = new HashMap();
+            _ccmap = new HashMap<String, ConfigurableComponent>();
             setGroupMap(grpset);
 
             _gmediator.registerPanel(this);
@@ -950,14 +948,12 @@ public class PanelConfigurable extends javax.swing.JPanel {
          * from the set of classes belong to this group, create its own Map
          * also used for reset and reload of new data
          */
-        private void setGroupMap(Set grpset){
+        private void setGroupMap(Set<ConfigurableComponent> grpset){
             _ccmap.clear();
 
             //create a hashmap of group members
-            for( Iterator it = grpset.iterator(); it.hasNext();){
-                ConfigurableComponent cc =
-                        (ConfigurableComponent)it.next();
-                _ccmap.put(cc.getName(),cc);
+            for (ConfigurableComponent cc : grpset) {
+                _ccmap.put(cc.getName(), cc);
             }
         }
 
@@ -998,7 +994,7 @@ public class PanelConfigurable extends javax.swing.JPanel {
         /**
          * @return the whole map that represents all information for the GUI Panel
          */
-        private Map getGroupMap(){
+        private Map<String, ConfigurableComponent> getGroupMap(){
             return _ccmap;
         }
 
@@ -1013,10 +1009,9 @@ public class PanelConfigurable extends javax.swing.JPanel {
          * @return the <code>Set</code> collection of defined configuration sets
          * for the specified classname
          */
-        private Set getConfigurationSet(String classname){
+        private Set<String> getConfigurationSet(String classname){
             if (_ccmap.containsKey(classname)){
-                ConfigurableComponent cc =
-                        (ConfigurableComponent)_ccmap.get(classname);
+                ConfigurableComponent cc = _ccmap.get(classname);
 
                 if ( cc.getConfigurationPropMap() != null &&
                         !cc.getConfigurationPropMap().isEmpty() )
@@ -1039,7 +1034,7 @@ public class PanelConfigurable extends javax.swing.JPanel {
             throws PanelMediatorException
         {
             if( _ccmap.containsKey(classname) ){
-                ConfigurableComponent cc = (ConfigurableComponent)_ccmap.get(classname);
+                ConfigurableComponent cc = _ccmap.get(classname);
                 if(cc.containsConfigurationSet(setname)){
                     cc.deleteConfigurationProp(setname);
                 }
@@ -1065,7 +1060,7 @@ public class PanelConfigurable extends javax.swing.JPanel {
             throws PanelMediatorException
         {
              if( _ccmap.containsKey(classname) ){
-                ConfigurableComponent cc = (ConfigurableComponent)_ccmap.get(classname);
+                ConfigurableComponent cc = _ccmap.get(classname);
                 if(cc.containsConfigurationSet(setname)){
                     cc.deleteOneConfigurationPropFromSet(setname,propname);
                 }
@@ -1101,8 +1096,7 @@ public class PanelConfigurable extends javax.swing.JPanel {
 
             //create the new configuration set
             if ( _ccmap.containsKey(classname) ){
-                ConfigurableComponent cc =
-                        (ConfigurableComponent)_ccmap.get(classname);
+                ConfigurableComponent cc = _ccmap.get(classname);
                 cc.createNewSet(name);
             }
             else
@@ -1113,10 +1107,9 @@ public class PanelConfigurable extends javax.swing.JPanel {
         /**
          * @return Set of configrable properties owned by the specified class
          */
-        private Set getPropertySet(String classname){
+        private Set<String> getPropertySet(String classname){
             if (_ccmap.containsKey(classname)){
-                ConfigurableComponent cc =
-                        (ConfigurableComponent)_ccmap.get(classname);
+                ConfigurableComponent cc = _ccmap.get(classname);
                 if ( cc.getPropertyMap() != null && !cc.getPropertyMap().isEmpty() )
                      return cc.getPropertyMap().keySet();
                 else
@@ -1130,8 +1123,7 @@ public class PanelConfigurable extends javax.swing.JPanel {
          */
         private ConfigurableProperty getProperty(String classname,String propname){
             if( _ccmap.containsKey(classname) ){
-                ConfigurableComponent cc =
-                        (ConfigurableComponent)_ccmap.get(classname);
+                ConfigurableComponent cc = _ccmap.get(classname);
                 if (cc.containsProperty(propname)){
                     return cc.getProperty(propname);
                 }
@@ -1186,8 +1178,7 @@ public class PanelConfigurable extends javax.swing.JPanel {
          */
         private Iterator getPropertyValue(String classname,String setName,String propname){
             if( _ccmap.containsKey(classname) ){
-                ConfigurableComponent cc =
-                        (ConfigurableComponent)_ccmap.get(classname);
+                ConfigurableComponent cc = _ccmap.get(classname);
                 Object propval = cc.getConfigurationPropValue(setName,propname);
                 if (propval != null){
                     if (propval instanceof String){
@@ -1214,8 +1205,7 @@ public class PanelConfigurable extends javax.swing.JPanel {
         private void changePropertyValue(String classname,String setName,
                 String propname, String propval) throws PanelMediatorException
         {
-            ConfigurableComponent cc =
-                        (ConfigurableComponent)_ccmap.get(classname);
+            ConfigurableComponent cc = _ccmap.get(classname);
             cc.changeConfigurationPropValue(setName,propname,propval);
         }
 
@@ -1224,10 +1214,9 @@ public class PanelConfigurable extends javax.swing.JPanel {
          * @throws PanelMediatorException
          */
         private void changePropertyValue(String classname,String setName,
-                String propname, List propval) throws PanelMediatorException
+                String propname, List<String> propval) throws PanelMediatorException
         {
-            ConfigurableComponent cc =
-                        (ConfigurableComponent)_ccmap.get(classname);
+            ConfigurableComponent cc = _ccmap.get(classname);
             cc.changeConfigurationPropValue(setName,propname,propval);
         }
 
@@ -1245,8 +1234,7 @@ public class PanelConfigurable extends javax.swing.JPanel {
                 String propname, Object propval) throws PanelMediatorException
         {
             if( _ccmap.containsKey(classname) ){
-                ConfigurableComponent cc =
-                        (ConfigurableComponent)_ccmap.get(classname);
+                ConfigurableComponent cc = _ccmap.get(classname);
 
                 if(cc.containsConfigurationSet(setName) && cc.containsProperty(propname)){
                     ConfigurableProperty cp = cc.getProperty(propname);
@@ -1287,8 +1275,7 @@ public class PanelConfigurable extends javax.swing.JPanel {
                 Object propval)
         {
             if( _ccmap.containsKey(classname) ){
-                ConfigurableComponent cc =
-                        (ConfigurableComponent)_ccmap.get(classname);
+                ConfigurableComponent cc = _ccmap.get(classname);
 
                 if( cc.containsProperty(propname)){
                     ConfigurableProperty cp = cc.getProperty(propname);
@@ -1319,7 +1306,7 @@ public class PanelConfigurable extends javax.swing.JPanel {
          * this method is used to get a list of classes that meets the property
          * type restriction
          */
-        private List getComponentList(String classname,String prop){
+        private List<String> getComponentList(String classname,String prop){
             ConfigurableProperty cp = getProperty(classname,prop);
             if(cp != null){
                 String classtype = cp.getClassType();
@@ -1328,16 +1315,15 @@ public class PanelConfigurable extends javax.swing.JPanel {
                     // get list of clases that are / subclass of this type
                     // return mymap that contains name of class 
                     // and configuration stored for that class
-                    Map mymap = _gmediator.getModelBuilder().getclasslist(classtype);
+                    Map<String, String> mymap = _gmediator.getModelBuilder().getclasslist(classtype);
                     if(mymap != null && !mymap.isEmpty()){
-                        List myreturn = new ArrayList();
-                        for(Iterator it = mymap.entrySet().iterator();it.hasNext();){
-                            Map.Entry me = (Map.Entry)it.next();
-                            String setname = (String)me.getKey();//full class name
-                            String fullname = (String)me.getValue();//config set
+                        List<String> myreturn = new ArrayList<String>();
+                        for (Map.Entry<String, String> me : mymap.entrySet()) {
+                            String setname = me.getKey();//full class name
+                            String fullname = me.getValue();//config set
                             int index = fullname.lastIndexOf('.');
-                            String localname = fullname.substring(index+1);
-                            String packagename = fullname.substring(0,index);
+                            String localname = fullname.substring(index + 1);
+                            String packagename = fullname.substring(0, index);
                             // format the output to be "setname-classname"
                             String myitem = setname + '-' + localname + '(' + packagename + ')';
                             // System.out.println("item $$ "+myitem);                            

@@ -27,7 +27,7 @@ public class LinguistStats extends LinguistProcessor {
         Set<SearchState> visitedStates = new HashSet<SearchState>();
         int stateCount = 0;
         queue.add(linguist.getSearchGraph().getInitialState());
-        while (queue.size() > 0) {
+        while (!queue.isEmpty()) {
             SearchState state = queue.remove(0);
             if (!visitedStates.contains(state)) {
                 stateCount++;

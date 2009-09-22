@@ -80,11 +80,8 @@ public class CIPhoneLoop {
             lastState.setFinalState(true);
             attachState(lastState, branchState, logOne, logOne, logOne);
 
-            for (Iterator i = model.getContextIndependentUnitIterator();
-                 i.hasNext();) {
-                Unit unit = (Unit) i.next();
-                UnitState unitState =
-                        new UnitState(unit, HMMPosition.UNDEFINED);
+            for (Iterator<Unit> i = model.getContextIndependentUnitIterator(); i.hasNext();) {
+                UnitState unitState = new UnitState(i.next(), HMMPosition.UNDEFINED);
 
                 // attach unit state to the branch out state
                 attachState(branchState, unitState, logOne, logOne,
@@ -159,18 +156,17 @@ public class CIPhoneLoop {
         protected HMMStateState expandHMMTree(UnitState parent,
                                             HMMStateState tree) {
             HMMStateState retState = tree;
-            HMMStateArc[] arcs = tree.getHMMState().getSuccessors();
-            for (int i = 0; i < arcs.length; i++) {
+            for (HMMStateArc arc : tree.getHMMState().getSuccessors()) {
                 HMMStateState newState;
-                if (arcs[i].getHMMState().isEmitting()) {
+                if (arc.getHMMState().isEmitting()) {
                     newState = new HMMStateState
-                            (parent, arcs[i].getHMMState());
+                        (parent, arc.getHMMState());
                 } else {
                     newState = new NonEmittingHMMState
-                            (parent, arcs[i].getHMMState());
+                        (parent, arc.getHMMState());
                 }
                 SentenceHMMState existingState = getExistingState(newState);
-                float logProb = arcs[i].getLogProbability();
+                float logProb = arc.getLogProbability();
                 if (existingState != null) {
                     attachState(tree, existingState, logProb, logOne, logOne);
                 } else {

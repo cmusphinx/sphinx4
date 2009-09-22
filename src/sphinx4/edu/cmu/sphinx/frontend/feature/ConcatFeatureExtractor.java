@@ -35,8 +35,8 @@ public class ConcatFeatureExtractor extends AbstractFeatureExtractor {
         for (int k = -window; k <= window; k++) {
         	int position = (currentPosition + k + cepstraBufferSize) % cepstraBufferSize;
         	double[] buffer = cepstraBuffer[position].getValues();
-            for (int l = 0; l < buffer.length; l++) {
-                feature[j++] = (float) buffer[l];
+            for (double val : buffer) {
+                feature[j++] = (float)val;
             }
         }
         currentPosition = (currentPosition + 1) % cepstraBufferSize ;

@@ -19,7 +19,7 @@ package edu.cmu.sphinx.demo.jsapi.cardmatch;
  */
 public class SequencePrompt implements Prompt {
     private String[] prompts;
-    private int curPrompt = 0;
+    private int curPrompt;
 
     /**
      * Creates a sequence prompt

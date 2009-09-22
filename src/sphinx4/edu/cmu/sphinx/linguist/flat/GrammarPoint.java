@@ -20,7 +20,6 @@ import edu.cmu.sphinx.linguist.language.grammar.GrammarArc;
 import edu.cmu.sphinx.linguist.language.grammar.GrammarNode;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -36,7 +35,7 @@ public class GrammarPoint {
     private int wordIndex;        // which word in the alternative
     private int pronunciationIndex;    // which pronunciation in the word
     private int unitIndex;        // which unit in the pronunciation
-    private static boolean bounded = false;
+    private static boolean bounded;
 
 
     /**
@@ -155,26 +154,24 @@ public class GrammarPoint {
      * @param maxContexts      the maxium number of right contexts to return
      * @return a list of containing Unit[] contexts.
      */
-    public List getRightContexts(int size, boolean startWithCurrent,
+    public List<Unit[]> getRightContexts(int size, boolean startWithCurrent,
                                  int maxContexts) {
-        List contexts = new ArrayList();
-        List nextPoints = getNextGrammarPoints(startWithCurrent);
+        List<Unit[]> contexts = new ArrayList<Unit[]>();
+        List<GrammarPoint> nextPoints = getNextGrammarPoints(startWithCurrent);
 
-        if (nextPoints.size() == 0) {
+        if (nextPoints.isEmpty()) {
             Unit[] units = Unit.getEmptyContext(size);
             addContext(contexts, units);
         } else {
-            for (Iterator i = nextPoints.iterator(); i.hasNext();) {
-                GrammarPoint gp = (GrammarPoint) i.next();
+            for (GrammarPoint gp : nextPoints) {
                 if (size == 1) {
                     Unit[] units = new Unit[size];
                     units[0] = gp.getUnitOrFill();
                     addContext(contexts, units);
                 } else {
-                    List rc = gp.getRightContexts(size - 1, false,
-                            maxContexts - contexts.size());
-                    for (Iterator j = rc.iterator(); j.hasNext();) {
-                        Unit[] rcUnits = (Unit[]) j.next();
+                    List<Unit[]> rc = gp.getRightContexts(size - 1, false,
+                        maxContexts - contexts.size());
+                    for (Unit[] rcUnits : rc) {
                         Unit[] units = Unit.getEmptyContext(rcUnits.length + 1);
                         units[0] = gp.getUnitOrFill();
                         System.arraycopy(rcUnits, 0, units, 1, rcUnits.length);
@@ -198,10 +195,8 @@ public class GrammarPoint {
      * @param contexts the list of contexts to add the new units to
      * @param units    the units to add to the context
      */
-    private void addContext(List contexts, Unit[] units) {
-        for (Iterator i = contexts.iterator(); i.hasNext();) {
-            Unit[] onList = (Unit[]) i.next();
-
+    private void addContext(List<Unit[]> contexts, Unit[] units) {
+        for (Unit[] onList : contexts) {
             if (Unit.isContextMatch(onList, units)) {
                 return; // found on list so bailout
             }
@@ -217,8 +212,8 @@ public class GrammarPoint {
      * @param startWithCurrent include the current state in the context
      * @return the (possibly empty) list of next GrammarPoint objects
      */
-    private List getNextGrammarPoints(boolean startWithCurrent) {
-        List nextPoints = new ArrayList();
+    private List<GrammarPoint> getNextGrammarPoints(boolean startWithCurrent) {
+        List<GrammarPoint> nextPoints = new ArrayList<GrammarPoint>();
         int unitsLength = 0;
 
         // if this GrammarPoint is associated with a grammar node
@@ -285,13 +280,11 @@ public class GrammarPoint {
      * @param node successors are gathered from this node
      * @return list the list of grammar nodes
      */
-    private static List getNextGrammarNodesWithWords(GrammarNode node) {
-        List list = new ArrayList();
+    private static List<GrammarNode> getNextGrammarNodesWithWords(GrammarNode node) {
+        List<GrammarNode> list = new ArrayList<GrammarNode>();
 
-        GrammarArc[] arcs = node.getSuccessors();
-
-        for (int i = 0; i < arcs.length; i++) {
-            GrammarNode gnode = arcs[i].getGrammarNode();
+        for (GrammarArc arc : node.getSuccessors()) {
+            GrammarNode gnode = arc.getGrammarNode();
             if (gnode.getAlternatives().length == 0) {
                 if (gnode.isFinalNode()) {
                     list.add(gnode);
@@ -313,10 +306,8 @@ public class GrammarPoint {
      * @param nextPoints where the grammar points should be added
      */
     private static void addNextGrammarPointsWithWords(GrammarNode
-            node, List nextPoints) {
-        for (Iterator i = getNextGrammarNodesWithWords(node).iterator();
-             i.hasNext();) {
-            GrammarNode nextNode = (GrammarNode) i.next();
+            node, List<GrammarPoint> nextPoints) {
+        for (GrammarNode nextNode : getNextGrammarNodesWithWords(node)) {
             for (int j = 0; j < nextNode.getAlternatives().length; j++) {
                 GrammarPoint gp = new GrammarPoint(nextNode, j, 0, 0, 0);
                 nextPoints.add(gp);

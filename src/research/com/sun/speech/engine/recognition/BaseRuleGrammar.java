@@ -187,11 +187,10 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar, Seriali
      * @param enabled   the new enabled state.
      */
     public void setEnabled(String[] ruleNames, boolean enabled) throws IllegalArgumentException {
-        for (int i = 0; i < ruleNames.length; i++) {
-            GRule r = rules.get(stripRuleName(ruleNames[i]));
+        for (String ruleName : ruleNames) {
+            GRule r = rules.get(stripRuleName(ruleName));
             if (r == null) {
-                throw new IllegalArgumentException("Unknown Rule: " +
-                        ruleNames[i]);
+                throw new IllegalArgumentException("Unknown Rule: " + ruleName);
             } else if (r.isEnabled != enabled) {
                 r.isEnabled = enabled;
                 //sjagrammarChanged=true;
@@ -282,39 +281,39 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar, Seriali
 
         // Check each import statement for a possible match
         //
-        for (int i = 0; i < imports.length; i++) {
+        for (RuleName ruleName : imports) {
             // TO-DO: update for JSAPI 1.0
-            String iSimpleName = imports[i].getSimpleRuleName();
-            String iGrammarName = imports[i].getSimpleGrammarName();
-            String iPackageName = imports[i].getPackageName();
-            String iFullGrammarName = imports[i].getFullGrammarName();
+            String iSimpleName = ruleName.getSimpleRuleName();
+            String iGrammarName = ruleName.getSimpleGrammarName();
+            String iPackageName = ruleName.getPackageName();
+            String iFullGrammarName = ruleName.getFullGrammarName();
 
             // Check for badly formed import name
             if (iFullGrammarName == null)
                 throw new GrammarException("Error: badly formed import " +
-                        imports[i], null);
+                    ruleName, null);
 
             // Get the imported grammar
             RuleGrammar gref = myRec.getRuleGrammar(iFullGrammarName);
             if (gref == null) {
                 RecognizerUtilities.debugMessageOut(
-                        "Warning: import of unknown grammar " +
-                                imports[i] + " in " + getName());
+                    "Warning: import of unknown grammar " +
+                        ruleName + " in " + getName());
                 continue;
             }
 
             // If import includes simpleName, test that it really exists
             if (!iSimpleName.equals("*")
-                    && gref.getRule(iSimpleName) == null) {
+                && gref.getRule(iSimpleName) == null) {
                 RecognizerUtilities.debugMessageOut(
-                        "Warning: import of undefined rule " +
-                                imports[i] + " in " + getName());
+                    "Warning: import of undefined rule " +
+                        ruleName + " in " + getName());
                 continue;
             }
 
             // Check for fully-qualified or qualified reference
             if (iFullGrammarName.equals(fullGrammarName)
-                    || iGrammarName.equals(fullGrammarName)) {
+                || iGrammarName.equals(fullGrammarName)) {
                 // Know that either
                 //    import <ipkg.igram.???> matches <pkg.gram.???>
                 // OR
@@ -368,7 +367,7 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar, Seriali
         //
         // The return behavior depends upon number of matches
         //
-        if (matches.size() == 0) {
+        if (matches.isEmpty()) {
             // Return null if rulename is unresolvable
             return null;
         } else if (matches.size() > 1) {
@@ -527,8 +526,8 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar, Seriali
         RuleName imports[] = listImports();
 
         if (imports != null) {
-            for (int i = 0; i < imports.length; i++) {
-                String gname = imports[i].getFullGrammarName();
+            for (RuleName ruleName : imports) {
+                String gname = ruleName.getFullGrammarName();
                 RuleGrammar GI = myRec.getRuleGrammar(gname);
                 if (GI == null) {
                     b.append("Undefined grammar ").append(gname).append(" imported in ").append(getName()).append('\n');
@@ -540,8 +539,8 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar, Seriali
         }
 
         String rn[] = listRuleNames();
-        for (int i = 0; i < rn.length; i++) {
-            resolveRule(getRuleInternal(rn[i]));
+        for (String s : rn) {
+            resolveRule(getRuleInternal(s));
         }
     }
 
@@ -557,8 +556,8 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar, Seriali
         if (r instanceof RuleAlternatives) {
             RuleAlternatives ra = (RuleAlternatives) r;
             Rule array[] = ra.getRules();
-            for (int i = 0; i < array.length; i++) {
-                resolveRule(array[i]);
+            for (Rule rule : array) {
+                resolveRule(rule);
             }
             return;
         }
@@ -566,8 +565,8 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar, Seriali
         if (r instanceof RuleSequence) {
             RuleSequence rs = (RuleSequence) r;
             Rule array[] = rs.getRules();
-            for (int i = 0; i < array.length; i++) {
-                resolveRule(array[i]);
+            for (Rule rule : array) {
+                resolveRule(rule);
             }
             return;
         }
@@ -643,7 +642,7 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar, Seriali
     Properties importDocComments = new Properties();
 
     /** Storage for documentation comments for the grammar for jsgfdoc. */
-    String grammarDocComment = null;
+    String grammarDocComment;
 
 
     /** Add a new RuleGrammar comment. */
@@ -764,7 +763,7 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar, Seriali
         boolean isEnabled;
         boolean hasChanged;
         List<String> samples = new ArrayList<String>();
-        int lineno = 0;
+        int lineno;
     }
 }
 

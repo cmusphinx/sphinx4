@@ -91,9 +91,8 @@ public class LargeTrigramModelTest {
 
         timer.start();
 
-        for (Iterator<WordSequence> i = wordSequences.iterator(); i.hasNext(); ) {
+        for (WordSequence ws : wordSequences) {
             lm.start();
-            WordSequence ws = (WordSequence) i.next();
             logScores[s++] = (int)lm.getProbability(ws);
             lm.stop();
         }
@@ -101,10 +100,9 @@ public class LargeTrigramModelTest {
         timer.stop();
         
         s = 0;
-        for (Iterator<WordSequence> i = wordSequences.iterator(); i.hasNext(); ) {
-            WordSequence ws = (WordSequence) i.next();
+        for (WordSequence ws : wordSequences) {
             outStream.println(Utilities.pad(logScores[s++], 10) + ' ' +
-                              getString(ws));
+                getString(ws));
         }
         
         if (true) {

@@ -66,16 +66,16 @@ public class LiveConnectDemo {
         grammar.setEnabled(true);
         recognizer.commitChanges();
 
-        for (int i = 0; i < utterances.length; i++) {
-            RuleParse p = grammar.parse(utterances[i], null);
+        for (String utterance : utterances) {
+            RuleParse p = grammar.parse(utterance, null);
 
             if (p == null) {
-                System.out.println("ILLEGAL UTTERANCE: " + utterances[i]);
+                System.out.println("ILLEGAL UTTERANCE: " + utterance);
                 continue;
             }
-            
+
             System.out.println();
-            System.out.println("Utterance: " + utterances[i]);
+            System.out.println("Utterance: " + utterance);
 
             getTagsParser().parseTags(p);
         }

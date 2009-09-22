@@ -44,11 +44,9 @@ public class CompositeSenone implements Senone, Serializable {
      * @param senoneCollection the Collection of senones
      * @return a composite senone
      */
-    public static CompositeSenone create(Collection senoneCollection,
+    public static CompositeSenone create(Collection<Senone> senoneCollection,
                                          float weight) {
-        return new CompositeSenone(
-                (Senone[]) senoneCollection.toArray(
-                        new Senone[senoneCollection.size()]), weight);
+        return new CompositeSenone(senoneCollection.toArray(new Senone[senoneCollection.size()]), weight);
     }
 
 
@@ -71,8 +69,8 @@ public class CompositeSenone implements Senone, Serializable {
      */
     public void dump(String msg) {
         System.out.println("   CompositeSenone " + msg + ": ");
-        for (int i = 0; i < senones.length; i++) {
-            senones[i].dump("   ");
+        for (Senone senone : senones) {
+            senone.dump("   ");
         }
     }
 
@@ -90,16 +88,16 @@ public class CompositeSenone implements Senone, Serializable {
             logScore = logLastScore;
         } else {
             if (wantMaxScore) {
-                for (int i = 0; i < senones.length; i++) {
-                    float newScore = senones[i].getScore(feature);
+                for (Senone senone : senones) {
+                    float newScore = senone.getScore(feature);
                     if (newScore > logScore) {
                         logScore = newScore;
                     }
                 }
             } else { // average score
                 float logCumulativeScore = 0.0f;
-                for (int i = 0; i < senones.length; i++) {
-                    logCumulativeScore += senones[i].getScore(feature);
+                for (Senone senone : senones) {
+                    logCumulativeScore += senone.getScore(feature);
                 }
                 logScore = logCumulativeScore / senones.length;
             }
@@ -170,8 +168,8 @@ public class CompositeSenone implements Senone, Serializable {
     public long getID() {
         long factor = 1L;
         long id = 0L;
-        for (int i = 0; i < senones.length; i++) {
-            id += senones[i].getID() * (factor);
+        for (Senone senone : senones) {
+            id += senone.getID() * factor;
             factor = factor * MAX_SENONES;
         }
         return id;

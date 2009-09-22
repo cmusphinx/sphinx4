@@ -24,8 +24,8 @@ import java.util.StringTokenizer;
 /**
  * Provides a zip to city, state lookup service
  */
-public class ZipDatabase implements Iterable {
-    private Map zipDB = new HashMap();
+public class ZipDatabase implements Iterable<ZipInfo> {
+    private Map<String, ZipInfo> zipDB = new HashMap<String, ZipInfo>();
 
     /**
      * Creates the zip database
@@ -80,7 +80,7 @@ public class ZipDatabase implements Iterable {
      * @return city info or null if the zip was not found
      */
     public ZipInfo lookup(String zipcode) {
-        return (ZipInfo) zipDB.get(zipcode);
+        return zipDB.get(zipcode);
     }
 
     /**
@@ -89,7 +89,7 @@ public class ZipDatabase implements Iterable {
      * @return an iterator for all entries
      */
     @Override
-    public Iterator iterator() {
+    public Iterator<ZipInfo> iterator() {
         return zipDB.values().iterator();
     }
 

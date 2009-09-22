@@ -23,8 +23,8 @@ import java.util.logging.Logger;
 public class SimpleUtterance implements Utterance {
 
     private String utteranceID;
-    private Collection transcriptSet;
-    private Iterator transcriptIterator;
+    private Collection<SimpleTranscript> transcriptSet;
+    private Iterator<SimpleTranscript> transcriptIterator;
 
     /*
      * The logger for this class
@@ -35,7 +35,7 @@ public class SimpleUtterance implements Utterance {
 
     /** Constructor for class SimpleUtterance. */
     public SimpleUtterance() {
-        transcriptSet = new LinkedList();
+        transcriptSet = new LinkedList<SimpleTranscript>();
     }
 
 
@@ -47,7 +47,7 @@ public class SimpleUtterance implements Utterance {
     public SimpleUtterance(String utteranceID) {
         logger.info("Utterance ID: " + utteranceID);
         this.utteranceID = utteranceID;
-        this.transcriptSet = new LinkedList();
+        this.transcriptSet = new LinkedList<SimpleTranscript>();
     }
 
 
@@ -93,7 +93,7 @@ public class SimpleUtterance implements Utterance {
      * @return the next Trasncript.
      */
     public Transcript nextTranscript() {
-        return (Transcript) transcriptIterator.next();
+        return transcriptIterator.next();
     }
 
 

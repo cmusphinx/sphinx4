@@ -110,7 +110,7 @@ public class RawReader {
         */
         short[] audioData = new short[samples.size()];
         for (int i = 0; i < audioData.length; i++) {
-            audioData[i] = (samples.get(i)).shortValue();
+            audioData[i] = samples.get(i);
         }
         return audioData;
     }

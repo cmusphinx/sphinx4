@@ -36,8 +36,8 @@ public class SameStampScoreCombiner implements ScoreCombiner {
      */
     public List<ParallelToken> removeTokensByStamp(List<ParallelToken> tokenList, String stamp) {
         List<ParallelToken> returnList = new LinkedList<ParallelToken>();
-        for (ListIterator<ParallelToken> i = tokenList.listIterator(); i.hasNext();) {
-            ParallelToken token = (ParallelToken) i.next();
+        for (Iterator<ParallelToken> i = tokenList.iterator(); i.hasNext();) {
+            ParallelToken token = i.next();
             if (token.getLastCombineStamp().equals(stamp)) {
                 returnList.add(token);
                 i.remove();
@@ -58,16 +58,15 @@ public class SameStampScoreCombiner implements ScoreCombiner {
         // sort all the parallel tokens in the CombineToken
         // according to their last combine time
 
-        List tokenList = Arrays.asList
-                (combineToken.getParallelTokens().toArray());
+        List<ParallelToken> tokenList = new ArrayList<ParallelToken>(combineToken.getParallelTokens());
 
         // System.out.println("TokenList size: " + tokenList.size());
 
         double logHighestCombinedScore = Double.NEGATIVE_INFINITY;
         List<ParallelToken> highestList = null;
 
-        while (tokenList.size() > 0) {
-            ParallelToken firstToken = (ParallelToken) tokenList.get(0);
+        while (!tokenList.isEmpty()) {
+            ParallelToken firstToken = tokenList.get(0);
             List<ParallelToken> sameStampList = removeTokensByStamp
                     (tokenList, firstToken.getLastCombineStamp());
 
@@ -84,9 +83,8 @@ public class SameStampScoreCombiner implements ScoreCombiner {
         assert highestList != null && highestList.size() > 1;
         // System.out.println("Highest TokenList size: " + highestList.size());
 
-        for (Iterator<ParallelToken> i = highestList.iterator(); i.hasNext();) {
-            ParallelToken token = (ParallelToken) i.next();
-            token.setCombinedScore((float) logHighestCombinedScore);
+        for (ParallelToken token : highestList) {
+            token.setCombinedScore((float)logHighestCombinedScore);
         }
 
         combineToken.clear();
@@ -103,16 +101,14 @@ public class SameStampScoreCombiner implements ScoreCombiner {
      * @param sameStampTokenList the token list
      * @return the combined log score
      */
-    private double getCombinedScore(List sameStampTokenList) {
-        Map uniqueMap = new HashMap();
+    private double getCombinedScore(List<ParallelToken> sameStampTokenList) {
+        Map<String, ParallelToken> uniqueMap = new HashMap<String, ParallelToken>();
         int combineTime = -1;
 
         // first retain the highest scoring token from each stream 
-        for (Iterator i = sameStampTokenList.iterator(); i.hasNext();) {
-            ParallelToken token = (ParallelToken) i.next();
+        for (ParallelToken token : sameStampTokenList) {
             String modelName = token.getModelName();
-            ParallelToken tokenInMap =
-                    (ParallelToken) uniqueMap.get(modelName);
+            ParallelToken tokenInMap = uniqueMap.get(modelName);
             if (tokenInMap == null) {
                 uniqueMap.put(modelName, token);
             } else {
@@ -124,13 +120,12 @@ public class SameStampScoreCombiner implements ScoreCombiner {
 
         // clear the list
         sameStampTokenList.clear();
-        assert sameStampTokenList.size() == 0;
+        assert sameStampTokenList.isEmpty();
 
         // now calculate the combinedScore
         double logTotalScore = 0;
 
-        for (Iterator i = uniqueMap.values().iterator(); i.hasNext();) {
-            ParallelToken pToken = (ParallelToken) i.next();
+        for (ParallelToken pToken : uniqueMap.values()) {
             // System.out.println("Highest: " + tokenToString(pToken));
             sameStampTokenList.add(pToken);
 
@@ -149,10 +144,9 @@ public class SameStampScoreCombiner implements ScoreCombiner {
     }
 
 
-    private void checkSameTime(List tokenList) {
+    private void checkSameTime(List<ParallelToken> tokenList) {
         System.out.print("SameTimeList: ");
-        for (Iterator i = tokenList.iterator(); i.hasNext();) {
-            ParallelToken token = (ParallelToken) i.next();
+        for (ParallelToken token : tokenList) {
             System.out.print(tokenToString(token));
         }
         System.out.println();

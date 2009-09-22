@@ -68,7 +68,7 @@ public class ConfusionSet extends TreeMap<Double, Set<WordResult>> {
      */
     public WordResult getBestHypothesis() {
         Set<WordResult> s = getBestHypothesisSet();
-        return (WordResult) s.iterator().next();
+        return s.iterator().next();
     }
 
 
@@ -78,7 +78,7 @@ public class ConfusionSet extends TreeMap<Double, Set<WordResult>> {
      * @return the highest posterior
      */
     public double getBestPosterior() {
-        return ((Double) lastKey()).doubleValue();
+        return lastKey();
     }
 
 
@@ -137,13 +137,9 @@ public class ConfusionSet extends TreeMap<Double, Set<WordResult>> {
      */
     public void dump(String name) {
         System.out.print(name + " :");
-        for (Iterator<Set<WordResult>> i = values().iterator(); i.hasNext();) {
-            Set<WordResult> wordSet = i.next();
-            for (Iterator<WordResult> r = wordSet.iterator(); r.hasNext();) {
-                WordResult wordResult = (WordResult) r.next();
-                System.out.print
-                        (' ' +
-                                wordResult.getPronunciation().getWord().getSpelling());
+        for (Set<WordResult> wordSet : values()) {
+            for (WordResult wordResult : wordSet) {
+                System.out.print(' ' + wordResult.getPronunciation().getWord().getSpelling());
             }
         }
         System.out.println();
@@ -154,9 +150,8 @@ public class ConfusionSet extends TreeMap<Double, Set<WordResult>> {
         StringBuilder b = new StringBuilder();
         for (Map.Entry<Double, Set<WordResult>> entry : entrySet()) {
             b.append(entry.getKey()).append(':');
-            Iterator<WordResult> j = entry.getValue().iterator();
-            while (j.hasNext())
-                b.append(j.next()).append(',');
+            for (WordResult wordResult : entry.getValue())
+                b.append(wordResult).append(',');
             if (!entry.getValue().isEmpty())
                 b.setLength(b.length() - 1);
 

@@ -24,7 +24,7 @@ public class Pool {
 
     private String name;
     private List pool;
-    private Map features = new HashMap();
+    private Map<String, Integer> features = new HashMap<String, Integer>();
 
 
     /**
@@ -125,11 +125,11 @@ public class Pool {
      * @return the value for the feature
      */
     public int getFeature(String name, int defaultValue) {
-        Integer val = (Integer) features.get(name);
+        Integer val = features.get(name);
         if (val == null) {
             return defaultValue;
         } else {
-            return val.intValue();
+            return val;
         }
     }
 }

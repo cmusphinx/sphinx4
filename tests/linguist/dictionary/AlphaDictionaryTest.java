@@ -16,10 +16,6 @@ import edu.cmu.sphinx.linguist.dictionary.Dictionary;
 import edu.cmu.sphinx.linguist.dictionary.FullDictionary;
 import edu.cmu.sphinx.util.props.ConfigurationManager;
 
-import java.io.File;
-
-import java.net.URL;
-
 
 /**
  * A test for FullDictionary class that reads in the connected-digits

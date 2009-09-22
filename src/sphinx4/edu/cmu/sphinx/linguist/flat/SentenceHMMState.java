@@ -45,7 +45,7 @@ public abstract class SentenceHMMState implements Serializable, SearchState {
     private int fields;
     private String name;
 
-    private Map arcs;
+    private Map<String, SentenceHMMStateArc> arcs;
     private SentenceHMMState parent;
     private String cachedName;
     private String fullName;
@@ -72,7 +72,7 @@ public abstract class SentenceHMMState implements Serializable, SearchState {
     /** Empty contructor */
     protected SentenceHMMState() {
         stateNumber = globalStateNumber--;
-        this.arcs = new LinkedHashMap();
+        this.arcs = new LinkedHashMap<String, SentenceHMMStateArc>();
     }
 
 
@@ -257,7 +257,7 @@ public abstract class SentenceHMMState implements Serializable, SearchState {
      *
      * @return the lex tree state
      */
-    public Object getLexState() {
+    public SentenceHMMState getLexState() {
         return this;
     }
 
@@ -525,9 +525,7 @@ public abstract class SentenceHMMState implements Serializable, SearchState {
      * @return the arc or null if none could be found.
      */
     public SentenceHMMStateArc findArc(SentenceHMMState state) {
-        SentenceHMMStateArc arc =
-                (SentenceHMMStateArc) arcs.get(state.getValueSignature());
-        return arc;
+        return arcs.get(state.getValueSignature());
     }
 
 
@@ -569,8 +567,7 @@ public abstract class SentenceHMMState implements Serializable, SearchState {
             states = sortedStates;
         }
 
-        for (Iterator i = states.iterator(); i.hasNext();) {
-            SentenceHMMState state = (SentenceHMMState) i.next();
+        for (SentenceHMMState state : states) {
             if (visitor.visit(state)) {
                 return true;
             }
@@ -639,14 +636,13 @@ public abstract class SentenceHMMState implements Serializable, SearchState {
 
         queue.add(start);
 
-        while (queue.size() > 0) {
+        while (!queue.isEmpty()) {
             SentenceHMMState state = queue.remove(0);
 
             visitedStates.add(state);
             SearchStateArc[] successors = state.getSuccessors();
-            for (int i = 0; i < successors.length; i++) {
-                SearchStateArc arc = successors[i];
-                SentenceHMMState nextState = (SentenceHMMState) arc.getState();
+            for (SearchStateArc arc : successors) {
+                SentenceHMMState nextState = (SentenceHMMState)arc.getState();
                 if (!visitedStates.contains(nextState) && !queue.contains(nextState)) {
                     queue.add(nextState);
                 }

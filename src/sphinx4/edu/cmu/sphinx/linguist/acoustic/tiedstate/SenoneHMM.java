@@ -123,8 +123,8 @@ public class SenoneHMM implements HMM {
      */
     public boolean isComposite() {
         Senone[] senones = getSenoneSequence().getSenones();
-        for (int i = 0; i < senones.length; i++) {
-            if (senones[i] instanceof CompositeSenone) {
+        for (Senone senone : senones) {
+            if (senone instanceof CompositeSenone) {
                 return true;
             }
         }

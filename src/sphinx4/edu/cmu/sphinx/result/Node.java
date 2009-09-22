@@ -38,7 +38,7 @@ import java.util.*;
 public class Node {
 
     // used to generate unique IDs for new Nodes.
-    private static int nodeCount = 0;
+    private static int nodeCount;
 
     private String id;
     private Word word;

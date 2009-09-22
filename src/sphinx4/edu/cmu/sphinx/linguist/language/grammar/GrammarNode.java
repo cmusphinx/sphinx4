@@ -90,7 +90,7 @@ public class GrammarNode {
     /** Optimize this grammar node. */
     void optimize() {
         for (int i = 0; i < arcList.size(); i++) {
-            GrammarArc arc = (GrammarArc) arcList.get(i);
+            GrammarArc arc = arcList.get(i);
             arcList.set(i, optimizeArc(arc));
         }
 
@@ -117,7 +117,7 @@ public class GrammarNode {
     GrammarArc optimizeArc(GrammarArc arc) {
         GrammarNode nextNode = arc.getGrammarNode();
         while (nextNode.isEmpty() && nextNode.arcList.size() == 1) {
-            GrammarArc nextArc = (GrammarArc) nextNode.arcList.get(0);
+            GrammarArc nextArc = nextNode.arcList.get(0);
             arc = new GrammarArc(nextArc.getGrammarNode(),
                     arc.getProbability() + nextArc.getProbability());
             nextNode = arc.getGrammarNode();
@@ -173,7 +173,7 @@ public class GrammarNode {
      * @return the transitions to the successors for this node.
      */
     public GrammarArc[] getSuccessors() {
-        return (GrammarArc[]) arcList.toArray(new GrammarArc[arcList.size()]);
+        return arcList.toArray(new GrammarArc[arcList.size()]);
     }
 
 
@@ -262,10 +262,9 @@ public class GrammarNode {
             visitedNodes.add(this);
             GrammarArc[] arcs = getSuccessors();
 
-            for (int i = 0; i < arcs.length; i++) {
-                GrammarNode child = arcs[i].getGrammarNode();
-                child.traverse(level + 1, visitedNodes,
-                        arcs[i].getProbability());
+            for (GrammarArc arc : arcs) {
+                GrammarNode child = arc.getGrammarNode();
+                child.traverse(level + 1, visitedNodes, arc.getProbability());
             }
         } else if (isFinalNode()) {
 
@@ -296,13 +295,13 @@ public class GrammarNode {
                     " shape: " + getGDLShape(this) +
                     " color: " + getGDLColor(this) + '}');
             GrammarArc[] arcs = getSuccessors();
-            for (int i = 0; i < arcs.length; i++) {
-                GrammarNode child = arcs[i].getGrammarNode();
-                float prob = arcs[i].getProbability();
+            for (GrammarArc arc : arcs) {
+                GrammarNode child = arc.getGrammarNode();
+                float prob = arc.getProbability();
                 out.println("   edge: { source: "
-                        + getGDLID(this) +
-                        " target: " + getGDLID(child) +
-                        " label: \"" + prob + "\"}");
+                    + getGDLID(this) +
+                    " target: " + getGDLID(child) +
+                    " label: \"" + prob + "\"}");
                 child.traverseGDL(out, visitedNodes);
             }
         }

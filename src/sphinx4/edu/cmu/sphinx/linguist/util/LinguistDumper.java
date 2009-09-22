@@ -135,8 +135,8 @@ public class LinguistDumper extends LinguistProcessor {
         Set<String> visitedStates = new HashSet<String>();
         startDump(out);
         queue.add(new StateLevel(startingState, 0));
-        while (queue.size() > 0) {
-            StateLevel stateLevel = (StateLevel) queue.remove(0);
+        while (!queue.isEmpty()) {
+            StateLevel stateLevel = queue.remove(0);
             int level = stateLevel.getLevel();
             SearchState state = stateLevel.getState();
             // equalCheck(state);
@@ -173,8 +173,8 @@ public class LinguistDumper extends LinguistProcessor {
      */
     @SuppressWarnings("unused")
     private void equalCheck(SearchState state) {
-        SearchState eqState = (SearchState) eqStates.get(state);
-        SearchState eqSig = (SearchState) eqSigs.get(state.getSignature());
+        SearchState eqState = eqStates.get(state);
+        SearchState eqSig = eqSigs.get(state.getSignature());
         if ((eqState == null || eqSig == null) && !(eqState == eqSig)) {
             System.out.println("Missing one: ");
             System.out.println("  state val: " + state);

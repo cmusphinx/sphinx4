@@ -1015,8 +1015,8 @@ public class JSGFParserTokenManager implements JSGFParserConstants {
     }
 
 
-    int curLexState = 0;
-    int defaultLexState = 0;
+    int curLexState;
+    int defaultLexState;
     int jjnewStateCnt;
     int jjround;
     int jjmatchedPos;

@@ -47,8 +47,7 @@ public class LMGrammar extends Grammar {
     */
     public void newProperties(PropertySheet ps) throws PropertyException {
         super.newProperties(ps);
-        languageModel = (LanguageModel) ps.getComponent(PROP_LANGUAGE_MODEL
-        );
+        languageModel = (LanguageModel) ps.getComponent(PROP_LANGUAGE_MODEL);
     }
 
 

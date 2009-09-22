@@ -21,7 +21,6 @@ import edu.cmu.sphinx.util.props.*;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -137,9 +136,8 @@ public class Recognizer implements Configurable, ResultProducer {
     private void setState(RecognizerState newState) {
         currentState = newState;
         synchronized (stateListeners) {
-            for (Iterator<StateListener> i = stateListeners.iterator(); i.hasNext();) {
-                StateListener stateListener = i.next();
-                stateListener.statusChanged(currentState);
+            for (StateListener sl : stateListeners) {
+                sl.statusChanged(currentState);
             }
         }
     }
@@ -186,10 +184,9 @@ public class Recognizer implements Configurable, ResultProducer {
 
     /** Resets the monitors monitoring this recognizer */
     public void resetMonitors() {
-        for (Iterator i = monitors.iterator(); i.hasNext();) {
-            Object o = i.next();
+        for (Object o : monitors) {
             if (o instanceof Resetable) {
-                Resetable r = (Resetable) o;
+                Resetable r = (Resetable)o;
                 r.reset();
             }
         }

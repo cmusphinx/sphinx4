@@ -23,7 +23,6 @@ import edu.cmu.sphinx.tools.gui.util.ConfigurableUtilException;
 
 import java.util.List;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.io.File;
 
 
@@ -46,7 +45,7 @@ public class GUIMediator {
     public static final String SHOW_CONFIG = "show_config";
         
     private MainJFrame _mainJF;
-    private List _panelList;
+    private List<GUIFileActionListener> _panelList;
     private XMLConfigReader _xmlReader; 
     private XMLConfigWriter _xmlWriter;  
     private ModelBuilder _mb;
@@ -56,7 +55,7 @@ public class GUIMediator {
      * Creates a new instance of GUIMediator 
      */
     public GUIMediator() throws ConfigurableUtilException{
-        _panelList = new ArrayList(); //for the GUI panels                 
+        _panelList = new ArrayList<GUIFileActionListener>(); //for the GUI panels
         
         // load reader and writer
         _xmlReader = XMLConfigReader.getInstance();
@@ -113,66 +112,49 @@ public class GUIMediator {
     }
     
     // read the file and update all GUI panels
-    private void updateList (File fFile) throws GUIReaderException, GUIWriterException
-    {
+    private void updateList (File fFile) throws GUIReaderException, GUIWriterException {
         ConfigProperties cp = _xmlReader.read(fFile);
         _mb.update(cp);
-        if ( _panelList != null)
-        {
-            for( Iterator it = _panelList.iterator(); it.hasNext();)
-            {
-                GUIFileActionListener listener = (GUIFileActionListener)it.next();
+        if (_panelList != null) {
+            for (GUIFileActionListener listener : _panelList) {
                 listener.update(cp);
             }
          }
-        
     }
         
     
-    private void saveToFile(File fFile) throws GUIReaderException, GUIWriterException
-    {
+    private void saveToFile(File fFile) throws GUIReaderException, GUIWriterException {
         ConfigProperties cp = new ConfigProperties(); 
-        if( readList(cp) )
+        if (readList(cp))
             _xmlWriter.writeOutput(cp,fFile);
     }
     
     /** read the GUI entries and save changes to ConfigProperties */
-    private boolean readList ( ConfigProperties cp) throws GUIReaderException, GUIWriterException
-    {  
-        
-       
+    private boolean readList ( ConfigProperties cp) throws GUIReaderException, GUIWriterException {
         try {
             _mb.saveData(cp);
             
-            if ( _panelList != null)
-            {
-                for( Iterator it = _panelList.iterator(); it.hasNext();)
-                {
-                    GUIFileActionListener listener = (GUIFileActionListener)it.next();
+            if (_panelList != null) {
+                for (GUIFileActionListener listener : _panelList) {
                     listener.saveData(cp);
                 }                
                return true;
             }
             return true;
-        }catch(GUIOperationException oe){
+        } catch (GUIOperationException oe) {
             return false;
         }
     }
     
     /** inform GUI panels to clear all configuration data
      */
-    private void clearAll()
-    {          
+    private void clearAll() {
         _mb.clearAll();
-        if ( _panelList != null)
-            {
-            for( Iterator it = _panelList.iterator(); it.hasNext();)
-            {
-                GUIFileActionListener listener = (GUIFileActionListener)it.next();
+        if (_panelList != null) {
+            for (GUIFileActionListener listener : _panelList) {
                 listener.clearAll();
             }
-        }
-        
+        }        
     }
     
     /**refresh the Sphinx model in Model Builder and GUI Panels
@@ -182,6 +164,7 @@ public class GUIMediator {
         _mb.printModel();
         _mainJF.addTextPanels(_mb.getGroups());
     }
+    
     /**
      * all action will call this method, with its specific command
      *
@@ -189,8 +172,7 @@ public class GUIMediator {
      * @param fFile   File to open/save to
      * @throws GUIReaderException, GUIWriterException
      */
-    public void action(String command,File fFile) throws GUIReaderException, GUIWriterException
-    {  
+    public void action(String command,File fFile) throws GUIReaderException, GUIWriterException {  
         if (command.equalsIgnoreCase(OPEN))
             updateList(fFile);
         else if (command.equalsIgnoreCase(SAVE))
@@ -205,11 +187,9 @@ public class GUIMediator {
      * @throws GUIReaderException, GUIWriterException
      */
     public void action(String command, javax.swing.JTextArea outputJTextArea) 
-        throws GUIWriterException, GUIReaderException
-    {
-       ConfigProperties cp = new ConfigProperties();
-        if( readList(cp) )
-        {
+            throws GUIWriterException, GUIReaderException {
+        ConfigProperties cp = new ConfigProperties();
+        if (readList(cp)) {
             String output = _xmlWriter.getOutput(cp);
             outputJTextArea.setText(output);
         }
@@ -220,8 +200,7 @@ public class GUIMediator {
      *
      * @throws ConfigurableUtilException when there's error while reloading model
      */
-    public void action(String command) throws ConfigurableUtilException{
-        
+    public void action(String command) throws ConfigurableUtilException {
         if (command.equalsIgnoreCase(NEW))
             clearAll();        
         else if (command.equalsIgnoreCase(REFRESH))

@@ -16,7 +16,6 @@ package edu.cmu.sphinx.tools.gui.util;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Iterator;
 import java.util.List;
 
 import edu.cmu.sphinx.tools.gui.RawPropertyData;
@@ -38,11 +37,11 @@ import edu.cmu.sphinx.tools.gui.RawPropertyData;
 public class ConfigurableComponent {
     
     private String _sectionName;
-    private Map _propList; // String propertyName, ConfigurableProperty 
-    private Class _component;    
+    private Map<String, ConfigurableProperty> _propList; // String propertyName, ConfigurableProperty
+    private Class<?> _component;
     private String _componentDesc;
     private String _componentClassName;
-    private Map _confProp; // List of String name, Rpd for this class
+    private Map<String, RawPropertyData> _confProp; // List of String name, Rpd for this class
     
     /** 
      * Creates a new instance of <code>ConfigurableComponent</code>
@@ -52,13 +51,13 @@ public class ConfigurableComponent {
      * @param name class name
      * @param desc brief description of this configurable component
      */
-    public ConfigurableComponent(String section, Class component, String name, String desc) {
+    public ConfigurableComponent(String section, Class<?> component, String name, String desc) {
         _sectionName = section;
         _component = component;
         _componentClassName = name;
         _componentDesc = desc;
-       _propList = new HashMap();
-       _confProp = new HashMap();
+       _propList = new HashMap<String, ConfigurableProperty>();
+       _confProp = new HashMap<String, RawPropertyData>();
     }
         
     /**
@@ -69,20 +68,20 @@ public class ConfigurableComponent {
      */
     public String toString(){
         StringBuilder output = new StringBuilder("Section :").append(_sectionName).append('\n');
-        output.append(" Class Name : " + _componentClassName+'\n');
+        output.append(" Class Name : ").append(_componentClassName).append('\n');
         if (!_componentDesc.isEmpty()) {
             output.append(" Desc : ").append(_componentDesc).append('\n');
         }
         if( !_propList.isEmpty() ){
             output.append(" Property list : \n");
-            for (Iterator it = _propList.values().iterator();it.hasNext();){
-                output.append(it.next());
+            for (ConfigurableProperty cp : _propList.values()) {
+                output.append(cp);
             }
         }        
         if ( !_confProp.isEmpty()){
             output.append(" Configuration values : ***** \n");
-            for (Iterator it = _confProp.values().iterator();it.hasNext();){
-                output.append(it.next());
+            for (RawPropertyData rpd : _confProp.values()) {
+                output.append(rpd);
             }
         }
         return output.toString();
@@ -99,7 +98,7 @@ public class ConfigurableComponent {
      * @return Returns the Map that holds the component properties 
      *         (pair of <code>String, ConfigurableProperty</code>)
      */
-    public Map getPropertyMap(){
+    public Map<String, ConfigurableProperty> getPropertyMap(){
         return _propList;
     }
     
@@ -130,17 +129,13 @@ public class ConfigurableComponent {
      *         returns null if the property does not exist
      */
     public ConfigurableProperty getProperty(String name){
-        ConfigurableProperty cp = (ConfigurableProperty)_propList.get(name);
-        if (cp == null){
-            return null;
-        }
-        else return cp;        
+        return _propList.get(name);
     }
     
     /**
      * @return the <code>Class</code> that this component refers to
      */
-    public Class getComponentClass(){
+    public Class<?> getComponentClass(){
         return _component;
     }
     
@@ -180,9 +175,8 @@ public class ConfigurableComponent {
      * @param rpdname name of <code>RawPropertyData</code> to be deleted
      */
     public void deleteConfigurationProp(String rpdname){
-        if ( _confProp.containsKey(rpdname)) {
+        if (_confProp.containsKey(rpdname))
             _confProp.remove(rpdname);
-        }
     }
     
 
@@ -196,7 +190,7 @@ public class ConfigurableComponent {
      * @param propname Property name to be modified    
      */
     public void deleteOneConfigurationPropFromSet(String rpdname,String propname){
-        RawPropertyData rpd = (RawPropertyData)_confProp.get(rpdname);
+        RawPropertyData rpd = _confProp.get(rpdname);
         rpd.remove(propname);
     }
     
@@ -211,8 +205,8 @@ public class ConfigurableComponent {
      */
     public void changeConfigurationPropValue(String rpdname,String propname,
             String newvalue){
-        RawPropertyData rpd = (RawPropertyData)_confProp.get(rpdname);
-        rpd.change(propname,newvalue);
+        RawPropertyData rpd = _confProp.get(rpdname);
+        rpd.add(propname,newvalue);
     }
     
     /** 
@@ -225,9 +219,9 @@ public class ConfigurableComponent {
      * @param newvalue List of new values of the property
      */
     public void changeConfigurationPropValue(String rpdname,String propname,
-            List newvalue){
-        RawPropertyData rpd = (RawPropertyData)_confProp.get(rpdname);
-        rpd.change(propname,newvalue);
+            List<String> newvalue){
+        RawPropertyData rpd = _confProp.get(rpdname);
+        rpd.add(propname,newvalue);
     }
         
     /**
@@ -240,15 +234,13 @@ public class ConfigurableComponent {
      *          contains value of the property
      */
     public Object getConfigurationPropValue(String rpdName,String propname){        
-        if( _confProp.containsKey(rpdName) ){
-            RawPropertyData rpd = (RawPropertyData)_confProp.get(rpdName);
+        if (_confProp.containsKey(rpdName)) {
+            RawPropertyData rpd = _confProp.get(rpdName);
             if ( rpd.getProperties().containsKey(propname)) {
                 return rpd.getProperties().get(propname);
-            }
-            else
+            } else
                 return null;
-        }
-        else
+        } else
             return null;
     }
     
@@ -257,7 +249,7 @@ public class ConfigurableComponent {
      *          configuration sets of this component. Each entry consists of 
      *          String setname, RawPropertyData setproperties
      */
-    public Map getConfigurationPropMap(){
+    public Map<String, RawPropertyData> getConfigurationPropMap(){
         return _confProp;
     }
     
@@ -277,23 +269,21 @@ public class ConfigurableComponent {
      * by adding them as default
      */
     private void addDefaultProps(RawPropertyData rpd){
-        Map completePropMap = this.getPropertyMap();
-        for (Iterator it = completePropMap.entrySet().iterator();it.hasNext();){
-            Map.Entry propentry = (Map.Entry)it.next();
-            String propname = (String)propentry.getKey();
+        Map<String, ConfigurableProperty> completePropMap = this.getPropertyMap();
+        for (Map.Entry<String, ConfigurableProperty> propentry : completePropMap.entrySet()) {
+            String propname = propentry.getKey();
             // System.out.println("***** prop"+propname);           
-            
+
             // if it doesn't exist yet
-            if( !rpd.contains(propname) ){
-                ConfigurableProperty prop = (ConfigurableProperty)propentry.getValue();
+            if (!rpd.contains(propname)) {
+                ConfigurableProperty prop = propentry.getValue();
                 String defaultVal = prop.getDefault();
                 if (defaultVal != null && !defaultVal.trim().isEmpty()) {
-                    rpd.add(propname,defaultVal);
+                    rpd.add(propname, defaultVal);
                     // System.out.println("***** add prop "+propname);
-                }
-                else {
-                    rpd.add(propname, (String)null);           
-                    System.out.println("***** add null prop "+propname);
+                } else {
+                    rpd.add(propname, (String)null);
+                    System.out.println("***** add null prop " + propname);
                 }
             }
         }

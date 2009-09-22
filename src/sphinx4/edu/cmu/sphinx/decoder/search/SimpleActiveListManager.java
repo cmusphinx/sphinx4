@@ -46,7 +46,7 @@ public class SimpleActiveListManager implements ActiveListManager {
     // --------------------------------------
     private Logger logger;
     private boolean checkPriorLists;
-    private List activeListFactories;
+    private List<ActiveListFactory> activeListFactories;
     private ActiveList[] currentActiveLists;
 
 
@@ -58,7 +58,7 @@ public class SimpleActiveListManager implements ActiveListManager {
     public void newProperties(PropertySheet ps) throws PropertyException {
         logger = ps.getLogger();
 
-        activeListFactories = ps.getComponentList(PROP_ACTIVE_LIST_FACTORIES);
+        activeListFactories = (List<ActiveListFactory>)ps.getComponentList(PROP_ACTIVE_LIST_FACTORIES);
         checkPriorLists = ps.getBoolean(PROP_CHECK_PRIOR_LISTS_EMPTY);
     }
 
@@ -73,7 +73,7 @@ public class SimpleActiveListManager implements ActiveListManager {
         // number of active list factories for the given searc states
         currentActiveLists = new ActiveList[numStateOrder];
 
-        if (activeListFactories.size() == 0) {
+        if (activeListFactories.isEmpty()) {
             logger.severe("No active list factories configured");
             throw new Error("No active list factories configured");
         }
@@ -97,8 +97,7 @@ public class SimpleActiveListManager implements ActiveListManager {
             if (which >= nlists) {
                 which = nlists - 1;
             }
-            ActiveListFactory alf =
-                    (ActiveListFactory) activeListFactories.get(which);
+            ActiveListFactory alf = activeListFactories.get(which);
             currentActiveLists[i] = alf.newInstance();
         }
     }

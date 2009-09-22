@@ -81,8 +81,7 @@ public class Confidence {
                         * in the best path
                         */
                         WordResult[] words = best.getWords();
-                        for (int i = 0; i < words.length; i++) {
-                            WordResult wr = words[i];
+                        for (WordResult wr : words) {
                             printWordConfidence(wr);
                         }
                         System.out.println();

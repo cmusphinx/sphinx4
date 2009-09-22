@@ -87,9 +87,8 @@ public abstract class AbstractSausageMaker implements ConfidenceScorer, Configur
         public String toString() {
             StringBuilder sb = new StringBuilder();
             sb.append("s: ").append(startTime).append(" e: ").append(endTime).append('[');
-            Iterator<Node> i = elements.iterator();
-            while (i.hasNext())
-                sb.append(i.next()).append(',');
+            for (Node node : elements)
+                sb.append(node).append(',');
             if (!elements.isEmpty())
                 sb.setLength(sb.length() - 1);
             sb.append(']');
@@ -119,12 +118,8 @@ public abstract class AbstractSausageMaker implements ConfidenceScorer, Configur
          * @param cluster2 the second cluster
          */
         public int compare(Cluster cluster1, Cluster cluster2) {
-            Iterator<Node> i = cluster1.iterator();
-            while (i.hasNext()) {
-                Node n1 = (Node) i.next();
-                Iterator<Node> i2 = cluster2.iterator();
-                while (i2.hasNext()) {
-                    Node n2 = (Node) i2.next();
+            for (Node n1 : cluster1) {
+                for (Node n2 : cluster2) {
                     if (n1.isAncestorOf(n2)) {
                         return -1;
                     } else if (n2.isAncestorOf(n1)) {
@@ -210,9 +205,8 @@ public abstract class AbstractSausageMaker implements ConfidenceScorer, Configur
      */
     protected double clusterProbability(List<Node> cluster) {
         float p = LogMath.getLogZero();
-        Iterator<Node> i = cluster.iterator();
-        while (i.hasNext()) {
-            p = lattice.getLogMath().addAsLinear(p, (float) i.next().getPosterior());
+        for (Node node : cluster) {
+            p = lattice.getLogMath().addAsLinear(p, (float)node.getPosterior());
         }
         return p;
     }
@@ -285,25 +279,22 @@ public abstract class AbstractSausageMaker implements ConfidenceScorer, Configur
      */
     protected Sausage sausageFromClusters(List<Cluster> clusters) {
         Sausage sausage = new Sausage(clusters.size());
-        ListIterator<Cluster> c1 = clusters.listIterator();
-        while (c1.hasNext()) {
+        int index = 0;
+        for (Cluster cluster : clusters) {
             HashSet<String> seenWords = new HashSet<String>();
-            int index = c1.nextIndex();
-            Cluster cluster = ((Cluster) c1.next());
-            Iterator<Node> c2 = cluster.iterator();
-            while (c2.hasNext()) {
-                Node node = (Node) c2.next();
+            for (Node node : cluster) {
                 Word word = node.getWord();
                 if (seenWords.contains(word.getSpelling())) {
                     continue;
                 }
                 seenWords.add(word.getSpelling());
                 SimpleWordResult swr = new SimpleWordResult
-                        (node,
-                                wordSubClusterProbability(cluster, word.getSpelling()),
-                                lattice.getLogMath());
+                    (node,
+                        wordSubClusterProbability(cluster, word.getSpelling()),
+                        lattice.getLogMath());
                 sausage.addWordHypothesis(index, swr);
             }
+            index++;
         }
         sausage.fillInBlanks(lattice.getLogMath());
         return sausage;

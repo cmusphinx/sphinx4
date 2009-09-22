@@ -61,7 +61,7 @@ public class ConfigMonitor implements Configurable, Runnable, Monitor {
     // -------------------------
     private boolean showConfig;
     private boolean showHTML = true;
-    private boolean saveXML = false;
+    private boolean saveXML;
     private boolean showGDL = true;
 
     private Logger logger;

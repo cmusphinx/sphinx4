@@ -45,12 +45,12 @@ public class InstanceOfTest {
     public int doInstanceOfCheck(BaseClass[] bc) {
 	int fooCount = 0;
 	instanceOfTimer.start();
-        for (int i = 0; i < maxIterations; i++) {
-	    for (int j = 0; j < bc.length; j++) {
-		if (bc[j] instanceof FooClass) {
-		    fooCount++;
-		}
-	    }
+    for (int i = 0; i < maxIterations; i++) {
+        for (BaseClass baseClass : bc) {
+            if (baseClass instanceof FooClass) {
+                fooCount++;
+            }
+        }
 	}
 	instanceOfTimer.stop();
 	return fooCount;
@@ -62,12 +62,12 @@ public class InstanceOfTest {
     public int doBooleanCheck(BaseClass[] bc) {
 	int fooCount = 0;
 	booleanTimer.start();
-        for (int i = 0; i < maxIterations; i++) {
-	    for (int j = 0; j < bc.length; j++) {
-		if (bc[j].isFoo()) {
-		    fooCount++;
-		}
-	    }
+    for (int i = 0; i < maxIterations; i++) {
+        for (BaseClass baseClass : bc) {
+            if (baseClass.isFoo()) {
+                fooCount++;
+            }
+        }
 	}
 	booleanTimer.stop();
 	return fooCount;
@@ -79,13 +79,13 @@ public class InstanceOfTest {
     public int doCastCheck(BaseClass[] bc) {
 	int fooCount = 0;
 	castTimer.start();
-        for (int i = 0; i < maxIterations; i++) {
-	    for (int j = 0; j < bc.length; j++) {
-		if (bc[j] instanceof FooClass) {
-		    FooClass foo = (FooClass) bc[j];
-		    fooCount += foo.getBigId();
-		}
-	    }
+    for (int i = 0; i < maxIterations; i++) {
+        for (BaseClass baseClass : bc) {
+            if (baseClass instanceof FooClass) {
+                FooClass foo = (FooClass)baseClass;
+                fooCount += foo.getBigId();
+            }
+        }
 	}
 	castTimer.stop();
 	return fooCount;
@@ -94,13 +94,13 @@ public class InstanceOfTest {
     public int doNoCastCheck(BaseClass[] bc) {
 	int fooCount = 0;
 	noCastTimer.start();
-        for (int i = 0; i < maxIterations; i++) {
-	    for (int j = 0; j < bc.length; j++) {
-		if (bc[j] instanceof FooClass) {
-		    FooClass foo = ((FooClass) bc[j]).getFooClass();
-		    fooCount += foo.getBigId();
-		}
-	    }
+    for (int i = 0; i < maxIterations; i++) {
+        for (BaseClass baseClass : bc) {
+            if (baseClass instanceof FooClass) {
+                FooClass foo = ((FooClass)baseClass).getFooClass();
+                fooCount += foo.getBigId();
+            }
+        }
 	}
 	noCastTimer.stop();
 	return fooCount;

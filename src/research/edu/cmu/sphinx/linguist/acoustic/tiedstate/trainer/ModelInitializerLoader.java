@@ -65,7 +65,7 @@ class ModelInitializerLoader implements Loader {
     private int vectorLength;
 
     private Map<String, Unit> contextIndependentUnits;
-    private Map phoneList;
+    private Map<String, Integer> phoneList;
     private HMMManager hmmManager;
 
     @S4String
@@ -111,7 +111,7 @@ class ModelInitializerLoader implements Loader {
 
         hmmManager = new HMMManager();
         contextIndependentUnits = new LinkedHashMap<String, Unit>();
-        phoneList = new LinkedHashMap();
+        phoneList = new LinkedHashMap<String, Integer>();
 
         meanTransformationMatrixPool = createDummyMatrixPool("meanTransformationMatrix");
         meanTransformationVectorPool = createDummyVectorPool("meanTransformationMatrix");
@@ -314,8 +314,8 @@ class ModelInitializerLoader implements Loader {
      */
     private void normalize(float[] data) {
         float sum = 0;
-        for (int i = 0; i < data.length; i++) {
-            sum += data[i];
+        for (float val : data) {
+            sum += val;
         }
 
         if (sum != 0.0f) {
@@ -415,7 +415,7 @@ class ModelInitializerLoader implements Loader {
             if (!sameSizedModels) {
                 size = est.getInt("ModelSize");
             }
-            phoneList.put(phone, new Integer(size));
+            phoneList.put(phone, size);
             logger.fine("Phone: " + phone + " size: " + size);
             int[] stid = new int[size];
             String position = "-";

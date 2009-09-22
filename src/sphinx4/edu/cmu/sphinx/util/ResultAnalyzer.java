@@ -13,7 +13,6 @@
 package edu.cmu.sphinx.util;
 
 import java.text.DecimalFormat;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -75,11 +74,11 @@ public class ResultAnalyzer {
         numHypWords += hypList.size();
         numSentences++;
 
-        while (refList.size() > 0 || hypList.size() > 0) {
+        while (!refList.isEmpty() || !hypList.isEmpty()) {
 
-            if (refList.size() == 0) {
+            if (refList.isEmpty()) {
                 addInsert(refList, hypList);
-            } else if (hypList.size() == 0) {
+            } else if (hypList.isEmpty()) {
                 addDeletion(refList, hypList);
             } else if (!refList.get(0).equals(hypList.get(0))) {
                 processMismatch(refList, hypList);
@@ -171,8 +170,8 @@ public class ResultAnalyzer {
         if (list.isEmpty())
             return "";        
         StringBuilder sb = new StringBuilder();
-        for (Iterator<String> i = list.iterator(); i.hasNext();)
-            sb.append(i.next()).append(' ');
+        for (String s : list)
+            sb.append(s).append(' ');
         sb.setLength(sb.length() - 1);
         return sb.toString();
     }
@@ -343,8 +342,7 @@ public class ResultAnalyzer {
     public void showMisrecognitions() {
         System.out.println
                 (mismatchedUtterances.size() + " sentence errors");
-        for (Iterator<Misrecognition> i = mismatchedUtterances.iterator(); i.hasNext();) {
-            Misrecognition misrecognition = i.next();
+        for (Misrecognition misrecognition : mismatchedUtterances) {
             System.out.println(misrecognition.getReference());
             System.out.println(misrecognition.getHypothesis());
         }

@@ -39,13 +39,13 @@ import java.util.List;
 public class SysCommandExecutor
 {	
 
-	private String fWorkingDirectory = null;
-	private List fEnvironmentVarList = null;
+	private String fWorkingDirectory;
+	private List<EnvironmentVar> fEnvironmentVarList;
 	
-	private StringBuffer fCmdOutput = null;
-	private StringBuffer fCmdError = null;
-	private AsyncStreamReader fCmdOutputThread = null;
-	private AsyncStreamReader fCmdErrorThread = null;	
+	private StringBuffer fCmdOutput;
+	private StringBuffer fCmdError;
+	private AsyncStreamReader fCmdOutputThread;
+	private AsyncStreamReader fCmdErrorThread;
 	
         /* this class uses Singleton pattern for the constructor */
         private SysCommandExecutor() {}
@@ -70,7 +70,7 @@ public class SysCommandExecutor
 	public void setEnvironmentVar(String name, String value)
 	{
 		if( fEnvironmentVarList == null )
-			fEnvironmentVarList = new ArrayList();
+			fEnvironmentVarList = new ArrayList<EnvironmentVar>();
 		
 		fEnvironmentVarList.add(new EnvironmentVar(name, value));
 	}
@@ -149,11 +149,11 @@ public class SysCommandExecutor
 			return null;
 		
 		String[] envTokenArray = new String[fEnvironmentVarList.size()];
-		Iterator envVarIter = fEnvironmentVarList.iterator();
+		Iterator<EnvironmentVar> envVarIter = fEnvironmentVarList.iterator();
 		int nEnvVarIndex = 0; 
 		while (envVarIter.hasNext() == true)
 		{
-			EnvironmentVar envVar = (EnvironmentVar)(envVarIter.next());
+			EnvironmentVar envVar = (envVarIter.next());
 			String envVarToken = envVar.fName + '=' + envVar.fValue;
 			envTokenArray[nEnvVarIndex++] = envVarToken;
 		}
@@ -164,12 +164,12 @@ public class SysCommandExecutor
  
 class AsyncStreamReader extends Thread
 {
-	private StringBuffer fBuffer = null;
-	private InputStream fInputStream = null;
-	private String fThreadId = null;
-	private boolean fStop = false;
+	private StringBuffer fBuffer;
+	private InputStream fInputStream;
+	private String fThreadId;
+	private boolean fStop;
 	
-	private String fNewLine = null;
+	private String fNewLine;
 	
 	public AsyncStreamReader(InputStream inputStream, StringBuffer buffer, String threadId)
 	{
@@ -218,8 +218,8 @@ class AsyncStreamReader extends Thread
  
 class EnvironmentVar
 {
-	public String fName = null;
-	public String fValue = null;
+	public String fName;
+	public String fValue;
 	
 	public EnvironmentVar(String name, String value)
 	{

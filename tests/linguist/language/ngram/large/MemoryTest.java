@@ -67,7 +67,7 @@ public class MemoryTest {
     private LargeTrigramModel lm;
     private Timer timer;
     private PrintStream outStream = System.out;
-    private int totalQueries = 0;
+    private int totalQueries;
     private boolean printScores;
     
 
@@ -134,7 +134,7 @@ public class MemoryTest {
             StringTokenizer st = new StringTokenizer(input);
             List<Word> list = new ArrayList<Word>();
             while (st.hasMoreTokens()) {
-                String tok = (String) st.nextToken();
+                String tok = st.nextToken();
                 list.add(dictionary.getWord(tok));
             }
             WordSequence ws = new WordSequence(list);

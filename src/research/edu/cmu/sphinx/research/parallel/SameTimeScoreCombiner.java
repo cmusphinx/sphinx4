@@ -96,7 +96,7 @@ public class SameTimeScoreCombiner implements ScoreCombiner {
             }
         }
 
-        assert highestList != null && highestList.size() > 0;
+        assert highestList != null && !highestList.isEmpty();
         // System.out.println("Highest TokenList size: " + highestList.size());
 
         for (ParallelToken token : highestList) {
@@ -130,8 +130,7 @@ public class SameTimeScoreCombiner implements ScoreCombiner {
 //					assert token.getLastCombineTime() == combineTime;
 //	    	}
             String modelName = token.getModelName();
-            ParallelToken tokenInMap =
-                    (ParallelToken) uniqueMap.get(modelName);
+            ParallelToken tokenInMap = uniqueMap.get(modelName);
             if (tokenInMap == null) {
                 uniqueMap.put(modelName, token);
             } else {
@@ -143,7 +142,7 @@ public class SameTimeScoreCombiner implements ScoreCombiner {
 
         // clear the list
         sameTimeTokenList.clear();
-        assert sameTimeTokenList.size() == 0;
+        assert sameTimeTokenList.isEmpty();
 
         // now calculate the combinedScore
         double logTotalScore = 0;
@@ -219,14 +218,14 @@ class SameTimeTokensReader {
 
             // first token
 
-            ParallelToken token = (ParallelToken) listIterator.next();
+            ParallelToken token = listIterator.next();
             subList.add(token);
             int lastCombineTime = token.getLastCombineTime();
 
             // then the next token(s) with the same combine time
 
             while (listIterator.hasNext()) {
-                ParallelToken nextToken = (ParallelToken) listIterator.next();
+                ParallelToken nextToken = listIterator.next();
                 if (isSameTime(nextToken.getLastCombineTime(),
                         lastCombineTime)) {
                     subList.add(nextToken);

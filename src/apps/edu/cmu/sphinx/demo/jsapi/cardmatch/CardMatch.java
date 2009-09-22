@@ -69,7 +69,7 @@ public class CardMatch implements Recorder, Configurable {
     private Recognizer recognizer;
     private Microphone microphone;
     private JSGFGrammar grammar;
-    private List imageFiles;
+    private List<String> imageFiles;
     private boolean doEndpointing;
     private boolean useVoice;
     private int numberOfCards;
@@ -83,15 +83,11 @@ public class CardMatch implements Recorder, Configurable {
     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
     */
     public void newProperties(PropertySheet ps) throws PropertyException {
-        recognizer = (Recognizer) ps.getComponent(PROP_RECOGNIZER
-        );
-        grammar = (JSGFGrammar) ps
-                .getComponent(PROP_GRAMMAR);
-        microphone = (Microphone) ps.getComponent(PROP_MICROPHONE
-        );
+        recognizer = (Recognizer) ps.getComponent(PROP_RECOGNIZER);
+        grammar = (JSGFGrammar) ps.getComponent(PROP_GRAMMAR);
+        microphone = (Microphone) ps.getComponent(PROP_MICROPHONE);
 
-        doEndpointing = ps.getBoolean(PROP_DO_ENDPOINTING
-        );
+        doEndpointing = ps.getBoolean(PROP_DO_ENDPOINTING);
         useVoice = ps.getBoolean(PROP_USE_VOICE);
 
         numberOfCards = ps.getInt(PROP_NUM_CARDS);
@@ -141,7 +137,7 @@ public class CardMatch implements Recorder, Configurable {
         if (files == null) {
             throw new IllegalStateException("No image files");
         } else {
-            List fileList = new ArrayList();
+            List<String> fileList = new ArrayList<String>();
             StringTokenizer tokenizer = new StringTokenizer(files);
             while (tokenizer.hasMoreTokens()) {
                 String name = tokenizer.nextToken();
@@ -149,7 +145,7 @@ public class CardMatch implements Recorder, Configurable {
                     fileList.add(name);
                 }
             }
-            return (String[]) fileList.toArray(new String[fileList.size()]);
+            return fileList.toArray(new String[fileList.size()]);
         }
     }
 

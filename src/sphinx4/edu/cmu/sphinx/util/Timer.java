@@ -32,11 +32,11 @@ public class Timer {
     private final String name;
 
     private double sum;
-    private long count = 0L;
-    private long startTime = 0L;
-    private long curTime = 0L;
+    private long count;
+    private long startTime;
+    private long curTime;
     private long minTime = Long.MAX_VALUE;
-    private long maxTime = 0L;
+    private long maxTime;
     private boolean notReliable; // if true, timing is not reliable
 
 

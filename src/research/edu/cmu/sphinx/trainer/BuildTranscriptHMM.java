@@ -172,16 +172,12 @@ public class BuildTranscriptHMM {
         Graph phonemeGraph = new Graph();
         phonemeGraph.copyGraph(wordGraph);
 
-        Object[] nodeArray = phonemeGraph.nodeToArray();
-        for (int i = 0; i < nodeArray.length; i++) {
-            int index = phonemeGraph.indexOf((Node) nodeArray[i]);
-            Node node = phonemeGraph.getNode(index);
+        for (Node node : phonemeGraph.nodeToArray()) {
             if (node.getType().equals(NodeType.WORD)) {
                 String word = node.getID();
                 // "false" means graph won't have additional dummy
                 // nodes surrounding the word
-                Graph pronunciationGraph =
-                        dictionary.getWordGraph(word, false);
+                Graph pronunciationGraph = dictionary.getWordGraph(word, false);
                 phonemeGraph.insertGraph(pronunciationGraph, node);
             }
         }
@@ -216,10 +212,7 @@ public class BuildTranscriptHMM {
 
         hmmGraph.copyGraph(cdGraph);
 
-        Object[] nodeArray = hmmGraph.nodeToArray();
-        for (int i = 0; i < nodeArray.length; i++) {
-            int index = hmmGraph.indexOf((Node) nodeArray[i]);
-            Node node = hmmGraph.getNode(index);
+        for (Node node : hmmGraph.nodeToArray()) {
             Unit unit = null;
             if (node.getType().equals(NodeType.PHONE)) {
                 // unit = acousticModel.lookupUnit(node.getID());
@@ -232,8 +225,8 @@ public class BuildTranscriptHMM {
                 continue;
             }
             HMM hmm =
-                    acousticModel.lookupNearestHMM(unit, HMMPosition.UNDEFINED, false);
-            Graph modelGraph = buildModelGraph((SenoneHMM) hmm);
+                acousticModel.lookupNearestHMM(unit, HMMPosition.UNDEFINED, false);
+            Graph modelGraph = buildModelGraph((SenoneHMM)hmm);
             modelGraph.validate();
             hmmGraph.insertGraph(modelGraph, node);
         }

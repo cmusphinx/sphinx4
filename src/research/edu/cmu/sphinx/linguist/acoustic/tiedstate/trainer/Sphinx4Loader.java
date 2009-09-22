@@ -225,10 +225,10 @@ class Sphinx4Loader extends Sphinx3Loader {
                     unit = lastUnit;
                 } else {
                     Unit[] leftContext = new Unit[1];
-                    leftContext[0] = (Unit) contextIndependentUnits.get(left);
+                    leftContext[0] = contextIndependentUnits.get(left);
 
                     Unit[] rightContext = new Unit[1];
-                    rightContext[0] = (Unit) contextIndependentUnits.get(right);
+                    rightContext[0] = contextIndependentUnits.get(right);
 
                     Context context = LeftRightContext.get(leftContext,
                             rightContext);

@@ -152,8 +152,7 @@ public class OutOfGrammarGraph {
         /** Creates the first branch state */
         FirstBranchState() {
             List<OogHMM> successorList = new ArrayList<OogHMM>();
-            for (Iterator<Unit> i = acousticModel.getContextIndependentUnitIterator();
-                 i.hasNext();) {
+            for (Iterator<Unit> i = acousticModel.getContextIndependentUnitIterator(); i.hasNext();) {
                 Unit unit = i.next();
                 OogHMM hmm = new OogHMM(unit);
                 successorList.add(hmm);

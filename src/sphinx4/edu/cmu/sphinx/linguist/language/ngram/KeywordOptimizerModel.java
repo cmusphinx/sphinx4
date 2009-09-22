@@ -28,7 +28,7 @@ public class KeywordOptimizerModel implements LanguageModel {
     @S4Component(type = LanguageModel.class)
     public final static String PROP_PARENT = "parent";
     
-    public HashMap<String, Float> keywordProbs = null;
+    public HashMap<String, Float> keywordProbs;
     
     // ----------------------------
     // Configuration data

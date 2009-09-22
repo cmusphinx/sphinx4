@@ -16,13 +16,13 @@ package edu.cmu.sphinx.linguist.acoustic;
 public class Unit {
 
     private String name;
-    private boolean filler = false;
-    private boolean silence = false;
-    private Context context = null;
+    private boolean filler;
+    private boolean silence;
+    private Context context;
     private int baseID;
     private Unit baseUnit;
 
-    private volatile String key = null;
+    private volatile String key;
 
 
     /**

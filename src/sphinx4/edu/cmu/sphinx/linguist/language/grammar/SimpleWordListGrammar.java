@@ -108,8 +108,7 @@ public class SimpleWordListGrammar extends Grammar implements Configurable {
         initialNode.add(branchNode, LogMath.getLogOne());
         float branchScore = logMath.linearToLog(
                 1.0 / wordGrammarNodes.size());
-        for (Object wordGrammarNode : wordGrammarNodes) {
-            GrammarNode wordNode = (GrammarNode) wordGrammarNode;
+        for (GrammarNode wordNode : wordGrammarNodes) {
             branchNode.add(wordNode, branchScore);
             wordNode.add(finalNode, LogMath.getLogOne());
             if (isLooping) {

@@ -15,11 +15,11 @@ package edu.cmu.sphinx.linguist.acoustic.tiedstate.trainer;
 import edu.cmu.sphinx.frontend.Data;
 import edu.cmu.sphinx.frontend.FloatData;
 import edu.cmu.sphinx.linguist.acoustic.HMMState;
+import edu.cmu.sphinx.linguist.acoustic.HMM;
 import edu.cmu.sphinx.linguist.acoustic.tiedstate.*;
 import edu.cmu.sphinx.util.LogMath;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.logging.Logger;
 
 
@@ -27,7 +27,7 @@ import java.util.logging.Logger;
 class HMMPoolManager {
 
     private HMMManager hmmManager;
-    private HashMap indexMap;
+    private HashMap<Object, Integer> indexMap;
     private Pool meansPool;
     private Pool variancePool;
     private Pool matrixPool;
@@ -66,7 +66,7 @@ class HMMPoolManager {
      */
     protected HMMPoolManager(Loader loader) {
         hmmManager = loader.getHMMManager();
-        indexMap = new HashMap();
+        indexMap = new HashMap<Object, Integer>();
         meansPool = loader.getMeansPool();
         variancePool = loader.getVariancePool();
         mixtureWeightsPool = loader.getMixtureWeightPool();
@@ -114,7 +114,7 @@ class HMMPoolManager {
 
         for (int i = 0; i < pool.size(); i++) {
             float[] element = (float[]) pool.get(i);
-            indexMap.put(element, new Integer(i));
+            indexMap.put(element, i);
             Buffer buffer = new Buffer(element.length, isLog, i);
             bufferPool.put(i, buffer);
         }
@@ -128,7 +128,7 @@ class HMMPoolManager {
 
         for (int i = 0; i < pool.size(); i++) {
             float[][] element = (float[][]) pool.get(i);
-            indexMap.put(element, new Integer(i));
+            indexMap.put(element, i);
             int poolSize = element.length;
             Buffer[] bufferArray = new Buffer[poolSize];
             for (int j = 0; j < poolSize; j++) {
@@ -211,8 +211,7 @@ class HMMPoolManager {
             for (int i = 0; i < mix.length; i++) {
                 float[] mean = mix[i].getMean();
                 // int indexMean = meansPool.indexOf(mean);
-                Integer indexInMap = (Integer) indexMap.get(mean);
-                int indexMean = indexInMap.intValue();
+                int indexMean = indexMap.get(mean);
                 assert indexMean >= 0;
                 assert indexMean == senone;
                 Buffer buffer = (Buffer) meansBufferPool.get(indexMean);
@@ -245,10 +244,8 @@ class HMMPoolManager {
                 float[] mean = mix[i].getMean();
                 float[] variance = mix[i].getVariance();
                 // int indexVariance = variancePool.indexOf(variance);
-                Integer indexInMap = (Integer) indexMap.get(variance);
-                int indexVariance = indexInMap.intValue();
-                Buffer buffer =
-                        (Buffer) varianceBufferPool.get(indexVariance);
+                int indexVariance = indexMap.get(variance);
+                Buffer buffer = (Buffer)varianceBufferPool.get(indexVariance);
                 float[] feature = ((FloatData) score.getData()).getValues();
                 double[] data = new double[feature.length];
                 float prob = score.getComponentGamma()[i];
@@ -305,12 +302,10 @@ class HMMPoolManager {
 
         // Find the index for current matrix in the transition matrix pool
         // int indexMatrix = matrixPool.indexOf(matrix);
-        Integer indexInMap = (Integer) indexMap.get(matrix);
-        int indexMatrix = indexInMap.intValue();
+        int indexMatrix = indexMap.get(matrix);
 
         // Find the corresponding buffer
-        Buffer[] bufferArray =
-                (Buffer[]) matrixBufferPool.get(indexMatrix);
+        Buffer[] bufferArray = (Buffer[])matrixBufferPool.get(indexMatrix);
 
         // Let's concentrate on the transitions *from* the current state
         float[] vector = matrix[indexState];
@@ -373,8 +368,7 @@ class HMMPoolManager {
         // Find the index of the current transition matrix in the
         // transition matrix pool.
         // int indexMatrix = matrixPool.indexOf(matrix);
-        Integer indexInMap = (Integer) indexMap.get(matrix);
-        int indexMatrix = indexInMap.intValue();
+        int indexMatrix = indexMap.get(matrix);
 
         // Find the buffer for the transition matrix.
         Buffer[] bufferArray =
@@ -398,12 +392,9 @@ class HMMPoolManager {
         if (indexHmm == TrainerAcousticModel.ALL_MODELS) {
             // Well, special case... we want to add an amount to all
             // the states in all models
-            for (Iterator i = hmmManager.iterator();
-                 i.hasNext();) {
-                SenoneHMM hmm = (SenoneHMM) i.next();
+            for (HMM hmm : hmmManager) {
                 for (int j = 0; j < hmm.getOrder(); j++) {
-                    accumulateStateTransition(j, hmm,
-                            score[indexScore].getScore());
+                    accumulateStateTransition(j, (SenoneHMM)hmm, score[indexScore].getScore());
                 }
             }
         } else {
@@ -536,7 +527,7 @@ class HMMPoolManager {
             float[] variance = (float[]) variancePool.get(i);
             Buffer buffer = (Buffer) varianceBufferPool.get(i);
             if (buffer.wasUsed()) {
-                float[] varianceBuffer = (float[]) buffer.getValues();
+                float[] varianceBuffer = buffer.getValues();
                 assert means.length == varianceBuffer.length;
                 for (int j = 0; j < means.length; j++) {
                     varianceBuffer[j] -= means[j] * means[j];
@@ -555,8 +546,8 @@ class HMMPoolManager {
         for (int i = 0; i < senonePool.size(); i++) {
             GaussianMixture gMix = (GaussianMixture) senonePool.get(i);
             MixtureComponent[] mixComponent = gMix.getMixtureComponents();
-            for (int j = 0; j < mixComponent.length; j++) {
-                mixComponent[j].precomputeDistance();
+            for (MixtureComponent component : mixComponent) {
+                component.precomputeDistance();
             }
         }
     }
@@ -572,7 +563,7 @@ class HMMPoolManager {
                 if (buffer.logFloor(logMixtureWeightFloor)) {
                     buffer.logNormalizeToSum(logMath);
                 }
-                float[] mixtureWeightsBuffer = (float[]) buffer.getValues();
+                float[] mixtureWeightsBuffer = buffer.getValues();
                 copyVector(mixtureWeightsBuffer, mixtureWeights);
             }
         }

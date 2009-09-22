@@ -16,7 +16,6 @@ package edu.cmu.sphinx.tools.gui;
 
 import java.util.Map;
 import java.util.HashMap;
-import java.util.Iterator;
 
 /**
  * This class stores all the configuration information to be written to output
@@ -30,9 +29,9 @@ import java.util.Iterator;
 public class ConfigProperties {
    
     /* the properties to be written */
-    private Map _propertyMap=null; // a HashMap for RawPropertyData map with component name as key
-    private Map _globalProperties=null; // a HashMap for global properties (often fine tuned properties)
-    private Map _otherPropMap=null; 
+    private Map<String, RawPropertyData> _propertyMap; // a HashMap for RawPropertyData map with component name as key
+    private Map<String, String> _globalProperties; // a HashMap for global properties (often fine tuned properties)
+    private Map<String, Map<String, Object>> _otherPropMap;
     // a two-tier HashMap for RawPropertyData with String classname as 1st key and rpd name as 2nd key
     
     /** 
@@ -44,7 +43,7 @@ public class ConfigProperties {
     /**
      * @return get the Map of Global properties
      */
-    public Map getGlobal(){
+    public Map<String, String> getGlobal(){
         return _globalProperties;
     }
     
@@ -52,7 +51,7 @@ public class ConfigProperties {
      * @return get the Map of component properties / configuration set
      *          with classname as the Map key
      */
-    public Map getOtherProp(){
+    public Map<String, Map<String, Object>> getOtherProp(){
         return _otherPropMap;
     }
     
@@ -60,14 +59,14 @@ public class ConfigProperties {
      * @return the configuration set/component properties
      *          with configuration name as Map key
      */
-    public Map getProperty(){
+    public Map<String, RawPropertyData> getProperty(){
         return _propertyMap;
     }
     
     /** 
      * @param global Set the global Map to this Map
      */
-    public void setGlobal (Map global){
+    public void setGlobal (Map<String, String> global){
         _globalProperties = global;
     }
 
@@ -76,11 +75,11 @@ public class ConfigProperties {
      * @param p <code>Map</code> of properties with key-value of 
      *          String name,RawPropertyData
      */
-    public void addRPDProperties(Map p)
+    public void addRPDProperties(Map<String, RawPropertyData> p)
     {   
         
         if (_propertyMap == null)
-            _propertyMap = new HashMap();
+            _propertyMap = new HashMap<String, RawPropertyData>();
         if ( p != null && !p.isEmpty())
             _propertyMap.putAll(p);
 
@@ -90,26 +89,25 @@ public class ConfigProperties {
         
     /** copy all the data in the input Map into the Other Map
      */
-    private void copyPropertiesToOtherMap(Map from)
+    private void copyPropertiesToOtherMap(Map<String, RawPropertyData> from)
     {
         // add new properties to the other map
         if ( from != null && !from.isEmpty()){
             if ( _otherPropMap == null){
-                _otherPropMap = new HashMap();
+                _otherPropMap = new HashMap<String, Map<String, Object>>();
             }
             
-            Map classmap;
-            for (Iterator it = from.values().iterator(); it.hasNext();){
-                RawPropertyData rpd = (RawPropertyData)it.next();     
+            Map<String, Object> classmap;
+            for (RawPropertyData rpd : from.values()) {
                 String classname = rpd.getClassName();
-                if ( _otherPropMap.containsKey(classname) ){
-                   classmap = (Map)_otherPropMap.get(classname);     
-                   if ( !classmap.containsKey(rpd.getName()) )
-                       classmap.put(rpd.getName(),rpd);       
-                }else{
-                   classmap = new HashMap();
-                   classmap.put(rpd.getName(),rpd);       
-                   _otherPropMap.put(classname,classmap); 
+                if (_otherPropMap.containsKey(classname)) {
+                    classmap = _otherPropMap.get(classname);
+                    if (!classmap.containsKey(rpd.getName()))
+                        classmap.put(rpd.getName(), rpd);
+                } else {
+                    classmap = new HashMap<String, Object>();
+                    classmap.put(rpd.getName(), rpd);
+                    _otherPropMap.put(classname, classmap);
                 }
             }
         }
@@ -118,13 +116,13 @@ public class ConfigProperties {
     /**
      * @param c Set the component properties to this one
      */
-    public void setProperty(Map c){
+    public void setProperty(Map<String, RawPropertyData> c){
         _propertyMap = c;
         
         //create a duplicate map that has the classname 
         // as key instead of configuration name key
         if ( _otherPropMap == null)
-            _otherPropMap = new HashMap();
+            _otherPropMap = new HashMap<String, Map<String, Object>>();
         else
             _otherPropMap.clear();
         copyPropertiesToOtherMap(_propertyMap);

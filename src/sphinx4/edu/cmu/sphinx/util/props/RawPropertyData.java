@@ -63,7 +63,7 @@ public class RawPropertyData {
      * @param propName  the name of the property
      * @param propValue the value of the property
      */
-    void add(String propName, List propValue) {
+    void add(String propName, List<String> propValue) {
         properties.put(propName, propValue);
     }
 

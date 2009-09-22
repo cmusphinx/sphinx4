@@ -71,13 +71,10 @@ public class StreamCepstrumSource extends BaseDataProcessor {
     */
     public void newProperties(PropertySheet ps) throws PropertyException {
         super.newProperties(ps);
-        cepstrumLength = ps.getInt(PROP_CEPSTRUM_LENGTH
-        );
+        cepstrumLength = ps.getInt(PROP_CEPSTRUM_LENGTH);
         binary = ps.getBoolean(PROP_BINARY);
-        float frameShiftMs = ps.getFloat(PROP_FRAME_SHIFT_MS
-        );
-        float frameSizeMs = ps.getFloat(PROP_FRAME_SIZE_MS
-        );
+        float frameShiftMs = ps.getFloat(PROP_FRAME_SHIFT_MS);
+        float frameSizeMs = ps.getFloat(PROP_FRAME_SIZE_MS);
         sampleRate = ps.getInt(PROP_SAMPLE_RATE);
         frameShift = DataUtil.getSamplesPerWindow(sampleRate, frameShiftMs);
         frameSize = DataUtil.getSamplesPerShift(sampleRate, frameSizeMs);

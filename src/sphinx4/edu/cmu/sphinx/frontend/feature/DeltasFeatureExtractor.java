@@ -66,8 +66,8 @@ public class DeltasFeatureExtractor extends AbstractFeatureExtractor {
 
         // CEP; copy all the cepstrum data
         int j = 0;
-        for (int k = 0; k < current.length; k++) {
-            feature[j++] = (float) current[k];
+        for (double val : current) {
+            feature[j++] = (float)val;
         }
         // System.arraycopy(current, 0, feature, 0, j);
         // DCEP: mfc[2] - mfc[-2]

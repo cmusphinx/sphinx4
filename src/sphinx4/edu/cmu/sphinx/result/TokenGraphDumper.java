@@ -33,7 +33,7 @@ public class TokenGraphDumper {
     private Result result;
     private Map<Token, Integer> tokenIDMap;
     private Set<Token> dumpedTokens;
-    private int ID = 0;
+    private int ID;
 
 
     /**
@@ -130,8 +130,7 @@ public class TokenGraphDumper {
             if (loserManager != null) {
                 List<Token> list = loserManager.getAlternatePredecessors(token);
                 if (list != null) {
-                    for (Iterator<Token> i = list.iterator(); i.hasNext();) {
-                        Token loser = i.next();
+                    for (Token loser : list) {
                         gdl.append("edge: { sourcename: \"").append(getTokenID(token))
                             .append("\" targetname: \"").append(getTokenID(loser))
                             .append("\" }").append('\n').append(dumpTokenGDL(loser));

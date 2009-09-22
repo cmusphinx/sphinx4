@@ -51,9 +51,7 @@ public class FrameDropper extends BaseDataProcessor {
     */
     public void newProperties(PropertySheet ps) throws PropertyException {
         super.newProperties(ps);
-        dropEveryNthFrame = ps.getInt
-                (PROP_DROP_EVERY_NTH_FRAME
-                );
+        dropEveryNthFrame = ps.getInt(PROP_DROP_EVERY_NTH_FRAME);
 
         if (dropEveryNthFrame <= 1) {
             throw new IllegalArgumentException(PROP_DROP_EVERY_NTH_FRAME +

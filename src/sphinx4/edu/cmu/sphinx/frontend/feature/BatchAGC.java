@@ -24,7 +24,7 @@ import java.util.*;
 public class BatchAGC extends BaseDataProcessor {
 
     private List<Data> cepstraList;
-    private double agc = 0.0;
+    private double agc;
 
     /* (non-Javadoc)
      * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
@@ -49,7 +49,7 @@ public class BatchAGC extends BaseDataProcessor {
 
         Data output = null;
 
-        if (cepstraList.size() > 0) {
+        if (!cepstraList.isEmpty()) {
             output = cepstraList.remove(0);
         } else {
 	    agc = 0.0;
@@ -99,11 +99,10 @@ public class BatchAGC extends BaseDataProcessor {
 
     /** Normalizes the list of Data. */
     private void normalizeList() {
-        for (Iterator<Data> iterator = cepstraList.iterator(); iterator.hasNext();) {
-            Data cepstrumObject = iterator.next();
-            if (cepstrumObject instanceof DoubleData) {
-                ((DoubleData) cepstrumObject).getValues()[0] -= agc;
-                System.out.println(((DoubleData) cepstrumObject).getValues()[0]);
+        for (Data data : cepstraList) {
+            if (data instanceof DoubleData) {
+                ((DoubleData)data).getValues()[0] -= agc;
+                System.out.println(((DoubleData)data).getValues()[0]);
             }
         }
     }

@@ -19,7 +19,7 @@ import java.util.logging.Logger;
  */
 public class IncludingConfigHandler extends ConfigHandler {
 
-    private boolean replaceDuplicates = false;
+    private boolean replaceDuplicates;
     private URL baseURL;
 
 

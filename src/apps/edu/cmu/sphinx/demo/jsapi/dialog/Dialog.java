@@ -98,7 +98,7 @@ public class Dialog {
  */
 class MyBehavior extends NewGrammarDialogNodeBehavior {
 
-    private Collection sampleUtterances;
+    private Collection<String> sampleUtterances;
 
 
     /** Executed when we are ready to recognize */
@@ -175,8 +175,8 @@ class MyBehavior extends NewGrammarDialogNodeBehavior {
      *
      * @return the set of sample utterances
      */
-    private Collection collectSampleUtterances() {
-        Set set = new HashSet();
+    private Collection<String> collectSampleUtterances() {
+        Set<String> set = new HashSet<String>();
         for (int i = 0; i < 100; i++) {
             String s = getGrammar().getRandomSentence();
             if (!set.contains(s)) {
@@ -184,7 +184,7 @@ class MyBehavior extends NewGrammarDialogNodeBehavior {
             }
         }
 
-        List sampleList = new ArrayList(set);
+        List<String> sampleList = new ArrayList<String>(set);
         Collections.sort(sampleList);
         return sampleList;
     }
@@ -196,8 +196,8 @@ class MyBehavior extends NewGrammarDialogNodeBehavior {
             sampleUtterances = collectSampleUtterances();
         }
 
-        for (Iterator i = sampleUtterances.iterator(); i.hasNext();) {
-            System.out.println("  " + i.next());
+        for (String sampleUtterance : sampleUtterances) {
+            System.out.println("  " + sampleUtterance);
         }
     }
 
@@ -215,7 +215,7 @@ class MyBehavior extends NewGrammarDialogNodeBehavior {
  */
 class MyMusicBehavior extends MyBehavior {
 
-    private List songList = new ArrayList();
+    private List<String> songList = new ArrayList<String>();
 
 
     /** Creates a music behavior */
@@ -252,11 +252,10 @@ class MyMusicBehavior extends MyBehavior {
         int count = 1;
 
         try {
-            for (Iterator i = songList.iterator(); i.hasNext();) {
-                String song = (String) i.next();
+            for (String song : songList) {
                 String newRuleName = ruleName + count;
                 Rule newRule = ruleGrammar.ruleForJSGF("listen to " + song
-                        + " { " + newRuleName + " }");
+                    + " { " + newRuleName + " }");
                 ruleGrammar.setRule(newRuleName, newRule, true);
                 ruleGrammar.setEnabled(newRuleName, true);
                 count++;
@@ -279,10 +278,10 @@ class MyMusicBehavior extends MyBehavior {
     private void dumpGrammar(RuleGrammar rg) {
         String[] ruleNames = rg.listRuleNames();
 
-        for (int i = 0; i < ruleNames.length; i++) {
-            String enabled = rg.isEnabled(ruleNames[i]) ? "ON" : "OFF";
-            System.out.println("Rule: " + ruleNames[i] + ' ' +
-                    rg.getRule(ruleNames[i]) + ' ' + enabled);
+        for (String ruleName : ruleNames) {
+            String enabled = rg.isEnabled(ruleName) ? "ON" : "OFF";
+            System.out.println("Rule: " + ruleName + ' ' +
+                rg.getRule(ruleName) + ' ' + enabled);
         }
     }
 }

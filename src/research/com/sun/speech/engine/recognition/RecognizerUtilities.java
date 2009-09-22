@@ -25,8 +25,8 @@ public class RecognizerUtilities {
             throws GrammarException {
         RuleGrammar gramFrom[] = recFrom.listRuleGrammars();
 
-        for (int i = 0; i < gramFrom.length; i++) {
-            String name = gramFrom[i].getName();
+        for (RuleGrammar grammar : gramFrom) {
+            String name = grammar.getName();
             RuleGrammar gramTo = recTo.getRuleGrammar(name);
 
             // Create a new grammar - if necessary
@@ -37,7 +37,7 @@ public class RecognizerUtilities {
                     throw new GrammarException("copyGrammars: " + gse, null);
                 }
             }
-            copyGrammar(gramFrom[i], gramTo);
+            copyGrammar(grammar, gramTo);
         }
     }
 
@@ -47,14 +47,13 @@ public class RecognizerUtilities {
             throws GrammarException {
         // Copy imports
         RuleName imports[] = gramFrom.listImports();
-        for (int j = 0; j < imports.length; j++) {
-            gramTo.addImport(imports[j]);
+        for (RuleName ruleName : imports) {
+            gramTo.addImport(ruleName);
         }
 
         // Copy each rule
         String rnames[] = gramFrom.listRuleNames();
-        for (int j = 0; j < rnames.length; j++) {
-            String ruleName = rnames[j];
+        for (String ruleName : rnames) {
             boolean isPublic = false;
             try {
                 isPublic = gramFrom.isRulePublic(ruleName);
@@ -74,14 +73,14 @@ public class RecognizerUtilities {
 
             // copy sample sentences if appropriate
             if ((gramTo instanceof BaseRuleGrammar) && (gramFrom instanceof BaseRuleGrammar)) {
-                List<String> a = ((BaseRuleGrammar) gramFrom).getSampleSentences(ruleName);
-                ((BaseRuleGrammar) gramTo).setSampleSentences(ruleName, a);
+                List<String> a = ((BaseRuleGrammar)gramFrom).getSampleSentences(ruleName);
+                ((BaseRuleGrammar)gramTo).setSampleSentences(ruleName, a);
             }
         }
     }
 
 
-    static Map<String, Set<String>> xrefs = null;
+    static Map<String, Set<String>> xrefs;
 
 
     /**
@@ -98,29 +97,27 @@ public class RecognizerUtilities {
             return;
         }
 
-        for (int i = 0; i < grams.length; i++) {
-            String[] names = grams[i].listRuleNames();
+        for (RuleGrammar gram : grams) {
+            String[] names = gram.listRuleNames();
             if (names == null) {
                 continue;
             }
-            for (int j = 0; j < names.length; j++) {
+            for (String name : names) {
                 // Get the definition of rule name[j] in gram[i]
-                Rule r = grams[i].getRule(names[j]);
+                Rule r = gram.getRule(name);
 
                 // Build a fully-qualified RuleName for rule name[j] in gram[i]
-                RuleName rn = new RuleName(grams[i].getName() + '.' + names[j]);
+                RuleName rn = new RuleName(gram.getName() + '.' + name);
 
                 // Identify all rules referenced in r
                 List<RuleName> refs = new ArrayList<RuleName>();
                 getRuleNameRefs(r, refs);
 
-                for (int k = 0; k < refs.size(); k++) {
-                    RuleName ref = refs.get(k);
-
+                for (RuleName ref : refs) {
                     // Get a fully-qualified reference
                     RuleName fullref;
                     try {
-                        fullref = ((BaseRuleGrammar) (grams[i])).resolve(ref);
+                        fullref = gram.resolve(ref);
                     } catch (GrammarException e) {
                         fullref = null;
                     }
@@ -134,7 +131,7 @@ public class RecognizerUtilities {
                         }
                         set.add(rn.toString().intern());
                     } else {
-                        debugMessageOut("Warning: unresolved rule " + ref + " in grammar " + grams[i].getName());
+                        debugMessageOut("Warning: unresolved rule " + ref + " in grammar " + gram.getName());
                     }
                 }
             }
@@ -176,8 +173,8 @@ public class RecognizerUtilities {
             }
 
             if (array != null) {
-                for (int i = 0; i < array.length; i++) {
-                    getRuleNameRefs(array[i], refs);
+                for (Rule rule : array) {
+                    getRuleNameRefs(rule, refs);
                 }
             }
         } else if (r instanceof RuleTag) {
@@ -267,15 +264,15 @@ public class RecognizerUtilities {
     static RuleGrammar[] transform(RuleGrammar RG[], boolean eliminateNULL, boolean eliminateVOID)
             throws GrammarException {
         //if (!eliminateNULL && !eliminateVOID) return RG;
-        RuleGrammar NRG[] = (RuleGrammar[]) RG.clone();
+        RuleGrammar NRG[] = RG.clone();
         boolean somethingchanged = true;
         boolean nochange = true;
         while (somethingchanged) {
             somethingchanged = false;
             for (int i = 0; i < NRG.length; i++) {
                 String rnames[] = NRG[i].listRuleNames();
-                for (int j = 0; j < rnames.length; j++) {
-                    Rule r = NRG[i].getRuleInternal(rnames[j]);
+                for (String rname : rnames) {
+                    Rule r = NRG[i].getRuleInternal(rname);
                     Rule nr = transform(r, NRG, eliminateNULL, eliminateVOID);
                     if (nr != r) {
                         nochange = false;
@@ -286,11 +283,11 @@ public class RecognizerUtilities {
                         }
                         boolean isPublic;
                         try {
-                            isPublic = NRG[i].isRulePublic(rnames[j]);
+                            isPublic = NRG[i].isRulePublic(rname);
                         } catch (IllegalArgumentException nse) {
                             throw new GrammarException(nse.toString(), null);
                         }
-                        NRG[i].setRule(rnames[j], nr, isPublic);
+                        NRG[i].setRule(rname, nr, isPublic);
                     }
                 }
             }
@@ -302,19 +299,19 @@ public class RecognizerUtilities {
         * Now remove unused rules
         */
         List<RuleGrammar> nr = new ArrayList<RuleGrammar>();
-        for (int i = 0; i < NRG.length; i++) {
+        for (RuleGrammar grammar : NRG) {
             RuleGrammar NG = null;
-            String rnames[] = NRG[i].listRuleNames();
+            String rnames[] = grammar.listRuleNames();
             int k = 0;
-            for (int j = 0; j < rnames.length; j++) {
-                Rule r1 = NRG[i].getRuleInternal(rnames[j]);
+            for (String rname : rnames) {
+                Rule r1 = grammar.getRuleInternal(rname);
                 RuleState s = new RuleState(r1, NRG);
                 //System.out.println(rnames[j] + " " + r1.getClass() + " " + s.isvoid + " " + s.isnull);
                 if ((eliminateVOID && s.isvoid) || (eliminateNULL && s.isnull)) {
-                    NRG[i].deleteRule(rnames[j]);
+                    grammar.deleteRule(rname);
                 } else k++;
             }
-            if (k > 0) nr.add(NRG[i]);
+            if (k > 0) nr.add(grammar);
         }
 
         /*
@@ -342,7 +339,7 @@ public class RecognizerUtilities {
                 RuleState s1 = new RuleState(r1, RGL);
                 if (ev && s1.isvoid) return RuleName.VOID;
                 if ((en && s1.isnull) || (r1 != rarry[i])) {
-                    if (rs == (RuleSequence) r) {
+                    if (rs == r) {
                         rs = (RuleSequence) rs.copy();
                         rarry = rs.getRules();
                     }
@@ -358,9 +355,9 @@ public class RecognizerUtilities {
             if (cnull == rarry.length) return RuleName.NULL;
             Rule barry[] = new Rule[rarry.length - cnull];
             int j = 0;
-            for (int i = 0; i < rarry.length; i++) {
-                if (rarry[i] != null) {
-                    barry[j++] = rarry[i];
+            for (Rule rule : rarry) {
+                if (rule != null) {
+                    barry[j++] = rule;
                 }
             }
             rs.setRules(barry);
@@ -383,7 +380,7 @@ public class RecognizerUtilities {
                 //System.out.println("rs: " + r1);
                 RuleState s1 = new RuleState(r1, RGL);
                 if ((en && s1.isnull) || (ev && s1.isvoid) || (r1 != rarry[i])) {
-                    if (ra == (RuleAlternatives) r) {
+                    if (ra == r) {
                         ra = (RuleAlternatives) ra.copy();
                         rarry = ra.getRules();
                     }
@@ -404,9 +401,9 @@ public class RecognizerUtilities {
             if ((cvoid + cnull) == rarry.length) return RuleName.NULL;
             Rule barry[] = new Rule[rarry.length - (cnull + cvoid)];
             int j = 0;
-            for (int i = 0; i < rarry.length; i++) {
-                if (rarry[i] != null) {
-                    barry[j++] = rarry[i];
+            for (Rule rule : rarry) {
+                if (rule != null) {
+                    barry[j++] = rule;
                 }
             }
             ra.setRules(barry);
@@ -464,8 +461,8 @@ public class RecognizerUtilities {
 
         boolean elimVOID = true;
         boolean elimNULL = true;
-        if (args.length > 1) elimNULL = (Boolean.valueOf(args[1])).booleanValue();
-        if (args.length > 2) elimVOID = (Boolean.valueOf(args[2])).booleanValue();
+        if (args.length > 1) elimNULL = Boolean.parseBoolean(args[1]);
+        if (args.length > 2) elimVOID = Boolean.parseBoolean(args[2]);
 
         try {
             R = new BaseRecognizer();
@@ -528,12 +525,12 @@ public class RecognizerUtilities {
             return;
         }
 
-        for (int j = 0; j < NRG.length; j++) {
-            System.out.println("Grammar: " + NRG[j].getName());
-            String rnames[] = NRG[j].listRuleNames();
-            for (int k = 0; k < rnames.length; k++) {
-                System.out.print('<' + rnames[k] + "> = ");
-                Rule r = NRG[j].getRuleInternal(rnames[k]);
+        for (RuleGrammar grammar : NRG) {
+            System.out.println("Grammar: " + grammar.getName());
+            String rnames[] = grammar.listRuleNames();
+            for (String rname : rnames) {
+                System.out.print('<' + rname + "> = ");
+                Rule r = grammar.getRuleInternal(rname);
                 System.out.println(r);
             }
             System.out.println("");
@@ -546,9 +543,9 @@ class RuleState {
 
     Rule getRule(RuleName rn, RuleGrammar RGL[]) {
         String gname = rn.getSimpleGrammarName();
-        for (int i = 0; i < RGL.length; i++) {
-            if (RGL[i].getName().equals(gname)) {
-                return RGL[i].getRuleInternal(rn.getSimpleRuleName());
+        for (RuleGrammar grammar : RGL) {
+            if (grammar.getName().equals(gname)) {
+                return grammar.getRuleInternal(rn.getSimpleRuleName());
             }
         }
         return null;
@@ -592,8 +589,8 @@ class RuleState {
     }
 
 
-    boolean isvoid = false;
-    boolean isnull = false;
+    boolean isvoid;
+    boolean isnull;
 }
 
 

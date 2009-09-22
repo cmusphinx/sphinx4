@@ -200,8 +200,8 @@ public class ParallelSearchManager implements SearchManager {
 
         setBestToken(firstState, firstToken);
 
-        for (Iterator i = linguist.getFeatureStreams(); i.hasNext();) {
-            FeatureStream stream = (FeatureStream) i.next();
+        for (Iterator<FeatureStream> i = linguist.getFeatureStreams(); i.hasNext();) {
+            FeatureStream stream = i.next();
             stream.setActiveList(activeListFactory.newInstance());
 
             // add the first ParallelTokens to the CombineToken
@@ -271,11 +271,10 @@ public class ParallelSearchManager implements SearchManager {
         boolean moreFeatures = false;
         for (Iterator<FeatureStream> i = linguist.getFeatureStreams(); i.hasNext();) {
             FeatureStream stream = i.next();
-            Data data =
-                    scorer.calculateScores(stream.getActiveList().getTokens());
+            Data data = scorer.calculateScores(stream.getActiveList().getTokens());
             Scoreable scoreable = null;
             if (data instanceof Scoreable)
-                    scoreable = (Scoreable) data; 
+                scoreable = (Scoreable)data;
             moreFeatures = (scoreable != null);
         }
         debugPrint(" done Scoring");
@@ -291,10 +290,9 @@ public class ParallelSearchManager implements SearchManager {
         debugPrint("Pruning");
 
         if (doFeaturePruning) {
-            for (Iterator i = linguist.getFeatureStreams(); i.hasNext();) {
-                FeatureStream stream = (FeatureStream) i.next();
-                stream.setActiveList
-                        (featureScorePruner.prune(stream.getActiveList()));
+            for (Iterator<FeatureStream> i = linguist.getFeatureStreams(); i.hasNext();) {
+                FeatureStream stream = i.next();
+                stream.setActiveList(featureScorePruner.prune(stream.getActiveList()));
             }
         }
 
@@ -306,8 +304,8 @@ public class ParallelSearchManager implements SearchManager {
     /** Prints all the active lists. */
     private void printActiveLists() {
         debugPrint(" CombinedActiveList: " + combinedActiveList.size());
-        for (Iterator i = linguist.getFeatureStreams(); i.hasNext();) {
-            FeatureStream stream = (FeatureStream) i.next();
+        for (Iterator<FeatureStream> i = linguist.getFeatureStreams(); i.hasNext();) {
+            FeatureStream stream = i.next();
             debugPrint(" ActiveList, " + stream.getName() + ": " +
                     stream.getActiveList().size());
         }
@@ -328,8 +326,8 @@ public class ParallelSearchManager implements SearchManager {
         delayedExpansionList = activeListFactory.newInstance();
 
         // grow the ActiveList of each feature stream
-        for (Iterator i = linguist.getFeatureStreams(); i.hasNext();) {
-            FeatureStream stream = (FeatureStream) i.next();
+        for (Iterator<FeatureStream> i = linguist.getFeatureStreams(); i.hasNext();) {
+            FeatureStream stream = i.next();
 
             // create a new ActiveList for the next frame
             ActiveList oldActiveList = stream.getActiveList();
@@ -345,15 +343,14 @@ public class ParallelSearchManager implements SearchManager {
         growDelayedExpansionList();
 
         // remove all pruned tokens from the active list of all streams
-        for (Iterator i = linguist.getFeatureStreams(); i.hasNext();) {
-            FeatureStream stream = (FeatureStream) i.next();
+        for (Iterator<FeatureStream> i = linguist.getFeatureStreams(); i.hasNext();) {
+            FeatureStream stream = i.next();
 
             // remove all the pruned tokens
             ActiveList prunedActiveList = activeListFactory.newInstance();
-            for (Iterator t = stream.getActiveList().iterator();
-                 t.hasNext();) {
-                ParallelToken token = (ParallelToken) t.next();
-                if (!token.isPruned()) {
+            for (Token t : stream.getActiveList()) {
+                ParallelToken token = (ParallelToken)t;
+                if (!(token.isPruned())) {
                     prunedActiveList.add(token);
                 }
             }
@@ -369,10 +366,9 @@ public class ParallelSearchManager implements SearchManager {
     /** Grow the delayedExpansionList by first pruning it, and then grow it. */
     private void growDelayedExpansionList() {
 
-        Iterator iterator = delayedExpansionList.iterator();
 
-        while (iterator.hasNext()) {
-            CombineToken token = (CombineToken) iterator.next();
+        for (Token t : delayedExpansionList) {
+            CombineToken token = (CombineToken)t;
             calculateCombinedScore(token);
         }
 
@@ -381,10 +377,8 @@ public class ParallelSearchManager implements SearchManager {
                     combinedScorePruner.prune(delayedExpansionList);
         }
 
-        iterator = delayedExpansionList.iterator();
-
-        while (iterator.hasNext()) {
-            CombineToken token = (CombineToken) iterator.next();
+        for (Token t : delayedExpansionList) {
+            CombineToken token = (CombineToken)t;
             token.setLastCombineTime(currentFrameNumber);
             growCombineToken(token);
         }
@@ -407,11 +401,8 @@ public class ParallelSearchManager implements SearchManager {
      * @param activeList the ActiveList to grow
      */
     private void growActiveList(ActiveList activeList) {
-
-        Iterator iterator = activeList.iterator();
-
-        while (iterator.hasNext()) {
-            ParallelToken token = (ParallelToken) iterator.next();
+        for (Token t : activeList) {
+            ParallelToken token = (ParallelToken)t;
             growParallelToken(token);
         }
     }
@@ -444,10 +435,9 @@ public class ParallelSearchManager implements SearchManager {
         SearchStateArc[] arcs = state.getSuccessors();
 
         // expand into each successor states
-        for (int i = 0; i < arcs.length; i++) {
+        for (SearchStateArc arc : arcs) {
 
-            SearchStateArc arc = arcs[i];
-            SentenceHMMState nextState = (SentenceHMMState) arc.getState();
+            SentenceHMMState nextState = (SentenceHMMState)arc.getState();
 
             // debugPrint("  Entering " + nextState);
 
@@ -455,7 +445,7 @@ public class ParallelSearchManager implements SearchManager {
             Token oldNextToken = getBestToken(nextState);
 
             boolean firstToken = oldNextToken == null ||
-                    oldNextToken.getFrameNumber() != nextFrameNumber;
+                oldNextToken.getFrameNumber() != nextFrameNumber;
 
             // RED states are the unsplitted states, or the non-feature
             // stream states
@@ -473,54 +463,54 @@ public class ParallelSearchManager implements SearchManager {
                     // create a CombineToken and set it as the best
                     // (and only) CombineToken of the state
                     nextToken = new CombineToken
-                            (token, nextState, nextFrameNumber);
+                        (token, nextState, nextFrameNumber);
                     setBestToken(nextState, nextToken);
                     delayedExpansionList.add(nextToken);
                 } else {
                     // get the combine token at the next state
-                    nextToken = (CombineToken) getBestToken(nextState);
+                    nextToken = (CombineToken)getBestToken(nextState);
                 }
 
                 assert (nextToken.getFrameNumber() == nextFrameNumber);
 
                 ParallelToken oldParallelToken =
-                        nextToken.getParallelToken(token.getFeatureStream());
+                    nextToken.getParallelToken(token.getFeatureStream());
 
                 // if this is the first token, or if this score is
                 // greater than the old one in the next CombineToken
                 // add this token or replace the old one with this token
 
                 if (firstToken || oldParallelToken == null ||
-                        oldParallelToken.getScore() <= logEntryScore) {
+                    oldParallelToken.getScore() <= logEntryScore) {
 
                     ParallelToken newToken = new ParallelToken
-                            (token,
-                                    nextState,
-                                    logEntryScore,
-                                    token.getCombinedScore(),
-                                    nextFrameNumber,
-                                    token.getLastCombineTime());
+                        (token,
+                            nextState,
+                            logEntryScore,
+                            token.getCombinedScore(),
+                            nextFrameNumber,
+                            token.getLastCombineTime());
 
                     // add this ParallelToken to the CombineToken.
                     nextToken.addParallelToken(newToken.getFeatureStream(),
-                            newToken);
+                        newToken);
                 }
             } else if (nextState.getColor() == Color.GREEN) {
 
                 // debugPrint("  . GREEN state");
 
                 if (firstToken ||
-                        getBestToken(nextState).getScore() <= logEntryScore) {
+                    getBestToken(nextState).getScore() <= logEntryScore) {
 
                     // debugPrint("  . adding parallel token");
 
                     ParallelToken newToken = new ParallelToken
-                            (token,
-                                    nextState,
-                                    logEntryScore,
-                                    token.getCombinedScore(),
-                                    nextFrameNumber,
-                                    token.getLastCombineTime());
+                        (token,
+                            nextState,
+                            logEntryScore,
+                            token.getCombinedScore(),
+                            nextFrameNumber,
+                            token.getLastCombineTime());
 
                     if (newToken.isEmitting()) {
                         // this is an emitting token (or an emitting state)
@@ -532,9 +522,9 @@ public class ParallelSearchManager implements SearchManager {
                 }
             } else {
                 throw new IllegalStateException
-                        ("Color of state " + nextState.getName() +
-                                " not RED or GREEN, its " +
-                                nextState.getColor() + '!');
+                    ("Color of state " + nextState.getName() +
+                        " not RED or GREEN, its " +
+                        nextState.getColor() + '!');
             }
         }
     }
@@ -584,18 +574,17 @@ public class ParallelSearchManager implements SearchManager {
         SearchStateArc[] arcs = state.getSuccessors();
 
         // expand into each successor states
-        for (int a = 0; a < arcs.length; a++) {
-
-            SentenceHMMStateArc arc = (SentenceHMMStateArc) arcs[a];
-            SentenceHMMState nextState = (SentenceHMMState) arc.getState();
+        for (SearchStateArc stateArc : arcs) {
+            SentenceHMMStateArc arc = (SentenceHMMStateArc)stateArc;
+            SentenceHMMState nextState = (SentenceHMMState)arc.getState();
 
             // debugPrint("Entering " + nextState);
 
             Token oldNextToken = getBestToken(nextState);
 
             boolean firstToken =
-                    (oldNextToken == null ||
-                            oldNextToken.getFrameNumber() != nextFrameNumber);
+                (oldNextToken == null ||
+                    oldNextToken.getFrameNumber() != nextFrameNumber);
 
             // RED states are the unsplitted states, or the non-feature
             // stream states
@@ -610,7 +599,7 @@ public class ParallelSearchManager implements SearchManager {
 
                     // create the next CombineToken for a RED state
                     CombineToken nextToken = new CombineToken
-                            (token, nextState, nextFrameNumber);
+                        (token, nextState, nextFrameNumber);
 
                     // propagate the combined score unchanged
                     nextToken.setScore(logEntryScore);
@@ -618,7 +607,7 @@ public class ParallelSearchManager implements SearchManager {
                     // propagate the individual ParallelTokens, taking
                     // into account the new transition score
                     transitionParallelTokens
-                            (token, nextToken, arc.getProbability());
+                        (token, nextToken, arc.getProbability());
 
                     setBestToken(nextState, nextToken);
 
@@ -627,10 +616,10 @@ public class ParallelSearchManager implements SearchManager {
                 }
             } else if (nextState.getColor() == Color.GREEN) {
 
-                ParallelState pState = (ParallelState) nextState;
+                ParallelState pState = (ParallelState)nextState;
 
                 ParallelToken parallelToken = token.getParallelToken
-                        (pState.getFeatureStream());
+                    (pState.getFeatureStream());
 
                 // we continue into a GREEN/feature stream state only
                 // if there is a ParallelToken for that feature stream
@@ -638,19 +627,19 @@ public class ParallelSearchManager implements SearchManager {
                 if (parallelToken != null) {
 
                     float logEntryScore = arc.getProbability() +
-                            parallelToken.getFeatureScore();
-                    ParallelToken oldToken = (ParallelToken) oldNextToken;
+                        parallelToken.getFeatureScore();
+                    ParallelToken oldToken = (ParallelToken)oldNextToken;
 
                     if (firstToken ||
-                            oldToken.getFeatureScore() <= logEntryScore) {
+                        oldToken.getFeatureScore() <= logEntryScore) {
 
                         ParallelToken nextToken = new ParallelToken
-                                (parallelToken,
-                                        nextState,
-                                        logEntryScore,
-                                        parallelToken.getCombinedScore(),
-                                        nextFrameNumber,
-                                        parallelToken.getLastCombineTime());
+                            (parallelToken,
+                                nextState,
+                                logEntryScore,
+                                parallelToken.getCombinedScore(),
+                                nextFrameNumber,
+                                parallelToken.getLastCombineTime());
 
                         // replace the oldBestToken with this new token
                         if (nextState.isEmitting()) {
@@ -664,7 +653,7 @@ public class ParallelSearchManager implements SearchManager {
                 }
             } else {
                 throw new IllegalStateException
-                        ("Color of state not RED or GREEN!");
+                    ("Color of state not RED or GREEN!");
             }
         }
     }
@@ -683,9 +672,7 @@ public class ParallelSearchManager implements SearchManager {
                                           float transitionScore) {
         // propagate the individual ParallelTokens, taking
         // into account the new transition scores
-        for (Iterator i = oldToken.iterator(); i.hasNext();) {
-
-            ParallelToken pToken = (ParallelToken) i.next();
+        for (ParallelToken pToken : oldToken) {
             ParallelToken newParallelToken = new ParallelToken
                     (pToken,
                             (SentenceHMMState) newToken.getSearchState(),

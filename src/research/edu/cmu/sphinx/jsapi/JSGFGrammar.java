@@ -172,11 +172,11 @@ public class JSGFGrammar extends Grammar {
     private RuleStack ruleStack;
     private Recognizer recognizer;
     private String grammarName;
-    private URL baseURL = null;
+    private URL baseURL;
     private LogMath logMath;
 
     private boolean loadGrammar = true;
-    private GrammarNode firstNode = null;
+    private GrammarNode firstNode;
 
 
     /*
@@ -299,8 +299,7 @@ public class JSGFGrammar extends Grammar {
     private GrammarGraph parseRuleName(RuleName initialRuleName)
             throws GrammarException {
         debugPrintln("parseRuleName: " + initialRuleName);
-        GrammarGraph result = (GrammarGraph) ruleStack.contains(initialRuleName
-                .getRuleName());
+        GrammarGraph result = ruleStack.contains(initialRuleName.getRuleName());
 
         if (result != null) { // its a recursive call
             return result;
@@ -414,11 +413,11 @@ public class JSGFGrammar extends Grammar {
     private void normalizeWeights(float[] weights) {
         if (weights != null) {
             double sum = 0.0;
-            for (int i = 0; i < weights.length; i++) {
-                if (weights[i] < 0) {
+            for (float weight : weights) {
+                if (weight < 0) {
                     throw new IllegalArgumentException("negative weight");
                 }
-                sum += weights[i];
+                sum += weight;
             }
             for (int i = 0; i < weights.length; i++) {
                 if (sum == 0.0f) {
@@ -506,16 +505,16 @@ public class JSGFGrammar extends Grammar {
      */
     private void dumpGrammarException(GrammarException ge) {
         System.out.println("Grammar exception " + ge);
-        GrammarSyntaxDetail[] gsd = ge.getDetails();
-        if (gsd != null) {
-            for (int i = 0; i < gsd.length; i++) {
-                System.out.println("Grammar Name: " + gsd[i].grammarName);
-                System.out.println("Grammar Loc : " + gsd[i].grammarLocation);
-                System.out.println("Import Name : " + gsd[i].importName);
-                System.out.println("Line number : " + gsd[i].lineNumber);
-                System.out.println("char number : " + gsd[i].charNumber);
-                System.out.println("Rule name   : " + gsd[i].ruleName);
-                System.out.println("Message     : " + gsd[i].message);
+        GrammarSyntaxDetail[] details = ge.getDetails();
+        if (details != null) {
+            for (GrammarSyntaxDetail gsd : details) {
+                System.out.println("Grammar Name: " + gsd.grammarName);
+                System.out.println("Grammar Loc : " + gsd.grammarLocation);
+                System.out.println("Import Name : " + gsd.importName);
+                System.out.println("Line number : " + gsd.lineNumber);
+                System.out.println("char number : " + gsd.charNumber);
+                System.out.println("Rule name   : " + gsd.ruleName);
+                System.out.println("Message     : " + gsd.message);
             }
         }
     }
@@ -544,8 +543,7 @@ public class JSGFGrammar extends Grammar {
             // for each of them
 
             String[] ruleNames = ruleGrammar.listRuleNames();
-            for (int i = 0; i < ruleNames.length; i++) {
-                String ruleName = ruleNames[i];
+            for (String ruleName : ruleNames) {
                 if (ruleGrammar.isRulePublic(ruleName)) {
                     String fullName = getFullRuleName(ruleName);
                     GrammarGraph publicRuleGraph = new GrammarGraph();
@@ -557,7 +555,7 @@ public class JSGFGrammar extends Grammar {
                     firstNode.add(publicRuleGraph.getStartNode(), 0.0f);
                     publicRuleGraph.getEndNode().add(finalNode, 0.0f);
                     publicRuleGraph.getStartNode().add(
-                            graph.getStartNode(), 0.0f);
+                        graph.getStartNode(), 0.0f);
                     graph.getEndNode().add(publicRuleGraph.getEndNode(), 0.0f);
                 }
             }
@@ -672,8 +670,8 @@ public class JSGFGrammar extends Grammar {
     /** Manages a stack of grammar graphs that can be accessed by grammar name */
     class RuleStack {
 
-        private List stack;
-        private HashMap map;
+        private List<String> stack;
+        private HashMap<String, GrammarGraph> map;
 
 
         /** Creates a name stack */
@@ -703,7 +701,7 @@ public class JSGFGrammar extends Grammar {
          */
         public GrammarGraph contains(String name) {
             if (stack.contains(name)) {
-                return (GrammarGraph) (GrammarGraph) map.get(name);
+                return map.get(name);
             } else {
                 return null;
             }
@@ -712,8 +710,8 @@ public class JSGFGrammar extends Grammar {
 
         /** Clears this name stack */
         public void clear() {
-            stack = new LinkedList();
-            map = new HashMap();
+            stack = new LinkedList<String>();
+            map = new HashMap<String, GrammarGraph>();
         }
     }
 }

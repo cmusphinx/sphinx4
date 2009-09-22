@@ -11,23 +11,12 @@
  */
 package tests.result.lattice;
 
-import edu.cmu.sphinx.frontend.util.StreamDataSource;
-
 import edu.cmu.sphinx.linguist.dictionary.Dictionary;
 
-import edu.cmu.sphinx.recognizer.Recognizer;
-
-import edu.cmu.sphinx.result.ConfidenceResult;
-import edu.cmu.sphinx.result.ConfidenceScorer;
 import edu.cmu.sphinx.result.GDLLatticeFactory;
 import edu.cmu.sphinx.result.Lattice;
-import edu.cmu.sphinx.result.LatticeOptimizer;
-import edu.cmu.sphinx.result.MAPConfidenceScorer;
-import edu.cmu.sphinx.result.Path;
-import edu.cmu.sphinx.result.Result;
 import edu.cmu.sphinx.result.SausageMaker;
 import edu.cmu.sphinx.result.Sausage;
-import edu.cmu.sphinx.result.WordResult;
 
 import edu.cmu.sphinx.util.LogMath;
 
@@ -37,11 +26,6 @@ import edu.cmu.sphinx.util.props.PropertyException;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-
-import javax.sound.sampled.AudioFormat;
-import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.UnsupportedAudioFileException;
 
 public class GDLLatticeTest {
 

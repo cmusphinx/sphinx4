@@ -20,7 +20,7 @@ import edu.cmu.sphinx.linguist.dictionary.Pronunciation;
 /** Dummy trainer dictionary. */
 public class TrainerDictionary extends FullDictionary {
 
-    static private Dictionary dictionary = null;
+    static private Dictionary dictionary;
 
     static final String UTTERANCE_BEGIN_SYMBOL = "<s>";
     static final String UTTERANCE_END_SYMBOL = "</s>";
@@ -49,7 +49,7 @@ public class TrainerDictionary extends FullDictionary {
             String number =
                     word.replaceFirst(".*\\(", "").replaceFirst("\\)", "");
             try {
-                pronunciationID = Integer.valueOf(number).intValue();
+                pronunciationID = Integer.parseInt(number);
             } catch (NumberFormatException nfe) {
                 throw new Error("Word with invalid pronunciation ID", nfe);
             }
@@ -79,9 +79,9 @@ public class TrainerDictionary extends FullDictionary {
         } else {
             prevNode = null;
         }
-        for (int i = 0; i < units.length; i++) {
+        for (Unit unit : units) {
             // create a new node for the next unit
-            wordNode = new Node(NodeType.PHONE, units[i].getName());
+            wordNode = new Node(NodeType.PHONE, unit.getName());
             if (prevNode == null) {
                 wordGraph.addNode(wordNode);
                 wordGraph.setInitialNode(wordNode);

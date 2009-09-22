@@ -38,9 +38,7 @@ public class BestConfidenceAccuracyTracker extends AccuracyTracker {
     */
     public void newProperties(PropertySheet ps) throws PropertyException {
         super.newProperties(ps);
-        confidenceScorer = (ConfidenceScorer) ps.getComponent(
-                PROP_CONFIDENCE_SCORER
-        );
+        confidenceScorer = (ConfidenceScorer)ps.getComponent(PROP_CONFIDENCE_SCORER);
     }
 
 
@@ -48,8 +46,8 @@ public class BestConfidenceAccuracyTracker extends AccuracyTracker {
     protected String getTranscriptionNoFiller(Path path) {
         StringBuilder sb = new StringBuilder();
         WordResult[] words = path.getWords();
-        for (int i = 0; i < words.length; i++) {
-            Word word = words[i].getPronunciation().getWord();
+        for (WordResult wordResult : words) {
+            Word word = wordResult.getPronunciation().getWord();
             if (!word.isFiller() && !word.getSpelling().equals("<unk>")) {
                 sb.append(word.getSpelling()).append(' ');
             }
@@ -62,8 +60,8 @@ public class BestConfidenceAccuracyTracker extends AccuracyTracker {
     protected String getTranscriptionRaw(Path path) {
         StringBuilder sb = new StringBuilder();
         WordResult[] words = path.getWords();
-        for (int i = 0; i < words.length; i++) {
-            Word word = words[i].getPronunciation().getWord();
+        for (WordResult wordResult : words) {
+            Word word = wordResult.getPronunciation().getWord();
             sb.append(word.getSpelling()).append(' ');
         }
         return sb.toString().trim();

@@ -21,7 +21,7 @@ public class ExcessiveNonSpeechPruner extends BaseDataProcessor {
 
     private int maxNonSpeechTime;
     private boolean inSpeech;
-    private int nonSpeechCounter = 0;
+    private int nonSpeechCounter;
 
 
     /**

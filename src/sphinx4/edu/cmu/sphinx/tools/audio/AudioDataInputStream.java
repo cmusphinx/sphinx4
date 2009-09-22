@@ -20,8 +20,8 @@ import java.io.InputStream;
 public class AudioDataInputStream extends InputStream {
 
     AudioFormat format;
-    int currentIndex = 0;
-    int markIndex = 0;
+    int currentIndex;
+    int markIndex;
     short[] shorts;
     byte[] bytes;
 

@@ -29,7 +29,7 @@ public class Word {
 
     private String spelling;               // the spelling of the word
     private Pronunciation[] pronunciations; // pronunciations of this word
-    private boolean isFiller = false;
+    private boolean isFiller;
 
 
     /**
@@ -119,10 +119,10 @@ public class Word {
     public Pronunciation getMostLikelyPronunciation() {
         float bestScore = Float.NEGATIVE_INFINITY;
         Pronunciation best = null;
-        for (int i = 0; i < pronunciations.length; i++) {
-            if (pronunciations[i].getProbability() > bestScore) {
-                bestScore = pronunciations[i].getProbability();
-                best = pronunciations[i];
+        for (Pronunciation pronunciation : pronunciations) {
+            if (pronunciation.getProbability() > bestScore) {
+                bestScore = pronunciation.getProbability();
+                best = pronunciation;
             }
         }
         return best;

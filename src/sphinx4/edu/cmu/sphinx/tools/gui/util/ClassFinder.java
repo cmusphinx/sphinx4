@@ -70,10 +70,10 @@ public class ClassFinder {
         validateDirectory(tempDir);
         File[] myFilesDirs = tempDir.listFiles();
 
-        for (int i = 0; i < myFilesDirs.length; i++) {
-            if (myFilesDirs[i].isDirectory()) {
+        for (File file : myFilesDirs) {
+            if (file.isDirectory()) {
                 // if it's directory, add the name to result list
-                folderList.add(myFilesDirs[i].getName());
+                folderList.add(file.getName());
             }
         }
         return folderList;        // list of String folderName 
@@ -90,7 +90,7 @@ public class ClassFinder {
      *                     model startDir and '.class' extension not included as package name
      * @throws ClassNotFoundException, FileNotFoundException
      */
-    public static void findClasses(String startDir, String startPackage, Set classList)
+    public static void findClasses(String startDir, String startPackage, Set<Class<?>> classList)
             throws ClassNotFoundException, FileNotFoundException {
         File tempDir = getStartingDir(startDir);
         validateDirectory(tempDir);
@@ -98,20 +98,20 @@ public class ClassFinder {
         File[] myFilesDirs = tempDir.listFiles();
         String tempFile = null;
 
-        for (int i = 0; i < myFilesDirs.length; i++) {
-            // go through each file and directory               
-            tempFile = myFilesDirs[i].getName();
-            if (myFilesDirs[i].isDirectory()) {
+        for (File file : myFilesDirs) {
+            // go through each file and directory
+            tempFile = file.getName();
+            if (file.isDirectory()) {
                 // if it's directory, go deeper recursively
                 findClasses(startDir + '/' + tempFile, startPackage + '.' + tempFile, classList);
             } else if (tempFile.endsWith(".class")) {
-                // removes the .class extension                    
+                // removes the .class extension
                 // if it's a file, check if it's a java .class file
                 // System.out.println("=== check class" + tempFile);
-                validateFile(myFilesDirs[i]);
+                validateFile(file);
                 try {
                     String classname = startPackage + '.' + tempFile.substring(0, tempFile.length() - 6);
-                    Class addclass = Class.forName(classname);
+                    Class<?> addclass = Class.forName(classname);
                     /* change this to URLClassLoader                                       
                       Class addclass =  Thread.currentThread().getContextClassLoader().loadClass(classname);
                       System.err.println(classname);
@@ -153,9 +153,9 @@ public class ClassFinder {
 
         // will check all the public fields
         // if any of them is with modifier 'public static final' and starts with 'PROP_'        
-        for (int i = 0; i < publicFields.length; i++) {
-            int m = publicFields[i].getModifiers();
-            String fieldname = publicFields[i].getName();
+        for (Field field : publicFields) {
+            int m = field.getModifiers();
+            String fieldname = field.getName();
             if (Modifier.isPublic(m) && Modifier.isStatic(m) && Modifier.isFinal(m)) {
 
                 if (fieldname.startsWith("PROP_"))
@@ -180,15 +180,15 @@ public class ClassFinder {
         //check the implemented interfaces
         Class[] theInterfaces = c.getInterfaces();
 
-        for (int i = 0; i < theInterfaces.length; i++) {
-            interfaceName = theInterfaces[i].getName();
+        for (Class cls : theInterfaces) {
+            interfaceName = cls.getName();
             //System.out.println("***This class "+c.getName()+" has interface "+interfaceName);
             if (interfaceName.equalsIgnoreCase("edu.cmu.sphinx.util.props.Configurable")) {
                 return true;
             } else if (interfaceName.startsWith(COMMON_SPHINX_PACKAGE)) {
                 //check the implemented interface only if they starts with 'edu'
                 //so, java library classes are not traversed
-                if (filterClass(theInterfaces[i])) {
+                if (filterClass(cls)) {
                     return true;
                 }
             }

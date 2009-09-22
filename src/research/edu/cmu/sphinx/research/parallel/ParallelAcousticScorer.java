@@ -19,7 +19,6 @@ import edu.cmu.sphinx.frontend.FrontEnd;
 import edu.cmu.sphinx.util.props.PropertyException;
 import edu.cmu.sphinx.util.props.PropertySheet;
 
-import java.util.Iterator;
 import java.util.List;
 
 
@@ -40,7 +39,7 @@ public class ParallelAcousticScorer extends AbstractScorer {
      * @return the best scoring scorable, or null if there are no more frames to score
      */
     public Data calculateScores(List<? extends Scoreable> scoreableList) {
-        frontEnd = getFrontEnd(scoreableList);
+        frontEnd = getFrontEnd((List<ParallelToken>)scoreableList);
         return super.calculateScores(scoreableList);
     }
 
@@ -65,14 +64,7 @@ public class ParallelAcousticScorer extends AbstractScorer {
      *
      * @return the acoustic model name of the Tokens
      */
-    private FrontEnd getFrontEnd(List activeList) {
-        if (activeList.size() > 0) {
-            Iterator i = activeList.iterator();
-            if (i.hasNext()) {
-                ParallelToken token = (ParallelToken) i.next();
-                return token.getFeatureStream().getFrontEnd();
-            }
-        }
-        return null;
+    private FrontEnd getFrontEnd(List<ParallelToken> activeList) {
+        return activeList.isEmpty() ? null : activeList.get(0).getFeatureStream().getFrontEnd();
     }
 }

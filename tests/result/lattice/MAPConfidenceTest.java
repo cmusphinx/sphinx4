@@ -17,9 +17,6 @@ import edu.cmu.sphinx.recognizer.Recognizer;
 
 import edu.cmu.sphinx.result.ConfidenceResult;
 import edu.cmu.sphinx.result.ConfidenceScorer;
-import edu.cmu.sphinx.result.Lattice;
-import edu.cmu.sphinx.result.LatticeOptimizer;
-import edu.cmu.sphinx.result.MAPConfidenceScorer;
 import edu.cmu.sphinx.result.Path;
 import edu.cmu.sphinx.result.Result;
 import edu.cmu.sphinx.result.WordResult;
@@ -31,8 +28,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 
-import javax.sound.sampled.AudioFormat;
-import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
@@ -44,7 +39,7 @@ public class MAPConfidenceTest {
     public static void main(String[] args) {
         try {            
             URL audioFileURL;
-	    if (args.length > 0) {
+	        if (args.length > 0) {
                 audioFileURL = new File(args[0]).toURI().toURL();
             } else {
                 audioFileURL = new File("green.wav").toURI().toURL();
@@ -54,47 +49,39 @@ public class MAPConfidenceTest {
             System.out.println("Loading Recognizer...\n");
 
             ConfigurationManager cm = new ConfigurationManager(configURL);
-	    Recognizer recognizer = (Recognizer) cm.lookup("recognizer");
+	        Recognizer recognizer = (Recognizer)cm.lookup("recognizer");
 
             /* allocate the resource necessary for the recognizer */
             recognizer.allocate();
 
-	    StreamDataSource reader
-		= (StreamDataSource) cm.lookup("streamDataSource");
+	        StreamDataSource reader = (StreamDataSource)cm.lookup("streamDataSource");
 
             /* set the stream data source to read from the audio file */
-	    reader.setInputStream
-		(AudioSystem.getAudioInputStream(audioFileURL),
-		 audioFileURL.getFile());
+	        reader.setInputStream(AudioSystem.getAudioInputStream(audioFileURL), audioFileURL.getFile());
 
             /* decode the audio file */
             Result result = recognizer.recognize();
             
             /* print out the results */
             if (result != null) {
-                ConfidenceScorer cs = (ConfidenceScorer) cm.lookup
-                    ("confidenceScorer");
+                ConfidenceScorer cs = (ConfidenceScorer)cm.lookup("confidenceScorer");
                 ConfidenceResult cr = cs.score(result);
                 Path best = cr.getBestHypothesis();
 
                 /* print out confidence of individual words in the best path */
                 WordResult[] words = best.getWords();
-                for (int i = 0; i < words.length; i++) {
-                    WordResult wr = words[i];
-                    System.out.println
-                        (wr.getPronunciation().getWord().getSpelling());
-                    System.out.println
-                        ("   (confidence: " +
-                         wr.getLogMath().logToLinear((float)wr.getConfidence()) + ')');
+                for (WordResult wr : words) {
+                    System.out.println(wr.getPronunciation().getWord().getSpelling());
+                    System.out.println("   (confidence: " +
+                        wr.getLogMath().logToLinear((float)wr.getConfidence()) + ')');
                 }
 
                 System.out.println();
 
                 /* confidence of the best path */
                 System.out.println(best.getTranscription());
-                System.out.println
-                    ("   (confidence: " +
-                     best.getLogMath().logToLinear((float)best.getConfidence()) + ')');
+                System.out.println("   (confidence: " +
+                    best.getLogMath().logToLinear((float)best.getConfidence()) + ')');
             }
         } catch (IOException e) {
             System.err.println("Problem when loading MAPConfidenceTest: " + e);

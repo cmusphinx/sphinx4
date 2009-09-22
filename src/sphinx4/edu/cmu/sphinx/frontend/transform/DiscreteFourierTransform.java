@@ -67,7 +67,7 @@ public class DiscreteFourierTransform extends BaseDataProcessor {
     private int numberFftPoints;
     private int logBase2NumberFftPoints;
     private int numberDataPoints;
-    private boolean invert = false;
+    private boolean invert;
 
     private Complex[] weightFft;
     private Complex[] inputFrame;

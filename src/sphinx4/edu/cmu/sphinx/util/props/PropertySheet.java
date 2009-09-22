@@ -220,9 +220,9 @@ public class PropertySheet implements Cloneable {
         Double propValue;
 	
         if (propObject instanceof Double)
-    	    propValue = (Double) propObject;
-        else if (propObject instanceof Integer)
-            propValue = new Double((Integer) propObject);
+    	    propValue = (Double)propObject;
+        else if (propObject instanceof Number)
+            propValue = ((Number)propObject).doubleValue();
         else
     	    propValue = Double.valueOf(flattenProp(name));
 
@@ -250,7 +250,7 @@ public class PropertySheet implements Cloneable {
         S4Boolean s4Boolean = (S4Boolean) s4PropWrapper.getAnnotation();
 
         if (propValues.get(name) == null)
-            propValues.put(name, (Boolean)s4Boolean.defaultValue());
+            propValues.put(name, s4Boolean.defaultValue());
  
         Object propObject = propValues.get(name);
         Boolean propValue;

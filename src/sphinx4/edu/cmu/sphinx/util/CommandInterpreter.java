@@ -29,15 +29,15 @@ import java.util.regex.PatternSyntaxException;
 public class CommandInterpreter extends Thread {
 
     private Map<String, CommandInterface> commandList;
-    private int totalCommands = 0;
+    private int totalCommands;
     private BufferedReader in;
     private PrintWriter out;
     private String prompt;
-    private boolean done = false;
-    private boolean trace = false;
+    private boolean done;
+    private boolean trace;
     private CommandHistory history = new CommandHistory();
 
-    private Socket socket = null;
+    private Socket socket;
 
 
     /**
@@ -174,8 +174,8 @@ public class CommandInterpreter extends Thread {
                     StringBuilder b = new StringBuilder(80);
 
                     System.out.println("arg length is " + args.length);
-                    for (int i = 0; i < args.length; i++) {
-                        b.append(args[i]);
+                    for (String arg : args) {
+                        b.append(arg);
                         b.append('\n');
                     }
                     putResponse(b.toString());
@@ -350,9 +350,8 @@ public class CommandInterpreter extends Thread {
                         count = 0;
                     }
 
-                    for (Iterator<String[]> i = commands.iterator(); i.hasNext();) {
-                        putResponse(CommandInterpreter.this.execute(
-                                i.next()));
+                    for (String[] command : commands) {
+                        putResponse(CommandInterpreter.this.execute(command));
                     }
                 } else {
                     putResponse("Usage: chain cmd1 ; cmd2 ; cmd3 ");
@@ -400,8 +399,7 @@ public class CommandInterpreter extends Thread {
         Set<String> unsortedKeys = commandList.keySet();
         Set<String> sortedKeys = new TreeSet<String>(unsortedKeys);
 
-        for (Iterator<String> i = sortedKeys.iterator(); i.hasNext();) {
-            String cmdName = i.next();
+        for (String cmdName : sortedKeys) {
             String help = (commandList.get(cmdName)).getHelp();
             putResponse(cmdName + " - " + help);
         }
@@ -538,7 +536,7 @@ public class CommandInterpreter extends Thread {
                 break;
             }
         }
-        return (String[]) words.toArray(new String[words.size()]);
+        return words.toArray(new String[words.size()]);
     }
 
     // inherited from thread.

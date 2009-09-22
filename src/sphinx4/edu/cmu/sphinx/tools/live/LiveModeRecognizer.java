@@ -134,7 +134,7 @@ public class LiveModeRecognizer implements Configurable {
         // perform alignment on remaining results
         List<String> references = referenceSource.getReferences();
         List<String> section = references.subList(startReference, references.size());
-        if (resultList.size() > 0 || section.size() > 0) {
+        if (!resultList.isEmpty() || !section.isEmpty()) {
             alignResults(resultList, section);
         }
         System.out.println("# ------------- Summary Statistics -------------");

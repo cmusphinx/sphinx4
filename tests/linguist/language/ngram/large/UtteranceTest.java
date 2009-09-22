@@ -20,7 +20,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -131,7 +130,7 @@ public class UtteranceTest {
             StringTokenizer st = new StringTokenizer(input);
             List<Word> list = new ArrayList<Word>();
             while (st.hasMoreTokens()) {
-                String tok = (String) st.nextToken().toLowerCase();
+                String tok = st.nextToken().toLowerCase();
                 list.add(dictionary.getWord(tok));
             }
             WordSequence wordSequence = new WordSequence(list);
@@ -143,25 +142,22 @@ public class UtteranceTest {
 
         timer.start();
 
-	lm.start();
+	    lm.start();
 
-	for (Iterator<WordSequence> i = wordSequences.iterator(); i.hasNext(); ) {
-	    WordSequence ws = (WordSequence) i.next();
+        for (WordSequence ws : wordSequences) {
             logScores[s++] = (int)lm.getProbability(ws);
-	}
+        }
 
-	totalQueries += s;
+	    totalQueries += s;
 	
-	lm.stop();
+	    lm.stop();
 	
         timer.stop();
 	
         if (printScores) {
             s = 0;
-            for (Iterator<WordSequence> i = wordSequences.iterator(); i.hasNext(); ) {
-                WordSequence ws = (WordSequence) i.next();
-                outStream.println(Utilities.pad(logScores[s++], 10) + ' ' +
-                                  ws.toString().toUpperCase());
+            for (WordSequence ws : wordSequences) {
+                outStream.println(Utilities.pad(logScores[s++], 10) + ' ' + ws.toString().toUpperCase());
             }
         }
     }

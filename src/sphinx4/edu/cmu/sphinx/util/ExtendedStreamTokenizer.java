@@ -23,7 +23,7 @@ public class ExtendedStreamTokenizer {
     private String path;
     private StreamTokenizer st;
     private Reader reader;
-    private boolean atEOF = false;
+    private boolean atEOF;
     private List<String> putbackList;
 
 
@@ -140,7 +140,7 @@ public class ExtendedStreamTokenizer {
      * @throws IOException              if an error occurs while loading the data
      */
     public String getString() throws StreamCorruptedException, IOException {
-        if (putbackList.size() > 0) {
+        if (!putbackList.isEmpty()) {
             return putbackList.remove(putbackList.size() - 1);
         } else {
             st.nextToken();

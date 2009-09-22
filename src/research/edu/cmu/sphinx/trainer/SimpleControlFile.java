@@ -33,10 +33,10 @@ public class SimpleControlFile implements ControlFile {
     private String wordSeparator;       // the word separator
     private int currentPartition;       // the current partition
     private int numberOfPartitions;     // total number of partitions
-    private Iterator audioFileIterator; // iterator for the control file
-    private Iterator transcriptFileIterator; // iterator for the transcriptions
-    private List audioFileList;         // list containing the audio files
-    private List transcriptFileList;    // list containing the transcriptions
+    private Iterator<String> audioFileIterator; // iterator for the control file
+    private Iterator<String> transcriptFileIterator; // iterator for the transcriptions
+    private List<String> audioFileList;         // list containing the audio files
+    private List<String> transcriptFileList;    // list containing the transcriptions
 
 
     /*
@@ -100,11 +100,11 @@ public class SimpleControlFile implements ControlFile {
     public Utterance nextUtterance() {
         logger.fine("processing ext utterance");
         
-        String utteranceLine = (String) audioFileIterator.next();
+        String utteranceLine = audioFileIterator.next();
         Utterance utterance = new SimpleUtterance(utteranceLine);
         String utteranceFilename =
                 utteranceLine.replaceFirst("^.*/", "").replaceFirst("\\..*$", "");
-        String transcriptLine = (String) transcriptFileIterator.next();
+        String transcriptLine = transcriptFileIterator.next();
         // Finds out if the audio file name is part of the transcript line
         assert transcriptLine.matches(".*[ \t]\\(" + utteranceFilename + "\\)$") :
                 "File name in transcript \"" + transcriptLine +
@@ -127,8 +127,8 @@ public class SimpleControlFile implements ControlFile {
      * @param file the name of the file
      * @throws IOException if error occurs while reading file
      */
-    private List getLines(String file) throws IOException {
-        List list = new ArrayList();
+    private List<String> getLines(String file) throws IOException {
+        List<String> list = new ArrayList<String>();
         BufferedReader reader
                 = new BufferedReader(new FileReader(file));
 

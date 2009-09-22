@@ -26,7 +26,7 @@ import java.util.List;
  */
 public class ConcatAudioFileDataSource extends AudioFileDataSource implements ReferenceSource {
 
-    private URL nextFile = null;
+    private URL nextFile;
     private List<String> referenceList;
     private boolean isInitialized;
 
@@ -127,7 +127,7 @@ public class ConcatAudioFileDataSource extends AudioFileDataSource implements Re
      * into an Enumeration, and then fed it to a SequenceInputStream, giving the illusion that the audio files are
      * concatenated, but only logically.
      */
-    class InputStreamEnumeration implements Enumeration {
+    class InputStreamEnumeration implements Enumeration<AudioInputStream> {
 
         private URL lastFile;
         Iterator<URL> fileIt;
@@ -158,8 +158,8 @@ public class ConcatAudioFileDataSource extends AudioFileDataSource implements Re
          *
          * @return the next element of this enumeration.
          */
-        public Object nextElement() {
-            Object stream = null;
+        public AudioInputStream nextElement() {
+            AudioInputStream stream = null;
             if (lastFile == null) {
                 nextFile = readNext();
             }
@@ -187,8 +187,8 @@ public class ConcatAudioFileDataSource extends AudioFileDataSource implements Re
                     // System.out.println(nextFile);
 
                     logger.finer("Strating processing of '" + lastFile.getFile() + '\'');
-                    for (int i = 0; i < fileListeners.size(); i++)
-                        fileListeners.get(i).audioFileProcStarted(new File(nextFile.getFile()));
+                    for (AudioFileProcessListener fl : fileListeners)
+                        fl.audioFileProcStarted(new File(nextFile.getFile()));
 
                     lastFile = nextFile;
                     nextFile = null;
@@ -212,8 +212,8 @@ public class ConcatAudioFileDataSource extends AudioFileDataSource implements Re
         public URL readNext() {
             if (lastFile != null) {
                 logger.finest("Finished processing of '" + lastFile.getFile() + '\'');
-                for (int i = 0; i < fileListeners.size(); i++)
-                    fileListeners.get(i).audioFileProcFinished(new File(lastFile.getFile()));
+                for (AudioFileProcessListener fl : fileListeners)
+                    fl.audioFileProcFinished(new File(lastFile.getFile()));
 
                 lastFile = null;
             }

@@ -30,8 +30,8 @@ public class AudioPanel extends JPanel
     private float xScale;
     private float yScale;
     private float originalXScale;
-    private int xDragStart = 0;
-    private int xDragEnd = 0;
+    private int xDragStart;
+    private int xDragEnd;
     protected int selectionStart = -1;
     protected int selectionEnd = -1;
 

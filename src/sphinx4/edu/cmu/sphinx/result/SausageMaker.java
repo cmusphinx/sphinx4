@@ -62,7 +62,7 @@ public class SausageMaker extends AbstractSausageMaker {
      * @return the latest begin time
      */
     private int getLatestBeginTime(List<Node> cluster) {
-        if (cluster.size() == 0) {
+        if (cluster.isEmpty()) {
             return -1;
         }
         int startTime = 0;
@@ -82,7 +82,7 @@ public class SausageMaker extends AbstractSausageMaker {
      * @return the earliest end time
      */
     private int getEarliestEndTime(List<Node> cluster) {
-        if (cluster.size() == 0) {
+        if (cluster.isEmpty()) {
             return -1;
         }
         int endTime = Integer.MAX_VALUE;
@@ -140,10 +140,10 @@ public class SausageMaker extends AbstractSausageMaker {
      * @return the string edit distance between the two lists
      */
     protected static int stringEditDistance(List p1, List p2) {
-        if (p1.size() == 0) {
+        if (p1.isEmpty()) {
             return p2.size();
         }
-        if (p2.size() == 0) {
+        if (p2.isEmpty()) {
             return p1.size();
         }
         int[][] distances = new int[p1.size() + 1][p2.size() + 1];
@@ -298,15 +298,13 @@ public class SausageMaker extends AbstractSausageMaker {
         Cluster toBeMerged1 = null;
         Cluster toBeMerged2 = null;
         double maxSim = Double.NEGATIVE_INFINITY;
-        ListIterator<Cluster> i = clusters.listIterator();
-        while (i.hasNext()) {
+        for (ListIterator<Cluster> i = clusters.listIterator(); i.hasNext();) {
             Cluster c1 = i.next();
             if (!i.hasNext()) {
                 break;
             }
-            ListIterator<Cluster> j = clusters.listIterator(i.nextIndex());
-            while (j.hasNext()) {
-                Cluster c2 = (Cluster) j.next();
+            for (ListIterator<Cluster> j = clusters.listIterator(i.nextIndex()); j.hasNext();) {
+                Cluster c2 = j.next();
                 double sim = intraClusterDistance(c1, c2);
                 if (sim > maxSim) {
                     maxSim = sim;
@@ -364,8 +362,8 @@ public class SausageMaker extends AbstractSausageMaker {
     private List<Cluster> topologicalSort(List<Cluster> clusters) {
         Comparator<Cluster> comparator = new ClusterComparator();
         List<Cluster> sorted = new ArrayList<Cluster>(clusters.size());
-        while (clusters.size() > 0) {
-            Cluster cluster = (Cluster) Collections.min(clusters, comparator);
+        while (!clusters.isEmpty()) {
+            Cluster cluster = Collections.min(clusters, comparator);
             clusters.remove(cluster);
             sorted.add(cluster);
         }

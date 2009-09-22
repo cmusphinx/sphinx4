@@ -159,7 +159,7 @@ class SimpleTrainManager implements TrainManager {
         dumpMemoryInfo("TrainManager start");
 
         models = getTrainerAcousticModels();
-        for (int m = 0; m < models.length; m++) {
+        for (TrainerAcousticModel model : models) {
 
             if (controlFile == null) {
                 controlFile = ConfigurationManager.getInstance(SimpleControlFile.class);
@@ -170,12 +170,12 @@ class SimpleTrainManager implements TrainManager {
                 initLearner.setUtterance(utterance);
                 while ((score = learner.getScore()) != null) {
                     assert score.length == 1;
-                    models[m].accumulate(0, score);
+                    model.accumulate(0, score);
                 }
             }
 
             // normalize() has a return value, but we can ignore it here.
-            models[m].normalize();
+            model.normalize();
         }
         dumpMemoryInfo("acoustic model");
     }
@@ -217,7 +217,7 @@ class SimpleTrainManager implements TrainManager {
 
         assert models != null;
         models = getTrainerAcousticModels();
-        for (int m = 0; m < models.length; m++) {
+        for (TrainerAcousticModel model : models) {
             float logLikelihood;
             float lastLogLikelihood = Float.MAX_VALUE;
             float relativeImprovement = 100.0f;
@@ -226,44 +226,44 @@ class SimpleTrainManager implements TrainManager {
             }
             for (int iteration = 0;
                  (iteration < maxIteration) &&
-                         (relativeImprovement > minimumImprovement);
+                     (relativeImprovement > minimumImprovement);
                  iteration++) {
                 System.out.println("Iteration: " + iteration);
-                models[m].resetBuffers();
+                model.resetBuffers();
                 for (controlFile.startUtteranceIterator();
                      controlFile.hasMoreUtterances();) {
                     Utterance utterance = controlFile.nextUtterance();
                     uttGraph =
-                            new UtteranceHMMGraph(context, utterance, models[m]);
+                        new UtteranceHMMGraph(context, utterance, model);
                     learner.setUtterance(utterance);
                     learner.setGraph(uttGraph);
                     nextScore = null;
                     while ((score = learner.getScore()) != null) {
                         for (int i = 0; i < score.length; i++) {
                             if (i > 0) {
-                                models[m].accumulate(i, score, nextScore);
+                                model.accumulate(i, score, nextScore);
                             } else {
-                                models[m].accumulate(i, score);
+                                model.accumulate(i, score);
                             }
                         }
                         nextScore = score;
                     }
-                    models[m].updateLogLikelihood();
+                    model.updateLogLikelihood();
                 }
-                logLikelihood = models[m].normalize();
+                logLikelihood = model.normalize();
                 System.out.println("Loglikelihood: " + logLikelihood);
                 saveModels(context);
                 if (iteration > 0) {
                     if (lastLogLikelihood != 0) {
                         relativeImprovement =
-                                (logLikelihood - lastLogLikelihood) /
-                                        lastLogLikelihood * 100.0f;
+                            (logLikelihood - lastLogLikelihood) /
+                                lastLogLikelihood * 100.0f;
                     } else if (lastLogLikelihood == logLikelihood) {
                         relativeImprovement = 0;
                     }
                     System.out.println("Finished iteration: " + iteration +
-                            " - Improvement: " +
-                            relativeImprovement);
+                        " - Improvement: " +
+                        relativeImprovement);
                 }
                 lastLogLikelihood = logLikelihood;
             }

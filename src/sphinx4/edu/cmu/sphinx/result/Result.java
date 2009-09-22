@@ -21,7 +21,6 @@ import edu.cmu.sphinx.linguist.dictionary.Word;
 import edu.cmu.sphinx.util.LogMath;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -39,7 +38,7 @@ public class Result {
     private ActiveList activeList;
     private List<Token> resultList;
     private AlternateHypothesisManager alternateHypothesisManager;
-    private boolean isFinal = false;
+    private boolean isFinal;
     private int currentFrameNumber;
     private String reference;
     private LogMath logMath;
@@ -197,8 +196,7 @@ public class Result {
     public Token getBestActiveToken() {
         Token bestToken = null;
         if (activeList != null) {
-            for (Iterator<Token> i = activeList.iterator(); i.hasNext();) {
-                Token token = (Token) i.next();
+            for (Token token : activeList) {
                 if (bestToken == null || token.getScore() > bestToken.getScore()) {
                     bestToken = token;
                 }
@@ -234,8 +232,7 @@ public class Result {
     public List<Token> findPartialMatchingTokens(String text) {
         List<Token> list = new ArrayList<Token>();
         text = text.trim();
-        for (Iterator<Token> i = activeList.iterator(); i.hasNext();) {
-            Token token = (Token) i.next();
+        for (Token token : activeList) {
             if (text.startsWith(token.getWordPathNoFiller())) {
                 list.add(token);
             }
@@ -252,8 +249,7 @@ public class Result {
     public Token getBestActiveParitalMatchingToken(String text) {
         List<Token> matchingList = findPartialMatchingTokens(text);
         Token bestToken = null;
-        for (Iterator<Token> i = matchingList.iterator(); i.hasNext();) {
-            Token token = i.next();
+        for (Token token : matchingList) {
             if (bestToken == null || token.getScore() > bestToken.getScore()) {
                 bestToken = token;
             }

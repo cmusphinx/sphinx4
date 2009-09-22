@@ -26,7 +26,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.text.DecimalFormat;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 
@@ -50,7 +49,7 @@ public class BatchClient implements Configurable {
     private static DecimalFormat timeFormat = new DecimalFormat("0.00");
 
     private Timer decodeTimer;
-    private long cumulativeProcessingTime = 0;
+    private long cumulativeProcessingTime;
 
     private NISTAlign aligner;
 
@@ -79,9 +78,7 @@ public class BatchClient implements Configurable {
         System.out.println("\nBatchDecoder: decoding files in " + batchFile);
         System.out.println("----------");
 
-        for (Iterator i = BatchFile.getLines(batchFile).iterator();
-             i.hasNext();) {
-            String line = (String) i.next();
+        for (String line : BatchFile.getLines(batchFile)) {
             String file = BatchFile.getFilename(line);
             String reference = BatchFile.getReference(line);
 

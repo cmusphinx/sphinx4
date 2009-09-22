@@ -170,8 +170,7 @@ public class FrontEnd extends BaseDataProcessor {
     */
     public void initialize() {
         super.initialize();
-        for (Iterator<DataProcessor> i = frontEndList.iterator(); i.hasNext();) {
-            DataProcessor dp = i.next();
+        for (DataProcessor dp : frontEndList) {
             dp.initialize();
         }
     }

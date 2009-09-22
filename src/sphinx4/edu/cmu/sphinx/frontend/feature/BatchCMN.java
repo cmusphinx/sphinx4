@@ -84,7 +84,7 @@ public class BatchCMN extends BaseDataProcessor {
 
         Data output = null;
 
-        if (cepstraList.size() > 0) {
+        if (!cepstraList.isEmpty()) {
             output = cepstraList.remove(0);
         } else {
             reset();
@@ -153,10 +153,9 @@ public class BatchCMN extends BaseDataProcessor {
             sums[i] /= numberDataCepstra;
         }
 
-        for (Iterator<Data> iterator = cepstraList.iterator(); iterator.hasNext();) {
-            Data cepstrumObject = iterator.next();
-            if (cepstrumObject instanceof DoubleData) {
-                double[] cepstrum = ((DoubleData) cepstrumObject).getValues();
+        for (Data data : cepstraList) {
+            if (data instanceof DoubleData) {
+                double[] cepstrum = ((DoubleData)data).getValues();
                 for (int j = 0; j < cepstrum.length; j++) {
                     cepstrum[j] -= sums[j]; // sums[] is now the means[]
                 }

@@ -130,8 +130,8 @@ public class Pronunciation {
      */
     public String toString() {
         StringBuilder result = new StringBuilder().append(word).append('(');
-        for (int i = 0; i < units.length; i++) {
-            result.append(units[i]).append(' ');
+        for (Unit unit : units) {
+            result.append(unit).append(' ');
         }
         result.append(')');
         return result.toString();
@@ -145,8 +145,8 @@ public class Pronunciation {
      */
     public String toDetailedString() {
         StringBuilder result = new StringBuilder().append(word).append(' ');
-        for (int i = 0; i < units.length; i++) {
-            result.append(units[i]).append(' ');
+        for (Unit unit : units) {
+            result.append(unit).append(' ');
         }
         result.append("\n   class: ").append(wordClassification)
             .append(" tag: ").append(tag).append(" prob: ").append(probability);

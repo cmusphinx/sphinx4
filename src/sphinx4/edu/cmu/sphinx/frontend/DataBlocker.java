@@ -24,7 +24,7 @@ public class DataBlocker extends BaseDataProcessor {
 
     private LinkedList<DoubleData> inBuffer = new LinkedList<DoubleData>();
 
-    private int curInBufferSize = 0;
+    private int curInBufferSize;
 
 
     public DataBlocker() {

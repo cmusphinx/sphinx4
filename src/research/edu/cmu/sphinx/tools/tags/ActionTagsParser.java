@@ -207,26 +207,24 @@ public class ActionTagsParser {
         }
 
         Object[] ids = scriptable.getIds();
-        for (int i = 0; i < ids.length; i++) {
+        for (Object id : ids) {
             String idStr;
             if (prefix == null) {
-                idStr = ids[i].toString();
+                idStr = id.toString();
             } else {
-                idStr = prefix + '.' + ids[i];
+                idStr = prefix + '.' + id;
             }
             try {
                 Object o;
-                if (ids[i] instanceof String) {
-                    o = scriptable.get((String) ids[i],
-                            scriptable);
+                if (id instanceof String) {
+                    o = scriptable.get((String)id, scriptable);
                 } else {
-                    o = scriptable.get(((Integer) ids[i]).intValue(),
-                            scriptable);
+                    o = scriptable.get((Integer)id, scriptable);
                 }
                 if (o instanceof Function) {
                     //builder.append(idStr + ": function\n");
                 } else if (o instanceof Scriptable) {
-                    printScriptable((Scriptable) o, builder, idStr);
+                    printScriptable((Scriptable)o, builder, idStr);
                 } else {
                     builder.append(idStr).append(": ").append(o).append('\n');
                 }

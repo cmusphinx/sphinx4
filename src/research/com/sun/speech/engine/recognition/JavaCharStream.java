@@ -65,19 +65,19 @@ public class JavaCharStream {
     protected int bufline[];
     protected int bufcolumn[];
 
-    protected int column = 0;
+    protected int column;
     protected int line = 1;
 
-    protected boolean prevCharIsCR = false;
-    protected boolean prevCharIsLF = false;
+    protected boolean prevCharIsCR;
+    protected boolean prevCharIsLF;
 
     protected java.io.Reader inputStream;
 
     protected char[] nextCharBuf;
     protected char[] buffer;
-    protected int maxNextCharInd = 0;
+    protected int maxNextCharInd;
     protected int nextCharInd = -1;
-    protected int inBuf = 0;
+    protected int inBuf;
 
 
     protected void ExpandBuff(boolean wrapAround) {

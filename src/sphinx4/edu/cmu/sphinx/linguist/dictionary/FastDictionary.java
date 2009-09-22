@@ -372,8 +372,8 @@ public class FastDictionary implements Dictionary {
         pList.toArray(pronunciations);
         Word wordObject = createWord(word, pronunciations, isFiller);
 
-        for (int i = 0; i < pronunciations.length; i++) {
-            pronunciations[i].setWord(wordObject);
+        for (Pronunciation pronunciation : pronunciations) {
+            pronunciation.setWord(wordObject);
         }
 
         return wordObject;
@@ -401,10 +401,8 @@ public class FastDictionary implements Dictionary {
         StringBuilder result = new StringBuilder();
 
         for (Map.Entry<String, Object> entry : sorted.entrySet()) {
-            List pronunciations = (List)entry.getValue();
             result.append(entry.getKey()).append('\n');
-            for (Iterator p = pronunciations.iterator(); p.hasNext();) {
-                Pronunciation pronunciation = (Pronunciation) p.next();
+            for (Pronunciation pronunciation : (List<Pronunciation>)entry.getValue()) {
                 result.append("   ").append(pronunciation).append('\n');
             }
         }
@@ -421,8 +419,7 @@ public class FastDictionary implements Dictionary {
     public Word[] getFillerWords() {
         Word[] fillerWordArray = new Word[fillerWords.size()];
         int index = 0;
-        for (Iterator i = fillerWords.iterator(); i.hasNext();) {
-            String spelling = (String) i.next();
+        for (String spelling : fillerWords) {
             fillerWordArray[index++] = getWord(spelling);
         }
         return fillerWordArray;
@@ -450,15 +447,14 @@ public class FastDictionary implements Dictionary {
         String pathListString = ps.getString(propertyListName);
 
         if (pathListString != null) {
-            List pathList = Arrays.asList(pathListString.split(";"));
-            for (Iterator i = pathList.iterator(); i.hasNext();) {
-                String addendumPath = (String) i.next();
+            List<String> pathList = Arrays.asList(pathListString.split(";"));
+            for (String addendumPath : pathList) {
                 try {
                     URL addendaUrl = new URL(addendumPath);
                     resourceList.add(addendaUrl);
                 } catch (MalformedURLException mue) {
                     throw new IllegalArgumentException(
-                            "Addendum path: " + addendumPath + " is not a valid URL.");
+                        "Addendum path: " + addendumPath + " is not a valid URL.");
                 }
             }
         }
@@ -474,8 +470,7 @@ public class FastDictionary implements Dictionary {
      */
     private void loadCustomDictionaries(List<URL> addenda) throws IOException {
         if (addenda != null) {
-            for (Iterator<URL> i = addenda.iterator(); i.hasNext();) {
-                URL addendumUrl = i.next();
+            for (URL addendumUrl : addenda) {
                 loadDictionary(addendumUrl.openStream(), false);
             }
         }

@@ -56,7 +56,7 @@ public class BaumWelchLearner implements Learner {
 
     private Data curFeature;
     private UtteranceGraph graph;
-    private Object[] scoreArray;
+    private TrainerScore[][] scoreArray;
     private int lastFeatureIndex;
     private int currentFeatureIndex;
     private float[] alphas;
@@ -172,10 +172,10 @@ public class BaumWelchLearner implements Learner {
      * Prepares the learner for returning scores, one at a time. To do so, it performs the full forward pass, but
      * returns the scores for the backward pass one feature frame at a time.
      */
-    private Object[] prepareScore() {
+    private TrainerScore[][] prepareScore() {
         // scoreList will contain a list of score, which in turn are a
         // vector of TrainerScore elements.
-        List scoreList = new ArrayList();
+        List<TrainerScore[]> scoreList = new ArrayList<TrainerScore[]>();
         int numStates = graph.size();
         TrainerScore[] score = new TrainerScore[numStates];
         alphas = new float[numStates];
@@ -253,7 +253,7 @@ public class BaumWelchLearner implements Learner {
             }
         }
 
-        return scoreList.toArray();
+        return scoreList.toArray(new TrainerScore[scoreList.size()][]);
     }
 
 
@@ -272,7 +272,7 @@ public class BaumWelchLearner implements Learner {
         currentFeatureIndex--;
         if (currentFeatureIndex >= 0) {
             float logScore = LogMath.getLogZero();
-            score = (TrainerScore[]) scoreArray[currentFeatureIndex];
+            score = scoreArray[currentFeatureIndex];
             assert score.length == betas.length;
             backwardPass(score);
             for (int i = 0; i < betas.length; i++) {

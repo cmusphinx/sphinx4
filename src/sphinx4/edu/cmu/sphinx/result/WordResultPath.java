@@ -73,7 +73,7 @@ public class WordResultPath implements Path {
     public LogMath getLogMath() {
         Iterator<WordResult> i = path.iterator();
         if (i.hasNext()) {
-            WordResult wr = (WordResult) i.next();
+            WordResult wr = i.next();
             return wr.getLogMath();
         } else {
             return null;
@@ -90,11 +90,8 @@ public class WordResultPath implements Path {
     /** @see edu.cmu.sphinx.result.Path#getTranscription() */
     public String getTranscription() {
         StringBuilder sb = new StringBuilder();
-        Iterator<WordResult> i = path.iterator();
-        while (i.hasNext()) {
-            WordResult wr = (WordResult) i.next();
+        for (WordResult wr : path)
             sb.append(wr).append(' ');
-        }
         if (!path.isEmpty())
             sb.setLength(sb.length() - 1);
         return sb.toString();

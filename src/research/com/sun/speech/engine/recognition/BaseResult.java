@@ -30,13 +30,13 @@ public class BaseResult
         java.io.Serializable, Cloneable, SpeechEventDispatcher {
 
     private final List<ResultListener> resultListeners = new ArrayList<ResultListener>();
-    String theText[] = null;
-    int nTokens = 0;
-    transient Grammar grammar = null;
+    String theText[];
+    int nTokens;
+    transient Grammar grammar;
     int state = Result.UNFINALIZED;
 
-    String[] tags = null;
-    String ruleName = null;
+    String[] tags;
+    String ruleName;
 
 
     /** Create an empty result. */

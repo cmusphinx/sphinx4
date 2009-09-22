@@ -38,9 +38,9 @@ public class Trainer implements Configurable {
 
     private String initialStage;
     private String finalStage;
-    private boolean isStageActive = false;
-    private List StageList = new LinkedList();
-    private Set StageNames = new HashSet();
+    private boolean isStageActive;
+    private List<Stage> StageList = new LinkedList<Stage>();
+    private Set<String> StageNames = new HashSet<String>();
 
     private TrainManager trainManager;
 
@@ -81,9 +81,7 @@ public class Trainer implements Configurable {
                 StageNames.contains(finalStage))) {
             return;
         }
-        for (Iterator iterator = StageList.iterator();
-             iterator.hasNext();) {
-            Stage stage = (Stage) iterator.next();
+        for (Stage stage : StageList) {
             if (!isStageActive) {
                 if (initialStage.equals(stage.toString())) {
                     isStageActive = true;

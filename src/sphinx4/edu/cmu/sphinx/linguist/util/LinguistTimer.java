@@ -76,8 +76,7 @@ public class LinguistTimer {
                 List<SearchState> oldList = activeList;
                 activeList = new ArrayList<SearchState>(maxBeam * 10);
                 frameTimer.start();
-                for (int j = 0; j < oldList.size(); j++) {
-                    SearchState nextStates = (SearchState) oldList.get(j);
+                for (SearchState nextStates : oldList) {
                     expandState(level, activeList, nextStates);
                 }
                 frameTimer.stop();
@@ -113,8 +112,8 @@ public class LinguistTimer {
         if (newStates.length > maxSuccessors) {
             maxSuccessors = newStates.length;
         }
-        for (int i = 0; i < newStates.length; i++) {
-            SearchState ns = newStates[i].getState();
+        for (SearchStateArc newState : newStates) {
+            SearchState ns = newState.getState();
             if (ns.isEmitting()) {
                 totalEmittingStates++;
                 activeList.add(ns);

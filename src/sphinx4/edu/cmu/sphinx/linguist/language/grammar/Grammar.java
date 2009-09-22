@@ -62,17 +62,17 @@ public abstract class Grammar implements Configurable, GrammarInterface {
 
     private boolean showGrammar;
     private boolean optimizeGrammar = true;
-    private boolean addSilenceWords = false;
-    private boolean addFillerWords = false;
+    private boolean addSilenceWords;
+    private boolean addFillerWords;
     protected Dictionary dictionary;
     protected GrammarNode initialNode;
     private Set<GrammarNode> grammarNodes;
 
     private final static Word[][] EMPTY_ALTERNATIVE = new Word[0][0];
     private Random randomizer = new Random(56); // use fixed initial to make get deterministic random value for testing
-    private int maxIdentity = 0;
-    private boolean postProcessed = false;
-    private boolean idCheck = false;
+    private int maxIdentity;
+    private boolean postProcessed;
+    private boolean idCheck;
 
 
     /*
@@ -531,14 +531,11 @@ public abstract class Grammar implements Configurable, GrammarInterface {
         Word[] fillers = dictionary.getFillerWords();
 
         for (Word fillerWord : fillers) {
-            if (fillerWord == dictionary.getSentenceStartWord()) {
-                continue;
-            } else if (fillerWord == dictionary.getSentenceEndWord()) {
-                continue;
-            } else {
+            if (fillerWord != dictionary.getSentenceStartWord()
+                    && fillerWord != dictionary.getSentenceEndWord()) {
                 fillerList.add(fillerWord);
             }
         }
-        return (Word[]) fillerList.toArray(new Word[fillerList.size()]);
+        return fillerList.toArray(new Word[fillerList.size()]);
     }
 }

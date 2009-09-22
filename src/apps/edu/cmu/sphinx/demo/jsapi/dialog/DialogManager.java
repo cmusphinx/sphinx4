@@ -26,7 +26,6 @@ import javax.speech.recognition.RuleGrammar;
 import javax.speech.recognition.RuleParse;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.logging.Logger;
 
@@ -76,7 +75,7 @@ public class DialogManager implements Configurable {
     // local data
     // ------------------------------------
     private DialogNode initialNode;
-    private Map nodeMap = new HashMap();
+    private Map<String, DialogNode> nodeMap = new HashMap<String, DialogNode>();
     private String name;
 
 
@@ -131,8 +130,7 @@ public class DialogManager implements Configurable {
     public void allocate() throws IOException {
         recognizer.allocate();
 
-        for (Iterator i = nodeMap.values().iterator(); i.hasNext(); ) {
-            DialogNode node = (DialogNode) i.next();
+        for (DialogNode node : nodeMap.values()) {
             node.init();
         }
     }
@@ -169,7 +167,7 @@ public class DialogManager implements Configurable {
                     if (nextStateName == null || nextStateName.isEmpty()) {
                         continue;
                     } else {
-                        DialogNode node = (DialogNode) nodeMap.get(nextStateName);
+                        DialogNode node = nodeMap.get(nextStateName);
                         if (node == null) {
                             warn("Can't transition to unknown state " 
                                     + nextStateName);
@@ -207,7 +205,7 @@ public class DialogManager implements Configurable {
      * @param name the name of the node
      */
     private DialogNode getNode(String name) {
-        return (DialogNode) nodeMap.get(name);
+        return nodeMap.get(name);
     }
 
     /**
@@ -460,8 +458,8 @@ class DialogNodeBehavior {
         if (tags == null)
             return "";
         StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < tags.length; i++)
-            sb.append(tags[i]).append(' ');
+        for (String tag : tags)
+            sb.append(tag).append(' ');
         return sb.toString().trim();
     }
 

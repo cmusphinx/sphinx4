@@ -21,7 +21,6 @@ import javax.swing.JOptionPane;
 import java.util.Vector;
 import java.util.Map;
 import java.util.HashMap;
-import java.util.Iterator;
 
 /**
  * This is for the Global Settings panel
@@ -247,23 +246,20 @@ import java.util.Iterator;
      * update the table according to the configProperties data
      */
     public void update(ConfigProperties cp) {
-        Map myglobal=cp.getGlobal();
+        Map<String, String> myglobal=cp.getGlobal();
         this.clearAll(); 
         // iterate each item in the global properties Map, and display it
-        for ( Iterator it = myglobal.entrySet().iterator(); it.hasNext();){
-            Map.Entry entry = (Map.Entry) it.next();            
-            String name = (String)entry.getKey();
-            String value = (String)entry.getValue();
-            addTableData(name,value);
+        for (Map.Entry<String, String> entry : myglobal.entrySet()) {
+            addTableData(entry.getKey(), entry.getValue());
         }        
     }
 
     /** save the data from table
      */
     public void saveData(ConfigProperties cp) throws GUIOperationException {
-        Map globalMap;
+        Map<String, String> globalMap;
         if (cp.getGlobal() == null)
-            globalMap = new HashMap();
+            globalMap = new HashMap<String, String>();
         else
             globalMap = cp.getGlobal();
             
@@ -281,7 +277,7 @@ import java.util.Iterator;
      * 
      * @throws GUIOperationException
      */
-    private void iterateTable(Map globalMap)throws GUIOperationException{
+    private void iterateTable(Map<String, String> globalMap)throws GUIOperationException{
         DefaultTableModel model =(DefaultTableModel)TableParameter.getModel();
         String propName;
         String propVal;

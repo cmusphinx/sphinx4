@@ -11,8 +11,6 @@
  */
 package edu.cmu.sphinx.result;
 
-import java.util.Iterator;
-
 /**
  * <p/>
  * Shows the confidence information about a Result. </p>

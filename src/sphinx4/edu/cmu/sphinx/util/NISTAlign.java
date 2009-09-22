@@ -722,7 +722,7 @@ public class NISTAlign {
         alignedHypothesisWords = new LinkedList<String>();
 
         for (int m = backtrace.size() - 2; m >= 0; m--) {
-            int backtraceEntry = (backtrace.get(m)).intValue();
+            int backtraceEntry = backtrace.get(m);
             if (backtraceEntry != INSERTION) {
                 referenceWord = referenceWordsIterator.next();
             } else {

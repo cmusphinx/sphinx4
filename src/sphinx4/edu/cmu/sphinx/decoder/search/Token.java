@@ -66,7 +66,7 @@ public class Token implements Scoreable {
     private int location;
     private Data myData;
 
-    private static Set predecessorClasses = null;
+    private static Set predecessorClasses;
 
     /**
      * A collection of arbitrary properties assigned to this token. This field becomes lazy intitialized to reduce

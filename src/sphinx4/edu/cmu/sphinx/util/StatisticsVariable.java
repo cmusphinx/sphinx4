@@ -13,7 +13,6 @@
 package edu.cmu.sphinx.util;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 /**
@@ -66,8 +65,7 @@ public class StatisticsVariable {
     /** Dump all of the StatisticsVariable in the given context */
     static public void dumpAll() {
         System.out.println(" ========= statistics  " + "=======");
-        for (Iterator<StatisticsVariable> i = pool.values().iterator(); i.hasNext();) {
-            StatisticsVariable stats = i.next();
+        for (StatisticsVariable stats : pool.values()) {
             stats.dump();
         }
     }
@@ -75,8 +73,7 @@ public class StatisticsVariable {
 
     /** Resets all of the StatisticsVariables in the given context */
     static public void resetAll() {
-        for (Iterator<StatisticsVariable> i = pool.values().iterator(); i.hasNext();) {
-            StatisticsVariable stats = i.next();
+        for (StatisticsVariable stats : pool.values()) {
             stats.reset();
         }
     }

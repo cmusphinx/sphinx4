@@ -84,7 +84,7 @@ public class TiedStateAcousticModel implements AcousticModel {
     private Logger logger;
     protected Loader loader;
     protected UnitManager unitManager;
-    private boolean useComposites = false;
+    private boolean useComposites;
     private Properties properties;
 
     // ----------------------------
@@ -92,7 +92,7 @@ public class TiedStateAcousticModel implements AcousticModel {
     // -----------------------------
     transient protected Timer loadTimer;
     transient private Map<String, SenoneSequence> compositeSenoneSequenceCache = new HashMap<String, SenoneSequence>();
-    private boolean allocated = false;
+    private boolean allocated;
 
 
     /* (non-Javadoc)
@@ -100,10 +100,8 @@ public class TiedStateAcousticModel implements AcousticModel {
     */
     public void newProperties(PropertySheet ps) throws PropertyException {
         loader = (Loader) ps.getComponent(PROP_LOADER);
-        unitManager = (UnitManager) ps.getComponent(PROP_UNIT_MANAGER
-        );
-        useComposites =
-                ps.getBoolean(PROP_USE_COMPOSITES);
+        unitManager = (UnitManager) ps.getComponent(PROP_UNIT_MANAGER);
+        useComposites = ps.getBoolean(PROP_USE_COMPOSITES);
         logger = ps.getLogger();
     }
 
@@ -346,7 +344,7 @@ public class TiedStateAcousticModel implements AcousticModel {
         }
 
         // couldn't find any matches, so at least include the CI unit
-        if (senoneSequenceList.size() == 0) {
+        if (senoneSequenceList.isEmpty()) {
             Unit ciUnit = unitManager.getUnit(unit.getName(), unit.isFiller());
             SenoneHMM baseHMM = lookupHMM(ciUnit, HMMPosition.UNDEFINED);
             senoneSequenceList.add(baseHMM.getSenoneSequence());
@@ -360,8 +358,7 @@ public class TiedStateAcousticModel implements AcousticModel {
         // First find the longest senone sequence
 
         int longestSequence = 0;
-        for (int i = 0; i < senoneSequenceList.size(); i++) {
-            SenoneSequence ss = senoneSequenceList.get(i);
+        for (SenoneSequence ss : senoneSequenceList) {
             if (ss.getSenones().length > longestSequence) {
                 longestSequence = ss.getSenones().length;
             }
@@ -376,9 +373,7 @@ public class TiedStateAcousticModel implements AcousticModel {
         float logWeight = 0.0f;
         for (int i = 0; i < longestSequence; i++) {
             Set<Senone> compositeSenoneSet = new HashSet<Senone>();
-            for (int j = 0; j < senoneSequenceList.size(); j++) {
-                SenoneSequence senoneSequence =
-                        senoneSequenceList.get(j);
+            for (SenoneSequence senoneSequence : senoneSequenceList) {
                 if (i < senoneSequence.getSenones().length) {
                     Senone senone = senoneSequence.getSenones()[i];
                     compositeSenoneSet.add(senone);
@@ -546,9 +541,9 @@ public class TiedStateAcousticModel implements AcousticModel {
             return false;
         }
 
-        for (int i = 0; i < units.length; i++) {
-            if (units[i].isFiller() &&
-                    !units[i].equals(UnitManager.SILENCE)) {
+        for (Unit unit : units) {
+            if (unit.isFiller() &&
+                !unit.equals(UnitManager.SILENCE)) {
                 return true;
             }
         }

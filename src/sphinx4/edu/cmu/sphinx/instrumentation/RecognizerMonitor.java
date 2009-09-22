@@ -17,7 +17,6 @@ import edu.cmu.sphinx.recognizer.RecognizerState;
 import edu.cmu.sphinx.recognizer.StateListener;
 import edu.cmu.sphinx.util.props.*;
 
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -43,8 +42,8 @@ public class RecognizerMonitor implements StateListener, Monitor {
     // Configuration data
     // --------------------------
     Recognizer recognizer;
-    List allocatedMonitors;
-    List deallocatedMonitors;
+    List<Runnable> allocatedMonitors;
+    List<Runnable> deallocatedMonitors;
     String name;
 
 
@@ -64,8 +63,8 @@ public class RecognizerMonitor implements StateListener, Monitor {
             recognizer.addStateListener(this);
         }
 
-        allocatedMonitors = ps.getComponentList(PROP_ALLOCATED_MONITORS);
-        deallocatedMonitors = ps.getComponentList(PROP_DEALLOCATED_MONITORS);
+        allocatedMonitors = (List)ps.getComponentList(PROP_ALLOCATED_MONITORS);
+        deallocatedMonitors = (List)ps.getComponentList(PROP_DEALLOCATED_MONITORS);
     }
 
 
@@ -75,7 +74,7 @@ public class RecognizerMonitor implements StateListener, Monitor {
     * @see edu.cmu.sphinx.recognizer.StateListener#statusChanged(edu.cmu.sphinx.recognizer.RecognizerState)
     */
     public void statusChanged(RecognizerState status) {
-        List runnableList = null;
+        List<Runnable> runnableList = null;
         if (status == RecognizerState.ALLOCATED) {
             runnableList = allocatedMonitors;
         } else if (status == RecognizerState.DEALLOCATED) {
@@ -83,8 +82,7 @@ public class RecognizerMonitor implements StateListener, Monitor {
         }
 
         if (runnableList != null) {
-            for (Iterator i = runnableList.iterator(); i.hasNext();) {
-                Runnable r = (Runnable) i.next();
+            for (Runnable r : runnableList) {
                 r.run();
             }
         }

@@ -54,7 +54,7 @@ public class PartitionActiveListFactory extends ActiveListFactory {
      */
     class PartitionActiveList implements ActiveList {
 
-        private int size = 0;
+        private int size;
         private int absoluteBeamWidth;
         private float logRelativeBeamWidth;
         private Token bestToken;
@@ -178,11 +178,10 @@ public class PartitionActiveListFactory extends ActiveListFactory {
 
             // a sanity check
             if (false) {
-                for (Iterator<Token> i = iterator(); i.hasNext();) {
-                    Token t = (Token) i.next();
+                for (Token t : this) {
                     if (t.getScore() > bestScore) {
                         System.out.println("GBS: found better score "
-                                + t + " vs. " + bestScore);
+                            + t + " vs. " + bestScore);
                     }
                 }
             }

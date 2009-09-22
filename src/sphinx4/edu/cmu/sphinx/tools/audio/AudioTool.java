@@ -60,10 +60,10 @@ public class AudioTool {
     static SpectrogramPanel spectrogramPanel;
     static JFileChooser fileChooser;
     static String filename;
-    static File file = null;
+    static File file;
     static AudioPlayer player;
     static Microphone recorder;
-    static boolean recording = false;
+    static boolean recording;
     static Preferences prefs;
     static float zoom = 1.0f;
 
@@ -84,16 +84,16 @@ public class AudioTool {
         int numDumped = 0;
 
         if (lineInfo != null) {
-            for (int i = 0; i < lineInfo.length; i++) {
-                if (lineInfo[i] instanceof DataLine.Info) {
+            for (Line.Info info : lineInfo) {
+                if (info instanceof DataLine.Info) {
                     AudioFormat[] formats =
-                            ((DataLine.Info) lineInfo[i]).getFormats();
-                    for (int j = 0; j < formats.length; j++) {
-                        System.out.println(indent + formats[j]);
+                        ((DataLine.Info)info).getFormats();
+                    for (AudioFormat format : formats) {
+                        System.out.println(indent + format);
                     }
                     numDumped++;
-                } else if (lineInfo[i] instanceof Port.Info) {
-                    System.out.println(indent + lineInfo[i]);
+                } else if (info instanceof Port.Info) {
+                    System.out.println(indent + info);
                     numDumped++;
                 }
             }
@@ -552,9 +552,7 @@ public class AudioTool {
             dataSource = (StreamDataSource) cm.lookup(DATA_SOURCE);
 
             PropertySheet ps = cm.getPropertySheet(WINDOWER);
-            float windowShiftInMs = ps.getFloat
-                    (RaisedCosineWindower.PROP_WINDOW_SHIFT_MS
-                    );
+            float windowShiftInMs = ps.getFloat(RaisedCosineWindower.PROP_WINDOW_SHIFT_MS);
 
             final JFrame jframe = new JFrame("AudioTool");
             fileChooser = new JFileChooser();

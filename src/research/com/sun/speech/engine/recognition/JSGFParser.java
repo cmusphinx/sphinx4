@@ -15,7 +15,7 @@ public class JSGFParser implements JSGFParserConstants {
     // to allow the creation of multiple parser instances
     //
     static final String version = "1.0";
-    static JSGFParser parser = null;
+    static JSGFParser parser;
 
 
     // This main method simplly checks the syntax of a jsgf Grammar
@@ -716,7 +716,7 @@ public class JSGFParser implements JSGFParserConstants {
         }
         jj_consume_token(34);
         {
-            if (true) return Float.valueOf(t.image).floatValue();
+            if (true) return Float.parseFloat(t.image);
         }
         throw new Error("Missing return statement in function");
     }
@@ -974,7 +974,7 @@ public class JSGFParser implements JSGFParserConstants {
     private int jj_ntk;
     private Token jj_scanpos, jj_lastpos;
     private int jj_la;
-    public boolean lookingAhead = false;
+    public boolean lookingAhead;
     private int jj_gen;
     final private int[] jj_la1 = new int[26];
     static private int[] jj_la1_0;
@@ -998,8 +998,8 @@ public class JSGFParser implements JSGFParserConstants {
 
 
     final private JJCalls[] jj_2_rtns = new JJCalls[1];
-    private boolean jj_rescan = false;
-    private int jj_gc = 0;
+    private boolean jj_rescan;
+    private int jj_gc;
 
 
     public JSGFParser(java.io.InputStream stream) {
@@ -1075,8 +1075,7 @@ public class JSGFParser implements JSGFParserConstants {
             jj_gen++;
             if (++jj_gc > 100) {
                 jj_gc = 0;
-                for (int i = 0; i < jj_2_rtns.length; i++) {
-                    JJCalls c = jj_2_rtns[i];
+                for (JJCalls c : jj_2_rtns) {
                     while (c != null) {
                         if (c.gen < jj_gen) c.first = null;
                         c = c.next;

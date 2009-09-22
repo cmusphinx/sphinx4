@@ -51,12 +51,12 @@ public class Live {
     private Map<String, LiveRecognizer> recognizers;
 
     //private AudioPlayer audioPlayer = null; // for play the recording
-    private LiveRecognizer currentRecognizer = null;
-    private LiveFrame liveFrame = null;
-    private Result lastResult = null;
-    private File currentDirectory = null;
+    private LiveRecognizer currentRecognizer;
+    private LiveFrame liveFrame;
+    private Result lastResult;
+    private File currentDirectory;
 
-    private boolean showPartialResults = false;
+    private boolean showPartialResults;
     private boolean handsFree; // uses endpointer
     private boolean epMode;
 
@@ -143,10 +143,8 @@ public class Live {
      * LiveDecoders.
      */
     public void terminate() {
-        for (Iterator<LiveRecognizer> i = recognizers.values().iterator(); i.hasNext();) {
-            LiveRecognizer lr = i.next();
+        for (LiveRecognizer lr : recognizers.values())
             lr.deallocate();
-        }
     }
 
 
@@ -326,39 +324,32 @@ public class Live {
         String decoderLine = properties.getProperty("decoders");
         String[] recognizerNames = decoderLine.split("\\s+");
 
-        for (int i = 0; i < recognizerNames.length; i++) {
+        for (String name : recognizerNames) {
 
             // name of the recognizer
-            String recognizerName = properties.getProperty(recognizerNames[i]
-                    + ".name");
+            String recognizerName = properties.getProperty(name + ".name");
             if (recognizerName == null) {
-                throw new NullPointerException("No name for recognizer "
-                        + recognizerNames[i]);
+                throw new NullPointerException("No name for recognizer " + name);
             }
 
             // cofnig file
-            String configFile = properties.getProperty(recognizerNames[i]
-                    + ".configFile");
+            String configFile = properties.getProperty(name + ".configFile");
             if (configFile == null) {
-                throw new NullPointerException("No config file for recognizer "
-                        + recognizerNames[i]);
+                throw new NullPointerException("No config file for recognizer " + name);
             }
 
             // transcript file
-            String testFile = properties.getProperty(recognizerNames[i]
-                    + ".testFile");
+            String testFile = properties.getProperty(name + ".testFile");
 
 
             // random order
-            String randomOrder = properties.getProperty(recognizerNames[i]
-                    + ".randomOrder");
-            boolean randomReference = randomOrder == null ? false :
-                                randomOrder.equals("true");
+            String randomOrder = properties.getProperty(name + ".randomOrder");
+            boolean randomReference = Boolean.parseBoolean(randomOrder);
             // add the name of the decoder to the recognizerNameList
             recognizerNameList.addElement(recognizerName);
 
             recognizers.put(recognizerName, new LiveRecognizer(recognizerName,
-                    configFile, testFile, randomReference));
+                configFile, testFile, randomReference));
             info(".");
         }
 

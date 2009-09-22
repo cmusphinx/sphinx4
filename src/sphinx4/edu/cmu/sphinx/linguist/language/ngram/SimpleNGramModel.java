@@ -51,13 +51,13 @@ public class SimpleNGramModel implements LanguageModel {
     private Dictionary dictionary;
     private int desiredMaxDepth;
     private Logger logger;
-    private int maxNGram = 0;
+    private int maxNGram;
     private Map<WordSequence, Probability> map;
     private Set<String> vocabulary;
     protected int lineNumber;
     protected BufferedReader reader;
     protected String fileName;
-    private boolean allocated = false;
+    private boolean allocated;
 
 
     public Logger getLogger() {
@@ -80,12 +80,10 @@ public class SimpleNGramModel implements LanguageModel {
         logger = ps.getLogger();
         format = ps.getString(PROP_FORMAT);
         urlLocation = ConfigurationManagerUtils.getResource(PROP_LOCATION, ps);
-        unigramWeight = ps.getFloat(PROP_UNIGRAM_WEIGHT
-        );
+        unigramWeight = ps.getFloat(PROP_UNIGRAM_WEIGHT);
         logMath = (LogMath) ps.getComponent(PROP_LOG_MATH);
         desiredMaxDepth = ps.getInt(PROP_MAX_DEPTH);
-        dictionary = (Dictionary) ps.getComponent(PROP_DICTIONARY
-        );
+        dictionary = (Dictionary) ps.getComponent(PROP_DICTIONARY);
         map = new HashMap<WordSequence, Probability>();
         vocabulary = new HashSet<String>();
     }
@@ -255,8 +253,8 @@ public class SimpleNGramModel implements LanguageModel {
         if (wordList.isEmpty())
             return "";
         StringBuilder sb = new StringBuilder();
-        for (Iterator<String> i = wordList.iterator(); i.hasNext();)
-            sb.append(i.next()).append('+');
+        for (String word : wordList)
+            sb.append(word).append('+');
         sb.setLength(sb.length() - 1);
         return sb.toString();
     }
@@ -303,12 +301,12 @@ public class SimpleNGramModel implements LanguageModel {
                 break;
             }
         }
-        int numUnigrams = (ngramList.get(0)).intValue() - 1;
+        int numUnigrams = ngramList.get(0) - 1;
         // -log(x) = log(1/x)
         float logUniformProbability = -logMath.linearToLog(numUnigrams);
         for (int index = 0; index < ngramList.size(); index++) {
             int ngram = index + 1;
-            int ngramCount = (ngramList.get(index)).intValue();
+            int ngramCount = ngramList.get(index);
             for (int i = 0; i < ngramCount; i++) {
                 StringTokenizer tok = new StringTokenizer(readLine());
                 int tokenCount = tok.countTokens();

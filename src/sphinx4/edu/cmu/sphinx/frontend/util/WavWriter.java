@@ -32,10 +32,10 @@ public class WavWriter extends BaseDataProcessor {
     @S4Boolean(defaultValue = false)
 
     public static final String PROP_IS_COMPLETE_PATH = "isCompletePath";
-    private boolean isCompletePath = false;
+    private boolean isCompletePath;
 
     /** The default value for PROP_RAND_STREAM_START */
-    private String dumpFilePath = null;
+    private String dumpFilePath;
 
     /** SphinxProperty for the number of bits per value. */
     @S4Integer(defaultValue = 16)
@@ -59,7 +59,7 @@ public class WavWriter extends BaseDataProcessor {
     @S4Boolean(defaultValue = false)
     public static final String PROP_CAPTURE_UTTERANCES = "captureUtterances";
     /** The default value of PROP_SIGNED_DATA. */
-    protected boolean captureUtts = false;
+    protected boolean captureUtts;
 
     private ByteArrayOutputStream baos;
     private DataOutputStream dos;

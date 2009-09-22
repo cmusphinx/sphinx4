@@ -60,7 +60,7 @@ public class PivotSausageMaker extends AbstractSausageMaker {
      * @return the requested cluster
      */
     protected Cluster getCluster(int i) {
-        return (Cluster) clusters.get(i);
+        return clusters.get(i);
     }
 
 
@@ -98,7 +98,7 @@ public class PivotSausageMaker extends AbstractSausageMaker {
                 //never cluster anything with the </s> node
                 return bestCluster;
             }
-            Cluster c = (Cluster) i.next();
+            Cluster c = i.next();
             int overlap = getOverlap(n, c.startTime, c.endTime);
             if (overlap > maxOverlap) {
                 maxOverlap = overlap;

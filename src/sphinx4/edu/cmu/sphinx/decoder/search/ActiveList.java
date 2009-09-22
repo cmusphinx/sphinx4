@@ -12,7 +12,6 @@
 
 package edu.cmu.sphinx.decoder.search;
 
-import java.util.Iterator;
 import java.util.List;
 import edu.cmu.sphinx.util.props.*;
 

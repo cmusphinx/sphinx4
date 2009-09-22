@@ -44,7 +44,7 @@ public class ActionTagsUtilities {
     final static protected String INDENT = "    ";
 
     /** If true, generate debug statements in the ECMAScript while parsing the tags. */
-    static private boolean debug = false;
+    static private boolean debug;
 
 
     /**
@@ -278,8 +278,8 @@ public class ActionTagsUtilities {
                 rules = ((RuleAlternatives) rule).getRules();
             }
             if (rules != null) {
-                for (int i = 0; i < rules.length; i++) {
-                    parseTags(rules[i], script, parseTree, indent, false);
+                for (Rule rule1 : rules) {
+                    parseTags(rule1, script, parseTree, indent, false);
                 }
             }
         } else if (rule instanceof RuleToken) {

@@ -22,7 +22,7 @@ public class SpeechEventUtilities {
      * If true, the AWT EventQueue has been set up in the VM.  This flag is used to determine whether we should use the
      * AWT EventQueue for synchronizing SpeechEvents with the AWT EventQueue or not.
      */
-    protected static boolean awtRunning = false;
+    protected static boolean awtRunning;
 
     /**
      * The AWT EventQueue.  This is lazily created in postSpeechEvent to delay the need to initialize the Toolkit until
@@ -30,7 +30,7 @@ public class SpeechEventUtilities {
      *
      * @see #postSpeechEvent
      */
-    protected static EventQueue systemEventQueue = null;
+    protected static EventQueue systemEventQueue;
 
     /**
      * A target used to process speechAWTEvent objects.  This target is a component that expresses interest in
@@ -38,7 +38,7 @@ public class SpeechEventUtilities {
      *
      * @see #postSpeechEvent
      */
-    protected static SpeechAWTEventTarget speechAWTEventTarget = null;
+    protected static SpeechAWTEventTarget speechAWTEventTarget;
 
     /**
      * If true, wait until an event has been dispatched before returning from the post method.  This is meant to be a
@@ -47,7 +47,7 @@ public class SpeechEventUtilities {
      *
      * @see #postSpeechEvent
      */
-    public static boolean waitUntilDispatched = false;
+    public static boolean waitUntilDispatched;
 
 
     /**
@@ -75,9 +75,9 @@ public class SpeechEventUtilities {
             int activeCount = rootGroup.activeCount();
             Thread[] threads = new Thread[activeCount];
             rootGroup.enumerate(threads, true);
-            for (int i = 0; i < threads.length; i++) {
-                if (threads[i] != null) {
-                    String name = threads[i].getName();
+            for (Thread thread : threads) {
+                if (thread != null) {
+                    String name = thread.getName();
                     if (name.startsWith("AWT-EventQueue")) {
                         awtRunning = true;
                         return true;
@@ -217,9 +217,9 @@ public class SpeechEventUtilities {
     protected static class SpeechAWTEvent extends AWTEvent {
 
         static final int EVENT_ID = AWTEvent.RESERVED_ID_MAX + 14830;
-        SpeechEventDispatcher dispatcher = null;
-        SpeechEvent event = null;
-        Object lock = null;
+        SpeechEventDispatcher dispatcher;
+        SpeechEvent event;
+        Object lock;
 
 
         SpeechAWTEvent(SpeechAWTEventTarget target,

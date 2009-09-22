@@ -98,10 +98,7 @@ public abstract class BaseEngineProperties
     protected void postPropertyChangeEvent(String propName,
                                            float oldValue,
                                            float newValue) {
-        EventObject e = new PropertyChangeEvent(this,
-                propName,
-                new Float(oldValue),
-                new Float(newValue));
+        EventObject e = new PropertyChangeEvent(this, propName, oldValue, newValue);
         SpeechEvent se = new SpeechEventWrapper(e);
         SpeechEventUtilities.postSpeechEvent(this, se);
     }
@@ -121,10 +118,7 @@ public abstract class BaseEngineProperties
     protected void postPropertyChangeEvent(String propName,
                                            int oldValue,
                                            int newValue) {
-        EventObject e = new PropertyChangeEvent(this,
-                propName,
-                new Integer(oldValue),
-                new Integer(newValue));
+        EventObject e = new PropertyChangeEvent(this, propName, oldValue, newValue);
         SpeechEvent se = new SpeechEventWrapper(e);
         SpeechEventUtilities.postSpeechEvent(this, se);
     }
@@ -144,10 +138,7 @@ public abstract class BaseEngineProperties
     protected void postPropertyChangeEvent(String propName,
                                            boolean oldValue,
                                            boolean newValue) {
-        EventObject e = new PropertyChangeEvent(this,
-                propName,
-                new Boolean(oldValue),
-                new Boolean(newValue));
+        EventObject e = new PropertyChangeEvent(this, propName, oldValue, newValue);
         SpeechEvent se = new SpeechEventWrapper(e);
         SpeechEventUtilities.postSpeechEvent(this, se);
     }
