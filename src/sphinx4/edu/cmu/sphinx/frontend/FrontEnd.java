@@ -139,7 +139,7 @@ public class FrontEnd extends BaseDataProcessor {
 
     private DataProcessor first;
     private DataProcessor last;
-    private Vector<SignalListener> signalListeners = new Vector<SignalListener>();
+    private List<SignalListener> signalListeners = new ArrayList<SignalListener>();
 
 
     /* (non-Javadoc)
@@ -248,10 +248,8 @@ public class FrontEnd extends BaseDataProcessor {
      * @param signal the signal that occurred
      */
     protected void fireSignalListeners(Signal signal) {
-        Vector<SignalListener> copy = new Vector<SignalListener>(signalListeners);
-        for (SignalListener listener : copy) {
+        for (SignalListener listener : new ArrayList<SignalListener>(signalListeners))
             listener.signalOccurred(signal);
-        }
     }
 
 

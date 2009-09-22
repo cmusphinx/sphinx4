@@ -18,7 +18,7 @@ import edu.cmu.sphinx.util.LogMath;
 
 import java.util.Iterator;
 import java.util.List;
-import java.util.Vector;
+import java.util.ArrayList;
 
 /**
  * An implementation of a result Path that computes scores and confidences on the fly.
@@ -27,7 +27,7 @@ import java.util.Vector;
  */
 public class WordResultPath implements Path {
 
-    private Vector<WordResult> path = new Vector<WordResult>();
+    private List<WordResult> path = new ArrayList<WordResult>();
 
 
     /**

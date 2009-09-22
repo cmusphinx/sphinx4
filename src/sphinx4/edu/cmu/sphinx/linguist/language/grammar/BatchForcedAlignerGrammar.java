@@ -7,7 +7,8 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.LineNumberReader;
-import java.util.Hashtable;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Copyright 1999-2006 Carnegie Mellon University. Portions Copyright 2002 Sun Microsystems, Inc. Portions Copyright
@@ -25,7 +26,7 @@ public class BatchForcedAlignerGrammar extends ForcedAlignerGrammar implements G
     public final static String PROP_REF_FILE = "refFile";
 
     protected String refFile;
-    protected Hashtable<String, GrammarNode> grammars;
+    protected final Map<String, GrammarNode> grammars = new HashMap<String, GrammarNode>();
     protected String currentUttName = "";
 
     /*
@@ -37,7 +38,6 @@ public class BatchForcedAlignerGrammar extends ForcedAlignerGrammar implements G
         super.newProperties(ps);
 
         refFile = ps.getString(PROP_REF_FILE);
-        grammars = new Hashtable<String,GrammarNode>();
     }
 
 
@@ -82,7 +82,7 @@ public class BatchForcedAlignerGrammar extends ForcedAlignerGrammar implements G
 
 
     public void setUtterance(String utteranceName) {
-        initialNode = (GrammarNode) grammars.get(utteranceName);
+        initialNode = grammars.get(utteranceName);
         assert initialNode != null;
     }
 }

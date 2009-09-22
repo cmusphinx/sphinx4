@@ -76,7 +76,7 @@ import java.util.*;
  * converting the FST file to a Grammar object are: <ol>
  * <p/>
  * <li><b>Create all the Grammar nodes </b> <br> Go through the entire FST file and for each word transition, take the
- * destination node ID and create a grammar node using that ID. These nodes are kept in a hashtable to make sure they
+ * destination node ID and create a grammar node using that ID. These nodes are kept in a hashmap to make sure they
  * are created once for each ID. Therefore, we get one word per grammar node.</li>
  * <p/>
  * <br>

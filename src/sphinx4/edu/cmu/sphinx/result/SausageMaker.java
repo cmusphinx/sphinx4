@@ -330,7 +330,7 @@ public class SausageMaker extends AbstractSausageMaker {
      * @return the sausage producing by collapsing the lattice.
      */
     public Sausage makeSausage() {
-        List<Cluster> clusters = new Vector<Cluster>(lattice.getNodes().size());
+        List<Cluster> clusters = new ArrayList<Cluster>(lattice.getNodes().size());
         Collection<Node> nodes = lattice.nodes.values();
         for (Node n : nodes) {
             n.cacheDescendants();
@@ -363,7 +363,7 @@ public class SausageMaker extends AbstractSausageMaker {
      */
     private List<Cluster> topologicalSort(List<Cluster> clusters) {
         Comparator<Cluster> comparator = new ClusterComparator();
-        Vector<Cluster> sorted = new Vector<Cluster>(clusters.size());
+        List<Cluster> sorted = new ArrayList<Cluster>(clusters.size());
         while (clusters.size() > 0) {
             Cluster cluster = (Cluster) Collections.min(clusters, comparator);
             clusters.remove(cluster);

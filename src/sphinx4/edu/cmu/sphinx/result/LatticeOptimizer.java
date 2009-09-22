@@ -11,7 +11,8 @@
  */
 package edu.cmu.sphinx.result;
 
-import java.util.Vector;
+import java.util.List;
+import java.util.ArrayList;
 
 /**
  * Class used to collapse all equivalent paths in a Lattice.  Results in a Lattices that is deterministic (no Node has
@@ -118,11 +119,11 @@ public class LatticeOptimizer {
     protected boolean optimizeNodeForward(Node n) {
         assert lattice.hasNode(n);
 
-        Vector<Edge> leavingEdges = new Vector<Edge>(n.getLeavingEdges());
+        List<Edge> leavingEdges = new ArrayList<Edge>(n.getLeavingEdges());
         for (int j = 0; j < leavingEdges.size(); j++) {
-            Edge e = leavingEdges.elementAt(j);
+            Edge e = leavingEdges.get(j);
             for (int k = j + 1; k < leavingEdges.size(); k++) {
-                Edge e2 = (Edge) leavingEdges.elementAt(k);
+                Edge e2 = leavingEdges.get(k);
 
                 /*
                  * If these are not the same edge, and they point to
@@ -270,11 +271,11 @@ public class LatticeOptimizer {
      * @return true if Node n required optimizing backwards
      */
     protected boolean optimizeNodeBackward(Node n) {
-        Vector<Edge> enteringEdges = new Vector<Edge>(n.getEnteringEdges());
+        List<Edge> enteringEdges = new ArrayList<Edge>(n.getEnteringEdges());
         for (int j = 0; j < enteringEdges.size(); j++) {
-            Edge e = (Edge) enteringEdges.elementAt(j);
+            Edge e = enteringEdges.get(j);
             for (int k = j + 1; k < n.getEnteringEdges().size(); k++) {
-                Edge e2 = (Edge) enteringEdges.elementAt(k);
+                Edge e2 = enteringEdges.get(k);
 
                 /*
                  * If these are not the same edge, and they point to

@@ -16,7 +16,6 @@ import javax.speech.SpeechEvent;
 import javax.speech.recognition.Recognizer;
 import javax.speech.recognition.RecognizerAudioEvent;
 import javax.speech.recognition.RecognizerAudioListener;
-import java.util.Enumeration;
 
 /**
  * Skeletal Implementation of the JSAPI AudioManager interface for Recognizers.  Merely provides convenience function
@@ -55,16 +54,9 @@ public class BaseRecognizerAudioManager extends BaseAudioManager
 
     /** Utility function to send a AUDIO_LEVEL event to all listeners. */
     public void fireAudioLevel(RecognizerAudioEvent event) {
-        if (listeners == null) {
-            return;
-        }
-        Enumeration E = listeners.elements();
-        while (E.hasMoreElements()) {
-            AudioListener al = (AudioListener) E.nextElement();
-            if (al instanceof RecognizerAudioListener) {
+        for (AudioListener al : listeners)
+            if (al instanceof RecognizerAudioListener)
                 ((RecognizerAudioListener) al).audioLevel(event);
-            }
-        }
     }
 
 
@@ -84,16 +76,9 @@ public class BaseRecognizerAudioManager extends BaseAudioManager
 
     /** Utility function to send a SPEECH_STARTED event to all listeners. */
     public void fireSpeechStarted(RecognizerAudioEvent event) {
-        if (listeners == null) {
-            return;
-        }
-        Enumeration E = listeners.elements();
-        while (E.hasMoreElements()) {
-            AudioListener al = (AudioListener) E.nextElement();
-            if (al instanceof RecognizerAudioListener) {
+        for (AudioListener al : listeners)
+            if (al instanceof RecognizerAudioListener)
                 ((RecognizerAudioListener) al).speechStarted(event);
-            }
-        }
     }
 
 
@@ -113,16 +98,9 @@ public class BaseRecognizerAudioManager extends BaseAudioManager
 
     /** Utility function to send a SPEECH_STOPPED event to all listeners. */
     public void fireSpeechStopped(RecognizerAudioEvent event) {
-        if (listeners == null) {
-            return;
-        }
-        Enumeration E = listeners.elements();
-        while (E.hasMoreElements()) {
-            AudioListener al = (AudioListener) E.nextElement();
-            if (al instanceof RecognizerAudioListener) {
+        for (AudioListener al : listeners)
+            if (al instanceof RecognizerAudioListener)
                 ((RecognizerAudioListener) al).speechStopped(event);
-            }
-        }
     }
 //////////////////////
 // End utility methods for calling RecognizerAudioListeners

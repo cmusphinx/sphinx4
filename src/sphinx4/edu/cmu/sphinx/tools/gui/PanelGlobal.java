@@ -222,7 +222,7 @@ import java.util.Iterator;
      */
     private void addTableData(String propName, String propVal){
         DefaultTableModel model = (DefaultTableModel)TableParameter.getModel();
-        Vector myData = new Vector(2);
+        Vector<String> myData = new Vector<String>(2);
         myData.add(propName);
         myData.add(propVal);
         model.insertRow(model.getRowCount(),myData);

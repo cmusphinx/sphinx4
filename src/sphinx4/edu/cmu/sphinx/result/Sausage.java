@@ -37,7 +37,7 @@ public class Sausage implements ConfidenceResult {
      * @param size The number of word slots in the sausage
      */
     public Sausage(int size) {
-        confusionSets = new Vector<ConfusionSet>(size);
+        confusionSets = new ArrayList<ConfusionSet>(size);
         for (int i = 0; i < size; i++) {
             confusionSets.add(new ConfusionSet());
         }

@@ -17,14 +17,15 @@ import javax.sound.sampled.AudioInputStream;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.io.IOException;
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 
 /** Represents a 16bit, SIGNED_PCM, big endian audio clip with a sample rate specified by AudioFormat. */
 public class AudioData {
 
     protected AudioFormat format;
     protected short[] shorts;
-    protected Vector<ChangeListener> listeners = new Vector<ChangeListener>();
+    protected final List<ChangeListener> listeners = new ArrayList<ChangeListener>();
     protected int selectionStart = -1;
     protected int selectionEnd = -1;
 
@@ -128,11 +129,8 @@ public class AudioData {
 
     /** Notify all ChangeListeners of a change. */
     protected void fireStateChanged() {
-        ChangeListener listener;
         ChangeEvent event = new ChangeEvent(this);
-        for (int i = 0; i < listeners.size(); i++) {
-            listener = listeners.elementAt(i);
+        for (ChangeListener listener : listeners)
             listener.stateChanged(event);
-        }
     }
 }

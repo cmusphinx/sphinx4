@@ -237,7 +237,7 @@ public abstract class AbstractSausageMaker implements ConfidenceScorer, Configur
      * @return the subcluster.
      */
     protected List<Node> makeWordSubCluster(List<Node> cluster, String word) {
-        Vector<Node> sub = new Vector<Node>();
+        List<Node> sub = new ArrayList<Node>();
         for (Node n : cluster) {
             if (n.getWord().getSpelling().equals(word)) {
                 sub.add(n);

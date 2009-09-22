@@ -6,7 +6,8 @@ import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.StringTokenizer;
-import java.util.Vector;
+import java.util.List;
+import java.util.ArrayList;
 
 public class JSGFParser implements JSGFParserConstants {
 
@@ -558,7 +559,7 @@ public class JSGFParser implements JSGFParserConstants {
 
 
     final public RuleAlternatives alternatives() throws ParseException {
-        Vector<Rule> rv = new Vector<Rule>();
+        List<Rule> rules = new ArrayList<Rule>();
         Rule r;
         float w;
         float wa[] = new float[25];
@@ -574,7 +575,7 @@ public class JSGFParser implements JSGFParserConstants {
             case 36:
             case 38:
                 r = sequence();
-                rv.addElement(r);
+                rules.add(r);
                 label_4:
                 while (true) {
                     switch ((jj_ntk == -1) ? jj_ntk() : jj_ntk) {
@@ -586,20 +587,20 @@ public class JSGFParser implements JSGFParserConstants {
                     }
                     jj_consume_token(33);
                     r = sequence();
-                    rv.addElement(r);
+                    rules.add(r);
                 }
                 break;
             case 34:
                 w = weight();
                 r = sequence();
-                rv.addElement(r);
+                rules.add(r);
                 wa[cnt++] = w;
                 label_5:
                 while (true) {
                     jj_consume_token(33);
                     w = weight();
                     r = sequence();
-                    rv.addElement(r);
+                    rules.add(r);
                     // make array bigger if needed
                     if (cnt > (wa.length - 1)) {
                         float watmp[] = new float[wa.length + 25];
@@ -621,9 +622,7 @@ public class JSGFParser implements JSGFParserConstants {
                 jj_consume_token(-1);
                 throw new ParseException();
         }
-        Rule rarry[] = new Rule[rv.size()];
-        rv.copyInto(rarry);
-        RuleAlternatives ra = new RuleAlternatives(rarry);
+        RuleAlternatives ra = new RuleAlternatives(rules.toArray(new Rule[rules.size()]));
         if (cnt != 0) {
             float wa1[] = new float[cnt];
             System.arraycopy(wa, 0, wa1, 0, cnt);
@@ -672,11 +671,11 @@ public class JSGFParser implements JSGFParserConstants {
 
     final public RuleSequence sequence() throws ParseException {
         Rule r;
-        Vector<Rule> v = new Vector<Rule>();
+        List<Rule> rules = new ArrayList<Rule>();
         label_6:
         while (true) {
             r = item();
-            v.addElement(r);
+            rules.add(r);
             switch ((jj_ntk == -1) ? jj_ntk() : jj_ntk) {
                 case GRAMMAR:
                 case IMPORT:
@@ -693,10 +692,8 @@ public class JSGFParser implements JSGFParserConstants {
                     break label_6;
             }
         }
-        Rule ra[] = new Rule[v.size()];
-        v.copyInto(ra);
         {
-            if (true) return new RuleSequence(ra);
+            if (true) return new RuleSequence(rules.toArray(new Rule[rules.size()]));
         }
         throw new Error("Missing return statement in function");
     }
@@ -727,7 +724,7 @@ public class JSGFParser implements JSGFParserConstants {
 
     final public Rule item() throws ParseException {
         Rule r;
-        Vector t = null;
+        List<String> tags = null;
         int count = -1;
         switch ((jj_ntk == -1) ? jj_ntk() : jj_ntk) {
             case GRAMMAR:
@@ -777,7 +774,7 @@ public class JSGFParser implements JSGFParserConstants {
                 }
                 switch ((jj_ntk == -1) ? jj_ntk() : jj_ntk) {
                     case TAG:
-                        t = tag();
+                        tags = tag();
                         break;
                     default:
                         jj_la1[17] = jj_gen;
@@ -810,7 +807,7 @@ public class JSGFParser implements JSGFParserConstants {
                 }
                 switch ((jj_ntk == -1) ? jj_ntk() : jj_ntk) {
                     case TAG:
-                        t = tag();
+                        tags = tag();
                         break;
                     default:
                         jj_la1[20] = jj_gen;
@@ -823,7 +820,7 @@ public class JSGFParser implements JSGFParserConstants {
                 count = RuleCount.OPTIONAL;
                 switch ((jj_ntk == -1) ? jj_ntk() : jj_ntk) {
                     case TAG:
-                        t = tag();
+                        tags = tag();
                         break;
                     default:
                         jj_la1[21] = jj_gen;
@@ -835,9 +832,8 @@ public class JSGFParser implements JSGFParserConstants {
                 throw new ParseException();
         }
         if (count != -1) r = new RuleCount(r, count);
-        if (t != null) {
-            for (int i = 0; i < t.size(); i++) {
-                String tag = (String) t.elementAt(i);
+        if (tags != null) {
+            for (String tag : tags) {
                 if (tag.charAt(0) == '{') {
                     tag = tag.substring(1, tag.length() - 1);
                     tag = tag.replace('\\', ' ');
@@ -852,13 +848,13 @@ public class JSGFParser implements JSGFParserConstants {
     }
 
 
-    final public Vector tag() throws ParseException {
+    final public List<String> tag() throws ParseException {
         Token t;
-        Vector v = new Vector();
+        List<String> list = new ArrayList<String>();
         label_7:
         while (true) {
             t = jj_consume_token(TAG);
-            v.addElement(t.image);
+            list.add(t.image);
             switch ((jj_ntk == -1) ? jj_ntk() : jj_ntk) {
                 case TAG:
                     break;
@@ -868,7 +864,7 @@ public class JSGFParser implements JSGFParserConstants {
             }
         }
         {
-            if (true) return v;
+            if (true) return list;
         }
         throw new Error("Missing return statement in function");
     }
@@ -1155,7 +1151,7 @@ public class JSGFParser implements JSGFParserConstants {
     }
 
 
-    private Vector<int[]> jj_expentries = new Vector<int[]>();
+    private List<int[]> jj_expentries = new ArrayList<int[]>();
     private int[] jj_expentry;
     private int jj_kind = -1;
     private int[] jj_lasttokens = new int[100];
@@ -1169,8 +1165,7 @@ public class JSGFParser implements JSGFParserConstants {
         } else if (jj_endpos != 0) {
             jj_expentry = java.util.Arrays.copyOf(jj_lasttokens, jj_endpos);
             boolean exists = false;
-            for (java.util.Enumeration e = jj_expentries.elements(); e.hasMoreElements();) {
-                int[] oldentry = (int[]) (e.nextElement());
+            for (int[] oldentry : jj_expentries) {
                 if (oldentry.length == jj_expentry.length) {
                     exists = true;
                     for (int i = 0; i < jj_expentry.length; i++) {
@@ -1182,14 +1177,14 @@ public class JSGFParser implements JSGFParserConstants {
                     if (exists) break;
                 }
             }
-            if (!exists) jj_expentries.addElement(jj_expentry);
+            if (!exists) jj_expentries.add(jj_expentry);
             if (pos != 0) jj_lasttokens[(jj_endpos = pos) - 1] = kind;
         }
     }
 
 
     public ParseException generateParseException() {
-        jj_expentries.removeAllElements();
+        jj_expentries.clear();
         boolean[] la1tokens = new boolean[40];
         for (int i = 0; i < 40; i++) {
             la1tokens[i] = false;
@@ -1214,16 +1209,13 @@ public class JSGFParser implements JSGFParserConstants {
             if (la1tokens[i]) {
                 jj_expentry = new int[1];
                 jj_expentry[0] = i;
-                jj_expentries.addElement(jj_expentry);
+                jj_expentries.add(jj_expentry);
             }
         }
         jj_endpos = 0;
         jj_rescan_token();
         jj_add_error_token(0, 0);
-        int[][] exptokseq = new int[jj_expentries.size()][];
-        for (int i = 0; i < jj_expentries.size(); i++) {
-            exptokseq[i] = jj_expentries.elementAt(i);
-        }
+        int[][] exptokseq = jj_expentries.toArray(new int[jj_expentries.size()][]);
         return new ParseException(token, exptokseq, tokenImage);
     }
 

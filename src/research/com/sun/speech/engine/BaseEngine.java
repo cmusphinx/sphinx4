@@ -8,8 +8,8 @@
 package com.sun.speech.engine;
 
 import javax.speech.*;
-import java.util.Enumeration;
-import java.util.Vector;
+import java.util.List;
+import java.util.ArrayList;
 
 /**
  * Supports the JSAPI 1.0 <code>Engine</code> interface. Actual JSAPI implementations might want to extend or modify
@@ -28,7 +28,7 @@ abstract public class BaseEngine implements Engine, SpeechEventDispatcher {
     protected Object engineStateLock;
 
     /** List of <code>EngineListeners</code> registered for <code>EngineEvents</code> on this <code>Engine</code>. */
-    protected Vector engineListeners;
+    protected final List<EngineListener> engineListeners = new ArrayList<EngineListener>();
 
     /** The <code>AudioManager</code> for this <code>Engine</code>. */
     protected AudioManager audioManager = null;
@@ -56,7 +56,6 @@ abstract public class BaseEngine implements Engine, SpeechEventDispatcher {
      */
     public BaseEngine(EngineModeDesc desc) {
         engineModeDesc = desc;
-        engineListeners = new Vector();
         engineState = DEALLOCATED;
         engineStateLock = new Object();
         engineProperties = createEngineProperties();
@@ -334,7 +333,7 @@ abstract public class BaseEngine implements Engine, SpeechEventDispatcher {
     public void addEngineListener(EngineListener listener) {
         synchronized (engineListeners) {
             if (!engineListeners.contains(listener)) {
-                engineListeners.addElement(listener);
+                engineListeners.add(listener);
             }
         }
     }
@@ -347,7 +346,7 @@ abstract public class BaseEngine implements Engine, SpeechEventDispatcher {
      */
     public void removeEngineListener(EngineListener listener) {
         synchronized (engineListeners) {
-            engineListeners.removeElement(listener);
+            engineListeners.remove(listener);
         }
     }
 
@@ -384,11 +383,8 @@ abstract public class BaseEngine implements Engine, SpeechEventDispatcher {
         if (engineListeners == null) {
             return;
         }
-        Enumeration E = engineListeners.elements();
-        while (E.hasMoreElements()) {
-            EngineListener el = (EngineListener) E.nextElement();
+        for (EngineListener el : engineListeners)
             el.engineAllocated(event);
-        }
     }
 
 
@@ -425,11 +421,8 @@ abstract public class BaseEngine implements Engine, SpeechEventDispatcher {
         if (engineListeners == null) {
             return;
         }
-        Enumeration E = engineListeners.elements();
-        while (E.hasMoreElements()) {
-            EngineListener el = (EngineListener) E.nextElement();
+        for (EngineListener el : engineListeners)
             el.engineAllocatingResources(event);
-        }
     }
 
 
@@ -465,11 +458,8 @@ abstract public class BaseEngine implements Engine, SpeechEventDispatcher {
         if (engineListeners == null) {
             return;
         }
-        Enumeration E = engineListeners.elements();
-        while (E.hasMoreElements()) {
-            EngineListener el = (EngineListener) E.nextElement();
+        for (EngineListener el : engineListeners)
             el.engineDeallocated(event);
-        }
     }
 
 
@@ -507,11 +497,8 @@ abstract public class BaseEngine implements Engine, SpeechEventDispatcher {
         if (engineListeners == null) {
             return;
         }
-        Enumeration E = engineListeners.elements();
-        while (E.hasMoreElements()) {
-            EngineListener el = (EngineListener) E.nextElement();
+        for (EngineListener el : engineListeners)
             el.engineDeallocatingResources(event);
-        }
     }
 
 
@@ -546,11 +533,8 @@ abstract public class BaseEngine implements Engine, SpeechEventDispatcher {
         if (engineListeners == null) {
             return;
         }
-        Enumeration E = engineListeners.elements();
-        while (E.hasMoreElements()) {
-            EngineListener el = (EngineListener) E.nextElement();
+        for (EngineListener el : engineListeners)
             el.enginePaused(event);
-        }
     }
 
 
@@ -585,11 +569,8 @@ abstract public class BaseEngine implements Engine, SpeechEventDispatcher {
         if (engineListeners == null) {
             return;
         }
-        Enumeration E = engineListeners.elements();
-        while (E.hasMoreElements()) {
-            EngineListener el = (EngineListener) E.nextElement();
+        for (EngineListener el : engineListeners)
             el.engineResumed(event);
-        }
     }
 
 

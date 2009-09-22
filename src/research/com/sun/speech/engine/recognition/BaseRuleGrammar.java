@@ -17,11 +17,11 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar, Seriali
     /** Line delimiter. */
     private static final String LINE_SEPARATOR = System.getProperty("line.separator");
 
-    protected Hashtable<String, GRule> rules;
-    protected Vector imports;
-    protected Vector importedRules;
+    protected final Map<String, GRule> rules = new HashMap<String, GRule>();
+    protected final List<RuleName> imports = new ArrayList<RuleName>();
+    protected final List<String> importedRules = new ArrayList<String>();
 
-    protected HashMap<String, Collection<String>> ruleTags;
+    protected final Map<String, Collection<String>> ruleTags = new HashMap<String, Collection<String>>();
 
 
     /**
@@ -32,11 +32,6 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar, Seriali
      */
     public BaseRuleGrammar(BaseRecognizer R, String name) {
         super(R, name);
-
-        rules = new Hashtable<String, GRule>();
-        ruleTags = new HashMap<String, Collection<String>>();
-        imports = new Vector();
-        importedRules = new Vector();
     }
 
 
@@ -50,13 +45,10 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar, Seriali
         if (rules == null) {
             return;
         }
-        Enumeration<GRule> e = rules.elements();
-        while (e.hasMoreElements()) {
-            GRule g = e.nextElement();
+        for (GRule g : rules.values())
 //            if (g.isPublic) {
             g.isEnabled = enabled;
 //            }
-        }
     }
 //////////////////////
 // End overridden Grammar Methods
@@ -147,13 +139,10 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar, Seriali
         if (rules == null) {
             return new String[0];
         }
-        String rn[] = new String[rules.size()];
+        String[] rn = new String[rules.size()];
         int i = 0;
-        Enumeration<GRule> e = rules.elements();
-        while (e.hasMoreElements()) {
-            GRule g = e.nextElement();
+        for (GRule g : rules.values())
             rn[i++] = g.ruleName;
-        }
         return rn;
     }
 
@@ -269,12 +258,12 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar, Seriali
             }
         }
 
-        // Collect all matching imports into a vector.  After trying to
+        // Collect all matching imports into a list.  After trying to
         // match rn to each import statement the vec will have
         // size()=0 if rn is unresolvable
         // size()=1 if rn is properly resolvable
         // size()>1 if rn is an ambiguous reference
-        Vector matches = new Vector();
+        List<RuleName> matches = new ArrayList<RuleName>();
 
         // Get list of imports
         // Add local grammar to simply the case of checking for
@@ -335,8 +324,7 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar, Seriali
                 if (iSimpleName.equals("*")) {
                     if (gref.getRule(simpleName) != null) {
                         // import <pkg.gram.*> matches <pkg.gram.rulename>
-                        matches.addElement(
-                                new RuleName(iFullGrammarName + '.' + simpleName));
+                        matches.add(new RuleName(iFullGrammarName + '.' + simpleName));
                     }
                     continue;
                 } else {
@@ -345,8 +333,7 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar, Seriali
                     //
                     if (iSimpleName.equals(simpleName)) {
                         // import <pkg.gram.rulename> exact match for <???.gram.rulename>
-                        matches.addElement(new RuleName(iFullGrammarName +
-                            '.' + simpleName));
+                        matches.add(new RuleName(iFullGrammarName + '.' + simpleName));
                     }
                     continue;
                 }
@@ -364,8 +351,7 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar, Seriali
             if (iSimpleName.equals("*")) {
                 if (gref.getRule(simpleName) != null) {
                     // import <pkg.gram.*> matches <simpleName>
-                    matches.addElement(new RuleName(iFullGrammarName +
-                        '.' + simpleName));
+                    matches.add(new RuleName(iFullGrammarName + '.' + simpleName));
                 }
                 continue;
             }
@@ -374,8 +360,7 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar, Seriali
             //    import <ipkg.igram.iSimpleName> against <simpleName>
 
             if (iSimpleName.equals(simpleName)) {
-                matches.addElement(new RuleName(iFullGrammarName +
-                    '.' + simpleName));
+                matches.add(new RuleName(iFullGrammarName + '.' + simpleName));
                 continue;
             }
         }
@@ -390,17 +375,13 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar, Seriali
             // Throw exception if ambiguous reference
             StringBuilder b = new StringBuilder();
             b.append("Warning: ambiguous reference ").append(rn).append(" in ").append(getName()).append(" to ");
-            for (int i = 0; i < matches.size(); i++) {
-                RuleName tmp = (RuleName) (matches.elementAt(i));
-                if (i > 0) {
-                    b.append(" and ");
-                }
-                b.append(tmp);
-            }
+            for (RuleName tmp : matches)
+                b.append(tmp).append(" and ");
+            b.setLength(b.length() - 5);
             throw new GrammarException(b.toString(), null);
         } else {
             // Return successfully
-            return (RuleName) (matches.elementAt(0));
+            return matches.get(0);
         }
     }
 
@@ -412,7 +393,7 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar, Seriali
      */
     public void addImport(RuleName importName) {
         if (!imports.contains(importName)) {
-            imports.addElement(importName);
+            imports.add(importName);
             grammarChanged = true;
         }
     }
@@ -426,7 +407,7 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar, Seriali
     public void removeImport(RuleName importName)
             throws IllegalArgumentException {
         if (imports.contains(importName)) {
-            imports.removeElement(importName);
+            imports.remove(importName);
             grammarChanged = true;
         }
     }
@@ -437,14 +418,7 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar, Seriali
         if (imports == null) {
             return new RuleName[0];
         }
-        RuleName rn[] = new RuleName[imports.size()];
-        int i = 0;
-        Enumeration e = imports.elements();
-        while (e.hasMoreElements()) {
-            RuleName r = (RuleName) e.nextElement();
-            rn[i++] = r;
-        }
-        return rn;
+        return imports.toArray(new RuleName[imports.size()]);
     }
 
 
@@ -641,7 +615,7 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar, Seriali
     /** Add a rule as imported. */
     protected void setRuleIsImported(String simpleName) {
         if (!importedRules.contains(simpleName)) {
-            importedRules.addElement(simpleName);
+            importedRules.add(simpleName);
         }
     }
 
@@ -737,12 +711,12 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar, Seriali
         if (r == null) {
             return;
         }
-        r.samples.addElement(sample);
+        r.samples.add(sample);
     }
 
 
     /** add a sample sentence to the list of sample sentences that go with the specified rule */
-    void setSampleSentences(String rname, Vector samps) {
+    void setSampleSentences(String rname, List<String> samps) {
         GRule r = rules.get(stripRuleName(rname));
         /* TODO : exception */
         if (r == null) {
@@ -753,7 +727,7 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar, Seriali
 
 
     /** get the list of sample sentences that go with the specified rule */
-    public Vector getSampleSentences(String rname) {
+    public List<String> getSampleSentences(String rname) {
         GRule r = rules.get(stripRuleName(rname));
         if (r == null) {
             return null;
@@ -789,7 +763,7 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar, Seriali
         boolean isPublic;
         boolean isEnabled;
         boolean hasChanged;
-        Vector samples = new Vector();
+        List<String> samples = new ArrayList<String>();
         int lineno = 0;
     }
 }

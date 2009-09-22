@@ -12,23 +12,14 @@ import javax.speech.SpeechError;
 import javax.speech.SpeechEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.Enumeration;
-import java.util.EventObject;
-import java.util.Vector;
+import java.util.*;
 
 /** Supports the JSAPI 1.0 <code>EngineProperties</code> interface. */
 public abstract class BaseEngineProperties
         implements EngineProperties, SpeechEventDispatcher {
 
     /** List of <code>PropertyChangeListeners</code> registered for <code>PropertyChangeEvents</code> on this object. */
-    protected Vector propertyChangeListeners;
-
-
-    /** Class constructor. */
-    protected BaseEngineProperties() {
-        propertyChangeListeners = new Vector();
-    }
-
+    protected final List<PropertyChangeListener> propertyChangeListeners = new ArrayList<PropertyChangeListener>();
 
     /**
      * Obtains the AWT <code>Component</code> that provides the default user interface for setting the properties of the
@@ -55,7 +46,7 @@ public abstract class BaseEngineProperties
      */
     public void addPropertyChangeListener(PropertyChangeListener listener) {
         if (!propertyChangeListeners.contains(listener)) {
-            propertyChangeListeners.addElement(listener);
+            propertyChangeListeners.add(listener);
         }
     }
 
@@ -66,7 +57,7 @@ public abstract class BaseEngineProperties
      * @param listener the <code>PropertyChangeListener</code> to remove
      */
     public void removePropertyChangeListener(PropertyChangeListener listener) {
-        propertyChangeListeners.removeElement(listener);
+        propertyChangeListeners.remove(listener);
     }
 
 
@@ -171,15 +162,8 @@ public abstract class BaseEngineProperties
      * @see #dispatchSpeechEvent
      */
     public void firePropertyChangeEvent(PropertyChangeEvent event) {
-        if (propertyChangeListeners == null) {
-            return;
-        }
-        Enumeration E = propertyChangeListeners.elements();
-        while (E.hasMoreElements()) {
-            PropertyChangeListener pl =
-                    (PropertyChangeListener) E.nextElement();
+        for (PropertyChangeListener pl : propertyChangeListeners)
             pl.propertyChange(event);
-        }
     }
 
 

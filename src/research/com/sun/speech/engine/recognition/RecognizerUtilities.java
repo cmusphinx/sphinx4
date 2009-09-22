@@ -12,9 +12,7 @@ import java.io.File;
 import java.io.PrintStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Enumeration;
-import java.util.Hashtable;
-import java.util.Vector;
+import java.util.*;
 
 /** Utilities methods. */
 public class RecognizerUtilities {
@@ -76,14 +74,14 @@ public class RecognizerUtilities {
 
             // copy sample sentences if appropriate
             if ((gramTo instanceof BaseRuleGrammar) && (gramFrom instanceof BaseRuleGrammar)) {
-                Vector a = ((BaseRuleGrammar) gramFrom).getSampleSentences(ruleName);
+                List<String> a = ((BaseRuleGrammar) gramFrom).getSampleSentences(ruleName);
                 ((BaseRuleGrammar) gramTo).setSampleSentences(ruleName, a);
             }
         }
     }
 
 
-    static Hashtable xrefs = null;
+    static Map<String, Set<String>> xrefs = null;
 
 
     /**
@@ -93,7 +91,7 @@ public class RecognizerUtilities {
      * @see #getRefsToRuleName
      */
     static public void buildXrefTable(Recognizer rec) {
-        xrefs = new Hashtable();
+        xrefs = new HashMap<String, Set<String>>();
         RuleGrammar[] grams = rec.listRuleGrammars();
 
         if (grams == null) {
@@ -113,11 +111,11 @@ public class RecognizerUtilities {
                 RuleName rn = new RuleName(grams[i].getName() + '.' + names[j]);
 
                 // Identify all rules referenced in r
-                Vector<RuleName> refs = new Vector<RuleName>();
+                List<RuleName> refs = new ArrayList<RuleName>();
                 getRuleNameRefs(r, refs);
 
                 for (int k = 0; k < refs.size(); k++) {
-                    RuleName ref = (RuleName) (refs.elementAt(k));
+                    RuleName ref = refs.get(k);
 
                     // Get a fully-qualified reference
                     RuleName fullref;
@@ -128,14 +126,13 @@ public class RecognizerUtilities {
                     }
 
                     if (fullref != null) {
-                        Hashtable h = (Hashtable) (xrefs.get(fullref.toString().intern()));
-
-                        if (h == null) {
-                            h = new Hashtable();
+                        String key = fullref.toString().intern();
+                        Set<String> set = xrefs.get(key);
+                        if (set == null) {
+                            set = new HashSet<String>();
+                            xrefs.put(key, set);
                         }
-
-                        h.put(rn.toString().intern(), "dummy");
-                        xrefs.put(fullref.toString().intern(), h);
+                        set.add(rn.toString().intern());
                     } else {
                         debugMessageOut("Warning: unresolved rule " + ref + " in grammar " + grams[i].getName());
                     }
@@ -155,25 +152,21 @@ public class RecognizerUtilities {
             return null;
         }
 
-        Hashtable h = (Hashtable) (xrefs.get(r.toString().intern()));
+        Set<String> set = xrefs.get(r.toString().intern());
 
-        if (h == null) {
+        if (set == null) {
             return null;
         }
 
-        RuleName[] rulenames = new RuleName[h.size()];
-
+        RuleName[] rulenames = new RuleName[set.size()];
         int i = 0;
-        for (Enumeration e = h.keys(); e.hasMoreElements();) {
-            String name = (String) (e.nextElement());
+        for (String name : set)
             rulenames[i++] = new RuleName(name);
-        }
-
         return rulenames;
     }
 
 
-    static protected void getRuleNameRefs(Rule r, Vector refs) {
+    static protected void getRuleNameRefs(Rule r, List<RuleName> refs) {
         if (r instanceof RuleAlternatives || r instanceof RuleSequence) {
             Rule[] array;
             if (r instanceof RuleAlternatives) {
@@ -194,22 +187,22 @@ public class RecognizerUtilities {
         } else if (r instanceof RuleName) {
             // Put a copy in the Xref list (avoid side-effects of linking)
             RuleName tmp = (RuleName) r;
-            refs.addElement(new RuleName(tmp.getRuleName()));
+            refs.add(new RuleName(tmp.getRuleName()));
         }
     }
 
 
-    static private Hashtable oldMessages = new Hashtable();
+    static private Set<String> oldMessages = new HashSet<String>();
 
 
     /** Print out a message - don't ever repeat it. */
     static protected void debugMessageOut(String message) {
         message = message.intern();
-        if (oldMessages.get(message) != null) {
+        if (oldMessages.contains(message)) {
             return;
         }
         errOutput.println(message);
-        oldMessages.put(message, "dummy");
+        oldMessages.add(message);
     }
 
     /*
@@ -308,7 +301,7 @@ public class RecognizerUtilities {
         /*
         * Now remove unused rules
         */
-        Vector nr = new Vector();
+        List<RuleGrammar> nr = new ArrayList<RuleGrammar>();
         for (int i = 0; i < NRG.length; i++) {
             RuleGrammar NG = null;
             String rnames[] = NRG[i].listRuleNames();
@@ -321,15 +314,13 @@ public class RecognizerUtilities {
                     NRG[i].deleteRule(rnames[j]);
                 } else k++;
             }
-            if (k > 0) nr.addElement(NRG[i]);
+            if (k > 0) nr.add(NRG[i]);
         }
 
         /*
         * Now return all non-null grammars
         */
-        RuleGrammar FRG[] = new RuleGrammar[nr.size()];
-        nr.copyInto(FRG);
-        return FRG;
+        return nr.toArray(new RuleGrammar[nr.size()]);
     }
 
 

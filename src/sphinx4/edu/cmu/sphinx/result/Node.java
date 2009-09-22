@@ -44,8 +44,8 @@ public class Node {
     private Word word;
     private int beginTime = -1;
     private int endTime = -1;
-    private Vector<Edge> enteringEdges;
-    private Vector<Edge> leavingEdges;
+    private List<Edge> enteringEdges;
+    private List<Edge> leavingEdges;
     private double forwardScore;
     private double backwardScore;
     private double posterior;
@@ -55,8 +55,8 @@ public class Node {
 
 
     {
-        enteringEdges = new Vector<Edge>();
-        leavingEdges = new Vector<Edge>();
+        enteringEdges = new ArrayList<Edge>();
+        leavingEdges = new ArrayList<Edge>();
         nodeCount++;
     }
 
@@ -228,7 +228,7 @@ public class Node {
      * @return a copy of the edges from this node
      */
     public Collection<Edge> getCopyOfLeavingEdges() {
-        return new Vector<Edge>(leavingEdges);
+        return new ArrayList<Edge>(leavingEdges);
     }
 
 

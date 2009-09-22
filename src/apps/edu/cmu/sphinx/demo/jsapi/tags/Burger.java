@@ -8,11 +8,12 @@
  */
 package edu.cmu.sphinx.demo.jsapi.tags;
 
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Burger implements OrderItem {
-    public Vector toppings = new Vector();
-    public Vector condiments = new Vector();
+    public List<String> toppings = new ArrayList<String>();
+    public List<String> condiments = new ArrayList<String>();
 
     public Burger() {
     }
@@ -26,7 +27,7 @@ public class Burger implements OrderItem {
     }
     
     public String toString() {
-        Vector allToppings = new Vector(toppings);
+        List<String> allToppings = new ArrayList<String>(toppings);
         allToppings.addAll(condiments);
         int numToppings = allToppings.size();
         if (numToppings == 0) {
@@ -34,7 +35,7 @@ public class Burger implements OrderItem {
         } else {
             StringBuilder sb = new StringBuilder("burger with ");
             for (int i = 0; i < numToppings; i++) {
-                sb.append(allToppings.elementAt(i));
+                sb.append(allToppings.get(i));
                 if (numToppings > 1) {
                     if (i == (numToppings - 2)) {
                         sb.append(" and ");

@@ -23,15 +23,13 @@ import javax.speech.EngineStateError;
 import javax.speech.SpeechEvent;
 import javax.speech.recognition.*;
 import java.applet.AudioClip;
-import java.util.Enumeration;
-import java.util.StringTokenizer;
-import java.util.Vector;
+import java.util.*;
 
 public class BaseResult
         implements Result, FinalResult, FinalRuleResult, FinalDictationResult,
         java.io.Serializable, Cloneable, SpeechEventDispatcher {
 
-    private Vector resultListeners;
+    private final List<ResultListener> resultListeners = new ArrayList<ResultListener>();
     String theText[] = null;
     int nTokens = 0;
     transient Grammar grammar = null;
@@ -55,7 +53,6 @@ public class BaseResult
 
     /** Create a result with a result string */
     public BaseResult(Grammar G, String S) {
-        resultListeners = new Vector();
         grammar = G;
         tryTokens(G, S);
     }
@@ -140,14 +137,14 @@ public class BaseResult
     /** Add a ResultListener to this Result. From javax.speech.recognition.Result. */
     public void addResultListener(ResultListener listener) {
         if (!resultListeners.contains(listener)) {
-            resultListeners.addElement(listener);
+            resultListeners.add(listener);
         }
     }
 
 
     /** Remove a ResultListener from this Result. From javax.speech.recognition.Result. */
     public void removeResultListener(ResultListener listener) {
-        resultListeners.removeElement(listener);
+        resultListeners.remove(listener);
     }
 //////////////////////
 // End Result Methods
@@ -338,14 +335,8 @@ public class BaseResult
 
     /** Utility function to send a AUDIO_RELEASED event to all result listeners. */
     public void fireAudioReleased(ResultEvent event) {
-        Enumeration E;
-        if (resultListeners != null) {
-            E = resultListeners.elements();
-            while (E.hasMoreElements()) {
-                ResultListener rl = (ResultListener) E.nextElement();
-                rl.audioReleased(event);
-            }
-        }
+        for (ResultListener rl : resultListeners)
+            rl.audioReleased(event);
     }
 
 
@@ -362,14 +353,8 @@ public class BaseResult
 
     /** Utility function to send a GRAMMAR_FINALIZED event to all result listeners. */
     public void fireGrammarFinalized(ResultEvent event) {
-        Enumeration E;
-        if (resultListeners != null) {
-            E = resultListeners.elements();
-            while (E.hasMoreElements()) {
-                ResultListener rl = (ResultListener) E.nextElement();
-                rl.grammarFinalized(event);
-            }
-        }
+        for (ResultListener rl : resultListeners)
+            rl.grammarFinalized(event);
     }
 
 
@@ -387,14 +372,8 @@ public class BaseResult
 
     /** Utility function to send a RESULT_ACCEPTED event to all result listeners. */
     public void fireResultAccepted(ResultEvent event) {
-        Enumeration E;
-        if (resultListeners != null) {
-            E = resultListeners.elements();
-            while (E.hasMoreElements()) {
-                ResultListener rl = (ResultListener) E.nextElement();
-                rl.resultAccepted(event);
-            }
-        }
+        for (ResultListener rl : resultListeners)
+            rl.resultAccepted(event);
     }
 
 
@@ -411,14 +390,8 @@ public class BaseResult
 
     /** Utility function to send a RESULT_CREATED event to all result listeners. */
     public void fireResultCreated(ResultEvent event) {
-        Enumeration E;
-        if (resultListeners != null) {
-            E = resultListeners.elements();
-            while (E.hasMoreElements()) {
-                ResultListener rl = (ResultListener) E.nextElement();
-                rl.resultCreated(event);
-            }
-        }
+        for (ResultListener rl : resultListeners)
+            rl.resultCreated(event);
     }
 
 
@@ -436,14 +409,8 @@ public class BaseResult
 
     /** Utility function to send a RESULT_REJECTED event to all result listeners. */
     public void fireResultRejected(ResultEvent event) {
-        Enumeration E;
-        if (resultListeners != null) {
-            E = resultListeners.elements();
-            while (E.hasMoreElements()) {
-                ResultListener rl = (ResultListener) E.nextElement();
-                rl.resultRejected(event);
-            }
-        }
+        for (ResultListener rl : resultListeners)
+            rl.resultRejected(event);
     }
 
 
@@ -460,14 +427,8 @@ public class BaseResult
 
     /** Utility function to send a RESULT_UPDATED event to all result listeners. */
     public void fireResultUpdated(ResultEvent event) {
-        Enumeration E;
-        if (resultListeners != null) {
-            E = resultListeners.elements();
-            while (E.hasMoreElements()) {
-                ResultListener rl = (ResultListener) E.nextElement();
-                rl.resultUpdated(event);
-            }
-        }
+        for (ResultListener rl : resultListeners)
+            rl.resultUpdated(event);
     }
 
 
@@ -484,14 +445,8 @@ public class BaseResult
 
     /** Utility function to send a TRAINING_INFO_RELEASED event to all result listeners. */
     public void fireTrainingInfoReleased(ResultEvent event) {
-        Enumeration E;
-        if (resultListeners != null) {
-            E = resultListeners.elements();
-            while (E.hasMoreElements()) {
-                ResultListener rl = (ResultListener) E.nextElement();
-                rl.trainingInfoReleased(event);
-            }
-        }
+        for (ResultListener rl : resultListeners)
+            rl.trainingInfoReleased(event);
     }
 //////////////////////
 // End utility methods for sending ResultEvents

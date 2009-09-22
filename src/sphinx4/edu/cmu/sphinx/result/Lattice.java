@@ -497,7 +497,7 @@ public class Lattice {
      * @return a copy of the collection of Nodes
      */
     protected Collection<Node> getCopyOfNodes() {
-        return new Vector<Node>(nodes.values());
+        return new ArrayList<Node>(nodes.values());
     }
 
 
@@ -823,7 +823,7 @@ public class Lattice {
      * @return Topologically sorted list of nodes in this lattice.
      */
     public List<Node> sortNodes() {
-        Vector<Node> sorted = new Vector<Node>(nodes.size());
+        List<Node> sorted = new ArrayList<Node>(nodes.size());
         sortHelper(initialNode, sorted, new HashSet<Node>());
         Collections.reverse(sorted);
         return sorted;

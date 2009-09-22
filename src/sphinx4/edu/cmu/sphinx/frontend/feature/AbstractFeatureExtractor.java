@@ -30,7 +30,7 @@ public abstract class AbstractFeatureExtractor extends BaseDataProcessor {
 
     private int bufferPosition;
     private Signal pendingSignal;
-    private List<Data> outputQueue;
+    private LinkedList<Data> outputQueue;
 
     protected int cepstraBufferEdge;
     protected int window;
@@ -59,7 +59,7 @@ public abstract class AbstractFeatureExtractor extends BaseDataProcessor {
         cepstraBufferSize = 256;
         cepstraBuffer = new DoubleData[cepstraBufferSize];
         cepstraBufferEdge = cepstraBufferSize - (window * 2 + 2);
-        outputQueue = new Vector<Data>();
+        outputQueue = new LinkedList<Data>();
         reset();
     }
 
@@ -78,7 +78,7 @@ public abstract class AbstractFeatureExtractor extends BaseDataProcessor {
      * @throws DataProcessingException if there is a data processing error
      */
     public Data getData() throws DataProcessingException {
-        if (outputQueue.size() == 0) {
+        if (outputQueue.isEmpty()) {
             Data input = getNextData();
             if (input != null) {
                 if (input instanceof DoubleData) {
@@ -101,12 +101,7 @@ public abstract class AbstractFeatureExtractor extends BaseDataProcessor {
                 }
             }
         }
-        if (outputQueue.size() > 0) {
-            Data feature = outputQueue.remove(0);
-            return feature;
-        } else {
-            return null;
-        }
+        return outputQueue.isEmpty() ? null : outputQueue.removeFirst();
     }
 
 

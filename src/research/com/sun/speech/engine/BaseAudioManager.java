@@ -9,7 +9,8 @@ package com.sun.speech.engine;
 
 import javax.speech.AudioListener;
 import javax.speech.AudioManager;
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Supports the JSAPI 1.0 <code>AudioManager</code> interface.  Actual JSAPI implementations might want to extend or
@@ -18,14 +19,7 @@ import java.util.Vector;
 public class BaseAudioManager implements AudioManager {
 
     /** List of <code>AudioListeners</code> registered for <code>AudioEvents</code> on this object. */
-    protected Vector listeners;
-
-
-    /** Class constructor. */
-    public BaseAudioManager() {
-        listeners = new Vector();
-    }
-
+    protected final List<AudioListener> listeners  = new ArrayList<AudioListener>();
 
     /**
      * Requests notification of <code>AudioEvents</code> from the <code>AudioManager</code>.
@@ -34,10 +28,9 @@ public class BaseAudioManager implements AudioManager {
      */
     public void addAudioListener(AudioListener listener) {
         if (!listeners.contains(listener)) {
-            listeners.addElement(listener);
+            listeners.add(listener);
         }
     }
-
 
     /**
      * Removes an <code>AudioListener</code> from the list of <code>AudioListeners</code>.
@@ -45,7 +38,7 @@ public class BaseAudioManager implements AudioManager {
      * @param listener the listener to remove
      */
     public void removeAudioListener(AudioListener listener) {
-        listeners.removeElement(listener);
+        listeners.remove(listener);
     }
 }
 

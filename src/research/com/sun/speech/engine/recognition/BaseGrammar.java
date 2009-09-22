@@ -13,8 +13,8 @@ import com.sun.speech.engine.SpeechEventUtilities;
 import javax.speech.SpeechEvent;
 import javax.speech.recognition.*;
 import java.io.Serializable;
-import java.util.Enumeration;
-import java.util.Vector;
+import java.util.List;
+import java.util.ArrayList;
 
 /**
  * Implementation of javax.speech.recognition.Grammar.
@@ -25,8 +25,8 @@ public class BaseGrammar
         implements Grammar, Serializable, SpeechEventDispatcher {
 
     public transient BaseRecognizer myRec;
-    protected transient Vector grammarListeners;
-    protected transient Vector resultListeners;
+    protected final transient List<GrammarListener> grammarListeners = new ArrayList<GrammarListener>();
+    protected final transient List<ResultListener> resultListeners = new ArrayList<ResultListener>();
     protected String myName;
 
     protected boolean grammarActive;  // only changed by commit and rec focus
@@ -42,8 +42,6 @@ public class BaseGrammar
      * @param name the name of this Grammar.
      */
     public BaseGrammar(BaseRecognizer R, String name) {
-        grammarListeners = new Vector();
-        resultListeners = new Vector();
         myRec = R;
         myName = name;
         grammarActive = false;
@@ -129,7 +127,7 @@ public class BaseGrammar
      */
     public void addGrammarListener(GrammarListener listener) {
         if (!grammarListeners.contains(listener)) {
-            grammarListeners.addElement(listener);
+            grammarListeners.add(listener);
         }
     }
 
@@ -140,7 +138,7 @@ public class BaseGrammar
      * @param listener the listener to remove.
      */
     public void removeGrammarListener(GrammarListener listener) {
-        grammarListeners.removeElement(listener);
+        grammarListeners.remove(listener);
     }
 
 
@@ -152,7 +150,7 @@ public class BaseGrammar
      */
     public void addResultListener(ResultListener listener) {
         if (!resultListeners.contains(listener)) {
-            resultListeners.addElement(listener);
+            resultListeners.add(listener);
         }
     }
 
@@ -163,7 +161,7 @@ public class BaseGrammar
      * @param listener the listener to remove.
      */
     public void removeResultListener(ResultListener listener) {
-        resultListeners.removeElement(listener);
+        resultListeners.remove(listener);
     }
 //////////////////////
 // End Grammar Methods
@@ -188,14 +186,8 @@ public class BaseGrammar
 
     /** Utility function to send a GRAMMAR_ACTIVATED event to all result listeners. */
     protected void fireGrammarActivated(GrammarEvent event) {
-        if (grammarListeners == null) {
-            return;
-        }
-        Enumeration E = grammarListeners.elements();
-        while (E.hasMoreElements()) {
-            GrammarListener gl = (GrammarListener) E.nextElement();
+        for (GrammarListener gl : grammarListeners)
             gl.grammarActivated(event);
-        }
     }
 
 
@@ -212,14 +204,8 @@ public class BaseGrammar
 
     /** Utility function to send a GRAMMAR_CHANGES_COMMITTED event to all result listeners. */
     protected void fireGrammarChangesCommitted(GrammarEvent event) {
-        if (grammarListeners == null) {
-            return;
-        }
-        Enumeration E = grammarListeners.elements();
-        while (E.hasMoreElements()) {
-            GrammarListener gl = (GrammarListener) E.nextElement();
+        for (GrammarListener gl : grammarListeners)
             gl.grammarChangesCommitted(event);
-        }
     }
 
 
@@ -236,14 +222,8 @@ public class BaseGrammar
 
     /** Utility function to send a GRAMMAR_DEACTIVATED event to all result listeners. */
     protected void fireGrammarDeactivated(GrammarEvent event) {
-        if (grammarListeners == null) {
-            return;
-        }
-        Enumeration E = grammarListeners.elements();
-        while (E.hasMoreElements()) {
-            GrammarListener gl = (GrammarListener) E.nextElement();
+        for (GrammarListener gl : grammarListeners)
             gl.grammarDeactivated(event);
-        }
     }
 //////////////////////
 // End utility methods for sending GrammarEvents
@@ -268,14 +248,8 @@ public class BaseGrammar
 
     /** Utility function to send a AUDIO_RELEASED event to all result listeners. */
     public void fireAudioReleased(ResultEvent event) {
-        Enumeration E;
-        if (resultListeners != null) {
-            E = resultListeners.elements();
-            while (E.hasMoreElements()) {
-                ResultListener rl = (ResultListener) E.nextElement();
-                rl.audioReleased(event);
-            }
-        }
+        for (ResultListener rl : resultListeners)
+            rl.audioReleased(event);
     }
 
 
@@ -292,13 +266,9 @@ public class BaseGrammar
 
     /** Utility function to send a GRAMMAR_FINALIZED event to all result listeners. */
     public void fireGrammarFinalized(ResultEvent event) {
-        Enumeration E;
         if (resultListeners != null) {
-            E = resultListeners.elements();
-            while (E.hasMoreElements()) {
-                ResultListener rl = (ResultListener) E.nextElement();
+            for (ResultListener rl : resultListeners)
                 rl.grammarFinalized(event);
-            }
         }
     }
 
@@ -316,14 +286,8 @@ public class BaseGrammar
 
     /** Utility function to send a RESULT_ACCEPTED event to all result listeners. */
     public void fireResultAccepted(ResultEvent event) {
-        Enumeration E;
-        if (resultListeners != null) {
-            E = resultListeners.elements();
-            while (E.hasMoreElements()) {
-                ResultListener rl = (ResultListener) E.nextElement();
-                rl.resultAccepted(event);
-            }
-        }
+        for (ResultListener rl : resultListeners)
+            rl.resultAccepted(event);
     }
 
 
@@ -340,14 +304,8 @@ public class BaseGrammar
 
     /** Utility function to send a RESULT_CREATED event to all result listeners. */
     public void fireResultCreated(ResultEvent event) {
-        Enumeration E;
-        if (resultListeners != null) {
-            E = resultListeners.elements();
-            while (E.hasMoreElements()) {
-                ResultListener rl = (ResultListener) E.nextElement();
-                rl.resultCreated(event);
-            }
-        }
+        for (ResultListener rl : resultListeners)
+            rl.resultCreated(event);
     }
 
 
@@ -364,14 +322,8 @@ public class BaseGrammar
 
     /** Utility function to send a RESULT_REJECTED event to all result listeners. */
     public void fireResultRejected(ResultEvent event) {
-        Enumeration E;
-        if (resultListeners != null) {
-            E = resultListeners.elements();
-            while (E.hasMoreElements()) {
-                ResultListener rl = (ResultListener) E.nextElement();
-                rl.resultRejected(event);
-            }
-        }
+        for (ResultListener rl : resultListeners)
+            rl.resultRejected(event);
     }
 
 
@@ -388,14 +340,8 @@ public class BaseGrammar
 
     /** Utility function to send a RESULT_UPDATED event to all result listeners. */
     public void fireResultUpdated(ResultEvent event) {
-        Enumeration E;
-        if (resultListeners != null) {
-            E = resultListeners.elements();
-            while (E.hasMoreElements()) {
-                ResultListener rl = (ResultListener) E.nextElement();
-                rl.resultUpdated(event);
-            }
-        }
+        for (ResultListener rl : resultListeners)
+            rl.resultUpdated(event);
     }
 
 
@@ -412,14 +358,8 @@ public class BaseGrammar
 
     /** Utility function to send a TRAINING_INFO_RELEASED event to all result listeners. */
     public void fireTrainingInfoReleased(ResultEvent event) {
-        Enumeration E;
-        if (resultListeners != null) {
-            E = resultListeners.elements();
-            while (E.hasMoreElements()) {
-                ResultListener rl = (ResultListener) E.nextElement();
-                rl.trainingInfoReleased(event);
-            }
-        }
+        for (ResultListener rl : resultListeners)
+            rl.trainingInfoReleased(event);
     }
 //////////////////////
 // End utility methods for sending ResultEvents

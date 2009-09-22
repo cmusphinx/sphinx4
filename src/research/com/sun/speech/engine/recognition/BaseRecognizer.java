@@ -18,9 +18,7 @@ import javax.speech.recognition.*;
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Enumeration;
-import java.util.Hashtable;
-import java.util.Vector;
+import java.util.*;
 
 /**
  * Skeletal Implementation of the JSAPI Recognizer interface.
@@ -45,8 +43,8 @@ import java.util.Vector;
 public class BaseRecognizer extends BaseEngine
         implements Recognizer, SpeechEventDispatcher {
 
-    protected Vector resultListeners;
-    protected Hashtable grammarList;
+    protected final List<ResultListener> resultListeners = new ArrayList<ResultListener>();
+    protected Map<String, RuleGrammar> grammarList = new HashMap<String, RuleGrammar>();
     protected boolean caseSensitiveGrammarNames = true;
     protected boolean hasModalGrammars = false;
 
@@ -86,8 +84,6 @@ public class BaseRecognizer extends BaseEngine
     public BaseRecognizer(boolean reloadAll, RecognizerModeDesc mode) {
         super(mode);
         this.reloadAll = reloadAll;
-        resultListeners = new Vector();
-        grammarList = new Hashtable();
         audioManager = new BaseRecognizerAudioManager();
     }
 //////////////////////
@@ -291,13 +287,7 @@ public class BaseRecognizer extends BaseEngine
         if (grammarList == null) {
             return new RuleGrammar[0];
         }
-        RuleGrammar rl[] = new RuleGrammar[grammarList.size()];
-        int i = 0;
-        Enumeration e = grammarList.elements();
-        while (e.hasMoreElements()) {
-            rl[i++] = (RuleGrammar) e.nextElement();
-        }
-        return rl;
+        return grammarList.values().toArray(new RuleGrammar[grammarList.size()]);
     }
 
 
@@ -443,7 +433,7 @@ public class BaseRecognizer extends BaseEngine
      */
     public void addResultListener(ResultListener listener) {
         if (!resultListeners.contains(listener)) {
-            resultListeners.addElement(listener);
+            resultListeners.add(listener);
         }
     }
 
@@ -454,7 +444,7 @@ public class BaseRecognizer extends BaseEngine
      * @param listener the listener to remove.
      */
     public void removeResultListener(ResultListener listener) {
-        resultListeners.removeElement(listener);
+        resultListeners.remove(listener);
     }
 
 
@@ -556,14 +546,8 @@ public class BaseRecognizer extends BaseEngine
 
     /** Utility function to send a AUDIO_RELEASED event to all result listeners. */
     public void fireAudioReleased(ResultEvent event) {
-        Enumeration E;
-        if (resultListeners != null) {
-            E = resultListeners.elements();
-            while (E.hasMoreElements()) {
-                ResultListener rl = (ResultListener) E.nextElement();
-                rl.audioReleased(event);
-            }
-        }
+        for (ResultListener rl : resultListeners)
+            rl.audioReleased(event);
     }
 
 
@@ -580,14 +564,8 @@ public class BaseRecognizer extends BaseEngine
 
     /** Utility function to send a GRAMMAR_FINALIZED event to all result listeners. */
     public void fireGrammarFinalized(ResultEvent event) {
-        Enumeration E;
-        if (resultListeners != null) {
-            E = resultListeners.elements();
-            while (E.hasMoreElements()) {
-                ResultListener rl = (ResultListener) E.nextElement();
-                rl.grammarFinalized(event);
-            }
-        }
+        for (ResultListener rl : resultListeners)
+            rl.grammarFinalized(event);
     }
 
 
@@ -604,14 +582,8 @@ public class BaseRecognizer extends BaseEngine
 
     /** Utility function to send a RESULT_ACCEPTED event to all result listeners. */
     public void fireResultAccepted(ResultEvent event) {
-        Enumeration E;
-        if (resultListeners != null) {
-            E = resultListeners.elements();
-            while (E.hasMoreElements()) {
-                ResultListener rl = (ResultListener) E.nextElement();
-                rl.resultAccepted(event);
-            }
-        }
+        for (ResultListener rl : resultListeners)
+            rl.resultAccepted(event);
     }
 
 
@@ -628,14 +600,8 @@ public class BaseRecognizer extends BaseEngine
 
     /** Utility function to send a RESULT_CREATED event to all result listeners. */
     public void fireResultCreated(ResultEvent event) {
-        Enumeration E;
-        if (resultListeners != null) {
-            E = resultListeners.elements();
-            while (E.hasMoreElements()) {
-                ResultListener rl = (ResultListener) E.nextElement();
-                rl.resultCreated(event);
-            }
-        }
+        for (ResultListener rl : resultListeners)
+            rl.resultCreated(event);
     }
 
 
@@ -652,14 +618,8 @@ public class BaseRecognizer extends BaseEngine
 
     /** Utility function to send a RESULT_REJECTED event to all result listeners. */
     public void fireResultRejected(ResultEvent event) {
-        Enumeration E;
-        if (resultListeners != null) {
-            E = resultListeners.elements();
-            while (E.hasMoreElements()) {
-                ResultListener rl = (ResultListener) E.nextElement();
-                rl.resultRejected(event);
-            }
-        }
+        for (ResultListener rl : resultListeners)
+            rl.resultRejected(event);
     }
 
 
@@ -676,14 +636,8 @@ public class BaseRecognizer extends BaseEngine
 
     /** Utility function to send a RESULT_UPDATED event to all result listeners. */
     public void fireResultUpdated(ResultEvent event) {
-        Enumeration E;
-        if (resultListeners != null) {
-            E = resultListeners.elements();
-            while (E.hasMoreElements()) {
-                ResultListener rl = (ResultListener) E.nextElement();
-                rl.resultUpdated(event);
-            }
-        }
+        for (ResultListener rl : resultListeners)
+            rl.resultUpdated(event);
     }
 
 
@@ -700,14 +654,8 @@ public class BaseRecognizer extends BaseEngine
 
     /** Utility function to send a TRAINING_INFO_RELEASED event to all result listeners. */
     public void fireTrainingInfoReleased(ResultEvent event) {
-        Enumeration E;
-        if (resultListeners != null) {
-            E = resultListeners.elements();
-            while (E.hasMoreElements()) {
-                ResultListener rl = (ResultListener) E.nextElement();
-                rl.trainingInfoReleased(event);
-            }
-        }
+        for (ResultListener rl : resultListeners)
+            rl.trainingInfoReleased(event);
     }
 //////////////////////
 // End utility methods for sending ResultEvents
@@ -812,13 +760,9 @@ public class BaseRecognizer extends BaseEngine
         if (engineListeners == null) {
             return;
         }
-        Enumeration E = engineListeners.elements();
-        while (E.hasMoreElements()) {
-            EngineListener el = (EngineListener) E.nextElement();
-            if (el instanceof RecognizerListener) {
+        for (EngineListener el : engineListeners)
+            if (el instanceof RecognizerListener)
                 ((RecognizerListener) el).changesCommitted(event);
-            }
-        }
     }
 
 
@@ -840,13 +784,9 @@ public class BaseRecognizer extends BaseEngine
         if (engineListeners == null) {
             return;
         }
-        Enumeration E = engineListeners.elements();
-        while (E.hasMoreElements()) {
-            EngineListener el = (EngineListener) E.nextElement();
-            if (el instanceof RecognizerListener) {
+        for (EngineListener el : engineListeners)
+            if (el instanceof RecognizerListener)
                 ((RecognizerListener) el).focusGained(event);
-            }
-        }
     }
 
 
@@ -868,13 +808,9 @@ public class BaseRecognizer extends BaseEngine
         if (engineListeners == null) {
             return;
         }
-        Enumeration E = engineListeners.elements();
-        while (E.hasMoreElements()) {
-            EngineListener el = (EngineListener) E.nextElement();
-            if (el instanceof RecognizerListener) {
+        for (EngineListener el : engineListeners)
+            if (el instanceof RecognizerListener)
                 ((RecognizerListener) el).focusLost(event);
-            }
-        }
     }
 
 
@@ -896,13 +832,9 @@ public class BaseRecognizer extends BaseEngine
         if (engineListeners == null) {
             return;
         }
-        Enumeration E = engineListeners.elements();
-        while (E.hasMoreElements()) {
-            EngineListener el = (EngineListener) E.nextElement();
-            if (el instanceof RecognizerListener) {
+        for (EngineListener el : engineListeners)
+            if (el instanceof RecognizerListener)
                 ((RecognizerListener) el).recognizerProcessing(event);
-            }
-        }
     }
 
 
@@ -924,13 +856,9 @@ public class BaseRecognizer extends BaseEngine
         if (engineListeners == null) {
             return;
         }
-        Enumeration E = engineListeners.elements();
-        while (E.hasMoreElements()) {
-            EngineListener el = (EngineListener) E.nextElement();
-            if (el instanceof RecognizerListener) {
+        for (EngineListener el : engineListeners)
+            if (el instanceof RecognizerListener)
                 ((RecognizerListener) el).recognizerSuspended(event);
-            }
-        }
     }
 //////////////////////
 // End utility methods for sending RecognizerEvents
@@ -945,7 +873,7 @@ public class BaseRecognizer extends BaseEngine
      */
     protected void commitChangeInternal() {
         boolean haveChanges = false;
-        Vector enabled = new Vector();
+        List<String> enabled = new ArrayList<String>();
         RuleGrammar G[] = listRuleGrammars();
         if (!supportsNULL || !supportsVOID) {
             try {
@@ -974,7 +902,7 @@ public class BaseRecognizer extends BaseEngine
             for (int j = 0; j < rnames.length; j++) {
                 String ruleName = rnames[j];
                 if (G[i].isEnabled(ruleName)) {
-                    enabled.addElement(gname + '_' + ruleName);
+                    enabled.add(gname + '_' + ruleName);
                 }
                 if (!haveChanges
                         || (!JG.isRuleChanged(ruleName) && !reloadAll)) {
@@ -1011,7 +939,7 @@ public class BaseRecognizer extends BaseEngine
 
 
     /** Called with list of rules that should be enabled. */
-    protected void changeEnabled(Vector enabled) {
+    protected void changeEnabled(List<String> enabled) {
     }
 
 
@@ -1039,7 +967,7 @@ public class BaseRecognizer extends BaseEngine
                                     URL context,
                                     boolean recurse,
                                     boolean relo,
-                                    Vector grams)
+                                    List<RuleGrammar> grams)
             throws GrammarException, IOException {
         RuleGrammar G2 = null;
         RuleName imports[] = G.listImports();
@@ -1057,7 +985,7 @@ public class BaseRecognizer extends BaseEngine
                     G2 = JSGFParser.newGrammarFromJSGF(grammarURL, R);
                     if (G2 != null) {
                         if (grams != null) {
-                            grams.addElement(G2);
+                            grams.add(G2);
                         }
                         if (recurse) {
                             loadImports(R, G2, context, recurse, relo, grams);
@@ -1088,7 +1016,7 @@ public class BaseRecognizer extends BaseEngine
             URL context,
             boolean recurse,
             boolean relo,
-            Vector grams) throws GrammarException, IOException {
+            List<RuleGrammar> grams) throws GrammarException, IOException {
 
         String[] ruleNames = g.listRuleNames();
         //go through every rule
@@ -1116,7 +1044,7 @@ public class BaseRecognizer extends BaseEngine
 
                             if (G2 != null) {
                                 if (grams != null) {
-                                    grams.addElement(G2);
+                                    grams.add(G2);
                                 }
                                 if (recurse) {
                                     loadImports(r,
@@ -1150,9 +1078,7 @@ public class BaseRecognizer extends BaseEngine
         if (grammarList == null) {
             return;
         }
-        Enumeration e = grammarList.elements();
-        while (e.hasMoreElements()) {
-            RuleGrammar rg = (RuleGrammar) e.nextElement();
+        for (RuleGrammar rg : grammarList.values()) {
             if (rg.getActivationMode() == Grammar.RECOGNIZER_MODAL) {
                 hasModalGrammars = true;
                 return;
@@ -1187,16 +1113,15 @@ public class BaseRecognizer extends BaseEngine
         if (grammarList == null) {
             return;
         }
-        Enumeration e = grammarList.elements();
-        while (e.hasMoreElements()) {
-            BaseRuleGrammar rg = (BaseRuleGrammar) e.nextElement();
+        for (RuleGrammar rg : grammarList.values()) {
             boolean active = isActive(rg);
-            if (active != rg.grammarActive) {
-                rg.grammarActive = active;
+            BaseRuleGrammar brg = (BaseRuleGrammar)rg;
+            if (active != brg.grammarActive) {
+                brg.grammarActive = active;
                 if (active) {
-                    rg.postGrammarActivated();
+                    brg.postGrammarActivated();
                 } else {
-                    rg.postGrammarDeactivated();
+                    brg.postGrammarDeactivated();
                 }
             }
         }
