@@ -49,6 +49,20 @@ public abstract class ActiveListFactory implements Configurable {
     protected int absoluteBeamWidth;
     protected float logRelativeBeamWidth;
 
+    /**
+     * 
+     * @param absoluteBeamWidth
+     * @param relativeBeamWidth
+     * @param logMath
+     */
+    public ActiveListFactory( int absoluteBeamWidth,double relativeBeamWidth, LogMath logMath ){
+        this.absoluteBeamWidth = absoluteBeamWidth;
+        this.logRelativeBeamWidth = logMath.linearToLog(relativeBeamWidth);      
+    }
+
+    public ActiveListFactory() {
+    }
+
 
     public void newProperties(PropertySheet ps) throws PropertyException {
         absoluteBeamWidth = ps.getInt(PROP_ABSOLUTE_BEAM_WIDTH);

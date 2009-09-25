@@ -24,6 +24,22 @@ public class ExcessiveNonSpeechPruner extends BaseDataProcessor {
     private int nonSpeechCounter;
 
 
+    public ExcessiveNonSpeechPruner(int maxNonSpeechTime) {
+        this.maxNonSpeechTime = maxNonSpeechTime;
+    }
+
+    public ExcessiveNonSpeechPruner() {
+    }
+      
+    /*
+    * (non-Javadoc)
+    *
+    * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
+    */
+    public void newProperties(PropertySheet ps) throws PropertyException {
+        maxNonSpeechTime = ps.getInt(PROP_MAX_NON_SPEECH_TIME_MS);
+    }
+
     /**
      * Returns the processed Data output.
      *
@@ -68,16 +84,6 @@ public class ExcessiveNonSpeechPruner extends BaseDataProcessor {
 
         assert false;
         return -1;
-    }
-
-
-    /*
-    * (non-Javadoc)
-    *
-    * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
-    */
-    public void newProperties(PropertySheet ps) throws PropertyException {
-        maxNonSpeechTime = ps.getInt(PROP_MAX_NON_SPEECH_TIME_MS);
     }
 
 }

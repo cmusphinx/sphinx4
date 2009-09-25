@@ -136,6 +136,39 @@ public class SimpleBreadthFirstSearchManager implements SearchManager {
     private ActiveListFactory activeListFactory;
     private boolean streamEnd;
 
+    public SimpleBreadthFirstSearchManager() {
+        
+    }
+
+    /**
+     * 
+     * @param logMath
+     * @param linguist
+     * @param pruner
+     * @param scorer
+     * @param activeListFactory
+     * @param showTokenCount
+     * @param relativeWordBeamWidth
+     * @param growSkipInterval
+     * @param wantEntryPruning
+     */
+    public SimpleBreadthFirstSearchManager(LogMath logMath, Linguist linguist, Pruner pruner,
+                                           AcousticScorer scorer, ActiveListFactory activeListFactory,
+                                           boolean showTokenCount, double relativeWordBeamWidth,
+                                           int growSkipInterval, boolean wantEntryPruning) {
+        this.name = getClass().getName();
+        this.logger = Logger.getLogger(name);
+        this.logMath = logMath;
+        this.linguist = linguist;
+        this.pruner = pruner;
+        this.scorer = scorer;
+        this.activeListFactory = activeListFactory;
+        this.showTokenCount = showTokenCount;
+        this.growSkipInterval = growSkipInterval;
+        this.wantEntryPruning = wantEntryPruning;
+        this.logRelativeWordBeamWidth = logMath.linearToLog(relativeWordBeamWidth);
+    }
+
     public void newProperties(PropertySheet ps) throws PropertyException {
         logger = ps.getLogger();
         name = ps.getInstanceName();

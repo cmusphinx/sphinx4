@@ -4,6 +4,8 @@ import edu.cmu.sphinx.util.props.PropertyException;
 import edu.cmu.sphinx.util.props.PropertySheet;
 import edu.cmu.sphinx.util.props.S4Double;
 
+import java.util.logging.Logger;
+
 /**
  * Allows to modify the gain of an audio-signal.  If the gainFactor is 1 the signal passes this
  * <code>DataProcessor</code> unchanged.
@@ -17,6 +19,13 @@ public class GainControlProcessor extends BaseDataProcessor {
 
     private double gainFactor;
 
+    public GainControlProcessor(double gainFactor) {
+        initLogger();
+        this.gainFactor = gainFactor;
+    }
+
+    public GainControlProcessor() {        
+    }
 
     /*
     * (non-Javadoc)
@@ -25,7 +34,6 @@ public class GainControlProcessor extends BaseDataProcessor {
     */
     public void newProperties(PropertySheet ps) throws PropertyException {
         super.newProperties(ps);
-
         gainFactor = ps.getDouble(GAIN_FACTOR);
     }
 

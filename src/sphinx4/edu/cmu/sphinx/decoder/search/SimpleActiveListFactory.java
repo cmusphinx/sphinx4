@@ -14,6 +14,7 @@ package edu.cmu.sphinx.decoder.search;
 
 import edu.cmu.sphinx.util.props.PropertyException;
 import edu.cmu.sphinx.util.props.PropertySheet;
+import edu.cmu.sphinx.util.LogMath;
 
 import java.util.Collections;
 import java.util.Iterator;
@@ -23,6 +24,19 @@ import java.util.List;
 /** A factory for simple active lists */
 public class SimpleActiveListFactory extends ActiveListFactory {
 
+    /**
+     * 
+     * @param absoluteBeamWidth
+     * @param relativeBeamWidth
+     * @param logMath
+     */
+    public SimpleActiveListFactory(int absoluteBeamWidth, double relativeBeamWidth, LogMath logMath) {
+        super(absoluteBeamWidth, relativeBeamWidth, logMath);
+    }
+
+    public SimpleActiveListFactory() {
+        
+    }
 
     /*
     * (non-Javadoc)

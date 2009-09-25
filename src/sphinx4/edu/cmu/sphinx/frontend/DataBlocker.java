@@ -5,6 +5,7 @@ import edu.cmu.sphinx.util.props.PropertySheet;
 import edu.cmu.sphinx.util.props.S4Double;
 
 import java.util.LinkedList;
+import java.util.logging.Logger;
 
 /**
  * A <code>DataProcessor</code> which wraps incoming <code>DoubleData</code>-objects into equally size blocks of defined
@@ -30,9 +31,23 @@ public class DataBlocker extends BaseDataProcessor {
     public DataBlocker() {
     }
 
-
+    /**
+     * 
+     * @param blockSizeMs
+     */
     public DataBlocker(double blockSizeMs) {
+        initLogger();
         this.blockSizeMs = blockSizeMs;
+    }
+
+    public void newProperties(PropertySheet propertySheet) throws PropertyException {
+        super.newProperties(propertySheet);
+        blockSizeMs = propertySheet.getDouble(PROP_BLOCK_SIZE_MS);
+    }
+
+
+    public double getBlockSizeMs() {
+        return blockSizeMs;
     }
 
 
@@ -100,14 +115,4 @@ public class DataBlocker extends BaseDataProcessor {
         return new DoubleData(newSampleBlock, sampleRate, collectTime, firstSample);
     }
 
-
-    public void newProperties(PropertySheet propertySheet) throws PropertyException {
-        super.newProperties(propertySheet);
-        blockSizeMs = propertySheet.getDouble(PROP_BLOCK_SIZE_MS);
-    }
-
-
-    public double getBlockSizeMs() {
-        return blockSizeMs;
-    }
 }

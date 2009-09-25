@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * A FIFO-buffer for <code>Data</code>-elements.
@@ -48,6 +49,34 @@ public class DataBufferProcessor extends BaseDataProcessor implements DataListen
     public static final String DATA_LISTENERS = "dataListeners";
     private List<DataListener> dataListeners = new ArrayList<DataListener>();
 
+    /**
+     * @param name
+     * @param logger
+     * @param maxBufferSize The maximal size of the buffer in frames. The oldest frames will be removed if the buffer grows out of bounds.
+     * @param waitIfEmpty If this property is set <code>true</code> the buffer will wait for new data until it returns from a
+     * <code>getData</code>-call. Enable this flag if the buffer should serve as starting point for a new
+     * feature-pull-chain.
+     * @param waitTime The time in milliseconds which will be waited between two attemtps to read a data-lement from the buffer when
+     * being in <code>waitIfEmpty</code>-mode
+     * @param listeners
+     */
+    public DataBufferProcessor(int maxBufferSize, boolean waitIfEmpty, int waitTime, List<? extends Configurable> listeners) {
+        initLogger();
+        
+        this.maxBufferSize = maxBufferSize;
+        this.waitIfEmpty = waitIfEmpty;
+
+        if (waitIfEmpty) // if false we don't need the value
+            this.waitTime = waitTime;
+
+        for (Configurable configurable : listeners) {
+            assert configurable instanceof DataListener;
+            addDataListener((DataListener) configurable);
+        }
+    }
+
+    public DataBufferProcessor() {
+    }
 
     @Override
     public void newProperties(PropertySheet ps) throws PropertyException {

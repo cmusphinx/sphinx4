@@ -72,8 +72,30 @@ public class ThreadedAcousticScorer extends AbstractScorer {
     private Semaphore semaphore;    // join after call
     private Data currentData;       // current feature being processed
 
-    public ThreadedAcousticScorer(String name, Logger logger, BaseDataProcessor frontEnd, ScoreNormalizer scoreNormalizer) {
-        super(name, logger, frontEnd, scoreNormalizer);
+    /**
+     * @param frontEnd the frontend to retrieve features from for scoring
+     * @param scoreNormalizer optional post-processor for computed scores that will normalize scores. If not set, no normalization will
+     * applied and the token scores will be returned unchanged.
+     * @param minScoreablesPerThread the number of threads that are used to score hmm states. If the isCpuRelative
+     * property is false, then is is the exact number of threads that are used to score hmm states. If the isCpuRelative
+     * property is true, then this value is combined with the number of available proessors on the system. If you want
+     * to have one thread per CPU available to score states, set the NUM_THREADS property to 0 and the isCpuRelative to
+     * true. If you want exactly one thread to process scores set NUM_THREADS to 1 and isCpuRelative to false.
+     * <p/>
+     * If the value is 1 isCpuRelative is false no additional thread will be instantiated, and all compuation will be
+     * done in the calling thread itself. The default value is 0.
+     * @param cpuRelative controls whether the number of available CPUs on the system is used when determining
+     * the number of threads to use for scoring. If true, the NUM_THREADS property is combined with the available number
+     * of CPUS to deterimine the number of threads. Note that the number of threads is contrained to be never lower than
+     * zero. Also, if the number of threads is 0, the states are scored on the calling thread, no separate threads are
+     * started. The default value is false.
+     * @param numThreads the minimum number of scoreables sent to a thread. This is used to prevent
+     * over threading of the scoring that could happen if the number of threads is high compared to the size of the
+     * activelist. The default is 50
+     */
+    public ThreadedAcousticScorer(BaseDataProcessor frontEnd, ScoreNormalizer scoreNormalizer, int minScoreablesPerThread,boolean cpuRelative, int numThreads) {
+        super(frontEnd, scoreNormalizer);
+        init(minScoreablesPerThread,cpuRelative, numThreads );
     }
 
     public ThreadedAcousticScorer() {
@@ -83,13 +105,16 @@ public class ThreadedAcousticScorer extends AbstractScorer {
     public void newProperties(PropertySheet ps) throws PropertyException {
         super.newProperties(ps);
 
-        minScoreablesPerThread = ps.getInt(PROP_MIN_SCOREABLES_PER_THREAD);
+        init(ps.getInt(PROP_MIN_SCOREABLES_PER_THREAD), ps.getBoolean(PROP_IS_CPU_RELATIVE), ps.getInt(PROP_NUM_THREADS));
+    }
 
-        boolean cpuRelative = ps.getBoolean(PROP_IS_CPU_RELATIVE);
-        numThreads = ps.getInt(PROP_NUM_THREADS);
+    private void init(int minScoreablesPerThread,boolean cpuRelative, int numThreads ) {
+        this.minScoreablesPerThread = minScoreablesPerThread;
+
+        this.numThreads = numThreads;
 
         if (cpuRelative) {
-            numThreads += Runtime.getRuntime().availableProcessors();
+            this.numThreads += Runtime.getRuntime().availableProcessors();
         }
     }
 

@@ -39,8 +39,16 @@ public class Decoder extends AbstractDecoder {
         featureBlockSize = ps.getInt(PROP_FEATURE_BLOCK_SIZE);
     }
 
-    public Decoder( String name, Logger logger, SearchManager searchManager, boolean fireNonFinalResults, boolean autoAllocate, List<? extends Configurable> resultListener, int featureBlockSize) {
-        super( name, logger, searchManager, fireNonFinalResults, autoAllocate, resultListener);
+    /**
+     *
+     * @param searchManager
+     * @param fireNonFinalResults
+     * @param autoAllocate
+     * @param resultListener
+     * @param featureBlockSize
+     */
+    public Decoder( SearchManager searchManager, boolean fireNonFinalResults, boolean autoAllocate, List<? extends Configurable> resultListener, int featureBlockSize) {
+        super( searchManager, fireNonFinalResults, autoAllocate, resultListener);
         this.featureBlockSize = featureBlockSize;
     }
     

@@ -23,6 +23,7 @@ import edu.cmu.sphinx.util.props.S4Integer;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Implements a level tracking endpointer invented by Bent Schmidt Nielsen.
@@ -73,6 +74,20 @@ public class SpeechClassifier extends BaseDataProcessor {
     protected boolean isSpeech;
 
     protected List<Data> outputQueue = new LinkedList<Data>();
+
+    public SpeechClassifier(int frameLengthMs, double adjustment, double threshold, double minSignal ) {
+        initLogger();
+        this.frameLengthSec = ((float) frameLengthMs) / 1000.f;
+
+        this.adjustment = adjustment;
+        this.threshold = threshold;
+        this.minSignal = minSignal;
+
+        initialize();
+    }
+
+    public SpeechClassifier() {
+    }
 
     @Override
     public void newProperties(PropertySheet ps) throws PropertyException {

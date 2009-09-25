@@ -21,6 +21,7 @@ import edu.cmu.sphinx.util.props.S4Integer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.logging.Logger;
 
 /**
  * Converts a stream of SpeechClassifiedData objects, marked as speech and non-speech, and mark out the regions that are
@@ -78,6 +79,18 @@ public class SpeechMarker extends BaseDataProcessor {
 
     private List<Data> outputQueue;  // Audio objects are added to the end
     private boolean inSpeech;
+
+    public SpeechMarker(int startSpeechTime, int endSilenceTime, int speechLeader, int speechLeaderFrames, int speechTrailer) {
+        initLogger();
+        this.startSpeechTime = startSpeechTime;
+        this.endSilenceTime = endSilenceTime;
+        this.speechLeader = speechLeader;
+        this.speechLeaderFrames = speechLeaderFrames;
+        this.speechTrailer = speechTrailer;        
+    }
+
+    public SpeechMarker() {
+    }
 
     @Override
     public void newProperties(PropertySheet ps) throws PropertyException {

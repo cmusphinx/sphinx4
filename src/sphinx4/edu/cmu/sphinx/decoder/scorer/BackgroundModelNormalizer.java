@@ -36,9 +36,13 @@ public class BackgroundModelNormalizer implements ScoreNormalizer {
         logger.warning("no active list set.");
     }
 
-    public BackgroundModelNormalizer(SimpleBreadthFirstSearchManager activeListProvider, Logger logger) {
+    /**
+     * @param activeListProvider The active list provider used to determined the best token for normalization. If this reference is not defined no
+     * nomralization will be applied.
+     */
+    public BackgroundModelNormalizer(SimpleBreadthFirstSearchManager activeListProvider) {
         this.activeListProvider = activeListProvider;
-        this.logger = logger;
+        this.logger = Logger.getLogger(getClass().getName());
 
         logger.warning("no active list set.");
     }

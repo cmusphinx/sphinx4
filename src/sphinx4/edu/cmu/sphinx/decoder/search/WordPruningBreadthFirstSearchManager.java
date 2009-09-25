@@ -160,7 +160,53 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
     // private TokenTracker tokenTracker;
     // private TokenTypeTracker tokenTypeTracker;
     private Map<SearchState, Token> skewMap;
-    private boolean streamEnd; 
+    private boolean streamEnd;
+
+    /**
+     * 
+     * @param logMath
+     * @param linguist
+     * @param pruner
+     * @param scorer
+     * @param activeListManager
+     * @param showTokenCount
+     * @param relativeWordBeamWidth
+     * @param growSkipInterval
+     * @param checkStateOrder
+     * @param buildWordLattice
+     * @param maxLatticeEdges
+     * @param acousticLookaheadFrames
+     * @param keepAllTokens
+     */
+    public WordPruningBreadthFirstSearchManager(LogMath logMath, Linguist linguist, Pruner pruner,
+                                           AcousticScorer scorer, ActiveListManager activeListManager,
+                                           boolean showTokenCount, double relativeWordBeamWidth,
+                                           int growSkipInterval,
+                                           boolean checkStateOrder, boolean buildWordLattice,
+                                           int maxLatticeEdges, float acousticLookaheadFrames,
+                                           boolean keepAllTokens) {
+
+        this.logger = Logger.getLogger(getClass().getName());
+        this.logMath = logMath;
+        this.linguist = linguist;
+        this.pruner = pruner;
+        this.scorer = scorer;
+        this.activeListManager = activeListManager;
+        this.showTokenCount = showTokenCount;
+        this.growSkipInterval = growSkipInterval;
+        this.checkStateOrder = checkStateOrder;
+        this.buildWordLattice = buildWordLattice;
+        this.maxLatticeEdges = maxLatticeEdges;
+        this.acousticLookaheadFrames = acousticLookaheadFrames;
+        this.keepAllTokens = keepAllTokens;
+
+        double linearRelativeBeamWidth = relativeWordBeamWidth;
+        this.relativeBeamWidth = logMath.linearToLog(linearRelativeBeamWidth);
+    }
+
+    public WordPruningBreadthFirstSearchManager() {
+        
+    }
 
     /*
     * (non-Javadoc)

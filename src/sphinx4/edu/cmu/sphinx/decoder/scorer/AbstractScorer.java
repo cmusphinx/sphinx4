@@ -41,13 +41,16 @@ public abstract class AbstractScorer extends ConfigurableAdapter implements Acou
 
     public void newProperties(PropertySheet ps) throws PropertyException {
         super.newProperties(ps);
-
         this.frontEnd = (BaseDataProcessor) ps.getComponent(FEATURE_FRONTEND);
         this.scoreNormalizer = (ScoreNormalizer) ps.getComponent(SCORE_NORMALIZER);
     }
 
-    public AbstractScorer(String name, Logger logger, BaseDataProcessor frontEnd, ScoreNormalizer scoreNormalizer) {
-        super(name,logger);
+    /**
+     * @param frontEnd the frontend to retrieve features from for scoring
+     * @param scoreNormalizer optional post-processor for computed scores that will normalize scores. If not set, no normalization will
+     * applied and the token scores will be returned unchanged.
+     */
+    public AbstractScorer(BaseDataProcessor frontEnd, ScoreNormalizer scoreNormalizer) {
 
         this.frontEnd = frontEnd;
         this.scoreNormalizer = scoreNormalizer;

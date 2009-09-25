@@ -16,19 +16,20 @@ public abstract class ConfigurableAdapter implements Configurable{
     public ConfigurableAdapter() {
     }
 
-    public void newProperties(PropertySheet ps) throws PropertyException {
-        init( ps.getInstanceName(), ps.getLogger());
+    protected void initLogger() {
+        this.name = getClass().getSimpleName();
+        init( name , Logger.getLogger( name ) );
     }
 
-    public ConfigurableAdapter(String name, Logger logger) {
-        init(name, logger);
+    public void newProperties(PropertySheet ps) throws PropertyException {
+        init( ps.getInstanceName(), ps.getLogger());
     }
 
     private void init(String name, Logger logger) {
         this.name = name;
         this.logger = logger;
 
-        // fix null names
+        // fix null names                                              
         name =  name != null ? name : getClass().getSimpleName();
     }
 

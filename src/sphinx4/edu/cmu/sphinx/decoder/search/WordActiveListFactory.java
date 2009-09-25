@@ -17,6 +17,7 @@ import edu.cmu.sphinx.linguist.dictionary.Word;
 import edu.cmu.sphinx.util.props.PropertyException;
 import edu.cmu.sphinx.util.props.PropertySheet;
 import edu.cmu.sphinx.util.props.S4Integer;
+import edu.cmu.sphinx.util.LogMath;
 
 import java.util.*;
 
@@ -38,6 +39,20 @@ public class WordActiveListFactory extends ActiveListFactory {
 
     private int maxPathsPerWord;
     private int maxFiller;
+
+    /**
+     * 
+     * @param absoluteBeamWidth
+     * @param relativeBeamWidth
+     * @param logMath
+     * @param maxPathsPerWord
+     * @param maxFiller
+     */
+    public WordActiveListFactory(int absoluteBeamWidth, double relativeBeamWidth, LogMath logMath, int maxPathsPerWord, int maxFiller ) {
+        super(absoluteBeamWidth, relativeBeamWidth, logMath);
+        this.maxPathsPerWord = maxPathsPerWord;
+        this.maxFiller = maxFiller;
+    }
 
 
     /*

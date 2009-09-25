@@ -10,6 +10,7 @@ import edu.cmu.sphinx.util.props.S4ComponentList;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * Creates push-branches out of a Frontend. This might be used for for push-decoding or to create new pull-streams
@@ -24,6 +25,8 @@ public class FrontEndSplitter extends BaseDataProcessor implements DataProducer 
     public static final String PROP_DATA_LISTENERS = "dataListeners";
     private List<DataListener> listeners = new ArrayList<DataListener>();
 
+    public FrontEndSplitter() {
+    }
 
     public void newProperties(PropertySheet ps) throws PropertyException {
         super.newProperties(ps);

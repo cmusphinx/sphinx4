@@ -18,6 +18,7 @@ import edu.cmu.sphinx.util.props.PropertySheet;
 import edu.cmu.sphinx.util.props.S4ComponentList;
 
 import java.util.*;
+import java.util.logging.Logger;
 
 /**
  * FrontEnd is a wrapper class for the chain of front end processors. It provides methods for manipulating and
@@ -141,14 +142,26 @@ public class FrontEnd extends BaseDataProcessor {
     private DataProcessor last;
     private List<SignalListener> signalListeners = new ArrayList<SignalListener>();
 
+    public FrontEnd(List<DataProcessor> frontEndList) {
+        initLogger();
+        this.frontEndList = frontEndList;
+        init();
+    }
+
+    public FrontEnd() {
+
+    }
 
     /* (non-Javadoc)
      * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
      */
     public void newProperties(PropertySheet ps) throws PropertyException {
         super.newProperties(ps);
-        frontEndList = (List<DataProcessor>) ps.getComponentList(PROP_PIPELINE);
+        this.frontEndList = (List<DataProcessor>) ps.getComponentList(PROP_PIPELINE);
+        init();
+    }
 
+    private void init() {
         last = null;
         for (DataProcessor dp : frontEndList) {
             assert dp != null;

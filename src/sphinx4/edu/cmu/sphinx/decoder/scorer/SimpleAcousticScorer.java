@@ -25,13 +25,17 @@ import java.util.logging.Logger;
  * Note that all scores are maintained in LogMath log base.
  */
 public class SimpleAcousticScorer extends AbstractScorer {
-    
-    public SimpleAcousticScorer(String name, Logger logger, BaseDataProcessor frontEnd, ScoreNormalizer scoreNormalizer) {
-        super(name, logger, frontEnd, scoreNormalizer);
+
+    /**
+     * @param frontEnd the frontend to retrieve features from for scoring
+     * @param scoreNormalizer optional post-processor for computed scores that will normalize scores. If not set, no normalization will
+     * applied and the token scores will be returned unchanged.
+     */
+    public SimpleAcousticScorer(BaseDataProcessor frontEnd, ScoreNormalizer scoreNormalizer) {
+        super(frontEnd, scoreNormalizer);
     }
 
-    public SimpleAcousticScorer() {
-        
+    public SimpleAcousticScorer() {       
     }
 
     protected Data doScoring(List<? extends Scoreable> scoreableList, Data data) {

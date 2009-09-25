@@ -34,7 +34,9 @@ import java.util.logging.Logger;
  */
 public class Microphone extends BaseDataProcessor {
 
-    /** SphinxProperty for the sample rate of the data. */
+    /**
+     * SphinxProperty for the sample rate of the data.
+     */
     @S4Integer(defaultValue = 16000)
     public static final String PROP_SAMPLE_RATE = "sampleRate";
 
@@ -53,19 +55,27 @@ public class Microphone extends BaseDataProcessor {
     @S4Integer(defaultValue = 10)
     public final static String PROP_MSEC_PER_READ = "msecPerRead";
 
-    /** SphinxProperty for the number of bits per value. */
+    /**
+     * SphinxProperty for the number of bits per value.
+     */
     @S4Integer(defaultValue = 16)
     public static final String PROP_BITS_PER_SAMPLE = "bitsPerSample";
 
-    /** Property specifying the number of channels. */
+    /**
+     * Property specifying the number of channels.
+     */
     @S4Integer(defaultValue = 1)
     public static final String PROP_CHANNELS = "channels";
 
-    /** Property specify the endianness of the data. */
+    /**
+     * Property specify the endianness of the data.
+     */
     @S4Boolean(defaultValue = true)
     public static final String PROP_BIG_ENDIAN = "bigEndian";
 
-    /** Property specify whether the data is signed. */
+    /**
+     * Property specify whether the data is signed.
+     */
     @S4Boolean(defaultValue = true)
     public static final String PROP_SIGNED = "signed";
 
@@ -85,7 +95,9 @@ public class Microphone extends BaseDataProcessor {
     @S4String(defaultValue = "average", range = {"average", "selectChannel"})
     public final static String PROP_STEREO_TO_MONO = "stereoToMono";
 
-    /** The Sphinx property that specifies the channel to use if the audio is stereo */
+    /**
+     * The Sphinx property that specifies the channel to use if the audio is stereo
+     */
     @S4Integer(defaultValue = 0)
     public final static String PROP_SELECT_CHANNEL = "selectChannel";
 
@@ -128,6 +140,55 @@ public class Microphone extends BaseDataProcessor {
     private String stereoToMono;
     private int sampleRate;
 
+    /**
+     *
+     * @param name
+     * @param logger
+     * @param sampleRate sample rate of the data
+     * @param bitsPerSample number of bits per value.
+     * @param channels number of channels.
+     * @param bigEndian the endianness of the data
+     * @param signed whether the data is signed.
+     * @param closeBetweenUtterances whether or not the microphone will release the audio between utterances.  On
+     * certain systems (linux for one), closing and reopening the audio does not work too well. The default is false for
+     * Linux systems, true for others
+     * @param msecPerRead the number of milliseconds of audio data to read each time from the underlying
+     * Java Sound audio device.
+     * @param keepLastAudio whether to keep the audio data of an utterance around until the next utterance
+     * is recorded.
+     * @param stereoToMono how to convert stereo audio to mono. Currently, the possible values are
+     * "average", which averages the samples from at each channel, or "selectChannel", which chooses audio only from
+     * that channel. If you choose "selectChannel", you should also specify which channel to use with the
+     * "selectChannel" property.
+     * @param selectedChannel the channel to use if the audio is stereo
+     * @param selectedMixerIndex the mixer to use.  The value can be "default," (which means let the
+     * AudioSystem decide), "last," (which means select the last Mixer supported by the AudioSystem), which appears to
+     * be what is often used for USB headsets, or an integer value which represents the index of the Mixer.Info that is
+     * returned by AudioSystem.getMixerInfo(). To get the list of Mixer.Info objects, run the AudioTool application with
+     * a command line argument of "-dumpMixers".
+     */
+    public Microphone(int sampleRate, int bitsPerSample, int channels,
+                      boolean bigEndian, boolean signed, boolean closeBetweenUtterances, int msecPerRead, boolean keepLastAudio,
+                      String stereoToMono, int selectedChannel, String selectedMixerIndex) {
+        initLogger();
+
+        this.bigEndian = bigEndian;
+        this.signed = signed;
+
+        this.desiredFormat = new AudioFormat
+                ((float) sampleRate, bitsPerSample, channels, signed, bigEndian);
+
+        this.closeBetweenUtterances = closeBetweenUtterances;
+        this.msecPerRead = msecPerRead;
+        this.keepDataReference = keepLastAudio;
+        this.stereoToMono = stereoToMono;
+        this.selectedChannel = selectedChannel;
+        this.selectedMixerIndex = selectedMixerIndex;
+    }
+
+    public Microphone() {
+
+    }
 
     /*
     * (non-Javadoc)
@@ -226,7 +287,9 @@ public class Microphone extends BaseDataProcessor {
     }
 
 
-    /** Creates the audioLine if necessary and returns it. */
+    /**
+     * Creates the audioLine if necessary and returns it.
+     */
     private TargetDataLine getAudioLine() {
         if (audioLine != null) {
             return audioLine;
@@ -388,7 +451,9 @@ public class Microphone extends BaseDataProcessor {
     }
 
 
-    /** This Thread records audio, and caches them in an audio buffer. */
+    /**
+     * This Thread records audio, and caches them in an audio buffer.
+     */
     class RecordingThread extends Thread {
 
         private boolean done;
@@ -407,7 +472,9 @@ public class Microphone extends BaseDataProcessor {
         }
 
 
-        /** Starts the thread, and waits for recorder to be ready */
+        /**
+         * Starts the thread, and waits for recorder to be ready
+         */
         public void start() {
             started = false;
             super.start();
@@ -436,7 +503,9 @@ public class Microphone extends BaseDataProcessor {
         }
 
 
-        /** Implements the run() method of the Thread class. Records audio, and cache them in the audio buffer. */
+        /**
+         * Implements the run() method of the Thread class. Records audio, and cache them in the audio buffer.
+         */
         public void run() {
             totalSamplesRead = 0;
             logger.info("started recording");
@@ -493,7 +562,9 @@ public class Microphone extends BaseDataProcessor {
         }
 
 
-        /** Waits for the recorder to start */
+        /**
+         * Waits for the recorder to start
+         */
         private synchronized void waitForStart() {
             // note that in theory we coulde use a LineEvent START
             // to tell us when the microphone is ready, but we have
@@ -612,7 +683,9 @@ public class Microphone extends BaseDataProcessor {
     }
 
 
-    /** Clears all cached audio data. */
+    /**
+     * Clears all cached audio data.
+     */
     public void clear() {
         audioList = new DataList();
     }
@@ -662,13 +735,17 @@ public class Microphone extends BaseDataProcessor {
 }
 
 
-/** Manages the data as a FIFO queue */
+/**
+ * Manages the data as a FIFO queue
+ */
 class DataList {
 
     private List<Data> list;
 
 
-    /** Creates a new data list */
+    /**
+     * Creates a new data list
+     */
     public DataList() {
         list = new LinkedList<Data>();
     }

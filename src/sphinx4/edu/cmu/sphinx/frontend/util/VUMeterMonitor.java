@@ -8,6 +8,7 @@ import edu.cmu.sphinx.util.props.RawPropertyData;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.logging.Logger;
 
 /**
  * A VU meter to be plugged into a front-end. Preferably this component should be plugged directly behind the
@@ -65,21 +66,11 @@ public class VUMeterMonitor extends BaseDataProcessor {
 
     /** A little test-function which plugs a microphone directly into the vu-meter. */
     public static void main(String[] args) throws DataProcessingException {
-        Microphone mic = new Microphone();
+        Microphone mic = new Microphone( 16000, 16, 1,
+                          true, true, true, 10, false,
+                          "selectChannel", 2, "default");
 
-        PropertySheet propSheet = new PropertySheet(mic, null, new RawPropertyData("tt", mic.getClass().getName()), new ConfigurationManager());
-        try {
-            propSheet.setString(Microphone.PROP_STEREO_TO_MONO, "selectChannel");
-            propSheet.setInt(Microphone.PROP_SELECT_CHANNEL, 2);
-            propSheet.setBoolean(Microphone.PROP_BIG_ENDIAN, true);
-//            propSheet.setLogger(getLogger());
-
-            mic.newProperties(propSheet);
-            mic.initialize();
-        } catch (PropertyException e) {
-            e.printStackTrace();
-        }
-
+        mic.initialize();
         mic.startRecording();
 
         VUMeterMonitor monitor = new VUMeterMonitor();

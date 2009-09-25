@@ -50,6 +50,22 @@ public class SimpleActiveListManager implements ActiveListManager {
     private ActiveList[] currentActiveLists;
 
 
+    /**
+     * 
+     * @param activeListFactories
+     * @param checkPriorLists
+     */
+    public SimpleActiveListManager(List<ActiveListFactory> activeListFactories, boolean checkPriorLists) {
+        this.logger = Logger.getLogger( getClass().getName() );
+
+        this.activeListFactories = activeListFactories;
+        this.checkPriorLists = checkPriorLists;
+    }
+
+    public SimpleActiveListManager() {
+        
+    }
+
     /*
     * (non-Javadoc)
     *
