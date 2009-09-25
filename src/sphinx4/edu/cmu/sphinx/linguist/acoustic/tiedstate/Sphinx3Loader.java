@@ -14,6 +14,7 @@ package edu.cmu.sphinx.linguist.acoustic.tiedstate;
 // Placeholder for a package import
 
 import edu.cmu.sphinx.linguist.acoustic.*;
+import static edu.cmu.sphinx.linguist.acoustic.tiedstate.Pool.Feature.*;
 import edu.cmu.sphinx.util.ExtendedStreamTokenizer;
 import edu.cmu.sphinx.util.LogMath;
 import edu.cmu.sphinx.util.Utilities;
@@ -160,10 +161,7 @@ public class Sphinx3Loader implements Loader {
     @S4Boolean(defaultValue = true)
     public final static String PROP_SPARSE_FORM = "sparseForm";
 
-    /**
-     * The SphinxProperty specifying whether context-dependent units should be
-     * used.
-     */
+    /** The SphinxProperty specifying whether context-dependent units should be used. */
     @S4Boolean(defaultValue = true)
     public final static String PROP_USE_CD_UNITS = "useCDUnits";
 
@@ -179,24 +177,22 @@ public class Sphinx3Loader implements Loader {
     @S4Double(defaultValue = 1e-7f)
     public final static String PROP_MW_FLOOR = "mixtureWeightFloor";
 
-    protected final static String NUM_SENONES = "num_senones";
-    protected final static String NUM_GAUSSIANS_PER_STATE = "num_gaussians";
-    protected final static String NUM_STREAMS = "num_streams";
     protected final static String FILLER = "filler";
     protected final static String SILENCE_CIPHONE = "SIL";
     protected final static int BYTE_ORDER_MAGIC = 0x11223344;
+
     /** Supports this version of the acoustic model */
     public final static String MODEL_VERSION = "0.3";
     protected final static int CONTEXT_SIZE = 1;
-    private Pool meansPool;
-    private Pool variancePool;
-    private Pool matrixPool;
-    private Pool meanTransformationMatrixPool;
-    private Pool meanTransformationVectorPool;
-    private Pool varianceTransformationMatrixPool;
-    private Pool varianceTransformationVectorPool;
-    private Pool mixtureWeightsPool;
-    private Pool senonePool;
+    private Pool<float[]> meansPool;
+    private Pool<float[]> variancePool;
+    private Pool<float[][]> matrixPool;
+    private Pool<float[][]> meanTransformationMatrixPool;
+    private Pool<float[]> meanTransformationVectorPool;
+    private Pool<float[][]> varianceTransformationMatrixPool;
+    private Pool<float[]> varianceTransformationVectorPool;
+    private Pool<float[]> mixtureWeightsPool;
+    private Pool<Senone> senonePool;
     private float[][] transformMatrix;
     private Map<String, Unit> contextIndependentUnits;
     private HMMManager hmmManager;
@@ -224,13 +220,7 @@ public class Sphinx3Loader implements Loader {
     private boolean useCDUnits;
     private boolean loaded;
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util
-     * .props.PropertySheet)
-     */
+    @Override
     public void newProperties(PropertySheet ps) throws PropertyException {
         logger = ps.getLogger();
 
@@ -241,23 +231,19 @@ public class Sphinx3Loader implements Loader {
         unitManager = (UnitManager) ps.getComponent(PROP_UNIT_MANAGER);
 
         String isBinary = (String) properties.get(PROP_IS_BINARY);
-        binary = isBinary != null ? Boolean.valueOf(isBinary).equals(
-                Boolean.TRUE) : ps.getBoolean(PROP_IS_BINARY);
+        binary = isBinary != null ? Boolean.valueOf(isBinary).equals(Boolean.TRUE) : ps.getBoolean(PROP_IS_BINARY);
 
         String isSparse = (String) properties.get(PROP_SPARSE_FORM);
-        sparseForm = isSparse != null ? Boolean.valueOf(isSparse).equals(
-                Boolean.TRUE) : ps.getBoolean(PROP_SPARSE_FORM);
+        sparseForm = isSparse != null ? Boolean.valueOf(isSparse).equals(Boolean.TRUE) : ps.getBoolean(PROP_SPARSE_FORM);
 
         String length = (String) properties.get(PROP_VECTOR_LENGTH);
-        vectorLength = length != null ? Integer.parseInt(length) : ps
-                .getInt(PROP_VECTOR_LENGTH);
+        vectorLength = length != null ? Integer.parseInt(length) : ps.getInt(PROP_VECTOR_LENGTH);
 
         String mdef = (String) properties.get(PROP_MODEL);
         model = mdef != null ? mdef : ps.getString(PROP_MODEL);
 
         String dataLocation = (String) properties.get(PROP_DATA_LOCATION);
-        dataDir = dataLocation != null ? dataLocation : ps
-                .getString(PROP_DATA_LOCATION);
+        dataDir = dataLocation != null ? dataLocation : ps.getString(PROP_DATA_LOCATION);
         dataDir = dataDir + '/';
 
         distFloor = ps.getFloat(PROP_MC_FLOOR);
@@ -295,6 +281,7 @@ public class Sphinx3Loader implements Loader {
         }
     }
 
+    @Override
     public void load() throws IOException {
         if (!loaded) {
             // TODO: what is this all about?
@@ -314,7 +301,7 @@ public class Sphinx3Loader implements Loader {
 
     /**
      * Return the HmmManager.
-     * 
+     *
      * @return the hmmManager
      */
     protected HMMManager getHmmManager() {
@@ -323,25 +310,25 @@ public class Sphinx3Loader implements Loader {
 
     /**
      * Return the MatrixPool.
-     * 
+     *
      * @return the matrixPool
      */
-    protected Pool getMatrixPool() {
+    protected Pool<float[][]> getMatrixPool() {
         return matrixPool;
     }
 
     /**
      * Return the MixtureWeightsPool.
-     * 
+     *
      * @return the mixtureWeightsPool
      */
-    protected Pool getMixtureWeightsPool() {
+    protected Pool<float[]> getMixtureWeightsPool() {
         return mixtureWeightsPool;
     }
 
     /**
      * Return the acoustic model properties.
-     * 
+     *
      * @return the acoustic model properties
      */
     protected Properties getProperties() {
@@ -354,9 +341,7 @@ public class Sphinx3Loader implements Loader {
     /**
      * Loads the AcousticModel from a directory in the file system.
      * 
-     * @param modelName
-     *            the name of the acoustic model; if null we just load from the
-     *            default location
+     * @param modelName the name of the acoustic model; if null we just load from the default location
      */
     private void loadModelFiles(String modelName) throws IOException {
 
@@ -365,24 +350,16 @@ public class Sphinx3Loader implements Loader {
         logger.config("    dataDir   : " + dataDir);
 
         if (binary) {
-            meansPool = loadDensityFileBinary(dataDir + "means",
-                    -Float.MAX_VALUE);
-            variancePool = loadDensityFileBinary(dataDir + "variances",
-                    varianceFloor);
-            mixtureWeightsPool = loadMixtureWeightsBinary(dataDir
-                    + "mixture_weights", mixtureWeightFloor);
-            matrixPool = loadTransitionMatricesBinary(dataDir
-                    + "transition_matrices");
+            meansPool = loadDensityFileBinary(dataDir + "means", -Float.MAX_VALUE);
+            variancePool = loadDensityFileBinary(dataDir + "variances", varianceFloor);
+            mixtureWeightsPool = loadMixtureWeightsBinary(dataDir + "mixture_weights", mixtureWeightFloor);
+            matrixPool = loadTransitionMatricesBinary(dataDir + "transition_matrices");
             transformMatrix = loadTransformMatrix(dataDir + "feature_transform");
         } else {
-            meansPool = loadDensityFileAscii(dataDir + "means.ascii",
-                    -Float.MAX_VALUE);
-            variancePool = loadDensityFileAscii(dataDir + "variances.ascii",
-                    varianceFloor);
-            mixtureWeightsPool = loadMixtureWeightsAscii(dataDir
-                    + "mixture_weights.ascii", mixtureWeightFloor);
-            matrixPool = loadTransitionMatricesAscii(dataDir
-                    + "transition_matrices.ascii");
+            meansPool = loadDensityFileAscii(dataDir + "means.ascii", -Float.MAX_VALUE);
+            variancePool = loadDensityFileAscii(dataDir + "variances.ascii", varianceFloor);
+            mixtureWeightsPool = loadMixtureWeightsAscii(dataDir + "mixture_weights.ascii", mixtureWeightFloor);
+            matrixPool = loadTransitionMatricesAscii(dataDir + "transition_matrices.ascii");
         }
         senonePool = createSenonePool(distFloor, varianceFloor);
         // load the HMM model file
@@ -393,33 +370,25 @@ public class Sphinx3Loader implements Loader {
         loadHMMPool(useCDUnits, modelStream, model);
     }
 
-    /**
-     * Returns the map of context indepent units. The map can be accessed by
-     * unit name.
-     * 
-     * @return the map of context independent units.
-     */
+    @Override
     public Map<String, Unit> getContextIndependentUnits() {
         return contextIndependentUnits;
     }
 
     /**
      * Creates the senone pool from the rest of the pools.
-     * 
-     * @param distFloor
-     *            the lowest allowed score
-     * @param varianceFloor
-     *            the lowest allowed variance
+     *
+     * @param distFloor the lowest allowed score
+     * @param varianceFloor the lowest allowed variance
      * @return the senone pool
      */
-    private Pool createSenonePool(float distFloor, float varianceFloor) {
-        Pool pool = new Pool("senones");
+    private Pool<Senone> createSenonePool(float distFloor, float varianceFloor) {
+        Pool<Senone> pool = new Pool<Senone>("senones");
         int numMixtureWeights = mixtureWeightsPool.size();
 
         int numMeans = meansPool.size();
         int numVariances = variancePool.size();
-        int numGaussiansPerSenone = mixtureWeightsPool.getFeature(
-                NUM_GAUSSIANS_PER_STATE, 0);
+        int numGaussiansPerSenone = mixtureWeightsPool.getFeature(NUM_GAUSSIANS_PER_STATE, 0);
         int numSenones = mixtureWeightsPool.getFeature(NUM_SENONES, 0);
         int whichGaussian = 0;
 
@@ -437,20 +406,21 @@ public class Sphinx3Loader implements Loader {
         for (int i = 0; i < numSenones; i++) {
             MixtureComponent[] mixtureComponents = new MixtureComponent[numGaussiansPerSenone];
             for (int j = 0; j < numGaussiansPerSenone; j++) {
-                mixtureComponents[j] = new MixtureComponent(logMath,
-                        (float[]) meansPool.get(whichGaussian),
-                        (float[][]) meanTransformationMatrixPool.get(0),
-                        (float[]) meanTransformationVectorPool.get(0),
-                        (float[]) variancePool.get(whichGaussian),
-                        (float[][]) varianceTransformationMatrixPool.get(0),
-                        (float[]) varianceTransformationVectorPool.get(0),
-                        distFloor, varianceFloor);
+                mixtureComponents[j] = new MixtureComponent(
+                    logMath,
+                    meansPool.get(whichGaussian),
+                    meanTransformationMatrixPool.get(0),
+                    meanTransformationVectorPool.get(0),
+                    variancePool.get(whichGaussian),
+                    varianceTransformationMatrixPool.get(0),
+                    varianceTransformationVectorPool.get(0),
+                    distFloor,
+                    varianceFloor);
 
                 whichGaussian++;
             }
 
-            Senone senone = new GaussianMixture(logMath,
-                    (float[]) mixtureWeightsPool.get(i), mixtureComponents, i);
+            Senone senone = new GaussianMixture(logMath, mixtureWeightsPool.get(i), mixtureComponents, i);
 
             pool.put(i, senone);
         }
@@ -460,23 +430,15 @@ public class Sphinx3Loader implements Loader {
     /**
      * Loads the sphinx3 density file, a set of density arrays are created and
      * placed in the given pool.
-     * 
-     * @param path
-     *            the name of the data
-     * @param floor
-     *            the minimum density allowed
+     *
+     * @param path the name of the data
+     * @param floor the minimum density allowed
      * @return a pool of loaded densities
-     * @throws FileNotFoundException
-     *             if a file cannot be found
-     * @throws IOException
-     *             if an error occurs while loading the data
+     * @throws FileNotFoundException if a file cannot be found
+     * @throws IOException if an error occurs while loading the data
      */
-    private Pool loadDensityFileAscii(String path, float floor)
+    private Pool<float[]> loadDensityFileAscii(String path, float floor)
             throws IOException {
-        int numStates;
-        int numStreams;
-        int numGaussiansPerState;
-
         logger.fine("Loading density file from: " + path);
         InputStream inputStream = getDataStream(path);
         if (inputStream == null) {
@@ -484,13 +446,12 @@ public class Sphinx3Loader implements Loader {
         }
 
         // 'false' argument refers to EOL is insignificant
-        ExtendedStreamTokenizer est = new ExtendedStreamTokenizer(inputStream,
-                '#', false);
-        Pool pool = new Pool(path);
+        ExtendedStreamTokenizer est = new ExtendedStreamTokenizer(inputStream, '#', false);
+        Pool<float[]> pool = new Pool<float[]>(path);
         est.expectString("param");
-        numStates = est.getInt("numStates");
-        numStreams = est.getInt("numStreams");
-        numGaussiansPerState = est.getInt("numGaussiansPerState");
+        int numStates = est.getInt("numStates");
+        int numStreams = est.getInt("numStreams");
+        int numGaussiansPerState = est.getInt("numGaussiansPerState");
         pool.setFeature(NUM_SENONES, numStates);
         pool.setFeature(NUM_STREAMS, numStreams);
         pool.setFeature(NUM_GAUSSIANS_PER_STATE, numGaussiansPerState);
@@ -508,8 +469,7 @@ public class Sphinx3Loader implements Loader {
                     if (density[k] < floor) {
                         density[k] = floor;
                     }
-                    // System.out.println(" " + i + " " + j + " " + k +
-                    // " " + density[k]);
+                    // System.out.println(" " + i + " " + j + " " + k + " " + density[k]);
                 }
                 int id = i * numGaussiansPerState + j;
                 pool.put(id, density);
@@ -520,42 +480,34 @@ public class Sphinx3Loader implements Loader {
     }
 
     /**
-     * Loads the sphinx3 densityfile, a set of density arrays are created and
+     * Loads the sphinx3 density file, a set of density arrays are created and
      * placed in the given pool.
-     * 
-     * @param path
-     *            the name of the data
-     * @param floor
-     *            the minimum density allowed
+     *
+     * @param path the name of the data
+     * @param floor the minimum density allowed
      * @return a pool of loaded densities
-     * @throws FileNotFoundException
-     *             if a file cannot be found
-     * @throws IOException
-     *             if an error occurs while loading the data
+     * @throws FileNotFoundException if a file cannot be found
+     * @throws IOException if an error occurs while loading the data
      */
-    private Pool loadDensityFileBinary(String path, float floor)
+    private Pool<float[]> loadDensityFileBinary(String path, float floor)
             throws IOException {
-        int numStates;
-        int numStreams;
-        int numGaussiansPerState;
         Properties props = new Properties();
         int blockSize = 0;
 
         DataInputStream dis = readS3BinaryHeader(path, props);
 
         String version = props.getProperty("version");
-        boolean doCheckSum;
 
         if (version == null || !version.equals(DENSITY_FILE_VERSION)) {
             throw new IOException("Unsupported version in " + path);
         }
 
         String checksum = props.getProperty("chksum0");
-        doCheckSum = (checksum != null && checksum.equals("yes"));
+        boolean doCheckSum = (checksum != null && checksum.equals("yes"));
 
-        numStates = readInt(dis);
-        numStreams = readInt(dis);
-        numGaussiansPerState = readInt(dis);
+        int numStates = readInt(dis);
+        int numStreams = readInt(dis);
+        int numGaussiansPerState = readInt(dis);
 
         int[] vectorLength = new int[numStreams];
         for (int i = 0; i < numStreams; i++) {
@@ -564,11 +516,11 @@ public class Sphinx3Loader implements Loader {
 
         int rawLength = readInt(dis);
 
-        // System.out.println("Nstates " + numStates);
-        // System.out.println("Nstreams " + numStreams);
-        // System.out.println("NgaussiansPerState " + numGaussiansPerState);
-        // System.out.println("vectorLength " + vectorLength.length);
-        // System.out.println("rawLength " + rawLength);
+        //System.out.println("Nstates " + numStates);
+        //System.out.println("Nstreams " + numStreams);
+        //System.out.println("NgaussiansPerState " + numGaussiansPerState);
+        //System.out.println("vectorLength " + vectorLength.length);
+        //System.out.println("rawLength " + rawLength);
 
         for (int i = 0; i < numStreams; i++) {
             blockSize += vectorLength[i];
@@ -577,7 +529,7 @@ public class Sphinx3Loader implements Loader {
         assert rawLength == numGaussiansPerState * blockSize * numStates;
         assert numStreams == 1;
 
-        Pool pool = new Pool(path);
+        Pool<float[]> pool = new Pool<float[]>(path);
         pool.setFeature(NUM_SENONES, numStates);
         pool.setFeature(NUM_STREAMS, numStreams);
         pool.setFeature(NUM_GAUSSIANS_PER_STATE, numGaussiansPerState);
@@ -601,14 +553,11 @@ public class Sphinx3Loader implements Loader {
     /**
      * Reads the S3 binary header from the given location + path. Adds header
      * information to the given set of properties.
-     * 
-     * @param path
-     *            the name of the file
-     * @param props
-     *            the properties
+     *
+     * @param path the name of the file
+     * @param props the properties
      * @return the input stream positioned after the header
-     * @throws IOException
-     *             on error
+     * @throws IOException on error
      */
     protected DataInputStream readS3BinaryHeader(String path, Properties props)
             throws IOException {
@@ -618,8 +567,7 @@ public class Sphinx3Loader implements Loader {
         if (inputStream == null) {
             throw new IOException("Can't open " + path);
         }
-        DataInputStream dis = new DataInputStream(new BufferedInputStream(
-                inputStream));
+        DataInputStream dis = new DataInputStream(new BufferedInputStream(inputStream));
         String id = readWord(dis);
         if (!id.equals("s3")) {
             throw new IOException("Not proper s3 binary file " + path);
@@ -647,13 +595,11 @@ public class Sphinx3Loader implements Loader {
     }
 
     /**
-     * Reads the next word (text separated by whitespace) from the given stream
-     * 
-     * @param dis
-     *            the input stream
+     * Reads the next word (text separated by whitespace) from the given stream.
+     *
+     * @param dis the input stream
      * @return the next word
-     * @throws IOException
-     *             on error
+     * @throws IOException on error
      */
     String readWord(DataInputStream dis) throws IOException {
         StringBuilder sb = new StringBuilder();
@@ -671,23 +617,20 @@ public class Sphinx3Loader implements Loader {
     }
 
     /**
-     * Reads a single char from the stream
-     * 
-     * @param dis
-     *            the stream to read
+     * Reads a single char from the stream.
+     *
+     * @param dis the stream to read
      * @return the next character on the stream
-     * @throws IOException
-     *             if an error occurs
+     * @throws IOException if an error occurs
      */
     private char readChar(DataInputStream dis) throws IOException {
         return (char) dis.readByte();
     }
 
     /**
-     * swap a 32 bit word
-     * 
-     * @param val
-     *            the value to swap
+     * Swap a 32 bit word.
+     *
+     * @param val the value to swap
      * @return the swapped value
      */
     private int byteSwap(int val) {
@@ -696,13 +639,11 @@ public class Sphinx3Loader implements Loader {
     }
 
     /**
-     * Read an integer from the input stream, byte-swapping as necessary
-     * 
-     * @param dis
-     *            the inputstream
+     * Read an integer from the input stream, byte-swapping as necessary.
+     *
+     * @param dis the inputstream
      * @return an integer value
-     * @throws IOException
-     *             on error
+     * @throws IOException on error
      */
     protected int readInt(DataInputStream dis) throws IOException {
         if (swap) {
@@ -713,13 +654,11 @@ public class Sphinx3Loader implements Loader {
     }
 
     /**
-     * Read a float from the input stream, byte-swapping as necessary
-     * 
-     * @param dis
-     *            the inputstream
+     * Read a float from the input stream, byte-swapping as necessary.
+     *
+     * @param dis the inputstream
      * @return a floating pint value
-     * @throws IOException
-     *             on error
+     * @throws IOException on error
      */
     protected float readFloat(DataInputStream dis) throws IOException {
         float val;
@@ -735,11 +674,9 @@ public class Sphinx3Loader implements Loader {
     /**
      * If a data point is non-zero and below 'floor' make it equal to floor
      * (don't floor zero values though).
-     * 
-     * @param data
-     *            the data to floor
-     * @param floor
-     *            the floored value
+     *
+     * @param data the data to floor
+     * @param floor the floored value
      */
     protected void nonZeroFloor(float[] data, float floor) {
         for (int i = 0; i < data.length; i++) {
@@ -751,11 +688,9 @@ public class Sphinx3Loader implements Loader {
 
     /**
      * If a data point is below 'floor' make it equal to floor.
-     * 
-     * @param data
-     *            the data to floor
-     * @param floor
-     *            the floored value
+     *
+     * @param data the data to floor
+     * @param floor the floored value
      */
     private void floorData(float[] data, float floor) {
         for (int i = 0; i < data.length; i++) {
@@ -766,10 +701,9 @@ public class Sphinx3Loader implements Loader {
     }
 
     /**
-     * Normalize the given data
-     * 
-     * @param data
-     *            the data to normalize
+     * Normalize the given data.
+     *
+     * @param data the data to normalize
      */
     protected void normalize(float[] data) {
         float sum = 0;
@@ -784,10 +718,9 @@ public class Sphinx3Loader implements Loader {
     }
 
     /**
-     * Convert to log math
-     * 
-     * @param data
-     *            the data to normalize
+     * Convert to log math.
+     *
+     * @param data the data to normalize
      */
     // linearToLog returns a float, so zero values in linear scale
     // should return -Float.MAX_VALUE.
@@ -799,15 +732,12 @@ public class Sphinx3Loader implements Loader {
 
     /**
      * Reads the given number of floats from the stream and returns them in an
-     * array of floats
-     * 
-     * @param dis
-     *            the stream to read data from
-     * @param size
-     *            the number of floats to read
+     * array of floats.
+     *
+     * @param dis the stream to read data from
+     * @param size the number of floats to read
      * @return an array of size float elements
-     * @throws IOException
-     *             if an exception occurs
+     * @throws IOException if an exception occurs
      */
     protected float[] readFloatArray(DataInputStream dis, int size)
             throws IOException {
@@ -819,59 +749,41 @@ public class Sphinx3Loader implements Loader {
     }
 
     /**
-     * Loads the sphinx3 densityfile, a set of density arrays are created and
-     * placed in the given pool.
-     * 
-     * @param useCDUnits
-     *            if true, loads also the context dependent units
-     * @param inputStream
-     *            the open input stream to use
-     * @param path
-     *            the path to a density file
-     * @return a pool of loaded densities
-     * @throws FileNotFoundException
-     *             if a file cannot be found
-     * @throws IOException
-     *             if an error occurs while loading the data
+     * Loads the sphinx3 densityfile, a set of density arrays are created and placed in the given pool.
+     *
+     * @param useCDUnits if true, loads also the context dependent units
+     * @param inputStream the open input stream to use
+     * @param path the path to a density file
+     * @throws FileNotFoundException if a file cannot be found
+     * @throws IOException if an error occurs while loading the data
      */
-    protected Pool loadHMMPool(boolean useCDUnits, InputStream inputStream,
-            String path) throws IOException {
-        int numBase;
-        int numTri;
-        int numStateMap;
-        int numTiedState;
-        int numStatePerHMM;
-        int numContextIndependentTiedState;
-        int numTiedTransitionMatrices;
-
-        ExtendedStreamTokenizer est = new ExtendedStreamTokenizer(inputStream,
-                '#', false);
-        Pool pool = new Pool(path);
+    protected void loadHMMPool(boolean useCDUnits, InputStream inputStream, String path)
+            throws IOException {
+        ExtendedStreamTokenizer est = new ExtendedStreamTokenizer(inputStream, '#', false);
 
         logger.fine("Loading HMM file from: " + path);
 
         est.expectString(MODEL_VERSION);
 
-        numBase = est.getInt("numBase");
+        int numBase = est.getInt("numBase");
         est.expectString("n_base");
 
-        numTri = est.getInt("numTri");
+        int numTri = est.getInt("numTri");
         est.expectString("n_tri");
 
-        numStateMap = est.getInt("numStateMap");
+        int numStateMap = est.getInt("numStateMap");
         est.expectString("n_state_map");
 
-        numTiedState = est.getInt("numTiedState");
+        int numTiedState = est.getInt("numTiedState");
         est.expectString("n_tied_state");
 
-        numContextIndependentTiedState = est
-                .getInt("numContextIndependentTiedState");
+        int numContextIndependentTiedState = est.getInt("numContextIndependentTiedState");
         est.expectString("n_tied_ci_state");
 
-        numTiedTransitionMatrices = est.getInt("numTiedTransitionMatrices");
+        int numTiedTransitionMatrices = est.getInt("numTiedTransitionMatrices");
         est.expectString("n_tied_tmat");
 
-        numStatePerHMM = numStateMap / (numTri + numBase);
+        int numStatePerHMM = numStateMap / (numTri + numBase);
 
         assert numTiedState == mixtureWeightsPool.getFeature(NUM_SENONES, 0);
         assert numTiedTransitionMatrices == matrixPool.size();
@@ -910,11 +822,10 @@ public class Sphinx3Loader implements Loader {
                 unit = UnitManager.SILENCE;
             }
 
-            float[][] transitionMatrix = (float[][]) matrixPool.get(tmat);
+            float[][] transitionMatrix = matrixPool.get(tmat);
             SenoneSequence ss = getSenoneSequence(stid);
 
-            HMM hmm = new SenoneHMM(unit, ss, transitionMatrix, HMMPosition
-                    .lookup(position));
+            HMM hmm = new SenoneHMM(unit, ss, transitionMatrix, HMMPosition.lookup(position));
             hmmManager.put(hmm);
         }
 
@@ -939,8 +850,8 @@ public class Sphinx3Loader implements Loader {
 
             for (int j = 0; j < numStatePerHMM - 1; j++) {
                 stid[j] = est.getInt("j");
-                assert stid[j] >= numContextIndependentTiedState
-                        && stid[j] < numTiedState;
+                assert stid[j] >= numContextIndependentTiedState &&
+                       stid[j] < numTiedState;
             }
             est.expectString("N");
 
@@ -974,7 +885,7 @@ public class Sphinx3Loader implements Loader {
                     logger.fine("Loaded " + unit);
                 }
 
-                float[][] transitionMatrix = (float[][]) matrixPool.get(tmat);
+                float[][] transitionMatrix = matrixPool.get(tmat);
 
                 SenoneSequence ss = lastSenoneSequence;
                 if (ss == null || !sameSenoneSequence(stid, lastStid)) {
@@ -983,21 +894,18 @@ public class Sphinx3Loader implements Loader {
                 lastSenoneSequence = ss;
                 lastStid = stid;
 
-                HMM hmm = new SenoneHMM(unit, ss, transitionMatrix, HMMPosition
-                        .lookup(position));
+                HMM hmm = new SenoneHMM(unit, ss, transitionMatrix, HMMPosition.lookup(position));
                 hmmManager.put(hmm);
             }
         }
 
         est.close();
-        return pool;
     }
 
     /**
      * Returns true if the given senone sequence IDs are the same.
-     * 
-     * @return true if the given senone sequence IDs are the same, false
-     *         otherwise
+     *
+     * @return true if the given senone sequence IDs are the same, false otherwise
      */
     protected boolean sameSenoneSequence(int[] ssid1, int[] ssid2) {
         if (ssid1.length == ssid2.length) {
@@ -1013,34 +921,29 @@ public class Sphinx3Loader implements Loader {
     }
 
     /**
-     * Gets the senone sequence representing the given senones
-     * 
-     * @param stateid
-     *            is the array of senone state ids
+     * Gets the senone sequence representing the given senones.
+     *
+     * @param stateid is the array of senone state ids
      * @return the senone sequence associated with the states
      */
     protected SenoneSequence getSenoneSequence(int[] stateid) {
         Senone[] senones = new Senone[stateid.length];
         for (int i = 0; i < stateid.length; i++) {
-            senones[i] = (Senone) senonePool.get(stateid[i]);
+            senones[i] = senonePool.get(stateid[i]);
         }
         return new SenoneSequence(senones);
     }
 
     /**
-     * Loads the mixture weights
-     * 
-     * @param path
-     *            the path to the mixture weight file
-     * @param floor
-     *            the minimum mixture weight allowed
+     * Loads the mixture weights.
+     *
+     * @param path the path to the mixture weight file
+     * @param floor the minimum mixture weight allowed
      * @return a pool of mixture weights
-     * @throws FileNotFoundException
-     *             if a file cannot be found
-     * @throws IOException
-     *             if an error occurs while loading the data
+     * @throws FileNotFoundException if a file cannot be found
+     * @throws IOException if an error occurs while loading the data
      */
-    private Pool loadMixtureWeightsAscii(String path, float floor)
+    private Pool<float[]> loadMixtureWeightsAscii(String path, float floor)
             throws IOException {
         logger.fine("Loading mixture weights from: " + path);
         InputStream inputStream = getDataStream(path);
@@ -1048,16 +951,12 @@ public class Sphinx3Loader implements Loader {
             throw new FileNotFoundException("Error trying to read file " + path);
         }
 
-        int numStates;
-        int numStreams;
-        int numGaussiansPerState;
-        Pool pool = new Pool(path);
-        ExtendedStreamTokenizer est = new ExtendedStreamTokenizer(inputStream,
-                '#', false);
+        Pool<float[]> pool = new Pool<float[]>(path);
+        ExtendedStreamTokenizer est = new ExtendedStreamTokenizer(inputStream, '#', false);
         est.expectString("mixw");
-        numStates = est.getInt("numStates");
-        numStreams = est.getInt("numStreams");
-        numGaussiansPerState = est.getInt("numGaussiansPerState");
+        int numStates = est.getInt("numStates");
+        int numStreams = est.getInt("numStreams");
+        int numGaussiansPerState = est.getInt("numGaussiansPerState");
         pool.setFeature(NUM_SENONES, numStates);
         pool.setFeature(NUM_STREAMS, numStreams);
         pool.setFeature(NUM_GAUSSIANS_PER_STATE, numGaussiansPerState);
@@ -1082,46 +981,37 @@ public class Sphinx3Loader implements Loader {
     }
 
     /**
-     * Loads the mixture weights (Binary)
-     * 
-     * @param path
-     *            the path to the mixture weight file
-     * @param floor
-     *            the minimum mixture weight allowed
+     * Loads the mixture weights (Binary).
+     *
+     * @param path the path to the mixture weight file
+     * @param floor the minimum mixture weight allowed
      * @return a pool of mixture weights
-     * @throws FileNotFoundException
-     *             if a file cannot be found
-     * @throws IOException
-     *             if an error occurs while loading the data
+     * @throws FileNotFoundException if a file cannot be found
+     * @throws IOException if an error occurs while loading the data
      */
-    private Pool loadMixtureWeightsBinary(String path, float floor)
+    private Pool<float[]> loadMixtureWeightsBinary(String path, float floor)
             throws IOException {
         logger.fine("Loading mixture weights from: " + path);
 
-        int numStates;
-        int numStreams;
-        int numGaussiansPerState;
-        int numValues;
         Properties props = new Properties();
 
         DataInputStream dis = readS3BinaryHeader(path, props);
 
         String version = props.getProperty("version");
-        boolean doCheckSum;
 
         if (version == null || !version.equals(MIXW_FILE_VERSION)) {
             throw new IOException("Unsupported version in " + path);
         }
 
         String checksum = props.getProperty("chksum0");
-        doCheckSum = (checksum != null && checksum.equals("yes"));
+        boolean doCheckSum = (checksum != null && checksum.equals("yes"));
 
-        Pool pool = new Pool(path);
+        Pool<float[]> pool = new Pool<float[]>(path);
 
-        numStates = readInt(dis);
-        numStreams = readInt(dis);
-        numGaussiansPerState = readInt(dis);
-        numValues = readInt(dis);
+        int numStates = readInt(dis);
+        int numStreams = readInt(dis);
+        int numGaussiansPerState = readInt(dis);
+        int numValues = readInt(dis);
 
         assert numValues == numStates * numStreams * numGaussiansPerState;
         assert numStreams == 1;
@@ -1142,17 +1032,15 @@ public class Sphinx3Loader implements Loader {
     }
 
     /**
-     * Loads the transition matrices
-     * 
-     * @param path
-     *            the path to the transitions matrices
+     * Loads the transition matrices.
+     *
+     * @param path the path to the transitions matrices
      * @return a pool of transition matrices
-     * @throws FileNotFoundException
-     *             if a file cannot be found
-     * @throws IOException
-     *             if an error occurs while loading the data
+     * @throws FileNotFoundException if a file cannot be found
+     * @throws IOException if an error occurs while loading the data
      */
-    protected Pool loadTransitionMatricesAscii(String path) throws IOException {
+    protected Pool<float[][]> loadTransitionMatricesAscii(String path)
+            throws IOException {
         logger.fine("Loading transition matrices from: " + path);
 
         InputStream inputStream = getDataStream(path);
@@ -1160,14 +1048,11 @@ public class Sphinx3Loader implements Loader {
             throw new FileNotFoundException("Error trying to read file " + path);
         }
 
-        int numMatrices;
-        int numStates;
-        Pool pool = new Pool(path);
-        ExtendedStreamTokenizer est = new ExtendedStreamTokenizer(inputStream,
-                '#', false);
+        Pool<float[][]> pool = new Pool<float[][]>(path);
+        ExtendedStreamTokenizer est = new ExtendedStreamTokenizer(inputStream, '#', false);
         est.expectString("tmat");
-        numMatrices = est.getInt("numMatrices");
-        numStates = est.getInt("numStates");
+        int numMatrices = est.getInt("numMatrices");
+        int numStates = est.getInt("numStates");
         logger.fine("with " + numMatrices + " and " + numStates
                 + " states, in " + (sparseForm ? "sparse" : "dense") + " form");
 
@@ -1191,8 +1076,7 @@ public class Sphinx3Loader implements Loader {
                     }
                     tmat[j][k] = logMath.linearToLog(tmat[j][k]);
                     if (logger.isLoggable(Level.FINE)) {
-                        logger.fine("tmat j " + j + " k " + k + " tm "
-                                + tmat[j][k]);
+                        logger.fine("tmat j " + j + " k " + k + " tm " + tmat[j][k]);
                     }
                 }
             }
@@ -1203,42 +1087,35 @@ public class Sphinx3Loader implements Loader {
     }
 
     /**
-     * Loads the transition matrices (Binary)
-     * 
-     * @param path
-     *            the path to the transitions matrices
+     * Loads the transition matrices (Binary).
+     *
+     * @param path the path to the transitions matrices
      * @return a pool of transition matrices
-     * @throws FileNotFoundException
-     *             if a file cannot be found
-     * @throws IOException
-     *             if an error occurs while loading the data
+     * @throws FileNotFoundException if a file cannot be found
+     * @throws IOException if an error occurs while loading the data
      */
-    protected Pool loadTransitionMatricesBinary(String path) throws IOException {
+    protected Pool<float[][]> loadTransitionMatricesBinary(String path)
+            throws IOException {
         logger.fine("Loading transition matrices from: " + path);
-        int numMatrices;
-        int numStates;
-        int numRows;
-        int numValues;
 
         Properties props = new Properties();
         DataInputStream dis = readS3BinaryHeader(path, props);
 
         String version = props.getProperty("version");
-        boolean doCheckSum;
 
         if (version == null || !version.equals(TMAT_FILE_VERSION)) {
             throw new IOException("Unsupported version in " + path);
         }
 
         String checksum = props.getProperty("chksum0");
-        doCheckSum = (checksum != null && checksum.equals("yes"));
+        boolean doCheckSum = (checksum != null && checksum.equals("yes"));
 
-        Pool pool = new Pool(path);
+        Pool<float[][]> pool = new Pool<float[][]>(path);
 
-        numMatrices = readInt(dis);
-        numRows = readInt(dis);
-        numStates = readInt(dis);
-        numValues = readInt(dis);
+        int numMatrices = readInt(dis);
+        int numRows = readInt(dis);
+        int numStates = readInt(dis);
+        int numValues = readInt(dis);
 
         assert numValues == numStates * numRows * numMatrices;
 
@@ -1261,22 +1138,16 @@ public class Sphinx3Loader implements Loader {
     }
 
     /**
-     * Loads the transform matrices (Binary)
-     * 
-     * @param path
-     *            the path to the transform matrix
+     * Loads the transform matrices (Binary).
+     *
+     * @param path the path to the transform matrix
      * @return a transform matrix
-     * @throws java.io.FileNotFoundException
-     *             if a file cannot be found
-     * @throws java.io.IOException
-     *             if an error occurs while loading the data
+     * @throws java.io.FileNotFoundException if a file cannot be found
+     * @throws java.io.IOException if an error occurs while loading the data
      */
-    protected float[][] loadTransformMatrix(String path) throws IOException {
+    protected float[][] loadTransformMatrix(String path)
+            throws IOException {
         logger.fine("Loading transform matrix from: " + path);
-
-        int numRows;
-        int numValues;
-        int num;
 
         Properties props = new Properties();
 
@@ -1288,24 +1159,22 @@ public class Sphinx3Loader implements Loader {
         }
 
         String version = props.getProperty("version");
-        boolean doCheckSum;
 
         if (version == null || !version.equals(TRANSFORM_FILE_VERSION)) {
             throw new IOException("Unsupported version in " + path);
         }
 
         String checksum = props.getProperty("chksum0");
-        doCheckSum = (checksum != null && checksum.equals("yes"));
+        boolean doCheckSum = (checksum != null && checksum.equals("yes"));
 
         readInt(dis);
-        numRows = readInt(dis);
-        numValues = readInt(dis);
-        num = readInt(dis);
+        int numRows = readInt(dis);
+        int numValues = readInt(dis);
+        int num = readInt(dis);
 
         assert num == numRows * numValues;
 
         float[][] result = new float[numRows][];
-
         for (int i = 0; i < numRows; i++) {
             result[i] = readFloatArray(dis, numValues);
         }
@@ -1315,13 +1184,12 @@ public class Sphinx3Loader implements Loader {
 
     /**
      * Creates a pool with a single identity matrix in it.
-     * 
-     * @param name
-     *            the name of the pool
+     *
+     * @param name the name of the pool
      * @return the pool with the matrix
      */
-    private Pool createDummyMatrixPool(String name) {
-        Pool pool = new Pool(name);
+    private Pool<float[][]> createDummyMatrixPool(String name) {
+        Pool<float[][]> pool = new Pool<float[][]>(name);
         float[][] matrix = new float[vectorLength][vectorLength];
         logger.fine("creating dummy matrix pool " + name);
         for (int i = 0; i < vectorLength; i++) {
@@ -1339,14 +1207,13 @@ public class Sphinx3Loader implements Loader {
 
     /**
      * Creates a pool with a single zero vector in it.
-     * 
-     * @param name
-     *            the name of the pool
+     *
+     * @param name the name of the pool
      * @return the pool with the vector
      */
-    private Pool createDummyVectorPool(String name) {
+    private Pool<float[]> createDummyVectorPool(String name) {
         logger.fine("creating dummy vector pool " + name);
-        Pool pool = new Pool(name);
+        Pool<float[]> pool = new Pool<float[]>(name);
         float[] vector = new float[vectorLength];
         for (int i = 0; i < vectorLength; i++) {
             vector[i] = 0.0f;
@@ -1355,124 +1222,72 @@ public class Sphinx3Loader implements Loader {
         return pool;
     }
 
-    /**
-     * Gets the pool of means for this loader
-     * 
-     * @return the pool
-     */
-    public Pool getMeansPool() {
+    @Override
+    public Pool<float[]> getMeansPool() {
         return meansPool;
     }
 
-    /**
-     * Gets the pool of means transformation matrices for this loader
-     * 
-     * @return the pool
-     */
-    public Pool getMeansTransformationMatrixPool() {
+    @Override
+    public Pool<float[][]> getMeansTransformationMatrixPool() {
         return meanTransformationMatrixPool;
     }
 
-    /**
-     * Gets the pool of means transformation vectors for this loader
-     * 
-     * @return the pool
-     */
-    public Pool getMeansTransformationVectorPool() {
+    @Override
+    public Pool<float[]> getMeansTransformationVectorPool() {
         return meanTransformationVectorPool;
     }
 
-    /*
-     * Gets the variance pool
-     * 
-     * @return the pool
-     */
-    public Pool getVariancePool() {
+    @Override
+    public Pool<float[]> getVariancePool() {
         return variancePool;
     }
 
-    /**
-     * Gets the variance transformation matrix pool
-     * 
-     * @return the pool
-     */
-    public Pool getVarianceTransformationMatrixPool() {
+    @Override
+    public Pool<float[][]> getVarianceTransformationMatrixPool() {
         return varianceTransformationMatrixPool;
     }
 
-    /**
-     * Gets the pool of variance transformation vectors for this loader
-     * 
-     * @return the pool
-     */
-    public Pool getVarianceTransformationVectorPool() {
+    @Override
+    public Pool<float[]> getVarianceTransformationVectorPool() {
         return varianceTransformationVectorPool;
     }
 
-    /*
-     * Gets the mixture weight pool
-     * 
-     * @return the pool
-     */
-    public Pool getMixtureWeightPool() {
+    @Override
+    public Pool<float[]> getMixtureWeightPool() {
         return mixtureWeightsPool;
     }
 
-    /*
-     * Gets the transition matrix pool
-     * 
-     * @return the pool
-     */
-    public Pool getTransitionMatrixPool() {
+    @Override
+    public Pool<float[][]> getTransitionMatrixPool() {
         return matrixPool;
     }
 
-    /*
-     * Gets the senone pool for this loader
-     * 
-     * @return the pool
-     */
-    public Pool getSenonePool() {
-        return senonePool;
-    }
-
-    /*
-     * Gets the transform matrix for this loader
-     * 
-     * @return the pool
-     */
+    @Override
     public float[][] getTransformMatrix() {
         return transformMatrix;
     }
 
-    /**
-     * Returns the size of the left context for context dependent units
-     * 
-     * @return the left context size
-     */
+    @Override
+    public Pool<Senone> getSenonePool() {
+        return senonePool;
+    }
+
+    @Override
     public int getLeftContextSize() {
         return CONTEXT_SIZE;
     }
 
-    /**
-     * Returns the size of the right context for context dependent units
-     * 
-     * @return the left context size
-     */
+    @Override
     public int getRightContextSize() {
         return CONTEXT_SIZE;
     }
 
-    /**
-     * Returns the hmm manager associated with this loader
-     * 
-     * @return the hmm Manager
-     */
+    @Override
     public HMMManager getHMMManager() {
         return hmmManager;
     }
 
-    /** Log info about this loader */
+    @Override
     public void logInfo() {
         logger.info("Sphinx3Loader");
         meansPool.logInfo(logger);
@@ -1485,8 +1300,7 @@ public class Sphinx3Loader implements Loader {
         varianceTransformationVectorPool.logInfo(logger);
         mixtureWeightsPool.logInfo(logger);
         senonePool.logInfo(logger);
-        logger.info("Context Independent Unit Entries: "
-                + contextIndependentUnits.size());
+        logger.info("Context Independent Unit Entries: " + contextIndependentUnits.size());
         hmmManager.logInfo(logger);
     }
 }

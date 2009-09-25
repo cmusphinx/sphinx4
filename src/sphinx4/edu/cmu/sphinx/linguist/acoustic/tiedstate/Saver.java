@@ -10,16 +10,15 @@
  *
  */
 
-
 package edu.cmu.sphinx.linguist.acoustic.tiedstate;
 
 import edu.cmu.sphinx.util.props.Configurable;
 import edu.cmu.sphinx.util.props.S4Double;
 import edu.cmu.sphinx.util.props.S4Boolean;
+import edu.cmu.sphinx.linguist.acoustic.Unit;
 
 import java.util.Map;
 import java.io.IOException;
-
 
 /** Generic interface for a saver of acoustic models */
 public interface Saver extends Configurable {
@@ -39,90 +38,84 @@ public interface Saver extends Configurable {
     public final static String PROP_SPARSE_FORM = "sparseForm";
 
     /**
-     * Gets the pool of means for this loader
+     * Gets the pool of means for this loader.
      *
      * @return the pool
      */
-    public Pool getMeansPool();
-
+    public Pool<float[]> getMeansPool();
 
     /**
-     * Gets the pool of means transformation matrices for this loader
+     * Gets the pool of means transformation matrices for this loader.
      *
      * @return the pool
      */
-    public Pool getMeansTransformationMatrixPool();
-
+    public Pool<float[][]> getMeansTransformationMatrixPool();
 
     /**
-     * Gets the pool of means transformation vectors for this loader
+     * Gets the pool of means transformation vectors for this loader.
      *
      * @return the pool
      */
-    public Pool getMeansTransformationVectorPool();
-
-
-    /*
-     * Gets the variance pool
-     *
-     * @return the pool
-     */
-    public Pool getVariancePool();
-
+    public Pool<float[]> getMeansTransformationVectorPool();
 
     /**
-     * Gets the variance transformation matrix pool
+     * Gets the variance pool.
      *
      * @return the pool
      */
-    public Pool getVarianceTransformationMatrixPool();
-
-
-    /*
-     * Gets the senone pool for this loader
-     *
-     * @return the pool
-     */
-    public Pool getSenonePool();
-
+    public Pool<float[]> getVariancePool();
 
     /**
-     * Returns the HMM Manager for this loader
+     * Gets the variance transformation matrix pool.
+     *
+     * @return the pool
+     */
+    public Pool<float[][]> getVarianceTransformationMatrixPool();
+
+    /**
+     * Gets the variance transformation vectorpool.
+     *
+     * @return the pool
+     */
+    public Pool<float[]> getVarianceTransformationVectorPool();
+
+    /**
+     * Gets the senone pool for this loader.
+     *
+     * @return the pool
+     */
+    public Pool<Senone> getSenonePool();
+
+    /**
+     * Returns the HMM Manager for this loader.
      *
      * @return the HMM Manager
      */
     public HMMManager getHMMManager();
 
-
     /**
      * Returns the map of context indepent units. The map can be accessed by unit name.
      *
-     * @return the map of context independent units.
+     * @return the map of context independent units
      */
-    public Map getContextIndependentUnits();
-
+    public Map<String, Unit> getContextIndependentUnits();
 
     /** logs information about this loader */
     public void logInfo();
 
-
     /**
-     * Returns the size of the left context for context dependent units
+     * Returns the size of the left context for context dependent units.
      *
      * @return the left context size
      */
     public int getLeftContextSize();
 
-
     /**
-     * Returns the size of the right context for context dependent units
+     * Returns the size of the right context for context dependent units.
      *
      * @return the left context size
      */
     public int getRightContextSize();
-
     
     public void save(String name, boolean b) throws IOException;
 }
-
-

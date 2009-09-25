@@ -13,22 +13,20 @@
 package edu.cmu.sphinx.linguist.acoustic.tiedstate;
 
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.Logger;
 
 /** Used to pool shared objects in the acoustic model */
-public class Pool {
+public class Pool<T> {
+
+    public enum Feature { NUM_SENONES, NUM_GAUSSIANS_PER_STATE, NUM_STREAMS }
 
     private String name;
-    private List pool;
-    private Map<String, Integer> features = new HashMap<String, Integer>();
-
+    private List<T> pool;
+    private Map<Feature, Integer> features = new EnumMap<Feature, Integer>(Feature.class);
 
     /**
-     * Creates a new pool
+     * Creates a new pool.
      *
      * @param name the name of the pool
      */
@@ -37,9 +35,8 @@ public class Pool {
         pool = new ArrayList();
     }
 
-
     /**
-     * returns the pool's name.
+     * Returns the pool's name.
      *
      * @return the pool name
      */
@@ -47,37 +44,34 @@ public class Pool {
         return name;
     }
 
-
     /**
-     * returns the object with the given ID from the pool
+     * Returns the object with the given ID from the pool.
      *
      * @param id the id of the object
      * @return the object
      * @throws IndexOutOfBoundsException if the ID is out of range
      */
-    public Object get(int id) {
+    public T get(int id) {
         return pool.get(id);
     }
 
-
     /**
-     * returns the ID of a given object from the pool
+     * Returns the ID of a given object from the pool.
      *
      * @param object the object
      * @return the index
      */
-    public int indexOf(Object object) {
+    public int indexOf(T object) {
         return pool.indexOf(object);
     }
 
-
     /**
-     * Places the given object in the pool
+     * Places the given object in the pool.
      *
      * @param id a unique ID for this object
      * @param o  the object to add to the pool
      */
-    public void put(int id, Object o) {
+    public void put(int id, T o) {
         if (id == pool.size()) {
             pool.add(o);
         } else {
@@ -85,9 +79,8 @@ public class Pool {
         }
     }
 
-
     /**
-     * Retrieves the size of the pool
+     * Retrieves the size of the pool.
      *
      * @return the size of the pool
      */
@@ -95,9 +88,8 @@ public class Pool {
         return pool.size();
     }
 
-
     /**
-     * Dump information on this pool to the given logger
+     * Dump information on this pool to the given logger.
      *
      * @param logger the logger to send the info to
      */
@@ -105,32 +97,25 @@ public class Pool {
         logger.info("Pool " + name + " Entries: " + size());
     }
 
-
     /**
-     * Sets a feature for this pool
+     * Sets a feature for this pool.
      *
-     * @param name  the name of the feature
+     * @param feature feature to set
      * @param value the value for the feature
      */
-    public void setFeature(String name, int value) {
-        features.put(name, value);
+    public void setFeature(Feature feature, int value) {
+        features.put(feature, value);
     }
 
-
     /**
-     * Retrieves a feature from this pool
+     * Retrieves a feature from this pool.
      *
-     * @param name         the name of the feature
+     * @param feature feature to get
      * @param defaultValue the defaultValue for the pool
      * @return the value for the feature
      */
-    public int getFeature(String name, int defaultValue) {
-        Integer val = features.get(name);
-        if (val == null) {
-            return defaultValue;
-        } else {
-            return val;
-        }
+    public int getFeature(Feature feature, int defaultValue) {
+        Integer val = features.get(feature);
+        return val == null ? defaultValue : val;
     }
 }
-

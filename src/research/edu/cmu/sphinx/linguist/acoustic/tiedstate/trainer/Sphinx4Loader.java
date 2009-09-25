@@ -14,6 +14,7 @@ package edu.cmu.sphinx.linguist.acoustic.tiedstate.trainer;
 
 import edu.cmu.sphinx.linguist.acoustic.*;
 import edu.cmu.sphinx.linguist.acoustic.tiedstate.*;
+import static edu.cmu.sphinx.linguist.acoustic.tiedstate.Pool.Feature.*;
 import edu.cmu.sphinx.util.ExtendedStreamTokenizer;
 import edu.cmu.sphinx.util.LogMath;
 import edu.cmu.sphinx.util.StreamFactory;
@@ -29,7 +30,6 @@ import java.io.InputStream;
 import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Level;
-
 
 /**
  * an acoustic model loader that loads sphinx3 ascii data
@@ -52,61 +52,44 @@ class Sphinx4Loader extends Sphinx3Loader {
         maxModelSize = ps.getInt(MAX_MODEL_SIZE);
     }
 
-
     /**
      * Loads the sphinx4 densityfile, a set of density arrays are created and placed in the given pool.
      *
-     * @param useCDUnits  if true, loads also the context dependent units
-     * @param inputStream the open input stream to use
-     * @param path        the path to a density file
-     * @return a pool of loaded densities
-     * @throws FileNotFoundException if a file cannot be found
-     * @throws IOException           if an error occurs while loading the data
+     * {@inheritDoc}
      */
-    protected Pool loadHMMPool(boolean useCDUnits, InputStream inputStream, String path)
+    @Override
+    protected void loadHMMPool(boolean useCDUnits, InputStream inputStream, String path)
             throws IOException {
-        int token_type;
-        int numBase;
-        int numTri;
-        int numStateMap;
-        int numTiedState;
-        int numStatePerHMM;
-        int numContextIndependentTiedState;
-        int numTiedTransitionMatrices;
-
-        ExtendedStreamTokenizer est = new ExtendedStreamTokenizer
-                (inputStream, '#', false);
-        Pool pool = new Pool(path);
+        ExtendedStreamTokenizer est = new ExtendedStreamTokenizer(inputStream, '#', false);
 
         logger.info("Loading HMM file from: ");
         logger.info(path);
 
         est.expectString(MODEL_VERSION);
 
-        numBase = est.getInt("numBase");
+        int numBase = est.getInt("numBase");
         est.expectString("n_base");
 
-        numTri = est.getInt("numTri");
+        int numTri = est.getInt("numTri");
         est.expectString("n_tri");
 
-        numStateMap = est.getInt("numStateMap");
+        int numStateMap = est.getInt("numStateMap");
         est.expectString("n_state_map");
 
-        numTiedState = est.getInt("numTiedState");
+        int numTiedState = est.getInt("numTiedState");
         est.expectString("n_tied_state");
 
-        numContextIndependentTiedState =
-                est.getInt("numContextIndependentTiedState");
+        int numContextIndependentTiedState = est.getInt("numContextIndependentTiedState");
         est.expectString("n_tied_ci_state");
 
-        numTiedTransitionMatrices = est.getInt("numTiedTransitionMatrices");
+        int numTiedTransitionMatrices = est.getInt("numTiedTransitionMatrices");
         est.expectString("n_tied_tmat");
 
         int[] maxStid = new int[maxModelSize];
 
         HMMManager hmmManager = super.getHmmManager();
-        Pool matrixPool = super.getMatrixPool();
-        Pool mixtureWeightsPool = super.getMixtureWeightsPool();
+        Pool<float[][]> matrixPool = super.getMatrixPool();
+        Pool<float[]> mixtureWeightsPool = super.getMixtureWeightsPool();
         Map<String, Unit> contextIndependentUnits = super.getContextIndependentUnits();
 
         assert numTiedState == mixtureWeightsPool.getFeature(NUM_SENONES, 0);
@@ -165,11 +148,10 @@ class Sphinx4Loader extends Sphinx3Loader {
                 unit = null;
             }
 
-            float[][] transitionMatrix = (float[][]) matrixPool.get(tmat);
+            float[][] transitionMatrix = matrixPool.get(tmat);
             SenoneSequence ss = getSenoneSequence(stid);
 
-            HMM hmm = new SenoneHMM(unit, ss,
-                    transitionMatrix, HMMPosition.lookup(position));
+            HMM hmm = new SenoneHMM(unit, ss, transitionMatrix, HMMPosition.lookup(position));
             hmmManager.put(hmm);
         }
 
@@ -230,8 +212,7 @@ class Sphinx4Loader extends Sphinx3Loader {
                     Unit[] rightContext = new Unit[1];
                     rightContext[0] = contextIndependentUnits.get(right);
 
-                    Context context = LeftRightContext.get(leftContext,
-                            rightContext);
+                    Context context = LeftRightContext.get(leftContext, rightContext);
 //                    unit = Unit.getUnit(name, false, context);
                     unit = null;
                 }
@@ -242,7 +223,7 @@ class Sphinx4Loader extends Sphinx3Loader {
                     logger.fine("Loaded " + unit);
                 }
 
-                float[][] transitionMatrix = (float[][]) matrixPool.get(tmat);
+                float[][] transitionMatrix = matrixPool.get(tmat);
 
                 SenoneSequence ss = lastSenoneSequence;
                 if (ss == null || !sameSenoneSequence(stid, lastStid)) {
@@ -251,28 +232,16 @@ class Sphinx4Loader extends Sphinx3Loader {
                 lastSenoneSequence = ss;
                 lastStid = stid;
 
-                HMM hmm = new SenoneHMM(unit,
-                        ss,
-                        transitionMatrix,
-                        HMMPosition.lookup(position));
+                HMM hmm = new SenoneHMM(unit, ss, transitionMatrix, HMMPosition.lookup(position));
                 hmmManager.put(hmm);
             }
         }
 
         est.close();
-        return pool;
     }
 
-
-    /**
-     * Loads the transition matrices
-     *
-     * @param path the path to the transitions matrices
-     * @return a pool of transition matrices
-     * @throws FileNotFoundException if a file cannot be found
-     * @throws IOException           if an error occurs while loading the data
-     */
-    protected Pool loadTransitionMatricesAscii(String path)
+    @Override
+    protected Pool<float[][]> loadTransitionMatricesAscii(String path)
             throws FileNotFoundException, IOException {
 
         String location = "";
@@ -281,15 +250,12 @@ class Sphinx4Loader extends Sphinx3Loader {
         LogMath logMath = ConfigurationManager.getInstance(LogMath.class);
         logger.info("Loading transition matrices from: ");
         logger.info(path);
-        int numMatrices;
-        int numStates;
 
-        Pool pool = new Pool(path);
-        ExtendedStreamTokenizer est = new ExtendedStreamTokenizer
-                (inputStream, '#', false);
+        Pool<float[][]> pool = new Pool<float[][]>(path);
+        ExtendedStreamTokenizer est = new ExtendedStreamTokenizer(inputStream, '#', false);
 
         est.expectString("tmat");
-        numMatrices = est.getInt("numMatrices");
+        int numMatrices = est.getInt("numMatrices");
         est.expectString("X");
         // numStates = est.getInt("numStates");
 
@@ -298,7 +264,7 @@ class Sphinx4Loader extends Sphinx3Loader {
             est.expectString("[" + i + ']');
             est.expectString("nstate");
             // Number of emitting states + 1, final non-emitting state
-            numStates = est.getInt("numStates") + 1;
+            int numStates = est.getInt("numStates") + 1;
             float[][] tmat = new float[numStates][numStates];
 
             for (int j = 0; j < numStates; j++) {
@@ -331,50 +297,36 @@ class Sphinx4Loader extends Sphinx3Loader {
         return pool;
     }
 
-
-    /**
-     * Loads the transition matrices (Binary)
-     *
-     * @param path the path to the transitions matrices
-     * @return a pool of transition matrices
-     * @throws FileNotFoundException if a file cannot be found
-     * @throws IOException           if an error occurs while loading the data
-     */
-    protected Pool loadTransitionMatricesBinary(String path) throws IOException {
+    @Override
+    protected Pool<float[][]> loadTransitionMatricesBinary(String path) throws IOException {
 
         logger.info("Loading transition matrices from: ");
         logger.info(path);
-        int numMatrices;
-        int numStates;
-        int numRows;
-        int numValues;
-
 
         Properties props = new Properties();
         DataInputStream dis = readS3BinaryHeader(path, props);
 
         String version = props.getProperty("version");
-        boolean doCheckSum;
 
         if (version == null || !version.equals(TMAT_FILE_VERSION)) {
             throw new IOException("Unsupported version in " + path);
         }
 
         String checksum = props.getProperty("chksum0");
-        doCheckSum = (checksum != null && checksum.equals("yes"));
+        boolean doCheckSum = (checksum != null && checksum.equals("yes"));
 
-        Pool pool = new Pool(path);
+        Pool<float[][]> pool = new Pool<float[][]>(path);
 
-        numMatrices = readInt(dis);
+        int numMatrices = readInt(dis);
         // numRows = readInt(dis);
         // numStates = readInt(dis);
-        numValues = readInt(dis);
+        int numValues = readInt(dis);
 
         // assert numValues == numStates * numRows * numMatrices;
 
         int count = 0;
         for (int i = 0; i < numMatrices; i++) {
-            numStates = readInt(dis);
+            int numStates = readInt(dis);
             float[][] tmat = new float[numStates][];
             // last row should be zeros
             tmat[numStates - 1] = new float[numStates];
@@ -393,6 +345,4 @@ class Sphinx4Loader extends Sphinx3Loader {
         assert numValues == count;
         return pool;
     }
-
 }
-

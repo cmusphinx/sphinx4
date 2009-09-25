@@ -30,31 +30,18 @@ import java.util.logging.Logger;
 class Sphinx4Saver extends Sphinx3Saver {
 
     /** The logger for this class */
-    private static Logger logger =
-            Logger.getLogger(TrainerAcousticModel.PROP_PREFIX + "AcousticModel");
+    private static Logger logger = Logger.getLogger(TrainerAcousticModel.PROP_PREFIX + "AcousticModel");
 
     protected final static String TMAT_FILE_VERSION = "4.0";
 
-
-
-    /**
-     * Saves the transition matrices
-     *
-     * @param pool   the transition matrices pool
-     * @param path   the path to the transitions matrices
-     * @param append is true, the file will be appended, useful if saving to a ZIP or JAR file
-     * @throws FileNotFoundException if a file cannot be found
-     * @throws IOException           if an error occurs while saving the data
-     */
-    protected void saveTransitionMatricesAscii(Pool pool, String path, boolean append)
+    @Override
+    protected void saveTransitionMatricesAscii(Pool<float[][]> pool, String path, boolean append)
             throws IOException {
 
         String location = super.getLocation();
-        OutputStream outputStream = StreamFactory.getOutputStream(location,
-                path, append);
+        OutputStream outputStream = StreamFactory.getOutputStream(location, path, append);
         if (outputStream == null) {
-            throw new IOException("Error trying to write file "
-                    + location + path);
+            throw new IOException("Error trying to write file " + location + path);
         }
         PrintWriter pw = new PrintWriter(outputStream, true);
 
@@ -63,17 +50,15 @@ class Sphinx4Saver extends Sphinx3Saver {
         logger.info("Saving transition matrices to: ");
         logger.info(path);
         int numMatrices = pool.size();
-        int numStates;
-        float[][] tmat;
 
         assert numMatrices > 0;
-        tmat = (float[][]) pool.get(0);
+        float[][] tmat = pool.get(0);
 
         pw.println("tmat " + numMatrices + " X");
 
         for (int i = 0; i < numMatrices; i++) {
-            tmat = (float[][]) pool.get(i);
-            numStates = tmat[0].length;
+            tmat = pool.get(i);
+            int numStates = tmat[0].length;
 
             pw.println("tmat [" + i + ']');
             pw.println("nstate " + (numStates - 1));
@@ -89,11 +74,10 @@ class Sphinx4Saver extends Sphinx3Saver {
                                 pw.print("\t");
                             }
                             if (k == j || k == j + 1) {
-                                pw.print((float)
-                                        logMath.logToLinear(tmat[j][k]));
+                                pw.print((float)logMath.logToLinear(tmat[j][k]));
                             }
                         } else {
-                            pw.print((float) logMath.logToLinear(tmat[j][k]));
+                            pw.print((float)logMath.logToLinear(tmat[j][k]));
                         }
                         if (numStates - 1 == k) {
                             pw.println();
@@ -104,8 +88,7 @@ class Sphinx4Saver extends Sphinx3Saver {
                     }
 
                     if (logger.isLoggable(Level.FINE)) {
-                        logger.fine("tmat j " + j + " k "
-                                + k + " tm " + tmat[j][k]);
+                        logger.fine("tmat j " + j + " k " + k + " tm " + tmat[j][k]);
                     }
                 }
             }
@@ -113,18 +96,8 @@ class Sphinx4Saver extends Sphinx3Saver {
         outputStream.close();
     }
 
-
-    /**
-     * Saves the transition matrices (Binary)
-     *
-     * @param pool   the transition matrices pool
-     * @param path   the path to the transitions matrices
-     * @param append is true, the file will be appended, useful if saving to a ZIP or JAR file
-     * @return a pool of transition matrices
-     * @throws FileNotFoundException if a file cannot be found
-     * @throws IOException           if an error occurs while saving the data
-     */
-    protected void saveTransitionMatricesBinary(Pool pool, String path, boolean append)
+    @Override
+    protected void saveTransitionMatricesBinary(Pool<float[][]> pool, String path, boolean append)
             throws IOException {
 
         LogMath logMath = super.getLogMath();
@@ -132,7 +105,6 @@ class Sphinx4Saver extends Sphinx3Saver {
         logger.info("Saving transition matrices to: ");
         logger.info(path);
         Properties props = new Properties();
-        float[][] tmat;
 
         int checkSum = 0;
 
@@ -143,12 +115,9 @@ class Sphinx4Saver extends Sphinx3Saver {
             props.setProperty("chksum0", strCheckSum);
         }
 
-
         String location = super.getLocation();
 
-        DataOutputStream dos = writeS3BinaryHeader(location, path, props,
-                append);
-
+        DataOutputStream dos = writeS3BinaryHeader(location, path, props, append);
 
         int numMatrices = pool.size();
         assert numMatrices > 0;
@@ -160,7 +129,7 @@ class Sphinx4Saver extends Sphinx3Saver {
         int numStates = 0;
         int numValues = 0;
         for (int i = 0; i < numMatrices; i++) {
-            tmat = (float[][]) pool.get(i);
+            float[][] tmat = pool.get(i);
             int nStates = tmat[0].length;
             numStates += nStates;
             // Number of elements in each transition matrix is the
@@ -172,16 +141,13 @@ class Sphinx4Saver extends Sphinx3Saver {
         writeInt(dos, numValues);
 
         for (int i = 0; i < numMatrices; i++) {
-            float[] logTmatRow;
-            float[] tmatRow;
-
-            tmat = (float[][]) pool.get(i);
+            float[][] tmat = pool.get(i);
             numStates = tmat[0].length;
             writeInt(dos, numStates);
 
             // Last row should be all zeroes
-            logTmatRow = tmat[numStates - 1];
-            tmatRow = new float[logTmatRow.length];
+            float[] logTmatRow = tmat[numStates - 1];
+            float[] tmatRow = new float[logTmatRow.length];
 
             for (int j = 0; j < numStates; j++) {
                 assert tmatRow[j] == 0.0f;
@@ -201,4 +167,3 @@ class Sphinx4Saver extends Sphinx3Saver {
         dos.close();
     }
 }
-

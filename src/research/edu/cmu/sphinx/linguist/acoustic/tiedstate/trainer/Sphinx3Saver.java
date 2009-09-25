@@ -16,6 +16,7 @@ import edu.cmu.sphinx.linguist.acoustic.LeftRightContext;
 import edu.cmu.sphinx.linguist.acoustic.Unit;
 import edu.cmu.sphinx.linguist.acoustic.HMM;
 import edu.cmu.sphinx.linguist.acoustic.tiedstate.*;
+import static edu.cmu.sphinx.linguist.acoustic.tiedstate.Pool.Feature.*;
 import edu.cmu.sphinx.util.LogMath;
 import edu.cmu.sphinx.util.StreamFactory;
 import edu.cmu.sphinx.util.Utilities;
@@ -25,7 +26,6 @@ import java.io.*;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 
 /**
  * An acoustic model saver that saves sphinx3 ascii data.
@@ -57,10 +57,6 @@ class Sphinx3Saver implements Saver {
 
     protected Logger logger;
 
-    protected final static String NUM_SENONES = "num_senones";
-    protected final static String NUM_GAUSSIANS_PER_STATE = "num_gaussians";
-    protected final static String NUM_STREAMS = "num_streams";
-
     protected final static String FILLER = "filler";
     protected final static String SILENCE_CIPHONE = "SIL";
 
@@ -70,23 +66,22 @@ class Sphinx3Saver implements Saver {
 
     protected final static int CONTEXT_SIZE = 1;
 
-
     private String checksum;
     private boolean doCheckSum;
 
-    private Pool meansPool;
-    private Pool variancePool;
-    private Pool matrixPool;
-    private Pool meanTransformationMatrixPool;
-    private Pool meanTransformationVectorPool;
-    private Pool varianceTransformationMatrixPool;
-    private Pool varianceTransformationVectorPool;
-    private Pool mixtureWeightsPool;
+    private Pool<float[]> meansPool;
+    private Pool<float[]> variancePool;
+    private Pool<float[][]> matrixPool;
+    private Pool<float[][]> meanTransformationMatrixPool;
+    private Pool<float[]> meanTransformationVectorPool;
+    private Pool<float[][]> varianceTransformationMatrixPool;
+    private Pool<float[]> varianceTransformationVectorPool;
+    private Pool<float[]> mixtureWeightsPool;
 
-    private Pool senonePool;
+    private Pool<Senone> senonePool;
     private int vectorLength;
 
-    private Map contextIndependentUnits;
+    private Map<String, Unit>  contextIndependentUnits;
     private HMMManager hmmManager;
     private LogMath logMath;
     private boolean binary;
@@ -113,7 +108,7 @@ class Sphinx3Saver implements Saver {
     public String propsFile;
     public boolean useCDUnits;
 
-
+    @Override
     public void newProperties(PropertySheet ps) throws PropertyException {
         logger = ps.getLogger();
 
@@ -136,14 +131,13 @@ class Sphinx3Saver implements Saver {
         mixtureWeightsPool = loader.getMixtureWeightPool();
         matrixPool = loader.getTransitionMatrixPool();
         senonePool = loader.getSenonePool();
-        contextIndependentUnits = new LinkedHashMap();
+        contextIndependentUnits = new LinkedHashMap<String, Unit> ();
 
         // TODO: read checksum from props;
         checksum = "no";
         doCheckSum = (checksum != null && checksum.equals("yes"));
         swap = false;
     }
-
 
     /**
      * Return the checksum string.
@@ -154,7 +148,6 @@ class Sphinx3Saver implements Saver {
         return checksum;
     }
 
-
     /**
      * Return whether to do the dochecksum. If true, checksum is performed.
      *
@@ -163,7 +156,6 @@ class Sphinx3Saver implements Saver {
     protected boolean getDoCheckSum() {
         return doCheckSum;
     }
-
 
     /**
      * Return the LogMath.
@@ -174,7 +166,6 @@ class Sphinx3Saver implements Saver {
         return logMath;
     }
 
-
     /**
      * Return the location.
      *
@@ -184,12 +175,12 @@ class Sphinx3Saver implements Saver {
         return location;
     }
 
-
     /**
      * Saves the AcousticModel from a directory in the file system.
      *
      * @param modelName the name of the acoustic model; if null we just save from the default location
      */
+    @Override
     public void save(String modelName, boolean b) throws IOException {
 
         logger.info("Saving acoustic model: " + modelName);
@@ -207,19 +198,14 @@ class Sphinx3Saver implements Saver {
             saveDensityFileBinary(meansPool, dataDir + "means", true);
             // From now on, append to previous file
             saveDensityFileBinary(variancePool, dataDir + "variances", true);
-            saveMixtureWeightsBinary(mixtureWeightsPool,
-                    dataDir + "mixture_weights", true);
-            saveTransitionMatricesBinary(matrixPool,
-                    dataDir + "transition_matrices", true);
+            saveMixtureWeightsBinary(mixtureWeightsPool, dataDir + "mixture_weights", true);
+            saveTransitionMatricesBinary(matrixPool, dataDir + "transition_matrices", true);
 
         } else {
             saveDensityFileAscii(meansPool, dataDir + "means.ascii", true);
-            saveDensityFileAscii(variancePool, dataDir + "variances.ascii",
-                    true);
-            saveMixtureWeightsAscii(mixtureWeightsPool,
-                    dataDir + "mixture_weights.ascii", true);
-            saveTransitionMatricesAscii(matrixPool,
-                    dataDir + "transition_matrices.ascii", true);
+            saveDensityFileAscii(variancePool, dataDir + "variances.ascii", true);
+            saveMixtureWeightsAscii(mixtureWeightsPool, dataDir + "mixture_weights.ascii", true);
+            saveTransitionMatricesAscii(matrixPool, dataDir + "transition_matrices.ascii", true);
         }
 
         //	senonePool = createSenonePool(distFloor);
@@ -229,16 +215,10 @@ class Sphinx3Saver implements Saver {
         saveHMMPool(useCDUnits, StreamFactory.getOutputStream(location, modelName, true), location + File.separator + modelName);
     }
 
-
-    /**
-     * Returns the map of context indepent units. The map can be accessed by unit name.
-     *
-     * @return the map of context independent units.
-     */
-    public Map getContextIndependentUnits() {
+    @Override
+    public Map<String, Unit> getContextIndependentUnits() {
         return contextIndependentUnits;
     }
-
 
     /**
      * Creates the senone pool from the rest of the pools.
@@ -246,14 +226,13 @@ class Sphinx3Saver implements Saver {
      * @param distFloor the lowest allowed score
      * @return the senone pool
      */
-    private Pool createSenonePool(float distFloor, float varianceFloor) {
-        Pool pool = new Pool("senones");
+    private Pool<Senone> createSenonePool(float distFloor, float varianceFloor) {
+        Pool<Senone> pool = new Pool<Senone>("senones");
         int numMixtureWeights = mixtureWeightsPool.size();
 
         int numMeans = meansPool.size();
         int numVariances = variancePool.size();
-        int numGaussiansPerSenone =
-                mixtureWeightsPool.getFeature(NUM_GAUSSIANS_PER_STATE, 0);
+        int numGaussiansPerSenone = mixtureWeightsPool.getFeature(NUM_GAUSSIANS_PER_STATE, 0);
         int numSenones = mixtureWeightsPool.getFeature(NUM_SENONES, 0);
         int whichGaussian = 0;
 
@@ -273,28 +252,25 @@ class Sphinx3Saver implements Saver {
                     MixtureComponent[numGaussiansPerSenone];
             for (int j = 0; j < numGaussiansPerSenone; j++) {
                 mixtureComponents[j] = new MixtureComponent(
-                        logMath,
-                        (float[]) meansPool.get(whichGaussian),
-                        (float[][]) meanTransformationMatrixPool.get(0),
-                        (float[]) meanTransformationVectorPool.get(0),
-                        (float[]) variancePool.get(whichGaussian),
-                        (float[][]) varianceTransformationMatrixPool.get(0),
-                        (float[]) varianceTransformationVectorPool.get(0),
-                        distFloor,
-                        varianceFloor);
+                    logMath,
+                    meansPool.get(whichGaussian),
+                    meanTransformationMatrixPool.get(0),
+                    meanTransformationVectorPool.get(0),
+                    variancePool.get(whichGaussian),
+                    varianceTransformationMatrixPool.get(0),
+                    varianceTransformationVectorPool.get(0),
+                    distFloor,
+                    varianceFloor);
 
                 whichGaussian++;
             }
 
-            Senone senone = new GaussianMixture(
-                    logMath, (float[]) mixtureWeightsPool.get(i),
-                    mixtureComponents, i);
+            Senone senone = new GaussianMixture(logMath, mixtureWeightsPool.get(i), mixtureComponents, i);
 
             pool.put(i, senone);
         }
         return pool;
     }
-
 
     /**
      * Loads the Sphinx 3 acoustic model properties file, which is basically a normal system properties file.
@@ -309,12 +285,10 @@ class Sphinx3Saver implements Saver {
         logger.info("Saving acoustic properties file to:");
         logger.info(path);
 
-        OutputStream outputStream =
-                StreamFactory.getOutputStream(location, path, append);
+        OutputStream outputStream = StreamFactory.getOutputStream(location, path, append);
 
         if (outputStream == null) {
-            throw new IOException("Error trying to write file "
-                    + path);
+            throw new IOException("Error trying to write file " + path);
         }
         outputStream.close();
     }
@@ -329,33 +303,25 @@ class Sphinx3Saver implements Saver {
      * @throws FileNotFoundException if a file cannot be found
      * @throws IOException           if an error occurs while saving the data
      */
-    private void saveDensityFileAscii(Pool pool, String path, boolean append)
+    private void saveDensityFileAscii(Pool<float[]> pool, String path, boolean append)
             throws FileNotFoundException, IOException {
-        int token_type;
-        int numStates;
-        int numStreams;
-        int numGaussiansPerState;
-
         logger.info("Saving density file to: ");
         logger.info(path);
 
-        OutputStream outputStream =
-                StreamFactory.getOutputStream(location, path, append);
+        OutputStream outputStream = StreamFactory.getOutputStream(location, path, append);
 
         if (outputStream == null) {
-            throw new IOException("Error trying to write file "
-                    + location + path);
+            throw new IOException("Error trying to write file " + location + path);
         }
         PrintWriter pw = new PrintWriter(outputStream, true);
 
         pw.print("param ");
-        numStates = pool.getFeature(NUM_SENONES, -1);
+        int numStates = pool.getFeature(NUM_SENONES, -1);
         pw.print(numStates + " ");
-        numStreams = pool.getFeature(NUM_STREAMS, -1);
+        int numStreams = pool.getFeature(NUM_STREAMS, -1);
         pw.print(numStreams + " ");
-        numGaussiansPerState = pool.getFeature(NUM_GAUSSIANS_PER_STATE, -1);
+        int numGaussiansPerState = pool.getFeature(NUM_GAUSSIANS_PER_STATE, -1);
         pw.println(numGaussiansPerState);
-
 
         for (int i = 0; i < numStates; i++) {
             pw.println("mgau " + i);
@@ -365,7 +331,7 @@ class Sphinx3Saver implements Saver {
                 pw.print("density" + " \t" + j);
 
                 int id = i * numGaussiansPerState + j;
-                float[] density = (float[]) pool.get(id);
+                float[] density = pool.get(id);
                 for (int k = 0; k < vectorLength; k++) {
                     pw.print(" " + density[k]);
                     //   System.out.println(" " + i + " " + j + " " + k +
@@ -377,7 +343,6 @@ class Sphinx3Saver implements Saver {
         outputStream.close();
     }
 
-
     /**
      * Saves the sphinx3 densityfile, a set of density arrays are created and placed in the given pool.
      *
@@ -387,13 +352,8 @@ class Sphinx3Saver implements Saver {
      * @throws FileNotFoundException if a file cannot be found
      * @throws IOException           if an error occurs while saving the data
      */
-    private void saveDensityFileBinary(Pool pool, String path, boolean append)
+    private void saveDensityFileBinary(Pool<float[]> pool, String path, boolean append)
             throws FileNotFoundException, IOException {
-
-        int token_type;
-        int numStates;
-        int numStreams;
-        int numGaussiansPerState;
         Properties props = new Properties();
         int checkSum = 0;
 
@@ -403,12 +363,11 @@ class Sphinx3Saver implements Saver {
         props.setProperty("version", DENSITY_FILE_VERSION);
         props.setProperty("chksum0", checksum);
 
-        DataOutputStream dos = writeS3BinaryHeader(location, path, props,
-                append);
+        DataOutputStream dos = writeS3BinaryHeader(location, path, props, append);
 
-        numStates = pool.getFeature(NUM_SENONES, -1);
-        numStreams = pool.getFeature(NUM_STREAMS, -1);
-        numGaussiansPerState = pool.getFeature(NUM_GAUSSIANS_PER_STATE, -1);
+        int numStates = pool.getFeature(NUM_SENONES, -1);
+        int numStreams = pool.getFeature(NUM_STREAMS, -1);
+        int numGaussiansPerState = pool.getFeature(NUM_GAUSSIANS_PER_STATE, -1);
 
         writeInt(dos, numStates);
         writeInt(dos, numStreams);
@@ -438,7 +397,7 @@ class Sphinx3Saver implements Saver {
                 for (int k = 0; k < numGaussiansPerState; k++) {
                     int id = i * numStreams * numGaussiansPerState +
                             j * numGaussiansPerState + k;
-                    float[] density = (float[]) pool.get(id);
+                    float[] density = pool.get(id);
                     // Do checksum here?
                     writeFloatArray(dos, density);
                 }
@@ -453,7 +412,6 @@ class Sphinx3Saver implements Saver {
         dos.close();
     }
 
-
     /**
      * Writes the S3 binary header to the given location+path.
      *
@@ -464,17 +422,14 @@ class Sphinx3Saver implements Saver {
      * @return the output stream positioned after the header
      * @throws IOException on error
      */
+    protected DataOutputStream writeS3BinaryHeader(String location, String path, Properties props, boolean append)
+            throws IOException {
 
-    protected DataOutputStream writeS3BinaryHeader(String location, String
-            path, Properties props, boolean append) throws IOException {
-
-        OutputStream outputStream =
-                StreamFactory.getOutputStream(location, path, append);
+        OutputStream outputStream = StreamFactory.getOutputStream(location, path, append);
         if (doCheckSum) {
             assert false : "Checksum not supported";
         }
-        DataOutputStream dos =
-                new DataOutputStream(new BufferedOutputStream(outputStream));
+        DataOutputStream dos = new DataOutputStream(new BufferedOutputStream(outputStream));
 
         writeWord(dos, "s3\n");
 
@@ -490,7 +445,6 @@ class Sphinx3Saver implements Saver {
         return dos;
     }
 
-
     /**
      * Writes the next word (without surrounding white spaces) to the given stream.
      *
@@ -501,7 +455,6 @@ class Sphinx3Saver implements Saver {
     void writeWord(DataOutputStream dos, String word) throws IOException {
         dos.writeBytes(word);
     }
-
 
     /**
      * Writes a single char to the stream
@@ -515,7 +468,6 @@ class Sphinx3Saver implements Saver {
         dos.writeByte(character);
     }
 
-
     /**
      * swap a 32 bit word
      *
@@ -526,7 +478,6 @@ class Sphinx3Saver implements Saver {
         return ((0xff & (val >> 24)) | (0xff00 & (val >> 8)) |
                 (0xff0000 & (val << 8)) | (0xff000000 & (val << 24)));
     }
-
 
     /**
      * Writes an integer to the output stream, byte-swapping as necessary
@@ -543,7 +494,6 @@ class Sphinx3Saver implements Saver {
         }
     }
 
-
     /**
      * Writes a float to the output stream, byte-swapping as necessary
      *
@@ -551,7 +501,6 @@ class Sphinx3Saver implements Saver {
      * @param val a float value
      * @throws IOException on error
      */
-
     protected void writeFloat(DataOutputStream dos, float val)
             throws IOException {
         if (swap) {
@@ -560,7 +509,6 @@ class Sphinx3Saver implements Saver {
             dos.writeFloat(val);
         }
     }
-
 
     // Do we need the method nonZeroFloor??
     /**
@@ -577,7 +525,6 @@ class Sphinx3Saver implements Saver {
         }
     }
 
-
     /**
      * If a data point is below 'floor' make it equal to floor.
      *
@@ -591,7 +538,6 @@ class Sphinx3Saver implements Saver {
             }
         }
     }
-
 
     /**
      * Normalize the given data
@@ -611,7 +557,6 @@ class Sphinx3Saver implements Saver {
         }
     }
 
-
     /**
      * Dump the data
      *
@@ -624,7 +569,6 @@ class Sphinx3Saver implements Saver {
             System.out.println(name + ' ' + i + ": " + data[i]);
         }
     }
-
 
     /**
      * Convert to log math
@@ -639,7 +583,6 @@ class Sphinx3Saver implements Saver {
         }
     }
 
-
     /**
      * Convert from log math
      *
@@ -653,7 +596,6 @@ class Sphinx3Saver implements Saver {
         }
     }
 
-
     /**
      * Writes the given number of floats from an array of floats to a stream.
      *
@@ -663,12 +605,10 @@ class Sphinx3Saver implements Saver {
      */
     protected void writeFloatArray(DataOutputStream dos, float[] data)
             throws IOException {
-
         for (float val : data) {
             writeFloat(dos, val);
         }
     }
-
 
     /**
      * Saves the sphinx3 densityfile, a set of density arrays are created and placed in the given pool.
@@ -679,19 +619,8 @@ class Sphinx3Saver implements Saver {
      * @throws FileNotFoundException if a file cannot be found
      * @throws IOException           if an error occurs while saving the data
      */
-    private void saveHMMPool(boolean useCDUnits,
-                             OutputStream outputStream,
-                             String path)
+    private void saveHMMPool(boolean useCDUnits, OutputStream outputStream, String path)
             throws FileNotFoundException, IOException {
-        int token_type;
-        int numBase;
-        int numTri;
-        int numStateMap;
-        int numTiedState;
-        int numStatePerHMM;
-        int numContextIndependentTiedState;
-        int numTiedTransitionMatrices;
-
         logger.info("Saving HMM file to: ");
         logger.info(path);
 
@@ -708,10 +637,10 @@ class Sphinx3Saver implements Saver {
       */
 
         // First, count the HMMs
-        numBase = 0;
-        numTri = 0;
-        numContextIndependentTiedState = 0;
-        numStateMap = 0;
+        int numBase = 0;
+        int numTri = 0;
+        int numContextIndependentTiedState = 0;
+        int numStateMap = 0;
         for (HMM hmm : hmmManager) {
             numStateMap += hmm.getOrder() + 1;
             if (((SenoneHMM)hmm).isContextDependent()) {
@@ -725,10 +654,10 @@ class Sphinx3Saver implements Saver {
         pw.println(numBase + " n_base");
         pw.println(numTri + " n_tri");
         pw.println(numStateMap + " n_state_map");
-        numTiedState = mixtureWeightsPool.getFeature(NUM_SENONES, 0);
+        int numTiedState = mixtureWeightsPool.getFeature(NUM_SENONES, 0);
         pw.println(numTiedState + " n_tied_state");
         pw.println(numContextIndependentTiedState + " n_tied_ci_state");
-        numTiedTransitionMatrices = numBase;
+        int numTiedTransitionMatrices = numBase;
         assert numTiedTransitionMatrices == matrixPool.size();
         pw.println(numTiedTransitionMatrices + " n_tied_tmat");
 
@@ -736,7 +665,7 @@ class Sphinx3Saver implements Saver {
         pw.println("# Columns definitions");
         pw.println("#base lft  rt p attrib tmat      ... state id's ...");
 
-        numStatePerHMM = numStateMap / (numTri + numBase);
+        int numStatePerHMM = numStateMap / (numTri + numBase);
 
         // Save the base phones
         for (HMM hmm0 : hmmManager) {
@@ -755,12 +684,7 @@ class Sphinx3Saver implements Saver {
             pw.print(right + ' ');
             String position = hmm.getPosition().toString();
             pw.print(position + '\t');
-            String attribute;
-            if (unit.isFiller()) {
-                attribute = FILLER;
-            } else {
-                attribute = "n/a";
-            }
+            String attribute = unit.isFiller() ? FILLER : "n/a";
             pw.print(attribute + '\t');
             int tmat = matrixPool.indexOf(hmm.getTransitionMatrix());
             assert tmat < numTiedTransitionMatrices;
@@ -803,12 +727,7 @@ class Sphinx3Saver implements Saver {
             pw.print(right + ' ');
             String position = hmm.getPosition().toString();
             pw.print(position + '\t');
-            String attribute;
-            if (unit.isFiller()) {
-                attribute = FILLER;
-            } else {
-                attribute = "n/a";
-            }
+            String attribute = unit.isFiller() ? FILLER : "n/a";
             assert attribute.equals("n/a");
             pw.print(attribute + '\t');
             int tmat = matrixPool.indexOf(hmm.getTransitionMatrix());
@@ -833,25 +752,22 @@ class Sphinx3Saver implements Saver {
         outputStream.close();
     }
 
-
     /**
      * Gets the senone sequence representing the given senones
      *
      * @param stateid is the array of senone state ids
      * @return the senone sequence associated with the states
      */
-
     private SenoneSequence getSenoneSequence(int[] stateid) {
         Senone[] senones = new Senone[stateid.length];
 
         for (int i = 0; i < stateid.length; i++) {
-            senones[i] = (Senone) senonePool.get(stateid[i]);
+            senones[i] = senonePool.get(stateid[i]);
         }
 
         // TODO: Is there any advantage in trying to pool these?
         return new SenoneSequence(senones);
     }
-
 
     /**
      * Saves the mixture weights
@@ -862,36 +778,29 @@ class Sphinx3Saver implements Saver {
      * @throws FileNotFoundException if a file cannot be found
      * @throws IOException           if an error occurs while saving the data
      */
-    private void saveMixtureWeightsAscii(Pool pool, String path,
-                                         boolean append)
+    private void saveMixtureWeightsAscii(Pool<float[]> pool, String path, boolean append)
             throws FileNotFoundException, IOException {
         logger.info("Saving mixture weights to: ");
         logger.info(path);
 
-        int numStates;
-        int numStreams;
-        int numGaussiansPerState;
-
-        OutputStream outputStream = StreamFactory.getOutputStream(location,
-                path, append);
+        OutputStream outputStream = StreamFactory.getOutputStream(location, path, append);
         if (outputStream == null) {
-            throw new IOException("Error trying to write file "
-                    + location + path);
+            throw new IOException("Error trying to write file " + location + path);
         }
         PrintWriter pw = new PrintWriter(outputStream, true);
 
         pw.print("mixw ");
-        numStates = pool.getFeature(NUM_SENONES, -1);
+        int numStates = pool.getFeature(NUM_SENONES, -1);
         pw.print(numStates + " ");
-        numStreams = pool.getFeature(NUM_STREAMS, -1);
+        int numStreams = pool.getFeature(NUM_STREAMS, -1);
         pw.print(numStreams + " ");
-        numGaussiansPerState = pool.getFeature(NUM_GAUSSIANS_PER_STATE, -1);
+        int numGaussiansPerState = pool.getFeature(NUM_GAUSSIANS_PER_STATE, -1);
         pw.println(numGaussiansPerState);
 
         for (int i = 0; i < numStates; i++) {
             pw.print("mixw [" + i + " 0] ");
             float[] mixtureWeight = new float[numGaussiansPerState];
-            float[] logMixtureWeight = (float[]) pool.get(i);
+            float[] logMixtureWeight = pool.get(i);
             convertFromLogMath(logMixtureWeight, mixtureWeight);
 
             float sum = 0.0f;
@@ -908,7 +817,6 @@ class Sphinx3Saver implements Saver {
         outputStream.close();
     }
 
-
     /**
      * Saves the mixture weights (Binary)
      *
@@ -919,15 +827,11 @@ class Sphinx3Saver implements Saver {
      * @throws FileNotFoundException if a file cannot be found
      * @throws IOException           if an error occurs while saving the data
      */
-    private void saveMixtureWeightsBinary(Pool pool, String path,
-                                          boolean append)
+    private void saveMixtureWeightsBinary(Pool<float[]> pool, String path, boolean append)
             throws FileNotFoundException, IOException {
         logger.info("Saving mixture weights to: ");
         logger.info(path);
 
-        int numStates;
-        int numStreams;
-        int numGaussiansPerState;
         Properties props = new Properties();
         int checkSum = 0;
 
@@ -936,12 +840,11 @@ class Sphinx3Saver implements Saver {
             props.setProperty("chksum0", checksum);
         }
 
-        DataOutputStream dos = writeS3BinaryHeader(location, path, props,
-                append);
+        DataOutputStream dos = writeS3BinaryHeader(location, path, props, append);
 
-        numStates = pool.getFeature(NUM_SENONES, -1);
-        numStreams = pool.getFeature(NUM_STREAMS, -1);
-        numGaussiansPerState = pool.getFeature(NUM_GAUSSIANS_PER_STATE, -1);
+        int numStates = pool.getFeature(NUM_SENONES, -1);
+        int numStreams = pool.getFeature(NUM_STREAMS, -1);
+        int numGaussiansPerState = pool.getFeature(NUM_GAUSSIANS_PER_STATE, -1);
 
         writeInt(dos, numStates);
         writeInt(dos, numStreams);
@@ -954,7 +857,7 @@ class Sphinx3Saver implements Saver {
 
         for (int i = 0; i < numStates; i++) {
             float[] mixtureWeight = new float[numGaussiansPerState];
-            float[] logMixtureWeight = (float[]) pool.get(i);
+            float[] logMixtureWeight = pool.get(i);
             convertFromLogMath(logMixtureWeight, mixtureWeight);
 
             writeFloatArray(dos, mixtureWeight);
@@ -967,7 +870,6 @@ class Sphinx3Saver implements Saver {
         dos.close();
     }
 
-
     /**
      * Saves the transition matrices
      *
@@ -977,33 +879,28 @@ class Sphinx3Saver implements Saver {
      * @throws FileNotFoundException if a file cannot be found
      * @throws IOException           if an error occurs while saving the data
      */
-    protected void saveTransitionMatricesAscii(Pool pool, String path,
-                                               boolean append)
+    protected void saveTransitionMatricesAscii(Pool<float[][]> pool, String path, boolean append)
             throws FileNotFoundException, IOException {
-        OutputStream outputStream = StreamFactory.getOutputStream(location,
-                path, append);
+        OutputStream outputStream = StreamFactory.getOutputStream(location, path, append);
         if (outputStream == null) {
-            throw new IOException("Error trying to write file "
-                    + location + path);
+            throw new IOException("Error trying to write file " + location + path);
         }
         PrintWriter pw = new PrintWriter(outputStream, true);
 
         logger.info("Saving transition matrices to: ");
         logger.info(path);
         int numMatrices = pool.size();
-        int numStates;
-        float[][] tmat;
 
         assert numMatrices > 0;
-        tmat = (float[][]) pool.get(0);
-        numStates = tmat[0].length;
+        float[][] tmat = pool.get(0);
+        int numStates = tmat[0].length;
 
         pw.println("tmat " + numMatrices + ' ' + numStates);
 
         for (int i = 0; i < numMatrices; i++) {
             pw.println("tmat [" + i + ']');
 
-            tmat = (float[][]) pool.get(i);
+            tmat = pool.get(i);
             for (int j = 0; j < numStates; j++) {
                 for (int k = 0; k < numStates; k++) {
 
@@ -1040,7 +937,6 @@ class Sphinx3Saver implements Saver {
         outputStream.close();
     }
 
-
     /**
      * Saves the transition matrices (Binary)
      *
@@ -1051,15 +947,11 @@ class Sphinx3Saver implements Saver {
      * @throws FileNotFoundException if a file cannot be found
      * @throws IOException           if an error occurs while saving the data
      */
-    protected void saveTransitionMatricesBinary(Pool pool, String path, boolean append)
+    protected void saveTransitionMatricesBinary(Pool<float[][]> pool, String path, boolean append)
             throws IOException {
 
         logger.info("Saving transition matrices to: ");
         logger.info(path);
-        int numMatrices;
-        int numStates;
-        int numRows;
-        int numValues;
         Properties props = new Properties();
 
         props.setProperty("version", TMAT_FILE_VERSION);
@@ -1067,34 +959,27 @@ class Sphinx3Saver implements Saver {
             props.setProperty("chksum0", checksum);
         }
 
+        DataOutputStream dos = writeS3BinaryHeader(location, path, props, append);
 
-        DataOutputStream dos = writeS3BinaryHeader(location, path, props,
-                append);
-
-
-        numMatrices = pool.size();
+        int numMatrices = pool.size();
         assert numMatrices > 0;
         writeInt(dos, numMatrices);
 
-        float[][] tmat = (float[][]) pool.get(0);
-        numStates = tmat[0].length;
-        numRows = numStates - 1;
+        float[][] tmat = pool.get(0);
+        int numStates = tmat[0].length;
+        int numRows = numStates - 1;
 
         writeInt(dos, numRows);
         writeInt(dos, numStates);
-        numValues = numStates * numRows * numMatrices;
+        int numValues = numStates * numRows * numMatrices;
         writeInt(dos, numValues);
 
-
         for (int i = 0; i < numMatrices; i++) {
-            float[] logTmatRow;
-            float[] tmatRow;
-
-            tmat = (float[][]) pool.get(i);
+            tmat = pool.get(i);
 
             // Last row should be all zeroes
-            logTmatRow = tmat[numStates - 1];
-            tmatRow = new float[logTmatRow.length];
+            float[] logTmatRow = tmat[numStates - 1];
+            float[] tmatRow = new float[logTmatRow.length];
 
             for (int j = 0; j < numStates; j++) {
                 assert tmatRow[j] == 0.0f;
@@ -1114,108 +999,57 @@ class Sphinx3Saver implements Saver {
         dos.close();
     }
 
-
-    /**
-     * Gets the pool of means for this saver
-     *
-     * @return the pool
-     */
-    public Pool getMeansPool() {
+    @Override
+    public Pool<float[]> getMeansPool() {
         return meansPool;
     }
 
-
-    /**
-     * Gets the pool of means transformation matrices for this saver
-     *
-     * @return the pool
-     */
-    public Pool getMeansTransformationMatrixPool() {
+    @Override
+    public Pool<float[][]> getMeansTransformationMatrixPool() {
         return meanTransformationMatrixPool;
     }
 
-
-    /**
-     * Gets the pool of means transformation vectors for this saver
-     *
-     * @return the pool
-     */
-    public Pool getMeansTransformationVectorPool() {
+    @Override
+    public Pool<float[]> getMeansTransformationVectorPool() {
         return meanTransformationVectorPool;
     }
 
-
-    /*
-     * Gets the variance pool
-     *
-     * @return the pool
-     */
-    public Pool getVariancePool() {
+    @Override
+    public Pool<float[]> getVariancePool() {
         return variancePool;
     }
 
-
-    /**
-     * Gets the variance transformation matrix pool
-     *
-     * @return the pool
-     */
-    public Pool getVarianceTransformationMatrixPool() {
+    @Override
+    public Pool<float[][]> getVarianceTransformationMatrixPool() {
         return varianceTransformationMatrixPool;
     }
 
-
-    /**
-     * Gets the pool of variance transformation vectors for this saver
-     *
-     * @return the pool
-     */
-    public Pool getVarianceTransformationVectorPool() {
+    @Override
+    public Pool<float[]> getVarianceTransformationVectorPool() {
         return varianceTransformationVectorPool;
     }
 
-
-    /*
-     * Gets the senone pool for this saver
-     *
-     * @return the pool
-     */
-    public Pool getSenonePool() {
+    @Override
+    public Pool<Senone> getSenonePool() {
         return senonePool;
     }
 
-
-    /**
-     * Returns the size of the left context for context dependent units
-     *
-     * @return the left context size
-     */
+    @Override
     public int getLeftContextSize() {
         return CONTEXT_SIZE;
     }
 
-
-    /**
-     * Returns the size of the right context for context dependent units
-     *
-     * @return the left context size
-     */
+    @Override
     public int getRightContextSize() {
         return CONTEXT_SIZE;
     }
 
-
-    /**
-     * Returns the hmm manager associated with this saver
-     *
-     * @return the hmm Manager
-     */
+    @Override
     public HMMManager getHMMManager() {
         return hmmManager;
     }
 
-
-    /** Log info about this saver */
+    @Override
     public void logInfo() {
         logger.info("Sphinx3Saver");
         meansPool.logInfo(logger);
@@ -1228,10 +1062,7 @@ class Sphinx3Saver implements Saver {
         varianceTransformationVectorPool.logInfo(logger);
         mixtureWeightsPool.logInfo(logger);
         senonePool.logInfo(logger);
-        logger.info("Context Independent Unit Entries: "
-                + contextIndependentUnits.size());
+        logger.info("Context Independent Unit Entries: " + contextIndependentUnits.size());
         hmmManager.logInfo(logger);
     }
-
 }
-

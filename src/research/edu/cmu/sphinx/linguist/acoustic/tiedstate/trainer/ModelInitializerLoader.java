@@ -16,6 +16,7 @@ import edu.cmu.sphinx.linguist.acoustic.HMM;
 import edu.cmu.sphinx.linguist.acoustic.HMMPosition;
 import edu.cmu.sphinx.linguist.acoustic.Unit;
 import edu.cmu.sphinx.linguist.acoustic.tiedstate.*;
+import static edu.cmu.sphinx.linguist.acoustic.tiedstate.Pool.Feature.*;
 import edu.cmu.sphinx.util.ExtendedStreamTokenizer;
 import edu.cmu.sphinx.util.LogMath;
 import edu.cmu.sphinx.util.StreamFactory;
@@ -30,19 +31,12 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-
 /**
  * an acoustic model loader that initializes models
  * <p/>
  * Mixture weights and transition probabilities are maintained in logMath log base,
  */
 class ModelInitializerLoader implements Loader {
-
-    /** The logger for this class */
-
-    private final static String NUM_SENONES = "num_senones";
-    private final static String NUM_GAUSSIANS_PER_STATE = "num_gaussians";
-    private final static String NUM_STREAMS = "num_streams";
 
     private final static String FILLER = "filler";
     private final static String SILENCE_CIPHONE = "SIL";
@@ -51,17 +45,16 @@ class ModelInitializerLoader implements Loader {
 
     private final static int CONTEXT_SIZE = 1;
 
+    private Pool<float[]> meansPool;
+    private Pool<float[]> variancePool;
+    private Pool<float[][]> matrixPool;
+    private Pool<float[][]> meanTransformationMatrixPool;
+    private Pool<float[]> meanTransformationVectorPool;
+    private Pool<float[][]> varianceTransformationMatrixPool;
+    private Pool<float[]> varianceTransformationVectorPool;
+    private Pool<float[]> mixtureWeightsPool;
 
-    private Pool meansPool;
-    private Pool variancePool;
-    private Pool matrixPool;
-    private Pool meanTransformationMatrixPool;
-    private Pool meanTransformationVectorPool;
-    private Pool varianceTransformationMatrixPool;
-    private Pool varianceTransformationVectorPool;
-    private Pool mixtureWeightsPool;
-
-    private Pool senonePool;
+    private Pool<Senone> senonePool;
     private int vectorLength;
 
     private Map<String, Unit> contextIndependentUnits;
@@ -101,9 +94,10 @@ class ModelInitializerLoader implements Loader {
     @S4Double(defaultValue = 1e-7f)
     public final static String PROP_MW_FLOOR = "mixtureWeightFloor";
 
+    /** The logger for this class */
     private Logger logger;
 
-
+    @Override
     public void newProperties(PropertySheet ps) throws PropertyException {
         logger = ps.getLogger();
 
@@ -118,14 +112,12 @@ class ModelInitializerLoader implements Loader {
         varianceTransformationMatrixPool = createDummyMatrixPool("varianceTransformationMatrix");
         varianceTransformationVectorPool = createDummyVectorPool("varianceTransformationMatrix");
 
-
-        String phone, dataDir, propsFile;
         String modelName = ps.getString(MODEL_NAME);
 
         String location = ps.getString(LOCATION);
-        phone = ps.getString(PHONE_LIST);
-        dataDir = ps.getString(DATA_DIR);
-        propsFile = ps.getString(PROP_FILE);
+        String phone = ps.getString(PHONE_LIST);
+        String dataDir = ps.getString(DATA_DIR);
+        String propsFile = ps.getString(PROP_FILE);
 
         logger.info("Creating Sphinx3 acoustic model: " + modelName);
         logger.info("    Path      : " + location);
@@ -150,7 +142,6 @@ class ModelInitializerLoader implements Loader {
         }
     }
 
-
     /** Prints out a help message with format of phone list. */
     private void printPhoneListHelp() {
         System.out.println("The format for the phone list file is:");
@@ -172,16 +163,10 @@ class ModelInitializerLoader implements Loader {
         System.out.println("\t...");
     }
 
-
-    /**
-     * Returns the map of context indepent units. The map can be accessed by unit name.
-     *
-     * @return the map of context independent units.
-     */
+    @Override
     public Map<String, Unit> getContextIndependentUnits() {
         return contextIndependentUnits;
     }
-
 
     /**
      * Adds a model to the senone pool.
@@ -192,7 +177,7 @@ class ModelInitializerLoader implements Loader {
      * @param varianceFloor the lowest allowed variance
      * @return the senone pool
      */
-    private void addModelToSenonePool(Pool pool, int[] stateID, float distFloor, float varianceFloor) {
+    private void addModelToSenonePool(Pool<Senone> pool, int[] stateID, float distFloor, float varianceFloor) {
         assert pool != null;
 
 //        int numMixtureWeights = mixtureWeightsPool.size();
@@ -213,34 +198,29 @@ class ModelInitializerLoader implements Loader {
       assert numVariances == numSenones * numGaussiansPerSenone;
       assert numMeans == numSenones * numGaussiansPerSenone;
       */
-        int numGaussiansPerSenone =
-                mixtureWeightsPool.getFeature(NUM_GAUSSIANS_PER_STATE, 0);
+        int numGaussiansPerSenone = mixtureWeightsPool.getFeature(NUM_GAUSSIANS_PER_STATE, 0);
         assert numGaussiansPerSenone > 0;
         for (int state : stateID) {
-            MixtureComponent[] mixtureComponents = new
-                    MixtureComponent[numGaussiansPerSenone];
+            MixtureComponent[] mixtureComponents = new MixtureComponent[numGaussiansPerSenone];
             for (int j = 0; j < numGaussiansPerSenone; j++) {
                 int whichGaussian = state * numGaussiansPerSenone + j;
                 mixtureComponents[j] = new MixtureComponent(
-                        logMath,
-                        (float[]) meansPool.get(whichGaussian),
-                        (float[][]) meanTransformationMatrixPool.get(0),
-                        (float[]) meanTransformationVectorPool.get(0),
-                        (float[]) variancePool.get(whichGaussian),
-                        (float[][]) varianceTransformationMatrixPool.get(0),
-                        (float[]) varianceTransformationVectorPool.get(0),
-                        distFloor,
-                        varianceFloor);
+                    logMath,
+                    meansPool.get(whichGaussian),
+                    meanTransformationMatrixPool.get(0),
+                    meanTransformationVectorPool.get(0),
+                    variancePool.get(whichGaussian),
+                    varianceTransformationMatrixPool.get(0),
+                    varianceTransformationVectorPool.get(0),
+                    distFloor,
+                    varianceFloor);
             }
 
-            Senone senone = new GaussianMixture(
-                    logMath, (float[]) mixtureWeightsPool.get(state),
-                    mixtureComponents, state);
+            Senone senone = new GaussianMixture(logMath, mixtureWeightsPool.get(state), mixtureComponents, state);
 
             pool.put(state, senone);
         }
     }
-
 
     /**
      * Adds a set of density arrays to a given pool.
@@ -251,18 +231,14 @@ class ModelInitializerLoader implements Loader {
      * @param numGaussiansPerState the number of Gaussians per state
      * @throws IOException if an error occurs while loading the data
      */
-    private void addModelToDensityPool(Pool pool, int[] stateID,
-                                       int numStreams, int numGaussiansPerState)
+    private void addModelToDensityPool(Pool<float[]> pool, int[] stateID, int numStreams, int numGaussiansPerState)
             throws IOException {
-        int numStates;
-        int numInPool;
-
         assert pool != null;
         assert stateID != null;
 
-        numStates = stateID.length;
+        int numStates = stateID.length;
 
-        numInPool = pool.getFeature(NUM_SENONES, 0);
+        int numInPool = pool.getFeature(NUM_SENONES, 0);
         pool.setFeature(NUM_SENONES, numStates + numInPool);
         numInPool = pool.getFeature(NUM_STREAMS, -1);
         if (numInPool == -1) {
@@ -291,11 +267,10 @@ class ModelInitializerLoader implements Loader {
         }
     }
 
-
     /**
      * If a data point is below 'floor' make it equal to floor.
      *
-     * @param data  the data to floor
+     * @param data the data to floor
      * @param floor the floored value
      */
     private void floorData(float[] data, float floor) {
@@ -306,9 +281,8 @@ class ModelInitializerLoader implements Loader {
         }
     }
 
-
     /**
-     * Normalize the given data
+     * Normalize the given data.
      *
      * @param data the data to normalize
      */
@@ -327,9 +301,8 @@ class ModelInitializerLoader implements Loader {
         }
     }
 
-
     /**
-     * Convert to log math
+     * Convert to log math.
      *
      * @param data the data to normalize
      */
@@ -340,7 +313,6 @@ class ModelInitializerLoader implements Loader {
             data[i] = logMath.linearToLog(data[i]);
         }
     }
-
 
     /**
      * Loads the phone list, which possibly contains the sizes (number of states) of models.
@@ -358,20 +330,15 @@ class ModelInitializerLoader implements Loader {
         int numStreams = 1;
         // Since we're initializing, we start simple.
         int numGaussiansPerState = 1;
-        String version;
-        boolean sameSizedModels;
-        boolean tmatSkip;
 
-        ExtendedStreamTokenizer est = new ExtendedStreamTokenizer
-                (inputStream, '#', false);
-        //    	Pool pool = new Pool(path);
+        ExtendedStreamTokenizer est = new ExtendedStreamTokenizer(inputStream, '#', false);
 
         // Initialize the pools we'll need.
-        meansPool = new Pool("means");
-        variancePool = new Pool("variances");
-        mixtureWeightsPool = new Pool("mixtureweights");
-        matrixPool = new Pool("transitionmatrices");
-        senonePool = new Pool("senones");
+        meansPool = new Pool<float[]>("means");
+        variancePool = new Pool<float[]>("variances");
+        mixtureWeightsPool = new Pool<float[]>("mixtureweights");
+        matrixPool = new Pool<float[][]>("transitionmatrices");
+        senonePool = new Pool<Senone>("senones");
 
         float distFloor = ps.getFloat(PROP_MC_FLOOR);
         float mixtureWeightFloor = ps.getFloat(PROP_MW_FLOOR);
@@ -382,12 +349,12 @@ class ModelInitializerLoader implements Loader {
         logger.info(path);
 
         // At this point, we only accept version 0.1
-        version = "0.1";
+        String version = "0.1";
         est.expectString("version");
         est.expectString(version);
 
         est.expectString("same_sized_models");
-        sameSizedModels = est.getString().equals("yes");
+        boolean sameSizedModels = est.getString().equals("yes");
 
         if (sameSizedModels) {
             est.expectString("n_state");
@@ -397,16 +364,13 @@ class ModelInitializerLoader implements Loader {
         // for this phone list version, let's assume left-to-right
         // models, with optional state skip.
         est.expectString("tmat_skip");
-        tmatSkip = est.getString().equals("yes");
+        boolean tmatSkip = est.getString().equals("yes");
 
         // Load the phones with sizes
 
         // stateIndex contains the absolute state index, that is, a
         // unique index in the senone pool.
-        int stateIndex;
-        int unitCount;
-        String attribute;
-        for (stateIndex = 0, unitCount = 0; ;) {
+        for (int stateIndex = 0, unitCount = 0; ;) {
             String phone = est.getString();
             if (est.isEOF()) {
                 break;
@@ -424,12 +388,9 @@ class ModelInitializerLoader implements Loader {
                 stid[j] = stateIndex;
             }
 
+            // TODO: check why attribute is not used - comment-outs are not clear
             // The first filler
-            if (phone.equals(SILENCE_CIPHONE)) {
-                attribute = FILLER;
-            } else {
-                attribute = "-";
-            }
+            // String attribute = phone.equals(SILENCE_CIPHONE) ? FILLER : "-";
 
 //            Unit unit = Unit.getUnit(phone, attribute.equals(FILLER));
             Unit unit = null;
@@ -446,23 +407,16 @@ class ModelInitializerLoader implements Loader {
             }
 
             // Means
-            addModelToDensityPool(meansPool, stid, numStreams,
-                    numGaussiansPerState);
+            addModelToDensityPool(meansPool, stid, numStreams, numGaussiansPerState);
 
             // Variances
-            addModelToDensityPool(variancePool, stid, numStreams,
-                    numGaussiansPerState);
+            addModelToDensityPool(variancePool, stid, numStreams, numGaussiansPerState);
 
             // Mixture weights
-            addModelToMixtureWeightPool(mixtureWeightsPool, stid, numStreams,
-                    numGaussiansPerState, mixtureWeightFloor);
+            addModelToMixtureWeightPool(mixtureWeightsPool, stid, numStreams, numGaussiansPerState, mixtureWeightFloor);
 
             // Transition matrix
-            addModelToTransitionMatricesPool(matrixPool,
-                    unitCount,
-                    stid.length,
-                    transitionProbabilityFloor,
-                    tmatSkip);
+            addModelToTransitionMatrixPool(matrixPool, unitCount, stid.length, transitionProbabilityFloor, tmatSkip);
 
             // After creating all pools, we create the senone pool.
             addModelToSenonePool(senonePool, stid, distFloor, varianceFloor);
@@ -471,12 +425,10 @@ class ModelInitializerLoader implements Loader {
             // create the HMMs.
 
             // Create tmat
-            float[][] transitionMatrix = (float[][])
-                    matrixPool.get(unitCount);
+            float[][] transitionMatrix = matrixPool.get(unitCount);
             SenoneSequence ss = getSenoneSequence(stid);
 
-            HMM hmm = new SenoneHMM(unit, ss,
-                    transitionMatrix, HMMPosition.lookup(position));
+            HMM hmm = new SenoneHMM(unit, ss, transitionMatrix, HMMPosition.lookup(position));
             hmmManager.put(hmm);
             unitCount++;
         }
@@ -489,9 +441,8 @@ class ModelInitializerLoader implements Loader {
         est.close();
     }
 
-
     /**
-     * Gets the senone sequence representing the given senones
+     * Gets the senone sequence representing the given senones.
      *
      * @param stateid is the array of senone state ids
      * @return the senone sequence associated with the states
@@ -501,13 +452,12 @@ class ModelInitializerLoader implements Loader {
         Senone[] senones = new Senone[stateid.length];
 
         for (int i = 0; i < stateid.length; i++) {
-            senones[i] = (Senone) senonePool.get(stateid[i]);
+            senones[i] = senonePool.get(stateid[i]);
         }
 
         // TODO: Is there any advantage in trying to pool these?
         return new SenoneSequence(senones);
     }
-
 
     /**
      * Adds model to the mixture weights
@@ -519,16 +469,15 @@ class ModelInitializerLoader implements Loader {
      * @param floor                the minimum mixture weight allowed
      * @throws IOException if an error occurs while loading the data
      */
-    private void addModelToMixtureWeightPool(Pool pool, int[] stateID,
+    private void addModelToMixtureWeightPool(Pool<float[]> pool, int[] stateID,
                                              int numStreams, int numGaussiansPerState, float floor)
             throws IOException {
 
         int numStates = stateID.length;
-        int numInPool;
 
         assert pool != null;
 
-        numInPool = pool.getFeature(NUM_SENONES, 0);
+        int numInPool = pool.getFeature(NUM_SENONES, 0);
         pool.setFeature(NUM_SENONES, numStates + numInPool);
         numInPool = pool.getFeature(NUM_STREAMS, -1);
         if (numInPool == -1) {
@@ -557,7 +506,6 @@ class ModelInitializerLoader implements Loader {
         }
     }
 
-
     /**
      * Adds transition matrix to the transition matrices pool
      *
@@ -568,9 +516,8 @@ class ModelInitializerLoader implements Loader {
      * @param skip              if true, states can be skipped
      * @throws IOException if an error occurs while loading the data
      */
-    private void addModelToTransitionMatricesPool(Pool pool, int hmmId,
-                                                  int numEmittingStates, float floor,
-                                                  boolean skip)
+    private void addModelToTransitionMatrixPool(Pool<float[][]> pool, int hmmId, int numEmittingStates,
+                                                float floor, boolean skip)
             throws IOException {
 
         assert pool != null;
@@ -611,18 +558,16 @@ class ModelInitializerLoader implements Loader {
         pool.put(hmmId, tmat);
     }
 
-
     /**
      * Creates a pool with a single identity matrix in it.
      *
      * @param name the name of the pool
      * @return the pool with the matrix
      */
-    private Pool createDummyMatrixPool(String name) {
-        Pool pool = new Pool(name);
+    private Pool<float[][]> createDummyMatrixPool(String name) {
+        Pool<float[][]> pool = new Pool<float[][]>(name);
         float[][] matrix = new float[vectorLength][vectorLength];
         logger.info("creating dummy matrix pool " + name);
-
         for (int i = 0; i < vectorLength; i++) {
             for (int j = 0; j < vectorLength; j++) {
                 if (i == j) {
@@ -637,18 +582,16 @@ class ModelInitializerLoader implements Loader {
         return pool;
     }
 
-
     /**
      * Creates a pool with a single zero vector in it.
      *
      * @param name the name of the pool
      * @return the pool with the vector
      */
-    private Pool createDummyVectorPool(String name) {
+    private Pool<float[]> createDummyVectorPool(String name) {
         logger.info("creating dummy vector pool " + name);
-        Pool pool = new Pool(name);
+        Pool<float[]> pool = new Pool<float[]>(name);
         float[] vector = new float[vectorLength];
-
         for (int i = 0; i < vectorLength; i++) {
             vector[i] = 0.0f;
         }
@@ -656,142 +599,76 @@ class ModelInitializerLoader implements Loader {
         return pool;
     }
 
-
+    @Override
     public void load() throws IOException {
     }
 
-
-    /**
-     * Gets the pool of means for this loader
-     *
-     * @return the pool
-     */
-    public Pool getMeansPool() {
+    @Override
+    public Pool<float[]> getMeansPool() {
         return meansPool;
     }
 
-
-    /**
-     * Gets the pool of means transformation matrices for this loader
-     *
-     * @return the pool
-     */
-    public Pool getMeansTransformationMatrixPool() {
+    @Override
+    public Pool<float[][]> getMeansTransformationMatrixPool() {
         return meanTransformationMatrixPool;
     }
 
-
-    /**
-     * Gets the pool of means transformation vectors for this loader
-     *
-     * @return the pool
-     */
-    public Pool getMeansTransformationVectorPool() {
+    @Override
+    public Pool<float[]> getMeansTransformationVectorPool() {
         return meanTransformationVectorPool;
     }
 
-
-    /*
-     * Gets the variance pool
-     *
-     * @return the pool
-     */
-    public Pool getVariancePool() {
+    @Override
+    public Pool<float[]> getVariancePool() {
         return variancePool;
     }
 
-
-    /**
-     * Gets the variance transformation matrix pool
-     *
-     * @return the pool
-     */
-    public Pool getVarianceTransformationMatrixPool() {
+    @Override
+    public Pool<float[][]> getVarianceTransformationMatrixPool() {
         return varianceTransformationMatrixPool;
     }
 
-
-    /**
-     * Gets the pool of variance transformation vectors for this loader
-     *
-     * @return the pool
-     */
-    public Pool getVarianceTransformationVectorPool() {
+    @Override
+    public Pool<float[]> getVarianceTransformationVectorPool() {
         return varianceTransformationVectorPool;
     }
 
-
-    /*
-     * Gets the mixture weight pool
-     *
-     * @return the pool
-     */
-    public Pool getMixtureWeightPool() {
+    @Override
+    public Pool<float[]> getMixtureWeightPool() {
         return mixtureWeightsPool;
     }
 
-
-    /*
-    * Gets the transition matrix pool
-    *
-    * @return the pool
-    */
-    public Pool getTransitionMatrixPool() {
+    @Override
+    public Pool<float[][]> getTransitionMatrixPool() {
         return matrixPool;
     }
 
-
-    /*
-    * Gets the transform matrix
-    *
-    * @return null since this feature is not supported
-    */
+    @Override
     public float[][] getTransformMatrix() {
         return null;
     }
 
-
-    /*
-    * Gets the senone pool for this loader
-    *
-    * @return the pool
-    */
-    public Pool getSenonePool() {
+    @Override
+    public Pool<Senone> getSenonePool() {
         return senonePool;
     }
 
-
-    /**
-     * Returns the size of the left context for context dependent units
-     *
-     * @return the left context size
-     */
+    @Override
     public int getLeftContextSize() {
         return CONTEXT_SIZE;
     }
 
-
-    /**
-     * Returns the size of the right context for context dependent units
-     *
-     * @return the left context size
-     */
+    @Override
     public int getRightContextSize() {
         return CONTEXT_SIZE;
     }
 
-
-    /**
-     * Returns the hmm manager associated with this loader
-     *
-     * @return the hmm Manager
-     */
+    @Override
     public HMMManager getHMMManager() {
         return hmmManager;
     }
 
-
-    /** Log info about this loader */
+    @Override
     public void logInfo() {
         logger.info("Sphinx3Loader");
         meansPool.logInfo(logger);
@@ -804,9 +681,7 @@ class ModelInitializerLoader implements Loader {
         varianceTransformationVectorPool.logInfo(logger);
         mixtureWeightsPool.logInfo(logger);
         senonePool.logInfo(logger);
-        logger.info("Context Independent Unit Entries: "
-                + contextIndependentUnits.size());
+        logger.info("Context Independent Unit Entries: " + contextIndependentUnits.size());
         hmmManager.logInfo(logger);
     }
 }
-
