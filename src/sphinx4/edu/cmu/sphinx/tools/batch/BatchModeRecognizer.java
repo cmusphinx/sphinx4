@@ -15,6 +15,7 @@ import edu.cmu.sphinx.frontend.BaseDataProcessor;
 import edu.cmu.sphinx.frontend.DataProcessor;
 import edu.cmu.sphinx.frontend.util.StreamCepstrumSource;
 import edu.cmu.sphinx.frontend.util.StreamDataSource;
+import edu.cmu.sphinx.frontend.util.StreamHTKCepstrum;
 import edu.cmu.sphinx.recognizer.Recognizer;
 import edu.cmu.sphinx.recognizer.RecognizerState;
 import edu.cmu.sphinx.result.Result;
@@ -205,6 +206,11 @@ public class BatchModeRecognizer implements Configurable {
                 StreamCepstrumSource cepstrumSource =
                         (StreamCepstrumSource) dataSource;
                 cepstrumSource.setInputStream(is, isBigEndian);
+                // TODO: christophe: should use an interface there !!
+            } else if (dataSource instanceof StreamHTKCepstrum) {
+                StreamHTKCepstrum cepstrumSource =
+                        (StreamHTKCepstrum) dataSource;
+                cepstrumSource.setInputStream(is, false);
             }
         }
     }
