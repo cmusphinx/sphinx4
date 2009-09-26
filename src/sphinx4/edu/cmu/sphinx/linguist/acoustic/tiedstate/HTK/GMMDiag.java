@@ -8,6 +8,8 @@
  */
 package edu.cmu.sphinx.linguist.acoustic.tiedstate.HTK;
 
+import edu.cmu.sphinx.util.LogMath;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.FileWriter;
