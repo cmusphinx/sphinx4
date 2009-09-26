@@ -27,9 +27,9 @@ import java.io.InputStream;
 
 
 /**
- * Produces Mel-cepstrum data from an InputStream. To set the inputstream with cepstral data, use the {@link
- * #setInputStream(InputStream,boolean) setInputStream} method, and then call {@link #getData} to obtain the Data
- * objects that have cepstra data in it.
+ * Produces Mel-cepstrum data from an InputStream. To set the input stream with cepstral data, use the {@link
+ * #setInputStream(InputStream) setInputStream} method, and then call {@link #getData} to obtain the Data
+ * objects that have cepstrum data in it.
  */
 public class StreamHTKCepstrum extends BaseDataProcessor {
 

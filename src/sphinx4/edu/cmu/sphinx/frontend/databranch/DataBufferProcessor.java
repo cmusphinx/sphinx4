@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Logger;
 
 /**
  * A FIFO-buffer for <code>Data</code>-elements.
@@ -31,7 +30,7 @@ public class DataBufferProcessor extends BaseDataProcessor implements DataListen
     private boolean waitIfEmpty;
 
     /**
-     * The time in milliseconds which will be waited between two attemtps to read a data-lement from the buffer when
+     * The time in milliseconds which will be waited between two attempts to read a data element from the buffer when
      * being in <code>waitIfEmpty</code>-mode
      */
     @S4Integer(defaultValue = 10)
@@ -50,13 +49,11 @@ public class DataBufferProcessor extends BaseDataProcessor implements DataListen
     private List<DataListener> dataListeners = new ArrayList<DataListener>();
 
     /**
-     * @param name
-     * @param logger
      * @param maxBufferSize The maximal size of the buffer in frames. The oldest frames will be removed if the buffer grows out of bounds.
      * @param waitIfEmpty If this property is set <code>true</code> the buffer will wait for new data until it returns from a
      * <code>getData</code>-call. Enable this flag if the buffer should serve as starting point for a new
      * feature-pull-chain.
-     * @param waitTime The time in milliseconds which will be waited between two attemtps to read a data-lement from the buffer when
+     * @param waitTime The time in milliseconds which will be waited between two attempts to read a data element from the buffer when
      * being in <code>waitIfEmpty</code>-mode
      * @param listeners
      */

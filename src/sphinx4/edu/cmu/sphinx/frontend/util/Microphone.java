@@ -42,7 +42,7 @@ public class Microphone extends BaseDataProcessor {
 
     /**
      * Sphinx property that specifies whether or not the microphone will release the audio between utterances.  On
-     * certain systems (linux for one), closing and reopening the audio does not work too well. The default is false for
+     * certain systems (Linux for one), closing and reopening the audio does not work too well. The default is false for
      * Linux systems, true for others.
      */
     @S4Boolean(defaultValue = true)
@@ -141,16 +141,13 @@ public class Microphone extends BaseDataProcessor {
     private int sampleRate;
 
     /**
-     *
-     * @param name
-     * @param logger
      * @param sampleRate sample rate of the data
      * @param bitsPerSample number of bits per value.
      * @param channels number of channels.
      * @param bigEndian the endianness of the data
      * @param signed whether the data is signed.
      * @param closeBetweenUtterances whether or not the microphone will release the audio between utterances.  On
-     * certain systems (linux for one), closing and reopening the audio does not work too well. The default is false for
+     * certain systems (Linux for one), closing and reopening the audio does not work too well. The default is false for
      * Linux systems, true for others
      * @param msecPerRead the number of milliseconds of audio data to read each time from the underlying
      * Java Sound audio device.

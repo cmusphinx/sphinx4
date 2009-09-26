@@ -414,7 +414,7 @@ public class GMMDiag {
 	 * Calculate log probability of the observation
 	 * must be called AFTER next() !
 	 * 
-	 * @return
+	 * @return log likelihood
 	 */
 	public float getLogLike() {
 		float sc = loglikes[0];
@@ -427,7 +427,7 @@ public class GMMDiag {
 	/**
 	 * must be called AFTER next()
 	 * 
-	 * @return
+	 * @return best gaussian
 	 */
 	public int getWinningGauss() {
 		int imax = 0;
@@ -471,11 +471,9 @@ public class GMMDiag {
 
 	/**
 	 * 
-	 * @param g
-	 *            : second GMM for the merge
-	 * @param w1
-	 *            : weight of the first GMM for the merge
-	 * @return
+	 * @param g  second GMM for the merge
+	 * @param w1 weight of the first GMM for the merge
+	 * @return gaussian
 	 */
 	public GMMDiag merge(GMMDiag g, float w1) {
 		GMMDiag res = new GMMDiag(getNgauss() + g.getNgauss(), getNcoefs());
@@ -496,10 +494,10 @@ public class GMMDiag {
 	}
 
 	/**
-	 * extracts ONE gauss from the GMM
+	 * extracts ONE gaussian from the GMM
 	 * 
-	 * @param n
-	 * @return
+	 * @param i position
+	 * @return gaussian
 	 */
 	public GMMDiag getGauss(int i) {
 		GMMDiag res = new GMMDiag(1, getNcoefs());
@@ -519,7 +517,7 @@ public class GMMDiag {
 	 * differ from more than 1%
 	 * 
 	 * @param g
-	 * @return
+	 * @return if GMMs are equal
 	 */
 	public boolean isEqual(GMMDiag g) {
 		if (getNgauss() != g.getNgauss())
