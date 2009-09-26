@@ -54,7 +54,6 @@
             description="Compiles all the classes.">
         <mkdir dir="${classes_dir}/edu/cmu/sphinx/tools"/>
         <javac debug="true"
-               source="1.5"
                deprecation="true"
                fork="true"
                destdir="${classes_dir}"

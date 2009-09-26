@@ -245,11 +245,9 @@
     <!-- ********************************************************** -->
     <target name="compile_src"
             depends="handle_jsapi"
-            description="Build just the 1.5 srcs">
+            description="Build just the srcs">
         <mkdir dir="${classes_dir}"/>
         <javac debug="true"
-               source="1.5"
-               target="1.5"
                srcdir="${src_dir}/sphinx4"
                deprecation="true"
                destdir="${classes_dir}">
@@ -257,8 +255,6 @@
             <classpath refid="libs"/>
         </javac>
         <javac debug="true"
-               source="1.5"
-               target="1.5"
                srcdir="${src_dir}/research"
                deprecation="true"
                destdir="${classes_dir}">
@@ -266,8 +262,6 @@
             <classpath refid="libs"/>
         </javac>
         <!--<javac debug="true"-->
-        <!--source="1.5"-->
-        <!--target="1.5"-->
         <!--srcdir="${src_dir}/apps/edu/cmu/sphinx/demo"-->
         <!--deprecation="true"-->
         <!--destdir="${classes_dir}/apps">-->
@@ -555,7 +549,6 @@
         <delete dir="${javadoc_dir}"/>
         <mkdir dir="${javadoc_dir}"/>
         <javadoc sourcepath="${src_dir}/sphinx4"
-                 source="1.5"
                  additionalparam="-breakiterator"
                  destdir="${javadoc_dir}"
                  overview="${src_dir}/sphinx4/overview.html"
@@ -586,7 +579,6 @@
             description="checks the javadocs">
         <mkdir dir="${javadoc_check_dir}"/>
         <javadoc sourcepath="${src_dir}/sphinx4"
-                 additionalparam="-source 1.5"
                  packagenames="edu.*"
                  excludepackagenames="edu.cmu.sphinx.trainer"
                  destdir="${javadoc_check_dir}"

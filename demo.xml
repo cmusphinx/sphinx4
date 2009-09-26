@@ -92,8 +92,6 @@
     <target name="compile_sphinx_helloworld">
         <mkdir dir="${demo_classes_dir}/edu/cmu/sphinx/demo/helloworld"/>
         <javac debug="true"
-               source="1.5"
-               target="1.5"
                listfiles="true"
                deprecation="true"
                srcdir="${demo_src_dir}"
@@ -117,8 +115,6 @@
     <target name="compile_sphinx_hellodigits">
         <mkdir dir="${demo_classes_dir}/edu/cmu/sphinx/demo/hellodigits"/>
         <javac debug="true"
-               source="1.5"
-               target="1.5"
                listfiles="true"
                deprecation="true"
                srcdir="${demo_src_dir}"
@@ -141,8 +137,6 @@
     <target name="compile_jsapi_dialog" if="jsapi_jar.isPresent">
         <mkdir dir="${demo_classes_dir}/edu/cmu/sphinx/demo/jsapi/dialog"/>
         <javac debug="true"
-               source="1.5"
-               target="1.5"
                listfiles="true"
                deprecation="true"
                srcdir="${demo_src_dir}"
@@ -172,8 +166,6 @@
     <target name="compile_jsapi_jsgf" if="jsapi_jar.isPresent">
         <mkdir dir="${demo_classes_dir}/edu/cmu/sphinx/demo/jsapi/jsgf"/>
         <javac debug="true"
-               source="1.5"
-               target="1.5"
                listfiles="true"
                deprecation="true"
                srcdir="${demo_src_dir}"
@@ -201,8 +193,6 @@
     <target name="compile_sphinx_hellongram">
         <mkdir dir="${demo_classes_dir}/edu/cmu/sphinx/demo/hellongram"/>
         <javac debug="true"
-               source="1.5"
-               target="1.5"
                listfiles="true"
                deprecation="true"
                srcdir="${demo_src_dir}"
@@ -226,8 +216,6 @@
     <target name="compile_sphinx_lattice">
         <mkdir dir="${demo_classes_dir}/edu/cmu/sphinx/demo/lattice"/>
         <javac debug="true"
-               source="1.5"
-               target="1.5"
                listfiles="true"
                deprecation="true"
                srcdir="${demo_src_dir}"
@@ -251,8 +239,6 @@
     <target name="compile_sphinx_wavfile">
         <mkdir dir="${demo_classes_dir}/edu/cmu/sphinx/demo/wavfile"/>
         <javac debug="true"
-               source="1.5"
-               target="1.5"
                listfiles="true"
                deprecation="true"
                srcdir="${demo_src_dir}"
@@ -278,8 +264,6 @@
     <target name="compile_sphinx_transcriber">
         <mkdir dir="${demo_classes_dir}/edu/cmu/sphinx/demo/transcriber"/>
         <javac debug="true"
-               source="1.5"
-               target="1.5"
                listfiles="true"
                deprecation="true"
                srcdir="${demo_src_dir}"
@@ -315,8 +299,6 @@
     <target name="compile_tags" if="jsapi_jar.isPresent">
         <mkdir dir="${demo_classes_dir}/edu/cmu/sphinx/demo/jsapi/tags"/>
         <javac debug="true"
-               source="1.5"
-               target="1.5"
                listfiles="true"
                deprecation="true"
                srcdir="${demo_src_dir}"
@@ -351,8 +333,6 @@
     <target name="compile_zipcity" depends="init,keystore">
         <mkdir dir="${demo_classes_dir}/edu/cmu/sphinx/demo/zipcity"/>
         <javac debug="true"
-               source="1.5"
-               target="1.5"
                listfiles="true"
                deprecation="true"
                srcdir="${demo_src_dir}"
@@ -400,8 +380,6 @@
     <target name="compile_sphinx_confidence">
         <mkdir dir="${demo_classes_dir}/edu/cmu/sphinx/demo/confidence"/>
         <javac debug="true"
-               source="1.5"
-               target="1.5"
                listfiles="true"
                deprecation="true"
                srcdir="${demo_src_dir}"

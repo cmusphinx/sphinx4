@@ -40,7 +40,6 @@ NOTE:  Before running the tests, you must have already built
             description="Compiles all the tests.">
 	    <mkdir dir="${classes_dir}/tests/other"/>
 	    <javac debug="true"
-	           source="1.5"
 		   deprecation="true"
 		   destdir="${classes_dir}"
 		   classpath="${classes_dir}"
