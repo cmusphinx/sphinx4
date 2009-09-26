@@ -492,13 +492,14 @@ public class ConfigurationManager implements Cloneable {
 
     /** Creates a deep copy of the given CM instance. */
     // This is not tested yet !!!
-    public Object clone() throws CloneNotSupportedException {
-        ConfigurationManager cloneCM = (ConfigurationManager) super.clone();
+    @Override
+    public ConfigurationManager clone() throws CloneNotSupportedException {
+        ConfigurationManager cloneCM = (ConfigurationManager)super.clone();
 
         cloneCM.changeListeners = new ArrayList<ConfigurationChangeListener>();
         cloneCM.symbolTable = new LinkedHashMap<String, PropertySheet>();
         for (Map.Entry<String, PropertySheet> entry : symbolTable.entrySet()) {
-            cloneCM.symbolTable.put(entry.getKey(), (PropertySheet)entry.getValue().clone());
+            cloneCM.symbolTable.put(entry.getKey(), entry.getValue().clone());
         }
 
         cloneCM.globalProperties = new GlobalProperties(globalProperties);

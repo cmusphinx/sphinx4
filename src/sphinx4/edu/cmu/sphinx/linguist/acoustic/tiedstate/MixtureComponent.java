@@ -314,10 +314,9 @@ public class MixtureComponent implements Cloneable, Serializable {
         }
     }
 
-
-    /** {@inheritDoc} */
-    public Object clone() throws CloneNotSupportedException {
-        MixtureComponent mixComp = (MixtureComponent) super.clone();
+    @Override
+    public MixtureComponent clone() throws CloneNotSupportedException {
+        MixtureComponent mixComp = (MixtureComponent)super.clone();
 
         mixComp.distFloor = distFloor;
         mixComp.varianceFloor = varianceFloor;

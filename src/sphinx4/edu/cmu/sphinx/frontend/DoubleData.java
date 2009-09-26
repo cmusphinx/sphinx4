@@ -92,15 +92,10 @@ public class DoubleData extends OVector implements Data {
         return collectTime;
     }
 
-
-    /**
-     * Returns a clone of this Data object.
-     *
-     * @return a clone of this data object
-     */
-    public Object clone() throws CloneNotSupportedException {
+    @Override
+    public DoubleData clone() throws CloneNotSupportedException {
         try {
-            DoubleData data = (DoubleData) super.clone();
+            DoubleData data = (DoubleData)super.clone();
             data.sampleRate = sampleRate;
             data.collectTime = collectTime;
             data.firstSampleNumber = firstSampleNumber;

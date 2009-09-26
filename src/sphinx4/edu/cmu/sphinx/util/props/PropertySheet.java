@@ -783,9 +783,9 @@ public class PropertySheet implements Cloneable {
         return getInstanceName() + "; isInstantiated=" + isInstanciated() + "; props=" + rawProps.keySet();
     }
 
-
-    protected Object clone() throws CloneNotSupportedException {
-        PropertySheet ps = (PropertySheet) super.clone();
+    @Override
+    protected PropertySheet clone() throws CloneNotSupportedException {
+        PropertySheet ps = (PropertySheet)super.clone();
 
         ps.registeredProperties = new HashMap<String, S4PropWrapper>(this.registeredProperties);
         ps.propValues = new HashMap<String, Object>(this.propValues);

@@ -88,7 +88,7 @@ public class MixtureComponentTest {
     public void testClone() throws CloneNotSupportedException {
         MixtureComponent gaussian = new MixtureComponent(lm, new float[]{2}, new float[][]{{3}}, new float[]{4}, new float[]{5}, new float[][]{{6}}, new float[]{7});
 
-        MixtureComponent clonedGaussian = (MixtureComponent) gaussian.clone();
+        MixtureComponent clonedGaussian = gaussian.clone();
 
         assertTrue(!clonedGaussian.equals(gaussian));
 

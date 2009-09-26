@@ -227,16 +227,15 @@ public class GaussianMixture implements Senone, Cloneable {
         return logMixtureWeights[index];
     }
 
-
-    /** {@inheritDoc} */
-    public Object clone() throws CloneNotSupportedException {
-        GaussianMixture gmm = (GaussianMixture) super.clone();
+    @Override
+    public GaussianMixture clone() throws CloneNotSupportedException {
+        GaussianMixture gmm = (GaussianMixture)super.clone();
 
         gmm.logMixtureWeights = this.logMixtureWeights != null ? this.logMixtureWeights.clone() : null;
         gmm.mixtureComponents = mixtureComponents.clone();
 
         for (int i = 0; i < mixtureComponents.length; i++) {
-            gmm.mixtureComponents[i] = (MixtureComponent) mixtureComponents[i].clone();
+            gmm.mixtureComponents[i] = mixtureComponents[i].clone();
         }
 
         gmm.id = id;

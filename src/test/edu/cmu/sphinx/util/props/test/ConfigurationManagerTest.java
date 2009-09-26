@@ -111,7 +111,7 @@ public class ConfigurationManagerTest {
         Assert.assertTrue(docu.getBeamWidth() == 4711);
 
         // test the the non-overridden properties of the parent-configuration were preserved
-        Assert.assertNotNull((DummyProcessor) cm.lookup("processor"));
+        Assert.assertNotNull(cm.lookup("processor"));
 
         // test the global properties:
         Assert.assertTrue("-5".equals(cm.getGlobalProperties().get("myalpha").getValue())); // overridden property

@@ -86,15 +86,10 @@ public class FloatData implements Data, Cloneable {
         return collectTime;
     }
 
-
-    /**
-     * Returns a clone of this Data object.
-     *
-     * @return a clone of this data object
-     */
-    public Object clone() throws CloneNotSupportedException {
+    @Override
+    public FloatData clone() throws CloneNotSupportedException {
         try {
-            Data data = (Data) super.clone();
+            FloatData data = (FloatData)super.clone();
             return data;
         } catch (CloneNotSupportedException e) {
             throw new InternalError(e.toString());
