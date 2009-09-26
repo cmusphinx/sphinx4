@@ -19,12 +19,12 @@ import java.util.StringTokenizer;
 /**
  * HTK is case-sensitive, S4 is not.
  * 
- * One must then first convert the HMM names to upper-case,
- * resolve conflicts, and use the same conversion to convert the lexicons and grammar.
- * This tool does it.
+ * One must then first convert the HMM names to upper-case, resolve conflicts,
+ * and use the same conversion to convert the lexicons and grammar. This tool
+ * does it.
  * 
- * @author cerisara
- *
+ * @author Christophe Cerisara
+ * 
  */
 public class NamesConversion {
 	HashMap<String,String> phoneConv = new HashMap<String,String>();

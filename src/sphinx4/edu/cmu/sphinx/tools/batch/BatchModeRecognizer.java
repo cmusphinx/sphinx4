@@ -210,7 +210,7 @@ public class BatchModeRecognizer implements Configurable {
             } else if (dataSource instanceof StreamHTKCepstrum) {
                 StreamHTKCepstrum cepstrumSource =
                         (StreamHTKCepstrum) dataSource;
-                cepstrumSource.setInputStream(is, false);
+                cepstrumSource.setInputStream(is);
             }
         }
     }

@@ -71,8 +71,7 @@ public class StreamHTKCepstrum extends BaseDataProcessor {
     private int frameSize;
     private int sampleRate;
     private long firstSampleNumber;
-    private boolean bigEndian = true;
-
+    private boolean bigEndian;
 
     /*
     * (non-Javadoc)
@@ -106,24 +105,23 @@ public class StreamHTKCepstrum extends BaseDataProcessor {
     /**
      * Sets the InputStream to read cepstral data from.
      *
-     * @param is        the InputStream to read cepstral data from
-     * @param bigEndian true if the InputStream data is in big-endian, false otherwise
+     * @param stream the InputStream to read cepstral data from
      * @throws IOException if an I/O error occurs
      */
-    public void setInputStream(InputStream is, boolean be)
+    public void setInputStream(InputStream stream)
             throws IOException {
-        //this.bigEndian = bigEndian;
         {
-        	binaryStream = new DataInputStream(new BufferedInputStream(is));
+        	binaryStream = new DataInputStream(new BufferedInputStream(stream));
             if (bigEndian) {
-            	// nb de trames:
+            	// number of frames
             	numPoints = binaryStream.readInt();
                 int sampPeriod = binaryStream.readInt();
                 // TODO: update sampleRate
-                // nb de bytes par trame:
+                // Number of bytes per frame
                 short sampSize = binaryStream.readShort();
-                cepstrumLength = sampSize/4;
-                // on veut le nb de floats:
+                cepstrumLength = sampSize / 4;
+                System.out.println ("Sample size " + sampSize);
+                // Number of floats to read
                 numPoints *= cepstrumLength;
                 short parmKind = binaryStream.readShort();
                 System.out.println("BigEndian");
@@ -131,10 +129,10 @@ public class StreamHTKCepstrum extends BaseDataProcessor {
                 numPoints = Utilities.readLittleEndianInt(binaryStream);
                 int sampPeriod = Utilities.readLittleEndianInt(binaryStream);
                 // TODO: update sampleRate
-                // nb de bytes par trame:
+                // number of bytes per frame
                 short sampSize = readLittleEndianShort(binaryStream);
                 cepstrumLength = sampSize/4;
-                // on veut le nb de floats:
+                // Number of floats to read
                 numPoints *= cepstrumLength;
                 short parmKind = readLittleEndianShort(binaryStream);
                 System.out.println("LittleEndian");
