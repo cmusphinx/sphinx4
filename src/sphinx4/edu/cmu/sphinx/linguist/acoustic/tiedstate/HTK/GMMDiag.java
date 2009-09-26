@@ -82,11 +82,11 @@ public class GMMDiag {
 	/**
 	 * Saves in proprietary format
 	 * 
-	 * @param nom
+	 * @param name
 	 */
-	public void save(String nom) {
+	public void save(String name) {
 		try {
-			PrintWriter fout = new PrintWriter(new FileWriter(nom));
+			PrintWriter fout = new PrintWriter(new FileWriter(name));
 			fout.println(ngauss + " " + ncoefs);
 			for (int i = 0; i < ngauss; i++) {
 				fout.println("gauss " + i + ' ' + getWeight(i));
@@ -105,13 +105,13 @@ public class GMMDiag {
 	}
 
 	/**
-	 * charge dans un format proprietaire (texte)
+	 * Load from text proprietary format
 	 * 
-	 * @param nom
+	 * @param name
 	 */
-	public void load(String nom) {
+	public void load(String name) {
 		try {
-			BufferedReader fin = new BufferedReader(new FileReader(nom));
+			BufferedReader fin = new BufferedReader(new FileReader(name));
 			String s = fin.readLine();
 			String[] ss = s.split(" ");
 			ngauss = Integer.parseInt(ss[0]);
@@ -121,7 +121,7 @@ public class GMMDiag {
 				s = fin.readLine();
 				ss = s.split(" ");
 				if (!ss[0].equals("gauss") || Integer.parseInt(ss[1]) != i) {
-					System.err.println("erreur lecture GMM " + s + ' ' + i);
+					System.err.println("Error loading GMM " + s + ' ' + i);
 					System.exit(1);
 				}
 				setWeight(i, Float.parseFloat(ss[2]));
@@ -380,8 +380,7 @@ public class GMMDiag {
 	}
 
 	/*
-	 * ****************************************
-	 * CALCUL DES LOGLIKES ****************************************
+	 * Log likelihood calculation
 	 */
 
 	private static float distFloor = -Float.MAX_VALUE;

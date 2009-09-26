@@ -202,7 +202,7 @@ public class HMMSet {
 				if (s.startsWith("~s")) {
 					String nomEtat = s.substring(s.indexOf('"') + 1, s
 							.lastIndexOf('"'));
-					loadEtat(f, nomEtat, null);
+					loadState(f, nomEtat, null);
 				} else if (s.startsWith("~v")) {
 					// variance floor: bypass
 				} else if (s.startsWith("~t")) {
@@ -283,16 +283,16 @@ public class HMMSet {
 			s = f.readLine();
 		}
 		int nstates = Integer.parseInt(s.substring(s.indexOf(' ') + 1));
-		// compliancy with sphinx3
+		// Compliance with sphinx3
 		nstates--;
 		SingleHMM theHMM = new SingleHMM(nstates);
-		theHMM.setNom(n);
+		theHMM.setName(n);
 		theHMM.hmmset = this;
 		while (!s.startsWith("<STATE>"))
 			s = f.readLine();
 		while (s.startsWith("<STATE>")) {
 			curstate = Integer.parseInt(s.substring(s.indexOf(' ') + 1));
-			// compliancy with sphinx3
+			// Compliance with sphinx3
 			curstate--;
 			s = f.readLine();
 			int gmmidx = -1;
@@ -311,7 +311,7 @@ public class HMMSet {
 					System.exit(1);
 				}
 			} else {
-				loadEtat(f, "", s);
+				loadState(f, "", s);
 				gmmidx = gmms.size() - 1;
 				e = gmms.get(gmms.size() - 1);
 			}
@@ -331,7 +331,7 @@ public class HMMSet {
 			int tridx = getTrans(nomTrans);
 			theHMM.setTrans(tridx);
 		} else {
-			// les trans sont explicites
+			// The transitions are explicit
 			if (!s.startsWith("<TRANSP>")) {
 				System.err.println("Error reading model: missing transitions." + s);
 				System.exit(1);
@@ -357,7 +357,7 @@ public class HMMSet {
 			s = f.readLine().trim();
 		if (s.startsWith("<TRANSP>")) {
 			nstates = Integer.parseInt(s.substring(s.indexOf(' ') + 1));
-			// compliancy with sphinx3
+			// Compliance with sphinx3
 			nstates--;
 		} else {
 			System.err.println("ERROR no TRANSP !");
@@ -365,13 +365,13 @@ public class HMMSet {
 		}
 		String[] ss;
 		trans = new float[nstates][nstates];
-		// compliancy with sphinx3
+		// Compliance with sphinx3
 		f.readLine();
 		for (int i = 0; i < nstates; i++) {
 			s = f.readLine().trim();
 			ss = s.split(" ");
 			for (int j = 0; j < nstates; j++) {
-				// compliancy with sphinx3
+				// Compliance with sphinx3
 				trans[i][j] = Float.parseFloat(ss[j + 1]);
 			}
 		}
@@ -391,7 +391,7 @@ public class HMMSet {
 		return tridx;
 	}
 
-	private void loadEtat(BufferedReader f, String nomEtat, String prem)
+	private void loadState(BufferedReader f, String nomEtat, String prem)
 			throws IOException {
 		nGaussians = 1;
 		String s;
@@ -418,7 +418,7 @@ public class HMMSet {
 			for (int i = 0; i < nGaussians; i++) {
 				if (i > 0)
 					s = f.readLine().trim();
-				// Doesn't load GCONST
+				// Don't load GCONST
 				if (s.startsWith("<GCONST>"))
 					s = f.readLine().trim();
 				ss = s.split(" ");
@@ -445,7 +445,7 @@ public class HMMSet {
 		String s;
 		String[] ss;
 		if (prem != null) {
-			// premiere ligne a prendre en compte
+			// First line is taken into account
 			s = prem;
 		} else
 			s = f.readLine().trim();
@@ -499,7 +499,7 @@ public class HMMSet {
 			return s.gmm;
 		} else {
 			if (tiedHMMs != null) {
-				// May be that state appears in the tiedstates
+				// May be that state appears in the tied states
 				for (i = 0; i < tiedHMMs.length; i++) {
 					if (tiedHMMs[i][0].equals(l.getName())) {
 						break;
@@ -509,7 +509,7 @@ public class HMMSet {
 					return findState(new Lab(tiedHMMs[i][1], l.getState()));
 				}
 			}
-			System.err.println("WARNING hmmset findstate not found " + l);
+			System.err.println("WARNING: state is not found in hmmset " + l);
 			return null;
 		}
 	}

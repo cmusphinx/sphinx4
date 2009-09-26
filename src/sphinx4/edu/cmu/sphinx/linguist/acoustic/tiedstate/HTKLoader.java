@@ -91,9 +91,8 @@ public class HTKLoader implements Loader {
 	public final static String PROP_IS_BINARY = "isBinary";
 
 	/** The name of the model definition file (contains the HMM data) */
-	@S4String(mandatory = false, defaultValue = "mdef")
+	@S4String(mandatory = true, defaultValue = "hmmdefs")
 	public final static String PROP_MODEL = "modelDefinition";
-	public final static String PROP_MODEL_1PH_DEFAULT = "model.1ph";
 
 	/** Shall we use the real 1ph or tie them from the 3ph ? */
 	@S4Boolean(defaultValue = true)
@@ -106,13 +105,6 @@ public class HTKLoader implements Loader {
 	/** The SphinxProperty for the length of feature vectors. */
 	@S4Integer(defaultValue = 39)
 	public final static String PROP_VECTOR_LENGTH = "vectorLength";
-
-	/**
-	 * The SphinxProperty specifying whether context-dependent units should be
-	 * used.
-	 */
-	@S4Boolean(defaultValue = true)
-	public final static String PROP_USE_CD_UNITS = "useCDUnits";
 
 	/** Mixture component score floor. */
 	@S4Double(defaultValue = 0.0f)
@@ -195,7 +187,6 @@ public class HTKLoader implements Loader {
 		distFloor = ps.getFloat(PROP_MC_FLOOR);
 		mixtureWeightFloor = ps.getFloat(PROP_MW_FLOOR);
 		varianceFloor = ps.getFloat(PROP_VARIANCE_FLOOR);
-		useCDUnits = ps.getBoolean(PROP_USE_CD_UNITS);
 	}
 
 	private void loadProperties() {

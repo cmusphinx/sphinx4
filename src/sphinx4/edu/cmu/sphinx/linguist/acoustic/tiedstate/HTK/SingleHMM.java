@@ -10,7 +10,7 @@ package edu.cmu.sphinx.linguist.acoustic.tiedstate.HTK;
 
 public class SingleHMM {
 	private HMMState[] states;
-	private String nomHMM;
+	private String name;
 	public float[][] trans;
 	// index of the transition macro
 	private int transidx = -1; // in case the transitions is a macro
@@ -20,24 +20,24 @@ public class SingleHMM {
 	public HMMSet hmmset;
 
 	public SingleHMM(int nbStates) {
-		nomHMM = "";
+		name = "";
 		states = new HMMState[nbStates];
 		nbEmittingStates = 0;
 	}
 
-	public void setNom(String s) {
-		nomHMM = s;
+	public void setName(String s) {
+		name = s;
 	}
 
 	public String getName() {
-		return nomHMM;
+		return name;
 	}
 
 	public String getBaseName() {
-		int m = nomHMM.indexOf('-');
+		int m = name.indexOf('-');
 		if (m < 0)
 			m = -1;
-		String b = nomHMM.substring(m + 1);
+		String b = name.substring(m + 1);
 		m = b.indexOf('+');
 		if (m < 0)
 			m = b.length();
@@ -45,17 +45,17 @@ public class SingleHMM {
 	}
 
 	public String getLeft() {
-		int m = nomHMM.indexOf('-');
+		int m = name.indexOf('-');
 		if (m < 0)
 			return "-";
-		return nomHMM.substring(0, m);
+		return name.substring(0, m);
 	}
 
 	public String getRight() {
-		int m = nomHMM.indexOf('+');
+		int m = name.indexOf('+');
 		if (m < 0)
 			return "-";
-		return nomHMM.substring(m + 1);
+		return name.substring(m + 1);
 	}
 
 	public void setState(int idx, HMMState st) {
