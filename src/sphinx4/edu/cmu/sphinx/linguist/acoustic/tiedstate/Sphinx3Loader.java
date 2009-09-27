@@ -231,10 +231,10 @@ public class Sphinx3Loader implements Loader {
         unitManager = (UnitManager) ps.getComponent(PROP_UNIT_MANAGER);
 
         String isBinary = (String) properties.get(PROP_IS_BINARY);
-        binary = isBinary != null ? Boolean.valueOf(isBinary).equals(Boolean.TRUE) : ps.getBoolean(PROP_IS_BINARY);
+        binary = isBinary != null ? Boolean.valueOf(isBinary) : ps.getBoolean(PROP_IS_BINARY);
 
         String isSparse = (String) properties.get(PROP_SPARSE_FORM);
-        sparseForm = isSparse != null ? Boolean.valueOf(isSparse).equals(Boolean.TRUE) : ps.getBoolean(PROP_SPARSE_FORM);
+        sparseForm = isSparse != null ? Boolean.valueOf(isSparse) : ps.getBoolean(PROP_SPARSE_FORM);
 
         String length = (String) properties.get(PROP_VECTOR_LENGTH);
         vectorLength = length != null ? Integer.parseInt(length) : ps.getInt(PROP_VECTOR_LENGTH);

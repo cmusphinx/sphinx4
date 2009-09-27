@@ -1277,13 +1277,7 @@ public class PanelConfigurable extends javax.swing.JPanel {
 
                 if( cc.containsProperty(propname)){
                     ConfigurableProperty cp = cc.getProperty(propname);
-                    if(cp.getType() != null){ // property is specified
-                        if(cp.getType().isValid(propval))
-                            return true;
-                        else
-                            return false;
-                    }else // there is no property specified, assume it's valid
-                        return true;
+                    return cp.getType() == null || cp.getType().isValid(propval); // no specified property is valid
                 }
             }
             return false;

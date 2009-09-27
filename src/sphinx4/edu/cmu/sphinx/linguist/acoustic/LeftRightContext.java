@@ -145,14 +145,8 @@ public class LeftRightContext extends Context {
                     !Unit.isContextMatch(lc, leftContext)) {
                 return false;
             }
-            if (rc != null && rightContext != null &&
-                    !Unit.isContextMatch(rc, rightContext)) {
-                return false;
-            }
-            return true;
-        } else if (context == Context.EMPTY_CONTEXT &&
-                leftContext == null &&
-                rightContext == null) {
+            return rc == null || rightContext == null || Unit.isContextMatch(rc, rightContext);
+        } else if (context == Context.EMPTY_CONTEXT && leftContext == null && rightContext == null) {
             return true;
         }
         return false;

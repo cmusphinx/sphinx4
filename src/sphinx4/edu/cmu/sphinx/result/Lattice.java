@@ -991,7 +991,7 @@ public class Lattice {
                         /* recursively check the two child nodes */
                         equivalent &= checkNodesEquivalent
                                 (edge.getToNode(), e2.getToNode());
-                        if (equivalent == false) {
+                        if (!equivalent) {
                             return false;
                         }
                     }

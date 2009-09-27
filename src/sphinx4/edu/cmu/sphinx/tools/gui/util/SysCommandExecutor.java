@@ -151,7 +151,7 @@ public class SysCommandExecutor
 		String[] envTokenArray = new String[fEnvironmentVarList.size()];
 		Iterator<EnvironmentVar> envVarIter = fEnvironmentVarList.iterator();
 		int nEnvVarIndex = 0; 
-		while (envVarIter.hasNext() == true)
+		while (envVarIter.hasNext())
 		{
 			EnvironmentVar envVar = (envVarIter.next());
 			String envVarToken = envVar.fName + '=' + envVar.fValue;
@@ -198,7 +198,7 @@ class AsyncStreamReader extends Thread
 	{		
 		BufferedReader bufOut = new BufferedReader(new InputStreamReader(fInputStream));		
 		String line = null;
-		while ( (fStop == false) && ((line = bufOut.readLine()) != null) )
+		while ( (!fStop) && ((line = bufOut.readLine()) != null) )
 		{
             fBuffer.append(line).append(fNewLine);
 		}		

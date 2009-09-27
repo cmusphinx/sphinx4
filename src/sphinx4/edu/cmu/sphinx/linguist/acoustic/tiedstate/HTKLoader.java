@@ -172,18 +172,16 @@ public class HTKLoader implements Loader {
 		unitManager = (UnitManager) ps.getComponent(PROP_UNIT_MANAGER);
 
 		String isBinary = (String) properties.get(PROP_IS_BINARY);
-		binary = isBinary != null ? Boolean.valueOf(isBinary).equals(
-				Boolean.TRUE) : ps.getBoolean(PROP_IS_BINARY);
+		binary = isBinary != null ? Boolean.valueOf(isBinary) : ps.getBoolean(PROP_IS_BINARY);
 
 		String length = (String) properties.get(PROP_VECTOR_LENGTH);
-		vectorLength = length != null ? Integer.parseInt(length) : ps
-				.getInt(PROP_VECTOR_LENGTH);
+		vectorLength = length != null ? Integer.parseInt(length) : ps.getInt(PROP_VECTOR_LENGTH);
 
 		String mdef = (String) properties.get(PROP_MODEL);
 		model = mdef != null ? mdef : ps.getString(PROP_MODEL);
 
 		tie1ph = ps.getBoolean(PROP_TIE_1PH);
-;
+
 		distFloor = ps.getFloat(PROP_MC_FLOOR);
 		mixtureWeightFloor = ps.getFloat(PROP_MW_FLOOR);
 		varianceFloor = ps.getFloat(PROP_VARIANCE_FLOOR);

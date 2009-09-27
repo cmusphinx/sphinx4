@@ -962,9 +962,7 @@ public class JSGFParser implements JSGFParserConstants {
 
 
     private boolean jj_3_1() {
-        if (jj_scan_token(29)) return true;
-        if (jj_scan_token(IDENTIFIER)) return true;
-        return false;
+        return jj_scan_token(29) || jj_scan_token(IDENTIFIER);
     }
 
 

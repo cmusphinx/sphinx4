@@ -173,7 +173,7 @@ class HMMTree {
     private void dumpTree(int level, Node node, Map<Node, Node> dupNode) {
         if (dupNode.get(node) == null) {
             dupNode.put(node, node);
-            System.out.println(Utilities.pad(level * 1) + node);
+            System.out.println(Utilities.pad(level) + node);
             if (!(node instanceof WordNode)) {
                 for (Node nextNode : node.getSuccessors()) {
                     dumpTree(level + 1, nextNode, dupNode);

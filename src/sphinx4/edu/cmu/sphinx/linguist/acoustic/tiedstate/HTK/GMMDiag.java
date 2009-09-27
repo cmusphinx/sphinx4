@@ -538,10 +538,7 @@ public class GMMDiag {
 	}
 
 	private boolean isDiff(float a, float b) {
-		if (Math.abs(1 - b / a) > 0.01) {
-			return true;
-		} else
-			return false;
+        return Math.abs(1 - b / a) > 0.01;
 	}
 
 	public String toString() {

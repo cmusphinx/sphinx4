@@ -221,15 +221,9 @@ import java.util.Set;
      * re-confirm a user action
      */
    private boolean confirmAction(String message){ 
-        int response;
-
-        response = JOptionPane.showConfirmDialog(this, message, 
+        int response = JOptionPane.showConfirmDialog(this, message,
                 "Confirm Action",JOptionPane.OK_CANCEL_OPTION);
-        if ( response == JOptionPane.OK_OPTION){
-            return true;
-        }
-        else
-            return false;
+        return response == JOptionPane.OK_OPTION;
    }
     
     /**
@@ -359,10 +353,7 @@ import java.util.Set;
                 return true;
             }
             String fname = f.getName();
-            if ( fname.toLowerCase().endsWith(".config.xml") ){
-                return true; // is a valid config file
-            }
-            return false;
+            return fname.toLowerCase().endsWith(".config.xml"); // is a valid config file
         }
         
         /**
