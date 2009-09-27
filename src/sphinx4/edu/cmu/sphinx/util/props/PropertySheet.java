@@ -18,11 +18,6 @@ public class PropertySheet implements Cloneable {
 
     public static final String COMP_LOG_LEVEL = "logLevel";
 
-    public enum PropertyType {
-
-        INT, DOUBLE, BOOL, COMP, STRING, COMPLIST
-    }
-
     private Map<String, S4PropWrapper> registeredProperties = new HashMap<String, S4PropWrapper>();
     private Map<String, Object> propValues = new HashMap<String, Object>();
 
@@ -691,15 +686,15 @@ public class PropertySheet implements Cloneable {
 
         Proxy annotation = wrapper.getAnnotation();
         if (annotation instanceof S4Component)
-            return PropertyType.COMP;
+            return PropertyType.COMPONENT;
         else if (annotation instanceof S4ComponentList)
-            return PropertyType.COMPLIST;
+            return PropertyType.COMPONENT_LIST;
         else if (annotation instanceof S4Integer)
             return PropertyType.INT;
         else if (annotation instanceof S4Double)
             return PropertyType.DOUBLE;
         else if (annotation instanceof S4Boolean)
-            return PropertyType.BOOL;
+            return PropertyType.BOOLEAN;
         else if (annotation instanceof S4String)
             return PropertyType.STRING;
         else
@@ -794,7 +789,7 @@ public class PropertySheet implements Cloneable {
 
         // make deep copy of raw-lists
         for (String regProp : ps.getRegisteredProperties()) {
-            if (getType(regProp).equals(PropertyType.COMPLIST)) {
+            if (getType(regProp) == PropertyType.COMPONENT_LIST) {
                 ps.rawProps.put(regProp, new ArrayList<String>((Collection<? extends String>) rawProps.get(regProp)));
                 ps.propValues.put(regProp, null);
             }

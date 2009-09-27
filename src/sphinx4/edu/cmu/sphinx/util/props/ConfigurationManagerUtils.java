@@ -277,7 +277,7 @@ public final class ConfigurationManagerUtils {
 
             switch (ps.getType(propName)) {
 
-                case COMPLIST:
+                case COMPONENT_LIST:
                     sb.append("\n\t\t<propertylist name=\"").append(propName).append("\">");
                     List<String> compNames = (List<String>) ps.getRawNoReplacement(propName);
                     for (String compName : compNames)
@@ -427,7 +427,7 @@ public final class ConfigurationManagerUtils {
 
                 switch (propSheet.getType(propName)) {
 
-                    case COMPLIST:
+                    case COMPONENT_LIST:
                         List<String> compNames = (List<String>) propSheet.getRawNoReplacement(propName);
                         for (int i = 0; i < compNames.size(); i++) {
                             String compName = compNames.get(i);
@@ -437,7 +437,7 @@ public final class ConfigurationManagerUtils {
                         }
 
                         break;
-                    case COMP:
+                    case COMPONENT:
                         if (propSheet.getRawNoReplacement(propName).equals(oldName)) {
                             propSheet.setRaw(propName, newName);
                         }
@@ -675,9 +675,8 @@ public final class ConfigurationManagerUtils {
         if (ps == null)
             throw new RuntimeException("Component '" + propName + "' is not registered to this system configuration '");
 
-        PropertySheet.PropertyType propType = ps.getType(propName);
-        switch (propType) {
-            case BOOL:
+        switch (ps.getType(propName)) {
+            case BOOLEAN:
                 ps.setBoolean(propName, Boolean.valueOf(propValue));
                 break;
             case DOUBLE:
@@ -689,10 +688,10 @@ public final class ConfigurationManagerUtils {
             case STRING:
                 ps.setString(propName, propValue);
                 break;
-            case COMP:
+            case COMPONENT:
                 ps.setComponent(propName, propValue, null);
                 break;
-            case COMPLIST:
+            case COMPONENT_LIST:
                 List<String> compNames = new ArrayList<String>();
                 for (String component : propValue.split(";")) {
                     compNames.add(component.trim());

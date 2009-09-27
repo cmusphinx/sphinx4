@@ -14,6 +14,8 @@
 
 package edu.cmu.sphinx.tools.gui.util;
 
+import edu.cmu.sphinx.util.props.PropertyType;
+
 /**
  * This class holds information about a <code>Configurable</code> property that 
  * is owned by a <code>Configurable</code> class. The information includes

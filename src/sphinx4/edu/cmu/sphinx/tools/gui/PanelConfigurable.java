@@ -16,7 +16,7 @@ package edu.cmu.sphinx.tools.gui;
 
 import edu.cmu.sphinx.tools.gui.util.ConfigurableComponent;
 import edu.cmu.sphinx.tools.gui.util.ConfigurableProperty;
-import edu.cmu.sphinx.tools.gui.util.PropertyType;
+import edu.cmu.sphinx.util.props.PropertyType;
 
 import javax.swing.*;
 import java.awt.*;
@@ -726,9 +726,7 @@ public class PanelConfigurable extends javax.swing.JPanel {
                 PropertyType mytype = cp.getType();
                 jTextPropType.setText((mytype==null)?null:mytype.toString());
 
-                if(mytype != null && (mytype.equals( PropertyType.COMPONENT ) ||
-                        mytype.equals(PropertyType.COMPONENT_LIST)) )
-                {
+                if (mytype == PropertyType.COMPONENT || mytype == PropertyType.COMPONENT_LIST) {
                     jLabelClassType.setVisible(true);
                     jTextClassType.setVisible(true);
                     jTextClassType.setText(cp.getClassType());

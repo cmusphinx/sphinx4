@@ -640,8 +640,7 @@ public class ModelBuilder implements GUIFileActionListener {
             if (_defval == null)
                 _defval = "";
 
-            if (_type != null &&
-                    (_type == PropertyType.COMPONENT || _type == PropertyType.COMPONENT_LIST)) {
+            if (_type == PropertyType.COMPONENT || _type == PropertyType.COMPONENT_LIST) {
                 // it's a class component type, 
                 // _classtype info should exist if it is specified in sphinx4 source code                                    
                 cp = new ConfigurableProperty
