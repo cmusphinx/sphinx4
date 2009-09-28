@@ -259,7 +259,7 @@ public class HTKLoader implements Loader {
 		logger.config("    modellName: " + model);
 		logger.config("    dataDir   : " + dataDir);
 
-		HTKstruct htkmods = new HTKstruct();
+		HTKStruct htkmods = new HTKStruct();
 		htkmods.load(MMFname);
 
 		meansPool = htkmods.htkMeans(MMFname);
@@ -513,16 +513,14 @@ public class HTKLoader implements Loader {
 	 * 
 	 * @param useCDUnits
 	 *            if true, loads also the context dependent units
-	 * @param inputStream
-	 *            the open input stream to use
+	 * @param htkmods
+	 *            the set of HTK models
 	 * @param path
 	 *            the path to a density file
-	 * @throws FileNotFoundException
-	 *             if a file cannot be found
 	 * @throws IOException
 	 *             if an error occurs while loading the data
 	 */
-	protected void loadHMMPool(boolean useCDUnits, HTKstruct htkmods,
+	protected void loadHMMPool(boolean useCDUnits, HTKStruct htkmods,
 			String path) throws IOException {
 		int numStatePerHMM;
 
@@ -906,14 +904,14 @@ public class HTKLoader implements Loader {
 		hmmManager.logInfo(logger);
 	}
 
-	class HTKstruct {
+	class HTKStruct {
 
 		HMMSet hmmsHTK;
 
-		public void load(String nom) {
+		public void load(String name) {
 			System.err.println("HTK loading...");
 			hmmsHTK = new HMMSet();
-			hmmsHTK.loadHTK(nom);
+			hmmsHTK.loadHTK(name);
 			// TODO: Is tied list useful for sphinx4
 			// hmmsHTK.loadTiedList(name + ".tiedlist");
 			System.err.println("HTK loading finished");
