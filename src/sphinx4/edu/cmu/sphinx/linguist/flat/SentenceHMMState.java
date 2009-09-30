@@ -35,6 +35,9 @@ public abstract class SentenceHMMState implements Serializable, SearchState {
     private final static int MASK_WHICH = 0xffff;
     private final static int SHIFT_WHICH = 0x8;
 
+    /** A Color is used to tag SentenceHMM nodes */
+    public static enum Color { RED, GREEN }
+
     private static int globalStateNumber = -1000;
 
     private int stateNumber;
