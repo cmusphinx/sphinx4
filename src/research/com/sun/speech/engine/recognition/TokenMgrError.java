@@ -21,53 +21,6 @@ public class TokenMgrError extends Error {
     /** Indicates the reason why the exception is thrown. It will have one of the above 4 values. */
     int errorCode;
 
-
-    /** Replaces unprintable characters by their espaced (or unicode escaped) equivalents in the given string */
-    protected static final String addEscapes(String str) {
-        StringBuilder retval = new StringBuilder();
-        char ch;
-        for (int i = 0; i < str.length(); i++) {
-            switch (str.charAt(i)) {
-                case 0:
-                    continue;
-                case '\b':
-                    retval.append("\\b");
-                    continue;
-                case '\t':
-                    retval.append("\\t");
-                    continue;
-                case '\n':
-                    retval.append("\\n");
-                    continue;
-                case '\f':
-                    retval.append("\\f");
-                    continue;
-                case '\r':
-                    retval.append("\\r");
-                    continue;
-                case '\"':
-                    retval.append("\\\"");
-                    continue;
-                case '\'':
-                    retval.append("\\\'");
-                    continue;
-                case '\\':
-                    retval.append("\\\\");
-                    continue;
-                default:
-                    if ((ch = str.charAt(i)) < 0x20 || ch > 0x7e) {
-                        String s = "0000" + Integer.toString(ch, 16);
-                        retval.append("\\u").append(s, s.length() - 4, s.length());
-                    } else {
-                        retval.append(ch);
-                    }
-                    continue;
-            }
-        }
-        return retval.toString();
-    }
-
-
     /**
      * Returns a detailed message for the Error when it is thrown by the token manager to indicate a lexical error.
      * Parameters : EOFSeen     : indicates if EOF caused the lexicl error curLexState : lexical state in which this
@@ -79,8 +32,8 @@ public class TokenMgrError extends Error {
         return ("Lexical error at line " +
                 errorLine + ", column " +
                 errorColumn + ".  Encountered: " +
-                (EOFSeen ? "<EOF> " : ('\"' + addEscapes(String.valueOf(curChar)) + '\"') + " (" + (int) curChar + "), ") +
-                "after : \"" + addEscapes(errorAfter) + '\"');
+                (EOFSeen ? "<EOF> " : ('\"' + RecognizerUtilities.addEscapes(String.valueOf(curChar)) + '\"') + " (" + (int) curChar + "), ") +
+                "after : \"" + RecognizerUtilities.addEscapes(errorAfter) + '\"');
     }
 
 

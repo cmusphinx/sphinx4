@@ -537,6 +537,54 @@ public class RecognizerUtilities {
             System.out.println("");
         }
     }
+
+    /**
+     * Replaces unprintable characters by their escaped (or unicode escaped) equivalents in the given string;
+     * used when those characters cannot be used as part of an ASCII string literal.
+     */
+    public static final String addEscapes(String str) {
+        StringBuilder retval = new StringBuilder();
+        for (int i = 0; i < str.length(); i++) {
+            char ch = str.charAt(i);
+            switch (ch) {
+                case 0:
+                    continue;
+                case '\b':
+                    retval.append("\\b");
+                    continue;
+                case '\t':
+                    retval.append("\\t");
+                    continue;
+                case '\n':
+                    retval.append("\\n");
+                    continue;
+                case '\f':
+                    retval.append("\\f");
+                    continue;
+                case '\r':
+                    retval.append("\\r");
+                    continue;
+                case '\"':
+                    retval.append("\\\"");
+                    continue;
+                case '\'':
+                    retval.append("\\\'");
+                    continue;
+                case '\\':
+                    retval.append("\\\\");
+                    continue;
+                default:
+                    if (ch < 0x20 || ch > 0x7e) {
+                        String s = "0000" + Integer.toString(ch, 16);
+                        retval.append("\\u").append(s, s.length() - 4, s.length());
+                    } else {
+                        retval.append(ch);
+                    }
+                    continue;
+            }
+        }
+        return retval.toString();
+    }
 }
 
 class RuleState {
