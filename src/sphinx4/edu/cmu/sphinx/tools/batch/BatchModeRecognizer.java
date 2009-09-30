@@ -17,7 +17,7 @@ import edu.cmu.sphinx.frontend.util.StreamCepstrumSource;
 import edu.cmu.sphinx.frontend.util.StreamDataSource;
 import edu.cmu.sphinx.frontend.util.StreamHTKCepstrum;
 import edu.cmu.sphinx.recognizer.Recognizer;
-import edu.cmu.sphinx.recognizer.RecognizerState;
+import edu.cmu.sphinx.recognizer.Recognizer.State;
 import edu.cmu.sphinx.result.Result;
 import edu.cmu.sphinx.util.*;
 import edu.cmu.sphinx.util.props.*;
@@ -520,7 +520,7 @@ public class BatchModeRecognizer implements Configurable {
             recognizer.allocate();
             ci.run();
             batchManager.stop();
-            if (recognizer.getState() == RecognizerState.READY) {
+            if (recognizer.getState() == State.READY) {
                 recognizer.deallocate();
             }
         } catch (IOException io) {

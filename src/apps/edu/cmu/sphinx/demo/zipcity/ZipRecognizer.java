@@ -12,10 +12,9 @@
 
 package edu.cmu.sphinx.demo.zipcity;
 
-
 import edu.cmu.sphinx.frontend.util.Microphone;
 import edu.cmu.sphinx.recognizer.Recognizer;
-import edu.cmu.sphinx.recognizer.RecognizerState;
+import edu.cmu.sphinx.recognizer.Recognizer.State;
 import edu.cmu.sphinx.result.Result;
 import edu.cmu.sphinx.util.props.ConfigurationManager;
 import edu.cmu.sphinx.util.props.PropertyException;
@@ -78,7 +77,7 @@ public class ZipRecognizer implements Runnable {
     /** Releases recognition resources */
     public void shutdown() {
         microphoneOff();
-        if (recognizer.getState() == RecognizerState.ALLOCATED) {
+        if (recognizer.getState() == State.ALLOCATED) {
             recognizer.deallocate();
         }
     }

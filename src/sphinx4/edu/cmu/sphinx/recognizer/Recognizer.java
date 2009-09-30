@@ -61,10 +61,12 @@ public class Recognizer implements Configurable, ResultProducer {
     @S4ComponentList(type = StateListener.class)
     public final static String PROP_MONITORS = "monitors";
 
+    /** Defines the possible states of the recognizer. */
+    public static enum State { DEALLOCATED, ALLOCATING, ALLOCATED, READY, RECOGNIZING, DEALLOCATING, ERROR }
 
     private String name;
     private Decoder decoder;
-    private RecognizerState currentState = RecognizerState.DEALLOCATED;
+    private State currentState = State.DEALLOCATED;
 
     private List<StateListener> stateListeners = Collections.synchronizedList(new ArrayList<StateListener>());
     private List monitors;
@@ -91,12 +93,12 @@ public class Recognizer implements Configurable, ResultProducer {
      */
     public Result recognize(String referenceText) throws IllegalStateException {
         Result result = null;
-        checkState(RecognizerState.READY);
+        checkState(State.READY);
         try {
-            setState(RecognizerState.RECOGNIZING);
+            setState(State.RECOGNIZING);
             result = decoder.decode(referenceText);
         } finally {
-            setState(RecognizerState.READY);
+            setState(State.READY);
         }
         return result;
     }
@@ -120,7 +122,7 @@ public class Recognizer implements Configurable, ResultProducer {
      * @param desiredState the state that the recognizer should be in
      * @throws IllegalStateException if the recognizer is not in the desired state.
      */
-    private void checkState(RecognizerState desiredState) {
+    private void checkState(State desiredState) {
         if (currentState != desiredState) {
             throw new IllegalStateException("Expected state " + desiredState
                     + " actual state " + currentState);
@@ -133,7 +135,7 @@ public class Recognizer implements Configurable, ResultProducer {
      *
      * @param newState the new state
      */
-    private void setState(RecognizerState newState) {
+    private void setState(State newState) {
         currentState = newState;
         synchronized (stateListeners) {
             for (StateListener sl : stateListeners) {
@@ -150,11 +152,11 @@ public class Recognizer implements Configurable, ResultProducer {
      * @throws IllegalStateException if the recognizer is not in the <code>DEALLOCATED</code> state
      */
     public void allocate() throws IllegalStateException {
-        checkState(RecognizerState.DEALLOCATED);
-        setState(RecognizerState.ALLOCATING);
+        checkState(State.DEALLOCATED);
+        setState(State.ALLOCATING);
         decoder.allocate();
-        setState(RecognizerState.ALLOCATED);
-        setState(RecognizerState.READY);
+        setState(State.ALLOCATED);
+        setState(State.READY);
     }
 
 
@@ -165,10 +167,10 @@ public class Recognizer implements Configurable, ResultProducer {
      * @throws IllegalStateException if the recognizer is not in the <code>ALLOCATED</code> state
      */
     public void deallocate() throws IllegalStateException {
-        checkState(RecognizerState.READY);
-        setState(RecognizerState.DEALLOCATING);
+        checkState(State.READY);
+        setState(State.DEALLOCATING);
         decoder.deallocate();
-        setState(RecognizerState.DEALLOCATED);
+        setState(State.DEALLOCATED);
     }
 
 
@@ -177,7 +179,7 @@ public class Recognizer implements Configurable, ResultProducer {
      *
      * @return the recognizer state
      */
-    public RecognizerState getState() {
+    public State getState() {
         return currentState;
     }
 

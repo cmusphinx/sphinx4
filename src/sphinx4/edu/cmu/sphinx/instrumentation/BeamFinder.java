@@ -14,7 +14,7 @@ package edu.cmu.sphinx.instrumentation;
 
 import edu.cmu.sphinx.decoder.search.Token;
 import edu.cmu.sphinx.recognizer.Recognizer;
-import edu.cmu.sphinx.recognizer.RecognizerState;
+import edu.cmu.sphinx.recognizer.Recognizer.State;
 import edu.cmu.sphinx.recognizer.StateListener;
 import edu.cmu.sphinx.result.Result;
 import edu.cmu.sphinx.decoder.ResultListener;
@@ -148,14 +148,9 @@ public class BeamFinder implements ResultListener,
         }
     }
 
-
-    /*
-    * (non-Javadoc)
-    *
-    * @see edu.cmu.sphinx.recognizer.StateListener#statusChanged(edu.cmu.sphinx.recognizer.RecognizerState)
-    */
-    public void statusChanged(RecognizerState status) {
-        if (enabled && status.equals(RecognizerState.DEALLOCATED)) {
+    @Override
+    public void statusChanged(Recognizer.State status) {
+        if (enabled && status == State.DEALLOCATED) {
             if (showSummary) {
                 showSummary();
             }

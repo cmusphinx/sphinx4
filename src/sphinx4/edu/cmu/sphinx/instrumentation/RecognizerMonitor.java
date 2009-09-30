@@ -13,7 +13,7 @@
 package edu.cmu.sphinx.instrumentation;
 
 import edu.cmu.sphinx.recognizer.Recognizer;
-import edu.cmu.sphinx.recognizer.RecognizerState;
+import edu.cmu.sphinx.recognizer.Recognizer.State;
 import edu.cmu.sphinx.recognizer.StateListener;
 import edu.cmu.sphinx.util.props.*;
 
@@ -67,17 +67,12 @@ public class RecognizerMonitor implements StateListener, Monitor {
         deallocatedMonitors = (List)ps.getComponentList(PROP_DEALLOCATED_MONITORS);
     }
 
-
-    /*
-    * (non-Javadoc)
-    *
-    * @see edu.cmu.sphinx.recognizer.StateListener#statusChanged(edu.cmu.sphinx.recognizer.RecognizerState)
-    */
-    public void statusChanged(RecognizerState status) {
+    @Override
+    public void statusChanged(Recognizer.State status) {
         List<Runnable> runnableList = null;
-        if (status == RecognizerState.ALLOCATED) {
+        if (status == State.ALLOCATED) {
             runnableList = allocatedMonitors;
-        } else if (status == RecognizerState.DEALLOCATED) {
+        } else if (status == State.DEALLOCATED) {
             runnableList = deallocatedMonitors;
         }
 
