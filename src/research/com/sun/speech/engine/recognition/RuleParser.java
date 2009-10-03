@@ -31,7 +31,11 @@ public class RuleParser {
 
     public static RuleParse parse(String inputTokens[], Recognizer R, RuleGrammar G, String ruleName) {
         List<RuleParse> list = mparse(inputTokens, R, G, ruleName);
-        return list == null ? null : list.get(0);
+        if (list != null)
+            for (RuleParse rp : list)
+                if (G.isRulePublic(rp.getRuleName().getRuleName()))
+                    return rp;
+        return null;
     }
 
     public static List<RuleParse> mparse(String text, Recognizer R, RuleGrammar G, String ruleName) {
