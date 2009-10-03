@@ -1,0 +1,82 @@
+
+\data\
+ngram 1=22
+ngram 2=38
+ngram 3=9
+
+\1-grams:
+-0.8695405	</s>
+-99	<s>	-0.09246196
+-0.8695405	[CITY]	-0.3262969
+-1.04449	[DAY-OF-WEEK]	-0.671937
+-1.805871	a	-0.2102308
+-1.122988	for	-0.8808055
+-1.514826	four	-0.2703331
+-1.805871	go	-0.1674454
+-1.805871	have	-0.2169692
+-1.805871	i	-0.2236046
+-1.805871	like	-0.1674454
+-1.805871	on	-0.1893648
+-1.514826	one	-0.2771776
+-1.122988	please	-0.5335574
+-1.342114	ticket	-0.5390565
+-1.218875	tickets	-0.7299289
+-0.8695405	to	-0.8046653
+-1.805871	tomorrow	-0.1964321
+-1.514826	two	-0.2703331
+-1.805871	want	-0.1674454
+-1.805871	we	-0.2236046
+-1.805871	would	-0.2236046
+
+\2-grams:
+-0.9579074	<s> [CITY]
+-1.339593	<s> a
+-1.339593	<s> i
+-1.339593	<s> one
+-0.9579074	<s> please
+-1.339593	<s> two
+-1.339593	<s> we
+-0.9579074	[CITY] </s>
+-1.339593	[CITY] [DAY-OF-WEEK]
+-0.3521825	[CITY] for	0
+-1.339593	[CITY] on
+-1.339593	[CITY] two
+-0.1760913	[DAY-OF-WEEK] </s>
+-0.7818162	[DAY-OF-WEEK] please	-0.07918125
+-0.3853509	a ticket
+-0.09691001	for [DAY-OF-WEEK]	0.03476211
+-1.084321	for tomorrow
+-0.304695	four tickets	0.1249388
+-0.3853509	go to
+-0.3853509	have four
+-0.3853509	i want
+-0.3853509	like to
+-0.3853509	on [DAY-OF-WEEK]
+-0.304695	one ticket	0.1249388
+-0.2218488	please </s>
+-1.084321	please four
+-1.084321	please one
+-0.1249387	ticket to	-0.1760913
+-0.9874108	tickets for
+-0.1249387	tickets to	-0.1760913
+-0.1091445	to [CITY]	-0.493827
+-1.339593	to go
+-1.339593	to have
+-0.3853509	tomorrow please
+-0.304695	two tickets
+-0.3853509	want to
+-0.3853509	we would
+-0.3853509	would like
+
+\3-grams:
+-0.544068	to [CITY] </s>
+-0.243038	to [CITY] for
+-0.1945747	for [DAY-OF-WEEK] </s>
+-0.09691001	[CITY] for [DAY-OF-WEEK]
+-0.1760913	[DAY-OF-WEEK] please </s>
+-0.1760913	one ticket to
+-0.1760913	four tickets to
+-0.06963593	ticket to [CITY]
+-0.06963593	tickets to [CITY]
+
+\end\

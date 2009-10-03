@@ -343,6 +343,19 @@ public class PropertySheet implements Cloneable {
 
 
     /**
+     * Gets a list of float numbers associated with the given parameter name
+     *
+     * @param name the parameter name
+     * @return a list of floats associated with the name.
+     * @throws InternalConfigurationException if parameters are not double values.
+     */
+    public List<String> getStringList(String name) throws InternalConfigurationException {
+        getProperty(name, S4StringList.class);
+        return (List<String>) propValues.get(name);
+    }
+    
+
+    /**
      * Gets a list of components associated with the given parameter name
      *
      * @param name the parameter name

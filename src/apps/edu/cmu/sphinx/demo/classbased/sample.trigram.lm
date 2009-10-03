@@ -1,0 +1,105 @@
+
+\data\
+ngram 1=34
+ngram 2=56
+ngram 3=2
+
+\1-grams:
+-0.8703725	</s>
+-99	<s>	-0.887899
+-1.81311	a	-0.2809295
+-1.81311	boston	-0.2942997
+-1.81311	chicago	-0.287666
+-1.81311	denver	-0.2671345
+-1.81311	detroit	-0.2381562
+-1.124481	for	-0.7434054
+-1.518514	four	-0.4501781
+-1.81311	friday	-0.2381562
+-1.81311	go	-0.2381562
+-1.81311	have	-0.287666
+-1.81311	i	-0.2942997
+-1.81311	like	-0.2381562
+-1.81311	monday	-0.2381562
+-1.518514	new-york	-0.4064593
+-1.81311	on	-0.2942997
+-1.518514	one	-0.4570208
+-1.81311	philadelphia	-0.2671345
+-1.124481	please	-0.6837384
+-1.81311	saturday	-0.2381562
+-1.81311	sunday	-0.2671345
+-1.344589	ticket	-0.5391862
+-1.220737	tickets	-0.5966741
+-0.8703725	to	-0.9277171
+-1.81311	tomorrow	-0.2671345
+-1.81311	toronto	-0.2671345
+-1.81311	tuesday	-0.2671345
+-1.518514	two	-0.4501781
+-1.81311	want	-0.2381562
+-1.81311	washington	-0.2671345
+-1.81311	we	-0.2942997
+-1.81311	wednesday	-0.2381562
+-1.81311	would	-0.2942997
+
+\2-grams:
+-1	<s> a
+-1	<s> chicago
+-1	<s> i
+-1	<s> new-york
+-1	<s> one
+-0.69897	<s> please
+-1	<s> two
+-1	<s> we
+-0.30103	a ticket
+-0.30103	boston on
+-0.30103	chicago two
+-0.30103	denver for
+-0.30103	detroit </s>
+-0.7781513	for friday
+-0.7781513	for saturday
+-0.7781513	for tomorrow
+-0.7781513	for tuesday
+-0.7781513	for wednesday
+-0.1760913	four tickets	-0.07918125
+-0.30103	friday </s>
+-0.30103	go to
+-0.30103	have four
+-0.30103	i want
+-0.30103	like to
+-0.30103	monday </s>
+-0.4771213	new-york </s>
+-0.4771213	new-york sunday
+-0.30103	on monday
+-0.1760913	one ticket	0.1249388
+-0.30103	philadelphia for
+-0.30103	please </s>
+-0.7781513	please four
+-0.7781513	please one
+-0.30103	saturday </s>
+-0.30103	sunday please
+-0.1249387	ticket to
+-0.69897	tickets for
+-0.2218488	tickets to
+-1	to boston
+-1	to denver
+-1	to detroit
+-1	to go
+-1	to have
+-1	to new-york
+-1	to philadelphia
+-1	to toronto
+-1	to washington
+-0.30103	tomorrow please
+-0.30103	toronto for
+-0.30103	tuesday please
+-0.1760913	two tickets
+-0.30103	want to
+-0.30103	washington for
+-0.30103	we would
+-0.30103	wednesday </s>
+-0.30103	would like
+
+\3-grams:
+-0.1760913	one ticket to
+-0.1760913	four tickets to
+
+\end\

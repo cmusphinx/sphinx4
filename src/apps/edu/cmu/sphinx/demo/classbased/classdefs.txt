@@ -1,0 +1,15 @@
+[DAY-OF-WEEK] monday 
+[DAY-OF-WEEK] tuesday 
+[DAY-OF-WEEK] wednesday 
+[DAY-OF-WEEK] thursday 
+[DAY-OF-WEEK] friday 
+[DAY-OF-WEEK] saturday 
+[DAY-OF-WEEK] sunday 
+[CITY] new-york
+[CITY] chicago
+[CITY] toronto
+[CITY] washington
+[CITY] denver
+[CITY] detroit
+[CITY] philadelphia
+[CITY] boston
