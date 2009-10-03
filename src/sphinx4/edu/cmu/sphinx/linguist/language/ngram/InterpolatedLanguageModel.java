@@ -1,7 +1,7 @@
 /*
  * Created on Jan 21, 2005
  */
-package edu.cmu.sphinx.linguist.language.classes;
+package edu.cmu.sphinx.linguist.language.ngram;
 
 import edu.cmu.sphinx.linguist.WordSequence;
 import edu.cmu.sphinx.linguist.language.ngram.LanguageModel;
