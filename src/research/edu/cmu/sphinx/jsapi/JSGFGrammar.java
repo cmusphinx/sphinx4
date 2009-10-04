@@ -542,8 +542,7 @@ public class JSGFGrammar extends Grammar {
             // go through each rule and create a network of GrammarNodes
             // for each of them
 
-            String[] ruleNames = ruleGrammar.listRuleNames();
-            for (String ruleName : ruleNames) {
+            for (String ruleName : ruleGrammar.listRuleNames()) {
                 if (ruleGrammar.isRulePublic(ruleName)) {
                     String fullName = getFullRuleName(ruleName);
                     GrammarGraph publicRuleGraph = new GrammarGraph();

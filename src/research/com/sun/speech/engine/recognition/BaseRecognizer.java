@@ -892,8 +892,7 @@ public class BaseRecognizer extends BaseEngine
         for (RuleGrammar grammar : G) {
             String gname = grammar.getName();
             BaseRuleGrammar JG = (BaseRuleGrammar)grammar;
-            String rnames[] = grammar.listRuleNames();
-            for (String ruleName : rnames) {
+            for (String ruleName : grammar.listRuleNames()) {
                 if (grammar.isEnabled(ruleName)) {
                     enabled.add(gname + '_' + ruleName);
                 }
@@ -963,31 +962,28 @@ public class BaseRecognizer extends BaseEngine
                                     List<RuleGrammar> grams)
             throws GrammarException, IOException {
         RuleGrammar G2 = null;
-        RuleName imports[] = G.listImports();
 
-        if (imports != null) {
-            for (RuleName ruleName : imports) {
-                //RecognizerUtilities.debugMessageOut("Checking import " +
-                //                                   imports[i].getRuleName());
-                String gname = ruleName.getFullGrammarName();
-                RuleGrammar GI = R.getRuleGrammar(gname);
+        for (RuleName ruleName : G.listImports()) {
+            //RecognizerUtilities.debugMessageOut("Checking import " +
+            //                                   imports[i].getRuleName());
+            String gname = ruleName.getFullGrammarName();
+            RuleGrammar GI = R.getRuleGrammar(gname);
 
-                if (GI == null) {
-                    URL grammarURL = gnameToURL(
-                        context, ruleName.getFullGrammarName());
-                    G2 = JSGFParser.newGrammarFromJSGF(grammarURL, R);
-                    if (G2 != null) {
-                        if (grams != null) {
-                            grams.add(G2);
-                        }
-                        if (recurse) {
-                            loadImports(R, G2, context, recurse, relo, grams);
-                        }
+            if (GI == null) {
+                URL grammarURL = gnameToURL(
+                    context, ruleName.getFullGrammarName());
+                G2 = JSGFParser.newGrammarFromJSGF(grammarURL, R);
+                if (G2 != null) {
+                    if (grams != null) {
+                        grams.add(G2);
+                    }
+                    if (recurse) {
+                        loadImports(R, G2, context, recurse, relo, grams);
                     }
                 }
             }
-            loadFullQualifiedRules(R, G, context, recurse, relo, grams);
         }
+        loadFullQualifiedRules(R, G, context, recurse, relo, grams);
     }
 
 
@@ -1011,9 +1007,8 @@ public class BaseRecognizer extends BaseEngine
             boolean relo,
             List<RuleGrammar> grams) throws GrammarException, IOException {
 
-        String[] ruleNames = g.listRuleNames();
         //go through every rule
-        for (String ruleName : ruleNames) {
+        for (String ruleName : g.listRuleNames()) {
             String rule = g.getRuleInternal(ruleName).toString();
             //check for rule-Tokens
             int index = 0;

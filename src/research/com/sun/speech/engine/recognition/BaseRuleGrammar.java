@@ -23,7 +23,6 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar, Seriali
 
     protected final Map<String, Collection<String>> ruleTags = new HashMap<String, Collection<String>>();
 
-
     /**
      * Create a new BaseRuleGrammar
      *
@@ -34,7 +33,6 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar, Seriali
         super(R, name);
     }
 
-
     /**
      * Set the enabled property of the Grammar. From javax.speech.recognition.Grammar.
      *
@@ -42,29 +40,16 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar, Seriali
      */
     public void setEnabled(boolean enabled) {
         super.setEnabled(enabled);
-        if (rules == null) {
-            return;
-        }
         for (GRule g : rules.values())
 //            if (g.isPublic) {
             g.isEnabled = enabled;
 //            }
     }
-//////////////////////
-// End overridden Grammar Methods
-//////////////////////
-
-//////////////////////
-// Begin RuleGrammar Methods
-
-    //////////////////////
-
 
     /** Parse partial JSGF text to a Rule object. From javax.speech.recognition.RuleGrammar. */
     public Rule ruleForJSGF(String text) {
         return JSGFParser.ruleForJSGF(text);
     }
-
 
     /**
      * Set a rule in the grammar either by creating a new rule or updating an existing rule.
@@ -85,10 +70,22 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar, Seriali
         r.isPublic = isPublic;
         r.isEnabled = false;
         r.hasChanged = true;
-        rules.put(stripRuleName(ruleName), r);
+        rules.put(r.ruleName, r);
         grammarChanged = true;
     }
 
+    /** Gets the GRule with the given name after it has been stripped, or null if it is unknown. */
+    private GRule getGRule(String ruleName) {
+        return rules.get(stripRuleName(ruleName));
+    }
+
+    /** Gets the GRule with the given name after it has been stripped, or throws an Exception if it is unknown. */
+    private GRule getKnownGRule(String ruleName) {
+        GRule r = getGRule(ruleName);
+        if (r == null)
+            throw new IllegalArgumentException("Unknown Rule: " + ruleName);
+        return r;
+    }
 
     /**
      * Return a copy of the data structure for the named rule. From javax.speech.recognition.RuleGrammar.
@@ -96,13 +93,9 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar, Seriali
      * @param ruleName the name of the rule.
      */
     public Rule getRule(String ruleName) {
-        GRule r = rules.get(stripRuleName(ruleName));
-        if (r == null) {
-            return null;
-        }
-        return r.rule.copy();
+        GRule r = getGRule(ruleName);
+        return r == null ? null : r.rule.copy();
     }
-
 
     /**
      * Return the data structure for the named rule. From javax.speech.recognition.RuleGrammar.
@@ -110,13 +103,9 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar, Seriali
      * @param ruleName the name of the rule.
      */
     public Rule getRuleInternal(String ruleName) {
-        GRule r = rules.get(stripRuleName(ruleName));
-        if (r == null) {
-            return null;
-        }
-        return r.rule;
+        GRule r = getGRule(ruleName);
+        return r == null ? null : r.rule;
     }
-
 
     /**
      * Test whether the specified rule is public. From javax.speech.recognition.RuleGrammar.
@@ -125,27 +114,13 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar, Seriali
      */
     public boolean isRulePublic(String ruleName)
             throws IllegalArgumentException {
-        GRule r = rules.get(stripRuleName(ruleName));
-        if (r == null) {
-            throw new IllegalArgumentException("Unknown Rule: " + ruleName);
-        } else {
-            return r.isPublic;
-        }
+        return getKnownGRule(ruleName).isPublic;
     }
-
 
     /** List the names of all rules define in this Grammar. From javax.speech.recognition.RuleGrammar. */
     public String[] listRuleNames() {
-        if (rules == null) {
-            return new String[0];
-        }
-        String[] rn = new String[rules.size()];
-        int i = 0;
-        for (GRule g : rules.values())
-            rn[i++] = g.ruleName;
-        return rn;
+        return rules.keySet().toArray(new String[rules.size()]);
     }
-
 
     /**
      * Delete a rule from the grammar. From javax.speech.recognition.RuleGrammar.
@@ -153,15 +128,9 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar, Seriali
      * @param ruleName the name of the rule.
      */
     public void deleteRule(String ruleName) throws IllegalArgumentException {
-        GRule r = rules.get(stripRuleName(ruleName));
-        if (r == null) {
-            throw new IllegalArgumentException("Unknown Rule: " + ruleName);
-        } else {
-            rules.remove(ruleName);
-        }
+        rules.remove(getKnownGRule(ruleName).ruleName);
         grammarChanged = true;
     }
-
 
     /**
      * Set the enabled state of the listed rule. From javax.speech.recognition.RuleGrammar.
@@ -170,15 +139,12 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar, Seriali
      * @param enabled  the new enabled state.
      */
     public void setEnabled(String ruleName, boolean enabled) throws IllegalArgumentException {
-        GRule r = rules.get(stripRuleName(ruleName));
-        if (r == null) {
-            throw new IllegalArgumentException("Unknown Rule: " + ruleName);
-        } else if (r.isEnabled != enabled) {
+        GRule r = getKnownGRule(ruleName);
+        if (r.isEnabled != enabled) {
             r.isEnabled = enabled;
             //sjagrammarChanged=true;
         }
     }
-
 
     /**
      * Set the enabled state of the listed rules. From javax.speech.recognition.RuleGrammar.
@@ -187,17 +153,9 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar, Seriali
      * @param enabled   the new enabled state.
      */
     public void setEnabled(String[] ruleNames, boolean enabled) throws IllegalArgumentException {
-        for (String ruleName : ruleNames) {
-            GRule r = rules.get(stripRuleName(ruleName));
-            if (r == null) {
-                throw new IllegalArgumentException("Unknown Rule: " + ruleName);
-            } else if (r.isEnabled != enabled) {
-                r.isEnabled = enabled;
-                //sjagrammarChanged=true;
-            }
-        }
+        for (String ruleName : ruleNames)
+            setEnabled(ruleName, enabled);
     }
-
 
     /**
      * Return enabled state of rule. From javax.speech.recognition.RuleGrammar.
@@ -205,14 +163,8 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar, Seriali
      * @param ruleName the name of the rule.
      */
     public boolean isEnabled(String ruleName) throws IllegalArgumentException {
-        GRule r = rules.get(stripRuleName(ruleName));
-        if (r == null) {
-            throw new IllegalArgumentException("Unknown Rule: " + ruleName);
-        } else {
-            return r.isEnabled;
-        }
+        return getKnownGRule(ruleName).isEnabled;
     }
-
 
     /**
      * Resolve a simple or qualified rulename as a full rulename. From javax.speech.recognition.RuleGrammar.
@@ -229,8 +181,7 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar, Seriali
 
         // Check for badly formed RuleName
         if (packageName != null && grammarName == null) {
-            throw new GrammarException("Error: badly formed rulename " + rn,
-                    null);
+            throw new GrammarException("Error: badly formed rulename " + rn, null);
         }
 
         if (name.getSimpleRuleName().equals("NULL")) {
@@ -267,20 +218,10 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar, Seriali
         // Get list of imports
         // Add local grammar to simply the case of checking for
         // a qualified or fully-qualified local reference.
-        RuleName imports[] = listImports();
-
-        if (imports == null) {
-            imports = new RuleName[1];
-            imports[0] = new RuleName(getName() + ".*");
-        } else {
-            RuleName[] tmp = new RuleName[imports.length + 1];
-            System.arraycopy(imports, 0, tmp, 0, imports.length);
-            tmp[imports.length] = new RuleName(getName() + ".*");
-            imports = tmp;
-        }
+        List<RuleName> imports = new ArrayList<RuleName>(this.imports);
+        imports.add(new RuleName(getName() + ".*"));
 
         // Check each import statement for a possible match
-        //
         for (RuleName ruleName : imports) {
             // TO-DO: update for JSAPI 1.0
             String iSimpleName = ruleName.getSimpleRuleName();
@@ -290,15 +231,13 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar, Seriali
 
             // Check for badly formed import name
             if (iFullGrammarName == null)
-                throw new GrammarException("Error: badly formed import " +
-                    ruleName, null);
+                throw new GrammarException("Error: badly formed import " + ruleName, null);
 
             // Get the imported grammar
             RuleGrammar gref = myRec.getRuleGrammar(iFullGrammarName);
             if (gref == null) {
                 RecognizerUtilities.debugMessageOut(
-                    "Warning: import of unknown grammar " +
-                        ruleName + " in " + getName());
+                        "Warning: import of unknown grammar " + ruleName + " in " + getName());
                 continue;
             }
 
@@ -306,8 +245,7 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar, Seriali
             if (!iSimpleName.equals("*")
                 && gref.getRule(iSimpleName) == null) {
                 RecognizerUtilities.debugMessageOut(
-                    "Warning: import of undefined rule " +
-                        ruleName + " in " + getName());
+                        "Warning: import of undefined rule " + ruleName + " in " + getName());
                 continue;
             }
 
@@ -338,7 +276,7 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar, Seriali
                 }
             }
 
-            // If we get here and rn is qualified or fully-qualified 
+            // If we get here and rn is qualified or fully-qualified
             // then the match failed - try the next import statement
             if (fullGrammarName != null) {
                 continue;
@@ -364,26 +302,21 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar, Seriali
             }
         }
 
-        //
         // The return behavior depends upon number of matches
-        //
-        if (matches.isEmpty()) {
-            // Return null if rulename is unresolvable
-            return null;
-        } else if (matches.size() > 1) {
-            // Throw exception if ambiguous reference
-            StringBuilder b = new StringBuilder();
-            b.append("Warning: ambiguous reference ").append(rn).append(" in ").append(getName()).append(" to ");
-            for (RuleName tmp : matches)
-                b.append(tmp).append(" and ");
-            b.setLength(b.length() - 5);
-            throw new GrammarException(b.toString(), null);
-        } else {
-            // Return successfully
-            return matches.get(0);
+        switch (matches.size()) {
+            case 0: // Return null if rulename is unresolvable
+                return null;
+            case 1: // Return successfully
+                return matches.get(0);
+            default: // Throw exception if ambiguous reference
+                StringBuilder b = new StringBuilder();
+                b.append("Warning: ambiguous reference ").append(rn).append(" in ").append(getName()).append(" to ");
+                for (RuleName tmp : matches)
+                    b.append(tmp).append(" and ");
+                b.setLength(b.length() - 5);
+                throw new GrammarException(b.toString(), null);
         }
     }
-
 
     /**
      * Import all rules or a specified rule from another grammar. From javax.speech.recognition.RuleGrammar.
@@ -396,7 +329,6 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar, Seriali
             grammarChanged = true;
         }
     }
-
 
     /**
      * Remove an import. From javax.speech.recognition.RuleGrammar.
@@ -411,15 +343,10 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar, Seriali
         }
     }
 
-
     /** List the current imports. From javax.speech.recognition.RuleGrammar. */
     public RuleName[] listImports() {
-        if (imports == null) {
-            return new RuleName[0];
-        }
         return imports.toArray(new RuleName[imports.size()]);
     }
-
 
     /**
      * Parse the text string against the specified rule. Uses the RuleParser class. From
@@ -429,12 +356,8 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar, Seriali
      * @param ruleName the name of rule to use for parsing.
      */
     public RuleParse parse(String text, String ruleName) throws GrammarException {
-        if (ruleName != null) {
-            ruleName = stripRuleName(ruleName);
-        }
-        return RuleParser.parse(text, myRec, this, ruleName);
+        return RuleParser.parse(text, myRec, this, ruleName == null ? ruleName : stripRuleName(ruleName));
     }
-
 
     /**
      * Parse the tokens string against the specified rule. Uses the RuleParser class. From
@@ -444,12 +367,8 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar, Seriali
      * @param ruleName the name of rule to use for parsing.
      */
     public RuleParse parse(String tokens[], String ruleName) throws GrammarException {
-        if (ruleName != null) {
-            ruleName = stripRuleName(ruleName);
-        }
-        return RuleParser.parse(tokens, myRec, this, ruleName);
+        return RuleParser.parse(tokens, myRec, this, ruleName == null ? ruleName : stripRuleName(ruleName));
     }
-
 
     /**
      * Parse the nth best result of a FinalRuleResult against the specified rule. Uses the RuleParser class. From
@@ -474,41 +393,29 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar, Seriali
         }
     }
 
-
     /**
      * Returns a string containing the specification for this grammar.
      *
      * @return specification for this grammar.
      */
     public String toString() {
-        StringBuilder str = new StringBuilder();
-        str.append("#JSGF V1.0;");
-        str.append(LINE_SEPARATOR);
-        str.append(LINE_SEPARATOR);
-        str.append("grammar ");
-        str.append(getName());
-        str.append(';');
-        str.append(LINE_SEPARATOR);
-        str.append(LINE_SEPARATOR);
+        StringBuilder sb = new StringBuilder();
+        sb.append("#JSGF V1.0;").append(LINE_SEPARATOR);
+        sb.append(LINE_SEPARATOR);
+        sb.append("grammar ").append(getName()).append(';').append(LINE_SEPARATOR);
+        sb.append(LINE_SEPARATOR);
         for (GRule entry : rules.values()) {
             if (entry.isPublic) {
-                str.append("public ");
+                sb.append("public ");
             }
-            str.append('<');
-            str.append(entry.ruleName);
-            str.append("> = ");
-            Rule rule = entry.rule;
-            str.append(rule);
-            str.append(';');
-            str.append(LINE_SEPARATOR);
+            sb.append('<').append(entry.ruleName).append("> = ").append(entry.rule).append(';').append(LINE_SEPARATOR);
         }
-        return str.toString();
+        return sb.toString();
     }
-
 
     /** Marked a rulename as changed. */
     protected void setRuleChanged(String ruleName, boolean x) {
-        GRule r = rules.get(stripRuleName(ruleName));
+        GRule r = getGRule(ruleName);
         if (r == null) {
             return;
         }
@@ -516,34 +423,26 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar, Seriali
         grammarChanged = true;
     }
 
-
     /** Resolve and linkup all rule references contained in all rules. */
     protected void resolveAllRules()
             throws GrammarException {
         StringBuilder b = new StringBuilder();
 
         // First make sure that all imports are resolvable
-        RuleName imports[] = listImports();
-
-        if (imports != null) {
-            for (RuleName ruleName : imports) {
-                String gname = ruleName.getFullGrammarName();
-                RuleGrammar GI = myRec.getRuleGrammar(gname);
-                if (GI == null) {
-                    b.append("Undefined grammar ").append(gname).append(" imported in ").append(getName()).append('\n');
-                }
+        for (RuleName ruleName : imports) {
+            String gname = ruleName.getFullGrammarName();
+            RuleGrammar GI = myRec.getRuleGrammar(gname);
+            if (GI == null) {
+                b.append("Undefined grammar ").append(gname).append(" imported in ").append(getName()).append('\n');
             }
         }
         if (b.length() > 0) {
             throw new GrammarException(b.toString(), null);
         }
 
-        String rn[] = listRuleNames();
-        for (String s : rn) {
-            resolveRule(getRuleInternal(s));
-        }
+        for (GRule r : rules.values())
+            resolveRule(r.rule);
     }
-
 
     /** Resolve the given rule. */
     protected void resolveRule(Rule r)
@@ -554,26 +453,21 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar, Seriali
         }
 
         if (r instanceof RuleAlternatives) {
-            RuleAlternatives ra = (RuleAlternatives) r;
-            Rule array[] = ra.getRules();
-            for (Rule rule : array) {
+            for (Rule rule : ((RuleAlternatives)r).getRules()) {
                 resolveRule(rule);
             }
             return;
         }
 
         if (r instanceof RuleSequence) {
-            RuleSequence rs = (RuleSequence) r;
-            Rule array[] = rs.getRules();
-            for (Rule rule : array) {
+            for (Rule rule : ((RuleSequence)r).getRules()) {
                 resolveRule(rule);
             }
             return;
         }
 
         if (r instanceof RuleCount) {
-            RuleCount rc = (RuleCount) r;
-            resolveRule(rc.getRule());
+            resolveRule(((RuleCount)r).getRule());
             return;
         }
 
@@ -581,12 +475,15 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar, Seriali
             RuleTag rt = (RuleTag) r;
 
             Rule rule = rt.getRule();
+            String ruleStr = rule.toString();
 
             // add the tag the tag-table
-            if (!ruleTags.containsKey(rule.toString()))
-                ruleTags.put(rule.toString(), new HashSet<String>());
-
-            ruleTags.get(rule.toString()).add(rt.getTag());
+            Collection<String> tags = ruleTags.get(ruleStr);
+            if (tags == null) {
+                tags = new HashSet<String>();
+                ruleTags.put(ruleStr, tags);
+            }
+            tags.add(rt.getTag());
 
             resolveRule(rule);
             return;
@@ -610,7 +507,6 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar, Seriali
         throw new GrammarException("Unknown rule type", null);
     }
 
-
     /** Add a rule as imported. */
     protected void setRuleIsImported(String simpleName) {
         if (!importedRules.contains(simpleName)) {
@@ -618,22 +514,16 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar, Seriali
         }
     }
 
-
     /** Returns the jsgf tags associated to the given rule. Cf.  jsgf-specification for details. */
     public Collection<String> getJSGFTags(String ruleName) {
         return ruleTags.get(ruleName);
     }
 
-
     /** See if a rule has changed. */
     protected boolean isRuleChanged(String ruleName) {
-        GRule r = rules.get(stripRuleName(ruleName));
-        if (r == null) {
-            return false;
-        }
-        return r.hasChanged;
+        GRule r = getGRule(ruleName);
+        return r == null ? false : r.hasChanged;
     }
-
 
     /** Storage for documentation comments for rules for jsgfdoc. */
     Properties ruleDocComments = new Properties();
@@ -644,46 +534,39 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar, Seriali
     /** Storage for documentation comments for the grammar for jsgfdoc. */
     String grammarDocComment;
 
-
-    /** Add a new RuleGrammar comment. */
+             /** Add a new RuleGrammar comment. */
     void addRuleDocComment(String rname, String comment) {
         ruleDocComments.put(rname, comment);
     }
-
 
     /** Retrieve a RuleGrammar comment. */
     public String getRuleDocComment(String rname) {
         return ruleDocComments.getProperty(rname, null);
     }
 
-
     /** Add a new import comment. */
     void addImportDocComment(RuleName imp, String comment) {
         importDocComments.put(imp.toString(), comment);
     }
-
 
     /** Retrieve an import comment. */
     public String getImportDocComment(RuleName imp) {
         return importDocComments.getProperty(imp.toString(), null);
     }
 
-
     /** Add the Grammar comment. */
     void addGrammarDocComment(String comment) {
         grammarDocComment = comment;
     }
-
 
     /** Retrieve the Grammar comment. */
     public String getGrammarDocComment() {
         return grammarDocComment;
     }
 
-
     /** annote the specified rule with its line number from the source file. This is used for debugging purposes. */
-    void setSourceLine(String rname, int i) {
-        GRule r = rules.get(stripRuleName(rname));
+    void setSourceLine(String ruleName, int i) {
+        GRule r = getGRule(ruleName);
         /* TODO : exception */
         if (r == null) {
             return;
@@ -691,21 +574,16 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar, Seriali
         r.lineno = i;
     }
 
-
     /** get the line number in the source file for the specified rule name */
-    public int getSourceLine(String rname) {
-        GRule r = rules.get(stripRuleName(rname));
+    public int getSourceLine(String ruleName) {
+        GRule r = getGRule(ruleName);
         /* TODO : exception */
-        if (r == null) {
-            return 0;
-        }
-        return r.lineno;
+        return r == null ? 0 : r.lineno;
     }
 
-
     /** add a sample sentence to the list of sample sentences that go with the specified rule */
-    void addSampleSentence(String rname, String sample) {
-        GRule r = rules.get(stripRuleName(rname));
+    void addSampleSentence(String ruleName, String sample) {
+        GRule r = getGRule(ruleName);
         /* TODO : exception */
         if (r == null) {
             return;
@@ -713,10 +591,9 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar, Seriali
         r.samples.add(sample);
     }
 
-
     /** add a sample sentence to the list of sample sentences that go with the specified rule */
-    void setSampleSentences(String rname, List<String> samps) {
-        GRule r = rules.get(stripRuleName(rname));
+    void setSampleSentences(String ruleName, List<String> samps) {
+        GRule r = getGRule(ruleName);
         /* TODO : exception */
         if (r == null) {
             return;
@@ -724,35 +601,22 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar, Seriali
         r.samples = samps;
     }
 
-
     /** get the list of sample sentences that go with the specified rule */
-    public List<String> getSampleSentences(String rname) {
-        GRule r = rules.get(stripRuleName(rname));
-        if (r == null) {
-            return null;
-        }
-        return r.samples;
+    public List<String> getSampleSentences(String ruleName) {
+        GRule r = getGRule(ruleName);
+        return r == null ? null : r.samples;
     }
-
 
     /** Non-JSAPI method returns a unique 32-bit id for the specified rule */
-    public int getRuleID(String rname) {
-        GRule r = rules.get(stripRuleName(rname));
-        if (r == null) {
-            return -1;
-        }
-        return r.hashCode();
+    public int getRuleID(String ruleName) {
+        GRule r = getGRule(ruleName);
+        return r == null ? -1 : r.hashCode();
     }
-
 
     /** Remove a pair of leading/trailing angle brackets . */
     protected String stripRuleName(String n) {
-        if (n.startsWith("<") && n.endsWith(">")) {
-            return n.substring(1, n.length() - 1);
-        }
-        return n;
+        return n.startsWith("<") && n.endsWith(">") ? n.substring(1, n.length() - 1) : n;
     }
-
 
     /** Internal class used to hold rules and their attributes */
     class GRule implements Serializable {

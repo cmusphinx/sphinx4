@@ -276,12 +276,9 @@ class MyMusicBehavior extends MyBehavior {
      * @param rg the rule grammar to dump
      */
     private void dumpGrammar(RuleGrammar rg) {
-        String[] ruleNames = rg.listRuleNames();
-
-        for (String ruleName : ruleNames) {
+        for (String ruleName : rg.listRuleNames()) {
             String enabled = rg.isEnabled(ruleName) ? "ON" : "OFF";
-            System.out.println("Rule: " + ruleName + ' ' +
-                rg.getRule(ruleName) + ' ' + enabled);
+            System.out.println("Rule: " + ruleName + ' ' + rg.getRule(ruleName) + ' ' + enabled);
         }
     }
 }
