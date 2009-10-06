@@ -30,6 +30,14 @@ public class LDA extends BaseDataProcessor {
 	int rows;
 	int values;
 
+    public LDA( Loader loader ) {
+        initLogger();
+        init(loader);
+    }
+
+    public LDA() {        
+    }
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -40,21 +48,25 @@ public class LDA extends BaseDataProcessor {
 	public void newProperties(PropertySheet ps) throws PropertyException {
 		super.newProperties(ps);
 		
-		loader = (Loader)ps.getComponent(PROP_LOADER);
-		
+		init( (Loader)ps.getComponent(PROP_LOADER) );
+	}
+
+    private void init(Loader loader) {
+        this.loader = loader;
+
 		try {
 			loader.load();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		transformMatrix = loader.getTransformMatrix();
-		
+		this.transformMatrix = loader.getTransformMatrix();
+
 		if (transformMatrix == null)
 			throw new RuntimeException("Model doesn't include transformation matrix");
-	                
-		rows = transformMatrix.length;
-		values = transformMatrix[0].length;
-	}
+
+		this.rows = transformMatrix.length;
+		this.values = transformMatrix[0].length;
+    }
 
 	/**
 	 * Returns the next Data object being processed by this LDA, or if it is a

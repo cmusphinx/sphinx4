@@ -24,6 +24,11 @@ public class Dither extends BaseDataProcessor {
 
 	Random random;
 
+    public Dither() {
+        initLogger();
+        this.random = new Random(0);
+    }
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -33,7 +38,6 @@ public class Dither extends BaseDataProcessor {
 	 */
 	public void newProperties(PropertySheet ps) throws PropertyException {
 		super.newProperties(ps);
-		random = new Random(0);
 	}
 
 	/**

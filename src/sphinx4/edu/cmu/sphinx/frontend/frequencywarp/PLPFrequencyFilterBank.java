@@ -57,6 +57,16 @@ public class PLPFrequencyFilterBank extends BaseDataProcessor {
     private double[] equalLoudnessScaling;
 
 
+    public PLPFrequencyFilterBank(double minFreq, double maxFreq, int numberFilters) {
+        initLogger();
+        this.minFreq = minFreq;
+        this.maxFreq = maxFreq;
+        this.numberFilters = numberFilters;
+    }
+
+    public PLPFrequencyFilterBank() {
+    }
+    
     /*
     * (non-Javadoc)
     *

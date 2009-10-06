@@ -1,6 +1,7 @@
 package edu.cmu.sphinx.frontend.util;
 
 import edu.cmu.sphinx.util.ReferenceSource;
+import edu.cmu.sphinx.util.props.Configurable;
 
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
@@ -31,6 +32,14 @@ public class ConcatAudioFileDataSource extends AudioFileDataSource implements Re
     private boolean isInitialized;
 
     List<URL> batchFiles;
+
+    public ConcatAudioFileDataSource(int bytesPerRead, List<? extends Configurable> listeners) {
+        super(bytesPerRead,listeners);
+    }
+
+    public ConcatAudioFileDataSource() {
+
+    }
 
     /** Initializes a ConcatFileDataSource. */
     public void initialize() {

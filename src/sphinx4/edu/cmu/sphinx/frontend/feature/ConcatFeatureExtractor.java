@@ -24,6 +24,17 @@ import edu.cmu.sphinx.frontend.*;
 public class ConcatFeatureExtractor extends AbstractFeatureExtractor {
 
     /**
+     *
+     * @param window
+     */
+    public ConcatFeatureExtractor( int window ) {
+        super(window);
+    }
+
+    public ConcatFeatureExtractor( ) {
+    }
+
+    /**
      * Computes the next feature. Advances the pointers as well.
      *
      * @return the feature Data computed

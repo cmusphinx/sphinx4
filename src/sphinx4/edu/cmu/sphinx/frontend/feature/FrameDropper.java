@@ -43,24 +43,38 @@ public class FrameDropper extends BaseDataProcessor {
     private int dropEveryNthFrame;
     private int id;   // first frame has ID "0", second "1", etc.
 
+    /**
+     *
+     * @param dropEveryNthFrame
+     * @param replaceNthWithPrevious
+     */
+    public FrameDropper( int dropEveryNthFrame, boolean replaceNthWithPrevious ) {
+        initLogger();
+        initVars( dropEveryNthFrame, replaceNthWithPrevious);
+    }
 
-    /*
+    public FrameDropper( ) {
+    }
+
+   /*
     * (non-Javadoc)
     *
     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
     */
     public void newProperties(PropertySheet ps) throws PropertyException {
         super.newProperties(ps);
-        dropEveryNthFrame = ps.getInt(PROP_DROP_EVERY_NTH_FRAME);
+        initVars( ps.getInt(PROP_DROP_EVERY_NTH_FRAME), ps.getBoolean(PROP_REPLACE_NTH_WITH_PREVIOUS));
+    }
 
+    protected void initVars( int dropEveryNthFrame, boolean replaceNthWithPrevious ) {
+        this.dropEveryNthFrame = dropEveryNthFrame;
         if (dropEveryNthFrame <= 1) {
             throw new IllegalArgumentException(PROP_DROP_EVERY_NTH_FRAME +
                     "must be greater than one");
         }
 
-        replaceNthWithPrevious = ps.getBoolean(PROP_REPLACE_NTH_WITH_PREVIOUS);
+        this.replaceNthWithPrevious = replaceNthWithPrevious;
     }
-
 
     /** Initializes this FrameDropper. */
     public void initialize() {

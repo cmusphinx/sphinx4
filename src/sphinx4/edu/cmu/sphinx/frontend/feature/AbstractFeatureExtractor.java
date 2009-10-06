@@ -38,6 +38,18 @@ public abstract class AbstractFeatureExtractor extends BaseDataProcessor {
     protected int cepstraBufferSize;
     protected DoubleData[] cepstraBuffer;
 
+    /**
+     * 
+     * @param window
+     */
+    public AbstractFeatureExtractor( int window ) {
+        initLogger();
+        this.window = window;
+    }
+
+    public AbstractFeatureExtractor() {
+    }
+
     /*
     * (non-Javadoc)
     *

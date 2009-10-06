@@ -81,6 +81,16 @@ public class RaisedCosineWindower extends BaseDataProcessor {
     private long currentFirstSampleNumber;
     private int sampleRate;
 
+    public RaisedCosineWindower( double alpha, float windowSizeInMs, float windowShiftInMs ) {
+        initLogger();
+        this.alpha = alpha;
+        this.windowSizeInMs = windowSizeInMs;
+        this.windowShiftInMs = windowShiftInMs;
+    }
+
+    public RaisedCosineWindower( ) {
+
+    }
 
     @Override
     public void newProperties(PropertySheet ps) throws PropertyException {

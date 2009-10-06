@@ -49,6 +49,9 @@ public class BatchCMN extends BaseDataProcessor {
     private List<Data> cepstraList;
     private int numberDataCepstra;
 
+    public BatchCMN() {
+        initLogger();
+    }
 
     /* (non-Javadoc)
      * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)

@@ -53,6 +53,15 @@ public class PLPCepstrumProducer extends BaseDataProcessor {
     private int numberPLPFilters;   // number of PLP filters
     private double[][] cosine;
 
+    public PLPCepstrumProducer(int numberPLPFilters,int cepstrumSize,int LPCOrder) {
+        initLogger();
+        this.numberPLPFilters = numberPLPFilters;
+        this.cepstrumSize = cepstrumSize;
+        this.LPCOrder = LPCOrder;
+    }
+
+    public PLPCepstrumProducer() {
+    }
 
     /*
     * (non-Javadoc)

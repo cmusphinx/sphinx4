@@ -46,6 +46,15 @@ public class Preemphasizer extends BaseDataProcessor {
     private double preemphasisFactor;
     private double prior;
 
+    public Preemphasizer( double preemphasisFactor ) {
+        initLogger();
+        this.preemphasisFactor = preemphasisFactor;
+    }
+
+    public Preemphasizer( ) {
+
+    }
+
 
     /*
     * (non-Javadoc)

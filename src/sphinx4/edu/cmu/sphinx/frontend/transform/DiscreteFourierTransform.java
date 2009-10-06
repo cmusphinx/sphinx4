@@ -77,10 +77,17 @@ public class DiscreteFourierTransform extends BaseDataProcessor {
     private Complex weightFftTimesFrom2;
     private Complex tempComplex;
 
-    private Logger logger;
+    public DiscreteFourierTransform( int numberFftPoints, boolean invert ) {
+        initLogger();
+        this.numberFftPoints = numberFftPoints;
+        this.isNumberFftPointsSet = (numberFftPoints != -1);
+        this.invert = invert;
+    }
 
+    public DiscreteFourierTransform() {
+    }
 
-    /*
+   /*
     * (non-Javadoc)
     *
     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)

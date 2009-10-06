@@ -15,6 +15,9 @@ public class AudioContinuityTester extends BaseDataProcessor {
 
     long lastSampleNum = -1;
 
+    public AudioContinuityTester() {
+        initLogger();
+    }
 
     public Data getData() throws DataProcessingException {
         Data d = getPredecessor().getData();

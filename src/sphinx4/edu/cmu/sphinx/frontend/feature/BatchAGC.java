@@ -26,6 +26,10 @@ public class BatchAGC extends BaseDataProcessor {
     private List<Data> cepstraList;
     private double agc;
 
+    public BatchAGC() {
+        initLogger();
+    }
+
     /* (non-Javadoc)
      * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
      */

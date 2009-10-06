@@ -88,6 +88,16 @@ public class MelFrequencyFilterBank extends BaseDataProcessor {
     private MelFilter[] filter;
 
 
+    public void MelFrequencyFilterBank(double minFreq, double maxFreq, int numberFilters) {
+        initLogger();
+        this.minFreq = minFreq;
+        this.maxFreq = maxFreq;
+        this.numberFilters = numberFilters;
+    }
+
+    public void MelFrequencyFilterBank() {
+    }
+
     /*
     * (non-Javadoc)
     *

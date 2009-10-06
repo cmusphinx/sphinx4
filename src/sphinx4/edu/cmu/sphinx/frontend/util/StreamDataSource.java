@@ -60,7 +60,15 @@ public class StreamDataSource extends BaseDataProcessor {
     private boolean utteranceStarted;
     protected int bitsPerSample;
 
+    public StreamDataSource(int sampleRate, int bytesPerRead, int bitsPerSample, boolean bigEndian, boolean signedData ) {
+        initLogger();
+        init(sampleRate,bytesPerRead,bitsPerSample,bigEndian,signedData );
+    }
 
+    public StreamDataSource() {
+
+    }
+    
     /*
     * (non-Javadoc)
     *
@@ -68,20 +76,24 @@ public class StreamDataSource extends BaseDataProcessor {
     */
     public void newProperties(PropertySheet ps) throws PropertyException {
         super.newProperties(ps);
-        sampleRate = ps.getInt(PROP_SAMPLE_RATE);
-        bytesPerRead = ps.getInt(PROP_BYTES_PER_READ);
-        bitsPerSample = ps.getInt(PROP_BITS_PER_SAMPLE);
+        init(ps.getInt(PROP_SAMPLE_RATE), ps.getInt(PROP_BYTES_PER_READ), ps.getInt(PROP_BITS_PER_SAMPLE), ps.getBoolean(PROP_BIG_ENDIAN_DATA), ps.getBoolean(PROP_SIGNED_DATA) );
+    }
 
-        if (bitsPerSample % 8 != 0) {
+    private void init(int sampleRate, int bytesPerRead, int bitsPerSample, boolean bigEndian, boolean signedData ) {
+        this.sampleRate = sampleRate;
+        this.bytesPerRead = bytesPerRead;
+        this.bitsPerSample = bitsPerSample;
+
+        if (this.bitsPerSample % 8 != 0) {
             throw new Error("StreamDataSource: bits per sample must be a " +
                     "multiple of 8.");
         }
         
-        bytesPerValue = bitsPerSample / 8;
-        bigEndian = ps.getBoolean(PROP_BIG_ENDIAN_DATA);
-        signedData = ps.getBoolean(PROP_SIGNED_DATA);
-        if (bytesPerRead % 2 == 1) {
-            bytesPerRead++;
+        this.bytesPerValue = bitsPerSample / 8;
+        this.bigEndian = bigEndian;
+        this.signedData = signedData;
+        if (this.bytesPerRead % 2 == 1) {
+            this.bytesPerRead++;
         }
     }
 

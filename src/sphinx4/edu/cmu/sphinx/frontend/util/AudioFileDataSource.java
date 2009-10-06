@@ -62,16 +62,25 @@ public class AudioFileDataSource extends BaseDataProcessor {
 
     private File curAudioFile;
 
+    public AudioFileDataSource(int bytesPerRead, List<? extends Configurable> listeners) {
+        create(bytesPerRead,listeners);
+    }
+
+    public AudioFileDataSource() {
+
+    }
+    
     @Override
     public void newProperties(PropertySheet ps) throws PropertyException {
         super.newProperties(ps);
-        bytesPerRead = ps.getInt(PROP_BYTES_PER_READ);
+        create(ps.getInt(PROP_BYTES_PER_READ),ps.getComponentList(AUDIO_FILE_LISTENERS));
+    }
 
-        logger = ps.getLogger();
+    private void create( int bytesPerRead, List<? extends Configurable> listeners ) {
+        this.bytesPerRead = bytesPerRead;
 
         // attach all pool-listeners
-        List<? extends Configurable> list = ps.getComponentList(AUDIO_FILE_LISTENERS);
-        for (Configurable configurable : list) {
+        for (Configurable configurable : listeners) {
             assert configurable instanceof AudioFileProcessListener;
             addNewFileListener((AudioFileProcessListener) configurable);
         }

@@ -66,6 +66,17 @@ public class LiveCMN extends BaseDataProcessor {
     private int numberFrame;        // total number of input Cepstrum
 
 
+    public LiveCMN(double initialMean, int cmnWindow, int cmnShiftWindow) {
+        initLogger();
+        this.initialMean = initialMean;
+        this.cmnWindow = cmnWindow;
+        this.cmnShiftWindow = cmnShiftWindow;
+    }
+
+    public LiveCMN() {
+
+    }
+
     public void newProperties(PropertySheet ps) throws PropertyException {
         super.newProperties(ps);
         initialMean = ps.getDouble(PROP_INITIAL_MEAN);

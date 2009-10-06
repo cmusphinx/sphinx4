@@ -41,6 +41,15 @@ public class DiscreteCosineTransform extends BaseDataProcessor {
     protected double[][] melcosine;
 
 
+    public DiscreteCosineTransform( int numberMelFilters, int cepstrumSize ) {
+        initLogger();
+        this.numberMelFilters = numberMelFilters;
+        this.cepstrumSize = cepstrumSize;
+    }
+
+    public DiscreteCosineTransform( ) {
+    }
+
     @Override
     public void newProperties(PropertySheet ps) throws PropertyException {
         super.newProperties(ps);
