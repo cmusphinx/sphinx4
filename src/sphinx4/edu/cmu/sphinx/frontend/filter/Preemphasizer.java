@@ -12,6 +12,7 @@
 package edu.cmu.sphinx.frontend.filter;
 
 import edu.cmu.sphinx.frontend.*;
+import edu.cmu.sphinx.frontend.endpoint.*;
 import edu.cmu.sphinx.util.props.*;
 
 /**
@@ -81,7 +82,7 @@ public class Preemphasizer extends BaseDataProcessor {
         if (input != null) {
             if (input instanceof DoubleData) {
                 applyPreemphasis(((DoubleData) input).getValues());
-            } else if (input instanceof DataEndSignal) {
+            } else if (input instanceof DataEndSignal || input instanceof SpeechEndSignal) {
                 prior = 0;
             }
         }
