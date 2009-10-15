@@ -200,7 +200,8 @@ public class FrontEnd extends BaseDataProcessor {
     }
 
 
-    /** Returns the collection of <code>DataProcessor</code>s which setup this <code>FrontEnd</code>. */
+    /** Returns the collection of <code>DataProcessor</code>s which setup this <code>FrontEnd</code>.
+     * @return*/
     public List<DataProcessor> getElements() {
         return frontEndList;
     }
@@ -265,7 +266,8 @@ public class FrontEnd extends BaseDataProcessor {
     }
 
 
-    /** Returns the last data procssor within the <code>DataProcessor</code> chain of this <code>FrontEnd</code>. */
+    /** Returns the last data procssor within the <code>DataProcessor</code> chain of this <code>FrontEnd</code>.
+     * @return*/
     public DataProcessor getLastDataProcessor() {
         return last;
     }

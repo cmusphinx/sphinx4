@@ -22,6 +22,14 @@ public class DataConverter extends BaseDataProcessor {
     public static final String PROP_CONVERSION_MODE = "conversionMode";
     private String convMode;
 
+    public DataConverter(String convMode) throws PropertyException {
+        initLogger();
+        this.convMode = convMode;
+    }
+
+    public DataConverter() {
+
+    }
 
     /*
     * (non-Javadoc)

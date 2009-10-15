@@ -154,6 +154,8 @@ public class PLPFrequencyFilterBank extends BaseDataProcessor {
      * E(w) = (w^2+56.8e6)*w^4/((w^2+6.3e6)^2(w^2+0.38e9)(w^6+9.58e26))
      * <p/>
      * where w is frequency in radians/second
+     * @param freq
+     * @return
      */
     private double loudnessScalingFunction(double freq) {
         double freqsquared = freq * freq;

@@ -151,7 +151,8 @@ public class DataBufferProcessor extends BaseDataProcessor implements DataListen
     }
 
 
-    /** Adds a new listener. */
+    /** Adds a new listener.
+     * @param l*/
     public void addDataListener(DataListener l) {
         if (l == null)
             return;
@@ -160,7 +161,8 @@ public class DataBufferProcessor extends BaseDataProcessor implements DataListen
     }
 
 
-    /** Removes a listener. */
+    /** Removes a listener.
+     * @param l*/
     public void removeDataListener(DataListener l) {
         if (l == null)
             return;

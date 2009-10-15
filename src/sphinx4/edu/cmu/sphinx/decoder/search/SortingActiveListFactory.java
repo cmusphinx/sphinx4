@@ -81,7 +81,9 @@ public class SortingActiveListFactory extends ActiveListFactory {
         private List<Token> tokenList;
 
 
-        /** Creates an empty active list */
+        /** Creates an empty active list
+         * @param absoluteBeamWidth
+         * @param logRelativeBeamWidth*/
         public SortingActiveList(int absoluteBeamWidth, float logRelativeBeamWidth) {
             this.absoluteBeamWidth = absoluteBeamWidth;
             this.logRelativeBeamWidth = logRelativeBeamWidth;

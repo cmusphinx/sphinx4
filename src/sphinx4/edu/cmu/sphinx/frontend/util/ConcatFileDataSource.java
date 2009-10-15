@@ -86,7 +86,6 @@ public class ConcatFileDataSource extends StreamDataSource implements ReferenceS
     @S4Integer(defaultValue = -1)
     public static final String PROP_TOTAL_FILES = "totalFiles";
 
-
     /**
      * The SphinxProperty that specifies the silence audio file, if any. If this property is null, then no silences are
      * added in between files.
@@ -137,6 +136,31 @@ public class ConcatFileDataSource extends StreamDataSource implements ReferenceS
     private int totalFiles;
     private String batchFile;
 
+    public ConcatFileDataSource( int sampleRate, int bytesPerRead, int bitsPerSample, boolean bigEndian, boolean signedData,
+        boolean addRandomSilence,
+        int maxSilence,
+        int skip,
+        String silenceFileName,
+        int startFile,
+        int totalFiles,
+        String transcriptFile,
+        String batchFile) {
+        super(sampleRate,bytesPerRead,bitsPerSample,bigEndian,signedData );
+
+        this.bytesPerSecond = sampleRate * (bitsPerSample / 8);
+        this.addRandomSilence = addRandomSilence;
+        this.maxSilence = maxSilence;
+        this.skip = skip;
+        this.silenceFileName = silenceFileName;
+        this.startFile = startFile;
+        this.totalFiles = totalFiles;
+        this.transcriptFile = transcriptFile;
+        this.batchFile = batchFile;
+    }
+
+    public ConcatFileDataSource() {
+        
+    }
 
     /*
     * (non-Javadoc)

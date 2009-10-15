@@ -63,6 +63,17 @@ public class StreamCepstrumSource extends BaseDataProcessor {
     private long firstSampleNumber;
     private boolean bigEndian = true;
 
+    public StreamCepstrumSource( int cepstrumLength, boolean binary, float frameShiftMs, float frameSizeMs, int sampleRate ) {
+	initLogger();
+        this.cepstrumLength = cepstrumLength;
+        this.binary = binary;
+        this.sampleRate = sampleRate;
+        this.frameShift = DataUtil.getSamplesPerWindow(sampleRate, frameShiftMs);
+        this.frameSize = DataUtil.getSamplesPerShift(sampleRate, frameSizeMs);
+    }
+
+    public StreamCepstrumSource( ) {
+    }
 
     /*
     * (non-Javadoc)

@@ -642,7 +642,9 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
     }
 
 
-    /** Checks that the given two states are in legitimate order. */
+    /** Checks that the given two states are in legitimate order.
+     * @param fromState
+     * @param toState*/
     private void checkStateOrder(SearchState fromState, SearchState toState) {
         if (fromState.getOrder() == numStateOrder - 1) {
             return;
@@ -755,6 +757,7 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
     /**
      * Determines whether or not we've visited the state associated with this token since the previous frame.
      *
+     * @param t
      * @return true if we've visted the search state since the last frame
      */
     private boolean isVisited(Token t) {
@@ -1536,7 +1539,8 @@ class TokenStats {
     }
 
 
-    /** Update this state with the given token */
+    /** Update this state with the given token
+     * @param t*/
     public void update(Token t) {
         count++;
         if (t.getScore() > maxScore) {

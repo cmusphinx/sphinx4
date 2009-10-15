@@ -35,18 +35,30 @@ public class Dither extends BaseDataProcessor {
     public static final String PROP_USE_RANDSEED = "useRandSeed";
     private boolean useRandSeed;
 
+    public Dither(  double ditherMax, boolean useRandSeed, double maxValue, double minValue) {
+        initLogger();
+
+        this.ditherMax = ditherMax;
+        this.useRandSeed = useRandSeed;
+
+        this.maxValue = maxValue;
+        this.minValue = minValue;
+    }
+
+    public Dither( ) {
+
+    }
 
     @Override
     public void newProperties(PropertySheet ps) throws PropertyException {
         super.newProperties(ps);
-        
+
         ditherMax = ps.getDouble(PROP_MAX_DITHER);
         useRandSeed = ps.getBoolean(PROP_USE_RANDSEED);
 
         maxValue = ps.getDouble(PROP_MAX_VAL);
         minValue = ps.getDouble(PROP_MIN_VAL);
     }
-
 
     @Override
     public void initialize() {
@@ -80,6 +92,7 @@ public class Dither extends BaseDataProcessor {
      *
      * @param input a MelSpectrum frame
      * @return a mel Cepstrum frame
+     * @throws IllegalArgumentException
      */
     private DoubleData process(Data input) throws IllegalArgumentException {
         DoubleData output;

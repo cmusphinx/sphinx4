@@ -79,7 +79,9 @@ public class PartitionActiveListFactory extends ActiveListFactory {
         private Partitioner partitioner = new Partitioner();
 
 
-        /** Creates an empty active list */
+        /** Creates an empty active list
+         * @param absoluteBeamWidth
+         * @param logRelativeBeamWidth*/
         public PartitionActiveList(int absoluteBeamWidth,
                                    float logRelativeBeamWidth) {
             this.absoluteBeamWidth = absoluteBeamWidth;

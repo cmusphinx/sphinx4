@@ -47,7 +47,15 @@ public class EnergyPlotter implements Configurable {
     private int maxEnergy;
     private String[] plots;
 
+    public EnergyPlotter(int maxEnergy) {
+        this.maxEnergy = maxEnergy;
+        buildPlots(maxEnergy);
+    }
 
+    public EnergyPlotter() {
+
+    }
+    
     public void newProperties(PropertySheet ps) throws PropertyException {
         maxEnergy = ps.getInt(PROP_MAX_ENERGY);
         buildPlots(maxEnergy);
@@ -70,6 +78,7 @@ public class EnergyPlotter implements Configurable {
      * Returns the plot string for the given energy.
      *
      * @param energy the energy level
+     * @return
      */
     private String getPlotString(int energy) {
         char[] plot = new char[energy];
@@ -107,6 +116,7 @@ public class EnergyPlotter implements Configurable {
      * Returns the corresponding plot String for the given energy value. The energy value should be positive or zero. If
      * its negative, It will output the string "-".
      *
+     * @param energy
      * @return energy the energy value
      */
     private String getPlot(int energy) {

@@ -134,6 +134,7 @@ public abstract class AbstractFeatureExtractor extends BaseDataProcessor {
      *
      * @param cepstrum the Data to replicate
      * @return the number of Features that can be computed
+     * @throws edu.cmu.sphinx.frontend.DataProcessingException
      */
     private int processFirstCepstrum(Data cepstrum)
             throws DataProcessingException {

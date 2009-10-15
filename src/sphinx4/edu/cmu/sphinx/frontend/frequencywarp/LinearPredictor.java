@@ -52,6 +52,7 @@ public class LinearPredictor {
      * in the Levinson recursion) Assumes the following sign convention:<br> prediction(x[t]) = Sum_i {Ar[i] * x[t-i]}
      *
      * @param autocor
+     * @return
      */
     public double[] getARFilter(double[] autocor) {
         /* No signal */

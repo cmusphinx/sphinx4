@@ -43,9 +43,18 @@ public class DataDumper extends BaseDataProcessor {
     private boolean enable;
     private boolean outputSignals;
     private DecimalFormat formatter;
-    private Logger logger;
 
+    public DataDumper( boolean enable, String format, boolean outputSignals ) {
+        initLogger();
+        this.formatter = new DecimalFormat(format, new DecimalFormatSymbols(Locale.US));
+        this.outputSignals = outputSignals;
+        this.enable = enable;
+    }
 
+    public DataDumper() {
+
+    }
+    
     /*
     * (non-Javadoc)
     *

@@ -11,7 +11,10 @@ import edu.cmu.sphinx.frontend.FrontEnd;
 public class FrontEndUtils {
 
 
-    /** Returns a the next <code>DataProcessor</code> of type <code>predecClass</code> which preceeds <code>dp</code> */
+    /** Returns a the next <code>DataProcessor</code> of type <code>predecClass</code> which preceeds <code>dp</code>
+     * @param dp
+     * @param predecClass
+     * @return*/
     public static <T extends DataProcessor> T getFrontEndProcessor(DataProcessor dp, Class<T> predecClass) {
         while (!predecClass.isInstance(dp)) {
             if (dp instanceof FrontEnd)

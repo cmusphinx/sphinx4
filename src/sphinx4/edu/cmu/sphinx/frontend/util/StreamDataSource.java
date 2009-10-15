@@ -165,7 +165,7 @@ public class StreamDataSource extends BaseDataProcessor {
      * Returns the next Data from the input stream, or null if there is none available
      *
      * @return a Data or null
-     * @throws java.io.IOException
+     * @throws edu.cmu.sphinx.frontend.DataProcessingException
      */
     private Data readNextFrame() throws DataProcessingException {
         // read one frame's worth of bytes

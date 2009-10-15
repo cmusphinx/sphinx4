@@ -114,7 +114,8 @@ public abstract class AbstractScorer extends ConfigurableAdapter implements Acou
     }
 
 
-    /** Handles the first element in a feature-stream. */
+    /** Handles the first element in a feature-stream.
+     * @param dataStartSignal*/
     protected void handleDataStartSignal(DataStartSignal dataStartSignal) {
         Map<String, Object> dataProps = dataStartSignal.getProps();
 
@@ -125,7 +126,8 @@ public abstract class AbstractScorer extends ConfigurableAdapter implements Acou
     }
 
 
-    /** Handles the last element in a feature-stream. */
+    /** Handles the last element in a feature-stream.
+     * @param dataEndSignal*/
     protected void handleDataEndSignal(DataEndSignal dataEndSignal) {
         // we don't treat the end-signal here, but extending classes might do
     }

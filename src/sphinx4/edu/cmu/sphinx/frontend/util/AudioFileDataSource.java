@@ -250,7 +250,7 @@ public class AudioFileDataSource extends BaseDataProcessor {
      * Returns the next Data from the input stream, or null if there is none available
      *
      * @return a Data or null
-     * @throws java.io.IOException
+     * @throws edu.cmu.sphinx.frontend.DataProcessingException
      */
     private Data readNextFrame() throws DataProcessingException {
         // read one frame's worth of bytes
@@ -329,7 +329,8 @@ public class AudioFileDataSource extends BaseDataProcessor {
     }
 
 
-    /** Adds a new listener for new file events. */
+    /** Adds a new listener for new file events.
+     * @param l*/
     public void addNewFileListener(AudioFileProcessListener l) {
         if (l == null)
             return;
@@ -338,7 +339,8 @@ public class AudioFileDataSource extends BaseDataProcessor {
     }
 
 
-    /** Removes a listener for new file events. */
+    /** Removes a listener for new file events.
+     * @param l*/
     public void removeNewFileListener(AudioFileProcessListener l) {
         if (l == null)
             return;

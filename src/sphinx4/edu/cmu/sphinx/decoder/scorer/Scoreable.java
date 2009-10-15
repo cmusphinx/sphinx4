@@ -37,6 +37,7 @@ public interface Scoreable extends Data {
     /**
      * Normalizes a previously calculated score
      *
+     * @param maxScore
      * @return the normalized score
      */
     public float normalizeScore(float maxScore);

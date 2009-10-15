@@ -414,6 +414,7 @@ public class DataUtil {
      * Returns a native audio format that has the same encoding, endianness and sample size as the given format, and a
      * sample rate that is larger than the given sample rate.
      *
+     * @param format
      * @return a suitable native audio format
      */
     public static AudioFormat getNativeAudioFormat(AudioFormat format) {
@@ -471,7 +472,9 @@ public class DataUtil {
     }
 
 
-    /** Converts DoubleData object to FloatDatas. */
+    /** Converts DoubleData object to FloatDatas.
+     * @param data
+     * @return*/
     public static DoubleData FloatData2DoubleData(FloatData data) {
         int numSamples = data.getValues().length;
 
@@ -486,7 +489,9 @@ public class DataUtil {
     }
 
 
-    /** Converts FloatData object to DoubleData. */
+    /** Converts FloatData object to DoubleData.
+     * @param data
+     * @return*/
     public static FloatData DoubleData2FloatData(DoubleData data) {
         int numSamples = data.getValues().length;
 

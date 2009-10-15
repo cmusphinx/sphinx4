@@ -99,6 +99,7 @@ public class Token implements Scoreable {
      * @param logLanguageScore        the language score associated with this token (in LogMath log base)
      * @param logInsertionProbability the insertion probabilty  associated with this token (in LogMath log base)
      * @param frameNumber             the frame number associated with this token
+     * @return
      */
     public Token child(SearchState state,
                        float logTotalScore,
@@ -196,7 +197,8 @@ public class Token implements Scoreable {
     }
 
 
-    /** Sets the feature for this Token. */
+    /** Sets the feature for this Token.
+     * @param data*/
     public void setData(Data data) {
         myData = data;
     }
@@ -328,7 +330,8 @@ public class Token implements Scoreable {
     }
 
 
-    /** Returns the acoustic score for this token (in logMath log base) */
+    /** Returns the acoustic score for this token (in logMath log base)
+     * @return*/
     public float getAcousticScore() {
         return logAcousticScore;
     }

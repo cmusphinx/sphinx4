@@ -20,6 +20,7 @@ public interface TokenStack {
     /**
      * Adds the given Token to this TokenStack.
      *
+     * @param token
      * @return the replaced Token, or null if no Token was replaced
      */
     public Token add(Token token);
@@ -29,6 +30,7 @@ public interface TokenStack {
      * Returns true if the given score is higher than the lowest scoring token in this TokenStack.
      *
      * @param score the score the check
+     * @param frameNumber
      * @return true if the given score is higher than the lowest scoring token, false otherwise
      */
     public boolean isInsertable(float score, int frameNumber);

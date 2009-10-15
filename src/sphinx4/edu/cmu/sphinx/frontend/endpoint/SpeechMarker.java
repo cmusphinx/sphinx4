@@ -215,6 +215,7 @@ public class SpeechMarker extends BaseDataProcessor {
      *
      * @param audio the SpeechClassifiedData to handle
      * @return true if utterance/speech has started for real, false otherwise
+     * @throws edu.cmu.sphinx.frontend.DataProcessingException
      */
     private boolean handleFirstSpeech(SpeechClassifiedData audio)
             throws DataProcessingException {
@@ -283,6 +284,7 @@ public class SpeechMarker extends BaseDataProcessor {
      *
      * @param audio a non-speech frame
      * @return true if speech has really ended, false if speech has not ended
+     * @throws edu.cmu.sphinx.frontend.DataProcessingException
      */
     private boolean readEndFrames(SpeechClassifiedData audio) throws
             DataProcessingException {

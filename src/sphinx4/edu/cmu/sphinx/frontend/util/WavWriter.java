@@ -66,6 +66,48 @@ public class WavWriter extends BaseDataProcessor {
 
     private int sampleRate;
     private boolean isInSpeech;
+
+    public WavWriter(String dumpFilePath, boolean isCompletePath, int bitsPerSample, boolean isBigEndian, boolean isSigned, boolean captureUtts) {
+	    initLogger();
+
+        this.dumpFilePath = dumpFilePath;
+        this.isCompletePath = isCompletePath;
+
+        this.bitsPerSample = bitsPerSample;
+        if (bitsPerSample % 8 != 0) {
+            throw new Error("StreamDataSource: bits per sample must be a multiple of 8.");
+        }
+
+        this.isBigEndian = isBigEndian;
+        this.isSigned = isSigned;
+        this.captureUtts = captureUtts;
+
+        initialize();
+    }
+
+    public WavWriter() {
+    }
+
+    /*
+    * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
+    */
+    public void newProperties(PropertySheet ps) throws PropertyException {
+        super.newProperties(ps);
+
+        dumpFilePath = ps.getString(WavWriter.PROP_OUT_FILE_NAME_PATTERN);
+        isCompletePath = ps.getBoolean(PROP_IS_COMPLETE_PATH);
+
+        bitsPerSample = ps.getInt(PROP_BITS_PER_SAMPLE);
+        if (bitsPerSample % 8 != 0) {
+            throw new Error("StreamDataSource: bits per sample must be a multiple of 8.");
+        }
+
+        isBigEndian = ps.getBoolean(PROP_BIG_ENDIAN_DATA);
+        isSigned = ps.getBoolean(PROP_SIGNED_DATA);
+        captureUtts = ps.getBoolean(PROP_CAPTURE_UTTERANCES);
+
+        initialize();
+    }
     
     public Data getData() throws DataProcessingException {
         Data data = getPredecessor().getData();
@@ -130,28 +172,6 @@ public class WavWriter extends BaseDataProcessor {
     }
 
 
-    /*
-    * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
-    */
-    public void newProperties(PropertySheet ps) throws PropertyException {
-        super.newProperties(ps);
-
-        dumpFilePath = ps.getString(WavWriter.PROP_OUT_FILE_NAME_PATTERN);
-        isCompletePath = ps.getBoolean(PROP_IS_COMPLETE_PATH);
-
-        bitsPerSample = ps.getInt(PROP_BITS_PER_SAMPLE);
-        if (bitsPerSample % 8 != 0) {
-            throw new Error("StreamDataSource: bits per sample must be a multiple of 8.");
-        }
-
-        isBigEndian = ps.getBoolean(PROP_BIG_ENDIAN_DATA);
-        isSigned = ps.getBoolean(PROP_SIGNED_DATA);
-        captureUtts = ps.getBoolean(PROP_CAPTURE_UTTERANCES);
-
-        initialize();
-    }
-
-
     private static AudioFileFormat.Type getTargetType(String extension) {
         AudioFileFormat.Type[] typesSupported = AudioSystem.getAudioFileTypes();
 
@@ -170,6 +190,7 @@ public class WavWriter extends BaseDataProcessor {
      * into a double, and becomes the next element in the double array. The size of the returned array is
      * (length/bytesPerValue). Currently, only 1 byte (8-bit) or 2 bytes (16-bit) samples are supported.
      *
+     * @param values
      * @param bytesPerValue the number of bytes per value
      * @param signedData    whether the data is signed
      * @return a double array, or <code>null</code> if byteArray is of zero length
@@ -218,7 +239,10 @@ public class WavWriter extends BaseDataProcessor {
     }
 
 
-    /** Writes a given double array into a wav file (given the sample rate of the signal). */
+    /** Writes a given double array into a wav file (given the sample rate of the signal).
+     * @param signal
+     * @param sampleRate
+     * @param targetFile*/
     public static void writeWavFile(double[] signal, int sampleRate, File targetFile) {
         AudioInputStream ais = WavWriter.convertDoublesToAudioStream(signal, sampleRate);
         AudioFileFormat.Type outputType = getTargetType("wav");

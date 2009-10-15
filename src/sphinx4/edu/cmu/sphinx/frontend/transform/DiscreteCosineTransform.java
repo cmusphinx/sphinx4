@@ -88,6 +88,7 @@ public class DiscreteCosineTransform extends BaseDataProcessor {
      *
      * @param input a MelSpectrum frame
      * @return a mel Cepstrum frame
+     * @throws IllegalArgumentException
      */
     private DoubleData process(DoubleData input)
             throws IllegalArgumentException {

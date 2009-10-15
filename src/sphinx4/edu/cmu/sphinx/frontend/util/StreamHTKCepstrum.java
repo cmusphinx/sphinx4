@@ -68,6 +68,17 @@ public class StreamHTKCepstrum extends BaseDataProcessor {
     private long firstSampleNumber;
     private boolean bigEndian;
 
+    public StreamHTKCepstrum( float frameShiftMs, float frameSizeMs, boolean bigEndian, int sampleRate ) {
+	    initLogger();
+        this.bigEndian = bigEndian;
+        this.sampleRate = sampleRate;
+        this.frameShift = DataUtil.getSamplesPerWindow(sampleRate, frameShiftMs);
+        this.frameSize = DataUtil.getSamplesPerShift(sampleRate, frameSizeMs);
+    }
+
+    public StreamHTKCepstrum( ) {
+    }
+
     /*
     * (non-Javadoc)
     *

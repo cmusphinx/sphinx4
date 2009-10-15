@@ -143,6 +143,7 @@ public class FrameDropper extends BaseDataProcessor {
      * Read a Data object from the predecessor DataProcessor, and increment the ID count appropriately.
      *
      * @return the read Data object
+     * @throws edu.cmu.sphinx.frontend.DataProcessingException
      */
     private Data readData() throws DataProcessingException {
         Data frame = getPredecessor().getData();
