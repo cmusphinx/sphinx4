@@ -135,8 +135,8 @@ public class ConfigurationManager implements Cloneable {
      *
      * @return all component named registered to this instance of <code>ConfigurationManager</code>
      */
-    public Collection<String> getComponentNames() {
-        return Arrays.asList(rawPropertyMap.keySet().toArray(new String[rawPropertyMap.size()]));
+    public Set<String> getComponentNames() {
+        return rawPropertyMap.keySet();
     }
 
 
@@ -467,13 +467,12 @@ public class ConfigurationManager implements Cloneable {
 
         ConfigurationManager cm = (ConfigurationManager) obj;
 
-        Collection<String> setA = new HashSet<String>(getComponentNames());
-        Collection<String> setB = new HashSet<String>(cm.getComponentNames());
-        if (!setA.equals(setB))
+        Set<String> thisCompNames = getComponentNames();
+        if (!thisCompNames.equals(cm.getComponentNames()))
             return false;
 
         // make sure that all components are the same
-        for (String instanceName : getComponentNames()) {
+        for (String instanceName : thisCompNames) {
             PropertySheet myPropSheet = getPropertySheet(instanceName);
             PropertySheet otherPropSheet = cm.getPropertySheet(instanceName);
 

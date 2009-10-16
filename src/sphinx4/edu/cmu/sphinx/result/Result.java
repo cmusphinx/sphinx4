@@ -519,7 +519,7 @@ public class Result {
      */
     public boolean validate() {
         boolean valid = true;
-        for (Token token : activeList.getTokens()) {
+        for (Token token : activeList) {
             if (!token.validate()) {
                 valid = false;
                 token.dumpTokenPath();

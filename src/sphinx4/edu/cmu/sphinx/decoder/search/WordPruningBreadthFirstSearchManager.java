@@ -413,7 +413,7 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
                     + activeList.getBestScore() + " tok "
                     + activeList.getBestToken());
         }
-        for (Token token : activeList.getTokens()) {
+        for (Token token : activeList) {
             if (token.getScore() >= relativeBeamThreshold && skewPrune(token)) {
                 collectSuccessorTokens(token);
             }
@@ -432,7 +432,7 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
         if (acousticLookaheadFrames > 0F) {
             growTimer.start();
             float bestScore = -Float.MAX_VALUE;
-            for (Token t : activeList.getTokens()) {
+            for (Token t : activeList) {
                 float score = t.getScore() + t.getAcousticScore()
                         * acousticLookaheadFrames;
                 if (score > bestScore) {
@@ -442,7 +442,7 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
             }
             float relativeBeamThreshold = bestScore + relativeBeamWidth;
 
-            for (Token t : activeList.getTokens()) {
+            for (Token t : activeList) {
                 if (t.getWorkingScore() >= relativeBeamThreshold) {
                     collectSuccessorTokens(t);
                 }
@@ -509,7 +509,7 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
     private void monitorWords(ActiveList activeList) {
         WordTracker tracker = new WordTracker(currentFrameNumber);
 
-        for (Token t : activeList.getTokens()) {
+        for (Token t : activeList) {
             tracker.add(t);
         }
         tracker.dump();
@@ -882,7 +882,7 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
     private void showTokenCount() {
         Set<Token> tokenSet = new HashSet<Token>();
 
-        for (Token token : activeList.getTokens()) {
+        for (Token token : activeList) {
             while (token != null) {
                 tokenSet.add(token);
                 token = token.getPredecessor();

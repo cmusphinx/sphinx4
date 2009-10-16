@@ -447,8 +447,7 @@ public class FastDictionary implements Dictionary {
         String pathListString = ps.getString(propertyListName);
 
         if (pathListString != null) {
-            List<String> pathList = Arrays.asList(pathListString.split(";"));
-            for (String addendumPath : pathList) {
+            for (String addendumPath : pathListString.split(";")) {
                 try {
                     URL addendaUrl = new URL(addendumPath);
                     resourceList.add(addendaUrl);

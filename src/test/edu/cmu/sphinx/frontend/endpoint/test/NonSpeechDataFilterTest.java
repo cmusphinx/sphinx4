@@ -70,7 +70,7 @@ public class NonSpeechDataFilterTest extends AbstractTestProcessor {
         input.add(new DataEndSignal(0));
 
         NonSpeechDataFilter nonSpeechDataFilter = ConfigurationManager.getInstance(NonSpeechDataFilter.class);
-        List<Data> result = new ArrayList<Data>(collectOutput(nonSpeechDataFilter));
+        List<Data> result = collectOutput(nonSpeechDataFilter);
 
         assertTrue(result.size() == 26);
 

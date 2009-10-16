@@ -751,8 +751,7 @@ public class LargeTrigramModel implements LanguageModel {
      * @return the unmodifiable set of words
      */
     public Set<String> getVocabulary() {
-        Set<String> vocabulary = new HashSet<String>();
-        vocabulary.addAll(Arrays.asList(loader.getWords()));
+        Set<String> vocabulary = new HashSet<String>(Arrays.asList(loader.getWords()));
         return Collections.unmodifiableSet(vocabulary);
     }
 

@@ -246,7 +246,7 @@ public class SimpleBreadthFirstSearchManager implements SearchManager {
     private ActiveList undoLastGrowStep() {
         ActiveList fixedList = activeList.newInstance();
 
-        for (Token token : activeList.getTokens()) {
+        for (Token token : activeList) {
             Token curToken = token.getPredecessor();
 
             // remove the final states that are not the real final ones because they're just hide prior final tokens:

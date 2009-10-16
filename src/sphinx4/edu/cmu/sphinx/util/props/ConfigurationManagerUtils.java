@@ -257,8 +257,7 @@ public final class ConfigurationManagerUtils {
             sb.append("\n\t<property name=\"").append(propName).append("\" value=\"").append(entry.getValue()).append("\"/>");
         }
 
-        Collection<String> allInstances = cm.getComponentNames();
-        for (String instanceName : allInstances)
+        for (String instanceName : cm.getComponentNames())
             sb.append("\n\n").append(propSheet2XML(instanceName, cm.getPropertySheet(instanceName)));
 
         sb.append("\n</config>");
@@ -633,7 +632,7 @@ public final class ConfigurationManagerUtils {
         assert propValue != null;
 
         Map<String, List<PropertySheet>> allProps = listAllsPropNames(cm);
-        Collection<String> configurableNames = cm.getComponentNames();
+        Set<String> configurableNames = cm.getComponentNames();
 
         if (!allProps.containsKey(propName) && !propName.contains("->") && !configurableNames.contains(propName))
             throw new RuntimeException("No property or configurable '" + propName + "' in configuration '" + cm.getConfigURL() + "'!");
