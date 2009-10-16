@@ -37,7 +37,6 @@ public class RecognizerMonitor implements StateListener, Monitor {
     @S4ComponentList(type = Configurable.class)
     public final static String PROP_DEALLOCATED_MONITORS = "deallocatedMonitors";
 
-
     // --------------------------
     // Configuration data
     // --------------------------
@@ -46,6 +45,14 @@ public class RecognizerMonitor implements StateListener, Monitor {
     List<Runnable> deallocatedMonitors;
     String name;
 
+    public RecognizerMonitor(Recognizer recognizer, List<Runnable> allocatedMonitors, List<Runnable> deallocatedMonitors ) {
+        initRecognizer(recognizer);
+        this.allocatedMonitors = allocatedMonitors;
+        this.deallocatedMonitors = deallocatedMonitors;
+    }
+
+    public RecognizerMonitor() {
+    }
 
     /*
     * (non-Javadoc)
@@ -53,7 +60,12 @@ public class RecognizerMonitor implements StateListener, Monitor {
     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
     */
     public void newProperties(PropertySheet ps) throws PropertyException {
-        Recognizer newRecognizer = (Recognizer) ps.getComponent(PROP_RECOGNIZER);
+        initRecognizer((Recognizer) ps.getComponent(PROP_RECOGNIZER));
+        allocatedMonitors = (List) ps.getComponentList(PROP_ALLOCATED_MONITORS);
+        deallocatedMonitors = (List) ps.getComponentList(PROP_DEALLOCATED_MONITORS);
+    }
+
+    private void initRecognizer(Recognizer newRecognizer) {
         if (recognizer == null) {
             recognizer = newRecognizer;
             recognizer.addStateListener(this);
@@ -62,12 +74,8 @@ public class RecognizerMonitor implements StateListener, Monitor {
             recognizer = newRecognizer;
             recognizer.addStateListener(this);
         }
-
-        allocatedMonitors = (List)ps.getComponentList(PROP_ALLOCATED_MONITORS);
-        deallocatedMonitors = (List)ps.getComponentList(PROP_DEALLOCATED_MONITORS);
     }
 
-    @Override
     public void statusChanged(Recognizer.State status) {
         List<Runnable> runnableList = null;
         if (status == State.ALLOCATED) {

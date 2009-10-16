@@ -65,15 +65,27 @@ public class RejectionTracker implements
     private int numFalseInGrammarUtterances;
 
 
+    public RejectionTracker( Recognizer recognizer, boolean showSummary, boolean showDetails ) {
+        initRecognizer(recognizer);
+        this.showSummary = showSummary;
+        this.showDetails = showDetails;
+    }
+
+    public RejectionTracker( ) {
+    }
+
     /*
     * (non-Javadoc)
     *
     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
     */
     public void newProperties(PropertySheet ps) throws PropertyException {
-        Recognizer newRecognizer = (Recognizer)
-                ps.getComponent(PROP_RECOGNIZER);
+        initRecognizer((Recognizer)ps.getComponent(PROP_RECOGNIZER));
+        showSummary = ps.getBoolean(PROP_SHOW_SUMMARY);
+        showDetails = ps.getBoolean(PROP_SHOW_DETAILS);
+    }
 
+    private void initRecognizer(Recognizer newRecognizer) {
         if (recognizer == null) {
             recognizer = newRecognizer;
             recognizer.addResultListener(this);
@@ -85,9 +97,6 @@ public class RejectionTracker implements
             recognizer.addResultListener(this);
             recognizer.addStateListener(this);
         }
-
-        showSummary = ps.getBoolean(PROP_SHOW_SUMMARY);
-        showDetails = ps.getBoolean(PROP_SHOW_DETAILS);
     }
 
 
@@ -163,7 +172,7 @@ public class RejectionTracker implements
         }
     }
 
-    @Override
+
     public void statusChanged(Recognizer.State status) {
         if (status == State.DEALLOCATED) {
             printStats();

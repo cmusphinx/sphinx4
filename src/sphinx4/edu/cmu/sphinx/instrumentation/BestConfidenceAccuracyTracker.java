@@ -14,6 +14,7 @@ import edu.cmu.sphinx.linguist.dictionary.Word;
 import edu.cmu.sphinx.result.*;
 import edu.cmu.sphinx.util.NISTAlign;
 import edu.cmu.sphinx.util.props.*;
+import edu.cmu.sphinx.recognizer.Recognizer;
 
 /**
  * Tracks and reports recognition accuracy using the "confidenceScorer" component specified in the ConfigurationManager.
@@ -30,6 +31,13 @@ public class BestConfidenceAccuracyTracker extends AccuracyTracker {
     /** The confidence scorer */
     protected ConfidenceScorer confidenceScorer;
 
+    public BestConfidenceAccuracyTracker(ConfidenceScorer confidenceScorer, Recognizer recognizer, boolean showSummary, boolean showDetails, boolean showResults, boolean showAlignedResults, boolean showRawResults) {
+        super( recognizer, showSummary, showDetails, showResults, showAlignedResults, showRawResults);
+        this.confidenceScorer = confidenceScorer;
+    }
+
+    public BestConfidenceAccuracyTracker() {
+    }
 
     /*
     * (non-Javadoc)
@@ -42,7 +50,9 @@ public class BestConfidenceAccuracyTracker extends AccuracyTracker {
     }
 
 
-    /** Gets the transcription with no fillers and no "<unk>". */
+    /** Gets the transcription with no fillers and no "<unk>".
+     * @param path
+     * @return*/
     protected String getTranscriptionNoFiller(Path path) {
         StringBuilder sb = new StringBuilder();
         WordResult[] words = path.getWords();
@@ -56,7 +66,9 @@ public class BestConfidenceAccuracyTracker extends AccuracyTracker {
     }
 
 
-    /** Gets the raw transcription */
+    /** Gets the raw transcription
+     * @param path
+     * @return*/
     protected String getTranscriptionRaw(Path path) {
         StringBuilder sb = new StringBuilder();
         WordResult[] words = path.getWords();

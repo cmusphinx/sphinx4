@@ -52,6 +52,15 @@ public class MemoryTracker
     private int numMemoryStats;
     private float avgMemoryUsed;
 
+    public MemoryTracker(Recognizer recognizer, boolean showSummary, boolean showDetails) {
+        initRecognizer(recognizer);
+        this.showSummary = showSummary;
+        this.showDetails = showDetails;
+    }
+
+    public MemoryTracker() {
+        
+    }
 
     /*
     * (non-Javadoc)
@@ -61,6 +70,12 @@ public class MemoryTracker
     public void newProperties(PropertySheet ps) throws PropertyException {
         Recognizer newRecognizer = (Recognizer) ps.getComponent(
                 PROP_RECOGNIZER);
+        initRecognizer(newRecognizer);
+        showSummary = ps.getBoolean(PROP_SHOW_SUMMARY);
+        showDetails = ps.getBoolean(PROP_SHOW_DETAILS);
+    }
+
+    private void initRecognizer(Recognizer newRecognizer) {
         if (recognizer == null) {
             recognizer = newRecognizer;
             recognizer.addResultListener(this);
@@ -72,8 +87,6 @@ public class MemoryTracker
             recognizer.addResultListener(this);
             recognizer.addStateListener(this);
         }
-        showSummary = ps.getBoolean(PROP_SHOW_SUMMARY);
-        showDetails = ps.getBoolean(PROP_SHOW_DETAILS);
     }
 
 
@@ -87,7 +100,8 @@ public class MemoryTracker
     }
 
 
-    /** Shows memory usage */
+    /** Shows memory usage
+     * @param show*/
     private void calculateMemoryUsage(boolean show) {
         float totalMem = Runtime.getRuntime().totalMemory()
                 / (1024.0f * 1024.0f);
@@ -122,7 +136,6 @@ public class MemoryTracker
         }
     }
 
-    @Override
     public void statusChanged(Recognizer.State status) {
         if (status == State.DEALLOCATED) {
             calculateMemoryUsage(showSummary);

@@ -78,17 +78,33 @@ public class BeamFinder implements ResultListener,
 
     private final static DecimalFormat logFormatter = new DecimalFormat("0.#E0");
     public final String TOKEN_RANK = "TOKENRANK";
+    
+    public BeamFinder( Recognizer recognizer, LogMath logMath, boolean showSummary, boolean showDetails, boolean enabled) {
+        initRecognizer(recognizer);
+        this.logMath = logMath;
+        this.showSummary = showSummary;
+        this.showDetails = showDetails;
+        this.enabled = enabled;
+    }
 
+    public BeamFinder( ) {
 
-    /*
+    }
+
+   /*
     * (non-Javadoc)
     *
     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
     */
     public void newProperties(PropertySheet ps) throws PropertyException {
-        Recognizer newRecognizer = (Recognizer) ps.getComponent(
-                PROP_RECOGNIZER);
+        initRecognizer((Recognizer) ps.getComponent(PROP_RECOGNIZER));
+        logMath = (LogMath) ps.getComponent(PROP_LOG_MATH);
+        showSummary = ps.getBoolean(PROP_SHOW_SUMMARY);
+        showDetails = ps.getBoolean(PROP_SHOW_DETAILS);
+        enabled = ps.getBoolean(PROP_ENABLED);
+    }
 
+    private void initRecognizer(Recognizer newRecognizer) {
         if (recognizer == null) {
             recognizer = newRecognizer;
             recognizer.addResultListener(this);
@@ -100,12 +116,6 @@ public class BeamFinder implements ResultListener,
             recognizer.addResultListener(this);
             recognizer.addStateListener(this);
         }
-
-        logMath = (LogMath) ps.getComponent(PROP_LOG_MATH);
-
-        showSummary = ps.getBoolean(PROP_SHOW_SUMMARY);
-        showDetails = ps.getBoolean(PROP_SHOW_DETAILS);
-        enabled = ps.getBoolean(PROP_ENABLED);
     }
 
 
@@ -148,7 +158,6 @@ public class BeamFinder implements ResultListener,
         }
     }
 
-    @Override
     public void statusChanged(Recognizer.State status) {
         if (enabled && status == State.DEALLOCATED) {
             if (showSummary) {
@@ -156,7 +165,6 @@ public class BeamFinder implements ResultListener,
             }
         }
     }
-
 
     /**
      * Ranks the given set of tokens

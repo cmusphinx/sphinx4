@@ -66,6 +66,23 @@ abstract public class AccuracyTracker
 
     private NISTAlign aligner = new NISTAlign(false, false);
 
+    public AccuracyTracker(Recognizer recognizer, boolean showSummary, boolean showDetails, boolean showResults, boolean showAlignedResults, boolean showRawResults) {
+
+        initRecognizer(recognizer);
+
+        this.showSummary = showSummary;
+        this.showDetails = showDetails;
+        this.showResults = showResults;
+        this.showAlignedResults = showAlignedResults;
+
+        this.showRaw = showRawResults;
+
+        aligner.setShowResults(showResults);
+        aligner.setShowAlignedResults(showAlignedResults);
+    }
+
+    public AccuracyTracker() {
+    }
 
     /*
     * (non-Javadoc)
@@ -73,8 +90,21 @@ abstract public class AccuracyTracker
     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
     */
     public void newProperties(PropertySheet ps) throws PropertyException {
-        Recognizer newRecognizer = (Recognizer) ps.getComponent(PROP_RECOGNIZER);
 
+        initRecognizer((Recognizer) ps.getComponent(PROP_RECOGNIZER));
+
+        showSummary = ps.getBoolean(PROP_SHOW_SUMMARY);
+        showDetails = ps.getBoolean(PROP_SHOW_DETAILS);
+        showResults = ps.getBoolean(PROP_SHOW_RESULTS);
+        showAlignedResults = ps.getBoolean(PROP_SHOW_ALIGNED_RESULTS);
+
+        showRaw = ps.getBoolean(PROP_SHOW_RAW_RESULTS);
+
+        aligner.setShowResults(showResults);
+        aligner.setShowAlignedResults(showAlignedResults);
+    }
+
+    private void initRecognizer(Recognizer newRecognizer) {
         if (recognizer == null) {
             recognizer = newRecognizer;
             recognizer.addResultListener(this);
@@ -86,16 +116,6 @@ abstract public class AccuracyTracker
             recognizer.addResultListener(this);
             recognizer.addStateListener(this);
         }
-
-        showSummary = ps.getBoolean(PROP_SHOW_SUMMARY);
-        showDetails = ps.getBoolean(PROP_SHOW_DETAILS);
-        showResults = ps.getBoolean(PROP_SHOW_RESULTS);
-        showAlignedResults = ps.getBoolean(PROP_SHOW_ALIGNED_RESULTS);
-
-        showRaw = ps.getBoolean(PROP_SHOW_RAW_RESULTS);
-
-        aligner.setShowResults(showResults);
-        aligner.setShowAlignedResults(showAlignedResults);
     }
 
 
@@ -154,7 +174,6 @@ abstract public class AccuracyTracker
     */
     abstract public void newResult(Result result);
 
-    @Override
     public void statusChanged(Recognizer.State status) {
         if (status == State.DEALLOCATED) {
             if (showSummary) {

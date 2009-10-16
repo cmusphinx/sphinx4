@@ -79,14 +79,44 @@ public class SpeedTracker
     private long totalResponseTime;
 
 
+    public SpeedTracker(Recognizer recognizer, FrontEnd frontEnd, boolean showSummary, boolean showDetails, boolean showResponseTime, boolean showTimers) {
+        initRecognizer(recognizer);
+        initFrontEnd(frontEnd);
+        this.showSummary = showSummary;
+        this.showDetails = showDetails;
+        this.showResponseTime = showResponseTime;
+        this.showTimers = showTimers;
+    }
+
+    public SpeedTracker() {
+    }
+
     /*
     * (non-Javadoc)
     *
     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
     */
     public void newProperties(PropertySheet ps) throws PropertyException {
-        Recognizer newRecognizer = (Recognizer) ps.getComponent(
-                PROP_RECOGNIZER);
+        initRecognizer((Recognizer) ps.getComponent(PROP_RECOGNIZER));
+        initFrontEnd((FrontEnd) ps.getComponent(PROP_FRONTEND));
+        showSummary = ps.getBoolean(PROP_SHOW_SUMMARY);
+        showDetails = ps.getBoolean(PROP_SHOW_DETAILS);
+        showResponseTime = ps.getBoolean(PROP_SHOW_RESPONSE_TIME);
+        showTimers = ps.getBoolean(PROP_SHOW_TIMERS);
+    }
+
+    private void initFrontEnd(FrontEnd newFrontEnd) {
+        if (frontEnd == null) {
+            frontEnd = newFrontEnd;
+            frontEnd.addSignalListener(this);
+        } else if (frontEnd != newFrontEnd) {
+            frontEnd.removeSignalListener(this);
+            frontEnd = newFrontEnd;
+            frontEnd.addSignalListener(this);
+        }
+    }
+
+    private void initRecognizer(Recognizer newRecognizer) {
         if (recognizer == null) {
             recognizer = newRecognizer;
             recognizer.addResultListener(this);
@@ -98,21 +128,6 @@ public class SpeedTracker
             recognizer.addResultListener(this);
             recognizer.addStateListener(this);
         }
-
-
-        FrontEnd newFrontEnd = (FrontEnd) ps.getComponent(PROP_FRONTEND);
-        if (frontEnd == null) {
-            frontEnd = newFrontEnd;
-            frontEnd.addSignalListener(this);
-        } else if (frontEnd != newFrontEnd) {
-            frontEnd.removeSignalListener(this);
-            frontEnd = newFrontEnd;
-            frontEnd.addSignalListener(this);
-        }
-        showSummary = ps.getBoolean(PROP_SHOW_SUMMARY);
-        showDetails = ps.getBoolean(PROP_SHOW_DETAILS);
-        showResponseTime = ps.getBoolean(PROP_SHOW_RESPONSE_TIME);
-        showTimers = ps.getBoolean(PROP_SHOW_TIMERS);
     }
 
 
@@ -243,7 +258,7 @@ public class SpeedTracker
         return System.currentTimeMillis();
     }
 
-    @Override
+
     public void statusChanged(Recognizer.State status) {
         if (status == State.ALLOCATED) {
             if (showTimers) {
