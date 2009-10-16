@@ -27,7 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * An AudioFileDataSource generates a stream of audio data from a given audion file. All required information concerning
+ * An AudioFileDataSource generates a stream of audio data from a given audio file. All required information concerning
  * the audio format are read directly from the file . One would need to call {@link #setAudioFile(java.io.File,String)}
  * to set the input file, and call {@link #getData} to obtain the Data frames.
  * <p/>

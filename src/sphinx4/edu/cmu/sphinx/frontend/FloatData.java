@@ -47,9 +47,7 @@ public class FloatData implements Data, Cloneable {
 
 
     /**
-     * Returns the values of this DoubleData object.
-     *
-     * @return the values
+     * @return the values of this data.
      */
     public float[] getValues() {
         return values;
@@ -57,9 +55,7 @@ public class FloatData implements Data, Cloneable {
 
 
     /**
-     * Returns the sample rate of this data.
-     *
-     * @return the sample rate of this data
+     * @return the sample rate of this data.
      */
     public int getSampleRate() {
         return sampleRate;
@@ -67,9 +63,7 @@ public class FloatData implements Data, Cloneable {
 
 
     /**
-     * Returns the position of the first sample in the original data. The very first sample number is zero.
-     *
-     * @return the position of the first sample in the original data
+     * @return the position of the first sample in the original data. The very first sample number is zero.
      */
     public long getFirstSampleNumber() {
         return firstSampleNumber;

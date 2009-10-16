@@ -52,9 +52,7 @@ public class DoubleData extends OVector implements Data {
 
 
     /**
-     * Returns a string that describes this DoubleData.
-     *
-     * @return a string that describes this DoubleData
+     * @return a string that describes the data.
      */
     public String toString() {
         return ("DoubleData: " + sampleRate + "Hz, first sample #: " +
@@ -63,9 +61,7 @@ public class DoubleData extends OVector implements Data {
 
 
     /**
-     * Returns the sample rate of the data.
-     *
-     * @return the sample rate of the data
+     * @return the sample rate of the data.
      */
     public int getSampleRate() {
         return sampleRate;
@@ -73,10 +69,8 @@ public class DoubleData extends OVector implements Data {
 
 
     /**
-     * Returns the position of the first sample in the original data. The very first sample number
+     * @return the position of the first sample in the original data. The very first sample number
      * is zero.
-     *
-     * @return the position of the first sample in the original data
      */
     public long getFirstSampleNumber() {
         return firstSampleNumber;
