@@ -161,7 +161,6 @@ public class HTKLoader implements Loader {
 	private boolean loaded;
 	private boolean tie1ph;
 
-	@Override
 	public void newProperties(PropertySheet ps) throws PropertyException {
 		logger = ps.getLogger();
 
@@ -201,7 +200,6 @@ public class HTKLoader implements Loader {
 		}
 	}
 
-	@Override
 	public void load() throws IOException {
 		if (!loaded) {
 			// TODO: what is this all about?
@@ -272,7 +270,6 @@ public class HTKLoader implements Loader {
 		loadHMMPool(useCDUnits, htkmods, location + File.separator + model);
 	}
 
-	@Override
 	public Map<String, Unit> getContextIndependentUnits() {
 		return contextIndependentUnits;
 	}
@@ -821,72 +818,58 @@ public class HTKLoader implements Loader {
 		return pool;
 	}
 
-	@Override
 	public Pool<float[]> getMeansPool() {
 		return meansPool;
 	}
 
-	@Override
 	public Pool<float[][]> getMeansTransformationMatrixPool() {
 		return meanTransformationMatrixPool;
 	}
 
-	@Override
 	public Pool<float[]> getMeansTransformationVectorPool() {
 		return meanTransformationVectorPool;
 	}
 
-	@Override
 	public Pool<float[]> getVariancePool() {
 		return variancePool;
 	}
 
-	@Override
 	public Pool<float[][]> getVarianceTransformationMatrixPool() {
 		return varianceTransformationMatrixPool;
 	}
 
-	@Override
 	public Pool<float[]> getVarianceTransformationVectorPool() {
 		return varianceTransformationVectorPool;
 	}
 
-	@Override
 	public Pool<float[]> getMixtureWeightPool() {
 		return mixtureWeightsPool;
 	}
 
-	@Override
 	public Pool<float[][]> getTransitionMatrixPool() {
 		return matrixPool;
 	}
 
-	@Override
 	public float[][] getTransformMatrix() {
 		return null;
 	}
 
-	@Override
 	public Pool<Senone> getSenonePool() {
 		return senonePool;
 	}
 
-	@Override
 	public int getLeftContextSize() {
 		return CONTEXT_SIZE;
 	}
 
-	@Override
 	public int getRightContextSize() {
 		return CONTEXT_SIZE;
 	}
 
-	@Override
 	public HMMManager getHMMManager() {
 		return hmmManager;
 	}
 
-	@Override
 	public void logInfo() {
 		logger.info("HTKLoader");
 		meansPool.logInfo(logger);

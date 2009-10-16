@@ -60,7 +60,7 @@ public class MappingDictionary extends FastDictionary implements Dictionary {
 	@Override
     public void allocate() throws IOException {
     		super.allocate();
-    		if (mappingFile.getFile() != "") 
+    		if (!mappingFile.getFile().equals(""))
     				loadMapping (mappingFile.openStream());
     }
 	/**

@@ -392,8 +392,7 @@ public class DiscreteFourierTransform extends BaseDataProcessor {
                 output[i] = to[i].squaredMagnitudeComplex();
             }
         }
-        return;
-    }
+        }
 
 
     /**
@@ -466,6 +465,5 @@ public class DiscreteFourierTransform extends BaseDataProcessor {
              */
             butterflyStage(to, from, numberFftPoints, (currentDistance >> 1));
         }
-        return;
-    }
+        }
 }

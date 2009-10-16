@@ -27,14 +27,20 @@ public class LinguistProcessor implements Configurable, Runnable {
     // ----------------------------
     private String name;
     private Linguist linguist;
+    
 
+    public LinguistProcessor( Linguist linguist ) {
+        this.linguist = linguist;
+    }
+
+    public LinguistProcessor( ) {
+    }
 
     /* (non-Javadoc)
     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
     */
     public void newProperties(PropertySheet ps) throws PropertyException {
         linguist = (Linguist) ps.getComponent(PROP_LINGUIST);
-
     }
 
 

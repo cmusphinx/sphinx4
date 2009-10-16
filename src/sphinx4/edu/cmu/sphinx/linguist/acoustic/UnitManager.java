@@ -46,6 +46,9 @@ public class UnitManager implements Configurable {
     private int nextID = SILENCE_ID + 1;
     private Logger logger;
 
+    public UnitManager() {
+        logger = Logger.getLogger(getClass().getName());
+    }
 
     /*
     * (non-Javadoc)

@@ -484,8 +484,8 @@ public class LexTreeLinguist implements Linguist {
                 return true;
             } else if (o instanceof LexTreeState) {
                 LexTreeState other = (LexTreeState) o;
-                boolean wordSequenceMatch = fullWordHistories ? wordSequence
-                        .equals(other.wordSequence) : true;
+                boolean wordSequenceMatch = !fullWordHistories || wordSequence
+                        .equals(other.wordSequence);
                 return node == other.node && wordSequenceMatch;
             } else {
                 return false;

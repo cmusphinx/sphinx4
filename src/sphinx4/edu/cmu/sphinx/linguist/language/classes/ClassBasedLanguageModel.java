@@ -188,4 +188,4 @@ public class ClassBasedLanguageModel implements LanguageModel {
     }
 
 
-};
+}
