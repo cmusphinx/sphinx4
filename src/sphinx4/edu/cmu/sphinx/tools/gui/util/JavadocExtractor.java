@@ -35,7 +35,7 @@ public class JavadocExtractor {
                 if( ! source_path.trim().endsWith("/")){ // add '/' at the end of path
                     source_path = source_path.concat("/");
                 }
-                String source_file = classname.replaceAll("\\.","/")+".java";   // replace '.' with '/'
+                String source_file = classname.replace('.', '/') + ".java"; // convert classname to filepath
 //                StringTokenizer stoken = new StringTokenizer(class_path.trim(),";");
 //                String new_class_path = new String();
 //                if (stoken.countTokens() > 1){
