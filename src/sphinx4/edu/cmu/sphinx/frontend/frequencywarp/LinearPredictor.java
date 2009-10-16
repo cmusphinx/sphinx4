@@ -48,11 +48,11 @@ public class LinearPredictor {
 
 
     /**
-     * Routine to compute Linear Prediction Coefficients for a frame of speech. Returns the energy of the frame (alpha
-     * in the Levinson recursion) Assumes the following sign convention:<br> prediction(x[t]) = Sum_i {Ar[i] * x[t-i]}
+     * Method to compute Linear Prediction Coefficients for a frame of speech. Assumes the following 
+     * sign convention:<br> prediction(x[t]) = Sum_i {Ar[i] * x[t-i]}
      *
      * @param autocor
-     * @return
+     * @return the energy of the frame (alpha in the Levinson recursion)
      */
     public double[] getARFilter(double[] autocor) {
         /* No signal */

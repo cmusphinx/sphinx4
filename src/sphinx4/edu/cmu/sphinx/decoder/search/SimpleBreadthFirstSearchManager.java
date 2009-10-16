@@ -240,8 +240,8 @@ public class SimpleBreadthFirstSearchManager implements SearchManager {
     /**
      * Because the growBranches() is called although no data is left after the last speech frame, the ordering of the
      * active-list might depend on the transition-probs and (penalty-scores) only. Therefore we need to undo the last
-     * grow-step up to final states or the last emitting state in order to fix the list..
-     * @return
+     * grow-step up to final states or the last emitting state in order to fix the list.
+     * @return newly created list
      */
     private ActiveList undoLastGrowStep() {
         ActiveList fixedList = activeList.newInstance();

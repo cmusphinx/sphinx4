@@ -105,7 +105,6 @@ public class PLPCepstrumProducer extends BaseDataProcessor {
      * operation is used to reduce the spectral amplitude of the critical band to enable all-pole modeling with
      * relatively low order AR filters.
      * @param inspectrum
-     * @return
      */
     private double[] powerLawCompress(double[] inspectrum) {
         double[] compressedspectrum = new double[inspectrum.length];

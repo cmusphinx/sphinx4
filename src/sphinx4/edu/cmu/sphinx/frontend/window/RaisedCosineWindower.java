@@ -371,7 +371,7 @@ public class RaisedCosineWindower extends BaseDataProcessor {
     /**
      * Returns the shift size used to window the incoming speech signal. This value might be used by other components to
      * determine the time resolution of feature vectors.
-     * @return
+     * @return the shift of the window
      */
     public float getWindowShiftInMs() {
         if (windowShiftInMs == 0)
@@ -390,7 +390,6 @@ public class RaisedCosineWindower extends BaseDataProcessor {
      * Rounds a given sample-number to the number of samples will be processed by this instance including the padding
      * samples at the end..
      * @param samples
-     * @return
      */
     public long roundToFrames(long samples) {
         int windowSize = DataUtil.getSamplesPerWindow(sampleRate, windowSizeInMs);

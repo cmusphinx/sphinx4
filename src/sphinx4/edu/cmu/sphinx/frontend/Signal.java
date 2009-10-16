@@ -57,7 +57,7 @@ public class Signal implements Data {
 
 
     /** Returns the properties associated to this signal.
-     * @return*/
+     */
     public synchronized Map<String, Object> getProps() {
         if (props == null)
             props = new HashMap<String, Object>();

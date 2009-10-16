@@ -78,7 +78,6 @@ public class EnergyPlotter implements Configurable {
      * Returns the plot string for the given energy.
      *
      * @param energy the energy level
-     * @return
      */
     private String getPlotString(int energy) {
         char[] plot = new char[energy];

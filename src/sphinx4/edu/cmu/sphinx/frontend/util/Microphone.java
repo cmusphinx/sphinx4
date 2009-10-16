@@ -266,7 +266,6 @@ public class Microphone extends BaseDataProcessor {
      * Gets the Mixer to use.  Depends upon selectedMixerIndex being defined.
      *
      * @see #newProperties
-     * @return
      */
     private Mixer getSelectedMixer() {
         if (selectedMixerIndex.equals("default")) {
@@ -285,7 +284,6 @@ public class Microphone extends BaseDataProcessor {
 
     /**
      * Creates the audioLine if necessary and returns it.
-     * @return
      */
     private TargetDataLine getAudioLine() {
         if (audioLine != null) {
@@ -657,7 +655,6 @@ public class Microphone extends BaseDataProcessor {
      *
      * @param samples  the audio samples, each double in the array is one sample
      * @param channels the number of channels in the stereo audio
-     * @return
      */
     private double[] convertStereoToMono(double[] samples, int channels) {
         assert (samples.length % channels == 0);

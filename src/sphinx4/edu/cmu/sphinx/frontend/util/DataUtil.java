@@ -474,7 +474,7 @@ public class DataUtil {
 
     /** Converts DoubleData object to FloatDatas.
      * @param data
-     * @return*/
+     */
     public static DoubleData FloatData2DoubleData(FloatData data) {
         int numSamples = data.getValues().length;
 
@@ -483,15 +483,15 @@ public class DataUtil {
         for (int i = 0; i < values.length; i++) {
             doubleData[i] = values[i];
         }
-//        System.arraycopy(data.getValues(), 0, doubleData, 0, numSamples); 
+//      System.arraycopy(data.getValues(), 0, doubleData, 0, numSamples); 
 
         return new DoubleData(doubleData, data.getSampleRate(), data.getCollectTime(), data.getFirstSampleNumber());
     }
 
 
     /** Converts FloatData object to DoubleData.
-     * @param data
-     * @return*/
+     *  @param data
+     */
     public static FloatData DoubleData2FloatData(DoubleData data) {
         int numSamples = data.getValues().length;
 
