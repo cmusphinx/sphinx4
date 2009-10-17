@@ -22,9 +22,9 @@ import java.util.Map;
  * file.
  */
 public class RawPropertyData {
-    private String name;
-    private String className;
-    private Map<String, Object> properties;
+    private final String name;
+    private final String className;
+    private final Map<String, Object> properties;
 
     /**
      * Creates a raw property data item

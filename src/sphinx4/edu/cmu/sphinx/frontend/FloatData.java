@@ -23,10 +23,10 @@ import edu.cmu.sphinx.util.MatrixUtils;
 @SuppressWarnings({"UnnecessaryLocalVariable"})
 public class FloatData implements Data, Cloneable {
 
-    private float[] values;
-    private int sampleRate;
-    private long firstSampleNumber;
-    private long collectTime;
+    private final float[] values;
+    private final int sampleRate;
+    private final long firstSampleNumber;
+    private final long collectTime;
 
 
     /**

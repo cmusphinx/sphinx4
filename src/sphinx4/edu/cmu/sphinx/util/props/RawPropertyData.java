@@ -20,9 +20,9 @@ import java.util.Map;
 /** Holds the raw property data just as it has come in from the properties file. */
 public class RawPropertyData {
 
-    private String name;
-    private String className;
-    private Map<String, Object> properties;
+    private final String name;
+    private final String className;
+    private final Map<String, Object> properties;
 
 
     /**

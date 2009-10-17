@@ -27,7 +27,7 @@ public class LinearPredictor {
     private double[] ARParameters;
     private double alpha;
     private double[] cepstra;
-    private double[] bilinearCepstra;
+    private final double[] bilinearCepstra;
 
 
     /**

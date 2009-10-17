@@ -18,7 +18,7 @@ import java.util.List;
 public class DataBufferProcessor extends BaseDataProcessor implements DataListener {
 
     /** The FIFO- data buffer. */
-    private List<Data> featureBuffer = new LinkedList<Data>();
+    private final List<Data> featureBuffer = new LinkedList<Data>();
 
     /**
      * If this property is set <code>true</code> the buffer will wait for new data until it returns from a
@@ -46,7 +46,7 @@ public class DataBufferProcessor extends BaseDataProcessor implements DataListen
 
     @S4ComponentList(type = Configurable.class, beTolerant = true)
     public static final String DATA_LISTENERS = "dataListeners";
-    private List<DataListener> dataListeners = new ArrayList<DataListener>();
+    private final List<DataListener> dataListeners = new ArrayList<DataListener>();
 
     /**
      * @param maxBufferSize The maximal size of the buffer in frames. The oldest frames will be removed if the buffer grows out of bounds.

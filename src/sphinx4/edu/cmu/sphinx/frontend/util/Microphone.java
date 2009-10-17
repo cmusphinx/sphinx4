@@ -120,7 +120,7 @@ public class Microphone extends BaseDataProcessor {
     private DataList audioList;
     private Utterance currentUtterance;
     private boolean doConversion;
-    private int audioBufferSize = 160000;
+    private final int audioBufferSize = 160000;
     private volatile boolean recording;
     private volatile boolean utteranceEndReached = true;
     private RecordingThread recorder;
@@ -737,7 +737,7 @@ public class Microphone extends BaseDataProcessor {
  */
 class DataList {
 
-    private List<Data> list;
+    private final List<Data> list;
 
 
     /**

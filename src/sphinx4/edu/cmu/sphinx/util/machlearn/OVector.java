@@ -6,7 +6,7 @@ import java.util.Arrays;
 /** An real-valued observation. */
 public class OVector implements Cloneable, Serializable {
 
-    protected double[] values;
+    protected final double[] values;
 
 
     /** Constructs a new observation for a given feature-vector. */
@@ -39,11 +39,8 @@ public class OVector implements Cloneable, Serializable {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof OVector) {
-            return Arrays.equals(values, ((OVector) obj).values);
-        }
+        return obj instanceof OVector && Arrays.equals(values, ((OVector) obj).values);
 
-        return false;
     }
 
 

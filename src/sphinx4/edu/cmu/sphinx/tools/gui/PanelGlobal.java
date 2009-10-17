@@ -29,8 +29,8 @@ import java.util.HashMap;
  */
  class PanelGlobal extends javax.swing.JPanel implements GUIFileActionListener {
     
-    private String _title;
-    private GUIMediator _gm;
+    private final String _title;
+    private final GUIMediator _gm;
      
     private static final int MODE_OK = 10;
     private static final int MODE_SKIP = 20;
@@ -152,10 +152,10 @@ import java.util.HashMap;
                 "Property Name", "Property Value"
             }
         ) {
-            Class[] types = new Class [] {
+            final Class[] types = new Class [] {
                 java.lang.String.class, java.lang.String.class
             };
-            boolean[] canEdit = new boolean [] {
+            final boolean[] canEdit = new boolean [] {
                 false, false
             };
 

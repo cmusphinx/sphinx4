@@ -25,10 +25,10 @@ import java.util.List;
 /** Represents a single state in an HMM */
 public class SenoneHMMState implements HMMState {
 
-    private SenoneHMM hmm;
-    private int state;
+    private final SenoneHMM hmm;
+    private final int state;
     HMMStateArc[] arcs;
-    private boolean isEmitting;
+    private final boolean isEmitting;
     private Senone senone;
 
     private static int objectCount;

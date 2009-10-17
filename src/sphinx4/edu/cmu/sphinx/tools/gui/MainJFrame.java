@@ -386,7 +386,7 @@ import java.util.Set;
     private javax.swing.JScrollPane jScrollPane6;
     private javax.swing.JTextArea jTextAreaOutput;
     // End of variables declaration//GEN-END:variables
-    private GUIMediator _gm;
+    private final GUIMediator _gm;
     private PanelGlobal _pGlobal;
     private PanelConfigurable _pConfigurable;
 }

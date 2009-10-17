@@ -1063,7 +1063,7 @@ public class LargeTrigramModel implements LanguageModel {
 class LRUCache<K, V> extends LinkedHashMap<K, V> {
 
 	private static final long serialVersionUID = 1L;
-	int maxSize;
+	final int maxSize;
 
 
     /**

@@ -18,7 +18,7 @@ import java.util.List;
 /** Contains an ordered list of senones. */
 public class SenoneSequence implements Serializable {
 
-    private Senone[] senones;
+    private final Senone[] senones;
 
 
     /**

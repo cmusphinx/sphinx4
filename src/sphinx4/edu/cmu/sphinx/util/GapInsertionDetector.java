@@ -177,9 +177,9 @@ class ReferenceFile {
 class ReferenceUtterance {
 
     private boolean isSilenceGap;
-    private float startTime;
-    private float endTime;
-    private String[] words;
+    private final float startTime;
+    private final float endTime;
+    private final String[] words;
 
 
     /**
@@ -324,7 +324,7 @@ class HypothesisFile {
 /** A hypothesis utterance, which will give you a list of hypothesis words. */
 class HypothesisUtterance {
 
-    private List<HypothesisWord> words;
+    private final List<HypothesisWord> words;
     private float startTime;
     private float endTime;
 
@@ -401,9 +401,9 @@ class HypothesisUtterance {
 /** A word in the hypothesis, containing information about when the word started and ended. */
 class HypothesisWord {
 
-    private String text;
-    private float startTime;
-    private float endTime;
+    private final String text;
+    private final float startTime;
+    private final float endTime;
 
 
     /**

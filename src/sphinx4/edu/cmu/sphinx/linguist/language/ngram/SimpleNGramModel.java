@@ -269,7 +269,7 @@ public class SimpleNGramModel implements LanguageModel {
      * @throws IOException if an error occurs while loading
      */
     private void load(String format, URL location, float unigramWeight,
-                      Dictionary dictionary) throws FileNotFoundException, IOException {
+                      Dictionary dictionary) throws IOException {
         String line;
         float logUnigramWeight = logMath.linearToLog(unigramWeight);
         float inverseLogUnigramWeight = logMath
@@ -392,7 +392,7 @@ public class SimpleNGramModel implements LanguageModel {
      * @param location the path to the language model
      * @throws IOException if an error occurs while opening the file
      */
-    private void open(URL location) throws FileNotFoundException,
+    private void open(URL location) throws
             IOException {
         lineNumber = 0;
         fileName = location.toString();
@@ -443,8 +443,8 @@ public class SimpleNGramModel implements LanguageModel {
 
 class Probability {
 
-    float logProbability;
-    float logBackoff;
+    final float logProbability;
+    final float logBackoff;
 
 
     /**

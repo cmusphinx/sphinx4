@@ -28,7 +28,7 @@ public class ConfigurableUtilException extends java.lang.Exception{
     public final static int UTIL_INIT = 3;  //"System scanner initialization";
     public final static int UTIL_PATHHACKER = 4; //"Classpath loader error"
     
-    private int _mode;
+    private final int _mode;
     
     /** 
      * Creates a new instance of <code>ConfigurableUtilException</code> with the 

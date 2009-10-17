@@ -45,9 +45,9 @@ public class GUIMediator {
     public static final String SHOW_CONFIG = "show_config";
         
     private MainJFrame _mainJF;
-    private List<GUIFileActionListener> _panelList;
-    private XMLConfigReader _xmlReader; 
-    private XMLConfigWriter _xmlWriter;  
+    private final List<GUIFileActionListener> _panelList;
+    private final XMLConfigReader _xmlReader;
+    private final XMLConfigWriter _xmlWriter;
     private ModelBuilder _mb;
 
     

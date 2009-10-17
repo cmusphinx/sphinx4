@@ -36,5 +36,5 @@ public class HMMState {
 	}
 
 	public Lab lab;
-	public GMMDiag gmm;
+	public final GMMDiag gmm;
 }

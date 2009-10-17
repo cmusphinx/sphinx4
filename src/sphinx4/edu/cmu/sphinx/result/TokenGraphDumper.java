@@ -29,10 +29,10 @@ import java.util.*;
  */
 public class TokenGraphDumper {
 
-    private AlternateHypothesisManager loserManager;
-    private Result result;
-    private Map<Token, Integer> tokenIDMap;
-    private Set<Token> dumpedTokens;
+    private final AlternateHypothesisManager loserManager;
+    private final Result result;
+    private final Map<Token, Integer> tokenIDMap;
+    private final Set<Token> dumpedTokens;
     private int ID;
 
 

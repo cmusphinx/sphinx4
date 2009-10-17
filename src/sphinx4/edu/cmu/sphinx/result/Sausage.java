@@ -28,7 +28,7 @@ import java.util.*;
 
 public class Sausage implements ConfidenceResult {
 
-    protected List<ConfusionSet> confusionSets;
+    protected final List<ConfusionSet> confusionSets;
 
 
     /**

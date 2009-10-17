@@ -20,8 +20,8 @@ import java.util.List;
 /** A simple implementation of the batch manager suitable for single threaded batch processing */
 public class PooledBatchManager implements BatchManager {
 
-    private String batchFile;
-    private int skip;
+    private final String batchFile;
+    private final int skip;
     private File processingFile;
 
     private final static File topDir = new File("tests");
@@ -32,7 +32,7 @@ public class PooledBatchManager implements BatchManager {
     private final static File lockFile = new File(".lock");
     private FileLock lock;
     private PrintStream oldOut;
-    private FileFilter testFileFilter = new TestFileFilter();
+    private final FileFilter testFileFilter = new TestFileFilter();
 
 
     /**

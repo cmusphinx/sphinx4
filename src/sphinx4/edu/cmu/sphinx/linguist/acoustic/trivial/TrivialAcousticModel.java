@@ -35,7 +35,7 @@ public class TrivialAcousticModel implements AcousticModel {
     public final static String RIGHT_CONTEXT_SIZE = "leftContextSize";
 
     private String name;
-    private Map<Unit, HMM> hmmMap = new HashMap<Unit, HMM>();
+    private final Map<Unit, HMM> hmmMap = new HashMap<Unit, HMM>();
     private int leftContextSize;
     private int rightContextSize;
 
@@ -181,10 +181,10 @@ public class TrivialAcousticModel implements AcousticModel {
 class TrivialHMM implements HMM {
 
     private final static int NUM_STATES = 4;
-    Unit unit;
-    HMMPosition position;
-    HMMState[] hmmStates;
-    private Unit baseUnit;
+    final Unit unit;
+    final HMMPosition position;
+    final HMMState[] hmmStates;
+    private final Unit baseUnit;
 
 
     /**
@@ -271,10 +271,10 @@ class TrivialHMM implements HMM {
 /** A trivial implementation of an HMMState */
 class TrivialHMMState implements HMMState {
 
-    private static HMMStateArc[] EMPTY_ARC = new HMMStateArc[0];
-    private HMM hmm;
-    private int which;
-    private boolean isFinal;
+    private static final HMMStateArc[] EMPTY_ARC = new HMMStateArc[0];
+    private final HMM hmm;
+    private final int which;
+    private final boolean isFinal;
 
 
     TrivialHMMState(HMM hmm, int which, boolean isFinal) {

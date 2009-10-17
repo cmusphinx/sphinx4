@@ -20,7 +20,7 @@ import edu.cmu.sphinx.linguist.acoustic.UnitManager;
 /** Represents a unit in an SentenceHMMS */
 public class UnitState extends SentenceHMMState implements UnitSearchState {
 
-    private Unit unit;
+    private final Unit unit;
     private transient StatePath tail;
     private HMMPosition position = HMMPosition.INTERNAL;
 

@@ -42,12 +42,12 @@ public class ModelBuilder implements GUIFileActionListener {
     private static final String SOURCE_PROP = "source_path";
     private static final String CLASSES_PROP = "classes_path";
 
-    private Map<Object, ConfigurableComponent> _classes; // configurable classes (String name,ConfigurableComponent)
-    private Map<String, Set<ConfigurableComponent>> _groups; //String,Set of ConfigurableComponent
+    private final Map<Object, ConfigurableComponent> _classes; // configurable classes (String name,ConfigurableComponent)
+    private final Map<String, Set<ConfigurableComponent>> _groups; //String,Set of ConfigurableComponent
     // this is the root folders of all sphinx classes
-    private String _folder_path = FOLDER_PROP;
+    private final String _folder_path = FOLDER_PROP;
     // this is the root package of all sphinx classes
-    private String _package_path = PACKAGE_PROP;
+    private final String _package_path = PACKAGE_PROP;
     private static String _source_path;  // path separated by '/', and ends with '/'
     private static String _classes_path; // path separated by '/', and ends with '/'
 
@@ -64,7 +64,7 @@ public class ModelBuilder implements GUIFileActionListener {
 
     private static class ModelBuilderHolder {
 
-        private static ModelBuilder instance = new ModelBuilder();
+        private static final ModelBuilder instance = new ModelBuilder();
     }
 
 

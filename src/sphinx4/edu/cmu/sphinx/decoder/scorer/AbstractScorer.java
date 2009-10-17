@@ -119,10 +119,7 @@ public abstract class AbstractScorer extends ConfigurableAdapter implements Acou
     protected void handleDataStartSignal(DataStartSignal dataStartSignal) {
         Map<String, Object> dataProps = dataStartSignal.getProps();
 
-        if (dataProps.containsKey(DataStartSignal.SPEECH_TAGGED_FEATURE_STREAM))
-            useSpeechSignals = (Boolean) dataProps.get(DataStartSignal.SPEECH_TAGGED_FEATURE_STREAM);
-        else
-            useSpeechSignals = false;
+        useSpeechSignals = dataProps.containsKey(DataStartSignal.SPEECH_TAGGED_FEATURE_STREAM) && (Boolean) dataProps.get(DataStartSignal.SPEECH_TAGGED_FEATURE_STREAM);
     }
 
 

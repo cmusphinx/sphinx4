@@ -39,7 +39,7 @@ public final class LogMath implements Configurable, Serializable {
     public final static String PROP_USE_ADD_TABLE = "useAddTable";
 
 
-    private static float logZero = -Float.MAX_VALUE;
+    private static final float logZero = -Float.MAX_VALUE;
     private static float logOne;
 
     // -------------------------------

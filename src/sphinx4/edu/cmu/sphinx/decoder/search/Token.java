@@ -51,13 +51,13 @@ public class Token implements Scoreable {
 
     private static int curCount;
     private static int lastCount;
-    private static DecimalFormat scoreFmt = new DecimalFormat("0.0000000E00");
-    private static DecimalFormat numFmt = new DecimalFormat("0000");
+    private static final DecimalFormat scoreFmt = new DecimalFormat("0.0000000E00");
+    private static final DecimalFormat numFmt = new DecimalFormat("0000");
 
-    private Token predecessor;
+    private final Token predecessor;
     private int frameNumber;
     private float logTotalScore;
-    private float logLanguageScore;
+    private final float logLanguageScore;
     private float logInsertionProbability;
     private float logAcousticScore;
     private float logWorkingScore;

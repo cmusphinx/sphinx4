@@ -43,7 +43,7 @@ public class MappingDictionary extends FastDictionary implements Dictionary {
 	public static final String PROP_MAP_FILE = "mapFile";
 
 	private URL mappingFile;
-	private Map<String,String> mapping = new HashMap<String,String>();
+	private final Map<String,String> mapping = new HashMap<String,String>();
 				
 	@Override
 	public void newProperties(PropertySheet ps) throws PropertyException {

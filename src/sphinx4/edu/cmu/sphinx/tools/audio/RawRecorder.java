@@ -20,10 +20,10 @@ import java.io.IOException;
 /** Grabs audio from the microphone and returns an array of samples. */
 public class RawRecorder {
 
-    Object lock = new Object();
+    final Object lock = new Object();
     RecordThread recorder;
     AudioFormat inFormat;
-    AudioFormat outFormat;
+    final AudioFormat outFormat;
     TargetDataLine microphone;
     boolean downsample;
 
@@ -122,7 +122,7 @@ public class RawRecorder {
     class RecordThread extends Thread {
 
         boolean done;
-        Object lock = new Object();
+        final Object lock = new Object();
         ByteArrayOutputStream out;
 
 

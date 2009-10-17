@@ -25,8 +25,8 @@ import java.util.Random;
 /** Gets successors from a linguist and times them */
 public class LinguistTimer {
 
-    private Linguist linguist;
-    private boolean details;
+    private final Linguist linguist;
+    private final boolean details;
     int totalStates;
     int totalEmittingStates;
     int totalNonEmittingStates;

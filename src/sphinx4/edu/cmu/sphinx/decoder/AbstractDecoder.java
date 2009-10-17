@@ -18,7 +18,7 @@ public abstract class AbstractDecoder implements ResultProducer, Configurable {
 
     @S4ComponentList(type = ResultListener.class)
     public static final String PROP_RESULT_LISTENERS = "resultListeners";
-    protected List<ResultListener> resultListeners = new ArrayList<ResultListener>();
+    protected final List<ResultListener> resultListeners = new ArrayList<ResultListener>();
 
     /** If set to true the used search-manager will be automatically allocated in <code>newProperties()</code>. */
     @S4Boolean(defaultValue = false)

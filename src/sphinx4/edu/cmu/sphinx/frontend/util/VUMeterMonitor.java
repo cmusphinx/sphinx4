@@ -23,9 +23,9 @@ import java.util.logging.Logger;
 
 public class VUMeterMonitor extends BaseDataProcessor {
 
-    VUMeter vumeter;
-    VUMeterPanel vuMeterPanel;
-    JDialog vuMeterDialog;
+    final VUMeter vumeter;
+    final VUMeterPanel vuMeterPanel;
+    final JDialog vuMeterDialog;
 
 
     public VUMeterMonitor() {

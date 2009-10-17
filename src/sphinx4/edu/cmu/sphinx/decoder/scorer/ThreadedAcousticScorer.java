@@ -408,9 +408,9 @@ class Semaphore {
 
 class ScoreableJob {
 
-    private List<? extends Scoreable> scoreables;
-    private int start;
-    private int size;
+    private final List<? extends Scoreable> scoreables;
+    private final int start;
+    private final int size;
 
 
     /**

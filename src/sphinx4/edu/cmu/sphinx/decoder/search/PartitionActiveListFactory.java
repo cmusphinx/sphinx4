@@ -70,13 +70,13 @@ public class PartitionActiveListFactory extends ActiveListFactory {
     class PartitionActiveList implements ActiveList {
 
         private int size;
-        private int absoluteBeamWidth;
-        private float logRelativeBeamWidth;
+        private final int absoluteBeamWidth;
+        private final float logRelativeBeamWidth;
         private Token bestToken;
         // when the list is changed these things should be
         // changed/updated as well
         private Token[] tokenList;
-        private Partitioner partitioner = new Partitioner();
+        private final Partitioner partitioner = new Partitioner();
 
 
         /** Creates an empty active list
@@ -266,8 +266,8 @@ public class PartitionActiveListFactory extends ActiveListFactory {
 
 class TokenArrayIterator implements Iterator<Token> {
 
-    private Token[] tokenArray;
-    private int size;
+    private final Token[] tokenArray;
+    private final int size;
     private int pos;
 
 

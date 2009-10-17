@@ -245,7 +245,7 @@ public class ConcatFileDataSource extends StreamDataSource implements ReferenceS
      */
     class InputStreamEnumeration implements Enumeration {
 
-        private int totalFiles;
+        private final int totalFiles;
         private boolean inSilence;
         private Random silenceRandom;
         private BufferedReader reader;

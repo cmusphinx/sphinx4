@@ -24,9 +24,9 @@ public class HMMSet {
 	/**
 	 * contains HMMState instances
 	 */
-	public List<HMMState> states;
-	public List<float[][]> transitions = new ArrayList<float[][]>();
-	public Map<String, Integer> transNames = new HashMap<String, Integer>();
+	public final List<HMMState> states;
+	public final List<float[][]> transitions = new ArrayList<float[][]>();
+	public final Map<String, Integer> transNames = new HashMap<String, Integer>();
 
 	public Iterator<SingleHMM> get1phIt() {
 		Iterator<SingleHMM> it = new Iterator<SingleHMM>() {
@@ -109,11 +109,11 @@ public class HMMSet {
 	/**
 	 * contains GMMDiag instances
 	 */
-	public List<GMMDiag> gmms;
+	public final List<GMMDiag> gmms;
 	/**
 	 * contains HMM instances
 	 */
-	public List<SingleHMM> hmms;
+	public final List<SingleHMM> hmms;
 
 	public int getNhmms() {
 		return hmms.size();

@@ -103,7 +103,7 @@ public class NISTAlign {
     private LinkedList<String> alignedHypothesisWords;
 
     /** Helpers to create percentage strings. */
-    static DecimalFormat percentageFormat = new DecimalFormat("##0.0%");
+    static final DecimalFormat percentageFormat = new DecimalFormat("##0.0%");
 
 
     private boolean showResults;

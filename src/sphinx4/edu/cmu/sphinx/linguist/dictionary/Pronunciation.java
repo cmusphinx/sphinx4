@@ -22,10 +22,10 @@ public class Pronunciation {
             = new Pronunciation(new Unit[0], null, null, 1.0f);
 
     private Word word;
-    private WordClassification wordClassification;
-    private Unit[] units;
-    private String tag;
-    private float probability;
+    private final WordClassification wordClassification;
+    private final Unit[] units;
+    private final String tag;
+    private final float probability;
 
 
     /**

@@ -31,8 +31,8 @@ public class CompositeSenone implements Senone, Serializable {
 
     private final static int MAX_SENONES = 20000;
     private final static boolean wantMaxScore = true;
-    private Senone[] senones;
-    private float weight;
+    private final Senone[] senones;
+    private final float weight;
 
     transient volatile private Data logLastDataScored;
     transient volatile private float logLastScore;

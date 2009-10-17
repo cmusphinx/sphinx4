@@ -28,10 +28,10 @@ import java.util.Map;
 /** Loads configuration from an XML file */
 public class SaxLoader {
 
-    private URL url;
-    private Map<String, RawPropertyData> rpdMap;
-    private GlobalProperties globalProperties;
-    private boolean replaceDuplicates;
+    private final URL url;
+    private final Map<String, RawPropertyData> rpdMap;
+    private final GlobalProperties globalProperties;
+    private final boolean replaceDuplicates;
 
 
     /**

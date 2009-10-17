@@ -26,12 +26,12 @@ import edu.cmu.sphinx.util.props.PropertyType;
  */
 public class ConfigurableProperty {
     
-    private String _name;
-    private String _default;    
-    private PropertyType _type;
-    private String _classtype;
-    private String _desc;
-    private String _original_name;
+    private final String _name;
+    private final String _default;
+    private final PropertyType _type;
+    private final String _classtype;
+    private final String _desc;
+    private final String _original_name;
         
     /** 
      * Creates a new instance of ConfigurableProperty 

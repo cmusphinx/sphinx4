@@ -27,7 +27,7 @@ import java.util.ArrayList;
  */
 public class WordResultPath implements Path {
 
-    private List<WordResult> path = new ArrayList<WordResult>();
+    private final List<WordResult> path = new ArrayList<WordResult>();
 
 
     /**

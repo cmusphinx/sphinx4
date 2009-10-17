@@ -849,14 +849,7 @@ public class LexTreeLinguist implements Linguist {
          * @return <code>true</code> if the object is equal to this
          */
         public boolean equals(Object o) {
-            if (o == this) {
-                return true;
-            } else if (o instanceof LexTreeEndUnitState) {
-                //LexTreeEndUnitState other = (LexTreeEndUnitState) o;
-                return super.equals(o);
-            } else {
-                return false;
-            }
+            return o == this || o instanceof LexTreeEndUnitState && super.equals(o);
         }
 
 

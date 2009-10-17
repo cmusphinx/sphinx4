@@ -165,10 +165,10 @@ public class PropertySheet implements Cloneable {
 
         int[] range = s4Integer.range();
         if (range.length != 2)
-            throw new InternalConfigurationException(getInstanceName(), name, range + " is not of expected range type, which is {minValue, maxValue)");
+            throw new InternalConfigurationException(getInstanceName(), name, Arrays.toString(range) + " is not of expected range type, which is {minValue, maxValue)");
 
         if (propValue < range[0] || propValue > range[1])
-            throw new InternalConfigurationException(getInstanceName(), name, " is not in range (" + range + ')');
+            throw new InternalConfigurationException(getInstanceName(), name, " is not in range (" + Arrays.toString(range) + ')');
 
         return propValue;
     }
@@ -223,10 +223,10 @@ public class PropertySheet implements Cloneable {
 
         double[] range = s4Double.range();
         if (range.length != 2)
-            throw new InternalConfigurationException(getInstanceName(), name, range + " is not of expected range type, which is {minValue, maxValue)");
+            throw new InternalConfigurationException(getInstanceName(), name, Arrays.toString(range) + " is not of expected range type, which is {minValue, maxValue)");
 
         if (propValue < range[0] || propValue > range[1])
-            throw new InternalConfigurationException(getInstanceName(), name, " is not in range (" + range + ')');
+            throw new InternalConfigurationException(getInstanceName(), name, " is not in range (" + Arrays.toString(range) + ')');
 
         return propValue;
     }

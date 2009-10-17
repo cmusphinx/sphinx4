@@ -20,10 +20,10 @@ import java.io.OutputStream;
 /** Writes raw audio to a file, handling sample size, endian format, and signed/unsigned data. */
 public class RawWriter {
 
-    private OutputStream outputStream;
-    private int bytesPerSample;
+    private final OutputStream outputStream;
+    private final int bytesPerSample;
     private boolean signedData;
-    private boolean bigEndian;
+    private final boolean bigEndian;
 
 
     /**

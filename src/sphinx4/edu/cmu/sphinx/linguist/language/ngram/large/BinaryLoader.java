@@ -575,7 +575,7 @@ public class BinaryLoader {
      * @param stream the DataInputStream to read from
      * @return the byte read
      */
-    private final byte readByte(DataInputStream stream) throws IOException {
+    private byte readByte(DataInputStream stream) throws IOException {
         bytesRead++;
         return stream.readByte();
     }
@@ -588,7 +588,7 @@ public class BinaryLoader {
      * @param bigEndian true if the DataInputStream is in bigEndian, false otherwise
      * @return the integer read
      */
-    private final int readInt(DataInputStream stream, boolean bigEndian)
+    private int readInt(DataInputStream stream, boolean bigEndian)
             throws IOException {
         bytesRead += 4;
         if (bigEndian) {
@@ -606,7 +606,7 @@ public class BinaryLoader {
      * @param bigEndian true if the DataInputStream is in bigEndian, false otherwise
      * @return the float read
      */
-    private final float readFloat(DataInputStream stream, boolean bigEndian)
+    private float readFloat(DataInputStream stream, boolean bigEndian)
             throws IOException {
         bytesRead += 4;
         if (bigEndian) {
@@ -625,7 +625,7 @@ public class BinaryLoader {
      * @param length the number of characters in the returned string
      * @return a string of the given length from the given DataInputStream
      */
-    private final String readString(DataInputStream stream, int length)
+    private String readString(DataInputStream stream, int length)
             throws IOException {
         StringBuilder builder = new StringBuilder();
         byte[] bytes = new byte[length];
@@ -646,7 +646,7 @@ public class BinaryLoader {
      * @param numberUnigrams the number of String to read
      * @return an array of the Strings read
      */
-    private final String[] readWords(DataInputStream stream, int length,
+    private String[] readWords(DataInputStream stream, int length,
                                      int numberUnigrams) throws IOException {
         String[] words = new String[numberUnigrams];
         byte[] bytes = new byte[length];

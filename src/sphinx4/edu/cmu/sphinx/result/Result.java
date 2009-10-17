@@ -35,13 +35,13 @@ import java.util.List;
  */
 public class Result {
 
-    private ActiveList activeList;
-    private List<Token> resultList;
+    private final ActiveList activeList;
+    private final List<Token> resultList;
     private AlternateHypothesisManager alternateHypothesisManager;
     private boolean isFinal;
-    private int currentFrameNumber;
+    private final int currentFrameNumber;
     private String reference;
-    private LogMath logMath;
+    private final LogMath logMath;
 
 
     /**

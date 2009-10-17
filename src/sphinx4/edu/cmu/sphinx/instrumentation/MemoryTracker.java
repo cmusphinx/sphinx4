@@ -40,7 +40,7 @@ public class MemoryTracker
     @S4Boolean(defaultValue = true)
     public final static String PROP_SHOW_DETAILS = "showDetails";
 
-    private static DecimalFormat memFormat = new DecimalFormat("0.00 Mb");
+    private static final DecimalFormat memFormat = new DecimalFormat("0.00 Mb");
     // ------------------------------
     // Configuration data
     // ------------------------------

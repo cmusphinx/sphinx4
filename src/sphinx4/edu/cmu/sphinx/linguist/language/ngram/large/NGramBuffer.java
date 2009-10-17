@@ -19,10 +19,10 @@ package edu.cmu.sphinx.linguist.language.ngram.large;
  */
 class NGramBuffer {
 
-    private byte[] buffer;
-    private int numberNGrams;
+    private final byte[] buffer;
+    private final int numberNGrams;
     private int position;
-    private boolean bigEndian;
+    private final boolean bigEndian;
     private boolean used;
 
 

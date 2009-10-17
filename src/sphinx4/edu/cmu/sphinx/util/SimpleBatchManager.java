@@ -19,10 +19,10 @@ import java.util.List;
 /** A simple implementation of the batch manager suitable for single threaded batch processing */
 public class SimpleBatchManager implements BatchManager {
 
-    private String batchFile;
-    private int skip;
+    private final String batchFile;
+    private final int skip;
     private int whichBatch;
-    private int totalBatches;
+    private final int totalBatches;
     private int curItem;
     private List<String> items;
 

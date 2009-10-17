@@ -35,7 +35,7 @@ public enum HMMPosition {
             posByRep[pos.rep.charAt(0)] = pos;
     }
 
-    private String rep;
+    private final String rep;
 
     private HMMPosition(char rep) {
         this.rep = String.valueOf(rep);

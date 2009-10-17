@@ -55,7 +55,7 @@ public class XMLConfigReader implements GUIReader {
       private XMLConfigReader() {}
 
       private static class XMLReaderHolder {
-          private static XMLConfigReader instance = new XMLConfigReader();
+          private static final XMLConfigReader instance = new XMLConfigReader();
       }
       
       /**

@@ -19,8 +19,8 @@ package edu.cmu.sphinx.linguist.flat;
  */
 public class StatePath {
 
-    SentenceHMMState state;
-    ContextBucket context;
+    final SentenceHMMState state;
+    final ContextBucket context;
 
 
     /**

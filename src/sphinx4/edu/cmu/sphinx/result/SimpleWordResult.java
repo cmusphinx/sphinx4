@@ -26,12 +26,12 @@ import edu.cmu.sphinx.util.LogMath;
  */
 public class SimpleWordResult implements WordResult {
 
-    Word word;
+    final Word word;
     int startFrame;
     int endFrame;
-    double score;
-    double confidence;
-    LogMath logMath;
+    final double score;
+    final double confidence;
+    final LogMath logMath;
 
 
     /**

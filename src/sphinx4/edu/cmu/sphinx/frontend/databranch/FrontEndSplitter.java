@@ -23,7 +23,7 @@ public class FrontEndSplitter extends BaseDataProcessor implements DataProducer 
 
     @S4ComponentList(type = Configurable.class, beTolerant = true)
     public static final String PROP_DATA_LISTENERS = "dataListeners";
-    private List<DataListener> listeners = new ArrayList<DataListener>();
+    private final List<DataListener> listeners = new ArrayList<DataListener>();
 
     public FrontEndSplitter() {
     }

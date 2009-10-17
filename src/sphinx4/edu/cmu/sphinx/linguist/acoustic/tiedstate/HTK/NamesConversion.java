@@ -27,8 +27,8 @@ import java.util.StringTokenizer;
  * 
  */
 public class NamesConversion {
-	HashMap<String,String> phoneConv = new HashMap<String,String>();
-	HashMap<String,String> wordConv = new HashMap<String,String>();
+	final HashMap<String,String> phoneConv = new HashMap<String,String>();
+	final HashMap<String,String> wordConv = new HashMap<String,String>();
 	String left, base, right;
 	
 	public NamesConversion() {

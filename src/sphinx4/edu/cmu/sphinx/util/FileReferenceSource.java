@@ -20,7 +20,7 @@ import java.util.List;
 /** A source of reference texts. */
 public class FileReferenceSource implements ReferenceSource {
 
-    private List<String> references;
+    private final List<String> references;
 
 
     /**

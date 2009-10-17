@@ -118,12 +118,12 @@ public class FSTGrammar extends Grammar {
     // -------------------------------
 
     private boolean addOptionalSilence;
-    private boolean ignoreUnknownTransitions = true;
+    private final boolean ignoreUnknownTransitions = true;
     private String path;
     private LogMath logMath;
 
-    private Map<String, GrammarNode> nodes = new HashMap<String, GrammarNode>();
-    private Set<GrammarNode> expandedNodes = new HashSet<GrammarNode>();
+    private final Map<String, GrammarNode> nodes = new HashMap<String, GrammarNode>();
+    private final Set<GrammarNode> expandedNodes = new HashSet<GrammarNode>();
 
 
     /**

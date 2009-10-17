@@ -161,6 +161,30 @@ public class HTKLoader implements Loader {
 	private boolean loaded;
 	private boolean tie1ph;
 
+    public HTKLoader( String propsFile, LogMath logMath, UnitManager unitManager,
+                      boolean isBinary, int vectorLength, String model,
+                      boolean tie1ph, float distFloor, float mixtureWeightFloor, float varianceFloor ) {
+
+            this.logger = Logger.getLogger(getClass().getName());
+
+            this.propsFile = propsFile;
+            loadProperties();
+
+            this.logMath = logMath;
+            this.unitManager = unitManager;
+            this.binary = isBinary;
+            this.vectorLength = vectorLength;
+            this.model = model;
+            this.tie1ph = tie1ph;
+            this.distFloor = distFloor;
+            this.mixtureWeightFloor = mixtureWeightFloor;
+            this.varianceFloor = varianceFloor;
+    }
+
+    public HTKLoader() {
+        
+    }
+
 	public void newProperties(PropertySheet ps) throws PropertyException {
 		logger = ps.getLogger();
 
@@ -249,8 +273,8 @@ public class HTKLoader implements Loader {
 	 *            the name of the acoustic model; if null we just load from the
 	 *            default location
 	 */
-	private void loadModelFiles(String MMFname) throws FileNotFoundException,
-			IOException, ZipException {
+	private void loadModelFiles(String MMFname) throws
+            IOException {
 
 		logger.config("Loading HTK acoustic model: " + MMFname);
 		logger.config("    Path      : " + location);

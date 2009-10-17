@@ -20,7 +20,7 @@ import javax.sound.sampled.SourceDataLine;
 /** Plays an AudioData in a separate thread. */
 public class AudioPlayer extends Thread {
 
-    private AudioData audio;
+    private final AudioData audio;
     private SourceDataLine line;
     private int selectionStart;
     private int selectionEnd;

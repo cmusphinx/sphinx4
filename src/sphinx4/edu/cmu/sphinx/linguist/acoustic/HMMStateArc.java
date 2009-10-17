@@ -20,8 +20,8 @@ package edu.cmu.sphinx.linguist.acoustic;
  */
 public class HMMStateArc {
 
-    private HMMState hmmState;
-    private float probability;
+    private final HMMState hmmState;
+    private final float probability;
 
 
     /**

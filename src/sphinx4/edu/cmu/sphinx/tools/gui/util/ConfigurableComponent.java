@@ -36,12 +36,12 @@ import edu.cmu.sphinx.tools.gui.RawPropertyData;
  */
 public class ConfigurableComponent {
     
-    private String _sectionName;
-    private Map<String, ConfigurableProperty> _propList; // String propertyName, ConfigurableProperty
-    private Class<?> _component;
-    private String _componentDesc;
-    private String _componentClassName;
-    private Map<String, RawPropertyData> _confProp; // List of String name, Rpd for this class
+    private final String _sectionName;
+    private final Map<String, ConfigurableProperty> _propList; // String propertyName, ConfigurableProperty
+    private final Class<?> _component;
+    private final String _componentDesc;
+    private final String _componentClassName;
+    private final Map<String, RawPropertyData> _confProp; // List of String name, Rpd for this class
     
     /** 
      * Creates a new instance of <code>ConfigurableComponent</code>

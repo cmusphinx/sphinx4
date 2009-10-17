@@ -19,7 +19,7 @@ import edu.cmu.sphinx.linguist.dictionary.Pronunciation;
 /** Represents a pronunciation in an SentenceHMMS */
 public class PronunciationState extends SentenceHMMState implements        WordSearchState {
 
-    private Pronunciation pronunciation;
+    private final Pronunciation pronunciation;
 
     /**
      * Creates a PronunciationState

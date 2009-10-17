@@ -73,8 +73,8 @@ public class SortingActiveListFactory extends ActiveListFactory {
     class SortingActiveList implements ActiveList {
 
         private final static int DEFAULT_SIZE = 1000;
-        private int absoluteBeamWidth;
-        private float logRelativeBeamWidth;
+        private final int absoluteBeamWidth;
+        private final float logRelativeBeamWidth;
         private Token bestToken;
         // when the list is changed these things should be
         // changed/updated as well

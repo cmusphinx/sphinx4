@@ -16,10 +16,10 @@ package edu.cmu.sphinx.linguist.language.ngram.large;
 /** Represents a probability, a backoff probability, and the location of the first bigram entry. */
 class UnigramProbability {
 
-    private int wordID;
+    private final int wordID;
     private float logProbability;
     private float logBackoff;
-    private int firstBigramEntry;
+    private final int firstBigramEntry;
 
 
     /**

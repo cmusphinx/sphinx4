@@ -27,13 +27,13 @@ package edu.cmu.sphinx.frontend.frequencywarp;
 public class PLPFilter {
 
     private double[] filterCoefficients;
-    private int numDFTPoints;
+    private final int numDFTPoints;
 
     /** The center frequency of the filter in Hertz. */
-    public double centerFreqInHz;
+    public final double centerFreqInHz;
 
     /** The center frequency of the filter in Bark. */
-    public double centerFreqInBark;
+    public final double centerFreqInBark;
 
 
     /**

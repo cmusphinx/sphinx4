@@ -34,7 +34,7 @@ public class UnitManager implements Configurable {
             new Unit(SILENCE_NAME, true, SILENCE_ID);
 
     private String name;
-    private Map<String, Unit> ciMap;
+    private final Map<String, Unit> ciMap;
 
 
     {

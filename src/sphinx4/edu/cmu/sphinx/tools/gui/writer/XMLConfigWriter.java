@@ -38,7 +38,7 @@ public class XMLConfigWriter implements GUIWriter{
       private XMLConfigWriter() {}
 
       private static class XMLWriterHolder {
-          private static XMLConfigWriter instance = new XMLConfigWriter();
+          private static final XMLConfigWriter instance = new XMLConfigWriter();
       }
       
       /** 

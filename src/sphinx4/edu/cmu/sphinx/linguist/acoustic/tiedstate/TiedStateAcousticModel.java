@@ -91,7 +91,7 @@ public class TiedStateAcousticModel implements AcousticModel {
     // internal variables
     // -----------------------------
     transient protected Timer loadTimer;
-    transient private Map<String, SenoneSequence> compositeSenoneSequenceCache = new HashMap<String, SenoneSequence>();
+    final transient private Map<String, SenoneSequence> compositeSenoneSequenceCache = new HashMap<String, SenoneSequence>();
     private boolean allocated;
 
 

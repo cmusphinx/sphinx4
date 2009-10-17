@@ -21,9 +21,9 @@ public class Pool<T> {
 
     public enum Feature { NUM_SENONES, NUM_GAUSSIANS_PER_STATE, NUM_STREAMS }
 
-    private String name;
-    private List<T> pool;
-    private Map<Feature, Integer> features = new EnumMap<Feature, Integer>(Feature.class);
+    private final String name;
+    private final List<T> pool;
+    private final Map<Feature, Integer> features = new EnumMap<Feature, Integer>(Feature.class);
 
     /**
      * Creates a new pool.

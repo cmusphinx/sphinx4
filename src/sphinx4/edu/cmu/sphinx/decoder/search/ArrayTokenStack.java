@@ -16,7 +16,7 @@ package edu.cmu.sphinx.decoder.search;
 /** An array implementation of TokenStack. */
 public class ArrayTokenStack implements TokenStack {
 
-    private Token[] stack;
+    private final Token[] stack;
 
 
     /**

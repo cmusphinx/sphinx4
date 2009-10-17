@@ -36,6 +36,5 @@ public class Segmenter {
 	        do {
 	        	data = frontend.getData();
 	        } while (data != null);
-	        return;
-	}
+	        }
 }

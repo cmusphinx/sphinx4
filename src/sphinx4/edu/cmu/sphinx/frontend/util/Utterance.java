@@ -25,9 +25,9 @@ import java.io.IOException;
 /** Represents the complete audio data of an utterance. */
 public class Utterance {
 
-    private String name;
-    private ByteArrayOutputStream audioBuffer;
-    private AudioFormat audioFormat;
+    private final String name;
+    private final ByteArrayOutputStream audioBuffer;
+    private final AudioFormat audioFormat;
 
 
     /**

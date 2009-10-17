@@ -21,7 +21,7 @@ import edu.cmu.sphinx.frontend.DoubleData;
 public class SpeechClassifiedData implements Data {
 
     private boolean isSpeech;
-    private DoubleData data;
+    private final DoubleData data;
 
 
     /**

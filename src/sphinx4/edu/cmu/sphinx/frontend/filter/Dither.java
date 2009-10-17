@@ -22,7 +22,7 @@ import java.util.*;
  */
 public class Dither extends BaseDataProcessor {
 
-	Random random;
+	final Random random;
 
     public Dither() {
         initLogger();

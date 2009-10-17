@@ -136,7 +136,7 @@ public class BatchNISTRecognizer extends BatchModeRecognizer {
         int endOffset;
         String name;
         byte[] data;
-        String ref;
+        final String ref;
 
 
         public String getFile() {

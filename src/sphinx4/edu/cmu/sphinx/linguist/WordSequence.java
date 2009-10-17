@@ -24,7 +24,7 @@ import java.util.List;
  */
 public final class WordSequence {
 
-    private Word[] words;
+    private final Word[] words;
     private transient int hashCode = -1;
 
     /** an empty word sequence, that is, it has no words. */

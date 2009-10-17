@@ -27,7 +27,7 @@ public class GUIReaderException extends java.lang.Exception {
     public final static int EXCEPTION_FILE_NOT_FOUND = 4;
     public final static int EXCEPTION_INVALID_TYPE = 5;
     
-    private int _mode;
+    private final int _mode;
     
     /**
      * Constructs an instance of <code>GUIReaderException</code> with the specified detail message.

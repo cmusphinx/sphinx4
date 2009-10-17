@@ -22,7 +22,7 @@ package edu.cmu.sphinx.frontend;
  */
 public class DataStartSignal extends Signal {
 
-    private int sampleRate;
+    private final int sampleRate;
     /**
      * A constant that is attached to all DataStartSignal passing this component. This allows subsequent
      * <code>DataProcessor</code>s (like the <code>Scorer</code>) to adapt their processsing behavior.

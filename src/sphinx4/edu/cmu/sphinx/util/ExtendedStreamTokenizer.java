@@ -21,10 +21,10 @@ import java.util.List;
 public class ExtendedStreamTokenizer {
 
     private String path;
-    private StreamTokenizer st;
-    private Reader reader;
+    private final StreamTokenizer st;
+    private final Reader reader;
     private boolean atEOF;
-    private List<String> putbackList;
+    private final List<String> putbackList;
 
 
     /**
@@ -139,7 +139,7 @@ public class ExtendedStreamTokenizer {
      * @throws StreamCorruptedException if the word does not match
      * @throws IOException              if an error occurs while loading the data
      */
-    public String getString() throws StreamCorruptedException, IOException {
+    public String getString() throws IOException {
         if (!putbackList.isEmpty()) {
             return putbackList.remove(putbackList.size() - 1);
         } else {
@@ -211,7 +211,7 @@ public class ExtendedStreamTokenizer {
      * @throws IOException              if an error occurs while loading the data
      */
     public void expectString(String expecting)
-            throws StreamCorruptedException, IOException {
+            throws IOException {
         String line = getString();
         if (!line.equals(expecting)) {
             corrupt("error matching expected string '" + expecting +
@@ -229,7 +229,7 @@ public class ExtendedStreamTokenizer {
      * @throws IOException              if an error occurs while loading the data
      */
     public void expectInt(String name, int expecting)
-            throws StreamCorruptedException, IOException {
+            throws IOException {
         int val = getInt(name);
         if (val != expecting) {
             corrupt("Expecting integer " + expecting);
@@ -246,7 +246,7 @@ public class ExtendedStreamTokenizer {
      * @throws IOException              if an error occurs while loading the data number
      */
     public int getInt(String name)
-            throws StreamCorruptedException, IOException {
+            throws IOException {
         int iVal = 0;
         try {
             String val = getString();
@@ -267,7 +267,7 @@ public class ExtendedStreamTokenizer {
      * @throws IOException              if an error occurs while loading the data number
      */
     public double getDouble(String name)
-            throws StreamCorruptedException, IOException {
+            throws IOException {
         double dVal = 0.0;
         try {
             String val = getString();
@@ -292,7 +292,7 @@ public class ExtendedStreamTokenizer {
      * @throws IOException              if an error occurs while loading the data number
      */
     public float getFloat(String name)
-            throws StreamCorruptedException, IOException {
+            throws IOException {
         float fVal = 0.0F;
         try {
             String val = getString();
@@ -318,7 +318,7 @@ public class ExtendedStreamTokenizer {
      * @throws IOException              if an error occurs while loading the data number
      */
     public float getFloat(String name, float defaultValue)
-            throws StreamCorruptedException, IOException {
+            throws IOException {
         float fVal = 0.0F;
         try {
             String val = getString();

@@ -27,7 +27,7 @@ import java.util.Map;
 public class Signal implements Data {
 
     /** the time this Signal was issued. */
-    private long time;
+    private final long time;
 
     /**
      * A (lazily initialized) collection of names properties of this signal. This collection might contain infos about

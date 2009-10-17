@@ -34,20 +34,20 @@ import java.util.*;
  */
 class HMMTree {
 
-    private HMMPool hmmPool;
+    private final HMMPool hmmPool;
     private InitialWordNode initialNode;
     private Dictionary dictionary;
 
     private LanguageModel lm;
-    private boolean addFillerWords;
-    private boolean addSilenceWord = true;
-    private Set<Unit> entryPoints = new HashSet<Unit>();
+    private final boolean addFillerWords;
+    private final boolean addSilenceWord = true;
+    private final Set<Unit> entryPoints = new HashSet<Unit>();
     private Set<Unit> exitPoints = new HashSet<Unit>();
     private Set<Word> allWords;
     private EntryPointTable entryPointTable;
     private boolean debug;
-    private float languageWeight;
-    private Map<Object, HMMNode[]> endNodeMap;
+    private final float languageWeight;
+    private final Map<Object, HMMNode[]> endNodeMap;
     private WordNode sentenceEndWordNode;
 
 
@@ -387,7 +387,7 @@ class HMMTree {
     /** The EntryPoint table is used to manage the set of entry points into the lex tree. */
     class EntryPointTable {
 
-        private Map<Unit, EntryPoint> entryPoints;
+        private final Map<Unit, EntryPoint> entryPoints;
 
 
         /**
@@ -442,9 +442,9 @@ class HMMTree {
     /** Manages a single entry point. */
     class EntryPoint {
 
-        Unit baseUnit;
-        Node baseNode;      // second units and beyond start here
-        Map<Unit, Node> unitToEntryPointMap;
+        final Unit baseUnit;
+        final Node baseNode;      // second units and beyond start here
+        final Map<Unit, Node> unitToEntryPointMap;
         List<Pronunciation> singleUnitWords;
         int nodeCount;
         Set<Unit> rcSet;
@@ -686,7 +686,7 @@ class Node {
 
     private static int nodeCount;
     private static int successorCount;
-    private static Map<Pronunciation, WordNode> wordNodeMap = new HashMap<Pronunciation, WordNode>();
+    private static final Map<Pronunciation, WordNode> wordNodeMap = new HashMap<Pronunciation, WordNode>();
     private Object successors;
     private float logUnigramProbability;
 
@@ -928,7 +928,7 @@ class Node {
 /** A node representing a word in the hmm tree */
 class WordNode extends Node {
 
-    private Pronunciation pronunciation;
+    private final Pronunciation pronunciation;
 
 
     /**
@@ -1002,7 +1002,7 @@ class WordNode extends Node {
  */
 class InitialWordNode extends WordNode {
 
-    HMMNode parent;
+    final HMMNode parent;
 
 
     /**
@@ -1087,7 +1087,7 @@ abstract class UnitNode extends Node {
 /** A node that represents an HMM in the hmm tree */
 class HMMNode extends UnitNode {
 
-    private HMM hmm;
+    private final HMM hmm;
 
     // There can potentially be a large number of nodes (millions),
     // therefore it is important to conserve space as much as
@@ -1219,9 +1219,9 @@ class HMMNode extends UnitNode {
 
 class EndNode extends UnitNode {
 
-    Unit baseUnit;
-    Unit leftContext;
-    Integer key;
+    final Unit baseUnit;
+    final Unit leftContext;
+    final Integer key;
 
 
     /**

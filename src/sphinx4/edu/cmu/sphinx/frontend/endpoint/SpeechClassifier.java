@@ -64,7 +64,7 @@ public class SpeechClassifier extends BaseDataProcessor {
     @S4Double(defaultValue = 0.003)
     public static final String PROP_ADJUSTMENT = "adjustment";
 
-    protected double averageNumber = 1;
+    protected final double averageNumber = 1;
     protected double adjustment;
     protected double level;               // average signal level
     protected double background;          // background signal level
@@ -73,7 +73,7 @@ public class SpeechClassifier extends BaseDataProcessor {
     protected float frameLengthSec;
     protected boolean isSpeech;
 
-    protected List<Data> outputQueue = new LinkedList<Data>();
+    protected final List<Data> outputQueue = new LinkedList<Data>();
 
     public SpeechClassifier(int frameLengthMs, double adjustment, double threshold, double minSignal ) {
         initLogger();

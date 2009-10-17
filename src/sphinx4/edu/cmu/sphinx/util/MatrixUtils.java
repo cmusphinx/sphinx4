@@ -5,7 +5,7 @@ import java.text.DecimalFormat;
 /** Some simple matrix and vector manipulation methods. */
 public class MatrixUtils {
 
-    public static DecimalFormat df = new DecimalFormat("0.00");
+    public static final DecimalFormat df = new DecimalFormat("0.00");
 
 
     public static String toString(double[][] m) {

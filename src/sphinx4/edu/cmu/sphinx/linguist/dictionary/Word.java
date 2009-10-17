@@ -27,9 +27,9 @@ public class Word {
     }
 
 
-    private String spelling;               // the spelling of the word
-    private Pronunciation[] pronunciations; // pronunciations of this word
-    private boolean isFiller;
+    private final String spelling;               // the spelling of the word
+    private final Pronunciation[] pronunciations; // pronunciations of this word
+    private final boolean isFiller;
 
 
     /**
@@ -137,11 +137,8 @@ public class Word {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof Word) {
-            return spelling.equals(((Word)obj).spelling);
-        }
+        return obj instanceof Word && spelling.equals(((Word) obj).spelling);
 
-        return false;
     }
 
 

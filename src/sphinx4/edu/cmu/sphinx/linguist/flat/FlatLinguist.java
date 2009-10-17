@@ -471,7 +471,7 @@ public class FlatLinguist implements Linguist, Configurable {
     protected class FlatSearchGraph implements SearchGraph {
 
         /** An array of classes that represents the order in which the states will be returned. */
-        private SearchState initialState;
+        private final SearchState initialState;
 
 
         /**
@@ -511,14 +511,14 @@ public class FlatLinguist implements Linguist, Configurable {
      */
     protected class GState {
 
-        private Map<ContextPair, List<SearchState>> entryPoints = new HashMap<ContextPair, List<SearchState>>();
-        private Map<ContextPair, List<SearchState>> exitPoints = new HashMap<ContextPair, List<SearchState>>();
-        private Map<String, SentenceHMMState> existingStates = new HashMap<String, SentenceHMMState>();
+        private final Map<ContextPair, List<SearchState>> entryPoints = new HashMap<ContextPair, List<SearchState>>();
+        private final Map<ContextPair, List<SearchState>> exitPoints = new HashMap<ContextPair, List<SearchState>>();
+        private final Map<String, SentenceHMMState> existingStates = new HashMap<String, SentenceHMMState>();
 
-        private GrammarNode node;
+        private final GrammarNode node;
 
-        private Set<UnitContext> rightContexts = new HashSet<UnitContext>();
-        private Set<UnitContext> leftContexts = new HashSet<UnitContext>();
+        private final Set<UnitContext> rightContexts = new HashSet<UnitContext>();
+        private final Set<UnitContext> leftContexts = new HashSet<UnitContext>();
         private Set<UnitContext> startingContexts;
 
         private int exitConnections;
@@ -852,11 +852,8 @@ public class FlatLinguist implements Linguist, Configurable {
         private boolean needsEmptyVersion(ContextPair cp) {
             UnitContext left = cp.getLeftContext();
             Unit[] units = left.getUnits();
-            if (units.length > 0) {
-                return (getRightContextSize(units[0]) < getRightContextSize());
-            }
+            return units.length > 0 && (getRightContextSize(units[0]) < getRightContextSize());
 
-            return false;
         }
 
 
@@ -1505,8 +1502,8 @@ public class FlatLinguist implements Linguist, Configurable {
 /** A class that represents a set of units used as a context */
 class UnitContext {
 
-    private static Map<UnitContext, UnitContext> unitContextMap = new HashMap<UnitContext, UnitContext>();
-    private Unit[] context;
+    private static final Map<UnitContext, UnitContext> unitContextMap = new HashMap<UnitContext, UnitContext>();
+    private final Unit[] context;
     private int hashCode = 12;
     private static int foldedCount;
     public final static UnitContext EMPTY = new UnitContext(new Unit[0]);
@@ -1626,10 +1623,10 @@ class UnitContext {
  */
 class ContextPair {
 
-    static Map<ContextPair, ContextPair> contextPairMap = new HashMap<ContextPair, ContextPair>();
-    private UnitContext left;
-    private UnitContext right;
-    private int hashCode;
+    static final Map<ContextPair, ContextPair> contextPairMap = new HashMap<ContextPair, ContextPair>();
+    private final UnitContext left;
+    private final UnitContext right;
+    private final int hashCode;
 
 
     /**

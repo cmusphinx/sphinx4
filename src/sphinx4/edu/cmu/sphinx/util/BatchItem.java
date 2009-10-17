@@ -16,8 +16,8 @@ package edu.cmu.sphinx.util;
 /** Provides a standard interface to for a single decode in a batch of decodes */
 public class BatchItem {
 
-    private String filename;
-    private String transcript;
+    private final String filename;
+    private final String transcript;
 
 
     /**

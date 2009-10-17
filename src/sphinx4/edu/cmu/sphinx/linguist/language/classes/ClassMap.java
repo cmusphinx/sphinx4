@@ -45,7 +45,7 @@ public class ClassMap implements Configurable {
     /**
      * Maps a class to a set of words that belong to this class
      */
-    private HashMap<String, Set<String>> classToWord = new HashMap<String, Set<String>>();
+    private final HashMap<String, Set<String>> classToWord = new HashMap<String, Set<String>>();
 
     /* (non-Javadoc)
     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)

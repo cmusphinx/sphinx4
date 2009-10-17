@@ -21,7 +21,7 @@ import java.util.ArrayList;
 
 public class LatticeOptimizer {
 
-    protected Lattice lattice;
+    protected final Lattice lattice;
 
 
     /**

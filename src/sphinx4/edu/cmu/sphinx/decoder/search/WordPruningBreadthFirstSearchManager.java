@@ -133,7 +133,7 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
     private int growSkipInterval;
     private float relativeBeamWidth;
     private float acousticLookaheadFrames;
-    private int maxTokenHeapSize = 3;
+    private final int maxTokenHeapSize = 3;
     private int maxLatticeEdges = 100;
 
     // -----------------------------------
@@ -1018,7 +1018,7 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
 
 class SinglePathThroughHMMKey {
 
-    private HMMSearchState hmmSearchState;
+    private final HMMSearchState hmmSearchState;
 
 
     public SinglePathThroughHMMKey(HMMSearchState hmmSearchState) {
@@ -1058,7 +1058,7 @@ class SinglePathThroughHMMKey {
 
 class TokenHeap {
 
-    Token[] tokens;
+    final Token[] tokens;
     int curSize;
 
 
@@ -1160,8 +1160,8 @@ class TokenHeap {
 
 class WordTracker {
 
-    Map<WordSequence, WordStats> statMap;
-    int frameNumber;
+    final Map<WordSequence, WordStats> statMap;
+    final int frameNumber;
     int stateCount;
     int maxWordHistories;
 
@@ -1253,7 +1253,7 @@ class WordStats {
     private int size;
     private float maxScore;
     private float minScore;
-    private WordSequence ws;
+    private final WordSequence ws;
 
     /**
      * Creates a word stat for the given sequence

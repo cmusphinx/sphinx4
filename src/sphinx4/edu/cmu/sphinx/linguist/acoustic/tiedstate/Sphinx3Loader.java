@@ -52,7 +52,7 @@ import java.util.logging.Logger;
  * which is located at the <code>sphinx4/lib</code> directory. If you run
  * <code>"jar tvf lib/WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz.jar"</code>, you
  * will find that its internal structure looks roughly like:
- * 
+ * <p/>
  * <pre>
  * WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz.jar
  *   |
@@ -98,7 +98,7 @@ import java.util.logging.Logger;
  * WSJ_clean_13dCep_16k_40mel_130Hz_6800Hz.class):
  * </p>
  * <p>
- * 
+ * <p/>
  * <pre>
  * description = Wall Street Journal acoustic models
  * isBinary = true
@@ -112,7 +112,7 @@ import java.util.logging.Logger;
  * maxFreq = 6800
  * minFreq. = 130
  * sampleRate = 16000
- * 
+ * <p/>
  * dataLocation = cd_continuous_8gau
  * modelDefinition = etc/WSJ_clean_13dCep_16k_40mel_130Hz_6800Hz.4000.mdef
  * </pre>
@@ -125,31 +125,45 @@ import java.util.logging.Logger;
  */
 public class Sphinx3Loader implements Loader {
 
-    /** The log math component for the system. */
+    /**
+     * The log math component for the system.
+     */
     @S4Component(type = LogMath.class)
     public final static String PROP_LOG_MATH = "logMath";
 
-    /** The unit manager */
+    /**
+     * The unit manager
+     */
     @S4Component(type = UnitManager.class)
     public final static String PROP_UNIT_MANAGER = "unitManager";
 
-    /** Specifies whether the model to be loaded is in ASCII or binary format */
+    /**
+     * Specifies whether the model to be loaded is in ASCII or binary format
+     */
     @S4Boolean(defaultValue = true)
     public final static String PROP_IS_BINARY = "isBinary";
 
-    /** The name of the model definition file (contains the HMM data) */
+    /**
+     * The name of the model definition file (contains the HMM data)
+     */
     @S4String(mandatory = false, defaultValue = "mdef")
     public final static String PROP_MODEL = "modelDefinition";
 
-    /** Subfolder where the acoustic model can be found */
+    /**
+     * Subfolder where the acoustic model can be found
+     */
     @S4String(mandatory = false, defaultValue = "data")
     public final static String PROP_DATA_LOCATION = "dataLocation";
 
-    /** The SphinxProperty for the name of the acoustic properties file. */
+    /**
+     * The SphinxProperty for the name of the acoustic properties file.
+     */
     @S4String(defaultValue = "model.props")
     public final static String PROP_PROPERTIES_FILE = "propertiesFile";
 
-    /** The SphinxProperty for the length of feature vectors. */
+    /**
+     * The SphinxProperty for the length of feature vectors.
+     */
     @S4Integer(defaultValue = 39)
     public final static String PROP_VECTOR_LENGTH = "vectorLength";
 
@@ -161,19 +175,27 @@ public class Sphinx3Loader implements Loader {
     @S4Boolean(defaultValue = true)
     public final static String PROP_SPARSE_FORM = "sparseForm";
 
-    /** The SphinxProperty specifying whether context-dependent units should be used. */
+    /**
+     * The SphinxProperty specifying whether context-dependent units should be used.
+     */
     @S4Boolean(defaultValue = true)
     public final static String PROP_USE_CD_UNITS = "useCDUnits";
 
-    /** Mixture component score floor. */
+    /**
+     * Mixture component score floor.
+     */
     @S4Double(defaultValue = 0.0f)
     public final static String PROP_MC_FLOOR = "MixtureComponentScoreFloor";
 
-    /** Variance floor. */
+    /**
+     * Variance floor.
+     */
     @S4Double(defaultValue = 0.0001f)
     public final static String PROP_VARIANCE_FLOOR = "varianceFloor";
 
-    /** Mixture weight floor. */
+    /**
+     * Mixture weight floor.
+     */
     @S4Double(defaultValue = 1e-7f)
     public final static String PROP_MW_FLOOR = "mixtureWeightFloor";
 
@@ -181,7 +203,9 @@ public class Sphinx3Loader implements Loader {
     protected final static String SILENCE_CIPHONE = "SIL";
     protected final static int BYTE_ORDER_MAGIC = 0x11223344;
 
-    /** Supports this version of the acoustic model */
+    /**
+     * Supports this version of the acoustic model
+     */
     public final static String MODEL_VERSION = "0.3";
     protected final static int CONTEXT_SIZE = 1;
     private Pool<float[]> meansPool;
@@ -220,7 +244,32 @@ public class Sphinx3Loader implements Loader {
     private boolean useCDUnits;
     private boolean loaded;
 
-    @Override
+    public Sphinx3Loader(String propsFile, LogMath logMath, UnitManager unitManager,
+                         boolean isBinary, boolean sparseForm, int vectorLength, String model, String dataDir,
+                         float distFloor, float mixtureWeightFloor, float varianceFloor, boolean useCDUnits) {
+
+        this.logger = Logger.getLogger(getClass().getName());
+
+        this.propsFile = propsFile;
+        loadProperties();
+
+        this.logMath = logMath;
+        this.unitManager = unitManager;
+        this.binary = isBinary;
+        this.sparseForm = sparseForm;
+        this.vectorLength = vectorLength;
+        this.model = model;
+        this.dataDir = dataDir;
+        this.distFloor = distFloor;
+        this.mixtureWeightFloor = mixtureWeightFloor;
+        this.varianceFloor = varianceFloor;
+        this.useCDUnits = useCDUnits;
+    }
+
+    public Sphinx3Loader() {
+
+    }
+
     public void newProperties(PropertySheet ps) throws PropertyException {
         logger = ps.getLogger();
 
@@ -281,7 +330,6 @@ public class Sphinx3Loader implements Loader {
         }
     }
 
-    @Override
     public void load() throws IOException {
         if (!loaded) {
             // TODO: what is this all about?
@@ -340,7 +388,7 @@ public class Sphinx3Loader implements Loader {
 
     /**
      * Loads the AcousticModel from a directory in the file system.
-     * 
+     *
      * @param modelName the name of the acoustic model; if null we just load from the default location
      */
     private void loadModelFiles(String modelName) throws IOException {
@@ -370,7 +418,6 @@ public class Sphinx3Loader implements Loader {
         loadHMMPool(useCDUnits, modelStream, model);
     }
 
-    @Override
     public Map<String, Unit> getContextIndependentUnits() {
         return contextIndependentUnits;
     }
@@ -378,7 +425,7 @@ public class Sphinx3Loader implements Loader {
     /**
      * Creates the senone pool from the rest of the pools.
      *
-     * @param distFloor the lowest allowed score
+     * @param distFloor     the lowest allowed score
      * @param varianceFloor the lowest allowed variance
      * @return the senone pool
      */
@@ -407,15 +454,15 @@ public class Sphinx3Loader implements Loader {
             MixtureComponent[] mixtureComponents = new MixtureComponent[numGaussiansPerSenone];
             for (int j = 0; j < numGaussiansPerSenone; j++) {
                 mixtureComponents[j] = new MixtureComponent(
-                    logMath,
-                    meansPool.get(whichGaussian),
-                    meanTransformationMatrixPool.get(0),
-                    meanTransformationVectorPool.get(0),
-                    variancePool.get(whichGaussian),
-                    varianceTransformationMatrixPool.get(0),
-                    varianceTransformationVectorPool.get(0),
-                    distFloor,
-                    varianceFloor);
+                        logMath,
+                        meansPool.get(whichGaussian),
+                        meanTransformationMatrixPool.get(0),
+                        meanTransformationVectorPool.get(0),
+                        variancePool.get(whichGaussian),
+                        varianceTransformationMatrixPool.get(0),
+                        varianceTransformationVectorPool.get(0),
+                        distFloor,
+                        varianceFloor);
 
                 whichGaussian++;
             }
@@ -431,11 +478,11 @@ public class Sphinx3Loader implements Loader {
      * Loads the sphinx3 density file, a set of density arrays are created and
      * placed in the given pool.
      *
-     * @param path the name of the data
+     * @param path  the name of the data
      * @param floor the minimum density allowed
      * @return a pool of loaded densities
      * @throws FileNotFoundException if a file cannot be found
-     * @throws IOException if an error occurs while loading the data
+     * @throws IOException           if an error occurs while loading the data
      */
     private Pool<float[]> loadDensityFileAscii(String path, float floor)
             throws IOException {
@@ -483,11 +530,11 @@ public class Sphinx3Loader implements Loader {
      * Loads the sphinx3 density file, a set of density arrays are created and
      * placed in the given pool.
      *
-     * @param path the name of the data
+     * @param path  the name of the data
      * @param floor the minimum density allowed
      * @return a pool of loaded densities
      * @throws FileNotFoundException if a file cannot be found
-     * @throws IOException if an error occurs while loading the data
+     * @throws IOException           if an error occurs while loading the data
      */
     private Pool<float[]> loadDensityFileBinary(String path, float floor)
             throws IOException {
@@ -554,7 +601,7 @@ public class Sphinx3Loader implements Loader {
      * Reads the S3 binary header from the given location + path. Adds header
      * information to the given set of properties.
      *
-     * @param path the name of the file
+     * @param path  the name of the file
      * @param props the properties
      * @return the input stream positioned after the header
      * @throws IOException on error
@@ -675,7 +722,7 @@ public class Sphinx3Loader implements Loader {
      * If a data point is non-zero and below 'floor' make it equal to floor
      * (don't floor zero values though).
      *
-     * @param data the data to floor
+     * @param data  the data to floor
      * @param floor the floored value
      */
     protected void nonZeroFloor(float[] data, float floor) {
@@ -689,7 +736,7 @@ public class Sphinx3Loader implements Loader {
     /**
      * If a data point is below 'floor' make it equal to floor.
      *
-     * @param data the data to floor
+     * @param data  the data to floor
      * @param floor the floored value
      */
     private void floorData(float[] data, float floor) {
@@ -734,7 +781,7 @@ public class Sphinx3Loader implements Loader {
      * Reads the given number of floats from the stream and returns them in an
      * array of floats.
      *
-     * @param dis the stream to read data from
+     * @param dis  the stream to read data from
      * @param size the number of floats to read
      * @return an array of size float elements
      * @throws IOException if an exception occurs
@@ -751,11 +798,11 @@ public class Sphinx3Loader implements Loader {
     /**
      * Loads the sphinx3 densityfile, a set of density arrays are created and placed in the given pool.
      *
-     * @param useCDUnits if true, loads also the context dependent units
+     * @param useCDUnits  if true, loads also the context dependent units
      * @param inputStream the open input stream to use
-     * @param path the path to a density file
+     * @param path        the path to a density file
      * @throws FileNotFoundException if a file cannot be found
-     * @throws IOException if an error occurs while loading the data
+     * @throws IOException           if an error occurs while loading the data
      */
     protected void loadHMMPool(boolean useCDUnits, InputStream inputStream, String path)
             throws IOException {
@@ -851,7 +898,7 @@ public class Sphinx3Loader implements Loader {
             for (int j = 0; j < numStatePerHMM - 1; j++) {
                 stid[j] = est.getInt("j");
                 assert stid[j] >= numContextIndependentTiedState &&
-                       stid[j] < numTiedState;
+                        stid[j] < numTiedState;
             }
             est.expectString("N");
 
@@ -937,11 +984,11 @@ public class Sphinx3Loader implements Loader {
     /**
      * Loads the mixture weights.
      *
-     * @param path the path to the mixture weight file
+     * @param path  the path to the mixture weight file
      * @param floor the minimum mixture weight allowed
      * @return a pool of mixture weights
      * @throws FileNotFoundException if a file cannot be found
-     * @throws IOException if an error occurs while loading the data
+     * @throws IOException           if an error occurs while loading the data
      */
     private Pool<float[]> loadMixtureWeightsAscii(String path, float floor)
             throws IOException {
@@ -983,11 +1030,11 @@ public class Sphinx3Loader implements Loader {
     /**
      * Loads the mixture weights (Binary).
      *
-     * @param path the path to the mixture weight file
+     * @param path  the path to the mixture weight file
      * @param floor the minimum mixture weight allowed
      * @return a pool of mixture weights
      * @throws FileNotFoundException if a file cannot be found
-     * @throws IOException if an error occurs while loading the data
+     * @throws IOException           if an error occurs while loading the data
      */
     private Pool<float[]> loadMixtureWeightsBinary(String path, float floor)
             throws IOException {
@@ -1037,7 +1084,7 @@ public class Sphinx3Loader implements Loader {
      * @param path the path to the transitions matrices
      * @return a pool of transition matrices
      * @throws FileNotFoundException if a file cannot be found
-     * @throws IOException if an error occurs while loading the data
+     * @throws IOException           if an error occurs while loading the data
      */
     protected Pool<float[][]> loadTransitionMatricesAscii(String path)
             throws IOException {
@@ -1092,7 +1139,7 @@ public class Sphinx3Loader implements Loader {
      * @param path the path to the transitions matrices
      * @return a pool of transition matrices
      * @throws FileNotFoundException if a file cannot be found
-     * @throws IOException if an error occurs while loading the data
+     * @throws IOException           if an error occurs while loading the data
      */
     protected Pool<float[][]> loadTransitionMatricesBinary(String path)
             throws IOException {
@@ -1143,7 +1190,7 @@ public class Sphinx3Loader implements Loader {
      * @param path the path to the transform matrix
      * @return a transform matrix
      * @throws java.io.FileNotFoundException if a file cannot be found
-     * @throws java.io.IOException if an error occurs while loading the data
+     * @throws java.io.IOException           if an error occurs while loading the data
      */
     protected float[][] loadTransformMatrix(String path)
             throws IOException {
@@ -1227,17 +1274,14 @@ public class Sphinx3Loader implements Loader {
         return meansPool;
     }
 
-    @Override
     public Pool<float[][]> getMeansTransformationMatrixPool() {
         return meanTransformationMatrixPool;
     }
 
-    @Override
     public Pool<float[]> getMeansTransformationVectorPool() {
         return meanTransformationVectorPool;
     }
 
-    @Override
     public Pool<float[]> getVariancePool() {
         return variancePool;
     }

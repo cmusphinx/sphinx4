@@ -26,7 +26,7 @@ public class GUIWriterException extends java.lang.Exception {
     public final static int EXCEPTION_NO_FILENAME = 3;
     public final static int EXCEPTION_INVALID_TYPE = 4;
             
-    private int _exceptionMode;
+    private final int _exceptionMode;
     
    
     /**

@@ -33,12 +33,12 @@ public class ResultAnalyzer {
     private int insertionErrors;
     private int deletionErrors;
 
-    private boolean verbose;
+    private final boolean verbose;
 
     private StringBuffer hypOutput;
     private StringBuffer refOutput;
 
-    private List<Misrecognition> mismatchedUtterances;
+    private final List<Misrecognition> mismatchedUtterances;
 
 
     /**
@@ -403,8 +403,8 @@ public class ResultAnalyzer {
 /** Represents the reference and hypothesis of a misrecognized utterance. */
 class Misrecognition {
 
-    private String reference;
-    private String hypothesis;
+    private final String reference;
+    private final String hypothesis;
 
 
     /**

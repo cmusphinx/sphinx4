@@ -18,7 +18,7 @@ import java.util.*;
 /** A linguist processor that dumps out stats about the search space */
 public class LinguistStats extends LinguistProcessor {
 
-    private Map<Class, Integer> stateCountByType = new HashMap<Class, Integer>();
+    private final Map<Class, Integer> stateCountByType = new HashMap<Class, Integer>();
 
     /** Dumps the stats of the linguist */
     public void run() {

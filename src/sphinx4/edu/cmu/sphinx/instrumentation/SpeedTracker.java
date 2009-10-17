@@ -54,7 +54,7 @@ public class SpeedTracker
     @S4Boolean(defaultValue = false)
     public final static String PROP_SHOW_TIMERS = "showTimers";
 
-    private static DecimalFormat timeFormat = new DecimalFormat("0.00");
+    private static final DecimalFormat timeFormat = new DecimalFormat("0.00");
 
 
     // ------------------------------

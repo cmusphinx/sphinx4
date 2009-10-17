@@ -25,14 +25,14 @@ import java.util.List;
 /** Builds a grammar sub-graph that matches all phones. This is suitable for use as an out-of-grammar detector */
 public class OutOfGrammarGraph {
 
-    private AcousticModel acousticModel;
-    private float logOutOfGrammarBranchProbability;
-    private float logPhoneInsertionProbability;
+    private final AcousticModel acousticModel;
+    private final float logOutOfGrammarBranchProbability;
+    private final float logPhoneInsertionProbability;
     private final static SearchStateArc[] EMPTY_ARCS = new SearchStateArc[0];
-    private FirstBranchState fbs;
-    private LastBranchState lbs;
-    private UnknownWordState uws;
-    private SearchStateArc[] lbsArcSet;
+    private final FirstBranchState fbs;
+    private final LastBranchState lbs;
+    private final UnknownWordState uws;
+    private final SearchStateArc[] lbsArcSet;
 
 
     /**
@@ -71,7 +71,7 @@ public class OutOfGrammarGraph {
     /** Represents the unknown word */
     class UnknownWordState extends OogSearchState implements WordSearchState {
 
-        private SearchStateArc[] successors;
+        private final SearchStateArc[] successors;
 
 
         /** Creates the unknown word state */
@@ -146,7 +146,7 @@ public class OutOfGrammarGraph {
     /** Represents the first branch state in the grammar */
     class FirstBranchState extends OogSearchState {
 
-        private SearchStateArc[] successors;
+        private final SearchStateArc[] successors;
 
 
         /** Creates the first branch state */
@@ -194,8 +194,8 @@ public class OutOfGrammarGraph {
     /** Represents an HMM Unit in the search graph */
     class OogHMM extends OogSearchState implements UnitSearchState {
 
-        private HMM hmm;
-        private SearchStateArc[] successors;
+        private final HMM hmm;
+        private final SearchStateArc[] successors;
 
 
         /**
@@ -264,8 +264,8 @@ public class OutOfGrammarGraph {
     /** Represents a single hmm state in the search graph */
     class OogHMMState extends OogSearchState implements HMMSearchState {
 
-        HMMState hmmState;
-        float logProbability;
+        final HMMState hmmState;
+        final float logProbability;
 
 
         /**
@@ -381,7 +381,7 @@ public class OutOfGrammarGraph {
     /** Represents the last branch state in the search graph */
     class LastBranchState extends OogSearchState {
 
-        private SearchStateArc[] successors;
+        private final SearchStateArc[] successors;
 
 
         /** Creates the last branch state */

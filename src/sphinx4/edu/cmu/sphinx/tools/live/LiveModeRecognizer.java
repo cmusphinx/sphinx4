@@ -77,7 +77,7 @@ public class LiveModeRecognizer implements Configurable {
     private FileWriter hypothesisTranscript;
     private ReferenceSource referenceSource;
     private GapInsertionDetector gapInsertionDetector;
-    private NISTAlign aligner = new NISTAlign(true, true);
+    private final NISTAlign aligner = new NISTAlign(true, true);
 
 
     /*

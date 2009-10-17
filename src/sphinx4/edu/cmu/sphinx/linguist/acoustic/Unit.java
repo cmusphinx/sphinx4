@@ -15,12 +15,12 @@ package edu.cmu.sphinx.linguist.acoustic;
 /** Represents a unit of speech. Units may represent phones, words or any other suitable unit */
 public class Unit {
 
-    private String name;
-    private boolean filler;
+    private final String name;
+    private final boolean filler;
     private boolean silence;
-    private Context context;
-    private int baseID;
-    private Unit baseUnit;
+    private final Context context;
+    private final int baseID;
+    private final Unit baseUnit;
 
     private volatile String key;
 

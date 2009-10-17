@@ -409,7 +409,7 @@ public class RaisedCosineWindower extends BaseDataProcessor {
 
 class DoubleBuffer {
 
-    private double[] buffer;
+    private final double[] buffer;
     private int occupancy;
 
 

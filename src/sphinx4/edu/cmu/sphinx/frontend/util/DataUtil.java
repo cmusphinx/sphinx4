@@ -33,14 +33,14 @@ public class DataUtil {
 
 
     /** DecimalFormat object to be used by all the methods. */
-    private static DecimalFormat format = new DecimalFormat();
+    private static final DecimalFormat format = new DecimalFormat();
 
 
-    private static int decimalIntegerDigits = 10;
-    private static int decimalFractionDigits = 5;
+    private static final int decimalIntegerDigits = 10;
+    private static final int decimalFractionDigits = 5;
 
-    private static int floatScientificFractionDigits = 8;
-    private static int doubleScientificFractionDigits = 8;
+    private static final int floatScientificFractionDigits = 8;
+    private static final int doubleScientificFractionDigits = 8;
 
 
     /** The number format to be used by *ArrayToString() methods. The default is scientific. */
@@ -116,7 +116,7 @@ public class DataUtil {
      * @throws java.lang.ArrayIndexOutOfBoundsException
      *
      */
-    public static final double[] bytesToValues(byte[] byteArray,
+    public static double[] bytesToValues(byte[] byteArray,
                                                int offset,
                                                int length,
                                                int bytesPerValue,
@@ -165,7 +165,7 @@ public class DataUtil {
      * @throws java.lang.ArrayIndexOutOfBoundsException
      *
      */
-    public static final double[] littleEndianBytesToValues(byte[] data,
+    public static double[] littleEndianBytesToValues(byte[] data,
                                                            int offset,
                                                            int length,
                                                            int bytesPerValue,

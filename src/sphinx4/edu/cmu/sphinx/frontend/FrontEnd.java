@@ -140,7 +140,7 @@ public class FrontEnd extends BaseDataProcessor {
 
     private DataProcessor first;
     private DataProcessor last;
-    private List<SignalListener> signalListeners = new ArrayList<SignalListener>();
+    private final List<SignalListener> signalListeners = new ArrayList<SignalListener>();
 
     public FrontEnd(List<DataProcessor> frontEndList) {
         initLogger();

@@ -24,12 +24,12 @@ import java.awt.event.MouseMotionListener;
 public class AudioPanel extends JPanel
         implements MouseMotionListener, MouseListener {
 
-    private AudioData audio;
+    private final AudioData audio;
     private float[] labelTimes;
     private String[] labels;
     private float xScale;
-    private float yScale;
-    private float originalXScale;
+    private final float yScale;
+    private final float originalXScale;
     private int xDragStart;
     private int xDragEnd;
     protected int selectionStart = -1;

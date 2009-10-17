@@ -48,7 +48,7 @@ public class InterpolatedLanguageModel implements LanguageModel {
     private int numberOfLanguageModels;
     private Set<String> vocabulary;
 
-    private static double EPSILON = 0.001;
+    private static final double EPSILON = 0.001;
 
     public void newProperties(PropertySheet ps) throws PropertyException {
         logger = ps.getLogger();

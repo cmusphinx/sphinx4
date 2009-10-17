@@ -137,8 +137,8 @@ public class MAPConfidenceScorer implements ConfidenceScorer, Configurable {
     /** The confidence result for the highest scoring path. */
     class MAPConfidenceResult implements ConfidenceResult {
 
-        private ConfidenceResult sausage;
-        private Path mapPath;
+        private final ConfidenceResult sausage;
+        private final Path mapPath;
 
 
         /**

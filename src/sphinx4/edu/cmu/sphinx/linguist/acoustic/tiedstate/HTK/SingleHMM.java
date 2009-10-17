@@ -9,7 +9,7 @@
 package edu.cmu.sphinx.linguist.acoustic.tiedstate.HTK;
 
 public class SingleHMM {
-	private HMMState[] states;
+	private final HMMState[] states;
 	private String name;
 	public float[][] trans;
 	// index of the transition macro

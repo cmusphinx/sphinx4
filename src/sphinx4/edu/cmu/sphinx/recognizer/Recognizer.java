@@ -68,7 +68,7 @@ public class Recognizer implements Configurable, ResultProducer {
     private Decoder decoder;
     private State currentState = State.DEALLOCATED;
 
-    private List<StateListener> stateListeners = Collections.synchronizedList(new ArrayList<StateListener>());
+    private final List<StateListener> stateListeners = Collections.synchronizedList(new ArrayList<StateListener>());
     private List monitors;
 
 

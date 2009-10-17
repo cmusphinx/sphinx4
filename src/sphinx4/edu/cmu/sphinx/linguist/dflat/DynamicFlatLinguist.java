@@ -326,7 +326,7 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
     }
 
 
-    Map<SearchState, SearchStateArc[]> successorCache = new HashMap<SearchState, SearchStateArc[]>();
+    final Map<SearchState, SearchStateArc[]> successorCache = new HashMap<SearchState, SearchStateArc[]>();
 
     /** The base search state for this dynamic flat linguist. */
     abstract class FlatSearchState implements SearchState, SearchStateArc {
@@ -496,10 +496,10 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
      */
     class GrammarState extends FlatSearchState {
 
-        private GrammarNode node;
-        private int lc;
-        private int nextBaseID;
-        private float languageProbability;
+        private final GrammarNode node;
+        private final int lc;
+        private final int nextBaseID;
+        private final float languageProbability;
 
 
         /**
@@ -788,7 +788,7 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
 
     class InitialState extends FlatSearchState {
 
-        private List<SearchStateArc> nextArcs = new ArrayList<SearchStateArc>();
+        private final List<SearchStateArc> nextArcs = new ArrayList<SearchStateArc>();
 
 
         /**
@@ -842,8 +842,8 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
     class PronunciationState extends FlatSearchState implements
             WordSearchState {
 
-        private GrammarState gs;
-        private Pronunciation pronunciation;
+        private final GrammarState gs;
+        private final Pronunciation pronunciation;
 
 
         /**
@@ -1025,12 +1025,12 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
     class FullHMMSearchState extends FlatSearchState implements
             UnitSearchState {
 
-        private PronunciationState pState;
-        private int index;
-        private int lc;
-        private int rc;
-        private HMM hmm;
-        private boolean isLastUnitOfWord;
+        private final PronunciationState pState;
+        private final int index;
+        private final int lc;
+        private final int rc;
+        private final HMM hmm;
+        private final boolean isLastUnitOfWord;
 
 
         /**
@@ -1261,9 +1261,9 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
     class HMMStateSearchState extends FlatSearchState implements
             HMMSearchState {
 
-        private FullHMMSearchState fullHMMSearchState;
-        private HMMState hmmState;
-        private float probability;
+        private final FullHMMSearchState fullHMMSearchState;
+        private final HMMState hmmState;
+        private final float probability;
 
 
         /**

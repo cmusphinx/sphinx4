@@ -18,7 +18,7 @@ import edu.cmu.sphinx.linguist.language.grammar.GrammarNode;
 /** Represents a non-emitting sentence hmm state */
 public class GrammarState extends SentenceHMMState {
 
-    private GrammarNode grammarNode;
+    private final GrammarNode grammarNode;
 
 
     /**

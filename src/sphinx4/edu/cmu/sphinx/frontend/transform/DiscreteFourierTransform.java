@@ -319,7 +319,7 @@ public class DiscreteFourierTransform extends BaseDataProcessor {
      * @param numberSamples the number of samples in the incoming window
      * @return the closest power of 2 that is equal to or larger than the number of samples in the incoming window
      */
-    private final static int getNumberFftPoints(int numberSamples) {
+    private  static int getNumberFftPoints(int numberSamples) {
         int fftPoints = 1;
 
         while (fftPoints < numberSamples) {

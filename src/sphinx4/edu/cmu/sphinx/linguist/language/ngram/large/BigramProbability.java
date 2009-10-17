@@ -19,11 +19,11 @@ package edu.cmu.sphinx.linguist.language.ngram.large;
  */
 class BigramProbability {
 
-    private int which;
-    private int wordID;
-    private int probabilityID;
-    private int backoffID;
-    private int firstTrigramEntry;
+    private final int which;
+    private final int wordID;
+    private final int probabilityID;
+    private final int backoffID;
+    private final int firstTrigramEntry;
 
 
     /**

@@ -161,8 +161,8 @@ public class LinguistDumper extends LinguistProcessor {
     }
 
 
-    Map<SearchState, SearchState> eqStates = new HashMap<SearchState, SearchState>();
-    Map<String, SearchState> eqSigs = new HashMap<String, SearchState>();
+    final Map<SearchState, SearchState> eqStates = new HashMap<SearchState, SearchState>();
+    final Map<String, SearchState> eqSigs = new HashMap<String, SearchState>();
 
 
     /**
@@ -217,8 +217,8 @@ public class LinguistDumper extends LinguistProcessor {
 
 class StateLevel {
 
-    private int level;
-    private SearchState state;
+    private final int level;
+    private final SearchState state;
 
 
     /**

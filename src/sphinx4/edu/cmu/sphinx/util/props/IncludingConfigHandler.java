@@ -20,7 +20,7 @@ import java.util.logging.Logger;
 public class IncludingConfigHandler extends ConfigHandler {
 
     private boolean replaceDuplicates;
-    private URL baseURL;
+    private final URL baseURL;
 
 
     public IncludingConfigHandler(Map<String, RawPropertyData> rpdMap, GlobalProperties globalProperties, boolean replaceDuplicates, URL baseURL) {

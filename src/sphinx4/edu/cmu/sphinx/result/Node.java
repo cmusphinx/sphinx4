@@ -477,10 +477,7 @@ public class Node {
      * @see java.lang.Object#equals(java.lang.Object)
      */
     public boolean equals(Object obj) {
-    	if (obj instanceof Node)
-    			return id.equals(((Node) obj).getId());
-    	else 
-    			return false;
+        return obj instanceof Node && id.equals(((Node) obj).getId());
     }
 
 

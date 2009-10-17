@@ -196,10 +196,7 @@ public class ClassFinder {
 
         // check the ancestor classes
         superclass = c.getSuperclass();
-        if (superclass != null && superclass.getName().startsWith(COMMON_SPHINX_PACKAGE)) {
-            return filterClass(superclass); // return the result of ancestor check
-        }
-        return false;
+        return superclass != null && superclass.getName().startsWith(COMMON_SPHINX_PACKAGE) && filterClass(superclass);
     }
 
 

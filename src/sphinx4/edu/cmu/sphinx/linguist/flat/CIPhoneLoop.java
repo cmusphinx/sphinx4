@@ -34,9 +34,9 @@ import java.util.Map;
  */
 public class CIPhoneLoop {
 
-    public AcousticModel model;
-    private float logPhoneInsertionProbability;
-    public float logOne = LogMath.getLogOne();
+    public final AcousticModel model;
+    private final float logPhoneInsertionProbability;
+    public final float logOne = LogMath.getLogOne();
 
 
     /**
@@ -65,8 +65,8 @@ public class CIPhoneLoop {
 
     protected class PhoneLoopSearchGraph implements SearchGraph {
 
-        protected Map<String, SearchState> existingStates;
-        protected SentenceHMMState firstState;
+        protected final Map<String, SearchState> existingStates;
+        protected final SentenceHMMState firstState;
 
 
         /** Constructs a phone loop search graph. */

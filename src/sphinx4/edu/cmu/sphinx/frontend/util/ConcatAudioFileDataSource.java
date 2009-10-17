@@ -141,7 +141,7 @@ public class ConcatAudioFileDataSource extends AudioFileDataSource implements Re
     class InputStreamEnumeration implements Enumeration<AudioInputStream> {
 
         private URL lastFile;
-        Iterator<URL> fileIt;
+        final Iterator<URL> fileIt;
 
 
         InputStreamEnumeration(List<URL> files) throws IOException {

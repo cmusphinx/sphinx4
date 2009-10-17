@@ -38,7 +38,7 @@ public class FeatureFileDumper {
     private int featureLength = -1;
 
     /** The logger for this class */
-    private static Logger logger = Logger
+    private static final Logger logger = Logger
             .getLogger("edu.cmu.sphinx.tools.feature.FeatureFileDumper");
 
 
@@ -50,7 +50,7 @@ public class FeatureFileDumper {
      */
     public FeatureFileDumper(ConfigurationManager cm, String frontEndName,
                              String inputAudioFile)
-            throws FileNotFoundException, IOException {
+            throws IOException {
         try {
 
             frontEnd = (FrontEnd) cm.lookup(frontEndName);

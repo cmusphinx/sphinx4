@@ -23,11 +23,11 @@ import edu.cmu.sphinx.linguist.SearchStateArc;
  */
 public class SentenceHMMStateArc implements SearchStateArc {
 
-    private SentenceHMMState nextState;
-    private float logAcousticProbability;
-    private float logLanguageProbability;
-    private float logInsertionProbability;
-    private int hashCode;
+    private final SentenceHMMState nextState;
+    private final float logAcousticProbability;
+    private final float logLanguageProbability;
+    private final float logInsertionProbability;
+    private final int hashCode;
 
 
     /**

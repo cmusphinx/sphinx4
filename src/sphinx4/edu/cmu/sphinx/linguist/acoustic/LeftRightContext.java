@@ -19,10 +19,10 @@ import java.util.Map;
 public class LeftRightContext extends Context {
 
     String stringRepresentation;
-    Unit[] leftContext;
-    Unit[] rightContext;
-    private static boolean CACHING_CONTEXTS = true;
-    private static Map<String, LeftRightContext> cache;
+    final Unit[] leftContext;
+    final Unit[] rightContext;
+    private static final boolean CACHING_CONTEXTS = true;
+    private static final Map<String, LeftRightContext> cache;
 
 
     static {
@@ -141,11 +141,8 @@ public class LeftRightContext extends Context {
             Unit[] lc = lrContext.getLeftContext();
             Unit[] rc = lrContext.getRightContext();
 
-            if (lc != null && leftContext != null &&
-                    !Unit.isContextMatch(lc, leftContext)) {
-                return false;
-            }
-            return rc == null || rightContext == null || Unit.isContextMatch(rc, rightContext);
+            return !(lc != null && leftContext != null &&
+                    !Unit.isContextMatch(lc, leftContext)) && (rc == null || rightContext == null || Unit.isContextMatch(rc, rightContext));
         } else if (context == Context.EMPTY_CONTEXT && leftContext == null && rightContext == null) {
             return true;
         }

@@ -35,9 +35,9 @@ import edu.cmu.sphinx.tools.gui.RawPropertyData;
  * Loads configuration from an XML file
  */
 public class SaxLoader {
-    private URL url;
+    private final URL url;
     private Map<String, RawPropertyData> rpdMap;
-    private Map<String, String> globalProperties;
+    private final Map<String, String> globalProperties;
     /**
      * Creates a loader that will load from the given location
      * 

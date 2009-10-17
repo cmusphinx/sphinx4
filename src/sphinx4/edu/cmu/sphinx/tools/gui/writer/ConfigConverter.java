@@ -33,7 +33,7 @@ public class ConfigConverter {
     private ConfigConverter() {}
     
     private static class ConfigConverterHolder {
-      private static ConfigConverter instance = new ConfigConverter();
+      private static final ConfigConverter instance = new ConfigConverter();
     }
       
     /**

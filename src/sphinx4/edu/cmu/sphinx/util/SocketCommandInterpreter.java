@@ -31,8 +31,8 @@ import java.util.Map;
 
 public class SocketCommandInterpreter extends Thread {
 
-    private int port;
-    private Map<String, CommandInterface> commandList;
+    private final int port;
+    private final Map<String, CommandInterface> commandList;
     private boolean trace;
     private boolean acceptConnections = true;
 

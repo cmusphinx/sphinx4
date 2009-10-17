@@ -69,7 +69,7 @@ public abstract class Grammar implements Configurable, GrammarInterface {
     private Set<GrammarNode> grammarNodes;
 
     private final static Word[][] EMPTY_ALTERNATIVE = new Word[0][0];
-    private Random randomizer = new Random(56); // use fixed initial to make get deterministic random value for testing
+    private final Random randomizer = new Random(56); // use fixed initial to make get deterministic random value for testing
     private int maxIdentity;
     private boolean postProcessed;
     private boolean idCheck;

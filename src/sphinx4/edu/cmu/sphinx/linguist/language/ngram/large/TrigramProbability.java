@@ -16,8 +16,8 @@ package edu.cmu.sphinx.linguist.language.ngram.large;
 /** Represents a word ID (third word of a trigram), and a trigram probability ID. */
 class TrigramProbability {
 
-    private int wordID;
-    private int probabilityID;
+    private final int wordID;
+    private final int probabilityID;
 
 
     /**

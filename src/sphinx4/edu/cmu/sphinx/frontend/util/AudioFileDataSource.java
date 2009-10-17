@@ -46,7 +46,7 @@ public class AudioFileDataSource extends BaseDataProcessor {
 
     @S4ComponentList(type = Configurable.class)
     public static final String AUDIO_FILE_LISTENERS = "audioFileListners";
-    protected List<AudioFileProcessListener> fileListeners = new ArrayList<AudioFileProcessListener>();
+    protected final List<AudioFileProcessListener> fileListeners = new ArrayList<AudioFileProcessListener>();
 
 
     protected InputStream dataStream;

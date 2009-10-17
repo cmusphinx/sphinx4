@@ -25,13 +25,13 @@ import edu.cmu.sphinx.util.Utilities;
  */
 public class SenoneHMM implements HMM {
 
-    private Unit unit;
-    private Unit baseUnit;
-    private SenoneSequence senoneSequence;
-    private float[][] transitionMatrix;
-    private HMMPosition position;
+    private final Unit unit;
+    private final Unit baseUnit;
+    private final SenoneSequence senoneSequence;
+    private final float[][] transitionMatrix;
+    private final HMMPosition position;
     private static int objectCount;
-    private HMMState[] hmmStates;
+    private final HMMState[] hmmStates;
 
 
     /**

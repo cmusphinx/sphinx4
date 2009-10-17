@@ -18,8 +18,8 @@ import edu.cmu.sphinx.linguist.acoustic.Unit;
 /** A ContextBucket manages left context history when an SentenceHMM is being built */
 class ContextBucket {
 
-    private int maxSize;
-    private Unit[] units;
+    private final int maxSize;
+    private final Unit[] units;
 
 
     /**

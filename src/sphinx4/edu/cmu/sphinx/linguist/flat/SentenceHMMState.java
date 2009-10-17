@@ -48,7 +48,7 @@ public abstract class SentenceHMMState implements Serializable, SearchState {
     private int fields;
     private String name;
 
-    private Map<String, SentenceHMMStateArc> arcs;
+    private final Map<String, SentenceHMMStateArc> arcs;
     private SentenceHMMState parent;
     private String cachedName;
     private String fullName;

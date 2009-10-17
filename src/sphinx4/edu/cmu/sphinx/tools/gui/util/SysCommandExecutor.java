@@ -51,7 +51,7 @@ public class SysCommandExecutor
         private SysCommandExecutor() {}
     
         private static class SysExecutorHolder {
-            private static SysCommandExecutor instance = new SysCommandExecutor();
+            private static final SysCommandExecutor instance = new SysCommandExecutor();
         }
       
         /**
@@ -164,12 +164,12 @@ public class SysCommandExecutor
  
 class AsyncStreamReader extends Thread
 {
-	private StringBuffer fBuffer;
-	private InputStream fInputStream;
-	private String fThreadId;
+	private final StringBuffer fBuffer;
+	private final InputStream fInputStream;
+	private final String fThreadId;
 	private boolean fStop;
 	
-	private String fNewLine;
+	private final String fNewLine;
 	
 	public AsyncStreamReader(InputStream inputStream, StringBuffer buffer, String threadId)
 	{
@@ -218,8 +218,8 @@ class AsyncStreamReader extends Thread
  
 class EnvironmentVar
 {
-	public String fName;
-	public String fValue;
+	public final String fName;
+	public final String fValue;
 	
 	public EnvironmentVar(String name, String value)
 	{

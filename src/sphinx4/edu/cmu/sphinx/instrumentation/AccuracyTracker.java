@@ -64,7 +64,7 @@ abstract public class AccuracyTracker
     private boolean showAlignedResults;
     private boolean showRaw;
 
-    private NISTAlign aligner = new NISTAlign(false, false);
+    private final NISTAlign aligner = new NISTAlign(false, false);
 
     public AccuracyTracker(Recognizer recognizer, boolean showSummary, boolean showDetails, boolean showResults, boolean showAlignedResults, boolean showRawResults) {
 

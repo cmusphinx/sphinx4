@@ -22,12 +22,12 @@ import java.util.Map;
  */
 public class StatisticsVariable {
 
-    private static Map<String, StatisticsVariable> pool = new HashMap<String, StatisticsVariable>();
+    private static final Map<String, StatisticsVariable> pool = new HashMap<String, StatisticsVariable>();
 
     /** the value of this StatisticsVariable. It can be manipulated directly by the application. */
     public double value;
 
-    private String name;        // the name of this value
+    private final String name;        // the name of this value
     private boolean enabled;        // if true this var is enabled
 
 

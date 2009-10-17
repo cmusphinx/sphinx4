@@ -56,7 +56,7 @@ public class StreamFactory {
      */
     public static InputStream getInputStream(String location,
                                              String file) throws
-            FileNotFoundException, IOException, ZipException {
+            IOException {
         if (location != null) {
             return StreamFactory.getInputStream
                     (StreamFactory.resolve(location), location, file);
@@ -90,7 +90,7 @@ public class StreamFactory {
     public static InputStream getInputStream(String format,
                                              String location,
                                              String file) throws
-            FileNotFoundException, IOException, ZipException {
+            IOException {
         InputStream stream = null;
         String absoluteLocation;
 
@@ -166,7 +166,7 @@ public class StreamFactory {
     public static OutputStream getOutputStream(String location,
                                                String file,
                                                boolean append) throws
-            FileNotFoundException, IOException, ZipException {
+            IOException {
         if (location != null) {
             return StreamFactory.getOutputStream
                     (StreamFactory.resolve(location), location, file, append);
@@ -204,7 +204,7 @@ public class StreamFactory {
                                                String location,
                                                String file,
                                                boolean append) throws
-            FileNotFoundException, IOException, ZipException {
+            IOException {
         OutputStream stream = null;
         if (format.equals(ZIP_FILE)) {
             try {
@@ -271,7 +271,7 @@ public class StreamFactory {
      */
     public static OutputStream getOutputStream(String location,
                                                String file) throws
-            FileNotFoundException, IOException, ZipException {
+            IOException {
         if (location != null) {
             return StreamFactory.getOutputStream
                     (StreamFactory.resolve(location), location, file);
@@ -306,7 +306,7 @@ public class StreamFactory {
     public static OutputStream getOutputStream(String format,
                                                String location,
                                                String file) throws
-            FileNotFoundException, IOException, ZipException {
+            IOException {
         if (format.equals(ZIP_FILE)) {
             System.out.println("WARNING: overwriting ZIP or JAR file!");
             return StreamFactory.getOutputStream

@@ -332,8 +332,8 @@ public class BeamFinder implements ResultListener,
 
 class TokenRank {
 
-    private int absoluteRank;
-    private float relativeRank;
+    private final int absoluteRank;
+    private final float relativeRank;
 
 
     /**

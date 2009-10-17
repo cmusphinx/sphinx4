@@ -21,7 +21,7 @@ import java.util.Properties;
 /** Dumps out information about an acoustic model. */
 public class PropertiesDumper {
 
-    private Properties props;
+    private final Properties props;
 
 
     /** Dumps the properties file 'model.props' that is in the same directory as this class. */

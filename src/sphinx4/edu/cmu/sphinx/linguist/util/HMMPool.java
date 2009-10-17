@@ -218,9 +218,7 @@ public class HMMPool {
 
 
     public boolean isValidID(int unitID) {
-        if (unitID < 0) return false;
-        if (unitID >= unitTable.length) return false;
-        return unitTable[unitID] != null;
+        return unitID >= 0 && unitID < unitTable.length && unitTable[unitID] != null;
     }
 
 
@@ -328,11 +326,11 @@ public class HMMPool {
      * 1GHZ sparc system, the lookup takes a little less than 1uSec.  This is probably fast enough.
      */
 
-    static HMMPosition pos[] = {
+    static final HMMPosition[] pos = {
             HMMPosition.BEGIN, HMMPosition.END, HMMPosition.SINGLE,
             HMMPosition.INTERNAL};
 
-    static int ids[] = {9206, 9320, 9620, 9865, 14831, 15836};
+    static final int[] ids = {9206, 9320, 9620, 9865, 14831, 15836};
 
 
     void benchmark() {

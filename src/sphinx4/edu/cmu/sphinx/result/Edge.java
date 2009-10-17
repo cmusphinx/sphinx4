@@ -21,8 +21,8 @@ public class Edge {
 
     protected double acousticScore;
     protected double lmScore;
-    protected Node fromNode;
-    protected Node toNode;
+    protected final Node fromNode;
+    protected final Node toNode;
 
 
     /**

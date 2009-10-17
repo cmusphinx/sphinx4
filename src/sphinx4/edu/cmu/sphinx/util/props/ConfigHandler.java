@@ -19,8 +19,8 @@ class ConfigHandler extends DefaultHandler {
     protected String itemListName;
     protected StringBuffer curItem;
 
-    protected Map<String, RawPropertyData> rpdMap;
-    protected GlobalProperties globalProperties;
+    protected final Map<String, RawPropertyData> rpdMap;
+    protected final GlobalProperties globalProperties;
 
 
     public ConfigHandler(Map<String, RawPropertyData> rpdMap, GlobalProperties globalProperties) {

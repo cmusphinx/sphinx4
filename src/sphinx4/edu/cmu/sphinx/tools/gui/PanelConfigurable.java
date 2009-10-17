@@ -31,7 +31,7 @@ import java.util.List;
  */
 public class PanelConfigurable extends javax.swing.JPanel {
 
-    private PanelMediator _pm;
+    private final PanelMediator _pm;
 
     private static final int COMBO_NEUTRAL = 1;
 
@@ -922,10 +922,10 @@ public class PanelConfigurable extends javax.swing.JPanel {
      */
     private class PanelMediator implements GUIFileActionListener {
 
-        private Map<String, ConfigurableComponent> _ccmap ; // ConfigurableComponent map based on component classname
-        private String _sectionName ;
-        private GUIMediator _gmediator;
-        private PanelConfigurable _panel;
+        private final Map<String, ConfigurableComponent> _ccmap ; // ConfigurableComponent map based on component classname
+        private final String _sectionName ;
+        private final GUIMediator _gmediator;
+        private final PanelConfigurable _panel;
 
         /**
          * Creates a new instance of PanelMediator
@@ -1337,7 +1337,7 @@ public class PanelConfigurable extends javax.swing.JPanel {
         private final static int INVALID_PROPNAME = 4;
         private final static int INVALID_VALUE = 5;
 
-        private int _mode;
+        private final int _mode;
 
         /**
          * Creates a new instance of <code>PanelMediatorException</code> with detail message.
@@ -1353,8 +1353,8 @@ public class PanelConfigurable extends javax.swing.JPanel {
 class ListItem {
       private final static Color NO_VALUE = Color.WHITE;
       private final static Color WITH_VALUE = Color.BLUE;
-      private String value;
-      private Color color;
+      private final String value;
+      private final Color color;
 
       public ListItem(boolean isValueSet, String s) {
           if(isValueSet)

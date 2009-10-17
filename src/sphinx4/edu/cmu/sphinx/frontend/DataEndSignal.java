@@ -22,7 +22,7 @@ package edu.cmu.sphinx.frontend;
  */
 public class DataEndSignal extends Signal {
 
-    private long duration;
+    private final long duration;
 
 
     /**

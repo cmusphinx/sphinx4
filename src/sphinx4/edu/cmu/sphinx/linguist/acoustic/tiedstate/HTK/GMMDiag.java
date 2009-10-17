@@ -385,7 +385,7 @@ public class GMMDiag {
 	 * Log likelihood calculation
 	 */
 
-	private static float distFloor = -Float.MAX_VALUE;
+	private static final float distFloor = -Float.MAX_VALUE;
 
 	public void computeLogLikes(float[] data) {
 		float logDval1gauss = 0f;

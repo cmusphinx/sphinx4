@@ -31,7 +31,7 @@ import java.util.*;
  */
 public class GrammarNode {
 
-    private int identity;            // the node id
+    private final int identity;            // the node id
     private boolean isFinal;            // is this the final node?
 
     private Word[][] alternatives;              // ordered words at this node

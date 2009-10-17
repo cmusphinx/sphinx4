@@ -35,7 +35,7 @@ public class CommandInterpreter extends Thread {
     private String prompt;
     private boolean done;
     private boolean trace;
-    private CommandHistory history = new CommandHistory();
+    private final CommandHistory history = new CommandHistory();
 
     private Socket socket;
 
@@ -570,10 +570,10 @@ public class CommandInterpreter extends Thread {
 
     // some history patterns used by getInputLine()
 
-    private static Pattern historyPush = Pattern.compile("(.+):p");
-    private static Pattern editPattern =
+    private static final Pattern historyPush = Pattern.compile("(.+):p");
+    private static final Pattern editPattern =
             Pattern.compile("\\^(.+?)\\^(.*?)\\^?");
-    private static Pattern bbPattern = Pattern.compile("(!!)");
+    private static final Pattern bbPattern = Pattern.compile("(!!)");
 
 
     /**
@@ -737,7 +737,7 @@ public class CommandInterpreter extends Thread {
 
     class CommandHistory {
 
-        private List<String> history = new ArrayList<String>(100);
+        private final List<String> history = new ArrayList<String>(100);
 
 
         /**

@@ -28,7 +28,7 @@ public class GUIOperationException extends java.lang.Exception {
     public final static int EXCEPTION_MISC = 5;
     
     
-    private int _mode;
+    private final int _mode;
     
     
     /**

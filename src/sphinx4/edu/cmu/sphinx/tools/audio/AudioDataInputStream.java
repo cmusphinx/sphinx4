@@ -22,8 +22,8 @@ public class AudioDataInputStream extends InputStream {
     AudioFormat format;
     int currentIndex;
     int markIndex;
-    short[] shorts;
-    byte[] bytes;
+    final short[] shorts;
+    final byte[] bytes;
 
 
     /**

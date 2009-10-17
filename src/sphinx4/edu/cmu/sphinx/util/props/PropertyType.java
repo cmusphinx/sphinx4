@@ -75,7 +75,7 @@ public enum PropertyType {
     
 
     /** Display name of this PropertyType. */
-    private String displayName;
+    private final String displayName;
 
     /**
      * Calls to {@link #isValid} will check if an object is instance of the class.
