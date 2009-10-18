@@ -115,17 +115,20 @@ public class Partitioner {
      * @return the index of the token with the ith largest score
      */
     private int midPointSelect(Token[] tokens, int p, int r, int i) {
-        if (p == r) {
-            return p;
-        }
-        int q = midPointPartition(tokens, p, r);
-        int k = q - p + 1;
-        if (i == k) {
-            return q;
-        } else if (i < k) {
-            return midPointSelect(tokens, p, q - 1, i);
-        } else {
-            return midPointSelect(tokens, q + 1, r, i - k);
+        while (true) {
+            if (p == r) {
+                return p;
+            }
+            int q = midPointPartition(tokens, p, r);
+            int k = q - p + 1;
+            if (i == k) {
+                return q;
+            } else if (i < k) {
+                r = q - 1;
+            } else {
+                p = q + 1;
+                i = i - k;
+            }
         }
     }
 }

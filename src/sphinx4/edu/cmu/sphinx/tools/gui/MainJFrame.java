@@ -264,52 +264,52 @@ import java.util.Set;
    } // openFile
 
 
-   /**
-    * Use a JFileChooser in Save mode to select files
-    * to open. Then a filter for FileFilter subclass to select
-    * for ".config.xml" files. If a file is selected, then 
-    *  give it to xml writer for file write
-    *
-    * @param fc <code>JFileChooser</code> reference
-    * @throws GUIReaderException, GUIWriterException
-   **/
-   private boolean saveFile (JFileChooser fc) throws GUIReaderException, GUIWriterException{
-     File file = null;
-    
-     fc.setDialogTitle ("Save File"); 
-     int result = fc.showSaveDialog (this); // Open chooser dialog
+    /**
+     * Use a JFileChooser in Save mode to select files
+     * to open. Then a filter for FileFilter subclass to select
+     * for ".config.xml" files. If a file is selected, then
+     * give it to xml writer for file write
+     *
+     * @param fc <code>JFileChooser</code> reference
+     * @throws GUIReaderException, GUIWriterException
+     */
+    private boolean saveFile(JFileChooser fc) throws GUIReaderException, GUIWriterException {
+        while (true) {
+            File file = null;
 
-     if (result == JFileChooser.CANCEL_OPTION) {
-         return true;
-     } else if (result == JFileChooser.APPROVE_OPTION) {
-         file = fc.getSelectedFile ();
-        
-         if ( !file.getName().toLowerCase().endsWith(".config.xml") )
-         {
-             file = new File(file.getPath().concat(".config.xml"));
-             fc.setSelectedFile(file);
-         }
-         if (file.exists ()) { // file exists
-             int response = JOptionPane.showConfirmDialog (null,
-               "Overwrite existing file?","Confirm Overwrite",
-                JOptionPane.OK_CANCEL_OPTION,
-                JOptionPane.QUESTION_MESSAGE);
-             if (response == JOptionPane.OK_OPTION) 
-             {
-                 _gm.action(GUIMediator.SAVE,file);
-                 return true;
-             }
-             else // do not overwrite, 
-                 return saveFile(fc);
-         } else { // file does not exist
-             _gm.action(GUIMediator.SAVE,file);
-                 return true;
-         }
-         
-     } else {
-       return false;
-     }
-  } // saveFile
+            fc.setDialogTitle("Save File");
+            int result = fc.showSaveDialog(this); // Open chooser dialog
+
+            if (result == JFileChooser.CANCEL_OPTION) {
+                return true;
+            } else if (result == JFileChooser.APPROVE_OPTION) {
+                file = fc.getSelectedFile();
+
+                if (!file.getName().toLowerCase().endsWith(".config.xml")) {
+                    file = new File(file.getPath().concat(".config.xml"));
+                    fc.setSelectedFile(file);
+                }
+                if (file.exists()) { // file exists
+                    int response = JOptionPane.showConfirmDialog(null,
+                            "Overwrite existing file?", "Confirm Overwrite",
+                            JOptionPane.OK_CANCEL_OPTION,
+                            JOptionPane.QUESTION_MESSAGE);
+                    if (response == JOptionPane.OK_OPTION) {
+                        _gm.action(GUIMediator.SAVE, file);
+                        return true;
+                    } else // do not overwrite,
+                    {
+                    }
+                } else { // file does not exist
+                    _gm.action(GUIMediator.SAVE, file);
+                    return true;
+                }
+
+            } else {
+                return false;
+            }
+        }
+    } // saveFile
 
     
     /* this private method is going to one more panel into the Main frame */

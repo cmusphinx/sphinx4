@@ -16,10 +16,15 @@ public class GlobalProperty {
 
 
     public Object getValue() {
-        if (value instanceof GlobalProperty)
-            return ((GlobalProperty) value).getValue();
+        GlobalProperty other = this;
+        while (true) {
+            if (other.value instanceof GlobalProperty) {
+                other = ((GlobalProperty) other.value);
+                continue;
+            }
 
-        return value;
+            return other.value;
+        }
     }
 
 

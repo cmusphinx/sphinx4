@@ -493,30 +493,33 @@ public class HMMSet {
 		}
 	}
 
-	public GMMDiag findState(Lab l) {
-		HMMState s = null;
-		int i;
-		for (i = 0; i < states.size(); i++) {
-			s = states.get(i);
-			if (s.getLab().isEqual(l))
-				break;
-		}
-		if (i < states.size()) {
-			return s.gmm;
-		} else {
-			if (tiedHMMs != null) {
-				// May be that state appears in the tied states
-				for (i = 0; i < tiedHMMs.length; i++) {
-					if (tiedHMMs[i][0].equals(l.getName())) {
-						break;
-					}
-				}
-				if (i < tiedHMMs.length) {
-					return findState(new Lab(tiedHMMs[i][1], l.getState()));
-				}
-			}
-			System.err.println("WARNING: state is not found in hmmset " + l);
-			return null;
-		}
-	}
+    public GMMDiag findState(Lab l) {
+        while (true) {
+            HMMState s = null;
+            int i;
+            for (i = 0; i < states.size(); i++) {
+                s = states.get(i);
+                if (s.getLab().isEqual(l))
+                    break;
+            }
+            if (i < states.size()) {
+                return s.gmm;
+            } else {
+                if (tiedHMMs != null) {
+                    // May be that state appears in the tied states
+                    for (i = 0; i < tiedHMMs.length; i++) {
+                        if (tiedHMMs[i][0].equals(l.getName())) {
+                            break;
+                        }
+                    }
+                    if (i < tiedHMMs.length) {
+                        l = new Lab(tiedHMMs[i][1], l.getState());
+                        continue;
+                    }
+                }
+                System.err.println("WARNING: state is not found in hmmset " + l);
+                return null;
+            }
+        }
+    }
 }

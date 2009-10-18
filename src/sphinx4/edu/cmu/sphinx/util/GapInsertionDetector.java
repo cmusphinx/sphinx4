@@ -296,17 +296,19 @@ class HypothesisFile {
      * @return the next available hypothesis utterance, or null if the end of file has been reached
      */
     private HypothesisUtterance nextUtterance() throws IOException {
-        String line = reader.readLine();
-        if (line != null) {
-            utteranceCount++;
-            HypothesisUtterance utterance = new HypothesisUtterance(line);
-            if (utterance.getWordCount() <= 0) {
-                return nextUtterance();
+        while (true) {
+            String line = reader.readLine();
+            if (line != null) {
+                utteranceCount++;
+                HypothesisUtterance utterance = new HypothesisUtterance(line);
+                if (utterance.getWordCount() <= 0) {
+
+                } else {
+                    return utterance;
+                }
             } else {
-                return utterance;
+                return null;
             }
-        } else {
-            return null;
         }
     }
 
