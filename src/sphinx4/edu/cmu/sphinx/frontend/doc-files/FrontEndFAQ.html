@@ -36,8 +36,8 @@
 </head>
 
 <body>
-<font face="Times New Roman">
-    <center>
+<span style="font-family: Times New Roman; ">
+    <div style="text-align: center;">
         <table bgcolor="#99CCFF" width="100%">
             <tr>
                 <td align=center width="100%">
@@ -45,10 +45,10 @@
                 </td>
             </tr>
         </table>
-    </center>
-</font>
+    </div>
+</span>
 
-<font face="Arial" size="2">
+<span style="font-family: Arial; font-size: x-small; ">
 <p>
 
 <h3>Table of Contents</h3>
@@ -184,7 +184,7 @@ and type:
     either BatchCMN or LiveCMN will follow the StreamCepstrumSource,
     skiping the preemphasis, windowing, MFCC, and DCT steps. The
     configuration should contain the lines:
-    <font face="Courier">
+    <span style="font-family: Courier; ">
       <pre>
 &lt;component name="batchRecognizer" type="edu.cmu.sphinx.tools.batch.BatchModeRecognizer"&gt;
 
@@ -205,7 +205,7 @@ and type:
 
 &lt;component name="streamCepstrumSource" type="edu.cmu.sphinx.frontend.util.StreamCepstrumSource"/&gt;
       </pre>
-    </font>
+    </span>
     For more information on configuration files, please refer to the document
     <a href="../../util/props/doc-files/ConfigurationManagement.html">Sphinx-4 Configuration Management</a>
 <p>
@@ -230,7 +230,7 @@ and type:
     should be placed in front of all the other data processors, e.g.,
 
 <p>
-    <font face="Courier">
+    <span style="font-family: Courier; ">
       <pre>
 &lt;component name="frontEnd" type="edu.cmu.sphinx.frontend.FrontEnd"&gt;
 
@@ -250,7 +250,7 @@ and type:
 &lt;component name="speechMarker" type="edu.cmu.sphinx.frontend.endpoint.SpeechMarker"/&gt;
 &lt;component name="nonSpeechDataFilter" type="edu.cmu.sphinx.frontend.endpoint.NonSpeechDataFilter"/&gt;
       </pre>
-    </font>
+    </span>
 
 <p>
     The SpeechClassifier property 'threshold' controls how sensitive
@@ -275,6 +275,6 @@ Portions Copyright 2002-2004 Mitsubishi Electric Research Laboratories.<br>
 All Rights Reserved. Usage is subject to
 <a href="../../../../../../license.terms">license terms</a>.
 
-</font>
+</span>
 </body>
 </html>
