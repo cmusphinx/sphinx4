@@ -415,7 +415,7 @@
 	      todir="${demo_classes_dir}/edu/cmu/sphinx/demo/classbased"/>
 	<copy file="${demo_src_dir}/edu/cmu/sphinx/demo/classbased/sample-with-classes.trigram.lm"
 	      todir="${demo_classes_dir}/edu/cmu/sphinx/demo/classbased"/>
-	<copy file="${demo_src_dir}/edu/cmu/sphinx/demo/classbased/classdefs.txt"
+	<copy file="${demo_src_dir}/edu/cmu/sphinx/demo/classbased/uniform-classdefs"
 	      todir="${demo_classes_dir}/edu/cmu/sphinx/demo/classbased"/>
 	<copy file="${demo_src_dir}/edu/cmu/sphinx/demo/classbased/classbased.config.xml"
 	      todir="${demo_classes_dir}/edu/cmu/sphinx/demo/classbased"/>

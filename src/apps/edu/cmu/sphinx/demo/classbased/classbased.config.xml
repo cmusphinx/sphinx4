@@ -179,7 +179,7 @@
     <component name="classMap" type="edu.cmu.sphinx.linguist.language.classes.ClassMap">
         <property name="logMath" value="logMath"/>
         <property name="classDefsLocation"
-                  value="resource:/edu.cmu.sphinx.demo.classbased.ClassBased!/edu/cmu/sphinx/demo/classbased/classdefs.txt"/>
+                  value="resource:/edu.cmu.sphinx.demo.classbased.ClassBased!/edu/cmu/sphinx/demo/classbased/uniform-classdefs"/>
     </component>
 
     <component name="wordClassModel" type="edu.cmu.sphinx.linguist.language.classes.ClassBasedLanguageModel">
