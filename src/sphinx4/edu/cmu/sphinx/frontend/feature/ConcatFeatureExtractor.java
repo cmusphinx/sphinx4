@@ -39,6 +39,7 @@ public class ConcatFeatureExtractor extends AbstractFeatureExtractor {
      *
      * @return the feature Data computed
      */
+    @Override
     protected Data computeNextFeature() {
         DoubleData currentCepstrum = cepstraBuffer[currentPosition];
         float[] feature = new float[(window * 2 + 1) * currentCepstrum.getValues().length];

@@ -32,10 +32,12 @@ public class HMMSet {
 		Iterator<SingleHMM> it = new Iterator<SingleHMM>() {
 			int cur;
 
-			public void remove() {
+			@Override
+            public void remove() {
 			}
 
-			public SingleHMM next() {
+			@Override
+            public SingleHMM next() {
 				for (;;) {
 					if (cur >= hmms.size())
 						return null;
@@ -47,7 +49,8 @@ public class HMMSet {
 				}
 			}
 
-			public boolean hasNext() {
+			@Override
+            public boolean hasNext() {
 				return false;
 			}
 		};
@@ -58,10 +61,12 @@ public class HMMSet {
 		Iterator<SingleHMM> it = new Iterator<SingleHMM>() {
 			int cur;
 
-			public void remove() {
+			@Override
+            public void remove() {
 			}
 
-			public SingleHMM next() {
+			@Override
+            public SingleHMM next() {
 				for (;;) {
 					if (cur >= hmms.size())
 						return null;
@@ -73,7 +78,8 @@ public class HMMSet {
 				}
 			}
 
-			public boolean hasNext() {
+			@Override
+            public boolean hasNext() {
 				return false;
 			}
 		};

@@ -45,6 +45,7 @@ public class NonSpeechDataFilter extends BaseDataProcessor {
 
 
     /** Initializes this data processor */
+    @Override
     public void initialize() {
         super.initialize();
 

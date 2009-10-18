@@ -45,6 +45,7 @@ public class VUMeterPanel extends JPanel {
 
     class VUMeterPanelThread extends Thread {
 
+        @Override
         public void run() {
             while (!quit) {
                 repaint();  // probably this one should be replaced by a more appropriate method call in order to get rid of the annoying flickering
@@ -65,6 +66,7 @@ public class VUMeterPanel extends JPanel {
      *
      * @param g The <code>Graphics</code> to draw on.
      */
+    @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
 

@@ -45,6 +45,7 @@ public class VUMeterMonitor extends BaseDataProcessor {
     }
 
 
+    @Override
     public Data getData() throws DataProcessingException {
         Data d = getPredecessor().getData();
 

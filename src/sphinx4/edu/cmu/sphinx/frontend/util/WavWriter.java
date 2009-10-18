@@ -91,6 +91,7 @@ public class WavWriter extends BaseDataProcessor {
     /*
     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
     */
+    @Override
     public void newProperties(PropertySheet ps) throws PropertyException {
         super.newProperties(ps);
 
@@ -109,6 +110,7 @@ public class WavWriter extends BaseDataProcessor {
         initialize();
     }
     
+    @Override
     public Data getData() throws DataProcessingException {
         Data data = getPredecessor().getData();
 
@@ -164,6 +166,7 @@ public class WavWriter extends BaseDataProcessor {
 
 
     /** Initializes this DataProcessor. This is typically called after the DataProcessor has been configured. */
+    @Override
     public void initialize() {
         super.initialize();
 

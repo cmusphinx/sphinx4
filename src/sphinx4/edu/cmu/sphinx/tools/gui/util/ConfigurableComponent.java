@@ -66,6 +66,7 @@ public class ConfigurableComponent {
      *
      * @return string description of model
      */
+    @Override
     public String toString(){
         StringBuilder output = new StringBuilder("Section :").append(_sectionName).append('\n');
         output.append(" Class Name : ").append(_componentClassName).append('\n');

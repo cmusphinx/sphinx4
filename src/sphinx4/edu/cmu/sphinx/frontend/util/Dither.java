@@ -73,6 +73,7 @@ public class Dither extends BaseDataProcessor {
      * @throws edu.cmu.sphinx.frontend.DataProcessingException
      *          if a data processing error occurred
      */
+    @Override
     public Data getData() throws DataProcessingException {
         Data input = getPredecessor().getData(); // get the spectrum
         getTimer().start();

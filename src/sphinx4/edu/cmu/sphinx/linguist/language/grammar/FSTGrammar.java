@@ -131,6 +131,7 @@ public class FSTGrammar extends Grammar {
      *
      * @param bogusText dummy variable
      */
+    @Override
     protected GrammarNode createGrammar(String bogusText)
             throws NoSuchMethodException {
         throw new NoSuchMethodException("Does not create "
@@ -143,6 +144,7 @@ public class FSTGrammar extends Grammar {
     *
     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
     */
+    @Override
     public void newProperties(PropertySheet ps) throws PropertyException {
         super.newProperties(ps);
         
@@ -156,6 +158,7 @@ public class FSTGrammar extends Grammar {
      *
      * @return the initial node for the grammar.
      */
+    @Override
     protected GrammarNode createGrammar() throws IOException {
 
         GrammarNode initialNode = null;

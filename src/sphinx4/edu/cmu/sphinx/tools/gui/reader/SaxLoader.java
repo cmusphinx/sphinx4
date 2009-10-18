@@ -96,6 +96,7 @@ public class SaxLoader {
         /* (non-Javadoc)
          * @see org.xml.sax.ContentHandler#startElement(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes)
          */
+        @Override
         public void startElement(String uri, String localName, String qName,
                 Attributes attributes) throws SAXException {
             if (qName.equals("config")) {
@@ -148,6 +149,7 @@ public class SaxLoader {
         /* (non-Javadoc)
          * @see org.xml.sax.ContentHandler#characters(char[], int, int)
          */
+        @Override
         public void characters(char ch[], int start, int length)
                 throws SAXParseException {
             if (curItem != null) {
@@ -158,6 +160,7 @@ public class SaxLoader {
         /* (non-Javadoc)
          * @see org.xml.sax.ContentHandler#endElement(java.lang.String, java.lang.String, java.lang.String)
          */
+        @Override
         public void endElement(String uri, String localName, String qName)
                 throws SAXParseException {
             if (qName.equals("component")) {
@@ -181,6 +184,7 @@ public class SaxLoader {
         /* (non-Javadoc)
          * @see org.xml.sax.ContentHandler#setDocumentLocator(org.xml.sax.Locator)
          */
+        @Override
         public void setDocumentLocator(Locator locator) {
             this.locator = locator;
         }

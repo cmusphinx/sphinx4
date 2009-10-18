@@ -45,7 +45,8 @@ public class LDA extends BaseDataProcessor {
 	 * edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util
 	 * .props.PropertySheet)
 	 */
-	public void newProperties(PropertySheet ps) throws PropertyException {
+	@Override
+    public void newProperties(PropertySheet ps) throws PropertyException {
 		super.newProperties(ps);
 		
 		init( (Loader)ps.getComponent(PROP_LOADER) );
@@ -78,7 +79,8 @@ public class LDA extends BaseDataProcessor {
 	 *             if there is a processing error
 	 * @see Data
 	 */
-	public Data getData() throws DataProcessingException {
+	@Override
+    public Data getData() throws DataProcessingException {
 		Data input = getPredecessor().getData();
 		Data output;
 		getTimer().start();

@@ -70,6 +70,7 @@ public interface Path {
     public String getTranscriptionNoFiller();
 
     /** Returns a string representation of this object */
+    @Override
     public String toString();
 
 

@@ -77,6 +77,7 @@ public class LiveCMN extends BaseDataProcessor {
 
     }
 
+    @Override
     public void newProperties(PropertySheet ps) throws PropertyException {
         super.newProperties(ps);
         initialMean = ps.getDouble(PROP_INITIAL_MEAN);
@@ -86,6 +87,7 @@ public class LiveCMN extends BaseDataProcessor {
 
 
     /** Initializes this LiveCMN. */
+    @Override
     public void initialize() {
         super.initialize();
     }
@@ -113,6 +115,7 @@ public class LiveCMN extends BaseDataProcessor {
      * @return the next available Data object, returns null if no Data object is available
      * @throws DataProcessingException if there is a data processing error
      */
+    @Override
     public Data getData() throws DataProcessingException {
 
         Data input = getPredecessor().getData();

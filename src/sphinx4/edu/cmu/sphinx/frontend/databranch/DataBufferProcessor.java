@@ -93,6 +93,7 @@ public class DataBufferProcessor extends BaseDataProcessor implements DataListen
     }
 
 
+    @Override
     public void processDataFrame(Data data) {
         featureBuffer.add(data);
 
@@ -115,6 +116,7 @@ public class DataBufferProcessor extends BaseDataProcessor implements DataListen
      * @throws edu.cmu.sphinx.frontend.DataProcessingException
      *          if a data processor error occurs
      */
+    @Override
     public Data getData() throws DataProcessingException {
         Data data = null;
 

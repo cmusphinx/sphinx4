@@ -86,6 +86,7 @@ public class OutOfGrammarGraph {
          *
          * @return the pronunciation
          */
+        @Override
         public Pronunciation getPronunciation() {
             return Word.UNKNOWN.getPronunciations()[0];
         }
@@ -96,6 +97,7 @@ public class OutOfGrammarGraph {
          *
          * @return the state order
          */
+        @Override
         public int getOrder() {
             return 1;
         }
@@ -106,6 +108,7 @@ public class OutOfGrammarGraph {
          *
          * @return the signature
          */
+        @Override
         public String getSignature() {
             return "oogUNK";
         }
@@ -116,6 +119,7 @@ public class OutOfGrammarGraph {
          *
          * @return the successor states
          */
+        @Override
         public SearchStateArc[] getSuccessors() {
             return successors;
         }
@@ -126,6 +130,7 @@ public class OutOfGrammarGraph {
          *
          * @return the language probability
          */
+        @Override
         public float getLanguageProbability() {
             return logOutOfGrammarBranchProbability;
         }
@@ -138,6 +143,7 @@ public class OutOfGrammarGraph {
          * @return true if this UnknownWordState indicates the start of a word, false if this UnknownWordState indicates
          *         the end of a word
          */
+        @Override
         public boolean isWordStart() {
             return true;
         }
@@ -166,6 +172,7 @@ public class OutOfGrammarGraph {
          *
          * @return the state order
          */
+        @Override
         public int getOrder() {
             return 2;
         }
@@ -176,6 +183,7 @@ public class OutOfGrammarGraph {
          *
          * @return the signature
          */
+        @Override
         public String getSignature() {
             return "oogFBS";
         }
@@ -186,6 +194,7 @@ public class OutOfGrammarGraph {
          *
          * @return the successor states
          */
+        @Override
         public SearchStateArc[] getSuccessors() {
             return successors;
         }
@@ -216,6 +225,7 @@ public class OutOfGrammarGraph {
          *
          * @return the unit
          */
+        @Override
         public Unit getUnit() {
             return hmm.getBaseUnit();
         }
@@ -226,6 +236,7 @@ public class OutOfGrammarGraph {
          *
          * @return the state order
          */
+        @Override
         public int getOrder() {
             return 3;
         }
@@ -236,6 +247,7 @@ public class OutOfGrammarGraph {
          *
          * @return the signature
          */
+        @Override
         public String getSignature() {
             return "oogHMM-" + getUnit();
         }
@@ -246,6 +258,7 @@ public class OutOfGrammarGraph {
          *
          * @return the successor states
          */
+        @Override
         public SearchStateArc[] getSuccessors() {
             return successors;
         }
@@ -256,6 +269,7 @@ public class OutOfGrammarGraph {
          *
          * @return the log probability
          */
+        @Override
         public float getInsertionProbability() {
             return logPhoneInsertionProbability;
         }
@@ -285,6 +299,7 @@ public class OutOfGrammarGraph {
          *
          * @return the signature
          */
+        @Override
         public String getSignature() {
             return "oog-" + hmmState;
         }
@@ -295,6 +310,7 @@ public class OutOfGrammarGraph {
          *
          * @return the hmm state
          */
+        @Override
         public HMMState getHMMState() {
             return hmmState;
         }
@@ -305,6 +321,7 @@ public class OutOfGrammarGraph {
          *
          * @return true if this is an emitting state
          */
+        @Override
         public boolean isEmitting() {
             return hmmState.isEmitting();
         }
@@ -315,6 +332,7 @@ public class OutOfGrammarGraph {
          *
          * @return the hashcode
          */
+        @Override
         public int hashCode() {
             return 191 + hmmState.hashCode();
         }
@@ -325,6 +343,7 @@ public class OutOfGrammarGraph {
          *
          * @return the probability
          */
+        @Override
         public float getAcousticProbability() {
             return logProbability;
         }
@@ -336,6 +355,7 @@ public class OutOfGrammarGraph {
          * @param o the object to test
          * @return <code>true</code> if the object is equal to this
          */
+        @Override
         public boolean equals(Object o) {
             if (o == this) {
                 return true;
@@ -353,6 +373,7 @@ public class OutOfGrammarGraph {
          *
          * @return the order
          */
+        @Override
         public int getOrder() {
             return isEmitting() ? 4 : 0;
         }
@@ -363,6 +384,7 @@ public class OutOfGrammarGraph {
          *
          * @return the successor states
          */
+        @Override
         public SearchStateArc[] getSuccessors() {
             if (hmmState.isExitState()) {
                 return lbsArcSet;
@@ -397,6 +419,7 @@ public class OutOfGrammarGraph {
          *
          * @return the state order
          */
+        @Override
         public int getOrder() {
             return 1;
         }
@@ -407,6 +430,7 @@ public class OutOfGrammarGraph {
          *
          * @return the signature
          */
+        @Override
         public String getSignature() {
             return "oogLBS";
         }
@@ -417,6 +441,7 @@ public class OutOfGrammarGraph {
          *
          * @return the successor states
          */
+        @Override
         public SearchStateArc[] getSuccessors() {
             return successors;
         }
@@ -430,6 +455,7 @@ public class OutOfGrammarGraph {
          *
          * @return the state order
          */
+        @Override
         public int getOrder() {
             return 2;
         }
@@ -440,6 +466,7 @@ public class OutOfGrammarGraph {
          *
          * @return the signature
          */
+        @Override
         public String getSignature() {
             return "oogFinal";
         }
@@ -450,6 +477,7 @@ public class OutOfGrammarGraph {
          *
          * @return true if this is a final state
          */
+        @Override
         public boolean isFinal() {
             return true;
         }
@@ -460,6 +488,7 @@ public class OutOfGrammarGraph {
          *
          * @return the successor states
          */
+        @Override
         public SearchStateArc[] getSuccessors() {
             return EMPTY_ARCS;
         }
@@ -476,6 +505,7 @@ public class OutOfGrammarGraph {
          *
          * @return the set of successors
          */
+        @Override
         public abstract SearchStateArc[] getSuccessors();
 
 
@@ -485,6 +515,7 @@ public class OutOfGrammarGraph {
          *
          * @return the signature
          */
+        @Override
         public abstract String getSignature();
 
 
@@ -493,6 +524,7 @@ public class OutOfGrammarGraph {
          *
          * @return the order
          */
+        @Override
         public abstract int getOrder();
 
 
@@ -501,6 +533,7 @@ public class OutOfGrammarGraph {
          *
          * @return true if this is an emitting state
          */
+        @Override
         public boolean isEmitting() {
             return false;
         }
@@ -511,6 +544,7 @@ public class OutOfGrammarGraph {
          *
          * @return true if this is a final state
          */
+        @Override
         public boolean isFinal() {
             return false;
         }
@@ -521,6 +555,7 @@ public class OutOfGrammarGraph {
          *
          * @return the lex state (null for this linguist)
          */
+        @Override
         public Object getLexState() {
             return null;
         }
@@ -531,6 +566,7 @@ public class OutOfGrammarGraph {
          *
          * @return the formatted string
          */
+        @Override
         public String toPrettyString() {
             return toString();
         }
@@ -541,6 +577,7 @@ public class OutOfGrammarGraph {
          *
          * @return a string representation
          */
+        @Override
         public String toString() {
             return getSignature();
         }
@@ -551,6 +588,7 @@ public class OutOfGrammarGraph {
          *
          * @return the word history (null for this linguist)
          */
+        @Override
         public WordSequence getWordHistory() {
             return null;
         }
@@ -561,6 +599,7 @@ public class OutOfGrammarGraph {
          *
          * @return the sucessor state
          */
+        @Override
         public SearchState getState() {
             return this;
         }
@@ -571,6 +610,7 @@ public class OutOfGrammarGraph {
          *
          * @return the log probability
          */
+        @Override
         public float getProbability() {
             return getLanguageProbability() + getAcousticProbability()
                     + getInsertionProbability();
@@ -582,6 +622,7 @@ public class OutOfGrammarGraph {
          *
          * @return the log probability
          */
+        @Override
         public float getLanguageProbability() {
             return LogMath.getLogOne();
         }
@@ -592,6 +633,7 @@ public class OutOfGrammarGraph {
          *
          * @return the log probability
          */
+        @Override
         public float getAcousticProbability() {
             return LogMath.getLogOne();
         }
@@ -602,6 +644,7 @@ public class OutOfGrammarGraph {
          *
          * @return the log probability
          */
+        @Override
         public float getInsertionProbability() {
             return LogMath.getLogOne();
         }

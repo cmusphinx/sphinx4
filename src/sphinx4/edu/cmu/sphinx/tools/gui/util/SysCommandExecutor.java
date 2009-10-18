@@ -185,7 +185,8 @@ class AsyncStreamReader extends Thread
 		return fBuffer.toString();
 	}
 	
-	public void run()
+	@Override
+    public void run()
 	{
 		try {
 			readCommandOutput();

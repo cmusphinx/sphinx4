@@ -32,12 +32,14 @@ public class GainControlProcessor extends BaseDataProcessor {
     *
     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
     */
+    @Override
     public void newProperties(PropertySheet ps) throws PropertyException {
         super.newProperties(ps);
         gainFactor = ps.getDouble(GAIN_FACTOR);
     }
 
 
+    @Override
     public Data getData() throws DataProcessingException {
         Data data = getPredecessor().getData();
 

@@ -185,6 +185,7 @@ public class ThreadedAcousticScorer extends AbstractScorer {
     }
 
 
+    @Override
     protected Data doScoring(List<? extends Scoreable> scoreableList, Data data) {
         Scoreable best;
 
@@ -280,6 +281,7 @@ public class ThreadedAcousticScorer extends AbstractScorer {
 
 
         /** Waits for a scoreable job and scores the scoreable in the job, signally back when done */
+        @Override
         public void run() {
             while (true) {
                 ScoreableJob scoreableJob = mailbox.pend();
@@ -482,6 +484,7 @@ class ScoreableJob {
      *
      * @return the string representation
      */
+    @Override
     public String toString() {
         return "List size " + scoreables.size() + " start " + start + " size "
                 + size;

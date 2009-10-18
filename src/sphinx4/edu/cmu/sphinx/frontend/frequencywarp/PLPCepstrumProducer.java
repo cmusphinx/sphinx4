@@ -68,6 +68,7 @@ public class PLPCepstrumProducer extends BaseDataProcessor {
     *
     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
     */
+    @Override
     public void newProperties(PropertySheet ps) throws PropertyException {
         super.newProperties(ps);
         numberPLPFilters = ps.getInt(PROP_NUMBER_FILTERS);
@@ -77,6 +78,7 @@ public class PLPCepstrumProducer extends BaseDataProcessor {
 
 
     /** Constructs a PLPCepstrumProducer */
+    @Override
     public void initialize() {
         super.initialize();
         computeCosine();
@@ -123,6 +125,7 @@ public class PLPCepstrumProducer extends BaseDataProcessor {
      * @return the next available Data object, returns null if no Data object is available
      * @throws DataProcessingException if there is an error reading the Data objects
      */
+    @Override
     public Data getData() throws DataProcessingException {
 
         Data input = getPredecessor().getData();

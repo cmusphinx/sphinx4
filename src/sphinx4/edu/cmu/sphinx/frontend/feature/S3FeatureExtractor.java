@@ -32,6 +32,7 @@ public class S3FeatureExtractor extends AbstractFeatureExtractor {
      *
      * @return the feature Data computed
      */
+    @Override
     protected Data computeNextFeature() {
 
     	int jp1 = (currentPosition - 1 + cepstraBufferSize) % cepstraBufferSize;

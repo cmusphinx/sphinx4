@@ -34,6 +34,7 @@ public class GlobalProperties extends HashMap<String, GlobalProperty> {
     // todo implement hashCode
 
 
+    @Override
     public boolean equals(Object o) {
         if (o != null && o instanceof GlobalProperties) {
             GlobalProperties gp = (GlobalProperties) o;

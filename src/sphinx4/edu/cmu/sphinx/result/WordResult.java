@@ -81,6 +81,7 @@ public interface WordResult {
 
 
     /** Returns a string representation of this object */
+    @Override
     public String toString();
 
 

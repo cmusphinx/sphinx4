@@ -79,6 +79,7 @@ public class FullDictionary implements Dictionary {
     *
     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
     */
+    @Override
     public void newProperties(PropertySheet ps) throws PropertyException {
         logger = ps.getLogger();
 
@@ -95,6 +96,7 @@ public class FullDictionary implements Dictionary {
     /* (non-Javadoc)
     * @see edu.cmu.sphinx.linguist.dictionary.Dictionary#allocate()
     */
+    @Override
     public void allocate() throws IOException {
 
         if (!allocated) {
@@ -119,6 +121,7 @@ public class FullDictionary implements Dictionary {
     /* (non-Javadoc)
     * @see edu.cmu.sphinx.linguist.dictionary.Dictionary#deallocate()
     */
+    @Override
     public void deallocate() {
         if (allocated) {
             fillerDictionary = null;
@@ -246,6 +249,7 @@ public class FullDictionary implements Dictionary {
      * @return a Word object
      * @see edu.cmu.sphinx.linguist.dictionary.Word
      */
+    @Override
     public Word getWord(String text) {
         text = text.toLowerCase();
         Word word = lookupWord(text);
@@ -291,6 +295,7 @@ public class FullDictionary implements Dictionary {
      *
      * @return the sentence start word
      */
+    @Override
     public Word getSentenceStartWord() {
         return getWord(SENTENCE_START_SPELLING);
     }
@@ -301,6 +306,7 @@ public class FullDictionary implements Dictionary {
      *
      * @return the sentence end word
      */
+    @Override
     public Word getSentenceEndWord() {
         return getWord(SENTENCE_END_SPELLING);
     }
@@ -311,6 +317,7 @@ public class FullDictionary implements Dictionary {
      *
      * @return the silence word
      */
+    @Override
     public Word getSilenceWord() {
         return getWord(SILENCE_SPELLING);
     }
@@ -321,6 +328,7 @@ public class FullDictionary implements Dictionary {
      *
      * @return the set of all possible word classifications
      */
+    @Override
     public WordClassification[] getPossibleWordClassifications() {
         return null;
     }
@@ -351,6 +359,7 @@ public class FullDictionary implements Dictionary {
      *
      * @return a string representation of this FullDictionary
      */
+    @Override
     public String toString() {
         return super.toString() + "numWords=" + wordDictionary.size() + " dictLlocation=" + getWordDictionaryFile();
     }
@@ -377,6 +386,7 @@ public class FullDictionary implements Dictionary {
      *
      * @return an array (possibly empty) of all filler words
      */
+    @Override
     public Word[] getFillerWords() {
         return fillerDictionary.values().toArray(
                 new Word[fillerDictionary.values().size()]);

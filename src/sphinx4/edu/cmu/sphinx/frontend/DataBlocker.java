@@ -40,6 +40,7 @@ public class DataBlocker extends BaseDataProcessor {
         this.blockSizeMs = blockSizeMs;
     }
 
+    @Override
     public void newProperties(PropertySheet propertySheet) throws PropertyException {
         super.newProperties(propertySheet);
         blockSizeMs = propertySheet.getDouble(PROP_BLOCK_SIZE_MS);
@@ -51,6 +52,7 @@ public class DataBlocker extends BaseDataProcessor {
     }
 
 
+    @Override
     public Data getData() throws DataProcessingException {
         while (curInBufferSize < blockSizeSamples) {
             Data data = getPredecessor().getData();

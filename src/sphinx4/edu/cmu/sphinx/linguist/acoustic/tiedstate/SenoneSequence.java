@@ -57,6 +57,7 @@ public class SenoneSequence implements Serializable {
      *
      * @return the object hashcode
      */
+    @Override
     public int hashCode() {
         int hashCode = 31;
         for (Senone senone : senones) {
@@ -71,6 +72,7 @@ public class SenoneSequence implements Serializable {
      *
      * @return true  if the objects are equal
      */
+    @Override
     public boolean equals(Object o) {
         if (this == o) {
             return true;

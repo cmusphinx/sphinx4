@@ -72,6 +72,7 @@ public class DiscreteCosineTransform extends BaseDataProcessor {
      * @return the next available DoubleData melcepstrum, or Signal object, or null if no Data is available
      * @throws DataProcessingException if a data processing error occurred
      */
+    @Override
     public Data getData() throws DataProcessingException {
         Data input = getPredecessor().getData(); // get the spectrum
         getTimer().start();

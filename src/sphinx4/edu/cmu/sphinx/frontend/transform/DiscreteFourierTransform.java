@@ -92,6 +92,7 @@ public class DiscreteFourierTransform extends BaseDataProcessor {
     *
     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
     */
+    @Override
     public void newProperties(PropertySheet ps) throws PropertyException {
         super.newProperties(ps);
         logger = ps.getLogger();
@@ -104,6 +105,7 @@ public class DiscreteFourierTransform extends BaseDataProcessor {
     /* (non-Javadoc)
     * @see edu.cmu.sphinx.frontend.DataProcessor#initialize(edu.cmu.sphinx.frontend.CommonConfig)
     */
+    @Override
     public void initialize() {
         super.initialize();
         if (isNumberFftPointsSet) {
@@ -265,6 +267,7 @@ public class DiscreteFourierTransform extends BaseDataProcessor {
      * @return the next available power spectrum DoubleData object, or null if no Spectrum object is available
      * @throws DataProcessingException if there is a processing error
      */
+    @Override
     public Data getData() throws DataProcessingException {
 
         Data input = getPredecessor().getData();

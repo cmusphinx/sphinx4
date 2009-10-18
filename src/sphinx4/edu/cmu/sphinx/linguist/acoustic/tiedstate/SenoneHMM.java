@@ -64,6 +64,7 @@ public class SenoneHMM implements HMM {
      *
      * @return the unit associated with this HMM
      */
+    @Override
     public Unit getUnit() {
         return unit;
     }
@@ -74,6 +75,7 @@ public class SenoneHMM implements HMM {
      *
      * @return the unit associated with this HMM
      */
+    @Override
     public Unit getBaseUnit() {
         return baseUnit;
     }
@@ -84,6 +86,7 @@ public class SenoneHMM implements HMM {
      *
      * @param which the state of interest
      */
+    @Override
     public HMMState getState(int which) {
         return hmmStates[which];
     }
@@ -98,6 +101,7 @@ public class SenoneHMM implements HMM {
     // getSenoneSequence.getSenones().length will provide the same
     // value, but this is certainly more convenient and easier to
     // understand
+    @Override
     public int getOrder() {
         return getSenoneSequence().getSenones().length;
     }
@@ -162,6 +166,7 @@ public class SenoneHMM implements HMM {
      *
      * @return the position for this HMM
      */
+    @Override
     public HMMPosition getPosition() {
         return position;
     }
@@ -193,6 +198,7 @@ public class SenoneHMM implements HMM {
      *
      * @return the set of arcs that transition to the initial states for this HMM
      */
+    @Override
     public HMMState getInitialState() {
         return getState(0);
     }
@@ -203,18 +209,21 @@ public class SenoneHMM implements HMM {
      *
      * @return the string representation
      */
+    @Override
     public String toString() {
         String name = isComposite() ? "HMM@" : "HMM";
         return name + '(' + unit + "):" + position;
     }
 
 
+    @Override
     public int hashCode() {
         return getTransitionMatrix().hashCode() * 3 +
                 getSenoneSequence().hashCode();
     }
 
 
+    @Override
     public boolean equals(Object o) {
         if (this == o) {
             return true;

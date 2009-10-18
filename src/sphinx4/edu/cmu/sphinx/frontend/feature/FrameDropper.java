@@ -61,6 +61,7 @@ public class FrameDropper extends BaseDataProcessor {
     *
     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
     */
+    @Override
     public void newProperties(PropertySheet ps) throws PropertyException {
         super.newProperties(ps);
         initVars( ps.getInt(PROP_DROP_EVERY_NTH_FRAME), ps.getBoolean(PROP_REPLACE_NTH_WITH_PREVIOUS));
@@ -77,6 +78,7 @@ public class FrameDropper extends BaseDataProcessor {
     }
 
     /** Initializes this FrameDropper. */
+    @Override
     public void initialize() {
         super.initialize();
         this.id = -1;
@@ -90,6 +92,7 @@ public class FrameDropper extends BaseDataProcessor {
      * @return the next available Data object, returns null if no Data object is available
      * @throws DataProcessingException if a data processing error occurs
      */
+    @Override
     public Data getData() throws DataProcessingException {
         Data feature = readData();
         if (feature != null) {

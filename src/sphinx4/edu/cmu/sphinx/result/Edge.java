@@ -42,6 +42,7 @@ public class Edge {
     }
 
 
+    @Override
     public String toString() {
         return "Edge(" + fromNode + "-->" + toNode + '[' + acousticScore
                 + ',' + lmScore + "])";

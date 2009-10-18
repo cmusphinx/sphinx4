@@ -34,6 +34,7 @@ public class Decoder extends AbstractDecoder {
 
     }
     
+    @Override
     public void newProperties(PropertySheet ps) throws PropertyException {
         super.newProperties(ps);
         featureBlockSize = ps.getInt(PROP_FEATURE_BLOCK_SIZE);
@@ -58,6 +59,7 @@ public class Decoder extends AbstractDecoder {
      * @param referenceText the reference text (or null)
      * @return a result
      */
+    @Override
     public Result decode(String referenceText) {
         searchManager.startRecognition();
         Result result;

@@ -21,6 +21,7 @@ public class BranchState extends SentenceHMMState {
      *
      * @return the short label.
      */
+    @Override
     public String getTypeLabel() {
         return "Brnch";
     }
@@ -31,6 +32,7 @@ public class BranchState extends SentenceHMMState {
      *
      * @return the state order
      */
+    @Override
     public int getOrder() {
         return 2;
     }

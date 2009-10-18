@@ -461,6 +461,7 @@ public class ConfigurationManager implements Cloneable {
      * Test wether the given configuration manager instance equals this instance in terms of same configuration. This
      * This equals implemenation does not care about instantiation of components.
      */
+    @Override
     public boolean equals(Object obj) {
         if (!(obj instanceof ConfigurationManager))
             return false;
@@ -484,6 +485,7 @@ public class ConfigurationManager implements Cloneable {
         return cm.getGlobalProperties().equals(getGlobalProperties());
     }
     
+    @Override
     public int hashCode() {
     	  assert false : "hashCode not designed";
     	  return 1; // any arbitrary constant will do 

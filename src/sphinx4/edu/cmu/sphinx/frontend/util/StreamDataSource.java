@@ -74,6 +74,7 @@ public class StreamDataSource extends BaseDataProcessor {
     *
     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
     */
+    @Override
     public void newProperties(PropertySheet ps) throws PropertyException {
         super.newProperties(ps);
         init(ps.getInt(PROP_SAMPLE_RATE), ps.getInt(PROP_BYTES_PER_READ), ps.getInt(PROP_BITS_PER_SAMPLE), ps.getBoolean(PROP_BIG_ENDIAN_DATA), ps.getBoolean(PROP_SIGNED_DATA) );
@@ -103,6 +104,7 @@ public class StreamDataSource extends BaseDataProcessor {
     *
     * @see edu.cmu.sphinx.frontend.DataProcessor#initialize(edu.cmu.sphinx.frontend.CommonConfig)
     */
+    @Override
     public void initialize() {
         super.initialize();
     }
@@ -130,6 +132,7 @@ public class StreamDataSource extends BaseDataProcessor {
      * @return the next Data or <code>null</code> if none is available
      * @throws DataProcessingException if there is a data processing error
      */
+    @Override
     public Data getData() throws DataProcessingException {
         getTimer().start();
         Data output = null;

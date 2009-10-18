@@ -147,6 +147,7 @@ public class Word {
      *
      * @return the spelling of this word
      */
+    @Override
     public String toString() {
         return spelling;
     }

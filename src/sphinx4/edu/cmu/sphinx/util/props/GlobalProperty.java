@@ -28,11 +28,13 @@ public class GlobalProperty {
     }
 
 
+    @Override
     public String toString() {
         return value != null ? value.toString() : null;
     }
 
 
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof GlobalProperty)) return false;
@@ -46,6 +48,7 @@ public class GlobalProperty {
     }
 
 
+    @Override
     public int hashCode() {
         return (value != null ? value.hashCode() : 0);
     }

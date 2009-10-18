@@ -192,6 +192,7 @@ public class Microphone extends BaseDataProcessor {
     *
     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
     */
+    @Override
     public void newProperties(PropertySheet ps) throws PropertyException {
         super.newProperties(ps);
         logger = ps.getLogger();
@@ -219,6 +220,7 @@ public class Microphone extends BaseDataProcessor {
     /**
      * Constructs a Microphone with the given InputStream.
      */
+    @Override
     public void initialize() {
         super.initialize();
         audioList = new DataList();
@@ -321,6 +323,7 @@ public class Microphone extends BaseDataProcessor {
              * the line states.
              */
             audioLine.addLineListener(new LineListener() {
+                @Override
                 public void update(LineEvent event) {
                     logger.info("line listener " + event);
                 }
@@ -470,6 +473,7 @@ public class Microphone extends BaseDataProcessor {
         /**
          * Starts the thread, and waits for recorder to be ready
          */
+        @Override
         public void start() {
             started = false;
             super.start();
@@ -501,6 +505,7 @@ public class Microphone extends BaseDataProcessor {
         /**
          * Implements the run() method of the Thread class. Records audio, and cache them in the audio buffer.
          */
+        @Override
         public void run() {
             totalSamplesRead = 0;
             logger.info("started recording");
@@ -696,6 +701,7 @@ public class Microphone extends BaseDataProcessor {
      * @return the next Data or <code>null</code> if none is available
      * @throws DataProcessingException if there is a data processing error
      */
+    @Override
     public Data getData() throws DataProcessingException {
         getTimer().start();
 

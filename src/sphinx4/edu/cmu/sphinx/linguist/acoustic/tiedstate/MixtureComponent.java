@@ -347,6 +347,7 @@ public class MixtureComponent implements Cloneable, Serializable {
     }
 
 
+    @Override
     public String toString() {
         return "mu=" + Arrays.toString(mean) + " cov=" + Arrays.toString(variance);
     }

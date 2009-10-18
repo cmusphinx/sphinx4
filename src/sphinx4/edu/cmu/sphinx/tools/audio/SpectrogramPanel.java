@@ -72,6 +72,7 @@ public class SpectrogramPanel extends JPanel {
         this.frontEnd = frontEnd;
         this.dataSource = dataSource;
         audio.addChangeListener(new ChangeListener() {
+            @Override
             public void stateChanged(ChangeEvent event) {
                 computeSpectrogram();
             }
@@ -202,6 +203,7 @@ public class SpectrogramPanel extends JPanel {
      *
      * @param g The <code>Graphics</code> to draw on.
      */
+    @Override
     public void paint(Graphics g) {
         /**
          * Fill in the whole image with white.

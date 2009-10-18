@@ -56,6 +56,7 @@ public enum PropertyType {
      * </ul>
      */
     RESOURCE("Resource") {
+        @Override
         public boolean validateString(String obj) throws Exception {
             // First see if it is a resource
             if (obj.toLowerCase().startsWith("resource:/"))

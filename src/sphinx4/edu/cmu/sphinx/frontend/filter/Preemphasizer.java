@@ -62,6 +62,7 @@ public class Preemphasizer extends BaseDataProcessor {
     *
     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
     */
+    @Override
     public void newProperties(PropertySheet ps) throws PropertyException {
         super.newProperties(ps);
         preemphasisFactor = ps.getDouble(PROP_PREEMPHASIS_FACTOR);
@@ -76,6 +77,7 @@ public class Preemphasizer extends BaseDataProcessor {
      * @throws DataProcessingException if there is a processing error
      * @see Data
      */
+    @Override
     public Data getData() throws DataProcessingException {
         Data input = getPredecessor().getData();
         getTimer().start();

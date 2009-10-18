@@ -43,6 +43,7 @@ public class PartitionActiveListFactory extends ActiveListFactory {
     *
     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
     */
+    @Override
     public void newProperties(PropertySheet ps) throws PropertyException {
         super.newProperties(ps);
     }
@@ -53,6 +54,7 @@ public class PartitionActiveListFactory extends ActiveListFactory {
     *
     * @see edu.cmu.sphinx.decoder.search.ActiveListFactory#newInstance()
     */
+    @Override
     public ActiveList newInstance() {
         return new PartitionActiveList(absoluteBeamWidth, logRelativeBeamWidth);
     }
@@ -99,6 +101,7 @@ public class PartitionActiveListFactory extends ActiveListFactory {
          *
          * @param token the token to add
          */
+        @Override
         public void add(Token token) {
             if (size < tokenList.length) {
                 tokenList[size] = token;
@@ -130,6 +133,7 @@ public class PartitionActiveListFactory extends ActiveListFactory {
          * @param oldToken the token to replace (or null in which case, replace works like add).
          * @param newToken the new token to be placed in the list.
          */
+        @Override
         public void replace(Token oldToken, Token newToken) {
             if (oldToken != null) {
                 int location = oldToken.getLocation();
@@ -155,6 +159,7 @@ public class PartitionActiveListFactory extends ActiveListFactory {
          *
          * @return a (possible new) active list
          */
+        @Override
         public ActiveList purge() {
             // if the absolute beam is zero, this means there
             // should be no constraint on the abs beam size at all
@@ -177,6 +182,7 @@ public class PartitionActiveListFactory extends ActiveListFactory {
          *
          * @return the beam threshold
          */
+        @Override
         public float getBeamThreshold() {
             return getBestScore() + logRelativeBeamWidth;
         }
@@ -187,6 +193,7 @@ public class PartitionActiveListFactory extends ActiveListFactory {
          *
          * @return the best score
          */
+        @Override
         public float getBestScore() {
             float bestScore = -Float.MAX_VALUE;
             if (bestToken != null) {
@@ -211,6 +218,7 @@ public class PartitionActiveListFactory extends ActiveListFactory {
          *
          * @param token the best scoring token
          */
+        @Override
         public void setBestToken(Token token) {
             bestToken = token;
         }
@@ -221,6 +229,7 @@ public class PartitionActiveListFactory extends ActiveListFactory {
          *
          * @return the best scoring token
          */
+        @Override
         public Token getBestToken() {
             return bestToken;
         }
@@ -231,6 +240,7 @@ public class PartitionActiveListFactory extends ActiveListFactory {
          *
          * @return the iterator for this token list
          */
+        @Override
         public Iterator<Token> iterator() {
             return (new TokenArrayIterator(tokenList, size));
         }
@@ -241,6 +251,7 @@ public class PartitionActiveListFactory extends ActiveListFactory {
          *
          * @return the list of tokens
          */
+        @Override
         public List<Token> getTokens() {
             return Arrays.asList(tokenList).subList(0, size);
         }
@@ -250,6 +261,7 @@ public class PartitionActiveListFactory extends ActiveListFactory {
          *
          * @return the size of the active list
          */
+        @Override
         public final int size() {
             return size;
         }
@@ -258,6 +270,7 @@ public class PartitionActiveListFactory extends ActiveListFactory {
         /* (non-Javadoc)
         * @see edu.cmu.sphinx.decoder.search.ActiveList#createNew()
         */
+        @Override
         public ActiveList newInstance() {
             return PartitionActiveListFactory.this.newInstance();
         }
@@ -279,12 +292,14 @@ class TokenArrayIterator implements Iterator<Token> {
 
 
     /** Returns true if the iteration has more tokens. */
+    @Override
     public boolean hasNext() {
         return pos < size;
     }
 
 
     /** Returns the next token in the iteration. */
+    @Override
     public Token next() throws NoSuchElementException {
         if (pos >= tokenArray.length) {
             throw new NoSuchElementException();
@@ -294,6 +309,7 @@ class TokenArrayIterator implements Iterator<Token> {
 
 
     /** Unimplemented, throws an Error if called. */
+    @Override
     public void remove() {
         throw new Error("TokenArrayIterator.remove() unimplemented");
     }

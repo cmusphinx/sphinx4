@@ -58,6 +58,7 @@ public class SphinxLogFormatter extends Formatter {
      * @param record the record to format
      * @return the formatted string
      */
+    @Override
     public String format(LogRecord record) {
         if (terse) {
             return record.getMessage() + '\n';

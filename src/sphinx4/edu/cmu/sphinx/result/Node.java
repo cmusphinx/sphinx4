@@ -352,6 +352,7 @@ public class Node {
      *
      * @return a description of this Node
      */
+    @Override
     public String toString() {
         return ("Node(" + word.getSpelling() + ',' + getBeginTime() + '|' +
                 getEndTime() + ')');
@@ -466,6 +467,7 @@ public class Node {
 
 
     /** @see java.lang.Object#hashCode() */
+    @Override
     public int hashCode() {
         return id.hashCode();
     }
@@ -476,6 +478,7 @@ public class Node {
      *
      * @see java.lang.Object#equals(java.lang.Object)
      */
+    @Override
     public boolean equals(Object obj) {
         return obj instanceof Node && id.equals(((Node) obj).getId());
     }

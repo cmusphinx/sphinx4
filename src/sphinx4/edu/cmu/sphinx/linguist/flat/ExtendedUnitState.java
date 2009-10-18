@@ -42,6 +42,7 @@ public class ExtendedUnitState extends UnitState {
      *
      * @return the full name for this state
      */
+    @Override
     public String getFullName() {
         return getName() + " in P" + getParent().getWhich();
     }

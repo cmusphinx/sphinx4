@@ -71,6 +71,7 @@ public class SimpleActiveListManager implements ActiveListManager {
     *
     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
     */
+    @Override
     public void newProperties(PropertySheet ps) throws PropertyException {
         logger = ps.getLogger();
 
@@ -84,6 +85,7 @@ public class SimpleActiveListManager implements ActiveListManager {
     *
     * @see edu.cmu.sphinx.decoder.search.ActiveListManager#setNumStateOrder(java.lang.Class[])
     */
+    @Override
     public void setNumStateOrder(int numStateOrder) {
         // check to make sure that we have the correct
         // number of active list factories for the given searc states
@@ -124,6 +126,7 @@ public class SimpleActiveListManager implements ActiveListManager {
      *
      * @param token the token to add
      */
+    @Override
     public void add(Token token) {
         ActiveList activeList = findListFor(token);
         if (activeList == null) {
@@ -151,6 +154,7 @@ public class SimpleActiveListManager implements ActiveListManager {
      * @param oldToken the token to replace (or null in which case, replace works like add).
      * @param newToken the new token to be placed in the list.
      */
+    @Override
     public void replace(Token oldToken, Token newToken) {
         ActiveList activeList = findListFor(oldToken);
         assert activeList != null;
@@ -163,6 +167,7 @@ public class SimpleActiveListManager implements ActiveListManager {
      *
      * @return the emitting ActiveList
      */
+    @Override
     public ActiveList getEmittingList() {
         ActiveList list = currentActiveLists[currentActiveLists.length - 1];
         currentActiveLists[currentActiveLists.length - 1] = list.newInstance();
@@ -176,6 +181,7 @@ public class SimpleActiveListManager implements ActiveListManager {
      *
      * @return an Iterator of non-emitting ActiveLists
      */
+    @Override
     public Iterator getNonEmittingListIterator() {
         return (new NonEmittingListIterator());
     }
@@ -191,11 +197,13 @@ public class SimpleActiveListManager implements ActiveListManager {
         }
 
 
+        @Override
         public boolean hasNext() {
             return listPtr + 1 < currentActiveLists.length - 1;
         }
 
 
+        @Override
         public Object next() throws NoSuchElementException {
             listPtr++;
 
@@ -221,6 +229,7 @@ public class SimpleActiveListManager implements ActiveListManager {
         }
 
 
+        @Override
         public void remove() {
             currentActiveLists[listPtr] =
                     currentActiveLists[listPtr].newInstance();
@@ -229,6 +238,7 @@ public class SimpleActiveListManager implements ActiveListManager {
 
 
     /** Outputs debugging info for this list manager */
+    @Override
     public void dump() {
         for (ActiveList al : currentActiveLists) {
             dumpList(al);

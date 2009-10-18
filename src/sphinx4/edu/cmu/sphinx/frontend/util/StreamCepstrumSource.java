@@ -80,6 +80,7 @@ public class StreamCepstrumSource extends BaseDataProcessor {
     *
     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
     */
+    @Override
     public void newProperties(PropertySheet ps) throws PropertyException {
         super.newProperties(ps);
         cepstrumLength = ps.getInt(PROP_CEPSTRUM_LENGTH);
@@ -93,6 +94,7 @@ public class StreamCepstrumSource extends BaseDataProcessor {
 
 
     /** Constructs a StreamCepstrumSource that reads MelCepstrum data from the given path. */
+    @Override
     public void initialize() {
         super.initialize();
         curPoint = -1;
@@ -138,6 +140,7 @@ public class StreamCepstrumSource extends BaseDataProcessor {
      * @return the next available Data object, returns null if no Data object is available
      * @throws DataProcessingException if a data processing error occurs
      */
+    @Override
     public Data getData() throws DataProcessingException {
 
         Data data;

@@ -56,12 +56,14 @@ public class BatchCMN extends BaseDataProcessor {
     /* (non-Javadoc)
      * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
      */
+    @Override
     public void newProperties(PropertySheet ps) throws PropertyException {
         super.newProperties(ps);
     }
 
 
     /** Initializes this BatchCMN. */
+    @Override
     public void initialize() {
         super.initialize();
         sums = null;
@@ -83,6 +85,7 @@ public class BatchCMN extends BaseDataProcessor {
      * @return the next available Data object, returns null if no Data object is available
      * @throws DataProcessingException if there is an error processing data
      */
+    @Override
     public Data getData() throws DataProcessingException {
 
         Data output = null;

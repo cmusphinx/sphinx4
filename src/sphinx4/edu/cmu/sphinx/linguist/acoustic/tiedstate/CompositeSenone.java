@@ -67,6 +67,7 @@ public class CompositeSenone implements Senone, Serializable {
      *
      * @param msg annotatin for the dump
      */
+    @Override
     public void dump(String msg) {
         System.out.println("   CompositeSenone " + msg + ": ");
         for (Senone senone : senones) {
@@ -81,6 +82,7 @@ public class CompositeSenone implements Senone, Serializable {
      * @param feature the feature to score
      * @return the score for the feature in logmath log base
      */
+    @Override
     public float getScore(Data feature) {
         float logScore = -Float.MAX_VALUE;
 
@@ -116,6 +118,7 @@ public class CompositeSenone implements Senone, Serializable {
      * @param feature the current feature
      * @return the score for the feature in LogMath
      */
+    @Override
     public float[] calculateComponentScore(Data feature) {
         assert false : "Not implemented!";
         return null;
@@ -138,6 +141,7 @@ public class CompositeSenone implements Senone, Serializable {
      * @param o the object to compare to this.
      * @return true if the objects are equal
      */
+    @Override
     public boolean equals(Object o) {
         if (!(o instanceof Senone)) {
             return false;
@@ -152,6 +156,7 @@ public class CompositeSenone implements Senone, Serializable {
      *
      * @return the hashcode
      */
+    @Override
     public int hashCode() {
         long id = getID();
         int high = (int) ((id >> 32));
@@ -165,6 +170,7 @@ public class CompositeSenone implements Senone, Serializable {
      *
      * @return the senone id
      */
+    @Override
     public long getID() {
         long factor = 1L;
         long id = 0L;
@@ -181,6 +187,7 @@ public class CompositeSenone implements Senone, Serializable {
      *
      * @return the string representation of this object
      */
+    @Override
     public String toString() {
         return "senone id: " + getID();
     }

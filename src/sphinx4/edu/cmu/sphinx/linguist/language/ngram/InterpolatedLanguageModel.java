@@ -50,6 +50,7 @@ public class InterpolatedLanguageModel implements LanguageModel {
 
     private static final double EPSILON = 0.001;
 
+    @Override
     public void newProperties(PropertySheet ps) throws PropertyException {
         logger = ps.getLogger();
         if (allocated) {
@@ -89,6 +90,7 @@ public class InterpolatedLanguageModel implements LanguageModel {
         }
     }
 
+    @Override
     public void allocate() throws IOException {
         if (!allocated) {
             allocated = true;
@@ -100,6 +102,7 @@ public class InterpolatedLanguageModel implements LanguageModel {
         }
     }
 
+    @Override
     public void deallocate() {
         allocated = false;
         for (LanguageModel model : languageModels) {
@@ -110,12 +113,14 @@ public class InterpolatedLanguageModel implements LanguageModel {
     /**
      * Called before a recognition
      */
+    @Override
     public void start() {
     }
 
     /**
      * Called after a recognition
      */
+    @Override
     public void stop() {
     }
 
@@ -124,6 +129,7 @@ public class InterpolatedLanguageModel implements LanguageModel {
      *
      * @see edu.cmu.sphinx.linguist.language.ngram.LanguageModel#getProbability(edu.cmu.sphinx.linguist.WordSequence)
      */
+    @Override
     public float getProbability(WordSequence wordSequence) {
         float prob = 0;
         for (int i = 0; i < numberOfLanguageModels; i++) {
@@ -142,6 +148,7 @@ public class InterpolatedLanguageModel implements LanguageModel {
     /* (non-Javadoc)
      * @see edu.cmu.sphinx.linguist.language.ngram.LanguageModel#getSmear(edu.cmu.sphinx.linguist.WordSequence)
      */
+    @Override
     public float getSmear(WordSequence wordSequence) {
         return 1.0f; // TODO not implememted
     }
@@ -149,6 +156,7 @@ public class InterpolatedLanguageModel implements LanguageModel {
     /* (non-Javadoc)
      * @see edu.cmu.sphinx.linguist.language.ngram.LanguageModel#getVocabulary()
      */
+    @Override
     public Set<String> getVocabulary() {
         return vocabulary;
     }
@@ -156,6 +164,7 @@ public class InterpolatedLanguageModel implements LanguageModel {
     /* (non-Javadoc)
      * @see edu.cmu.sphinx.linguist.language.ngram.LanguageModel#getMaxDepth()
      */
+    @Override
     public int getMaxDepth() {
         int maxDepth = 0;
         for (LanguageModel languageModel : languageModels) {
@@ -167,6 +176,7 @@ public class InterpolatedLanguageModel implements LanguageModel {
         return maxDepth;
     }
 
+    @Override
     public Logger getLogger() {
         return logger;
     }

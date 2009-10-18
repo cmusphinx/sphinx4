@@ -115,42 +115,49 @@ public class CommandInterpreter extends Thread {
 
     private void addStandardCommands() {
         add("help", new CommandInterface() {
+            @Override
             public String execute(CommandInterpreter ci, String[] args) {
                 dumpCommands();
                 return "";
             }
 
 
+            @Override
             public String getHelp() {
                 return "lists available commands";
             }
         });
 
         add("history", new CommandInterface() {
+            @Override
             public String execute(CommandInterpreter ci, String[] args) {
                 history.dump();
                 return "";
             }
 
 
+            @Override
             public String getHelp() {
                 return "shows command history";
             }
         });
 
         add("status", new CommandInterface() {
+            @Override
             public String execute(CommandInterpreter ci, String[] args) {
                 putResponse("Total number of commands: " + totalCommands);
                 return "";
             }
 
 
+            @Override
             public String getHelp() {
                 return "shows command status";
             }
         });
 
         add("echo", new CommandInterface() {
+            @Override
             public String execute(CommandInterpreter ci, String[] args) {
                 StringBuilder b = new StringBuilder(80);
 
@@ -163,6 +170,7 @@ public class CommandInterpreter extends Thread {
             }
 
 
+            @Override
             public String getHelp() {
                 return "display a line of text";
             }
@@ -170,6 +178,7 @@ public class CommandInterpreter extends Thread {
 
         if (false) {
             add("argtest", new CommandInterface() {
+                @Override
                 public String execute(CommandInterpreter ci, String[] args) {
                     StringBuilder b = new StringBuilder(80);
 
@@ -183,6 +192,7 @@ public class CommandInterpreter extends Thread {
                 }
 
 
+                @Override
                 public String getHelp() {
                     return "argument test";
                 }
@@ -190,53 +200,62 @@ public class CommandInterpreter extends Thread {
         }
 
         add("quit", new CommandInterface() {
+            @Override
             public String execute(CommandInterpreter ci, String[] args) {
                 done = true;
                 return "";
             }
 
 
+            @Override
             public String getHelp() {
                 return "exit the shell";
             }
         });
 
         add("on_exit", new CommandInterface() {
+            @Override
             public String execute(CommandInterpreter ci, String[] args) {
                 return "";
             }
 
 
+            @Override
             public String getHelp() {
                 return "command executed upon exit";
             }
         });
 
         add("version", new CommandInterface() {
+            @Override
             public String execute(CommandInterpreter ci, String[] args) {
                 putResponse("Command Interpreter - Version 1.1 ");
                 return "";
             }
 
 
+            @Override
             public String getHelp() {
                 return "displays version information";
             }
         });
 
         add("gc", new CommandInterface() {
+            @Override
             public String execute(CommandInterpreter ci, String[] args) {
                 Runtime.getRuntime().gc();
                 return "";
             }
 
 
+            @Override
             public String getHelp() {
                 return "performs garbage collection";
             }
         });
 
         add("memory", new CommandInterface() {
+            @Override
             public String execute(CommandInterpreter ci, String[] args) {
                 long totalMem = Runtime.getRuntime().totalMemory();
                 long freeMem = Runtime.getRuntime().freeMemory();
@@ -249,6 +268,7 @@ public class CommandInterpreter extends Thread {
             }
 
 
+            @Override
             public String getHelp() {
                 return "shows memory statistics";
             }
@@ -256,6 +276,7 @@ public class CommandInterpreter extends Thread {
 
 
         add("delay", new CommandInterface() {
+            @Override
             public String execute(CommandInterpreter ci, String[] args) {
                 if (args.length == 2) {
                     try {
@@ -272,12 +293,14 @@ public class CommandInterpreter extends Thread {
             }
 
 
+            @Override
             public String getHelp() {
                 return "pauses for a given number of seconds";
             }
         });
 
         add("repeat", new CommandInterface() {
+            @Override
             public String execute(CommandInterpreter ci, String[] args) {
                 if (args.length >= 3) {
                     try {
@@ -299,12 +322,14 @@ public class CommandInterpreter extends Thread {
             }
 
 
+            @Override
             public String getHelp() {
                 return "repeatedly execute a command";
             }
         });
 
         add("load", new CommandInterface() {
+            @Override
             public String execute(CommandInterpreter ci, String[] args) {
                 if (args.length == 2) {
                     if (!load(args[1])) {
@@ -317,12 +342,14 @@ public class CommandInterpreter extends Thread {
             }
 
 
+            @Override
             public String getHelp() {
                 return "load and execute commands from a file";
             }
         });
 
         add("chain", new CommandInterface() {
+            @Override
             public String execute(CommandInterpreter ci, String[] args) {
                 if (args.length > 1) {
                     String[] subargs = new String[args.length - 1];
@@ -360,12 +387,14 @@ public class CommandInterpreter extends Thread {
             }
 
 
+            @Override
             public String getHelp() {
                 return "execute multiple commands on a single line";
             }
         });
 
         add("time", new CommandInterface() {
+            @Override
             public String execute(CommandInterpreter ci, String[] args) {
                 if (args.length > 1) {
                     String[] subargs = new String[args.length - 1];
@@ -386,6 +415,7 @@ public class CommandInterpreter extends Thread {
             }
 
 
+            @Override
             public String getHelp() {
                 return "report the time it takes to run a command";
             }
@@ -542,6 +572,7 @@ public class CommandInterpreter extends Thread {
     // inherited from thread.
 
 
+    @Override
     public void run() {
         while (!done) {
             try {

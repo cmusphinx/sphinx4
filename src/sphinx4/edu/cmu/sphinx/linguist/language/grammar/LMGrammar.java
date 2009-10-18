@@ -45,6 +45,7 @@ public class LMGrammar extends Grammar {
     *
     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
     */
+    @Override
     public void newProperties(PropertySheet ps) throws PropertyException {
         super.newProperties(ps);
         languageModel = (LanguageModel) ps.getComponent(PROP_LANGUAGE_MODEL);
@@ -57,6 +58,7 @@ public class LMGrammar extends Grammar {
      *
      * @return the initial grammar node
      */
+    @Override
     protected GrammarNode createGrammar() throws IOException {
         languageModel.allocate();
         TimerPool.getTimer(this,"LMGrammar.create").start();

@@ -21,6 +21,7 @@ public abstract class ConfigurableAdapter implements Configurable{
         init( name , Logger.getLogger( name ) );
     }
 
+    @Override
     public void newProperties(PropertySheet ps) throws PropertyException {
         init( ps.getInstanceName(), ps.getLogger());
     }
@@ -44,6 +45,7 @@ public abstract class ConfigurableAdapter implements Configurable{
      *
      * @return the name of this BaseDataProcessor
      */
+    @Override
     public String toString() {
         return name != null ? name : getClass().getSimpleName();
     }

@@ -206,6 +206,7 @@ public class AudioFileDataSource extends BaseDataProcessor {
      * @throws edu.cmu.sphinx.frontend.DataProcessingException
      *          if there is a data processing error
      */
+    @Override
     public Data getData() throws DataProcessingException {
         getTimer().start();
         Data output = null;

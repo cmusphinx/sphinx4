@@ -110,6 +110,7 @@ public class CIPhoneLoop {
          *
          * @return the set of initial search state
          */
+        @Override
         public SearchState getInitialState() {
             return firstState;
         }
@@ -120,6 +121,7 @@ public class CIPhoneLoop {
          *
          * @return the number of different state types
          */
+        @Override
         public int getNumStateOrder() {
             return 5;
         }
@@ -196,16 +198,19 @@ public class CIPhoneLoop {
 
 class UnknownWordState extends SentenceHMMState implements WordSearchState {
 
+    @Override
     public Pronunciation getPronunciation() {
         return Word.UNKNOWN.getPronunciations()[0];
     }
 
 
+    @Override
     public int getOrder() {
         return 0;
     }
 
 
+    @Override
     public String getName() {
         return "UnknownWordState";
     }
@@ -218,6 +223,7 @@ class UnknownWordState extends SentenceHMMState implements WordSearchState {
      * @return true if this UnknownWordState indicates the start of a word, false if this UnknownWordState indicates the
      *         end of a word
      */
+    @Override
     public boolean isWordStart() {
         return true;
     }
@@ -230,6 +236,7 @@ class LoopBackState extends SentenceHMMState {
     }
 
 
+    @Override
     public int getOrder() {
         return 1;
     }
@@ -242,6 +249,7 @@ class BranchOutState extends SentenceHMMState {
     }
 
 
+    @Override
     public int getOrder() {
         return 1;
     }

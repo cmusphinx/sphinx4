@@ -23,6 +23,7 @@ public class NullPruner implements Pruner {
     /* (non-Javadoc)
     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
     */
+    @Override
     public void newProperties(PropertySheet ps) throws PropertyException {
     }
 
@@ -33,6 +34,7 @@ public class NullPruner implements Pruner {
 
 
     /** starts the pruner */
+    @Override
     public void startRecognition() {
     }
 
@@ -43,12 +45,14 @@ public class NullPruner implements Pruner {
      * @param activeList the active list of tokens
      * @return the pruned (and possibly new) activeList
      */
+    @Override
     public ActiveList prune(ActiveList activeList) {
         return activeList;
     }
 
 
     /** Performs post-recognition cleanup. */
+    @Override
     public void stopRecognition() {
     }
 
@@ -56,6 +60,7 @@ public class NullPruner implements Pruner {
     /* (non-Javadoc)
     * @see edu.cmu.sphinx.decoder.pruner.Pruner#allocate()
     */
+    @Override
     public void allocate() {
 
     }
@@ -64,6 +69,7 @@ public class NullPruner implements Pruner {
     /* (non-Javadoc)
     * @see edu.cmu.sphinx.decoder.pruner.Pruner#deallocate()
     */
+    @Override
     public void deallocate() {
 
     }

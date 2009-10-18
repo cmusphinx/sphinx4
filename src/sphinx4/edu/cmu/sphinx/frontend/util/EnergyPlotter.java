@@ -56,6 +56,7 @@ public class EnergyPlotter implements Configurable {
 
     }
     
+    @Override
     public void newProperties(PropertySheet ps) throws PropertyException {
         maxEnergy = ps.getInt(PROP_MAX_ENERGY);
         buildPlots(maxEnergy);

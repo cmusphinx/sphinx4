@@ -89,6 +89,7 @@ import java.util.Set;
         MenuItemNew.setText("New");
         MenuItemNew.setActionCommand("File-New");
         MenuItemNew.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 MenuItemActionPerformed(evt);
             }
@@ -99,6 +100,7 @@ import java.util.Set;
         MenuItemOpen.setText("Open");
         MenuItemOpen.setActionCommand("File-Open");
         MenuItemOpen.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 MenuItemActionPerformed(evt);
             }
@@ -109,6 +111,7 @@ import java.util.Set;
         MenuItemSave.setText("Save");
         MenuItemSave.setActionCommand("File-Save");
         MenuItemSave.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 MenuItemActionPerformed(evt);
             }
@@ -118,6 +121,7 @@ import java.util.Set;
 
         MenuItemExit.setText("Exit");
         MenuItemExit.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 MenuItemActionPerformed(evt);
             }
@@ -131,6 +135,7 @@ import java.util.Set;
         MenuItemRefresh.setText("Refresh");
         MenuItemRefresh.setActionCommand("Model-Refresh");
         MenuItemRefresh.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 MenuItemActionPerformed(evt);
             }
@@ -144,6 +149,7 @@ import java.util.Set;
         MenuItemShow.setText("Show Configuration Text");
         MenuItemShow.setActionCommand("Show-Configuration");
         MenuItemShow.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 MenuItemActionPerformed(evt);
             }
@@ -348,6 +354,7 @@ import java.util.Set;
     // inner class that is the FileFilter for choosing file types
     class ConfigFilter extends FileFilter {
         //Accept all directories and .config.xml files only        
+        @Override
         public boolean accept(File f) {
             if (f.isDirectory()) {
                 return true;
@@ -359,6 +366,7 @@ import java.util.Set;
         /**
          * @return The description of this filter
          */
+        @Override
         public String getDescription() {
             return "Sphinx config file";
         }

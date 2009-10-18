@@ -217,6 +217,7 @@ public class GrammarNode {
 
 
     /** Returns the string representation of this object */
+    @Override
     public String toString() {
         return "G" + getID();
     }

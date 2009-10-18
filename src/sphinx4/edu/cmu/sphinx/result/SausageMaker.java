@@ -343,6 +343,7 @@ public class SausageMaker extends AbstractSausageMaker {
 
 
     /** @see edu.cmu.sphinx.result.ConfidenceScorer#score(edu.cmu.sphinx.result.Result) */
+    @Override
     public ConfidenceResult score(Result result) {
         lattice = new Lattice(result);
         LatticeOptimizer lop = new LatticeOptimizer(lattice);

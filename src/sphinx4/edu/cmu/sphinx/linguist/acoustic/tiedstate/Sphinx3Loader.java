@@ -270,6 +270,7 @@ public class Sphinx3Loader implements Loader {
 
     }
 
+    @Override
     public void newProperties(PropertySheet ps) throws PropertyException {
         logger = ps.getLogger();
 
@@ -330,6 +331,7 @@ public class Sphinx3Loader implements Loader {
         }
     }
 
+    @Override
     public void load() throws IOException {
         if (!loaded) {
             // TODO: what is this all about?
@@ -418,6 +420,7 @@ public class Sphinx3Loader implements Loader {
         loadHMMPool(useCDUnits, modelStream, model);
     }
 
+    @Override
     public Map<String, Unit> getContextIndependentUnits() {
         return contextIndependentUnits;
     }
@@ -1274,14 +1277,17 @@ public class Sphinx3Loader implements Loader {
         return meansPool;
     }
 
+    @Override
     public Pool<float[][]> getMeansTransformationMatrixPool() {
         return meanTransformationMatrixPool;
     }
 
+    @Override
     public Pool<float[]> getMeansTransformationVectorPool() {
         return meanTransformationVectorPool;
     }
 
+    @Override
     public Pool<float[]> getVariancePool() {
         return variancePool;
     }

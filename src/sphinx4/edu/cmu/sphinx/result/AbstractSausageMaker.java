@@ -84,6 +84,7 @@ public abstract class AbstractSausageMaker implements ConfidenceScorer, Configur
         }
 
 
+        @Override
         public String toString() {
             StringBuilder sb = new StringBuilder();
             sb.append("s: ").append(startTime).append(" e: ").append(endTime).append('[');
@@ -117,6 +118,7 @@ public abstract class AbstractSausageMaker implements ConfidenceScorer, Configur
          * @param cluster1 the first cluster
          * @param cluster2 the second cluster
          */
+        @Override
         public int compare(Cluster cluster1, Cluster cluster2) {
             for (Node n1 : cluster1) {
                 for (Node n2 : cluster2) {
@@ -141,6 +143,7 @@ public abstract class AbstractSausageMaker implements ConfidenceScorer, Configur
 
 
     /** @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet) */
+    @Override
     public void newProperties(PropertySheet ps) throws PropertyException {
         languageWeight = ps.getFloat(PROP_LANGUAGE_WEIGHT);
     }

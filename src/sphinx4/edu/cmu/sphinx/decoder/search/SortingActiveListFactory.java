@@ -46,6 +46,7 @@ public class SortingActiveListFactory extends ActiveListFactory {
     *
     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
     */
+    @Override
     public void newProperties(PropertySheet ps) throws PropertyException {
         super.newProperties(ps);
     }
@@ -56,6 +57,7 @@ public class SortingActiveListFactory extends ActiveListFactory {
     *
     * @see edu.cmu.sphinx.decoder.search.ActiveListFactory#newInstance()
     */
+    @Override
     public ActiveList newInstance() {
         return new SortingActiveList(absoluteBeamWidth, logRelativeBeamWidth);
     }
@@ -98,6 +100,7 @@ public class SortingActiveListFactory extends ActiveListFactory {
          *
          * @param token the token to add
          */
+        @Override
         public void add(Token token) {
             token.setLocation(tokenList.size());
             tokenList.add(token);
@@ -113,6 +116,7 @@ public class SortingActiveListFactory extends ActiveListFactory {
          * @param oldToken the token to replace (or null in which case, replace works like add).
          * @param newToken the new token to be placed in the list.
          */
+        @Override
         public void replace(Token oldToken, Token newToken) {
             if (oldToken != null) {
                 int location = oldToken.getLocation();
@@ -140,6 +144,7 @@ public class SortingActiveListFactory extends ActiveListFactory {
          *
          * @return a (possible new) active list
          */
+        @Override
         public ActiveList purge() {
             // if the absolute beam is zero, this means there
             // should be no constraint on the abs beam size at all
@@ -158,6 +163,7 @@ public class SortingActiveListFactory extends ActiveListFactory {
          *
          * @return the beam threshold
          */
+        @Override
         public float getBeamThreshold() {
             return getBestScore() + logRelativeBeamWidth;
         }
@@ -168,6 +174,7 @@ public class SortingActiveListFactory extends ActiveListFactory {
          *
          * @return the best score
          */
+        @Override
         public float getBestScore() {
             float bestScore = -Float.MAX_VALUE;
             if (bestToken != null) {
@@ -182,6 +189,7 @@ public class SortingActiveListFactory extends ActiveListFactory {
          *
          * @param token the best scoring token
          */
+        @Override
         public void setBestToken(Token token) {
             bestToken = token;
         }
@@ -192,6 +200,7 @@ public class SortingActiveListFactory extends ActiveListFactory {
          *
          * @return the best scoring token
          */
+        @Override
         public Token getBestToken() {
             return bestToken;
         }
@@ -202,6 +211,7 @@ public class SortingActiveListFactory extends ActiveListFactory {
          *
          * @return the iterator for this token list
          */
+        @Override
         public Iterator<Token> iterator() {
             return tokenList.iterator();
         }
@@ -212,6 +222,7 @@ public class SortingActiveListFactory extends ActiveListFactory {
          *
          * @return the list of tokens
          */
+        @Override
         public List<Token> getTokens() {
             return tokenList;
         }
@@ -221,6 +232,7 @@ public class SortingActiveListFactory extends ActiveListFactory {
          *
          * @return the size of the active list
          */
+        @Override
         public final int size() {
             return tokenList.size();
         }
@@ -229,6 +241,7 @@ public class SortingActiveListFactory extends ActiveListFactory {
         /* (non-Javadoc)
         * @see edu.cmu.sphinx.decoder.search.ActiveList#newInstance()
         */
+        @Override
         public ActiveList newInstance() {
             return SortingActiveListFactory.this.newInstance();
         }

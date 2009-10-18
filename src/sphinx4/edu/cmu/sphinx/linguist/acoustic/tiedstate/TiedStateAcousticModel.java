@@ -98,6 +98,7 @@ public class TiedStateAcousticModel implements AcousticModel {
     /* (non-Javadoc)
     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
     */
+    @Override
     public void newProperties(PropertySheet ps) throws PropertyException {
         loader = (Loader) ps.getComponent(PROP_LOADER);
         unitManager = (UnitManager) ps.getComponent(PROP_UNIT_MANAGER);
@@ -111,6 +112,7 @@ public class TiedStateAcousticModel implements AcousticModel {
      *
      * @throws IOException if the model could not be loaded
      */
+    @Override
     public void allocate() throws IOException {
         if (!allocated) {
             this.loadTimer = TimerPool.getTimer(this, TIMER_LOAD);
@@ -126,6 +128,7 @@ public class TiedStateAcousticModel implements AcousticModel {
     /* (non-Javadoc)
     * @see edu.cmu.sphinx.linguist.acoustic.AcousticModel#deallocate()
     */
+    @Override
     public void deallocate() {
     }
 
@@ -135,6 +138,7 @@ public class TiedStateAcousticModel implements AcousticModel {
      *
      * @return the name of this AcousticModel, or null if it has no name
      */
+    @Override
     public String getName() {
         return name;
     }
@@ -189,6 +193,7 @@ public class TiedStateAcousticModel implements AcousticModel {
      * @param exactMatch if true, only an exact match is acceptable.
      * @return the HMM that best matches, or null if no match could be found.
      */
+    @Override
     public HMM lookupNearestHMM(Unit unit, HMMPosition position,
                                 boolean exactMatch) {
 
@@ -288,6 +293,7 @@ public class TiedStateAcousticModel implements AcousticModel {
      * @return an iterator that can be used to iterate through all HMMs in the model. The iterator returns objects of
      *         type <code>HMM</code>.
      */
+    @Override
     public Iterator<HMM> getHMMIterator() {
         return loader.getHMMManager().iterator();
     }
@@ -299,6 +305,7 @@ public class TiedStateAcousticModel implements AcousticModel {
      * @return an iterator that can be used to iterate through all CI units. The iterator returns objects of type
      *         <code>Unit</code>
      */
+    @Override
     public Iterator<Unit> getContextIndependentUnitIterator() {
         return loader.getContextIndependentUnits().values().iterator();
     }
@@ -402,6 +409,7 @@ public class TiedStateAcousticModel implements AcousticModel {
      *
      * @return the left context size
      */
+    @Override
     public int getLeftContextSize() {
         return loader.getLeftContextSize();
     }
@@ -412,6 +420,7 @@ public class TiedStateAcousticModel implements AcousticModel {
      *
      * @return the left context size
      */
+    @Override
     public int getRightContextSize() {
         return loader.getRightContextSize();
     }
@@ -576,6 +585,7 @@ public class TiedStateAcousticModel implements AcousticModel {
      *
      * @return the properties of this acoustic model
      */
+    @Override
     public Properties getProperties() {
         if (properties == null) {
             properties = new Properties();

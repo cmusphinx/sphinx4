@@ -79,6 +79,7 @@ public class RejectionTracker implements
     *
     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
     */
+    @Override
     public void newProperties(PropertySheet ps) throws PropertyException {
         initRecognizer((Recognizer)ps.getComponent(PROP_RECOGNIZER));
         showSummary = ps.getBoolean(PROP_SHOW_SUMMARY);
@@ -105,6 +106,7 @@ public class RejectionTracker implements
      * 
      * @see edu.cmu.sphinx.instrumentation.Resetable
      */
+    @Override
     public void reset() {
         numUtterances = 0;
         numOutOfGrammarUtterances = 0;
@@ -130,6 +132,7 @@ public class RejectionTracker implements
     *
     * @see edu.cmu.sphinx.decoder.ResultListener#newResult(edu.cmu.sphinx.result.Result)
     */
+    @Override
     public void newResult(Result result) {
         String ref = result.getReferenceText();
         if (result.isFinal() && ref != null) {
@@ -173,6 +176,7 @@ public class RejectionTracker implements
     }
 
 
+    @Override
     public void statusChanged(Recognizer.State status) {
         if (status == State.DEALLOCATED) {
             printStats();

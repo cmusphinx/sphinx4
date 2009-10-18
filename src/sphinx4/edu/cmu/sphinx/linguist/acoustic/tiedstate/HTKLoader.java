@@ -185,7 +185,8 @@ public class HTKLoader implements Loader {
         
     }
 
-	public void newProperties(PropertySheet ps) throws PropertyException {
+	@Override
+    public void newProperties(PropertySheet ps) throws PropertyException {
 		logger = ps.getLogger();
 
 		propsFile = ps.getString(PROP_PROPERTIES_FILE);
@@ -224,7 +225,8 @@ public class HTKLoader implements Loader {
 		}
 	}
 
-	public void load() throws IOException {
+	@Override
+    public void load() throws IOException {
 		if (!loaded) {
 			// TODO: what is this all about?
 			hmmManager = new HMMManager();
@@ -294,7 +296,8 @@ public class HTKLoader implements Loader {
 		loadHMMPool(useCDUnits, htkmods, location + File.separator + model);
 	}
 
-	public Map<String, Unit> getContextIndependentUnits() {
+	@Override
+    public Map<String, Unit> getContextIndependentUnits() {
 		return contextIndependentUnits;
 	}
 
@@ -842,59 +845,73 @@ public class HTKLoader implements Loader {
 		return pool;
 	}
 
-	public Pool<float[]> getMeansPool() {
+	@Override
+    public Pool<float[]> getMeansPool() {
 		return meansPool;
 	}
 
-	public Pool<float[][]> getMeansTransformationMatrixPool() {
+	@Override
+    public Pool<float[][]> getMeansTransformationMatrixPool() {
 		return meanTransformationMatrixPool;
 	}
 
-	public Pool<float[]> getMeansTransformationVectorPool() {
+	@Override
+    public Pool<float[]> getMeansTransformationVectorPool() {
 		return meanTransformationVectorPool;
 	}
 
-	public Pool<float[]> getVariancePool() {
+	@Override
+    public Pool<float[]> getVariancePool() {
 		return variancePool;
 	}
 
-	public Pool<float[][]> getVarianceTransformationMatrixPool() {
+	@Override
+    public Pool<float[][]> getVarianceTransformationMatrixPool() {
 		return varianceTransformationMatrixPool;
 	}
 
-	public Pool<float[]> getVarianceTransformationVectorPool() {
+	@Override
+    public Pool<float[]> getVarianceTransformationVectorPool() {
 		return varianceTransformationVectorPool;
 	}
 
-	public Pool<float[]> getMixtureWeightPool() {
+	@Override
+    public Pool<float[]> getMixtureWeightPool() {
 		return mixtureWeightsPool;
 	}
 
-	public Pool<float[][]> getTransitionMatrixPool() {
+	@Override
+    public Pool<float[][]> getTransitionMatrixPool() {
 		return matrixPool;
 	}
 
-	public float[][] getTransformMatrix() {
+	@Override
+    public float[][] getTransformMatrix() {
 		return null;
 	}
 
-	public Pool<Senone> getSenonePool() {
+	@Override
+    public Pool<Senone> getSenonePool() {
 		return senonePool;
 	}
 
-	public int getLeftContextSize() {
+	@Override
+    public int getLeftContextSize() {
 		return CONTEXT_SIZE;
 	}
 
-	public int getRightContextSize() {
+	@Override
+    public int getRightContextSize() {
 		return CONTEXT_SIZE;
 	}
 
-	public HMMManager getHMMManager() {
+	@Override
+    public HMMManager getHMMManager() {
 		return hmmManager;
 	}
 
-	public void logInfo() {
+	@Override
+    public void logInfo() {
 		logger.info("HTKLoader");
 		meansPool.logInfo(logger);
 		variancePool.logInfo(logger);

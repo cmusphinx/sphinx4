@@ -126,6 +126,7 @@ import java.util.HashMap;
         jPanel2.setFocusable(false);
         ButtonAdd.setText("Add");
         ButtonAdd.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 ButtonAddActionPerformed(evt);
             }
@@ -135,6 +136,7 @@ import java.util.HashMap;
 
         ButtonDelete.setText("Delete");
         ButtonDelete.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 ButtonDeleteActionPerformed(evt);
             }
@@ -159,10 +161,12 @@ import java.util.HashMap;
                 false, false
             };
 
+            @Override
             public Class getColumnClass(int columnIndex) {
                 return types [columnIndex];
             }
 
+            @Override
             public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit [columnIndex];
             }
@@ -232,6 +236,7 @@ import java.util.HashMap;
     /**
      * delete all rows from the table
      */
+    @Override
     public void clearAll() {
         
         DefaultTableModel model =(DefaultTableModel)TableParameter.getModel();
@@ -245,6 +250,7 @@ import java.util.HashMap;
     /**
      * update the table according to the configProperties data
      */
+    @Override
     public void update(ConfigProperties cp) {
         Map<String, String> myglobal=cp.getGlobal();
         this.clearAll(); 
@@ -256,6 +262,7 @@ import java.util.HashMap;
 
     /** save the data from table
      */
+    @Override
     public void saveData(ConfigProperties cp) throws GUIOperationException {
         Map<String, String> globalMap;
         if (cp.getGlobal() == null)
@@ -269,6 +276,7 @@ import java.util.HashMap;
     }
     
     /** the sphinx model is being reloaded */
+    @Override
     public void modelRefresh() {
         // do nothing
     }

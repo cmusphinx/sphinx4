@@ -348,6 +348,7 @@ public class PanelConfigurable extends javax.swing.JPanel {
         jLeftPanel.setLayout(new java.awt.BorderLayout());
 
         jListOuter.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
+            @Override
             public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
                 jListOuterValueChanged(evt);
             }
@@ -359,6 +360,7 @@ public class PanelConfigurable extends javax.swing.JPanel {
 
         jButtonSource.setText("Show Source Code");
         jButtonSource.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonSourceActionPerformed(evt);
             }
@@ -390,6 +392,7 @@ public class PanelConfigurable extends javax.swing.JPanel {
         jComboName.setOpaque(false);
         jComboName.setPreferredSize(new java.awt.Dimension(200, 25));
         jComboName.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 RightPanelTopActionPerformed(evt);
             }
@@ -400,6 +403,7 @@ public class PanelConfigurable extends javax.swing.JPanel {
         jButtonDel.setText("Delete");
         jButtonDel.setPreferredSize(new java.awt.Dimension(75, 25));
         jButtonDel.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 RightPanelTopActionPerformed(evt);
             }
@@ -432,6 +436,7 @@ public class PanelConfigurable extends javax.swing.JPanel {
         jInnerLeftPanel.add(jScrollPane4, java.awt.BorderLayout.NORTH);
 
         jListInner.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
+            @Override
             public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
                 jListInnerValueChanged(evt);
             }
@@ -444,6 +449,7 @@ public class PanelConfigurable extends javax.swing.JPanel {
         jButtonRemoveProp.setText("Remove from Set");
         jButtonRemoveProp.setToolTipText("Remove selected property from configuration set");
         jButtonRemoveProp.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonRemovePropActionPerformed(evt);
             }
@@ -528,6 +534,7 @@ public class PanelConfigurable extends javax.swing.JPanel {
         jButtonAdd.setText("Add");
         jButtonAdd.setPreferredSize(new java.awt.Dimension(200, 25));
         jButtonAdd.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonAddActionPerformed(evt);
             }
@@ -538,6 +545,7 @@ public class PanelConfigurable extends javax.swing.JPanel {
         jButtonRemove.setText("Remove");
         jButtonRemove.setPreferredSize(new java.awt.Dimension(200, 25));
         jButtonRemove.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonRemoveActionPerformed(evt);
             }
@@ -549,6 +557,7 @@ public class PanelConfigurable extends javax.swing.JPanel {
         jButtonChange.setText("Change Value");
         jButtonChange.setPreferredSize(new java.awt.Dimension(200, 25));
         jButtonChange.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonChangeActionPerformed(evt);
             }
@@ -559,6 +568,7 @@ public class PanelConfigurable extends javax.swing.JPanel {
         jButtonRefresh.setText("Refresh Property");
         jButtonRefresh.setPreferredSize(new java.awt.Dimension(250, 23));
         jButtonRefresh.addActionListener(new java.awt.event.ActionListener() {
+            @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonRefreshActionPerformed(evt);
             }
@@ -959,6 +969,7 @@ public class PanelConfigurable extends javax.swing.JPanel {
          * It is called once there is a new configuration file loaded
          * Model data will be updated automatically - only need to clear the GUI
          */
+        @Override
         public void update(ConfigProperties cp) {
             _panel.clearAllDisplay();
         }
@@ -967,6 +978,7 @@ public class PanelConfigurable extends javax.swing.JPanel {
          * It is called once the configuration file is about to be written
          * Nothing needs to be done for GUI
          */
+        @Override
         public void saveData(ConfigProperties cp) throws GUIOperationException {
             /* do nothing */
         }
@@ -975,6 +987,7 @@ public class PanelConfigurable extends javax.swing.JPanel {
          * This method is inherited from GUIFileActionListener
          * Method purpose is to clear all configuration data
          */
+        @Override
         public void clearAll() {
             _panel.clearAllDisplay();
             System.out.println("*** clear all ");
@@ -984,6 +997,7 @@ public class PanelConfigurable extends javax.swing.JPanel {
          * This method is inherited from GUIFileActionListener
          * Method purpose is to update panels after model change
          */
+        @Override
         public void modelRefresh() {
             /* do nothing */
         }
@@ -1379,6 +1393,7 @@ class ListItem {
     }
 
     // Set the attributes of the class and return a reference
+    @Override
     public Component getListCellRendererComponent(JList list,
             Object value, // value to display
             int index,    // cell index

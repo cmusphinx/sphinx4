@@ -36,6 +36,7 @@ public class KeywordOptimizerModel implements LanguageModel {
     private LanguageModel parent;
     private Logger logger;
 
+    @Override
     public Logger getLogger() {
         return logger;
     }
@@ -46,6 +47,7 @@ public class KeywordOptimizerModel implements LanguageModel {
     *
     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
     */
+    @Override
     public void newProperties(PropertySheet ps) throws PropertyException {
         parent = (LanguageModel) ps.getComponent(PROP_PARENT);
     }
@@ -55,6 +57,7 @@ public class KeywordOptimizerModel implements LanguageModel {
      *
      * @see edu.cmu.sphinx.linguist.language.ngram.LanguageModel#allocate()
      */
+     @Override
      public void allocate() throws IOException {
      	parent.allocate();
      }
@@ -65,17 +68,20 @@ public class KeywordOptimizerModel implements LanguageModel {
      *
      * @see edu.cmu.sphinx.linguist.language.ngram.LanguageModel#deallocate()
      */
+     @Override
      public void deallocate() {
     	 parent.deallocate();
      }
 
     /** Called before a recognition */
+    @Override
     public void start() {
     	parent.start();
     }
 
 
     /** Called after a recognition */
+    @Override
     public void stop() {
     	parent.stop();
     }
@@ -87,6 +93,7 @@ public class KeywordOptimizerModel implements LanguageModel {
      * @param wordSequence the word sequence
      * @return the probability of the word sequence. Probability is in logMath log base
      */
+    @Override
     public float getProbability(WordSequence wordSequence) {
     	float prob = parent.getProbability(wordSequence);
     	
@@ -110,6 +117,7 @@ public class KeywordOptimizerModel implements LanguageModel {
      * @param wordSequence the word sequence
      * @return the smear term associated with this word sequence
      */
+    @Override
     public float getSmear(WordSequence wordSequence) {
         return parent.getSmear(wordSequence);
     }
@@ -119,6 +127,7 @@ public class KeywordOptimizerModel implements LanguageModel {
      *
      * @return the maximum depth of the language model
      */
+    @Override
     public int getMaxDepth() {
         return parent.getMaxDepth();
     }
@@ -129,6 +138,7 @@ public class KeywordOptimizerModel implements LanguageModel {
      *
      * @return the unmodifiable set of words
      */
+    @Override
     public Set<String> getVocabulary() {
         return parent.getVocabulary();
     }

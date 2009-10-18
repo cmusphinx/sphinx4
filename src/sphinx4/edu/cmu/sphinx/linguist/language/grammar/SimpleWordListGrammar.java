@@ -67,6 +67,7 @@ public class SimpleWordListGrammar extends Grammar implements Configurable {
     *
     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
     */
+    @Override
     public void newProperties(PropertySheet ps) throws PropertyException {
         super.newProperties(ps);
         
@@ -81,6 +82,7 @@ public class SimpleWordListGrammar extends Grammar implements Configurable {
      *
      * @param bogusText dummy variable
      */
+    @Override
     protected GrammarNode createGrammar(String bogusText)
             throws NoSuchMethodException {
         throw new NoSuchMethodException("Does not create "
@@ -89,6 +91,7 @@ public class SimpleWordListGrammar extends Grammar implements Configurable {
 
 
     /** Creates the grammar. */
+    @Override
     protected GrammarNode createGrammar() throws IOException {
         ExtendedStreamTokenizer tok = new ExtendedStreamTokenizer(path, true);
         GrammarNode initialNode = createGrammarNode("<sil>");

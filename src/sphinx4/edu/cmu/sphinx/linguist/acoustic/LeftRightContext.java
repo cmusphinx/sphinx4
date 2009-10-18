@@ -45,6 +45,7 @@ public class LeftRightContext extends Context {
 
 
     /** Provides a string representation of a context */
+    @Override
     public String toString() {
         if (stringRepresentation == null) {
             stringRepresentation = getContextName(leftContext) + ',' +
@@ -135,6 +136,7 @@ public class LeftRightContext extends Context {
      * @param context the context to check
      * @return true if there is a partial match
      */
+    @Override
     public boolean isPartialMatch(Context context) {
         if (context instanceof LeftRightContext) {
             LeftRightContext lrContext = (LeftRightContext) context;

@@ -70,6 +70,7 @@ class ContextBucket {
      *
      * @return the string representation
      */
+    @Override
     public String toString() {
         return LeftRightContext.getContextName(units);
     }

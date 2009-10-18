@@ -35,12 +35,14 @@ public class BatchForcedAlignerRecognizer extends BatchNISTRecognizer {
     public BatchForcedAlignerGrammar bfaGrammar;
 
 
+    @Override
     protected void setInputStream(CTLUtterance utt) throws IOException {
         super.setInputStream(utt);
         bfaGrammar.setUtterance(utt.getName());
     }
 
 
+    @Override
     protected void handleResult(DataOutputStream out, CTLUtterance utt, Result result) throws IOException {
         System.out.println(utt + " --> " + result);
         Token token = result.getBestToken();

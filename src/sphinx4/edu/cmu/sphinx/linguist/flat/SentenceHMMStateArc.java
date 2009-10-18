@@ -61,6 +61,7 @@ public class SentenceHMMStateArc implements SearchStateArc {
      * @param o the object to compare to
      * @return <code>true</code> if the objects are equal
      */
+    @Override
     public boolean equals(Object o) {
         if (this == o) {
             return true;
@@ -82,6 +83,7 @@ public class SentenceHMMStateArc implements SearchStateArc {
      *
      * @return the hashCode
      */
+    @Override
     public int hashCode() {
         return hashCode;
     }
@@ -92,6 +94,7 @@ public class SentenceHMMStateArc implements SearchStateArc {
      *
      * @return the next state
      */
+    @Override
     public SearchState getState() {
         return nextState;
     }
@@ -114,6 +117,7 @@ public class SentenceHMMStateArc implements SearchStateArc {
      *
      * @return the acoustic transition probability in the logmath log domain
      */
+    @Override
     public float getAcousticProbability() {
         return logAcousticProbability;
     }
@@ -124,6 +128,7 @@ public class SentenceHMMStateArc implements SearchStateArc {
      *
      * @return the language  transition probability in the logmath log domain
      */
+    @Override
     public float getLanguageProbability() {
         return logLanguageProbability;
     }
@@ -134,6 +139,7 @@ public class SentenceHMMStateArc implements SearchStateArc {
      *
      * @return the insertion probability  in the logmath log domain
      */
+    @Override
     public float getInsertionProbability() {
         return logInsertionProbability;
     }
@@ -144,6 +150,7 @@ public class SentenceHMMStateArc implements SearchStateArc {
      *
      * @return the log probability
      */
+    @Override
     public float getProbability() {
         return logLanguageProbability + logAcousticProbability +
                 logInsertionProbability;

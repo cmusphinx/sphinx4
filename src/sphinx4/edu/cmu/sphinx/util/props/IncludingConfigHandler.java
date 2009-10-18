@@ -31,6 +31,7 @@ public class IncludingConfigHandler extends ConfigHandler {
     }
 
 
+    @Override
     public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
         if (qName.equals("config")) {
             // test if this configuration extends another one

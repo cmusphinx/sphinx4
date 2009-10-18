@@ -128,6 +128,7 @@ public class Pronunciation {
      *
      * @return a string of this Pronunciation
      */
+    @Override
     public String toString() {
         StringBuilder result = new StringBuilder().append(word).append('(');
         for (Unit unit : units) {

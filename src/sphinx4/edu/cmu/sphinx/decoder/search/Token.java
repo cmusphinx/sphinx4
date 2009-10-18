@@ -38,6 +38,7 @@ public class Token implements Scoreable {
 
     /** a token comparator that is used to order tokens in descending order */
     public final static Comparator<Token> COMPARATOR = new Comparator<Token>() {
+        @Override
         public int compare(Token t1, Token t2) {
             if (t1.getScore() > t2.getScore()) {
                 return -1;
@@ -191,6 +192,7 @@ public class Token implements Scoreable {
      *
      * @return the frame number for this token
      */
+    @Override
     public int getFrameNumber() {
         return frameNumber;
     }
@@ -218,6 +220,7 @@ public class Token implements Scoreable {
      *
      * @return the score of this frame (in logMath log base)
      */
+    @Override
     public float getScore() {
         return logTotalScore;
     }
@@ -230,6 +233,7 @@ public class Token implements Scoreable {
      * @param feature the feature to be scored
      * @return the score for the feature
      */
+    @Override
     public float calculateScore(Data feature) {
 
         //assert searchState.isEmitting() 
@@ -271,6 +275,7 @@ public class Token implements Scoreable {
      * @param maxLogScore the score to normalize this score with
      * @return the normalized score
      */
+    @Override
     public float normalizeScore(float maxLogScore) {
         logTotalScore -= maxLogScore;
         logAcousticScore -= maxLogScore;
@@ -384,6 +389,7 @@ public class Token implements Scoreable {
      *
      * @return the string representation of this object
      */
+    @Override
     public String toString() {
         return
             numFmt.format(getFrameNumber()) + ' ' +

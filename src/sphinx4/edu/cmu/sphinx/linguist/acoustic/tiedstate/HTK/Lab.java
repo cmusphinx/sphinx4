@@ -79,7 +79,8 @@ public class Lab {
 		}
 	}
 
-	public String toString() {
+	@Override
+    public String toString() {
 		String r = "";
 		if (start >= 0 && end >= start)
 			r += start + " " + end + ' ';

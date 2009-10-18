@@ -111,6 +111,7 @@ public class Unit {
      * @param o the object to check
      * @return true if the objects are equal
      */
+    @Override
     public boolean equals(Object o) {
         if (this == o) {
             return true;
@@ -128,6 +129,7 @@ public class Unit {
      *
      * @return the hashcode for this object
      */
+    @Override
     public int hashCode() {
         return getKey().hashCode();
     }
@@ -138,6 +140,7 @@ public class Unit {
      *
      * @return string version
      */
+    @Override
     public String toString() {
         if (key == null) {
             if (context == Context.EMPTY_CONTEXT) {

@@ -72,6 +72,7 @@ public class PLPFrequencyFilterBank extends BaseDataProcessor {
     *
     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
     */
+    @Override
     public void newProperties(PropertySheet ps) throws PropertyException {
         super.newProperties(ps);
         minFreq = ps.getDouble(PROP_MIN_FREQ);
@@ -81,6 +82,7 @@ public class PLPFrequencyFilterBank extends BaseDataProcessor {
 
 
     /** Initializes this PLPFrequencyFilterBank object */
+    @Override
     public void initialize() {
         super.initialize();
     }
@@ -235,6 +237,7 @@ public class PLPFrequencyFilterBank extends BaseDataProcessor {
      * @return the next available Data object, returns null if no Data object is available
      * @throws DataProcessingException if there is a data processing error
      */
+    @Override
     public Data getData() throws DataProcessingException {
 
         Data input = getPredecessor().getData();

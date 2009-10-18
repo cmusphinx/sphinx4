@@ -157,6 +157,7 @@ public class FlatLinguist implements Linguist, Configurable {
      *
      * @return the search graph
      */
+    @Override
     public SearchGraph getSearchGraph() {
         return searchGraph;
     }
@@ -167,6 +168,7 @@ public class FlatLinguist implements Linguist, Configurable {
     *
     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
     */
+    @Override
     public void newProperties(PropertySheet ps) throws PropertyException {
         // hookup to all of the components
         setupAcousticModel(ps);
@@ -225,6 +227,7 @@ public class FlatLinguist implements Linguist, Configurable {
     *
     * @see edu.cmu.sphinx.linguist.Linguist#allocate()
     */
+    @Override
     public void allocate() throws IOException {
         allocateAcousticModel();
         grammar.allocate();
@@ -253,6 +256,7 @@ public class FlatLinguist implements Linguist, Configurable {
     *
     * @see edu.cmu.sphinx.linguist.Linguist#deallocate()
     */
+    @Override
     public void deallocate() {
         if (acousticModel != null) {
             acousticModel.deallocate();
@@ -262,6 +266,7 @@ public class FlatLinguist implements Linguist, Configurable {
 
 
     /** Called before a recognition */
+    @Override
     public void startRecognition() {
         if (grammarHasChanged()) {
             stateSet = compileGrammar();
@@ -271,6 +276,7 @@ public class FlatLinguist implements Linguist, Configurable {
 
 
     /** Called after a recognition */
+    @Override
     public void stopRecognition() {
     }
 
@@ -489,6 +495,7 @@ public class FlatLinguist implements Linguist, Configurable {
         *
         * @see edu.cmu.sphinx.linguist.SearchGraph#getInitialState()
         */
+        @Override
         public SearchState getInitialState() {
             return initialState;
         }
@@ -499,6 +506,7 @@ public class FlatLinguist implements Linguist, Configurable {
         *
         * @see edu.cmu.sphinx.linguist.SearchGraph#getNumStateOrder()
         */
+        @Override
         public int getNumStateOrder() {
             return 7;
         }
@@ -1477,6 +1485,7 @@ public class FlatLinguist implements Linguist, Configurable {
          *
          * @return the string representation of the object
          */
+        @Override
         public String toString() {
             if (node.isEmpty()) {
                 return "GState " + node + "(empty)";
@@ -1569,6 +1578,7 @@ class UnitContext {
      * @param o the object to compare to
      * @return <code>true</code> if the objects are equal
      */
+    @Override
     public boolean equals(Object o) {
         if (this == o) {
             return true;
@@ -1595,6 +1605,7 @@ class UnitContext {
      *
      * @return the hashCode
      */
+    @Override
     public int hashCode() {
         return hashCode;
     }
@@ -1612,6 +1623,7 @@ class UnitContext {
      *
      * @return a string representation
      */
+    @Override
     public String toString() {
         return LeftRightContext.getContextName(context);
     }
@@ -1669,6 +1681,7 @@ class ContextPair {
      * @param o the object to compare to
      * @return <code>true</code> if the objects are equal return;
      */
+    @Override
     public boolean equals(Object o) {
         if (this == o) {
             return true;
@@ -1687,12 +1700,14 @@ class ContextPair {
      *
      * @return the hashCode
      */
+    @Override
     public int hashCode() {
         return hashCode;
     }
 
 
     /** Returns a string representation of the object */
+    @Override
     public String toString() {
         return "CP left: " + left + " right: " + right;
     }

@@ -74,6 +74,7 @@ public enum HMMPosition {
      *
      * @return the string representation
      */
+    @Override
     public String toString() {
         return rep;
     }

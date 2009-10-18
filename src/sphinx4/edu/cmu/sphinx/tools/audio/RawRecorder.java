@@ -138,6 +138,7 @@ public class RawRecorder {
         }
 
 
+        @Override
         public void run() {
             byte[] data = new byte[microphone.getBufferSize()];
             out = new ByteArrayOutputStream();

@@ -541,7 +541,8 @@ public class GMMDiag {
         return Math.abs(1 - b / a) > 0.01;
 	}
 
-	public String toString() {
+	@Override
+    public String toString() {
 		StringBuilder sb = new StringBuilder ();
 		for (int i = 0; i < getNgauss(); i++) {
 			sb.append(getMean(i, 0)).append(' ').append(getVar(i, 0)).append(

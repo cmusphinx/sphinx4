@@ -45,6 +45,7 @@ public class SimpleBatchManager implements BatchManager {
 
 
     /** Starts processing the batch */
+    @Override
     public void start() throws IOException {
         curItem = 0;
         items = getBatchItems(batchFile);
@@ -57,6 +58,7 @@ public class SimpleBatchManager implements BatchManager {
      * @return the next available batch item
      * @throws IOException if an I/O error occurs while getting the next item from the batch file.
      */
+    @Override
     public BatchItem getNextItem() throws IOException {
         if (curItem >= items.size()) {
             return null;
@@ -69,6 +71,7 @@ public class SimpleBatchManager implements BatchManager {
 
 
     /** Stops processing the batch */
+    @Override
     public void stop() throws IOException {
     }
 
@@ -78,6 +81,7 @@ public class SimpleBatchManager implements BatchManager {
      *
      * @return the filename
      */
+    @Override
     public String getFilename() {
         return batchFile;
     }

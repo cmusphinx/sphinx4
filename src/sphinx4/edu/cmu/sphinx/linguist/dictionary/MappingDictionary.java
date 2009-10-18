@@ -73,7 +73,8 @@ public class MappingDictionary extends FastDictionary implements Dictionary {
 	 *            if true, the unit is a filler unit
 	 * @return the unit
 	 */
-	protected Unit getCIUnit(String name, boolean isFiller) {
+	@Override
+    protected Unit getCIUnit(String name, boolean isFiller) {
 		if (mapping.containsKey(name)) {
 			name = mapping.get(name);
 		}

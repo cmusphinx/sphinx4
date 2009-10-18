@@ -75,7 +75,8 @@ public class XMLConfigReader implements GUIReader {
        * @throws    GUIReaderExceptoin  if there are any errors while finding
        *            and reading from file.
        */
-      public ConfigProperties read(File fFile) throws GUIReaderException {        
+      @Override
+      public ConfigProperties read(File fFile) throws GUIReaderException {
         if (fFile == null || fFile.getName().trim().isEmpty()) /* no filename for input */
         {
             throw new GUIReaderException

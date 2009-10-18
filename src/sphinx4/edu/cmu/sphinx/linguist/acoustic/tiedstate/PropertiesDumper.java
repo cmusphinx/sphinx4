@@ -62,6 +62,7 @@ public class PropertiesDumper {
      *
      * @return a string of the properties
      */
+    @Override
     public String toString() {
         StringBuilder result = new StringBuilder().append(props.get("description")).append('\n');
         List list = Collections.list(props.propertyNames());

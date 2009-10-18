@@ -236,6 +236,7 @@ public class LexTreeLinguist implements Linguist {
     *
     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
     */
+    @Override
     public void newProperties(PropertySheet ps) throws PropertyException {
         logger = ps.getLogger();
         acousticModel = (AcousticModel) ps.getComponent(PROP_ACOUSTIC_MODEL);
@@ -272,6 +273,7 @@ public class LexTreeLinguist implements Linguist {
     *
     * @see edu.cmu.sphinx.linguist.Linguist#allocate()
     */
+    @Override
     public void allocate() throws IOException {
         dictionary.allocate();
         acousticModel.allocate();
@@ -286,6 +288,7 @@ public class LexTreeLinguist implements Linguist {
     *
     * @see edu.cmu.sphinx.linguist.Linguist#deallocate()
     */
+    @Override
     public void deallocate() {
         acousticModel = null;
         logMath = null;
@@ -298,18 +301,21 @@ public class LexTreeLinguist implements Linguist {
     *
     * @see edu.cmu.sphinx.linguist.Linguist#getSearchGraph()
     */
+    @Override
     public SearchGraph getSearchGraph() {
         return searchGraph;
     }
 
 
     /** Called before a recognition */
+    @Override
     public void startRecognition() {
         languageModel.start();
     }
 
 
     /** Called after a recognition */
+    @Override
     public void stopRecognition() {
         languageModel.stop();
     }
@@ -392,6 +398,7 @@ public class LexTreeLinguist implements Linguist {
         *
         * @see edu.cmu.sphinx.linguist.SearchGraph#getInitialState()
         */
+        @Override
         public SearchState getInitialState() {
             return initialState;
         }
@@ -402,6 +409,7 @@ public class LexTreeLinguist implements Linguist {
         *
         * @see edu.cmu.sphinx.linguist.SearchGraph#getSearchStateOrder()
         */
+        @Override
         public int getNumStateOrder() {
             return 6;
         }
@@ -444,6 +452,7 @@ public class LexTreeLinguist implements Linguist {
          *
          * @return the signature
          */
+        @Override
         public String getSignature() {
             return "lts-" + node.hashCode() + "-ws-" + wordSequence;
         }
@@ -464,6 +473,7 @@ public class LexTreeLinguist implements Linguist {
          *
          * @return the hashcode
          */
+        @Override
         public int hashCode() {
             int hashCode = fullWordHistories
                     ? wordSequence.hashCode() * 37
@@ -479,6 +489,7 @@ public class LexTreeLinguist implements Linguist {
          * @param o the object to test
          * @return <code>true</code> if the object is equal to this
          */
+        @Override
         public boolean equals(Object o) {
             if (o == this) {
                 return true;
@@ -498,6 +509,7 @@ public class LexTreeLinguist implements Linguist {
          *
          * @return the sucessor state
          */
+        @Override
         public SearchState getState() {
             return this;
         }
@@ -508,6 +520,7 @@ public class LexTreeLinguist implements Linguist {
          *
          * @return the log probability
          */
+        @Override
         public float getProbability() {
             return getLanguageProbability() + getAcousticProbability()
                     + getInsertionProbability();
@@ -519,6 +532,7 @@ public class LexTreeLinguist implements Linguist {
          *
          * @return the log probability
          */
+        @Override
         public float getLanguageProbability() {
             return logOne;
         }
@@ -529,6 +543,7 @@ public class LexTreeLinguist implements Linguist {
          *
          * @return the log probability
          */
+        @Override
         public float getAcousticProbability() {
             return logOne;
         }
@@ -539,6 +554,7 @@ public class LexTreeLinguist implements Linguist {
          *
          * @return the log probability
          */
+        @Override
         public float getInsertionProbability() {
             return logOne;
         }
@@ -549,6 +565,7 @@ public class LexTreeLinguist implements Linguist {
          *
          * @return <code>true</code> if this is an emitting state.
          */
+        @Override
         public boolean isEmitting() {
             return false;
         }
@@ -559,6 +576,7 @@ public class LexTreeLinguist implements Linguist {
          *
          * @return <code>true</code> if this is an final state.
          */
+        @Override
         public boolean isFinal() {
             return false;
         }
@@ -579,11 +597,13 @@ public class LexTreeLinguist implements Linguist {
          *
          * @return the word sequence
          */
+        @Override
         public WordSequence getWordHistory() {
             return wordSequence;
         }
 
 
+        @Override
         public Node getLexState() {
             return node;
         }
@@ -594,6 +614,7 @@ public class LexTreeLinguist implements Linguist {
          *
          * @return a list of SearchState objects
          */
+        @Override
         public SearchStateArc[] getSuccessors() {
             SearchStateArc[] arcs = getCachedArcs();
             if (arcs == null) {
@@ -724,6 +745,7 @@ public class LexTreeLinguist implements Linguist {
          *
          * @return the string representation
          */
+        @Override
         public String toString() {
             return "lt-" + node + ' ' + getProbability() + '{' + wordSequence
                     + '}';
@@ -735,6 +757,7 @@ public class LexTreeLinguist implements Linguist {
          *
          * @return a pretty string
          */
+        @Override
         public String toPrettyString() {
             return toString();
         }
@@ -775,6 +798,7 @@ public class LexTreeLinguist implements Linguist {
         }
 
 
+        @Override
         abstract public int getOrder();
     }
 
@@ -807,6 +831,7 @@ public class LexTreeLinguist implements Linguist {
          *
          * @return the base unit
          */
+        @Override
         public Unit getUnit() {
             return getEndNode().getBaseUnit();
         }
@@ -817,6 +842,7 @@ public class LexTreeLinguist implements Linguist {
          *
          * @return the hashcode
          */
+        @Override
         public int hashCode() {
             return super.hashCode() * 17 + 423;
         }
@@ -827,6 +853,7 @@ public class LexTreeLinguist implements Linguist {
          *
          * @return the log probability
          */
+        @Override
         public float getInsertionProbability() {
             return logInsertionProbability;
         }
@@ -837,6 +864,7 @@ public class LexTreeLinguist implements Linguist {
          *
          * @return the log probability
          */
+        @Override
         public float getLanguageProbability() {
             return logLanguageProbability;
         }
@@ -848,6 +876,7 @@ public class LexTreeLinguist implements Linguist {
          * @param o the object to test
          * @return <code>true</code> if the object is equal to this
          */
+        @Override
         public boolean equals(Object o) {
             return o == this || o instanceof LexTreeEndUnitState && super.equals(o);
         }
@@ -868,6 +897,7 @@ public class LexTreeLinguist implements Linguist {
          *
          * @return a list of SearchState objects
          */
+        @Override
         public SearchStateArc[] getSuccessors() {
             SearchStateArc[] arcs = getCachedArcs();
             if (arcs == null) {
@@ -896,11 +926,13 @@ public class LexTreeLinguist implements Linguist {
         }
 
 
+        @Override
         public String toString() {
             return super.toString() + " EndUnit";
         }
 
 
+        @Override
         public int getOrder() {
             return 3;
         }
@@ -949,6 +981,7 @@ public class LexTreeLinguist implements Linguist {
          *
          * @return the base unit
          */
+        @Override
         public Unit getUnit() {
             return getHMMNode().getBaseUnit();
         }
@@ -959,6 +992,7 @@ public class LexTreeLinguist implements Linguist {
          *
          * @return the hashcode
          */
+        @Override
         public int hashCode() {
             if (hashCode == -1) {
                 hashCode = super.hashCode() * 17 + 421;
@@ -977,6 +1011,7 @@ public class LexTreeLinguist implements Linguist {
          * @param o the object to test
          * @return <code>true</code> if the object is equal to this
          */
+        @Override
         public boolean equals(Object o) {
             if (o == this) {
                 return true;
@@ -1004,6 +1039,7 @@ public class LexTreeLinguist implements Linguist {
          *
          * @return a list of SearchState objects
          */
+        @Override
         public SearchStateArc[] getSuccessors() {
             SearchStateArc[] arcs = new SearchStateArc[1];
             HMM hmm = getHMMNode().getHMM();
@@ -1014,6 +1050,7 @@ public class LexTreeLinguist implements Linguist {
         }
 
 
+        @Override
         public String toString() {
             return super.toString() + " unit";
         }
@@ -1024,6 +1061,7 @@ public class LexTreeLinguist implements Linguist {
          *
          * @return the log probability
          */
+        @Override
         public float getInsertionProbability() {
             return logInsertionProbability;
         }
@@ -1034,11 +1072,13 @@ public class LexTreeLinguist implements Linguist {
          *
          * @return the log probability
          */
+        @Override
         public float getLanguageProbability() {
             return logLanguageProbability;
         }
 
 
+        @Override
         public int getOrder() {
             return 4;
         }
@@ -1082,6 +1122,7 @@ public class LexTreeLinguist implements Linguist {
          *
          * @return the ID
          */
+        @Override
         public String getSignature() {
             return super.getSignature() + "-HMM-" + hmmState.getState();
         }
@@ -1092,6 +1133,7 @@ public class LexTreeLinguist implements Linguist {
          *
          * @return the hmm state
          */
+        @Override
         public HMMState getHMMState() {
             return hmmState;
         }
@@ -1102,6 +1144,7 @@ public class LexTreeLinguist implements Linguist {
          *
          * @return the hashcode
          */
+        @Override
         public int hashCode() {
             if (hashCode == -1) {
                 hashCode = super.hashCode() * 29 + (hmmState.getState() + 1);
@@ -1120,6 +1163,7 @@ public class LexTreeLinguist implements Linguist {
          * @param o the object to test
          * @return <code>true</code> if the object is equal to this
          */
+        @Override
         public boolean equals(Object o) {
             if (o == this) {
                 return true;
@@ -1138,6 +1182,7 @@ public class LexTreeLinguist implements Linguist {
          *
          * @return the log probability
          */
+        @Override
         public float getAcousticProbability() {
             return logAcousticProbability;
         }
@@ -1148,6 +1193,7 @@ public class LexTreeLinguist implements Linguist {
          *
          * @return the log probability
          */
+        @Override
         public float getLanguageProbability() {
             return logLanguageProbability;
         }
@@ -1158,6 +1204,7 @@ public class LexTreeLinguist implements Linguist {
          *
          * @return the log probability
          */
+        @Override
         public float getInsertionProbability() {
             return logInsertionProbability;
         }
@@ -1168,6 +1215,7 @@ public class LexTreeLinguist implements Linguist {
          *
          * @return the list of sucessor states
          */
+        @Override
         public SearchStateArc[] getSuccessors() {
             SearchStateArc[] nextStates = getCachedArcs();
             if (nextStates == null) {
@@ -1219,16 +1267,19 @@ public class LexTreeLinguist implements Linguist {
 
 
         /** Determines if this is an emitting state */
+        @Override
         public boolean isEmitting() {
             return hmmState.isEmitting();
         }
 
 
+        @Override
         public String toString() {
             return super.toString() + " hmm:" + hmmState;
         }
 
 
+        @Override
         public int getOrder() {
             return 5;
         }
@@ -1252,6 +1303,7 @@ public class LexTreeLinguist implements Linguist {
         }
 
 
+        @Override
         public int getOrder() {
             return 0;
         }
@@ -1289,6 +1341,7 @@ public class LexTreeLinguist implements Linguist {
          *
          * @return the pronunciation for this word
          */
+        @Override
         public Pronunciation getPronunciation() {
             return ((WordNode) getNode()).getPronunciation();
         }
@@ -1299,6 +1352,7 @@ public class LexTreeLinguist implements Linguist {
          *
          * @return <code>true</code> if this is an final state.
          */
+        @Override
         public boolean isFinal() {
             return getPronunciation().getWord().equals(sentenceEndWord);
         }
@@ -1309,6 +1363,7 @@ public class LexTreeLinguist implements Linguist {
          *
          * @return the hashcode
          */
+        @Override
         public int hashCode() {
             return super.hashCode() * 41 + lastNode.hashCode();
         }
@@ -1320,6 +1375,7 @@ public class LexTreeLinguist implements Linguist {
          *
          * @return the signature
          */
+        @Override
         public String getSignature() {
             return super.getSignature() + "-ln-" + lastNode.hashCode();
         }
@@ -1331,6 +1387,7 @@ public class LexTreeLinguist implements Linguist {
          * @param o the object to test
          * @return <code>true</code> if the object is equal to this
          */
+        @Override
         public boolean equals(Object o) {
             if (o == this) {
                 return true;
@@ -1348,6 +1405,7 @@ public class LexTreeLinguist implements Linguist {
          *
          * @return the log probability
          */
+        @Override
         public float getLanguageProbability() {
             return logLanguageProbability;
         }
@@ -1358,6 +1416,7 @@ public class LexTreeLinguist implements Linguist {
          *
          * @return a list of SearchState objects
          */
+        @Override
         public SearchStateArc[] getSuccessors() {
             SearchStateArc[] arcs = getCachedArcs();
             if (arcs == null) {
@@ -1393,6 +1452,7 @@ public class LexTreeLinguist implements Linguist {
         }
 
 
+        @Override
         public int getOrder() {
             return 1;
         }
@@ -1405,6 +1465,7 @@ public class LexTreeLinguist implements Linguist {
          * @return true if this LexTreeWordState indicates the start of a word, false if this LexTreeWordState indicates
          *         the end of a word
          */
+        @Override
         public boolean isWordStart() {
             return false;
         }
@@ -1431,6 +1492,7 @@ public class LexTreeLinguist implements Linguist {
         }
 
 
+        @Override
         public int getOrder() {
             return 2;
         }
@@ -1501,7 +1563,8 @@ public class LexTreeLinguist implements Linguist {
 
 		private static final long serialVersionUID = 1L;
 
-		protected boolean removeEldestEntry(Map.Entry<LexTreeState, SearchStateArc[]> eldest) {
+		@Override
+        protected boolean removeEldestEntry(Map.Entry<LexTreeState, SearchStateArc[]> eldest) {
             return size() > maxArcCacheSize;
         }
     }

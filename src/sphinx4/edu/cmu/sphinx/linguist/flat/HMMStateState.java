@@ -44,6 +44,7 @@ public class HMMStateState extends SentenceHMMState
      *
      * @return the hmmState
      */
+    @Override
     public HMMState getHMMState() {
         return hmmState;
     }
@@ -54,6 +55,7 @@ public class HMMStateState extends SentenceHMMState
      *
      * @return true if the state is an emitting state
      */
+    @Override
     public boolean isEmitting() {
         return isEmitting;
     }
@@ -65,6 +67,7 @@ public class HMMStateState extends SentenceHMMState
      *
      * @return the short label.
      */
+    @Override
     public String getTypeLabel() {
         return "HMM";
     }
@@ -90,6 +93,7 @@ public class HMMStateState extends SentenceHMMState
      *
      * @return the state order
      */
+    @Override
     public int getOrder() {
         return isEmitting ? 6 : 0;
     }

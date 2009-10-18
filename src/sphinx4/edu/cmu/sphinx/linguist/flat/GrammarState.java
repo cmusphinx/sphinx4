@@ -49,6 +49,7 @@ public class GrammarState extends SentenceHMMState {
      *
      * @return the short label.
      */
+    @Override
     public String getTypeLabel() {
         return "Gram";
     }
@@ -59,6 +60,7 @@ public class GrammarState extends SentenceHMMState {
      *
      * @return the state order
      */
+    @Override
     public int getOrder() {
         return 3;
     }

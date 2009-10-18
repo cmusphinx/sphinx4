@@ -62,6 +62,7 @@ public class AudioPanel extends JPanel
         setBackground(Color.white);
 
         audio.addChangeListener(new ChangeListener() {
+            @Override
             public void stateChanged(ChangeEvent event) {
                 int width = (int) (audio.getAudioData().length * xScale);
                 int height = (int) ((1 << 16) * yScale);
@@ -112,6 +113,7 @@ public class AudioPanel extends JPanel
      *
      * @param g the Graphics to use to repaint the component.
      */
+    @Override
     public void paintComponent(Graphics g) {
         int pos, index;
         int length;
@@ -299,6 +301,7 @@ public class AudioPanel extends JPanel
      *
      * @param evt the mouse pressed event
      */
+    @Override
     public void mousePressed(MouseEvent evt) {
         xDragStart = Math.max(0, evt.getX());
         setSelectionStart((int) (xDragStart / xScale));
@@ -312,6 +315,7 @@ public class AudioPanel extends JPanel
      *
      * @param evt the mouse dragged event
      */
+    @Override
     public void mouseDragged(MouseEvent evt) {
         xDragEnd = evt.getX();
         if (xDragEnd < (int) (getSelectionStart() * xScale)) {
@@ -323,22 +327,27 @@ public class AudioPanel extends JPanel
     }
 
 
+    @Override
     public void mouseReleased(MouseEvent evt) {
     }
 
 
+    @Override
     public void mouseMoved(MouseEvent evt) {
     }
 
 
+    @Override
     public void mouseEntered(MouseEvent evt) {
     }
 
 
+    @Override
     public void mouseExited(MouseEvent evt) {
     }
 
 
+    @Override
     public void mouseClicked(MouseEvent evt) {
     }
 }

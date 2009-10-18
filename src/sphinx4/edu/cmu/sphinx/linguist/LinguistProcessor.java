@@ -39,6 +39,7 @@ public class LinguistProcessor implements Configurable, Runnable {
     /* (non-Javadoc)
     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
     */
+    @Override
     public void newProperties(PropertySheet ps) throws PropertyException {
         linguist = (Linguist) ps.getComponent(PROP_LINGUIST);
     }
@@ -55,6 +56,7 @@ public class LinguistProcessor implements Configurable, Runnable {
     /* (non-Javadoc)
     * @see java.lang.Runnable#run()
     */
+    @Override
     public void run() {
 
     }

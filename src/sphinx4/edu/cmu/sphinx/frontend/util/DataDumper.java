@@ -60,6 +60,7 @@ public class DataDumper extends BaseDataProcessor {
     *
     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
     */
+    @Override
     public void newProperties(PropertySheet ps) throws PropertyException {
         super.newProperties(ps);
         
@@ -73,6 +74,7 @@ public class DataDumper extends BaseDataProcessor {
 
 
     /** Constructs a DataDumper */
+    @Override
     public void initialize() {
         super.initialize();
     }
@@ -84,6 +86,7 @@ public class DataDumper extends BaseDataProcessor {
      * @return the next Data or <code>null</code> if none is available
      * @throws DataProcessingException if there is a data processing error
      */
+    @Override
     public Data getData() throws DataProcessingException {
         Data input = getPredecessor().getData();
         if (enable) {

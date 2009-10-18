@@ -107,6 +107,7 @@ public class SpeechClassifier extends BaseDataProcessor {
 
 
     /** Initializes this LevelTracker endpointer and DataProcessor predecessor. */
+    @Override
     public void initialize() {
         super.initialize();
         reset();
@@ -182,6 +183,7 @@ public class SpeechClassifier extends BaseDataProcessor {
      * @return the next Data object, or null if none available
      * @throws DataProcessingException if a data processing error occurs
      */
+    @Override
     public Data getData() throws DataProcessingException {
         if (outputQueue.isEmpty()) {
             Data audio = getPredecessor().getData();

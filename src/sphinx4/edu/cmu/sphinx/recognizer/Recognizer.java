@@ -75,6 +75,7 @@ public class Recognizer implements Configurable, ResultProducer {
     /* (non-Javadoc)
     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
     */
+    @Override
     public void newProperties(PropertySheet ps) throws PropertyException {
         decoder = (Decoder) ps.getComponent(PROP_DECODER);
         monitors = ps.getComponentList(PROP_MONITORS);
@@ -201,6 +202,7 @@ public class Recognizer implements Configurable, ResultProducer {
      *
      * @param resultListener the listener to add
      */
+    @Override
     public void addResultListener(ResultListener resultListener) {
         decoder.addResultListener(resultListener);
     }
@@ -222,6 +224,7 @@ public class Recognizer implements Configurable, ResultProducer {
      *
      * @param resultListener the listener to remove
      */
+    @Override
     public void removeResultListener(ResultListener resultListener) {
         decoder.removeResultListener(resultListener);
     }
@@ -240,6 +243,7 @@ public class Recognizer implements Configurable, ResultProducer {
     /* (non-Javadoc)
     * @see java.lang.Object#toString()
     */
+    @Override
     public String toString() {
         return "Recognizer: " + name + " State: " + currentState;
     }

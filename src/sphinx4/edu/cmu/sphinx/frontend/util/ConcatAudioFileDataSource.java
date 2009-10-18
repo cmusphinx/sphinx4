@@ -42,6 +42,7 @@ public class ConcatAudioFileDataSource extends AudioFileDataSource implements Re
     }
 
     /** Initializes a ConcatFileDataSource. */
+    @Override
     public void initialize() {
         super.initialize();
 
@@ -118,6 +119,7 @@ public class ConcatAudioFileDataSource extends AudioFileDataSource implements Re
     }
 
 
+    @Override
     public void setAudioFile(URL audioFileURL, String streamName) {
         throw new RuntimeException("Not supported for ConcatAudioFileDataSource");
     }
@@ -128,6 +130,7 @@ public class ConcatAudioFileDataSource extends AudioFileDataSource implements Re
      *
      * @return a list of all reference text
      */
+    @Override
     public List<String> getReferences() {
         return referenceList;
     }
@@ -155,6 +158,7 @@ public class ConcatAudioFileDataSource extends AudioFileDataSource implements Re
          * @return true if and only if this enumeration object contains at least one more element to provide; false
          *         otherwise.
          */
+        @Override
         public boolean hasMoreElements() {
             if (nextFile == null) {
                 nextFile = readNext();
@@ -169,6 +173,7 @@ public class ConcatAudioFileDataSource extends AudioFileDataSource implements Re
          *
          * @return the next element of this enumeration.
          */
+        @Override
         public AudioInputStream nextElement() {
             AudioInputStream stream = null;
             if (lastFile == null) {

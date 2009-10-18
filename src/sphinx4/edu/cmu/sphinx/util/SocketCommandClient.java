@@ -240,6 +240,7 @@ public class SocketCommandClient {
             final SocketCommandClient sci = new
                     SocketCommandClient("localhost", 7890);
             ci.add("s", new CommandInterface() {
+                @Override
                 public String execute(CommandInterpreter ci, String[] args) {
                     StringBuilder cmd = new StringBuilder();
                     for (int i = 1; i < args.length; i++) {
@@ -250,12 +251,14 @@ public class SocketCommandClient {
                 }
 
 
+                @Override
                 public String getHelp() {
                     return "send a command";
                 }
             });
 
             ci.add("r", new CommandInterface() {
+                @Override
                 public String execute(CommandInterpreter ci, String[] args) {
                     while (sci.isResponse()) {
                         ci.putResponse(sci.getResponse());
@@ -264,12 +267,14 @@ public class SocketCommandClient {
                 }
 
 
+                @Override
                 public String getHelp() {
                     return "receive a response";
                 }
             });
 
             ci.add("sr", new CommandInterface() {
+                @Override
                 public String execute(CommandInterpreter ci, String[] args) {
                     StringBuilder cmd = new StringBuilder();
                     for (int i = 1; i < args.length; i++) {
@@ -283,6 +288,7 @@ public class SocketCommandClient {
                 }
 
 
+                @Override
                 public String getHelp() {
                     return "send a command, receive a response";
                 }

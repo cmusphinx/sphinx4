@@ -75,6 +75,7 @@ public class ConfigMonitor implements Configurable, Runnable, Monitor {
     /* (non-Javadoc)
     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
     */
+    @Override
     public void newProperties(PropertySheet ps) throws PropertyException {
         logger = ps.getLogger();
         cm = ConfigurationManagerUtils.getPropertyManager(ps);
@@ -99,6 +100,7 @@ public class ConfigMonitor implements Configurable, Runnable, Monitor {
     /* (non-Javadoc)
     * @see java.lang.Runnable#run()
     */
+    @Override
     public void run() {
         if (showConfig) {
             ConfigurationManagerUtils.showConfig(cm);

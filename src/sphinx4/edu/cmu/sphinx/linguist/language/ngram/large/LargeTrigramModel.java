@@ -91,6 +91,7 @@ public class LargeTrigramModel implements LanguageModel {
 
     private final static int SMEAR_MAGIC = 0xC0CAC01A; // things go better 
 
+    @Override
     public Logger getLogger() {
         return logger;
     }
@@ -153,6 +154,7 @@ public class LargeTrigramModel implements LanguageModel {
     *
     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
     */
+    @Override
     public void newProperties(PropertySheet ps) throws PropertyException {
         logger = ps.getLogger();
         format = ps.getString(LanguageModel.PROP_FORMAT);
@@ -191,6 +193,7 @@ public class LargeTrigramModel implements LanguageModel {
     *
     * @see edu.cmu.sphinx.linguist.language.ngram.LanguageModel#allocate()
     */
+    @Override
     public void allocate() throws IOException {
         TimerPool.getTimer(this, "LM Load").start();
         // create the log file if specified
@@ -244,6 +247,7 @@ public class LargeTrigramModel implements LanguageModel {
     *
     * @see edu.cmu.sphinx.linguist.language.ngram.LanguageModel#deallocate()
     */
+    @Override
     public void deallocate() {
         // TODO write me
     }
@@ -273,6 +277,7 @@ public class LargeTrigramModel implements LanguageModel {
 
 
     /** Called before a recognition */
+    @Override
     public void start() {
         if (logFile != null) {
             logFile.println("<START_UTT>");
@@ -281,6 +286,7 @@ public class LargeTrigramModel implements LanguageModel {
 
 
     /** Called after a recognition */
+    @Override
     public void stop() {
         clearCache();
         if (logFile != null) {
@@ -322,6 +328,7 @@ public class LargeTrigramModel implements LanguageModel {
      * @param wordSequence the word sequence
      * @return the probability of the word sequence. Probability is in logMath log base
      */
+    @Override
     public float getProbability(WordSequence wordSequence) {
         if (logFile != null) {
             logFile.println(wordSequence.toString().replace("][", " "));
@@ -420,6 +427,7 @@ public class LargeTrigramModel implements LanguageModel {
     int smearBigramHit;
 
 
+    @Override
     public float getSmear(WordSequence wordSequence) {
         float smearTerm = 1.0f;
         if (fullSmear) {
@@ -740,6 +748,7 @@ public class LargeTrigramModel implements LanguageModel {
      *
      * @return the maximum depth of the language model
      */
+    @Override
     public int getMaxDepth() {
         return maxDepth;
     }
@@ -750,6 +759,7 @@ public class LargeTrigramModel implements LanguageModel {
      *
      * @return the unmodifiable set of words
      */
+    @Override
     public Set<String> getVocabulary() {
         Set<String> vocabulary = new HashSet<String>(Arrays.asList(loader.getWords()));
         return Collections.unmodifiableSet(vocabulary);
@@ -1082,6 +1092,7 @@ class LRUCache<K, V> extends LinkedHashMap<K, V> {
      * @param eldest the eldest entry
      * @return true if the eldest entry should be removed
      */
+    @Override
     protected boolean removeEldestEntry(Map.Entry<K,V> eldest) {
         return size() > maxSize;
     }

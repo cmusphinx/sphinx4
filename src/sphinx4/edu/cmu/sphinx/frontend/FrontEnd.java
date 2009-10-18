@@ -155,6 +155,7 @@ public class FrontEnd extends BaseDataProcessor {
     /* (non-Javadoc)
      * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
      */
+    @Override
     public void newProperties(PropertySheet ps) throws PropertyException {
         super.newProperties(ps);
         this.frontEndList = (List<DataProcessor>) ps.getComponentList(PROP_PIPELINE);
@@ -181,6 +182,7 @@ public class FrontEnd extends BaseDataProcessor {
     /* (non-Javadoc)
     * @see edu.cmu.sphinx.frontend.DataProcessor#initialize(edu.cmu.sphinx.frontend.CommonConfig)
     */
+    @Override
     public void initialize() {
         super.initialize();
         for (DataProcessor dp : frontEndList) {
@@ -213,6 +215,7 @@ public class FrontEnd extends BaseDataProcessor {
      * @return an Data object that has been processed by this front end
      * @throws DataProcessingException if a data processor error occurs
      */
+    @Override
     public Data getData() throws DataProcessingException {
         Data data = last.getData();
 
@@ -230,6 +233,7 @@ public class FrontEnd extends BaseDataProcessor {
      *
      * @param dataSource the source of data
      */
+    @Override
     public void setPredecessor(DataProcessor dataSource) {
         setDataSource(dataSource);
     }
@@ -279,6 +283,7 @@ public class FrontEnd extends BaseDataProcessor {
      *
      * @return a description of this FrontEnd
      */
+    @Override
     public String toString() {
         if (last == null)
             return super.toString() + " {}";

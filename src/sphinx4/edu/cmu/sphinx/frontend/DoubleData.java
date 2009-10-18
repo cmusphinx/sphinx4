@@ -54,6 +54,7 @@ public class DoubleData extends OVector implements Data {
     /**
      * @return a string that describes the data.
      */
+    @Override
     public String toString() {
         return ("DoubleData: " + sampleRate + "Hz, first sample #: " +
                 firstSampleNumber + ", collect time: " + collectTime);

@@ -59,6 +59,7 @@ public class XMLConfigWriter implements GUIWriter{
        * @param fFile Output file
        * @throws GUIWriterException writing error
        */
+    @Override
     public boolean writeOutput(ConfigProperties configProp, File fFile) throws GUIWriterException{
         if (fFile == null || fFile.getName().trim().isEmpty()) /* no filename for output */
         {
@@ -93,6 +94,7 @@ public class XMLConfigWriter implements GUIWriter{
        * @return String configuration value as text
        * @throws GUIWriterException writing error
        */
+   @Override
    public String getOutput(ConfigProperties configProp) throws GUIWriterException{
         ConfigConverter cc = ConfigConverter.getInstance();
         StringBuilder sb = cc.writeOutput(configProp);

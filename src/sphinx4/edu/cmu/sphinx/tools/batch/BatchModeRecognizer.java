@@ -114,6 +114,7 @@ public class BatchModeRecognizer implements Configurable {
     *
     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
     */
+    @Override
     public void newProperties(PropertySheet ps) throws PropertyException {
         logger = ps.getLogger();
         cm = ConfigurationManagerUtils.getPropertyManager(ps);
@@ -223,6 +224,7 @@ public class BatchModeRecognizer implements Configurable {
      */
     void addCommands(CommandInterpreter ci) {
         ci.add("ls", new CommandInterface() {
+            @Override
             public String execute(CommandInterpreter ci, String[] args) {
                 if (args.length != 1) {
                     ci.putResponse("Usage: ls");
@@ -234,11 +236,13 @@ public class BatchModeRecognizer implements Configurable {
             }
 
 
+            @Override
             public String getHelp() {
                 return "list active components";
             }
         });
         ci.add("show", new CommandInterface() {
+            @Override
             public String execute(CommandInterpreter ci, String[] args) {
                 if (args.length < 2) {
                     ConfigurationManagerUtils.showConfig(cm);
@@ -252,11 +256,13 @@ public class BatchModeRecognizer implements Configurable {
             }
 
 
+            @Override
             public String getHelp() {
                 return "show component configuration";
             }
         });
         ci.add("edit", new CommandInterface() {
+            @Override
             public String execute(CommandInterpreter ci, String[] args) {
                 if (args.length != 2) {
                     ci.putResponse("Usage: edit component");
@@ -268,11 +274,13 @@ public class BatchModeRecognizer implements Configurable {
             }
 
 
+            @Override
             public String getHelp() {
                 return "edit a  component's configuration";
             }
         });
         ci.add("save", new CommandInterface() {
+            @Override
             public String execute(CommandInterpreter ci, String[] args) {
                 if (args.length != 2) {
                     ci.putResponse("Usage: save filename.xml");
@@ -284,11 +292,13 @@ public class BatchModeRecognizer implements Configurable {
             }
 
 
+            @Override
             public String getHelp() {
                 return "save configuration to a file";
             }
         });
         ci.add("set", new CommandInterface() {
+            @Override
             public String execute(CommandInterpreter ci, String[] args) {
                 if (args.length != 4) {
                     ci.putResponse("Usage: set component property value");
@@ -300,11 +310,13 @@ public class BatchModeRecognizer implements Configurable {
             }
 
 
+            @Override
             public String getHelp() {
                 return "set component property to a given value";
             }
         });
         ci.add("recognize", new CommandInterface() {
+            @Override
             public String execute(CommandInterpreter ci, String[] args) {
                 Result result = null;
 
@@ -330,6 +342,7 @@ public class BatchModeRecognizer implements Configurable {
             }
 
 
+            @Override
             public String getHelp() {
                 return "perform recognition on the given audio";
             }
@@ -337,6 +350,7 @@ public class BatchModeRecognizer implements Configurable {
         ci.addAlias("recognize", "rec");
 
         ci.add("statsReset", new CommandInterface() {
+            @Override
             public String execute(CommandInterpreter ci, String[] args) {
                 if (args.length != 1) {
                     ci.putResponse("Usage: statsReset");
@@ -347,12 +361,14 @@ public class BatchModeRecognizer implements Configurable {
             }
 
 
+            @Override
             public String getHelp() {
                 return "resets gathered statistics";
             }
         });
 
         ci.add("batchRecognize", new CommandInterface() {
+            @Override
             public String execute(CommandInterpreter ci, String[] args) {
                 Result result = null;
                 
@@ -378,6 +394,7 @@ public class BatchModeRecognizer implements Configurable {
             }
 
 
+            @Override
             public String getHelp() {
                 return "perform recognition on the current batch item";
             }
@@ -385,6 +402,7 @@ public class BatchModeRecognizer implements Configurable {
         ci.addAlias("batchRecognize", "br");
 
         ci.add("batchNext", new CommandInterface() {
+            @Override
             public String execute(CommandInterpreter ci, String[] args) {
                 Result result = null;
                 
@@ -426,6 +444,7 @@ public class BatchModeRecognizer implements Configurable {
             }
 
 
+            @Override
             public String getHelp() {
                 return "advance the batch and perform recognition";
             }
@@ -433,6 +452,7 @@ public class BatchModeRecognizer implements Configurable {
         ci.addAlias("batchNext", "bn");
 
         ci.add("batchAll", new CommandInterface() {
+            @Override
             public String execute(CommandInterpreter ci, String[] args) {
                 Result result = null;
 
@@ -465,12 +485,14 @@ public class BatchModeRecognizer implements Configurable {
             }
 
 
+            @Override
             public String getHelp() {
                 return "recognize all of the remaining batch items";
             }
         });
 
         ci.add("batchReset", new CommandInterface() {
+            @Override
             public String execute(CommandInterpreter ci, String[] args) {
                 if (args.length != 1) {
                     ci.putResponse("Usage: batchReset");
@@ -485,11 +507,13 @@ public class BatchModeRecognizer implements Configurable {
             }
 
 
+            @Override
             public String getHelp() {
                 return "reset the batch to the beginning";
             }
         });
         ci.add("batchLoad", new CommandInterface() {
+            @Override
             public String execute(CommandInterpreter ci, String[] args) {
                 if (args.length != 2) {
                     ci.putResponse("Usage: batchReset batchfile");
@@ -504,6 +528,7 @@ public class BatchModeRecognizer implements Configurable {
             }
 
 
+            @Override
             public String getHelp() {
                 return "reset the batch to the beginning";
             }

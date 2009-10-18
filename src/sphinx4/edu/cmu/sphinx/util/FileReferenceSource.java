@@ -61,6 +61,7 @@ public class FileReferenceSource implements ReferenceSource {
      *
      * @return a list of reference text
      */
+    @Override
     public List<String> getReferences() {
         return references;
     }

@@ -47,6 +47,7 @@ public class WordResultPath implements Path {
 
 
     /** @see edu.cmu.sphinx.result.Path#getScore() */
+    @Override
     public double getScore() {
         double score = LogMath.getLogOne();
         for (WordResult wr : path) {
@@ -57,6 +58,7 @@ public class WordResultPath implements Path {
 
 
     /** @see edu.cmu.sphinx.result.Path#getConfidence() */
+    @Override
     public double getConfidence() {
         double confidence = LogMath.getLogOne();
         for (WordResult wr : path) {
@@ -71,6 +73,7 @@ public class WordResultPath implements Path {
      *
      * @return the LogMath of the scores
      */
+    @Override
     public LogMath getLogMath() {
         Iterator<WordResult> i = path.iterator();
         if (i.hasNext()) {
@@ -83,12 +86,14 @@ public class WordResultPath implements Path {
 
 
     /** @see edu.cmu.sphinx.result.Path#getWords() */
+    @Override
     public WordResult[] getWords() {
         return path.toArray(new WordResult[path.size()]);
     }
 
 
     /** @see edu.cmu.sphinx.result.Path#getTranscription() */
+    @Override
     public String getTranscription() {
         StringBuilder sb = new StringBuilder();
         for (WordResult wr : path)

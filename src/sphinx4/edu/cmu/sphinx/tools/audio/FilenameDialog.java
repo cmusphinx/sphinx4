@@ -39,6 +39,7 @@ public class FilenameDialog extends JDialog {
         super(parent, modal);
         setTitle(title);
         addWindowListener(new WindowAdapter() {
+            @Override
             public void windowClosing(WindowEvent event) {
                 setVisible(false);
             }
@@ -86,6 +87,7 @@ public class FilenameDialog extends JDialog {
          */
         JButton okButton = new JButton("Save");
         okButton.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent event) {
                 setVisible(false);
             }

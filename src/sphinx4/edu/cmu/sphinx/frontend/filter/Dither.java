@@ -36,7 +36,8 @@ public class Dither extends BaseDataProcessor {
 	 * edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util
 	 * .props.PropertySheet)
 	 */
-	public void newProperties(PropertySheet ps) throws PropertyException {
+	@Override
+    public void newProperties(PropertySheet ps) throws PropertyException {
 		super.newProperties(ps);
 	}
 
@@ -50,7 +51,8 @@ public class Dither extends BaseDataProcessor {
 	 *             if there is a processing error
 	 * @see Data
 	 */
-	public Data getData() throws DataProcessingException {
+	@Override
+    public Data getData() throws DataProcessingException {
 		Data input = getPredecessor().getData();
 		getTimer().start();
 		if (input != null && input instanceof DoubleData) {

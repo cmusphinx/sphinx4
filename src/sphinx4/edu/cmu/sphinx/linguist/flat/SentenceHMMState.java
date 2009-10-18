@@ -212,6 +212,7 @@ public abstract class SentenceHMMState implements Serializable, SearchState {
     /** Reset process flags for this state and all successor states */
     public void resetAllProcessed() {
         visitStates(new SentenceHMMStateVisitor() {
+            @Override
             public boolean visit(SentenceHMMState state) {
                 state.setProcessed(false);
                 return false;
@@ -226,6 +227,7 @@ public abstract class SentenceHMMState implements Serializable, SearchState {
      * @return the word history.
      */
     //TODO Not implemented
+    @Override
     public WordSequence getWordHistory() {
         return WordSequence.EMPTY;
     }
@@ -246,6 +248,7 @@ public abstract class SentenceHMMState implements Serializable, SearchState {
      *
      * @return the set of successors
      */
+    @Override
     public SearchStateArc[] getSuccessors() {
         if (successorArray == null) {
             successorArray = new SentenceHMMStateArc[arcs.size()];
@@ -260,6 +263,7 @@ public abstract class SentenceHMMState implements Serializable, SearchState {
      *
      * @return the lex tree state
      */
+    @Override
     public SentenceHMMState getLexState() {
         return this;
     }
@@ -307,6 +311,7 @@ public abstract class SentenceHMMState implements Serializable, SearchState {
      *
      * @return true if the state is an emitting state
      */
+    @Override
     public boolean isEmitting() {
         return false;
     }
@@ -317,6 +322,7 @@ public abstract class SentenceHMMState implements Serializable, SearchState {
      *
      * @return true if this is a final state
      */
+    @Override
     public boolean isFinal() {
         return (fields & MASK_IS_FINAL) == MASK_IS_FINAL;
     }
@@ -349,6 +355,7 @@ public abstract class SentenceHMMState implements Serializable, SearchState {
     /** Dumps this SentenceHMMState and all its successors. Just for debugging. */
     public void dumpAll() {
         visitStates(new SentenceHMMStateVisitor() {
+            @Override
             public boolean visit(SentenceHMMState state) {
                 state.dump();
                 return false;
@@ -405,6 +412,7 @@ public abstract class SentenceHMMState implements Serializable, SearchState {
 
 
     /** Returns the string representation of this object */
+    @Override
     public String toString() {
         if (cachedName == null) {
             StringBuilder sb = new StringBuilder();
@@ -436,6 +444,7 @@ public abstract class SentenceHMMState implements Serializable, SearchState {
     *
     * @return a pretty string
     */
+    @Override
     public String toPrettyString() {
         return toString();
     }
@@ -464,6 +473,7 @@ public abstract class SentenceHMMState implements Serializable, SearchState {
      *
      * @return the signature
      */
+    @Override
     public String getSignature() {
         return getFullName();
     }
@@ -559,6 +569,7 @@ public abstract class SentenceHMMState implements Serializable, SearchState {
 
             TreeSet<SentenceHMMState> sortedStates = new TreeSet<SentenceHMMState>(new Comparator<SentenceHMMState>() {
 
+                @Override
                 public int compare(SentenceHMMState o1, SentenceHMMState o2) {
                     SentenceHMMState so1 = o1;
                     SentenceHMMState so2 = o2;
@@ -660,6 +671,7 @@ public abstract class SentenceHMMState implements Serializable, SearchState {
      *
      * @return the state order for this state
      */
+    @Override
     abstract public int getOrder();
 }
 

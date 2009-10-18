@@ -49,6 +49,7 @@ public class PooledBatchManager implements BatchManager {
 
 
     /** Starts processing the batch */
+    @Override
     public void start() throws IOException {
 
         // redirect standard out to a file
@@ -68,6 +69,7 @@ public class PooledBatchManager implements BatchManager {
      * @return the next available batch item
      * @throws IOException if an I/O error occurs while reading the next item from the batch file.
      */
+    @Override
     public BatchItem getNextItem() throws IOException {
         lock();
         try {
@@ -95,6 +97,7 @@ public class PooledBatchManager implements BatchManager {
 
 
     /** Stops processing the batch */
+    @Override
     public void stop() throws IOException {
     }
 
@@ -104,6 +107,7 @@ public class PooledBatchManager implements BatchManager {
      *
      * @return the filename
      */
+    @Override
     public String getFilename() {
         return batchFile;
     }
@@ -252,6 +256,7 @@ public class PooledBatchManager implements BatchManager {
 /** Filter that only yields filenames that are integer numbers */
 class TestFileFilter implements FileFilter {
 
+    @Override
     public boolean accept(File pathname) {
         String name = pathname.getName();
         try {

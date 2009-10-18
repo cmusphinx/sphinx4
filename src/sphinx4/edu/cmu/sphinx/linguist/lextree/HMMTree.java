@@ -919,6 +919,7 @@ class Node {
      *
      * @return the string representation of the object
      */
+    @Override
     public String toString() {
         return "Node ";
     }
@@ -979,6 +980,7 @@ class WordNode extends Node {
      *
      * @return the set of successor nodes
      */
+    @Override
     Collection<Node> getSuccessors() {
         throw new Error("Not supported");
     }
@@ -989,6 +991,7 @@ class WordNode extends Node {
      *
      * @return a string representation
      */
+    @Override
     public String toString() {
         return "WordNode " + pronunciation + " p " +
                 getUnigramProbability();
@@ -1129,6 +1132,7 @@ class HMMNode extends UnitNode {
      *
      * @return the base unit
      */
+    @Override
     Unit getBaseUnit() {
         // return hmm.getUnit().getBaseUnit();
         return hmm.getBaseUnit();
@@ -1145,11 +1149,13 @@ class HMMNode extends UnitNode {
     }
 
 
+    @Override
     HMMPosition getPosition() {
         return hmm.getPosition();
     }
 
 
+    @Override
     HMM getKey() {
         return getHMM();
     }
@@ -1160,6 +1166,7 @@ class HMMNode extends UnitNode {
      *
      * @return a string representation
      */
+    @Override
     public String toString() {
         return "HMMNode " + hmm + " p " + getUnigramProbability();
     }
@@ -1177,6 +1184,7 @@ class HMMNode extends UnitNode {
 
 
     /** Freeze this node. Convert the set into an array to reduce memory overhead */
+    @Override
     @SuppressWarnings({"unchecked"})
     void freeze() {
         super.freeze();
@@ -1244,6 +1252,7 @@ class EndNode extends UnitNode {
      *
      * @return the base unit
      */
+    @Override
     Unit getBaseUnit() {
         return baseUnit;
     }
@@ -1259,11 +1268,13 @@ class EndNode extends UnitNode {
     }
 
 
+    @Override
     Integer getKey() {
         return key;
     }
 
 
+    @Override
     HMMPosition getPosition() {
         return HMMPosition.END;
     }
@@ -1274,12 +1285,14 @@ class EndNode extends UnitNode {
      *
      * @return a string representation
      */
+    @Override
     public String toString() {
         return "EndNode base:" + baseUnit + " lc " + leftContext + ' ' + key;
     }
 
 
     /** Freeze this node. Convert the set into an array to reduce memory overhead */
+    @Override
     void freeze() {
         super.freeze();
     }

@@ -96,6 +96,7 @@ public class BeamFinder implements ResultListener,
     *
     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
     */
+    @Override
     public void newProperties(PropertySheet ps) throws PropertyException {
         initRecognizer((Recognizer) ps.getComponent(PROP_RECOGNIZER));
         logMath = (LogMath) ps.getComponent(PROP_LOG_MATH);
@@ -130,6 +131,7 @@ public class BeamFinder implements ResultListener,
 
 
     /** Resets the beam statistics */
+    @Override
     public void reset() {
         maxAbsoluteBeam = 0;
         avgAbsoluteBeam = 0;
@@ -149,6 +151,7 @@ public class BeamFinder implements ResultListener,
     *
     * @see edu.cmu.sphinx.decoder.ResultListener#newResult(edu.cmu.sphinx.result.Result)
     */
+    @Override
     public void newResult(Result result) {
         if (enabled) {
             process(result);
@@ -158,6 +161,7 @@ public class BeamFinder implements ResultListener,
         }
     }
 
+    @Override
     public void statusChanged(Recognizer.State status) {
         if (enabled && status == State.DEALLOCATED) {
             if (showSummary) {
@@ -373,6 +377,7 @@ class TokenRank {
      *
      * @return the string representation of this object
      */
+    @Override
     public String toString() {
         return "Rank[" + absoluteRank + ',' + relativeRank + ']';
     }

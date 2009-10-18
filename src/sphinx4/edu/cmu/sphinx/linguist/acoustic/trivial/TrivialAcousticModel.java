@@ -40,6 +40,7 @@ public class TrivialAcousticModel implements AcousticModel {
     private int rightContextSize;
 
 
+    @Override
     public void newProperties(PropertySheet ps) throws PropertyException {
         // get acoustic model configuration data from the sphinx
         // properties
@@ -69,6 +70,7 @@ public class TrivialAcousticModel implements AcousticModel {
      *
      * @return the name of this AcousticModel, or null if it has no name
      */
+    @Override
     public String getName() {
         return name;
     }
@@ -79,6 +81,7 @@ public class TrivialAcousticModel implements AcousticModel {
      *
      * @return the properties of this acoustic model
      */
+    @Override
     public Properties getProperties() {
         return new Properties();
     }
@@ -94,6 +97,7 @@ public class TrivialAcousticModel implements AcousticModel {
      * @param exactMatch if true, only an exact match is acceptable.
      * @return the HMM that best matches, or null if no match could be found.
      */
+    @Override
     public HMM lookupNearestHMM(Unit unit, HMMPosition position,
                                 boolean exactMatch) {
         HMM hmm = null;
@@ -111,6 +115,7 @@ public class TrivialAcousticModel implements AcousticModel {
      * @return an iterator that can be used to iterate through all HMMs in the model. The iterator returns objects of
      *         type <code>HMM</code>.
      */
+    @Override
     public Iterator<HMM> getHMMIterator() {
         return hmmMap.values().iterator();
     }
@@ -122,6 +127,7 @@ public class TrivialAcousticModel implements AcousticModel {
      * @return an iterator that can be used to iterate through all CI units. The iterator returns objects of type
      *         <code>Unit</code>
      */
+    @Override
     public Iterator<Unit> getContextIndependentUnitIterator() {
         return hmmMap.keySet().iterator();
     }
@@ -132,6 +138,7 @@ public class TrivialAcousticModel implements AcousticModel {
      *
      * @return the left context size
      */
+    @Override
     public int getLeftContextSize() {
         return leftContextSize;
     }
@@ -142,6 +149,7 @@ public class TrivialAcousticModel implements AcousticModel {
      *
      * @return the left context size
      */
+    @Override
     public int getRightContextSize() {
         return rightContextSize;
     }
@@ -163,6 +171,7 @@ public class TrivialAcousticModel implements AcousticModel {
     /* (non-Javadoc)
     * @see edu.cmu.sphinx.linguist.acoustic.AcousticModel#allocate()
     */
+    @Override
     public void allocate() throws IOException {
 
     }
@@ -171,6 +180,7 @@ public class TrivialAcousticModel implements AcousticModel {
     /* (non-Javadoc)
     * @see edu.cmu.sphinx.linguist.acoustic.AcousticModel#deallocate()
     */
+    @Override
     public void deallocate() {
 
     }
@@ -212,6 +222,7 @@ class TrivialHMM implements HMM {
      *
      * @return the unit associated with this HMM
      */
+    @Override
     public Unit getUnit() {
         return unit;
     }
@@ -222,6 +233,7 @@ class TrivialHMM implements HMM {
      *
      * @return the unit associated with this HMM
      */
+    @Override
     public Unit getBaseUnit() {
         return baseUnit;
     }
@@ -232,6 +244,7 @@ class TrivialHMM implements HMM {
      *
      * @param which the state of interest
      */
+    @Override
     public HMMState getState(int which) {
         return hmmStates[which];
     }
@@ -242,6 +255,7 @@ class TrivialHMM implements HMM {
      *
      * @return the order of the HMM
      */
+    @Override
     public int getOrder() {
         return hmmStates.length;
     }
@@ -252,6 +266,7 @@ class TrivialHMM implements HMM {
      *
      * @return the position for this HMM
      */
+    @Override
     public HMMPosition getPosition() {
         return position;
     }
@@ -262,6 +277,7 @@ class TrivialHMM implements HMM {
      *
      * @return the set of arcs that transition to the initial states for this HMM
      */
+    @Override
     public HMMState getInitialState() {
         return hmmStates[0];
     }
@@ -289,6 +305,7 @@ class TrivialHMMState implements HMMState {
      *
      * @return the HMM
      */
+    @Override
     public HMM getHMM() {
         return hmm;
     }
@@ -299,6 +316,7 @@ class TrivialHMMState implements HMMState {
      *
      * @return the state
      */
+    @Override
     public int getState() {
         return which;
     }
@@ -310,6 +328,7 @@ class TrivialHMMState implements HMMState {
      * @param feature the feature to be scored
      * @return the acoustic score for this state.
      */
+    @Override
     public float getScore(Data feature) {
         return 0.0f;
     }
@@ -320,6 +339,7 @@ class TrivialHMMState implements HMMState {
      *
      * @return true if the state is an emitting state
      */
+    @Override
     public boolean isEmitting() {
         return !isFinal;
     }
@@ -330,6 +350,7 @@ class TrivialHMMState implements HMMState {
      *
      * @return the set of successor state arcs
      */
+    @Override
     public HMMStateArc[] getSuccessors() {
         if (isFinal) {
             return EMPTY_ARC;
@@ -347,6 +368,7 @@ class TrivialHMMState implements HMMState {
      *
      * @return true if the state is an exit state
      */
+    @Override
     public boolean isExitState() {
         return isFinal;
     }

@@ -103,6 +103,7 @@ public class MelFrequencyFilterBank extends BaseDataProcessor {
     *
     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
     */
+    @Override
     public void newProperties(PropertySheet ps) throws PropertyException {
         super.newProperties(ps);
         minFreq = ps.getDouble(PROP_MIN_FREQ);
@@ -116,6 +117,7 @@ public class MelFrequencyFilterBank extends BaseDataProcessor {
     *
     * @see edu.cmu.sphinx.frontend.DataProcessor#initialize(edu.cmu.sphinx.frontend.CommonConfig)
     */
+    @Override
     public void initialize() {
         super.initialize();
     }
@@ -284,6 +286,7 @@ public class MelFrequencyFilterBank extends BaseDataProcessor {
      * @return the next available Data or Signal object, or returns null if no Data is available
      * @throws DataProcessingException if there is a data processing error
      */
+    @Override
     public Data getData() throws DataProcessingException {
         Data input = getPredecessor().getData();
         getTimer().start();

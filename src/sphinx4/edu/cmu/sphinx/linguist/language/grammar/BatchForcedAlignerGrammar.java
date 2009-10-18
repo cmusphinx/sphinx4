@@ -34,6 +34,7 @@ public class BatchForcedAlignerGrammar extends ForcedAlignerGrammar implements G
     *
     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
     */
+    @Override
     public void newProperties(PropertySheet ps) throws PropertyException {
         super.newProperties(ps);
 
@@ -41,6 +42,7 @@ public class BatchForcedAlignerGrammar extends ForcedAlignerGrammar implements G
     }
 
 
+    @Override
     protected GrammarNode createGrammar() {
         // TODO: FlatLinguist requires the initial grammar node
         // to contain a single silence. We'll do that for now,
@@ -76,6 +78,7 @@ public class BatchForcedAlignerGrammar extends ForcedAlignerGrammar implements G
     }
 
 
+    @Override
     public GrammarNode getInitialNode() {
         return initialNode;
     }

@@ -52,6 +52,7 @@ public class GDLDumper extends LinguistDumper {
     *
     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
     */
+    @Override
     public void newProperties(PropertySheet ps) throws PropertyException {
         super.newProperties(ps);
         verticalLayout = ps.getBoolean(
@@ -79,6 +80,7 @@ public class GDLDumper extends LinguistDumper {
      *
      * @param out the output stream.
      */
+    @Override
     protected void startDump(PrintStream out) {
         out.println("graph: {");
         out.println("    layout_algorithm: minbackward");
@@ -99,6 +101,7 @@ public class GDLDumper extends LinguistDumper {
      *
      * @param out the output stream.
      */
+    @Override
     protected void endDump(PrintStream out) {
         out.println("}");
     }
@@ -111,6 +114,7 @@ public class GDLDumper extends LinguistDumper {
      * @param state the state to dump
      * @param level the level of the state
      */
+    @Override
     protected void startDumpNode(PrintStream out, SearchState state, int level) {
 
         if (skipHMMs && (state instanceof HMMSearchState)) {
@@ -154,6 +158,7 @@ public class GDLDumper extends LinguistDumper {
      * @param state the state to dump
      * @param level the level of the state
      */
+    @Override
     protected void endDumpNode(PrintStream out, SearchState state, int level) {
     }
 
@@ -166,6 +171,7 @@ public class GDLDumper extends LinguistDumper {
      * @param arc   the arc to dump
      * @param level the level of the state
      */
+    @Override
     protected void dumpArc(PrintStream out, SearchState from,
                            SearchStateArc arc, int level) {
         List<SearchStateArc> arcList = new ArrayList<SearchStateArc>();

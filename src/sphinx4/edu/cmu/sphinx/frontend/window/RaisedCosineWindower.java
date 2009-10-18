@@ -148,6 +148,7 @@ public class RaisedCosineWindower extends BaseDataProcessor {
      * @throws DataProcessingException if a data processing error occurred
      * @see Data
      */
+    @Override
     public Data getData() throws DataProcessingException {
 
         if (outputQueue.isEmpty()) {

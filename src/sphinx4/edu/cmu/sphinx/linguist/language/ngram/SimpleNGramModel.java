@@ -60,6 +60,7 @@ public class SimpleNGramModel implements LanguageModel {
     private boolean allocated;
 
 
+    @Override
     public Logger getLogger() {
         return logger;
     }
@@ -70,6 +71,7 @@ public class SimpleNGramModel implements LanguageModel {
     *
     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
     */
+    @Override
     public void newProperties(PropertySheet ps) throws PropertyException {
 
 
@@ -94,6 +96,7 @@ public class SimpleNGramModel implements LanguageModel {
     *
     * @see edu.cmu.sphinx.linguist.language.ngram.LanguageModel#allocate()
     */
+    @Override
     public void allocate() throws IOException {
         allocated = true;
         load(format, urlLocation, unigramWeight, dictionary);
@@ -110,6 +113,7 @@ public class SimpleNGramModel implements LanguageModel {
     *
     * @see edu.cmu.sphinx.linguist.language.ngram.LanguageModel#deallocate()
     */
+    @Override
     public void deallocate() {
         allocated = false;
     }
@@ -126,11 +130,13 @@ public class SimpleNGramModel implements LanguageModel {
 
 
     /** Called before a recognition */
+    @Override
     public void start() {
     }
 
 
     /** Called after a recognition */
+    @Override
     public void stop() {
     }
 
@@ -141,6 +147,7 @@ public class SimpleNGramModel implements LanguageModel {
      * @param wordSequence the word sequence
      * @return the probability of the word sequence. Probability is in logMath log base
      */
+    @Override
     public float getProbability(WordSequence wordSequence) {
         float logProbability = 0.0f;
         Probability prob = getProb(wordSequence);
@@ -168,6 +175,7 @@ public class SimpleNGramModel implements LanguageModel {
      * @param wordSequence the word sequence
      * @return the smear term associated with this word sequence
      */
+    @Override
     public float getSmear(WordSequence wordSequence) {
         return 0.0f; // TODO not implemented
     }
@@ -194,6 +202,7 @@ public class SimpleNGramModel implements LanguageModel {
      *
      * @return the maximum depth of the language model
      */
+    @Override
     public int getMaxDepth() {
         return maxNGram;
     }
@@ -204,6 +213,7 @@ public class SimpleNGramModel implements LanguageModel {
      *
      * @return the unmodifiable set of words
      */
+    @Override
     public Set<String> getVocabulary() {
         return Collections.unmodifiableSet(vocabulary);
     }
@@ -464,6 +474,7 @@ class Probability {
      *
      * @return the string form of this object
      */
+    @Override
     public String toString() {
         return "Prob: " + logProbability + ' ' + logBackoff;
     }

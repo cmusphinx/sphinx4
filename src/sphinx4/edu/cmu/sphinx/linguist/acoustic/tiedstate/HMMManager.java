@@ -62,6 +62,7 @@ public class HMMManager implements Iterable<HMM> {
      *
      * @return an iterator that iterates through all HMMs
      */
+    @Override
     public Iterator<HMM> iterator() {
         return allHMMs.iterator();
     }

@@ -769,6 +769,7 @@ public class PropertySheet implements Cloneable {
      * Returns true if two property sheet define the same object in terms of configuration. The owner (and the parent
      * configuration manager) are not expected to be the same.
      */
+    @Override
     public boolean equals(Object obj) {
         if (obj == null || !(obj instanceof PropertySheet))
             return false;
@@ -781,6 +782,7 @@ public class PropertySheet implements Cloneable {
         return true;
     }
 
+    @Override
     public int hashCode() {
   	  	assert false : "hashCode not designed";
   	  	return 1; // any arbitrary constant will do 

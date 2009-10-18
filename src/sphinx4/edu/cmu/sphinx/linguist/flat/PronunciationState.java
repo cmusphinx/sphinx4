@@ -52,6 +52,7 @@ public class PronunciationState extends SentenceHMMState implements        WordS
      *
      * @return the pronunciation
      */
+    @Override
     public Pronunciation getPronunciation() {
         return pronunciation;
     }
@@ -63,6 +64,7 @@ public class PronunciationState extends SentenceHMMState implements        WordS
      *
      * @return the short label.
      */
+    @Override
     public String getTypeLabel() {
         return "Pron";
     }
@@ -73,6 +75,7 @@ public class PronunciationState extends SentenceHMMState implements        WordS
      *
      * @return the state order
      */
+    @Override
     public int getOrder() {
         return 4;
     }
@@ -85,6 +88,7 @@ public class PronunciationState extends SentenceHMMState implements        WordS
      * @return true if this PronunciationState indicates the start of a word, false if this PronunciationState indicates
      *         the end of a word
      */
+    @Override
     public boolean isWordStart() {
         return true;
     }

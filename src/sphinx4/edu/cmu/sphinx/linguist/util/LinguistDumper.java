@@ -41,6 +41,7 @@ public class LinguistDumper extends LinguistProcessor {
     *
     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
     */
+    @Override
     public void newProperties(PropertySheet ps) throws PropertyException {
         super.newProperties(ps);
         filename = ps.getString(PROP_FILENAME);
@@ -48,6 +49,7 @@ public class LinguistDumper extends LinguistProcessor {
 
 
     /** Dumps the search space hmm in GDL format */
+    @Override
     public void run() {
         try {
             FileOutputStream fos = new FileOutputStream(filename);
@@ -258,6 +260,7 @@ class StateLevel {
      *
      * @return a string representation
      */
+    @Override
     public String toString() {
         return String.valueOf(level) + ' ' + state.getSignature() + " 1 "
                 + getTypeLabel(state);

@@ -39,6 +39,7 @@ public class Context implements Serializable {
 
 
     /** Provides a string representation of a context */
+    @Override
     public String toString() {
         return "";
     }
@@ -50,6 +51,7 @@ public class Context implements Serializable {
      * @param o the object to check
      * @return true if the objects are equal
      */
+    @Override
     public boolean equals(Object o) {
         if (this == o) {
             return true;
@@ -68,6 +70,7 @@ public class Context implements Serializable {
      *
      * @return the hashcode for this object
      */
+    @Override
     public int hashCode() {
         return toString().hashCode();
     }

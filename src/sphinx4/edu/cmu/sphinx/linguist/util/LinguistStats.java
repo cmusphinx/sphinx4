@@ -21,6 +21,7 @@ public class LinguistStats extends LinguistProcessor {
     private final Map<Class, Integer> stateCountByType = new HashMap<Class, Integer>();
 
     /** Dumps the stats of the linguist */
+    @Override
     public void run() {
         Linguist linguist = getLinguist();
         List<SearchState> queue = new LinkedList<SearchState>();

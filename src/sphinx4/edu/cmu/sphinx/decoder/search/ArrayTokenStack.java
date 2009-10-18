@@ -36,6 +36,7 @@ public class ArrayTokenStack implements TokenStack {
      * @param newToken the new Token to add
      * @return the replaced Token, or null if no Token was replaced
      */
+    @Override
     public Token add(Token newToken) {
         Token lowestToken = null;
         int lowestTokenIndex = -1;
@@ -79,6 +80,7 @@ public class ArrayTokenStack implements TokenStack {
      * @param score the score the check
      * @return true if the given score is higher than the lowest scoring token, false otherwise
      */
+    @Override
     public boolean isInsertable(float score, int frameNumber) {
         for (Token token : stack) {
             if (token == null ||
@@ -96,12 +98,14 @@ public class ArrayTokenStack implements TokenStack {
      *
      * @return the capacity of this TokenStack
      */
+    @Override
     public int getCapacity() {
         return stack.length;
     }
 
 
     /** Removes all of the Tokens from this TokenStack */
+    @Override
     public void clear() {
         for (int i = 0; i < stack.length; i++) {
             stack[i] = null;

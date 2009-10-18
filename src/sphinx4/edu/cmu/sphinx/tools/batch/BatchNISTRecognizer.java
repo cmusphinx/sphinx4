@@ -95,6 +95,7 @@ public class BatchNISTRecognizer extends BatchModeRecognizer {
     *
     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
     */
+    @Override
     public void newProperties(PropertySheet ps) throws PropertyException {
         logger = ps.getLogger();
         //cm = ps.getPropertyManager();
@@ -231,11 +232,13 @@ public class BatchNISTRecognizer extends BatchModeRecognizer {
         }
 
 
+        @Override
         public boolean hasNext() {
             return utterance != null;
         }
 
 
+        @Override
         public CTLUtterance next() {
             CTLUtterance u = utterance;
             utterance = nextUtterance();
@@ -243,6 +246,7 @@ public class BatchNISTRecognizer extends BatchModeRecognizer {
         }
 
 
+        @Override
         public void remove() {
             throw new Error("Not implemented");
         }

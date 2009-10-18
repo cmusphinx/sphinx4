@@ -28,6 +28,7 @@ public class FrontEndSplitter extends BaseDataProcessor implements DataProducer 
     public FrontEndSplitter() {
     }
 
+    @Override
     public void newProperties(PropertySheet ps) throws PropertyException {
         super.newProperties(ps);
 
@@ -46,6 +47,7 @@ public class FrontEndSplitter extends BaseDataProcessor implements DataProducer 
      * @throws edu.cmu.sphinx.frontend.DataProcessingException
      *          if there is a data processing error
      */
+    @Override
     public Data getData() throws DataProcessingException {
         Data input = getPredecessor().getData();
 
@@ -56,6 +58,7 @@ public class FrontEndSplitter extends BaseDataProcessor implements DataProducer 
     }
 
 
+    @Override
     public void addDataListener(DataListener l) {
         if (l == null) {
             return;
@@ -64,6 +67,7 @@ public class FrontEndSplitter extends BaseDataProcessor implements DataProducer 
     }
 
 
+    @Override
     public void removeDataListener(DataListener l) {
         if (l == null) {
             return;

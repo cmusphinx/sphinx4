@@ -169,6 +169,7 @@ public class SimpleBreadthFirstSearchManager implements SearchManager {
         this.logRelativeWordBeamWidth = logMath.linearToLog(relativeWordBeamWidth);
     }
 
+    @Override
     public void newProperties(PropertySheet ps) throws PropertyException {
         logger = ps.getLogger();
         name = ps.getInstanceName();
@@ -189,6 +190,7 @@ public class SimpleBreadthFirstSearchManager implements SearchManager {
 
 
     /** Called at the start of recognition. Gets the search manager ready to recognize */
+    @Override
     public void startRecognition() {
         logger.finer("starting recognition");
 
@@ -208,6 +210,7 @@ public class SimpleBreadthFirstSearchManager implements SearchManager {
      * @param nFrames the number of frames to recognize
      * @return the current result or null if there is no Result (due to the lack of frames to recognize)
      */
+    @Override
     public Result recognize(int nFrames) {
         boolean done = false;
         Result result = null;
@@ -265,6 +268,7 @@ public class SimpleBreadthFirstSearchManager implements SearchManager {
 
 
     /** Terminates a recognition */
+    @Override
     public void stopRecognition() {
         localStop();
         scorer.stopRecognition();
@@ -616,6 +620,7 @@ public class SimpleBreadthFirstSearchManager implements SearchManager {
     *
     * @see edu.cmu.sphinx.decoder.search.SearchManager#allocate()
     */
+    @Override
     public void allocate() {
         totalTokensScored = StatisticsVariable
                 .getStatisticsVariable("totalTokensScored");
@@ -649,6 +654,7 @@ public class SimpleBreadthFirstSearchManager implements SearchManager {
     *
     * @see edu.cmu.sphinx.decoder.search.SearchManager#deallocate()
     */
+    @Override
     public void deallocate() {
         scorer.deallocate();
         pruner.deallocate();

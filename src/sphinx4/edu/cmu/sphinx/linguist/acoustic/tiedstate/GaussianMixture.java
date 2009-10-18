@@ -61,6 +61,7 @@ public class GaussianMixture implements Senone, Cloneable {
      *
      * @param msg annotation message
      */
+    @Override
     public void dump(String msg) {
         System.out.println(msg + " GaussianMixture: " + logLastScore);
     }
@@ -74,6 +75,7 @@ public class GaussianMixture implements Senone, Cloneable {
      * @param feature the feature to score
      * @return the score, in logMath log base, for the feature
      */
+    @Override
     public float getScore(Data feature) {
         float logScore;
 
@@ -94,6 +96,7 @@ public class GaussianMixture implements Senone, Cloneable {
      * @param o the object to compare to this.
      * @return true if the objects are equal
      */
+    @Override
     public boolean equals(Object o) {
         if (!(o instanceof Senone)) {
             return false;
@@ -108,6 +111,7 @@ public class GaussianMixture implements Senone, Cloneable {
      *
      * @return the hashcode
      */
+    @Override
     public int hashCode() {
         long id = getID();
         int high = (int) ((id >> 32));
@@ -121,6 +125,7 @@ public class GaussianMixture implements Senone, Cloneable {
      *
      * @return the senone id
      */
+    @Override
     public long getID() {
         return id;
     }
@@ -131,6 +136,7 @@ public class GaussianMixture implements Senone, Cloneable {
      *
      * @return the string representation of this object
      */
+    @Override
     public String toString() {
         return "senone id: " + getID();
     }
@@ -167,6 +173,7 @@ public class GaussianMixture implements Senone, Cloneable {
      * @param feature the feature to score
      * @return the LogMath log scores for the feature, one for each component
      */
+    @Override
     public float[] calculateComponentScore(Data feature) {
         if (feature instanceof DoubleData)
             System.err.println("DoubleData conversion required on mixture level!");

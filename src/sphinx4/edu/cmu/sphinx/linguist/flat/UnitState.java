@@ -73,6 +73,7 @@ public class UnitState extends SentenceHMMState implements UnitSearchState {
      *
      * @return the unit
      */
+    @Override
     public Unit getUnit() {
         return unit;
     }
@@ -93,6 +94,7 @@ public class UnitState extends SentenceHMMState implements UnitSearchState {
      *
      * @return the name for this state
      */
+    @Override
     public String getName() {
         return super.getName() + '<' + unit + '>';
     }
@@ -103,6 +105,7 @@ public class UnitState extends SentenceHMMState implements UnitSearchState {
      *
      * @return the value signature
      */
+    @Override
     public String getValueSignature() {
         return unit.toString();
     }
@@ -113,6 +116,7 @@ public class UnitState extends SentenceHMMState implements UnitSearchState {
      *
      * @return the pretty name
      */
+    @Override
     public String getPrettyName() {
         return unit.toString();
     }
@@ -124,6 +128,7 @@ public class UnitState extends SentenceHMMState implements UnitSearchState {
      *
      * @return the short label.
      */
+    @Override
     public String getTypeLabel() {
         return "Unit";
     }
@@ -161,6 +166,7 @@ public class UnitState extends SentenceHMMState implements UnitSearchState {
     }
 
 
+    @Override
     public boolean isUnit() {
         return true;
     }
@@ -171,6 +177,7 @@ public class UnitState extends SentenceHMMState implements UnitSearchState {
      *
      * @return the state order
      */
+    @Override
     public int getOrder() {
         return 5;
     }

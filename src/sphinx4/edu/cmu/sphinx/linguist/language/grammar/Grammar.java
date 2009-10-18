@@ -80,6 +80,7 @@ public abstract class Grammar implements Configurable, GrammarInterface {
     *
     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
     */
+    @Override
     public void newProperties(PropertySheet ps) throws PropertyException {
         logger = ps.getLogger();
         showGrammar = ps.getBoolean(PROP_SHOW_GRAMMAR);
@@ -117,6 +118,7 @@ public abstract class Grammar implements Configurable, GrammarInterface {
      *
      * @return the initial grammar node
      */
+    @Override
     public GrammarNode getInitialNode() {
         return initialNode;
     }
@@ -294,6 +296,7 @@ public abstract class Grammar implements Configurable, GrammarInterface {
      *
      * @return the set of nodes
      */
+    @Override
     public Set<GrammarNode> getGrammarNodes() {
         return grammarNodes;
     }

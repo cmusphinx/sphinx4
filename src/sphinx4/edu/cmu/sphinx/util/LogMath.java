@@ -76,6 +76,7 @@ public final class LogMath implements Configurable, Serializable {
     }
 
 
+    @Override
     public void newProperties(PropertySheet ps) throws PropertyException {
         logger = ps.getLogger();
 

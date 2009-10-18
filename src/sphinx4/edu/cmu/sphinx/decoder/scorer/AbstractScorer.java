@@ -39,6 +39,7 @@ public abstract class AbstractScorer extends ConfigurableAdapter implements Acou
     public AbstractScorer() {
     }
 
+    @Override
     public void newProperties(PropertySheet ps) throws PropertyException {
         super.newProperties(ps);
         this.frontEnd = (BaseDataProcessor) ps.getComponent(FEATURE_FRONTEND);
@@ -63,6 +64,7 @@ public abstract class AbstractScorer extends ConfigurableAdapter implements Acou
      * @param scoreableList A list containing scoreable objects to be scored
      * @return The best scoring scoreable, or <code>null</code> if there are no more features to score
      */
+    @Override
     public Data calculateScores(List<? extends Scoreable> scoreableList) {
 
     	try {
@@ -130,6 +132,7 @@ public abstract class AbstractScorer extends ConfigurableAdapter implements Acou
     }
 
 
+    @Override
     public void startRecognition() {
         if (useSpeechSignals == null) {
             Data firstData = getNextData();
@@ -155,6 +158,7 @@ public abstract class AbstractScorer extends ConfigurableAdapter implements Acou
     }
 
 
+    @Override
     public void stopRecognition() {
         // nothing needs to be done here
     }
@@ -173,10 +177,12 @@ public abstract class AbstractScorer extends ConfigurableAdapter implements Acou
     // Even if we don't do any meaningful allocation here, we implement the methods because
     // most extending scorers do need them either.
     
+    @Override
     public void allocate() {
     }
 
 
+    @Override
     public void deallocate() {
     }
 }

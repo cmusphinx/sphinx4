@@ -213,6 +213,7 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
     *
     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
     */
+    @Override
     public void newProperties(PropertySheet ps) throws PropertyException {
         logMath = (LogMath) ps.getComponent(PROP_LOG_MATH);
         logger = ps.getLogger();
@@ -240,6 +241,7 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
     *
     * @see edu.cmu.sphinx.decoder.search.SearchManager#allocate()
     */
+    @Override
     public void allocate() {
         // tokenTracker = new TokenTracker();
         // tokenTypeTracker = new TokenTypeTracker();
@@ -267,6 +269,7 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
     *
     * @see edu.cmu.sphinx.decoder.search.SearchManager#deallocate()
     */
+    @Override
     public void deallocate() {
         scorer.deallocate();
         pruner.deallocate();
@@ -275,6 +278,7 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
 
 
     /** Called at the start of recognition. Gets the search manager ready to recognize */
+    @Override
     public void startRecognition() {
         linguist.startRecognition();
         pruner.startRecognition();
@@ -289,6 +293,7 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
      * @param nFrames the number of frames to recognize
      * @return the current result
      */
+    @Override
     public Result recognize(int nFrames) {
         boolean done = false;
         Result result = null;
@@ -359,6 +364,7 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
 
 
     /** Terminates a recognition */
+    @Override
     public void stopRecognition() {
         localStop();
         scorer.stopRecognition();
@@ -1026,12 +1032,14 @@ class SinglePathThroughHMMKey {
     }
 
 
+    @Override
     public int hashCode() {
         return hmmSearchState.getLexState().hashCode() * 13
                 + hmmSearchState.getWordHistory().hashCode();
     }
 
 
+    @Override
     public boolean equals(Object o) {
         if (this == o) {
             return true;
@@ -1239,6 +1247,7 @@ class WordTracker {
 class WordStats {
 
     public final static Comparator<WordStats> COMPARATOR = new Comparator<WordStats>() {
+        @Override
         public int compare(WordStats ws1, WordStats ws2) {
             if (ws1.maxScore > ws2.maxScore) {
                 return -1;
@@ -1289,6 +1298,7 @@ class WordStats {
      *
      * @return a string representation
      */
+    @Override
     public String toString() {
         return "states:" + size + " max:" + maxScore + " min:" + minScore + ' '
                 + ws;

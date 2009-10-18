@@ -45,10 +45,12 @@ public class FrameDecoder extends AbstractDecoder implements DataProcessor {
      * @param referenceText the reference text (or null)
      * @return a result
      */
+    @Override
     public Result decode(String referenceText) {
         return searchManager.recognize(1);
     }
 
+    @Override
     public Data getData() throws DataProcessingException {
         Data d = getPredecessor().getData();
 
@@ -86,16 +88,19 @@ public class FrameDecoder extends AbstractDecoder implements DataProcessor {
     }
 
 
+    @Override
     public DataProcessor getPredecessor() {
         return predecessor;
     }
 
 
+    @Override
     public void setPredecessor(DataProcessor predecessor) {
         this.predecessor = predecessor;
     }
 
 
+    @Override
     public void initialize() {
     }
 

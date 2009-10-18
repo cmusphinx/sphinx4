@@ -39,6 +39,7 @@ public class SpeechStartSignal extends Signal {
      *
      * @return the string "SpeechStartSignal"
      */
+    @Override
     public String toString() {
         return "SpeechStartSignal";
     }

@@ -146,6 +146,7 @@ public class ConfusionSet extends TreeMap<Double, Set<WordResult>> {
     }
 
 
+    @Override
     public String toString() {
         StringBuilder b = new StringBuilder();
         for (Map.Entry<Double, Set<WordResult>> entry : entrySet()) {

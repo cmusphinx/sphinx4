@@ -85,6 +85,7 @@ public class ConfigurableProperty {
      *
      * @return Description of this property
      */
+    @Override
     public String toString(){
         StringBuilder output = new StringBuilder("\nProperty name: ").append(_name).append(' ');
         if (_default != null && !_default.isEmpty())

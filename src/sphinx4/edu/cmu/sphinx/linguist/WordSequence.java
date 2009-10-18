@@ -193,6 +193,7 @@ public final class WordSequence {
      *
      * @return the string
      */
+    @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         for (Word word : words)
@@ -206,6 +207,7 @@ public final class WordSequence {
      *
      * @return a hascode for this object
      */
+    @Override
     public int hashCode() {
         if (hashCode == -1) {
             int code = 123;
@@ -224,6 +226,7 @@ public final class WordSequence {
      * @param o the object to compare this to
      * @return true if the given object is equal to this object
      */
+    @Override
     public boolean equals(Object o) {
         if (this == o) {
             return true;

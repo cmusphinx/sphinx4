@@ -13,6 +13,7 @@ import java.util.List;
 public class MaxScoreNormalizer implements ScoreNormalizer {
 
 
+    @Override
     public void newProperties(PropertySheet ps) throws PropertyException {
     }
 
@@ -20,6 +21,7 @@ public class MaxScoreNormalizer implements ScoreNormalizer {
     }
 
 
+    @Override
     public Scoreable normalize(List<? extends Scoreable> scoreableList, Scoreable bestToken) {
         for (Scoreable scoreable : scoreableList) {
             scoreable.normalizeScore(bestToken.getScore());

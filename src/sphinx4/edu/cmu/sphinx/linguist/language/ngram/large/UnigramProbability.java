@@ -44,6 +44,7 @@ class UnigramProbability {
      *
      * @return the string form of this object
      */
+    @Override
     public String toString() {
         return "Prob: " + logProbability + ' ' + logBackoff;
     }

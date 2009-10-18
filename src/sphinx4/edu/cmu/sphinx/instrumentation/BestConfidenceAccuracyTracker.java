@@ -43,6 +43,7 @@ public class BestConfidenceAccuracyTracker extends AccuracyTracker {
     *
     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
     */
+    @Override
     public void newProperties(PropertySheet ps) throws PropertyException {
         super.newProperties(ps);
         confidenceScorer = (ConfidenceScorer)ps.getComponent(PROP_CONFIDENCE_SCORER);
@@ -53,6 +54,7 @@ public class BestConfidenceAccuracyTracker extends AccuracyTracker {
     *
     * @see edu.cmu.sphinx.decoder.ResultListener#newResult(edu.cmu.sphinx.result.Result)
     */
+    @Override
     public void newResult(Result result) {
         NISTAlign aligner = getAligner();
         String ref = result.getReferenceText();

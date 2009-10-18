@@ -83,12 +83,14 @@ public class SimpleWordResult implements WordResult {
 
 
     /** @see edu.cmu.sphinx.result.WordResult#getScore() */
+    @Override
     public double getScore() {
         return score;
     }
 
 
     /** @see edu.cmu.sphinx.result.WordResult#getConfidence() */
+    @Override
     public double getConfidence() {
         if (confidence > LogMath.getLogOne()) {
             return LogMath.getLogOne();
@@ -99,24 +101,28 @@ public class SimpleWordResult implements WordResult {
 
 
     /** @see edu.cmu.sphinx.result.WordResult#getLogMath() */
+    @Override
     public LogMath getLogMath() {
         return logMath;
     }
 
 
     /** @see edu.cmu.sphinx.result.WordResult#getPronunciation() */
+    @Override
     public Pronunciation getPronunciation() {
         return word.getMostLikelyPronunciation();
     }
 
 
     /** @see edu.cmu.sphinx.result.WordResult#getStartFrame() */
+    @Override
     public int getStartFrame() {
         return startFrame;
     }
 
 
     /** @see edu.cmu.sphinx.result.WordResult#getEndFrame() */
+    @Override
     public int getEndFrame() {
         return endFrame;
     }
@@ -127,12 +133,14 @@ public class SimpleWordResult implements WordResult {
      *
      * @return the word stored here as a string
      */
+    @Override
     public String toString() {
         return word.toString();
     }
 
 
     /** @see edu.cmu.sphinx.result.WordResult#getDataFrames() */
+    @Override
     public Data[] getDataFrames() {
         // TODO not yet implemented
         return null;
@@ -140,6 +148,7 @@ public class SimpleWordResult implements WordResult {
 
 
     /** @see edu.cmu.sphinx.result.WordResult#isFiller() */
+    @Override
     public boolean isFiller() {
         return word.isFiller() || word.toString().equals("<noop>");
     }

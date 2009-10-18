@@ -67,6 +67,7 @@ public class MemoryTracker
     *
     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
     */
+    @Override
     public void newProperties(PropertySheet ps) throws PropertyException {
         Recognizer newRecognizer = (Recognizer) ps.getComponent(
                 PROP_RECOGNIZER);
@@ -130,12 +131,14 @@ public class MemoryTracker
     *
     * @see edu.cmu.sphinx.decoder.ResultListener#newResult(edu.cmu.sphinx.result.Result)
     */
+    @Override
     public void newResult(Result result) {
         if (result.isFinal()) {
             calculateMemoryUsage(showDetails);
         }
     }
 
+    @Override
     public void statusChanged(Recognizer.State status) {
         if (status == State.DEALLOCATED) {
             calculateMemoryUsage(showSummary);

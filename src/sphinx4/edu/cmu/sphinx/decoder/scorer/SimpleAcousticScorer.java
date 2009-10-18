@@ -38,6 +38,7 @@ public class SimpleAcousticScorer extends AbstractScorer {
     public SimpleAcousticScorer() {       
     }
 
+    @Override
     protected Data doScoring(List<? extends Scoreable> scoreableList, Data data) {
         Scoreable best;
         best = scoreableList.get(0);

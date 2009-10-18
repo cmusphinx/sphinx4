@@ -27,12 +27,14 @@ public class ForcedAlignerGrammar extends Grammar {
 
 
     /** Create class from reference text (not implemented). */
+    @Override
     protected GrammarNode createGrammar() {
         throw new Error("Not implemented");
     }
 
 
     /** Creates the grammar */
+    @Override
     protected GrammarNode createGrammar(String referenceText)
             throws NoSuchMethodException {
 

@@ -105,6 +105,7 @@ public class SpeechMarker extends BaseDataProcessor {
 
 
     /** Initializes this SpeechMarker */
+    @Override
     public void initialize() {
         super.initialize();
         reset();
@@ -124,6 +125,7 @@ public class SpeechMarker extends BaseDataProcessor {
      * @return the next Data object, or null if none available
      * @throws DataProcessingException if a data processing error occurs
      */
+    @Override
     public Data getData() throws DataProcessingException {
         while (outputQueue.size() < speechLeaderFrames) {
             Data audio = readData();
