@@ -179,7 +179,7 @@
     <component name="classMap" type="edu.cmu.sphinx.linguist.language.classes.ClassMap">
         <property name="logMath" value="logMath"/>
         <property name="classDefsLocation"
-                  value="resource:/edu.cmu.sphinx.demo.classbased.ClassBased!/edu/cmu/sphinx/demo/classbased/uniform-classdefs"/>
+                  value="resource:/edu.cmu.sphinx.demo.classbased.ClassBased!/edu/cmu/sphinx/demo/classbased/classdefs.txt"/>
     </component>
 
     <component name="wordClassModel" type="edu.cmu.sphinx.linguist.language.classes.ClassBasedLanguageModel">
@@ -199,7 +199,7 @@
     </component>
 
     <component name="interpolatedLanguageModel"
-               type="edu.cmu.sphinx.linguist.language.classes.InterpolatedLanguageModel">
+               type="edu.cmu.sphinx.linguist.language.ngram.InterpolatedLanguageModel">
         <property name="logMath" value="logMath"/>
         <propertylist name="languageModels">
             <item>trigramModel</item>

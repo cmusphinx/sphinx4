@@ -17,7 +17,7 @@
 -->
 
 <html>
-  <head><title>Sphinx-4 Hello Digits Demo</title></head>
+  <head><title>Sphinx-4 Classbased Language Model Demo</title></head>
   <style TYPE="text/css">
   pre { font-size: medium; background: #f0f8ff; padding: 2mm; 
         border-style: ridge ; color: teal }
@@ -29,7 +29,7 @@
      <table bgcolor="#99CCFF" width="100%">
 	<tr>
 	  <td align=center width="100%">
-	    <h1><i>Sphinx-4</i> Hello Digits Demo</h1>
+	    <h1><i>Sphinx-4</i> Classbased Language Model Demo</h1>
 	  </td>
 	</tr>
       </table>
@@ -37,46 +37,54 @@
     </font>
 
     <font face="Arial" size="2">      
+    <p>
+    This is a simple command line program illustrating the use of class-based language models.
+    <p>
+    When you start up the demo program the following will show:
+    </p>
+    </font>
+<pre>
+Loading Recognizer...
+
+Sample sentences:
+
+one ticket to boston
+two tickets to washington for tuesday
+
+Start speaking. Press Ctrl-C to quit.
+
+one ticket to boston
+</pre>
+
+    <font face="Arial" size="2">
+    <p>
+    The language model describing this recognizer is class-based.
       <p>
-      This is a simple command line program that shows how to
-      write a simple Sphinx-4 application that recognizes connected
-      digits, using a BNF-style grammar. When you run the demo,
-      the following will show up, just start saying numbers.
+      The code for this demo is in 
+      <a href="ClassBased.java">ClassBased.java</a>.
       </p>
-      <pre>
-Say any digit(s): e.g. "two oh oh four", "three six five".
-Start speaking. Press Ctrl-C to quit.
 
-You said: one two three four
-
-Start speaking. Press Ctrl-C to quit.
-
-You said: four five six nine
-
-Start speaking. Press Ctrl-C to quit.
-      </pre>
       <h3>Building</h3>
       <p>
-      Check the <code>bin</code> directory to see if it has the
-      <code>HelloDigits.jar</code> file. If not, type the following in a 
-      shell from the Sphinx-4 top level directory:
+      Check the <code>bin</code> directory to see if it has the file
+      <code>ClassBased.jar</code>. If not, type the following at the top level
+      directory:
       </p>
+      <p>
       <code>ant -find demo.xml</code>
-      
+      </p>
       <h3>Running</h3>
       <p>
-      First make sure that you have
-      <a href="../../../../../../../doc/jsapi_setup.html">JSAPI setup</a> correctly. 
-      Then, to run the demo, go to the <b>top level directory</b> and type: 
+      To run the demo, type:
       </p>
-      <code>
-      sphinx4> java -jar bin/HelloDigits.jar</code>
-      </code>
-      <p>
-      <font color="FF0000"><b>NOTE:</b></font> 
+      <code>sphinx4> java -mx200m -jar bin/ClassBased.jar</code>
+      <p><font color="FF0000"><b>NOTE:</b></font> 
       <ol>
       <li>
-      Make sure that you are using Java<sup>TM</sup> 2 SDK, Standard Edition,
+      Make sure that you give it a large enough heap by putting in "-mx200m".
+      </li>
+      <li>
+      Make sure that you are using Java<sup>TM</sup> 2 SDK, Standard Edition, 
       v1.4 or higher.
       </li>
       <li>

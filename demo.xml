@@ -80,6 +80,7 @@
 	             compile_sphinx_hellodigits,
 		     compile_sphinx_hellongram,
 		     compile_sphinx_lattice,
+		     compile_sphinx_classbased,
 		     compile_sphinx_confidence,
 	             compile_jsapi_dialog,
 	             compile_jsapi_jsgf,
@@ -400,5 +401,31 @@
              compress="true"/>
     </target>
 
+    <target name="compile_sphinx_classbased">
+	<mkdir dir="${demo_classes_dir}/edu/cmu/sphinx/demo/classbased"/>
+	<javac debug="true"
+	       listfiles="true"
+	       deprecation="true"
+	       srcdir="${demo_src_dir}"
+	       includes="edu/cmu/sphinx/demo/classbased/**"
+	       destdir="${demo_classes_dir}">
+	    <classpath refid="libs"/>
+	</javac>
+	<copy file="${demo_src_dir}/edu/cmu/sphinx/demo/classbased/sample.trigram.lm"
+	      todir="${demo_classes_dir}/edu/cmu/sphinx/demo/classbased"/>
+	<copy file="${demo_src_dir}/edu/cmu/sphinx/demo/classbased/sample-with-classes.trigram.lm"
+	      todir="${demo_classes_dir}/edu/cmu/sphinx/demo/classbased"/>
+	<copy file="${demo_src_dir}/edu/cmu/sphinx/demo/classbased/classdefs.txt"
+	      todir="${demo_classes_dir}/edu/cmu/sphinx/demo/classbased"/>
+	<copy file="${demo_src_dir}/edu/cmu/sphinx/demo/classbased/classbased.config.xml"
+	      todir="${demo_classes_dir}/edu/cmu/sphinx/demo/classbased"/>
+	<mkdir dir="${bin_dir}"/>
+        <jar destfile="${bin_dir}/ClassBased.jar" 
+	     manifest="${demo_src_dir}/edu/cmu/sphinx/demo/classbased/classbased.Manifest"
+	     basedir="${demo_classes_dir}"
+	     includes="edu/cmu/sphinx/demo/classbased/**"
+	     filesonly="true"
+	     compress="true"/>
+    </target>
 
 </project>
