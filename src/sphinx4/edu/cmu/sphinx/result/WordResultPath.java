@@ -14,6 +14,7 @@
 
 package edu.cmu.sphinx.result;
 
+import edu.cmu.sphinx.linguist.dictionary.Word;
 import edu.cmu.sphinx.util.LogMath;
 
 import java.util.Iterator;
@@ -92,13 +93,23 @@ public class WordResultPath implements Path {
         StringBuilder sb = new StringBuilder();
         for (WordResult wr : path)
             sb.append(wr).append(' ');
-        if (!path.isEmpty())
-            sb.setLength(sb.length() - 1);
-        return sb.toString();
+        return sb.toString().trim();
     }
 
+    /** @see edu.cmu.sphinx.result.Path#getTranscriptionNoFiller() */
+    public String getTranscriptionNoFiller() {
+        StringBuilder sb = new StringBuilder();
+        for (WordResult wordResult : path) {
+            Word word = wordResult.getPronunciation().getWord();
+            if (!word.isFiller() && !word.getSpelling().equals("<unk>")) {
+                sb.append(word.getSpelling()).append(' ');
+            }
+        }
+        return sb.toString().trim();
+    }
 
     public void add(WordResult wr) {
         path.add(wr);
     }
+
 }

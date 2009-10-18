@@ -10,7 +10,6 @@
  */
 package edu.cmu.sphinx.instrumentation;
 
-import edu.cmu.sphinx.linguist.dictionary.Word;
 import edu.cmu.sphinx.result.*;
 import edu.cmu.sphinx.util.NISTAlign;
 import edu.cmu.sphinx.util.props.*;
@@ -49,37 +48,6 @@ public class BestConfidenceAccuracyTracker extends AccuracyTracker {
         confidenceScorer = (ConfidenceScorer)ps.getComponent(PROP_CONFIDENCE_SCORER);
     }
 
-
-    /** Gets the transcription with no fillers and no "<unk>".
-     * @param path
-     * @return*/
-    protected String getTranscriptionNoFiller(Path path) {
-        StringBuilder sb = new StringBuilder();
-        WordResult[] words = path.getWords();
-        for (WordResult wordResult : words) {
-            Word word = wordResult.getPronunciation().getWord();
-            if (!word.isFiller() && !word.getSpelling().equals("<unk>")) {
-                sb.append(word.getSpelling()).append(' ');
-            }
-        }
-        return sb.toString().trim();
-    }
-
-
-    /** Gets the raw transcription
-     * @param path
-     * @return*/
-    protected String getTranscriptionRaw(Path path) {
-        StringBuilder sb = new StringBuilder();
-        WordResult[] words = path.getWords();
-        for (WordResult wordResult : words) {
-            Word word = wordResult.getPronunciation().getWord();
-            sb.append(word.getSpelling()).append(' ');
-        }
-        return sb.toString().trim();
-    }
-
-
     /*
     * (non-Javadoc)
     *
@@ -96,11 +64,11 @@ public class BestConfidenceAccuracyTracker extends AccuracyTracker {
                     ConfidenceResult confidenceResult =
                             confidenceScorer.score(result);
                     bestPath = confidenceResult.getBestHypothesis();
-                    hyp = getTranscriptionNoFiller(bestPath);
+                    hyp = bestPath.getTranscriptionNoFiller();
                 }
                 aligner.align(ref, hyp);
                 if (bestPath != null) {
-                    showDetails(getTranscriptionRaw(bestPath));
+                    showDetails(bestPath.getTranscription());
                 } else {
                     showDetails("");
                 }

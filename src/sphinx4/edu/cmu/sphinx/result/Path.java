@@ -62,8 +62,16 @@ public interface Path {
      */
     public String getTranscription();
 
+    /**
+     * Gets the transcription of the path skipping the filler words
+     *
+     * @return the transcription of the path without fillers.
+     */    
+    public String getTranscriptionNoFiller();
 
     /** Returns a string representation of this object */
     public String toString();
+
+
 }
 
