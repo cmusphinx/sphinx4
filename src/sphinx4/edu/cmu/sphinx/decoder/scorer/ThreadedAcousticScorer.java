@@ -21,7 +21,6 @@ import edu.cmu.sphinx.util.props.S4Integer;
 
 import java.util.List;
 import java.util.ListIterator;
-import java.util.logging.Logger;
 
 /**
  * An acoustic scorer that breaks the scoring up into a configurable number of separate threads.

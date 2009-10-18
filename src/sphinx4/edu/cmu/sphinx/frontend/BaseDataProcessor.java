@@ -14,11 +14,8 @@
 package edu.cmu.sphinx.frontend;
 
 import edu.cmu.sphinx.util.props.ConfigurableAdapter;
-import edu.cmu.sphinx.util.props.PropertySheet;
 import edu.cmu.sphinx.util.Timer;
 import edu.cmu.sphinx.util.TimerPool;
-
-import java.util.logging.Logger;
 
 /**
  * An abstract DataProcessor implementing elements common to all concrete DataProcessors, such as name, predecessor, and

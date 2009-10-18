@@ -21,7 +21,6 @@ import edu.cmu.sphinx.util.props.S4Integer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.logging.Logger;
 
 /**
  * Converts a stream of SpeechClassifiedData objects, marked as speech and non-speech, and mark out the regions that are

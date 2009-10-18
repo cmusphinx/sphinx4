@@ -19,8 +19,6 @@ import edu.cmu.sphinx.frontend.DoubleData;
 import edu.cmu.sphinx.util.Complex;
 import edu.cmu.sphinx.util.props.*;
 
-import java.util.logging.Logger;
-
 
 /**
  * Computes the Discrete Fourier Transform (FT) of an input sequence, using Fast Fourier Transform (FFT). Fourier

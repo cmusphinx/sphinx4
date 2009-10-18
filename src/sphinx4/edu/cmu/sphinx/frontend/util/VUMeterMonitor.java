@@ -1,14 +1,9 @@
 package edu.cmu.sphinx.frontend.util;
 
 import edu.cmu.sphinx.frontend.*;
-import edu.cmu.sphinx.util.props.ConfigurationManager;
-import edu.cmu.sphinx.util.props.PropertyException;
-import edu.cmu.sphinx.util.props.PropertySheet;
-import edu.cmu.sphinx.util.props.RawPropertyData;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.logging.Logger;
 
 /**
  * A VU meter to be plugged into a front-end. Preferably this component should be plugged directly behind the

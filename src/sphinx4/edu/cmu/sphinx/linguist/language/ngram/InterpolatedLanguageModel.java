@@ -4,7 +4,6 @@
 package edu.cmu.sphinx.linguist.language.ngram;
 
 import edu.cmu.sphinx.linguist.WordSequence;
-import edu.cmu.sphinx.linguist.language.ngram.LanguageModel;
 import edu.cmu.sphinx.util.LogMath;
 import edu.cmu.sphinx.util.props.*;
 

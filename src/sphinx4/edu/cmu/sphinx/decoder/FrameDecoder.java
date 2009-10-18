@@ -19,7 +19,6 @@ import edu.cmu.sphinx.result.Result;
 import edu.cmu.sphinx.decoder.search.SearchManager;
 import edu.cmu.sphinx.util.props.Configurable;
 
-import java.util.logging.Logger;
 import java.util.List;
 
 

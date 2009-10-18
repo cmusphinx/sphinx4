@@ -16,7 +16,6 @@ import edu.cmu.sphinx.frontend.Data;
 import edu.cmu.sphinx.frontend.BaseDataProcessor;
 
 import java.util.List;
-import java.util.logging.Logger;
 
 
 /**

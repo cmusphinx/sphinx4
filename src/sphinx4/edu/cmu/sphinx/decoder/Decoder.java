@@ -19,7 +19,6 @@ import edu.cmu.sphinx.util.props.S4Integer;
 import edu.cmu.sphinx.util.props.Configurable;
 import edu.cmu.sphinx.decoder.search.SearchManager;
 
-import java.util.logging.Logger;
 import java.util.List;
 
 /** The primary decoder class */

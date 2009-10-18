@@ -12,7 +12,6 @@ import edu.cmu.sphinx.util.props.S4Component;
 
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
 
 /**
  * Implements some basic scorer functionality but keeps specific scoring open for sub-classes.

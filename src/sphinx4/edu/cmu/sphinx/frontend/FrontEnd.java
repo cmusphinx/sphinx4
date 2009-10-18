@@ -18,7 +18,6 @@ import edu.cmu.sphinx.util.props.PropertySheet;
 import edu.cmu.sphinx.util.props.S4ComponentList;
 
 import java.util.*;
-import java.util.logging.Logger;
 
 /**
  * FrontEnd is a wrapper class for the chain of front end processors. It provides methods for manipulating and

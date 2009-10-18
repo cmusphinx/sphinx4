@@ -17,8 +17,6 @@ import edu.cmu.sphinx.frontend.*;
 import edu.cmu.sphinx.util.props.PropertyException;
 import edu.cmu.sphinx.util.props.PropertySheet;
 
-import java.util.logging.Logger;
-
 
 /**
  * Given a sequence of Data, filters out the non-speech regions. The sequence of Data should have the speech and
