@@ -1,15 +1,4 @@
-src/apps/edu/cmu/sphinx/demo/jsapi/cardmatch/README.html
-src/apps/edu/cmu/sphinx/demo/jsapi/cardmatch/package.html
-src/apps/edu/cmu/sphinx/demo/jsapi/dialog/README.html
-src/apps/edu/cmu/sphinx/demo/jsapi/jsgf/README.html
-src/apps/edu/cmu/sphinx/demo/jsapi/tags/README.html
-src/apps/edu/cmu/sphinx/demo/hellodigits/README.html
-src/apps/edu/cmu/sphinx/demo/hellongram/README.html
 src/apps/edu/cmu/sphinx/demo/hellongram/hellongram.test
-src/apps/edu/cmu/sphinx/demo/helloworld/README.html
-src/apps/edu/cmu/sphinx/demo/transcriber/README.html
-src/apps/edu/cmu/sphinx/demo/wavfile/README.html
-src/apps/edu/cmu/sphinx/demo/zipcity/README.html
 src/apps/edu/cmu/sphinx/demo/zipcity/screenshot.gif
 doc-files/zipcity.gif
 doc-files/architecture.gif
