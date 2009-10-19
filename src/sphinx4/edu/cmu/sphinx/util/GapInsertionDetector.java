@@ -95,12 +95,12 @@ public class GapInsertionDetector {
                     gaps++;
                     if (showGapInsertions) {
                         log.append("GapInsError: Utterance: ").append(hypothesisFile.getUtteranceCount())
-                            .append(" Word: ").append(word.getText()).append(" (")
-                            .append(word.getStartTime()).append(',').append(word.getEndTime()).append("). ");
+                                .append(" Word: ").append(word.getText()).append(" (")
+                                .append(word.getStartTime()).append(',').append(word.getEndTime()).append("). ");
                         if (reference != null) {
                             assert reference.isSilenceGap();
                             log.append("Reference: <sil> (").append(reference.getStartTime())
-                                .append(',').append(reference.getEndTime()).append(')');
+                                    .append(',').append(reference.getEndTime()).append(')');
                         }
                         log.append('\n');
                     }
@@ -142,7 +142,9 @@ public class GapInsertionDetector {
     }
 }
 
-/** Creates a ReferenceFile. */
+/**
+ * Creates a ReferenceFile.
+ */
 class ReferenceFile {
 
     private BufferedReader reader;
@@ -173,7 +175,9 @@ class ReferenceFile {
     }
 }
 
-/** Converts a line in the HUB-4 .stm reference file into an object. */
+/**
+ * Converts a line in the HUB-4 .stm reference file into an object.
+ */
 class ReferenceUtterance {
 
     private boolean isSilenceGap;
@@ -296,19 +300,17 @@ class HypothesisFile {
      * @return the next available hypothesis utterance, or null if the end of file has been reached
      */
     private HypothesisUtterance nextUtterance() throws IOException {
-        while (true) {
-            String line = reader.readLine();
-            if (line != null) {
-                utteranceCount++;
-                HypothesisUtterance utterance = new HypothesisUtterance(line);
-                if (utterance.getWordCount() <= 0) {
-
-                } else {
-                    return utterance;
-                }
+        String line = reader.readLine();
+        if (line != null) {
+            utteranceCount++;
+            HypothesisUtterance utterance = new HypothesisUtterance(line);
+            if (utterance.getWordCount() <= 0) {
+                return nextUtterance();
             } else {
-                return null;
+                return utterance;
             }
+        } else {
+            return null;
         }
     }
 
@@ -323,7 +325,9 @@ class HypothesisFile {
     }
 }
 
-/** A hypothesis utterance, which will give you a list of hypothesis words. */
+/**
+ * A hypothesis utterance, which will give you a list of hypothesis words.
+ */
 class HypothesisUtterance {
 
     private final List<HypothesisWord> words;
@@ -331,7 +335,9 @@ class HypothesisUtterance {
     private float endTime;
 
 
-    /** Creates a hypothesis utterance from a line of input describing the hypothesis. */
+    /**
+     * Creates a hypothesis utterance from a line of input describing the hypothesis.
+     */
     HypothesisUtterance(String line) {
         words = new LinkedList<HypothesisWord>();
         StringTokenizer st = new StringTokenizer(line, " \t\n\r\f(),");
@@ -400,7 +406,9 @@ class HypothesisUtterance {
     }
 }
 
-/** A word in the hypothesis, containing information about when the word started and ended. */
+/**
+ * A word in the hypothesis, containing information about when the word started and ended.
+ */
 class HypothesisWord {
 
     private final String text;

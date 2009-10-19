@@ -272,9 +272,8 @@ import java.util.Set;
      *
      * @param fc <code>JFileChooser</code> reference
      * @throws GUIReaderException, GUIWriterException
-     */
+   **/
     private boolean saveFile(JFileChooser fc) throws GUIReaderException, GUIWriterException {
-        while (true) {
             File file = null;
 
             fc.setDialogTitle("Save File");
@@ -297,9 +296,9 @@ import java.util.Set;
                     if (response == JOptionPane.OK_OPTION) {
                         _gm.action(GUIMediator.SAVE, file);
                         return true;
-                    } else // do not overwrite,
-                    {
                     }
+             else // do not overwrite,
+                 return saveFile(fc);
                 } else { // file does not exist
                     _gm.action(GUIMediator.SAVE, file);
                     return true;
@@ -308,7 +307,6 @@ import java.util.Set;
             } else {
                 return false;
             }
-        }
     } // saveFile
 
     
