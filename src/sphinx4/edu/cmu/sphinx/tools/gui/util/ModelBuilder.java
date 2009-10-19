@@ -16,7 +16,6 @@ package edu.cmu.sphinx.tools.gui.util;
 
 import edu.cmu.sphinx.tools.gui.ConfigProperties;
 import edu.cmu.sphinx.tools.gui.GUIFileActionListener;
-import edu.cmu.sphinx.tools.gui.RawPropertyData;
 import edu.cmu.sphinx.util.props.*;
 
 import java.io.*;

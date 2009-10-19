@@ -30,9 +30,8 @@ public class SaxLoader {
 
     private final URL url;
     private final Map<String, RawPropertyData> rpdMap;
-    private final GlobalProperties globalProperties;
+    private final Map<String, String> globalProperties;
     private final boolean replaceDuplicates;
-
 
     /**
      * Creates a loader that will load from the given location
@@ -42,17 +41,22 @@ public class SaxLoader {
      * @param initRPD
      * @param replaceDuplicates
      */
-    public SaxLoader(URL url, GlobalProperties globalProperties, Map<String, RawPropertyData> initRPD, boolean replaceDuplicates) {
+    public SaxLoader(URL url, Map<String, String> globalProperties, Map<String, RawPropertyData> initRPD, boolean replaceDuplicates) {
         this.url = url;
         this.globalProperties = globalProperties;
         this.replaceDuplicates = replaceDuplicates;
-
-        if (initRPD == null)
-            rpdMap = new HashMap<String, RawPropertyData>();
-        else
-            rpdMap = initRPD;
+        this.rpdMap = initRPD == null ? new HashMap<String, RawPropertyData>() : initRPD;
     }
 
+    /**
+     * Creates a loader that will load from the given location
+     *
+     * @param url the location to load
+     * @param globalProperties the map of global properties
+     */
+    public SaxLoader(URL url, Map<String, String> globalProperties) {
+        this(url, globalProperties, null, false);
+    }
 
     /**
      * Loads a set of configuration data from the location
@@ -64,16 +68,14 @@ public class SaxLoader {
         try {
             SAXParserFactory factory = SAXParserFactory.newInstance();
             XMLReader xr = factory.newSAXParser().getXMLReader();
-//            ConfigHandler handler = new ConfigHandler(rpdMap, globalProperties);
-            IncludingConfigHandler handler = new IncludingConfigHandler(rpdMap, globalProperties, replaceDuplicates, url);
+            ConfigHandler handler = new ConfigHandler(rpdMap, globalProperties, replaceDuplicates, url);
             xr.setContentHandler(handler);
             xr.setErrorHandler(handler);
             InputStream is = url.openStream();
             xr.parse(new InputSource(is));
             is.close();
         } catch (SAXParseException e) {
-            String msg = "Error while parsing line " + e.getLineNumber()
-                    + " of " + url + ": " + e.getMessage();
+            String msg = "Error while parsing line " + e.getLineNumber() + " of " + url + ": " + e.getMessage();
             throw new IOException(msg);
         } catch (SAXException e) {
             throw new IOException("Problem with XML: " + e);

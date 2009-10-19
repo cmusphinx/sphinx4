@@ -20,7 +20,7 @@ public class ConfigurationManager implements Cloneable {
 
     private Map<String, PropertySheet> symbolTable = new LinkedHashMap<String, PropertySheet>();
     private Map<String, RawPropertyData> rawPropertyMap = new HashMap<String, RawPropertyData>();
-    private GlobalProperties globalProperties = new GlobalProperties();
+    private Map<String, String> globalProperties = new HashMap<String, String>();
 
     private boolean showCreations;
     private URL configURL;
@@ -53,10 +53,9 @@ public class ConfigurationManager implements Cloneable {
      */
     public ConfigurationManager(URL url) throws PropertyException {
         configURL = url;
-        SaxLoader saxLoader = new SaxLoader(url, globalProperties, null, false);
-
+        
         try {
-            rawPropertyMap = saxLoader.load();
+            rawPropertyMap = new SaxLoader(url, globalProperties).load();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -66,9 +65,9 @@ public class ConfigurationManager implements Cloneable {
 
         // we can't config the configuration manager with itself so we
         // do some of these config items manually.
-        GlobalProperty showCreations = globalProperties.get("showCreations");
+        String showCreations = globalProperties.get("showCreations");
         if (showCreations != null)
-            this.showCreations = "true".equals(showCreations.getValue());
+            this.showCreations = "true".equals(showCreations);
     }
 
 
@@ -347,8 +346,8 @@ public class ConfigurationManager implements Cloneable {
 
 
     /** Returns a copy of the map of global properties set for this configuration manager. */
-    public GlobalProperties getGlobalProperties() {
-        return new GlobalProperties(globalProperties);
+    public Map<String, String> getGlobalProperties() {
+        return new HashMap<String, String>(globalProperties);
     }
 
 
@@ -359,12 +358,12 @@ public class ConfigurationManager implements Cloneable {
      */
     public String getGlobalProperty(String propertyName) {
 //        propertyName = propertyName.startsWith("$") ? propertyName : "${" + propertyName + "}";
-        GlobalProperty globProp = globalProperties.get(propertyName);
+        String globProp = globalProperties.get(propertyName);
         return globProp != null ? globProp.toString() : null;
     }
 
 
-    public GlobalProperty getGloPropReference(String propertyName) {
+    public String getGloPropReference(String propertyName) {
         return globalProperties.get(propertyName);
     }
 
@@ -389,7 +388,7 @@ public class ConfigurationManager implements Cloneable {
         if (value == null)
             globalProperties.remove(propertyName);
         else
-            globalProperties.setValue(propertyName, value);
+            globalProperties.put(propertyName, value);
 
         // update all component configurations because they might be affected by the change
         for (String instanceName : getInstanceNames(Configurable.class)) {
@@ -503,7 +502,7 @@ public class ConfigurationManager implements Cloneable {
             cloneCM.symbolTable.put(entry.getKey(), entry.getValue().clone());
         }
 
-        cloneCM.globalProperties = new GlobalProperties(globalProperties);
+        cloneCM.globalProperties = new HashMap<String, String>(globalProperties);
         cloneCM.rawPropertyMap = new HashMap<String, RawPropertyData>(rawPropertyMap);
 
 

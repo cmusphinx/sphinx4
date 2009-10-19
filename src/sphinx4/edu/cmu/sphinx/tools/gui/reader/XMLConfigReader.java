@@ -15,7 +15,7 @@
 package edu.cmu.sphinx.tools.gui.reader;
 
 import edu.cmu.sphinx.tools.gui.ConfigProperties;
-import edu.cmu.sphinx.tools.gui.RawPropertyData;
+import edu.cmu.sphinx.util.props.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -88,7 +88,7 @@ public class XMLConfigReader implements GUIReader {
                URL url = fFile.toURI().toURL();
                
                Map<String, String> global = new HashMap<String, String>();
-               Map<String, RawPropertyData> pm = loader(url, global);
+               Map<String, RawPropertyData> pm = new SaxLoader(url, global).load();
                ConfigProperties cp = new ConfigProperties ();
                cp.setGlobal(global);
                cp.setProperty(pm);
@@ -99,21 +99,4 @@ public class XMLConfigReader implements GUIReader {
             }
         }
     }
-
-      /**
-     * Loads the configuration data from the given url and adds the info to the
-     * symbol table. Throws an <code>IOexception</code> if there is a problem loading the
-     * table. Note that this only performs a partial populating of the symbol
-     * table entry
-     * 
-     * @param url
-     *                the url to load from
-     * @throws IOException
-     *                 if an error occurs while loading the symbol table
-     */
-    private Map<String, RawPropertyData> loader(URL url, Map<String, String> global) throws IOException {
-        SaxLoader saxLoader = new SaxLoader(url, global);
-        return saxLoader.load();
-    }
-    
 }

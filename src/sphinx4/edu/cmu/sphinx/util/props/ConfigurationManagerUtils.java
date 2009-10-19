@@ -247,8 +247,8 @@ public final class ConfigurationManagerUtils {
 
         Pattern pattern = Pattern.compile("\\$\\{(\\w+)\\}");
 
-        GlobalProperties globalProps = cm.getGlobalProperties();
-        for (Map.Entry<String, GlobalProperty> entry : globalProps.entrySet()) {
+        Map<String, String> globalProps = cm.getGlobalProperties();
+        for (Map.Entry<String,String> entry : globalProps.entrySet()) {
             String propName = entry.getKey();
 
             Matcher matcher = pattern.matcher(propName);
@@ -367,7 +367,7 @@ public final class ConfigurationManagerUtils {
      * @param global global properies
      * @throws PropertyException if an attempt is made to set a parameter for an unknown component.
      */
-    static void applySystemProperties(Map<String, RawPropertyData> rawMap, GlobalProperties global)
+    static void applySystemProperties(Map<String, RawPropertyData> rawMap, Map<String, String> global)
             throws PropertyException {
         Properties props = System.getProperties();
         for (Enumeration e = props.keys(); e.hasMoreElements();) {
@@ -398,7 +398,7 @@ public final class ConfigurationManagerUtils {
 
             else if (param.indexOf('.') == -1) {
 //                String symbolName = "${" + param + "}";
-                global.setValue(param, value);
+                global.put(param, value);
             }
         }
     }
@@ -448,11 +448,8 @@ public final class ConfigurationManagerUtils {
         ps.setInstanceName(newName);
 
         // it might be possible that the component is the value of a global property
-        GlobalProperties globalProps = cm.getGlobalProperties();
-        for (Map.Entry<String, GlobalProperty> entry : globalProps.entrySet()) {
-            String propVal = entry.getValue().toString();
-
-            if (propVal.equals(oldName))
+        for (Map.Entry<String, String> entry : cm.getGlobalProperties().entrySet()) {
+            if (entry.getValue().equals(oldName))
                 cm.setGlobalProperty(entry.getKey(), newName);
         }
     }

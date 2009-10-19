@@ -132,7 +132,7 @@ public class PropertySheet implements Cloneable {
 
     private String flattenProp(String name) {
         Object value = propValues.get(name);
-        return value instanceof String ? (String) value : (value instanceof GlobalProperty ? (String) ((GlobalProperty) value).getValue() : null);
+        return value instanceof String ? (String)value : null;
     }
 
 
@@ -273,7 +273,7 @@ public class PropertySheet implements Cloneable {
         Class expectedType = s4Component.type();
 
         Object propVal = propValues.get(name);
-        if (propVal == null || propVal instanceof String || propVal instanceof GlobalProperty) {
+        if (propVal == null || propVal instanceof String) {
             Configurable configurable = null;
 
             if (propValues.get(name) != null) {

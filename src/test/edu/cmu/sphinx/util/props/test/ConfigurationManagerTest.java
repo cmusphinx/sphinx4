@@ -114,7 +114,7 @@ public class ConfigurationManagerTest {
         Assert.assertNotNull(cm.lookup("processor"));
 
         // test the global properties:
-        Assert.assertTrue("-5".equals(cm.getGlobalProperties().get("myalpha").getValue())); // overridden property
-        Assert.assertEquals("opencards", cm.getGlobalProperties().get("hiddenproductad").getValue()); // preserved property
+        Assert.assertTrue("-5".equals(cm.getGlobalProperties().get("myalpha"))); // overridden property
+        Assert.assertEquals("opencards", cm.getGlobalProperties().get("hiddenproductad")); // preserved property
     }
 }

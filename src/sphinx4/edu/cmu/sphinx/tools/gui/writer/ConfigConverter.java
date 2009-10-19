@@ -15,7 +15,7 @@
 package edu.cmu.sphinx.tools.gui.writer;
 
 import edu.cmu.sphinx.tools.gui.ConfigProperties;
-import edu.cmu.sphinx.tools.gui.RawPropertyData;
+import edu.cmu.sphinx.util.props.RawPropertyData;
 
 import java.util.Map;
 import java.util.List;

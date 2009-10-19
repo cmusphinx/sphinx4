@@ -18,7 +18,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.List;
 
-import edu.cmu.sphinx.tools.gui.RawPropertyData;
+import edu.cmu.sphinx.util.props.RawPropertyData;
 
 /**
  * This class holds information about one configurable class in the Sphinx model

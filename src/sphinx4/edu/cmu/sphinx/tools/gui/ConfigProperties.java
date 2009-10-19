@@ -17,6 +17,8 @@ package edu.cmu.sphinx.tools.gui;
 import java.util.Map;
 import java.util.HashMap;
 
+import edu.cmu.sphinx.util.props.RawPropertyData;
+
 /**
  * This class stores all the configuration information to be written to output
  * and the properties loaded from input file
