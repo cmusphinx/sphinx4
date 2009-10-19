@@ -199,7 +199,7 @@ public class PLPFrequencyFilterBank extends BaseDataProcessor {
 
         if (criticalBandFilter == null ||
                 sampleRate != input.getSampleRate()) {
-            numberFftPoints = (in.length - 1) * 2;
+            numberFftPoints = (in.length - 1) << 1;
             sampleRate = input.getSampleRate();
             buildCriticalBandFilterbank();
             buildEqualLoudnessScalingFactors();

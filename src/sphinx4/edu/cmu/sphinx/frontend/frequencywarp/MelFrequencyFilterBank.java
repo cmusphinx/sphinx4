@@ -257,7 +257,7 @@ public class MelFrequencyFilterBank extends BaseDataProcessor {
         double[] in = input.getValues();
 
         if (filter == null || sampleRate != input.getSampleRate()) {
-            numberFftPoints = (in.length - 1) * 2;
+            numberFftPoints = (in.length - 1) << 1;
             sampleRate = input.getSampleRate();
             buildFilterbank(numberFftPoints, numberFilters, minFreq, maxFreq);
         } else if (in.length != ((numberFftPoints >> 1) + 1)) {

@@ -324,7 +324,7 @@ public class DiscreteFourierTransform extends BaseDataProcessor {
         int fftPoints = 1;
 
         while (fftPoints < numberSamples) {
-            fftPoints *= 2;
+            fftPoints <<= 1;
             if (fftPoints < 1) {
                 throw new Error("Invalid # of FFT points: " + fftPoints);
             }

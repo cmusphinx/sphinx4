@@ -355,7 +355,7 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
      */
     private Map<Object, Object> createBestTokenMap() {
         // int mapSize = activeList.size() * 10;
-        int mapSize = activeList.size() * 4;
+        int mapSize = activeList.size() << 2;
         if (mapSize == 0) {
             mapSize = 1;
         }
