@@ -48,39 +48,57 @@ import java.util.*;
  */
 public class FlatLinguist implements Linguist, Configurable {
 
-    /** A sphinx property used to define the grammar to use when building the search graph */
+    /**
+     * A sphinx property used to define the grammar to use when building the search graph
+     */
     @S4Component(type = Grammar.class)
     public final static String PROP_GRAMMAR = "grammar";
 
-    /** A sphinx property used to define the unit manager to use when building the search graph */
+    /**
+     * A sphinx property used to define the unit manager to use when building the search graph
+     */
     @S4Component(type = UnitManager.class)
     public final static String PROP_UNIT_MANAGER = "unitManager";
 
-    /** A sphinx property used to define the acoustic model to use when building the search graph */
+    /**
+     * A sphinx property used to define the acoustic model to use when building the search graph
+     */
     @S4Component(type = AcousticModel.class)
     public final static String PROP_ACOUSTIC_MODEL = "acousticModel";
-    /** Sphinx property that defines the name of the logmath to be used by this search manager. */
+    /**
+     * Sphinx property that defines the name of the logmath to be used by this search manager.
+     */
 
     @S4Component(type = LogMath.class)
     public final static String PROP_LOG_MATH = "logMath";
 
-    /** Sphinx property used to determine whether or not the gstates are dumped. */
+    /**
+     * Sphinx property used to determine whether or not the gstates are dumped.
+     */
     @S4Boolean(defaultValue = false)
     public final static String PROP_DUMP_GSTATES = "dumpGstates";
 
-    /** Sphinx property that specifies whether to add a branch for detecting out-of-grammar utterances. */
+    /**
+     * Sphinx property that specifies whether to add a branch for detecting out-of-grammar utterances.
+     */
     @S4Boolean(defaultValue = false)
     public final static String PROP_ADD_OUT_OF_GRAMMAR_BRANCH = "addOutOfGrammarBranch";
 
-    /** Sphinx property for the probability of entering the out-of-grammar branch. */
+    /**
+     * Sphinx property for the probability of entering the out-of-grammar branch.
+     */
     @S4Double(defaultValue = 1.0)
     public final static String PROP_OUT_OF_GRAMMAR_PROBABILITY = "outOfGrammarProbability";
 
-    /** Sphinx property for the acoustic model used for the CI phone loop. */
+    /**
+     * Sphinx property for the acoustic model used for the CI phone loop.
+     */
     @S4Component(type = AcousticModel.class)
     public static final String PROP_PHONE_LOOP_ACOUSTIC_MODEL = "phoneLoopAcousticModel";
 
-    /** Sphinx property for the probability of inserting a CI phone in the out-of-grammar ci phone loop */
+    /**
+     * Sphinx property for the probability of inserting a CI phone in the out-of-grammar ci phone loop
+     */
     @S4Double(defaultValue = 1.0)
     public static final String PROP_PHONE_INSERTION_PROBABILITY = "phoneInsertionProbability";
 
@@ -91,7 +109,9 @@ public class FlatLinguist implements Linguist, Configurable {
     @S4Boolean(defaultValue = false)
     public final static String PROP_SHOW_COMPILATION_PROGRESS = "showCompilationProgress";
 
-    /** Property that controls whether word probabilities are spread across all pronunciations. */
+    /**
+     * Property that controls whether word probabilities are spread across all pronunciations.
+     */
     @S4Boolean(defaultValue = false)
     public final static String PROP_SPREAD_WORD_PROBABILITIES_ACROSS_PRONUNCIATIONS =
             "spreadWordProbabilitiesAcrossPronunciations";
@@ -162,6 +182,86 @@ public class FlatLinguist implements Linguist, Configurable {
         return searchGraph;
     }
 
+    /*
+            // hookup to all of the components
+        setupAcousticModel(ps);
+        logMath = (LogMath) ps.getComponent(PROP_LOG_MATH);
+        grammar = (Grammar) ps.getComponent(PROP_GRAMMAR);
+        unitManager = (UnitManager) ps.getComponent(PROP_UNIT_MANAGER);
+
+        // get the rest of the configuration data
+        logWordInsertionProbability = logMath.linearToLog(ps.getDouble(PROP_WORD_INSERTION_PROBABILITY));
+        logSilenceInsertionProbability = logMath.linearToLog(ps.getDouble(PROP_SILENCE_INSERTION_PROBABILITY));
+        logFillerInsertionProbability = logMath.linearToLog(ps.getDouble(PROP_FILLER_INSERTION_PROBABILITY));
+        logUnitInsertionProbability = logMath.linearToLog(ps.getDouble(PROP_UNIT_INSERTION_PROBABILITY));
+        languageWeight = ps.getFloat(Linguist.PROP_LANGUAGE_WEIGHT);
+        dumpGStates = ps.getBoolean(PROP_DUMP_GSTATES);
+        showCompilationProgress = ps.getBoolean(PROP_SHOW_COMPILATION_PROGRESS);
+        spreadWordProbabilitiesAcrossPronunciations = ps.getBoolean(PROP_SPREAD_WORD_PROBABILITIES_ACROSS_PRONUNCIATIONS);
+
+        addOutOfGrammarBranch = ps.getBoolean(PROP_ADD_OUT_OF_GRAMMAR_BRANCH);
+
+        if (addOutOfGrammarBranch) {
+            logOutOfGrammarBranchProbability = logMath.linearToLog
+                    (ps.getDouble(PROP_OUT_OF_GRAMMAR_PROBABILITY));
+            logPhoneInsertionProbability = logMath.linearToLog
+                    (ps.getDouble(PROP_PHONE_INSERTION_PROBABILITY));
+            phoneLoopAcousticModel = (AcousticModel)
+                    ps.getComponent(PROP_PHONE_LOOP_ACOUSTIC_MODEL);
+        }
+
+        name = ps.getInstanceName();
+     */
+    public FlatLinguist(
+            AcousticModel acousticModel,
+            LogMath logMath,
+            Grammar grammar,
+            UnitManager unitManager,
+            double wordInsertionProbability,
+            double silenceInsertionProbability,
+            double fillerInsertionProbability,
+            double unitInsertionProbability,
+            float languageWeight,
+            boolean dumpGStates,
+            boolean showCompilationProgress,
+            boolean spreadWordProbabilitiesAcrossPronunciations,
+            boolean addOutOfGrammarBranch,
+            double outOfGrammarBranchProbability,
+            double phoneInsertionProbability,
+            AcousticModel phoneLoopAcousticModel
+    ) {
+
+        this.acousticModel = acousticModel;
+        this.logMath = logMath;
+        this.grammar = grammar;
+        this.unitManager = unitManager;
+
+        // get the rest of the configuration data
+        this.logWordInsertionProbability = logMath.linearToLog(wordInsertionProbability);
+        this.logSilenceInsertionProbability = logMath.linearToLog(silenceInsertionProbability);
+        this.logFillerInsertionProbability = logMath.linearToLog(fillerInsertionProbability);
+        this.logUnitInsertionProbability = logMath.linearToLog(unitInsertionProbability);
+        this.languageWeight = languageWeight;
+        this.dumpGStates = dumpGStates;
+        this.showCompilationProgress = showCompilationProgress;
+        this.spreadWordProbabilitiesAcrossPronunciations = spreadWordProbabilitiesAcrossPronunciations;
+
+        this.addOutOfGrammarBranch = addOutOfGrammarBranch;
+
+        if (addOutOfGrammarBranch) {
+            this.logOutOfGrammarBranchProbability = logMath.linearToLog
+                    (outOfGrammarBranchProbability);
+            this.logPhoneInsertionProbability = logMath.linearToLog
+                    (phoneInsertionProbability);
+            this.phoneLoopAcousticModel = phoneLoopAcousticModel;
+        }
+
+        this.name = null;
+    }
+
+    public FlatLinguist() {
+
+    }
 
     /*
     * (non-Javadoc)
@@ -205,6 +305,7 @@ public class FlatLinguist implements Linguist, Configurable {
      * Sets up the acoustic model.
      *
      * @param ps the PropertySheet from which to obtain the acoustic model
+     * @throws edu.cmu.sphinx.util.props.PropertyException
      */
     protected void setupAcousticModel(PropertySheet ps)
             throws PropertyException {
@@ -242,7 +343,10 @@ public class FlatLinguist implements Linguist, Configurable {
     }
 
 
-    /** Allocates the acoustic model. */
+    /**
+     * Allocates the acoustic model.
+     * @throws java.io.IOException
+     */
     protected void allocateAcousticModel() throws IOException {
         acousticModel.allocate();
         if (addOutOfGrammarBranch) {
@@ -265,7 +369,9 @@ public class FlatLinguist implements Linguist, Configurable {
     }
 
 
-    /** Called before a recognition */
+    /**
+     * Called before a recognition
+     */
     @Override
     public void startRecognition() {
         if (grammarHasChanged()) {
@@ -275,7 +381,9 @@ public class FlatLinguist implements Linguist, Configurable {
     }
 
 
-    /** Called after a recognition */
+    /**
+     * Called after a recognition
+     */
     @Override
     public void stopRecognition() {
     }
@@ -312,6 +420,7 @@ public class FlatLinguist implements Linguist, Configurable {
      * GrammarJob queue. While there are jobs left on the grammar job queue, a job is removed from the queue and the
      * associated grammar node is expanded and attached to the tails. GrammarJobs for the successors are added to the
      * grammar job queue.
+     * @return
      */
     protected Collection<SentenceHMMState> compileGrammar() {
         initialGrammarState = grammar.getInitialNode();
@@ -386,6 +495,7 @@ public class FlatLinguist implements Linguist, Configurable {
     /**
      * Returns a new GState for the given GrammarNode.
      *
+     * @param grammarNode
      * @return a new GState for the given GrammarNode
      */
     protected GState createGState(GrammarNode grammarNode) {
@@ -393,15 +503,18 @@ public class FlatLinguist implements Linguist, Configurable {
     }
 
 
-    /** Ensures that there is a starting path by adding an empty left context to the strating gstate */
+    /**
+     * Ensures that there is a starting path by adding an empty left context to the strating gstate
+     */
     // TODO: Currently the FlatLinguist requires that the initial
     // grammar node returned by the Grammar contains a "sil" word
     protected void addStartingPath() {
-        addStartingPath( grammar.getInitialNode() );
+        addStartingPath(grammar.getInitialNode());
     }
 
     /**
      * Start the search at the indicated node
+     *
      * @param initialNode
      */
     protected void addStartingPath(GrammarNode initialNode) {
@@ -443,6 +556,7 @@ public class FlatLinguist implements Linguist, Configurable {
      * @param logAcousticProbability  the log acoustic probability
      * @param logLanguageProbability  the log language probability
      * @param logInsertionProbability the log insertion probability
+     * @return
      */
     protected SentenceHMMStateArc getArc(SentenceHMMState nextState,
                                          float logAcousticProbability, float logLanguageProbability,
@@ -473,10 +587,14 @@ public class FlatLinguist implements Linguist, Configurable {
     }
 
 
-    /** The search graph that is produced by the flat linguist. */
+    /**
+     * The search graph that is produced by the flat linguist.
+     */
     protected class FlatSearchGraph implements SearchGraph {
 
-        /** An array of classes that represents the order in which the states will be returned. */
+        /**
+         * An array of classes that represents the order in which the states will be returned.
+         */
         private final SearchState initialState;
 
 
@@ -596,6 +714,7 @@ public class FlatLinguist implements Linguist, Configurable {
         /**
          * Retrieves the set of trailing contexts for this node. the trailing contexts are the set of Unit[] with a size
          * equal to the maximum left context size that align with the end of the node
+         * @return
          */
         Collection<UnitContext> getEndingContexts() {
             Collection<UnitContext> endingContexts = new ArrayList<UnitContext>();
@@ -622,7 +741,9 @@ public class FlatLinguist implements Linguist, Configurable {
         }
 
 
-        /** Visit all of the successor states, and gather their starting contexts into this gstates right context */
+        /**
+         * Visit all of the successor states, and gather their starting contexts into this gstates right context
+         */
         private void pullRightContexts() {
             GrammarArc[] arcs = getSuccessors();
             for (GrammarArc arc : arcs) {
@@ -643,7 +764,9 @@ public class FlatLinguist implements Linguist, Configurable {
         }
 
 
-        /** Visit all of the successor states, and push our ending context into the successors left context */
+        /**
+         * Visit all of the successor states, and push our ending context into the successors left context
+         */
         void pushLeftContexts() {
             Collection<UnitContext> endingContext = getEndingContexts();
             Set<GrammarNode> visitedSet = new HashSet<GrammarNode>();
@@ -655,6 +778,7 @@ public class FlatLinguist implements Linguist, Configurable {
          * Pushes the given left context into the successor states. If a successor state is empty, continue to push into
          * this empty states successors
          *
+         * @param visitedSet
          * @param leftContext the context to push
          */
         void pushLeftContexts(Set<GrammarNode> visitedSet, Collection<UnitContext> leftContext) {
@@ -695,7 +819,11 @@ public class FlatLinguist implements Linguist, Configurable {
         }
 
 
-        /** Returns the entry points for a given context pair */
+        /**
+         * Returns the entry points for a given context pair
+         * @param contextPair
+         * @return
+         */
         private List<SearchState> getEntryPoints(ContextPair contextPair) {
             return entryPoints.get(contextPair);
         }
@@ -715,7 +843,7 @@ public class FlatLinguist implements Linguist, Configurable {
             ContextPair cp = ContextPair.get(UnitContext.SILENCE,
                     UnitContext.SILENCE);
             List<SearchState> list = getEntryPoints(cp);
-            return list == null || list.isEmpty() ? null : (SentenceHMMState)list.get(0);
+            return list == null || list.isEmpty() ? null : (SentenceHMMState) list.get(0);
         }
 
 
@@ -754,6 +882,7 @@ public class FlatLinguist implements Linguist, Configurable {
          *
          * @param list    the list of contexts
          * @param context the context to check
+         * @return
          */
         private boolean listContains(List<Unit[]> list, Unit[] context) {
             for (Unit[] item : list) {
@@ -775,7 +904,9 @@ public class FlatLinguist implements Linguist, Configurable {
         }
 
 
-        /** Expands each GState into the sentence HMM States */
+        /**
+         * Expands each GState into the sentence HMM States
+         */
         public void expand() {
             // for each left context/starting context pair create a list
             // of starting states.
@@ -1083,6 +1214,7 @@ public class FlatLinguist implements Linguist, Configurable {
          * @param left  the entry left context
          * @param units the set of units
          * @param index the index of the current unit
+         * @return
          */
         private Unit[] getLC(UnitContext left, Unit[] units, int index) {
             Unit[] leftUnits = left.getUnits();
@@ -1109,6 +1241,7 @@ public class FlatLinguist implements Linguist, Configurable {
          * @param units the set of units
          * @param index the index of the current unit
          * @param right the exiting right context
+         * @return
          */
         private Unit[] getRC(Unit[] units, int index, UnitContext right) {
             Unit[] rightUnits = right.getUnits();
@@ -1183,6 +1316,7 @@ public class FlatLinguist implements Linguist, Configurable {
          *
          * @param prevLeftContext the previous left context
          * @param unit            the current unit
+         * @return
          */
         UnitContext generateNextLeftContext(UnitContext prevLeftContext,
                                             Unit unit) {
@@ -1318,12 +1452,13 @@ public class FlatLinguist implements Linguist, Configurable {
          *
          * @param sourceList the set of source states
          * @param destList   the set of destinatin states.
+         * @param logLangProb
          */
         private void connect(List<SearchState> sourceList, List<SearchState> destList, float logLangProb) {
             for (SearchState source : sourceList) {
-                SentenceHMMState sourceState = (SentenceHMMState)source;
+                SentenceHMMState sourceState = (SentenceHMMState) source;
                 for (SearchState dest : destList) {
-                    SentenceHMMState destState = (SentenceHMMState)dest;
+                    SentenceHMMState destState = (SentenceHMMState) dest;
                     sourceState.connect(getArc(destState, logOne, logLangProb, logOne));
                     exitConnections++;
                 }
@@ -1390,7 +1525,9 @@ public class FlatLinguist implements Linguist, Configurable {
         }
 
 
-        /** Prints info about this GState */
+        /**
+         * Prints info about this GState
+         */
         void dumpInfo() {
             System.out.println(" ==== " + this + " ========");
             System.out.print("Node: " + node);
@@ -1410,7 +1547,9 @@ public class FlatLinguist implements Linguist, Configurable {
         }
 
 
-        /** Dumps the details for a gstate */
+        /**
+         * Dumps the details for a gstate
+         */
         void dumpDetails() {
             dumpCollection(" entryPoints", entryPoints.keySet());
             dumpCollection(" entryPoints states", entryPoints.values());
@@ -1425,7 +1564,9 @@ public class FlatLinguist implements Linguist, Configurable {
         }
 
 
-        /** Dumps out the names of the next set of grammar nodes */
+        /**
+         * Dumps out the names of the next set of grammar nodes
+         */
         private void dumpNextNodes() {
             System.out.println("     Next Grammar Nodes: ");
             for (GrammarArc arc : node.getSuccessors()) {
@@ -1508,7 +1649,9 @@ public class FlatLinguist implements Linguist, Configurable {
     }
 }
 
-/** A class that represents a set of units used as a context */
+/**
+ * A class that represents a set of units used as a context
+ */
 class UnitContext {
 
     private static final Map<UnitContext, UnitContext> unitContextMap = new HashMap<UnitContext, UnitContext>();
@@ -1611,7 +1754,9 @@ class UnitContext {
     }
 
 
-    /** Dumps information about the total number of UnitContext objects */
+    /**
+     * Dumps information about the total number of UnitContext objects
+     */
     public static void dumpInfo() {
         System.out.println("Total number of UnitContexts : "
                 + unitContextMap.size() + " folded: " + foldedCount);
@@ -1706,7 +1851,9 @@ class ContextPair {
     }
 
 
-    /** Returns a string representation of the object */
+    /**
+     * Returns a string representation of the object
+     */
     @Override
     public String toString() {
         return "CP left: " + left + " right: " + right;

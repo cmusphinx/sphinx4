@@ -25,7 +25,6 @@ public class GrammarArc {
     private GrammarNode grammarNode;
     private float logProbability;
 
-
     /**
      * Create a grammar arc
      *

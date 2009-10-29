@@ -43,6 +43,7 @@ public class GaussianMixture implements Senone, Cloneable {
      * @param logMath           the log math
      * @param logMixtureWeights the mixture weights for this senone in LogMath log base
      * @param mixtureComponents the mixture components for this senone
+     * @param id
      */
     public GaussianMixture(LogMath logMath, float[] logMixtureWeights,
                            MixtureComponent[] mixtureComponents, long id) {
@@ -229,7 +230,8 @@ public class GaussianMixture implements Senone, Cloneable {
     }
 
 
-    /** @return the (log-scaled) mixture weight of the component density <code>index</code> */
+    /** @param index
+     * @return the (log-scaled) mixture weight of the component density <code>index</code> */
     public float getLogComponentWeight(int index) {
         return logMixtureWeights[index];
     }

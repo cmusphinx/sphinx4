@@ -29,6 +29,11 @@ public class BatchForcedAlignerGrammar extends ForcedAlignerGrammar implements G
     protected final Map<String, GrammarNode> grammars = new HashMap<String, GrammarNode>();
     protected String currentUttName = "";
 
+    public BatchForcedAlignerGrammar(String refFile, boolean showGrammar,boolean optimizeGrammar,boolean addSilenceWords, boolean addFillerWords, Dictionary dictionary ) {
+        super(showGrammar,optimizeGrammar,addSilenceWords,addFillerWords,dictionary);
+        this.refFile = refFile;
+    }
+
     /*
     * (non-Javadoc)
     *

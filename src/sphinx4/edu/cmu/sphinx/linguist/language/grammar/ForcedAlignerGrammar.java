@@ -13,6 +13,7 @@
 package edu.cmu.sphinx.linguist.language.grammar;
 
 import edu.cmu.sphinx.util.LogMath;
+import edu.cmu.sphinx.linguist.dictionary.Dictionary;
 
 import java.util.StringTokenizer;
 
@@ -24,6 +25,14 @@ import java.util.StringTokenizer;
 public class ForcedAlignerGrammar extends Grammar {
 
     protected GrammarNode finalNode;
+
+    public ForcedAlignerGrammar(boolean showGrammar, boolean optimizeGrammar, boolean addSilenceWords, boolean addFillerWords, Dictionary dictionary) {
+        super(showGrammar,optimizeGrammar,addSilenceWords,addFillerWords,dictionary);
+    }
+
+    public ForcedAlignerGrammar() {
+
+    }
 
 
     /** Create class from reference text (not implemented). */

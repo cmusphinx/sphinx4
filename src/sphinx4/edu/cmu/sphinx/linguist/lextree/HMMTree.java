@@ -793,6 +793,7 @@ class Node {
      * context
      *
      * @param hmm the hmm to add
+     * @param probability
      * @return the node that holds the hmm (new or old)
      */
     Node addSuccessor(HMM hmm, float probability) {
@@ -817,6 +818,7 @@ class Node {
      * set of right context
      *
      * @param pronunciation the pronunciation to add
+     * @param probability
      * @return the node that holds the pronunciation (new or old)
      */
     WordNode addSuccessor(Pronunciation pronunciation, float probability) {
@@ -867,6 +869,7 @@ class Node {
      * Gets a word node associated with the pronunciation.
      *
      * @param p the pronunciation
+     * @param probability
      * @return the word node
      */
     private WordNode getWordNode(Pronunciation p, float probability) {
@@ -1108,6 +1111,7 @@ class HMMNode extends UnitNode {
      * Creates the node, wrapping the given hmm
      *
      * @param hmm the hmm to hold
+     * @param probablilty
      */
     HMMNode(HMM hmm, float probablilty) {
         super(probablilty);

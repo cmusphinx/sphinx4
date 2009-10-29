@@ -139,6 +139,17 @@ public class FSTGrammar extends Grammar {
     }
 
 
+    public FSTGrammar(String path, LogMath logMath, boolean showGrammar, boolean optimizeGrammar, boolean addSilenceWords, boolean addFillerWords, Dictionary dictionary) {
+        super(showGrammar,optimizeGrammar,addSilenceWords,addFillerWords,dictionary);
+        this.path = path;
+        this.logMath = logMath;
+    }
+
+    public FSTGrammar() {
+
+    }
+
+
     /*
     * (non-Javadoc)
     *
@@ -291,6 +302,7 @@ public class FSTGrammar extends Grammar {
      *
      * @param path the path of the FST file to read
      * @return the highest ID of all nodes
+     * @throws java.io.IOException
      */
     private int createNodes(String path) throws IOException {
         ExtendedStreamTokenizer tok = new ExtendedStreamTokenizer(path, true);

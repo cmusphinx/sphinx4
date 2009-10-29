@@ -245,7 +245,10 @@ public final class WordSequence {
     }
 
 
-    /** Returns a subsequence with both <code>startIndex</code> and <code>stopIndex</code> exclusive. */
+    /** Returns a subsequence with both <code>startIndex</code> and <code>stopIndex</code> exclusive.
+     * @param startIndex
+     * @param stopIndex
+     * @return*/
     public WordSequence getSubSequence(int startIndex, int stopIndex) {
         List<Word> subseqWords = new ArrayList<Word>();
 
@@ -257,7 +260,8 @@ public final class WordSequence {
     }
 
 
-    /** Returns the words of the <code>WordSequence</code>. */
+    /** Returns the words of the <code>WordSequence</code>.
+     * @return*/
     public Word[] getWords() {
         return getSubSequence(0, size()).words; //create a copy yo keep the class imutable
     }

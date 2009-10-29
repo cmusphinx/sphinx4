@@ -20,7 +20,8 @@ public class WordClassification implements Serializable {
     private final String classificationName;
 
 
-    /** Unconstructable... */
+    /** Unconstructable...
+     * @param classificationName*/
     private WordClassification(String classificationName) {
         this.classificationName = classificationName;
     }

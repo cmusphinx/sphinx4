@@ -273,6 +273,7 @@ public class HTKLoader implements Loader {
 	 * @param MMFname
 	 *            the name of the acoustic model; if null we just load from the
 	 *            default location
+     * @throws java.io.IOException
 	 */
 	private void loadModelFiles(String MMFname) throws
             IOException {
@@ -771,7 +772,9 @@ public class HTKLoader implements Loader {
 	/**
 	 * Returns true if the given senone sequence IDs are the same.
 	 * 
-	 * @return true if the given senone sequence IDs are the same, false
+	 * @param ssid1
+     * @param ssid2
+     * @return true if the given senone sequence IDs are the same, false
 	 *         otherwise
 	 */
 	protected boolean sameSenoneSequence(int[] ssid1, int[] ssid2) {

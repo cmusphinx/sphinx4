@@ -46,6 +46,21 @@ public class GDLDumper extends LinguistDumper {
     private boolean dumpArcLabels;
     private LogMath logMath;
 
+    public GDLDumper( String filename, Linguist linguist,
+                      boolean verticalLayout, boolean skipHMMs, boolean dumpArcLabels,
+                      LogMath logMath ) {
+        super( filename, linguist );
+
+        this.verticalLayout = verticalLayout;
+        this.skipHMMs = skipHMMs;
+        this.dumpArcLabels = dumpArcLabels;
+        setDepthFirst(false); // breadth first traversal
+        this.logMath = logMath;
+    }
+
+    public GDLDumper() {
+        
+    }
 
     /*
     * (non-Javadoc)
@@ -237,6 +252,7 @@ public class GDLDumper extends LinguistDumper {
      * Formats the given floating point number for edge labels.
      *
      * @param value the floating point value to format
+     * @return
      */
     private String formatEdgeLabel(double value) {
         if (value == 1.0) {

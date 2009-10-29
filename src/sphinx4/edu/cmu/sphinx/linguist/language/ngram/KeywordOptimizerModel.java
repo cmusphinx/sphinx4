@@ -41,6 +41,13 @@ public class KeywordOptimizerModel implements LanguageModel {
         return logger;
     }
 
+    public KeywordOptimizerModel( LanguageModel parent ) {
+        this.parent = parent;
+    }
+
+    public KeywordOptimizerModel() {
+        
+    }
 
     /*
     * (non-Javadoc)

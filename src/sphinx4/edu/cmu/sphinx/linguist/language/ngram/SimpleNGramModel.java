@@ -58,12 +58,22 @@ public class SimpleNGramModel implements LanguageModel {
     protected String fileName;
     private boolean allocated;
 
-
-    @Override
-    public Logger getLogger() {
-        return logger;
+    public SimpleNGramModel( String format, URL urlLocation, float unigramWeight, LogMath logMath, 
+                             int desiredMaxDepth, Dictionary dictionary ) {
+        logger = Logger.getLogger(getClass().getName());
+        this.format = format;
+        this.urlLocation = urlLocation;
+        this.unigramWeight = unigramWeight;
+        this.logMath = logMath;
+        this.desiredMaxDepth = desiredMaxDepth;
+        this.dictionary = dictionary;
+        this.map = new HashMap<WordSequence, Probability>();
+        this.vocabulary = new HashSet<String>();
     }
 
+    public SimpleNGramModel() {
+
+    }
 
     /*
     * (non-Javadoc)
@@ -89,6 +99,10 @@ public class SimpleNGramModel implements LanguageModel {
         vocabulary = new HashSet<String>();
     }
 
+    @Override
+    public Logger getLogger() {
+        return logger;
+    }
 
     /*
     * (non-Javadoc)
@@ -275,6 +289,7 @@ public class SimpleNGramModel implements LanguageModel {
      * @param format        the format of the model
      * @param location      the URL location of the model
      * @param unigramWeight the unigram weight
+     * @param dictionary
      * @throws IOException if an error occurs while loading
      */
     private void load(String format, URL location, float unigramWeight,
@@ -383,6 +398,7 @@ public class SimpleNGramModel implements LanguageModel {
      * Reads the next line from the LM file. Keeps track of line number.
      *
      * @throws IOException if an error occurs while reading the input or an EOF is encountered.
+     * @return
      */
     private String readLine() throws IOException {
         String line;
@@ -440,6 +456,7 @@ public class SimpleNGramModel implements LanguageModel {
     /**
      * Generates a 'corrupt' IO exception
      *
+     * @param why
      * @throws IOException with the given string
      */
     private void corrupt(String why) throws IOException {

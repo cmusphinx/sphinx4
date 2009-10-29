@@ -392,6 +392,7 @@ public class Sphinx3Loader implements Loader {
      * Loads the AcousticModel from a directory in the file system.
      *
      * @param modelName the name of the acoustic model; if null we just load from the default location
+     * @throws java.io.IOException
      */
     private void loadModelFiles(String modelName) throws IOException {
 
@@ -955,6 +956,8 @@ public class Sphinx3Loader implements Loader {
     /**
      * Returns true if the given senone sequence IDs are the same.
      *
+     * @param ssid1
+     * @param ssid2
      * @return true if the given senone sequence IDs are the same, false otherwise
      */
     protected boolean sameSenoneSequence(int[] ssid1, int[] ssid2) {

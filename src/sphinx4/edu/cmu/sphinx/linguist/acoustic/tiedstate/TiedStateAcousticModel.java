@@ -81,7 +81,7 @@ public class TiedStateAcousticModel implements AcousticModel {
     // Configured variables
     // -----------------------------
     protected String name;
-    private Logger logger;
+    protected Logger logger;
     protected Loader loader;
     protected UnitManager unitManager;
     private boolean useComposites;
@@ -94,18 +94,23 @@ public class TiedStateAcousticModel implements AcousticModel {
     final transient private Map<String, SenoneSequence> compositeSenoneSequenceCache = new HashMap<String, SenoneSequence>();
     private boolean allocated;
 
+    public TiedStateAcousticModel( Loader loader, UnitManager unitManager, boolean useComposites) {
+        this.loader = loader;
+        this.unitManager = unitManager;
+        this.useComposites = useComposites;
+        this.logger = Logger.getLogger(getClass().getName());
+    }
 
-    /* (non-Javadoc)
-    * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
-    */
-    @Override
+    public TiedStateAcousticModel() {
+
+    }
+
     public void newProperties(PropertySheet ps) throws PropertyException {
         loader = (Loader) ps.getComponent(PROP_LOADER);
         unitManager = (UnitManager) ps.getComponent(PROP_UNIT_MANAGER);
         useComposites = ps.getBoolean(PROP_USE_COMPOSITES);
         logger = ps.getLogger();
     }
-
 
     /**
      * initialize this acoustic model with the given name and context.
@@ -316,6 +321,8 @@ public class TiedStateAcousticModel implements AcousticModel {
      * 'left' or 'right' may be null to indicate that the match should succeed on any context.
      *
      * @param unit the unit
+     * @param position
+     * @return
      */
     public SenoneSequence getCompositeSenoneSequence(Unit unit,
                                                      HMMPosition position) {
@@ -482,6 +489,7 @@ public class TiedStateAcousticModel implements AcousticModel {
      * silence filler context
      *
      * @param unit the unit of interest
+     * @param position
      * @return the associated hmm or null
      */
     private SenoneHMM getHMMInSilenceContext(Unit unit, HMMPosition position) {

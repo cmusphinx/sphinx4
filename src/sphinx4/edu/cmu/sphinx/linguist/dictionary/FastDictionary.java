@@ -105,6 +105,33 @@ public class FastDictionary implements Dictionary {
     protected Set<String> fillerWords;
     protected boolean allocated;
 
+    public FastDictionary(
+            URL wordDictionaryFile,
+            URL fillerDictionaryFile,
+            List<URL> addendaUrlList,
+            boolean addSilEndingPronunciation,
+            String wordReplacement,
+            boolean allowMissingWords,
+            boolean createMissingWords,
+            UnitManager unitManager
+    ) {
+        this.logger = Logger.getLogger(getClass().getName());
+
+        this.wordDictionaryFile = wordDictionaryFile;
+        this.fillerDictionaryFile = fillerDictionaryFile;
+        this.addendaUrlList = addendaUrlList;
+
+        this.addSilEndingPronunciation = addSilEndingPronunciation;
+        this.wordReplacement = wordReplacement;
+        this.allowMissingWords = allowMissingWords;
+        this.createMissingWords = createMissingWords;
+        this.unitManager = unitManager;
+    }
+
+    public FastDictionary() {
+
+    }
+
 
     /*
     * (non-Javadoc)
@@ -337,6 +364,8 @@ public class FastDictionary implements Dictionary {
      * Processes a dictionary entry. When loaded the dictionary just loads each line of the dictionary into the hash
      * table, assuming that most words are not going to be used. Only when a word is actually used is its pronunciations
      * massaged into an array of pronunciations.
+     * @param word
+     * @return
      */
     private Word processEntry(String word) {
         List<Pronunciation> pList = new LinkedList<Pronunciation>();
@@ -411,7 +440,7 @@ public class FastDictionary implements Dictionary {
 
         for (Map.Entry<String, Object> entry : sorted.entrySet()) {
             result.append(entry.getKey()).append('\n');
-            for (Pronunciation pronunciation : (List<Pronunciation>)entry.getValue()) {
+            for (Pronunciation pronunciation : (List<Pronunciation>) entry.getValue()) {
                 result.append("   ").append(pronunciation).append('\n');
             }
         }
@@ -436,7 +465,9 @@ public class FastDictionary implements Dictionary {
     }
 
 
-    /** Dumps this FastDictionary to System.out. */
+    /**
+     * Dumps this FastDictionary to System.out.
+     */
     public void dump() {
         System.out.print(toString());
     }
@@ -463,7 +494,7 @@ public class FastDictionary implements Dictionary {
                     resourceList.add(addendaUrl);
                 } catch (MalformedURLException mue) {
                     throw new IllegalArgumentException(
-                        "Addendum path: " + addendumPath + " is not a valid URL.");
+                            "Addendum path: " + addendumPath + " is not a valid URL.");
                 }
             }
         }

@@ -35,6 +35,14 @@ public class LinguistDumper extends LinguistProcessor {
     private boolean depthFirst = true;
     private String filename;
 
+    public LinguistDumper( String filename, Linguist linguist ) {
+        super( linguist );
+        this.filename = filename;
+    }
+
+    public LinguistDumper() {
+
+    }
 
     /*
     * (non-Javadoc)

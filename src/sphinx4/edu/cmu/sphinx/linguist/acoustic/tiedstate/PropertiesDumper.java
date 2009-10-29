@@ -24,7 +24,8 @@ public class PropertiesDumper {
     private final Properties props;
 
 
-    /** Dumps the properties file 'model.props' that is in the same directory as this class. */
+    /** Dumps the properties file 'model.props' that is in the same directory as this class.
+     * @param argv*/
     public static void main(String[] argv) {
         try {
             PropertiesDumper dumper = new PropertiesDumper("model.props");
@@ -40,6 +41,7 @@ public class PropertiesDumper {
      * Constructs a PropertiesDumper of the given acoustic model properties file.
      *
      * @param propsFile the properties file to dump
+     * @throws java.io.IOException
      */
     public PropertiesDumper(String propsFile) throws IOException {
         props = new Properties();
@@ -51,6 +53,7 @@ public class PropertiesDumper {
      * Constructs a PropertiesDumper of the given acoustic model properties.
      *
      * @param properties the Properties object to dump
+     * @throws java.io.IOException
      */
     public PropertiesDumper(Properties properties) throws IOException {
         props = properties;

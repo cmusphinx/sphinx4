@@ -19,9 +19,12 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.StringTokenizer;
+import java.util.List;
+import java.util.logging.Logger;
 
 import edu.cmu.sphinx.linguist.acoustic.Context;
 import edu.cmu.sphinx.linguist.acoustic.Unit;
+import edu.cmu.sphinx.linguist.acoustic.UnitManager;
 import edu.cmu.sphinx.util.props.ConfigurationManagerUtils;
 import edu.cmu.sphinx.util.props.PropertyException;
 import edu.cmu.sphinx.util.props.PropertySheet;
@@ -44,6 +47,32 @@ public class MappingDictionary extends FastDictionary implements Dictionary {
 
 	private URL mappingFile;
 	private final Map<String,String> mapping = new HashMap<String,String>();
+
+    public MappingDictionary(
+            URL mappingFile,
+            URL wordDictionaryFile,
+            URL fillerDictionaryFile,
+            List<URL> addendaUrlList,
+            boolean addSilEndingPronunciation,
+            String wordReplacement,
+            boolean allowMissingWords,
+            boolean createMissingWords,
+            UnitManager unitManager
+    ) {
+        super( wordDictionaryFile,
+            fillerDictionaryFile,
+            addendaUrlList,
+            addSilEndingPronunciation,
+            wordReplacement,
+            allowMissingWords,
+            createMissingWords,
+            unitManager);
+        this.mappingFile = mappingFile;
+    }
+
+    public MappingDictionary() {
+
+    }
 				
 	@Override
 	public void newProperties(PropertySheet ps) throws PropertyException {

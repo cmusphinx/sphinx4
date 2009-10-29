@@ -39,14 +39,26 @@ public class TrivialAcousticModel implements AcousticModel {
     private int leftContextSize;
     private int rightContextSize;
 
+    public TrivialAcousticModel(int leftContextSize, int rightContextSize) {
+        init(leftContextSize,rightContextSize);        
+    }
+
+    public TrivialAcousticModel() {
+
+    }
 
     @Override
     public void newProperties(PropertySheet ps) throws PropertyException {
         // get acoustic model configuration data from the sphinx
         // properties
 
-        this.leftContextSize = ps.getInt(LEFT_CONTEXT_SIZE);
-        this.rightContextSize = ps.getInt(RIGHT_CONTEXT_SIZE);
+        init(ps.getInt(LEFT_CONTEXT_SIZE),ps.getInt(RIGHT_CONTEXT_SIZE));
+
+    }
+
+    private void init(int leftContextSize, int rightContextSize) {
+        this.leftContextSize = leftContextSize;
+        this.rightContextSize = rightContextSize;
 
         // create HMMs for all of the units
 

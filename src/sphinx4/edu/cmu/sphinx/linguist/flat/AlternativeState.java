@@ -20,7 +20,9 @@ import java.io.Serializable;
 public class AlternativeState extends SentenceHMMState
         implements Serializable {
 
-    /** Creates a WordState */
+    /** Creates a WordState
+ * @param parent
+ * @param which*/
     public AlternativeState(GrammarState parent, int which) {
         super("A", parent, which);
     }

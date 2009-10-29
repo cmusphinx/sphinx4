@@ -52,7 +52,8 @@ public interface LanguageModel extends Configurable {
     public final static String PROP_DICTIONARY = "dictionary";
 
 
-    /** Create the language model */
+    /** Create the language model
+     * @throws java.io.IOException*/
     public void allocate() throws IOException;
 
 

@@ -14,6 +14,8 @@ package edu.cmu.sphinx.linguist.language.grammar;
 import edu.cmu.sphinx.util.ExtendedStreamTokenizer;
 import edu.cmu.sphinx.util.LogMath;
 import edu.cmu.sphinx.util.props.*;
+import edu.cmu.sphinx.linguist.language.ngram.LanguageModel;
+import edu.cmu.sphinx.linguist.dictionary.*;
 
 import java.io.IOException;
 import java.util.*;
@@ -61,6 +63,16 @@ public class SimpleWordListGrammar extends Grammar implements Configurable {
     private boolean isLooping;
     private LogMath logMath;
 
+    public SimpleWordListGrammar(String path, boolean isLooping, LogMath logMath, boolean showGrammar, boolean optimizeGrammar, boolean addSilenceWords, boolean addFillerWords, edu.cmu.sphinx.linguist.dictionary.Dictionary dictionary) {
+        super(showGrammar,optimizeGrammar,addSilenceWords,addFillerWords,dictionary);
+        this.path = path;
+        this.isLooping = isLooping;
+        this.logMath = logMath;
+    }
+
+    public SimpleWordListGrammar() {
+
+    }
 
     /*
     * (non-Javadoc)

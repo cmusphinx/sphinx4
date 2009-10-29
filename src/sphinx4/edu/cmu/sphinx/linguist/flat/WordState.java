@@ -17,7 +17,9 @@ import edu.cmu.sphinx.linguist.dictionary.Word;
 /** Represents a word in an SentenceHMMS */
 public class WordState extends SentenceHMMState {
 
-    /** Creates a WordState */
+    /** Creates a WordState
+     * @param parent
+     * @param which*/
     public WordState(AlternativeState parent, int which) {
         super("W", parent, which);
     }

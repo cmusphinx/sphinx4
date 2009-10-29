@@ -47,6 +47,16 @@ public class ClassMap implements Configurable {
      */
     private final HashMap<String, Set<String>> classToWord = new HashMap<String, Set<String>>();
 
+    public ClassMap(URL classDefsLocation, LogMath logMath) {
+        this.logger = Logger.getLogger(getClass().getName());
+        this.classDefsLocation = classDefsLocation;
+        this.logMath = logMath;
+    }
+
+    public ClassMap() {
+
+    }
+
     /* (non-Javadoc)
     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
     */

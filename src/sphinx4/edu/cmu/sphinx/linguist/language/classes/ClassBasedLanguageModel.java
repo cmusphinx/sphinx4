@@ -54,6 +54,17 @@ public class ClassBasedLanguageModel implements LanguageModel {
 
     private ClassMap classMap;
 
+    public ClassBasedLanguageModel(ClassMap classMap, LanguageModel classLM, LogMath logMath ) {
+        this.logger = Logger.getLogger(getClass().getName());
+        this.classMap = classMap;
+        this.classLM = classLM;
+        this.logMath = logMath;
+    }
+
+    public ClassBasedLanguageModel() {
+
+    }
+        
     /*
      * (non-Javadoc)
      *

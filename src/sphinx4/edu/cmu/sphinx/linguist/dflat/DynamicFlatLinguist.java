@@ -120,6 +120,34 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
     // an empty arc (just waiting for Noah, I guess)
     private final SearchStateArc[] EMPTY_ARCS = new SearchStateArc[0];
 
+    public DynamicFlatLinguist(AcousticModel acousticModel, Grammar grammar, UnitManager unitManager, LogMath logMath,
+                               double logWordInsertionProbability, double logSilenceInsertionProbability, double logUnitInsertionProbability,
+                               double logFillerInsertionProbability, float languageWeight, boolean addOutOfGrammarBranch, AcousticModel phoneLoopAcousticModel
+                               ) {
+        // hookup to all of the components
+        this.logger = Logger.getLogger(getClass().getName());
+        this.acousticModel = acousticModel;
+        this.logMath = logMath;
+        this.grammar = grammar;
+        this.unitManager = unitManager;
+
+        // get the rest of the configuration data
+        this.logWordInsertionProbability = logMath.linearToLog(logWordInsertionProbability);
+        this.logSilenceInsertionProbability = logMath.linearToLog(logSilenceInsertionProbability);
+        this.logUnitInsertionProbability = logMath.linearToLog(logUnitInsertionProbability);
+        this.logFillerInsertionProbability = logMath.linearToLog(logFillerInsertionProbability);
+        this.languageWeight = languageWeight;
+        this.addOutOfGrammarBranch = addOutOfGrammarBranch;
+        this.logOutOfGrammarBranchProbability = logMath.linearToLog(logOutOfGrammarBranchProbability);
+
+        this.logPhoneInsertionProbability = logMath.linearToLog(logPhoneInsertionProbability);
+        if (addOutOfGrammarBranch) {
+            this.phoneLoopAcousticModel = phoneLoopAcousticModel;
+        }
+    }
+
+    public DynamicFlatLinguist() {
+    }
 
     /*
     * (non-Javadoc)
@@ -167,6 +195,7 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
      * Sets up the acoustic model.
      *
      * @param ps the PropertySheet from which to obtain the acoustic model
+     * @throws edu.cmu.sphinx.util.props.PropertyException
      */
     protected void setupAcousticModel(PropertySheet ps)
             throws PropertyException {
@@ -190,7 +219,8 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
     }
 
 
-    /** Allocates the acoustic model. */
+    /** Allocates the acoustic model.
+     * @throws java.io.IOException*/
     protected void allocateAcousticModel() throws IOException {
         acousticModel.allocate();
         if (addOutOfGrammarBranch) {
@@ -653,6 +683,7 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
          *
          * @param lc         the current left context
          * @param nextBaseID the desired next base ID
+         * @return
          */
         SearchStateArc[] getNextGrammarStates(int lc, int nextBaseID) {
             GrammarArc[] nextNodes = node.getSuccessors();
@@ -698,6 +729,7 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
          *
          * @param arcs     the set of arcs to filter
          * @param nextBase the ID of the desired next unit
+         * @return
          */
         GrammarArc[] filter(GrammarArc[] arcs, int nextBase) {
             if (nextBase != ANY) {
@@ -719,6 +751,7 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
          *
          * @param node   the grammar node
          * @param unitID the id of the unit
+         * @return
          */
         private boolean hasEntryContext(GrammarNode node, int unitID) {
             Set<Unit> unitSet = nodeToUnitSetMap.get(node);
@@ -731,6 +764,7 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
          *
          * @param p        the set of pronunciations to filter
          * @param nextBase the ID of the desired initial unit
+         * @return
          */
         Pronunciation[] filter(Pronunciation[] p, int nextBase) {
             return p;

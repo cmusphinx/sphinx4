@@ -15,6 +15,7 @@ package edu.cmu.sphinx.linguist.acoustic.tiedstate.trainer;
 import edu.cmu.sphinx.linguist.acoustic.tiedstate.Loader;
 import edu.cmu.sphinx.linguist.acoustic.tiedstate.Saver;
 import edu.cmu.sphinx.linguist.acoustic.tiedstate.TiedStateAcousticModel;
+import edu.cmu.sphinx.linguist.acoustic.UnitManager;
 import edu.cmu.sphinx.util.TimerPool;
 import edu.cmu.sphinx.util.props.*;
 
@@ -27,11 +28,6 @@ public class TrainerAcousticModel extends TiedStateAcousticModel {
 
     /** Prefix for acoustic model SphinxProperties. */
     public final static String PROP_PREFIX = "edu.cmu.sphinx.linguist.acoustic.";
-
-
-    @S4Component(type = Loader.class)
-    public static final String LOADER = "loader";
-    private Loader loader;
 
     @S4Component(type = Saver.class)
     public static final String SAVER = "saver";
@@ -61,20 +57,27 @@ public class TrainerAcousticModel extends TiedStateAcousticModel {
     /** Flag indicating all models should be operated on. */
     public final static int ALL_MODELS = -1;
 
-    /** The logger for this class */
-    private Logger logger;
-
     /** The pool manager */
     private HMMPoolManager hmmPoolManager;
     public String saveFormat;
+
+    public TrainerAcousticModel( Loader loader, UnitManager unitManager, boolean useComposites,
+                                 Saver saver, String saveFormat ) {
+        super( loader, unitManager, useComposites );
+
+        this.saver = saver;
+        this.hmmPoolManager = new HMMPoolManager(loader);
+        this.loadTimer = TimerPool.getTimer(this, TIMER_LOAD);
+        this.saveFormat = saveFormat;
+
+        logInfo();
+    }
 
 
     @Override
     public void newProperties(PropertySheet ps) throws PropertyException {
         super.newProperties(ps);
-        logger = ps.getLogger();
 
-        loader = (Loader) ps.getComponent(LOADER);
         saver = (Saver) ps.getComponent(SAVER);
 
         hmmPoolManager = new HMMPoolManager(loader);

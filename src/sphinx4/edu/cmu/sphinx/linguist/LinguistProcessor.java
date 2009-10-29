@@ -26,8 +26,7 @@ public class LinguistProcessor implements Configurable, Runnable {
     // Configuration data
     // ----------------------------
     private String name;
-    private Linguist linguist;
-    
+    private Linguist linguist;   
 
     public LinguistProcessor( Linguist linguist ) {
         this.linguist = linguist;

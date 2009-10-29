@@ -13,8 +13,10 @@ package edu.cmu.sphinx.linguist.language.grammar;
 
 import edu.cmu.sphinx.linguist.WordSequence;
 import edu.cmu.sphinx.linguist.dictionary.Word;
+import edu.cmu.sphinx.linguist.dictionary.Dictionary;
 import edu.cmu.sphinx.linguist.language.ngram.LanguageModel;
 import edu.cmu.sphinx.util.TimerPool;
+import edu.cmu.sphinx.util.LogMath;
 import edu.cmu.sphinx.util.props.PropertyException;
 import edu.cmu.sphinx.util.props.PropertySheet;
 import edu.cmu.sphinx.util.props.S4Component;
@@ -39,6 +41,14 @@ public class LMGrammar extends Grammar {
     // ------------------------
     private LanguageModel languageModel;
 
+    public LMGrammar(LanguageModel languageModel, boolean showGrammar, boolean optimizeGrammar, boolean addSilenceWords, boolean addFillerWords, Dictionary dictionary) {
+        super(showGrammar,optimizeGrammar,addSilenceWords,addFillerWords,dictionary);
+        this.languageModel = languageModel;
+    }
+
+    public LMGrammar() {
+
+    }
 
     /*
     * (non-Javadoc)

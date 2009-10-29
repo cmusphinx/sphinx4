@@ -9,9 +9,11 @@ import edu.cmu.sphinx.linguist.dictionary.WordClassification;
 import edu.cmu.sphinx.util.props.PropertyException;
 import edu.cmu.sphinx.util.props.PropertySheet;
 import edu.cmu.sphinx.util.props.S4Component;
+import edu.cmu.sphinx.util.LogMath;
 
 import java.io.IOException;
 import java.util.logging.Logger;
+import java.net.URL;
 
 /**
  * The only purpose of this class is to present all classes
@@ -29,10 +31,19 @@ public class ClassPresentingDictionary implements Dictionary {
     public final static String PROP_WORD_DICTIONARY = "wordDictionary";
 
     private Logger logger;
-    private boolean allocated;
+    private boolean allocated = false;
     private Dictionary wordDictionary;
     private ClassMap classMap;
 
+    public ClassPresentingDictionary(ClassMap classMap, Dictionary wordDictionary) {
+        this.logger = Logger.getLogger(getClass().getName());
+        this.classMap = classMap;
+        this.wordDictionary = wordDictionary;
+    }
+
+    public ClassPresentingDictionary() {
+
+    }
 
     @Override
     public void newProperties(PropertySheet ps) throws PropertyException {

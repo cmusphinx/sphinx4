@@ -31,6 +31,7 @@ class NGramBuffer {
      *
      * @param buffer       the byte[] with trigrams
      * @param numberNGrams the number of N-gram
+     * @param bigEndian
      */
     public NGramBuffer(byte[] buffer, int numberNGrams, boolean bigEndian) {
         this.buffer = buffer;

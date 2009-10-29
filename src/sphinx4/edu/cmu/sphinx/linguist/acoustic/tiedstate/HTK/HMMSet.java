@@ -277,6 +277,7 @@ public class HMMSet {
 	 * @param n
 	 * @param autresEtats
 	 * @throws IOException
+     * @return
 	 */
 	private SingleHMM loadHMM(BufferedReader f, String n,
 			List<GMMDiag> autresEtats) throws IOException {
@@ -445,7 +446,11 @@ public class HMMSet {
 	/**
 	 * Read until the last line of the file but it may leave one last line
 	 * so it can loose GCONST.
-	 */
+     * @param f
+     * @param n
+     * @param prem
+     * @throws java.io.IOException
+     */
 	private void loadHTKGauss(BufferedReader f, int n, String prem)
 			throws IOException {
 		String s;

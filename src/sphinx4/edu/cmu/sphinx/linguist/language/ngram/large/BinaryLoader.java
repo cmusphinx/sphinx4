@@ -241,6 +241,7 @@ public class BinaryLoader {
      * @param position the starting position in the file
      * @param size     the number of bytes to load
      * @return the loaded ByteBuffer
+     * @throws java.io.IOException
      */
     public byte[] loadBuffer(long position, int size) throws IOException {
         // assert ((position + size) <= fileChannel.size());
@@ -257,6 +258,7 @@ public class BinaryLoader {
      * Loads the language model from the given file.
      *
      * @param location the file containing the language model
+     * @throws java.io.IOException
      */
     private void loadBinary(File location) throws IOException {
 
@@ -323,6 +325,7 @@ public class BinaryLoader {
      * Reads the LM file header
      *
      * @param stream the data stream of the LM file
+     * @throws java.io.IOException
      */
     private void readHeader(DataInputStream stream) throws IOException {
         int headerLength = readInt(stream, bigEndian);
@@ -410,6 +413,7 @@ public class BinaryLoader {
      * Skips the bigrams and trigrams of the LM.
      *
      * @param stream the source of data
+     * @throws java.io.IOException
      */
     private void skipBigramsTrigrams(DataInputStream stream) throws IOException {
         // skip all the bigram entries, the +1 is the sentinel at the end
@@ -462,7 +466,9 @@ public class BinaryLoader {
     }
 
 
-    /** Apply the language weight to the given array of probabilities. */
+    /** Apply the language weight to the given array of probabilities.
+     * @param logProbabilities
+     * @param languageWeight*/
     private void applyLanguageWeight(float[] logProbabilities,
                                      float languageWeight) {
         for (int i = 0; i < logProbabilities.length; i++) {
@@ -471,7 +477,9 @@ public class BinaryLoader {
     }
 
 
-    /** Apply the WIP to the given array of probabilities. */
+    /** Apply the WIP to the given array of probabilities.
+     * @param logProbabilities
+     * @param wip*/
     private void applyWip(float[] logProbabilities, double wip) {
         float logWip = logMath.linearToLog(wip);
         for (int i = 0; i < logProbabilities.length; i++) {
@@ -485,6 +493,8 @@ public class BinaryLoader {
      *
      * @param stream    the DataInputStream from which to read the table
      * @param bigEndian true if the given stream is bigEndian, false otherwise
+     * @throws java.io.IOException
+     * @return
      */
     private float[] readFloatTable(DataInputStream stream, boolean bigEndian)
             throws IOException {
@@ -511,6 +521,7 @@ public class BinaryLoader {
      * @param bigEndian true if the given stream is bigEndian, false otherwise
      * @param tableSize the size of the trigram segment table
      * @return the trigram segment table, which is an array of integers
+     * @throws java.io.IOException
      */
     private int[] readIntTable(DataInputStream stream, boolean bigEndian,
                                int tableSize) throws IOException {
@@ -533,6 +544,7 @@ public class BinaryLoader {
      * @param numberUnigrams the number of unigrams to read
      * @param bigEndian      true if the DataInputStream is big-endian, false otherwise
      * @return an array of UnigramProbability index by the unigram ID
+     * @throws java.io.IOException
      */
     private UnigramProbability[] readUnigrams(DataInputStream stream,
                                               int numberUnigrams, boolean bigEndian) throws IOException {
@@ -574,6 +586,7 @@ public class BinaryLoader {
      *
      * @param stream the DataInputStream to read from
      * @return the byte read
+     * @throws java.io.IOException
      */
     private byte readByte(DataInputStream stream) throws IOException {
         bytesRead++;
@@ -587,6 +600,7 @@ public class BinaryLoader {
      * @param stream    the DataInputStream to read from
      * @param bigEndian true if the DataInputStream is in bigEndian, false otherwise
      * @return the integer read
+     * @throws java.io.IOException
      */
     private int readInt(DataInputStream stream, boolean bigEndian)
             throws IOException {
@@ -605,6 +619,7 @@ public class BinaryLoader {
      * @param stream    the DataInputStream to read from
      * @param bigEndian true if the DataInputStream is in bigEndian, false otherwise
      * @return the float read
+     * @throws java.io.IOException
      */
     private float readFloat(DataInputStream stream, boolean bigEndian)
             throws IOException {
@@ -624,6 +639,7 @@ public class BinaryLoader {
      * @param stream the DataInputStream to read from
      * @param length the number of characters in the returned string
      * @return a string of the given length from the given DataInputStream
+     * @throws java.io.IOException
      */
     private String readString(DataInputStream stream, int length)
             throws IOException {
@@ -645,6 +661,7 @@ public class BinaryLoader {
      * @param length         the total length in bytes of all the Strings
      * @param numberUnigrams the number of String to read
      * @return an array of the Strings read
+     * @throws java.io.IOException
      */
     private String[] readWords(DataInputStream stream, int length,
                                      int numberUnigrams) throws IOException {

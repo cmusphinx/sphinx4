@@ -49,6 +49,29 @@ public class InterpolatedLanguageModel implements LanguageModel {
 
     private static final double EPSILON = 0.001;
 
+    InterpolatedLanguageModel(LogMath logMath, List<LanguageModel> languageModels, float [] floats ) {
+        this.logger = Logger.getLogger(getClass().getName());
+        this.languageModels = languageModels;
+        this.numberOfLanguageModels = languageModels.size();
+
+        this.weights = new float[floats.length];
+        float weightSum = 0;
+        for (int i = 0; i < floats.length; i++) {
+            weightSum += floats[i];
+            this.weights[i] = logMath.linearToLog(floats[i]);
+        }
+        if (weightSum < 1.0 - EPSILON || weightSum > 1.0 + EPSILON) {
+            throw new PropertyException(
+                    InterpolatedLanguageModel.class.getName(),
+                    PROP_LANGUAGE_MODEL_WEIGHTS,
+                    "Weights do not sum to 1.0");
+        }
+    }
+
+    InterpolatedLanguageModel() {
+
+    }
+
     @Override
     public void newProperties(PropertySheet ps) throws PropertyException {
         logger = ps.getLogger();

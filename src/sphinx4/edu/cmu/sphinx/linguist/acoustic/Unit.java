@@ -173,7 +173,8 @@ public class Unit {
     }
 
 
-    /** gets the key for this unit */
+    /** gets the key for this unit
+     * @return*/
     private String getKey() {
         return toString();
     }

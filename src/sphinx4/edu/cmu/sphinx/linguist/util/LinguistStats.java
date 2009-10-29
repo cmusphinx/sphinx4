@@ -20,6 +20,14 @@ public class LinguistStats extends LinguistProcessor {
 
     private final Map<Class, Integer> stateCountByType = new HashMap<Class, Integer>();
 
+    public LinguistStats( Linguist linguist ) {
+        super(linguist);
+    }
+
+    public LinguistStats() {
+        
+    }
+
     /** Dumps the stats of the linguist */
     @Override
     public void run() {

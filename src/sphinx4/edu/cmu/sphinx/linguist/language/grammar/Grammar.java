@@ -74,6 +74,18 @@ public abstract class Grammar implements Configurable, GrammarInterface {
     private boolean postProcessed;
     private boolean idCheck;
 
+    public Grammar(boolean showGrammar,boolean optimizeGrammar,boolean addSilenceWords, boolean addFillerWords, Dictionary dictionary ) {
+        this.logger = Logger.getLogger(getClass().getName());
+        this.showGrammar = showGrammar;
+        this.optimizeGrammar = optimizeGrammar;
+        this.addSilenceWords = addSilenceWords;
+        this.addFillerWords = addFillerWords;
+        this.dictionary = dictionary;
+    }
+
+    public Grammar() {
+
+    }
 
     /*
     * (non-Javadoc)
@@ -93,7 +105,8 @@ public abstract class Grammar implements Configurable, GrammarInterface {
     }
 
 
-    /** Create the grammar */
+    /** Create the grammar
+     * @throws java.io.IOException*/
     public void allocate() throws IOException {
         dictionary.allocate();
         newGrammar();
@@ -275,7 +288,8 @@ public abstract class Grammar implements Configurable, GrammarInterface {
     }
 
 
-    /** Dumps the grammar */
+    /** Dumps the grammar
+     * @param name*/
     public void dumpGrammar(String name) {
         getInitialNode().dumpGDL(name);
     }
@@ -326,6 +340,7 @@ public abstract class Grammar implements Configurable, GrammarInterface {
      *
      * @param bogusText dummy variable
      * @throws NoSuchMethodException if called with reference sentence
+     * @return
      */
     protected GrammarNode createGrammar(String bogusText)
             throws NoSuchMethodException {
@@ -349,6 +364,7 @@ public abstract class Grammar implements Configurable, GrammarInterface {
      *
      * @param identity the id for this node
      * @param alts     the set of alternative word lists for this GrammarNode
+     * @return
      */
     protected GrammarNode createGrammarNode(int identity, String[][] alts) {
         GrammarNode node;
@@ -379,6 +395,7 @@ public abstract class Grammar implements Configurable, GrammarInterface {
      * created. The grammar id is automatically assigned
      *
      * @param word the word for this grammar node
+     * @return
      */
 
     protected GrammarNode createGrammarNode(String word) {
@@ -404,6 +421,7 @@ public abstract class Grammar implements Configurable, GrammarInterface {
      *
      * @param identity the id for this node
      * @param word     the word for this grammar node
+     * @return
      */
     protected GrammarNode createGrammarNode(int identity, String word) {
         GrammarNode node;
@@ -443,6 +461,7 @@ public abstract class Grammar implements Configurable, GrammarInterface {
      * Adds the given grammar node to the set of nodes for this grammar
      *
      * @param node the grammar node
+     * @throws Error
      */
     private void add(GrammarNode node) throws Error {
         if (node.getID() > maxIdentity) {

@@ -148,6 +148,35 @@ public class LargeTrigramModel implements LanguageModel {
     private float[] trigramBackoffTable;
     private float[] unigramSmearTerm;
 
+    public LargeTrigramModel( String format, URL urlLocation, String ngramLogFile,
+                              int maxTrigramCacheSize, int maxBigramCacheSize,
+                              boolean clearCacheAfterUtterance, int maxDepth,
+                              LogMath logMath, Dictionary dictionary,
+                              boolean applyLanguageWeightAndWip, float languageWeight,
+                              double wip, float unigramWeight, boolean fullSmear          
+                              ) {
+        logger = Logger.getLogger(getClass().getName());
+        this.format = format;
+        this.location = new File (urlLocation.getFile());
+
+        this.ngramLogFile = ngramLogFile;
+        this.maxTrigramCacheSize = maxTrigramCacheSize;
+        this.maxBigramCacheSize = maxBigramCacheSize;
+        this.clearCacheAfterUtterance = clearCacheAfterUtterance;
+        this.maxDepth = maxDepth;
+        this.logMath = logMath;
+        this.dictionary = dictionary;
+        this.applyLanguageWeightAndWip = applyLanguageWeightAndWip;
+        this.languageWeight = languageWeight;
+        this.wip = wip;
+        this.unigramWeight = unigramWeight;
+        this.fullSmear = fullSmear;
+    }
+
+    public LargeTrigramModel() {
+
+    }
+
 
     /*
     * (non-Javadoc)
@@ -253,7 +282,8 @@ public class LargeTrigramModel implements LanguageModel {
     }
 
 
-    /** Builds the map from unigram to unigramID. Also finds the startWordID and endWordID. */
+    /** Builds the map from unigram to unigramID. Also finds the startWordID and endWordID.
+     * @param dictionary*/
     private void buildUnigramIDMap(Dictionary dictionary) {
         int missingWords = 0;
         String[] words = loader.getWords();
