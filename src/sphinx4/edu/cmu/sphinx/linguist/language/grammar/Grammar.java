@@ -33,6 +33,7 @@ import java.util.logging.Logger;
  * <p/>
  * Note that all grammar probabilities are maintained in LogMath log domain.
  */
+@SuppressWarnings({"JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc"})
 public abstract class Grammar implements Configurable, GrammarInterface {
 
     /** Property to control the the dumping of the grammar */

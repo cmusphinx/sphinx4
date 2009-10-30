@@ -17,6 +17,7 @@ import edu.cmu.sphinx.linguist.dictionary.Word;
 import java.io.Serializable;
 
 /** Represents a set of alternatives in an SentenceHMMS */
+@SuppressWarnings({"JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc"})
 public class AlternativeState extends SentenceHMMState
         implements Serializable {
 

@@ -19,6 +19,7 @@ import edu.cmu.sphinx.linguist.acoustic.HMMState;
 import java.io.Serializable;
 
 /** Represents a hmmState in an SentenceHMMS */
+@SuppressWarnings({"JavaDoc"})
 public class HMMStateState extends SentenceHMMState
         implements Serializable, HMMSearchState {
 

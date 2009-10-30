@@ -122,6 +122,7 @@ import java.util.logging.Logger;
  * therefore are cached. The effect of using this EndNode optimization is to reduce the space required by the tree by
  * about 300mb and the time required to generate the tree from about 60 seconds to about 6 seconds.
  */
+@SuppressWarnings({"JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc"})
 public class LexTreeLinguist implements Linguist {
 
     /** A sphinx property used to define the grammar to use when building the search graph */

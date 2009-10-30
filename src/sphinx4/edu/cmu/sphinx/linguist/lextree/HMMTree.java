@@ -682,6 +682,7 @@ class HMMTree {
 // we'd like an array.  To support this dual mode, we manage the
 // successors in an Object which can either be a Map or a List
 // depending upon whether the node has been frozen or not.
+@SuppressWarnings({"JavaDoc", "JavaDoc", "JavaDoc"})
 class Node {
 
     private static int nodeCount;
@@ -1091,6 +1092,7 @@ abstract class UnitNode extends Node {
 }
 
 /** A node that represents an HMM in the hmm tree */
+@SuppressWarnings({"JavaDoc"})
 class HMMNode extends UnitNode {
 
     private final HMM hmm;

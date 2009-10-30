@@ -22,6 +22,7 @@ import java.util.List;
  * This class can be used to keep track of a word sequence.  This class is an immutable class. It can never be modified
  * once it is created (except, perhaps for transient, cached things such as a precalculated hashcode).
  */
+@SuppressWarnings({"JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc"})
 public final class WordSequence {
 
     private final Word[] words;

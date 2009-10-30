@@ -8,6 +8,7 @@
  */
 package edu.cmu.sphinx.linguist.acoustic.tiedstate.HTK;
 
+@SuppressWarnings({"JavaDoc"})
 public class SingleHMM {
 	private final HMMState[] states;
 	private String name;

@@ -22,6 +22,7 @@ import java.util.StringTokenizer;
  * <p/>
  * Note that all grammar probabilities are maintained in the LogMath log base
  */
+@SuppressWarnings({"JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc"})
 public class ForcedAlignerGrammar extends Grammar {
 
     protected GrammarNode finalNode;

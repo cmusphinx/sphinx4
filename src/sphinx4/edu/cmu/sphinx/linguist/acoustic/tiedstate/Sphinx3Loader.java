@@ -123,6 +123,7 @@ import java.util.logging.Logger;
  * override those values by specifying them in the configuration file.
  * </p>
  */
+@SuppressWarnings({"JavaDoc", "JavaDoc", "JavaDoc"})
 public class Sphinx3Loader implements Loader {
 
     /**

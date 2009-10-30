@@ -46,6 +46,7 @@ import java.util.*;
  * <p/>
  * Note that all probabilties are maintained in the log math domain
  */
+@SuppressWarnings({"JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc"})
 public class FlatLinguist implements Linguist, Configurable {
 
     /**

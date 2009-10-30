@@ -29,6 +29,7 @@ import java.util.logging.Logger;
  * unit.  This class operates under the constraint that context sizes are exactly one, which is generally only valid for
  * large vocabulary tasks.
  */
+@SuppressWarnings({"JavaDoc", "JavaDoc", "JavaDoc"})
 public class HMMPool {
 
     private AcousticModel model;

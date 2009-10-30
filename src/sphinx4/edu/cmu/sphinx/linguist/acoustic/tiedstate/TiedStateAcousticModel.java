@@ -58,7 +58,7 @@ import java.util.logging.Logger;
  * the non-required left or right context, the index of a transition matrix, and, for each state, the index of a mean
  * vector, a variance vector, and a set of mixture weights.
  */
-@SuppressWarnings({"UnnecessaryLocalVariable"})
+@SuppressWarnings({"UnnecessaryLocalVariable", "JavaDoc", "JavaDoc", "JavaDoc"})
 public class TiedStateAcousticModel implements AcousticModel {
 
     /** The property that defines the component used to load the acoustic model */

@@ -53,6 +53,7 @@ import java.util.logging.Logger;
  * This dictionary will read in all the words and its pronunciation(s) at startup. Therefore, if the dictionary is big,
  * it will take longer to load and will consume more memory.
  */
+@SuppressWarnings({"JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc"})
 public class FullDictionary implements Dictionary {
 
     // ----------------------------------

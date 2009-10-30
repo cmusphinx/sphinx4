@@ -28,6 +28,7 @@ import java.util.List;
  * points to a particular unit within a pronunciation/word/grammar.  From a particular grammar point, it is possible to
  * get the set of next grammar points.
  */
+@SuppressWarnings({"JavaDoc"})
 public class GrammarPoint {
 
     private GrammarNode node;        // the grammar node

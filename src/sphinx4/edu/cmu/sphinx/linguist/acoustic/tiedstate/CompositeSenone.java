@@ -27,6 +27,7 @@ import java.util.Collection;
  * <p/>
  * Note that all scores are maintained in LogMath log base
  */
+@SuppressWarnings({"JavaDoc", "JavaDoc", "JavaDoc"})
 public class CompositeSenone implements Senone, Serializable {
 
     private final static int MAX_SENONES = 20000;

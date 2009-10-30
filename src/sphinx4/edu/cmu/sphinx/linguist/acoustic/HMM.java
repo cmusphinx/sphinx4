@@ -18,6 +18,7 @@ package edu.cmu.sphinx.linguist.acoustic;
  * from state to state, and a sequence of senones associated with each state. This representation of an HMM is a
  * specialized left-to-right markov model. No backward transitions are allowed.
  */
+@SuppressWarnings({"JavaDoc"})
 public interface HMM {
 
     /**

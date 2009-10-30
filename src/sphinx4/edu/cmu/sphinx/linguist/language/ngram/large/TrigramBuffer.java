@@ -14,6 +14,7 @@ package edu.cmu.sphinx.linguist.language.ngram.large;
 
 
 /** Implements a buffer for trigrams read from disk. */
+@SuppressWarnings({"JavaDoc"})
 class TrigramBuffer extends NGramBuffer {
 
     /**

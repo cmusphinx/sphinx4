@@ -75,6 +75,7 @@ import java.util.logging.Logger;
  * work for standard 3ph models (it supports state/transition tying).
  * 
  */
+@SuppressWarnings({"JavaDoc", "JavaDoc", "JavaDoc"})
 public class HTKLoader implements Loader {
 
 	/** The log math component for the system. */

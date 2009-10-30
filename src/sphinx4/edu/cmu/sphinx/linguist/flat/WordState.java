@@ -15,6 +15,7 @@ package edu.cmu.sphinx.linguist.flat;
 import edu.cmu.sphinx.linguist.dictionary.Word;
 
 /** Represents a word in an SentenceHMMS */
+@SuppressWarnings({"JavaDoc", "JavaDoc"})
 public class WordState extends SentenceHMMState {
 
     /** Creates a WordState

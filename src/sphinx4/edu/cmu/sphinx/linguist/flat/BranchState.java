@@ -2,6 +2,7 @@ package edu.cmu.sphinx.linguist.flat;
 
 
 /** Represents a branching node in a grammar */
+@SuppressWarnings({"JavaDoc", "JavaDoc", "JavaDoc"})
 public class BranchState extends SentenceHMMState {
 
     /**

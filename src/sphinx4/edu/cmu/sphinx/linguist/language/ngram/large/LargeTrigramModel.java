@@ -33,6 +33,7 @@ import java.util.logging.Logger;
  * Note that all probabilities in the grammar are stored in LogMath log base format. Language Probabilities in the
  * language model file are stored in log 10 base. They are converted to the LogMath logbase.
  */
+@SuppressWarnings({"JavaDoc"})
 public class LargeTrigramModel implements LanguageModel {
 
     /**

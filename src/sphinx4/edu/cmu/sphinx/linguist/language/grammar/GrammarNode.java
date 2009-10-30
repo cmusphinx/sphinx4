@@ -29,6 +29,7 @@ import java.util.*;
  * <p/>
  * Note that all probabilties are maintained in the LogMath log base
  */
+@SuppressWarnings({"JavaDoc"})
 public class GrammarNode {
 
     private final int identity;            // the node id

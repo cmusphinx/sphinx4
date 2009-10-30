@@ -24,6 +24,7 @@ import java.io.*;
  * Note that all probabilites in the grammar are stored in LogMath log base format. Language Probabilties in the
  * language model file are stored in log 10 base. They are converted to the LogMath logbase.
  */
+@SuppressWarnings({"JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc"})
 public class BinaryLoader {
 
     private static final String DARPA_LM_HEADER = "Darpa Trigram LM";

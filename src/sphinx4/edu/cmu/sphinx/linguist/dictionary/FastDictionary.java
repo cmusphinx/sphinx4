@@ -60,6 +60,7 @@ import java.util.logging.Logger;
  * <p/>
  * In the above example, the words "one" and "zero" have two pronunciations each.
  */
+@SuppressWarnings({"JavaDoc", "JavaDoc", "JavaDoc"})
 public class FastDictionary implements Dictionary {
 
 

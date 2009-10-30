@@ -24,6 +24,7 @@ import java.util.StringTokenizer;
  * @author Christophe Cerisara
  * 
  */
+@SuppressWarnings({"JavaDoc", "JavaDoc", "JavaDoc"})
 public class GMMDiag {
 	public int nT;
 	public String nom;

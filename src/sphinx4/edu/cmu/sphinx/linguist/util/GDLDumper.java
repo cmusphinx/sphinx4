@@ -20,6 +20,7 @@ import java.io.PrintStream;
 import java.util.*;
 
 /** A linguist processor that dumps out the sentence hmm in GDL format. */
+@SuppressWarnings({"JavaDoc", "JavaDoc"})
 public class GDLDumper extends LinguistDumper {
 
     /** The SphinxProperty specifying whether to skip HMMs during dumping. */

@@ -17,6 +17,7 @@ import java.util.*;
  * 
  * @author Christophe Cerisara
  */
+@SuppressWarnings({"JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc"})
 public class HMMSet {
 	private GMMDiag g;
 	private int nGaussians;

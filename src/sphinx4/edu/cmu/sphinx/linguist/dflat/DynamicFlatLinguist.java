@@ -39,6 +39,7 @@ import java.util.logging.Logger;
  * <p/>
  * Note that all probabilties are maintained in the log math domain
  */
+@SuppressWarnings({"JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc"})
 public class DynamicFlatLinguist implements Linguist, Configurable {
 
     /** A sphinx property used to define the grammar to use when building the search graph */

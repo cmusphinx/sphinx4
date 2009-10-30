@@ -96,6 +96,7 @@ import java.util.*;
  * <p/>
  * </ol>
  */
+@SuppressWarnings({"JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc"})
 public class FSTGrammar extends Grammar {
 
     /** A property for the location of the FST n-gram file. */

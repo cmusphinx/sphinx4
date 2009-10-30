@@ -34,6 +34,7 @@ import java.util.logging.Logger;
  * Note that all probabilities in the grammar are stored in LogMath log base format. Language Probabilities in the
  * language model file are stored in log 10 base.
  */
+@SuppressWarnings({"JavaDoc", "JavaDoc", "JavaDoc"})
 public class SimpleNGramModel implements LanguageModel {
 
     /** Sphinx property that defines the logMath component. */

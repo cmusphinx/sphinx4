@@ -24,6 +24,7 @@ import java.util.logging.Logger;
  * <p/>
  * Note that all probabilities are in LogMath log base, except as otherwise noted.
  */
+@SuppressWarnings({"JavaDoc"})
 public interface LanguageModel extends Configurable {
 
     /** The SphinxProperty specifying the format of the language model. */
