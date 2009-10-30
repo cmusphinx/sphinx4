@@ -29,7 +29,7 @@ import java.util.logging.Logger;
  * unit.  This class operates under the constraint that context sizes are exactly one, which is generally only valid for
  * large vocabulary tasks.
  */
-@SuppressWarnings({"JavaDoc", "JavaDoc", "JavaDoc"})
+
 public class HMMPool {
 
     private AcousticModel model;
@@ -47,8 +47,8 @@ public class HMMPool {
      * Constructs a HMMPool object.
      *
      * @param model the model to use for the pool
-     * @param logger
-     * @param unitManager
+
+
      */
     public HMMPool(AcousticModel model, Logger logger, UnitManager unitManager) {
         this.logger = logger;
@@ -293,7 +293,7 @@ public class HMMPool {
     /**
      * Given an ID, build up a name for display
      *
-     * @param id
+
      * @return the name baed on the ID
      */
     private String getUnitNameFromID(int id) {

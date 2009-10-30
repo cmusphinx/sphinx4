@@ -17,12 +17,12 @@ import edu.cmu.sphinx.linguist.dictionary.Word;
 import java.io.Serializable;
 
 /** Represents a set of alternatives in an SentenceHMMS */
-@SuppressWarnings({"JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc"})
+
 public class AlternativeState extends SentenceHMMState
         implements Serializable {
 
     /** Creates a WordState
- * @param parent
+
  * @param which*/
     public AlternativeState(GrammarState parent, int which) {
         super("A", parent, which);

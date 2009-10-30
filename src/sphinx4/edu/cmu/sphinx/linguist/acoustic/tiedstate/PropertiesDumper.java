@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Properties;
 
 /** Dumps out information about an acoustic model. */
-@SuppressWarnings({"JavaDoc", "JavaDoc", "JavaDoc"})
+
 public class PropertiesDumper {
 
     private final Properties props;

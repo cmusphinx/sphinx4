@@ -17,7 +17,7 @@ package edu.cmu.sphinx.linguist.language.ngram.large;
  * Implements a buffer that contains NGrams. It assumes that the first two bytes of each n-gram entry is the ID of the
  * n-gram.
  */
-@SuppressWarnings({"JavaDoc"})
+
 class NGramBuffer {
 
     private final byte[] buffer;
@@ -32,7 +32,7 @@ class NGramBuffer {
      *
      * @param buffer       the byte[] with trigrams
      * @param numberNGrams the number of N-gram
-     * @param bigEndian
+
      */
     public NGramBuffer(byte[] buffer, int numberNGrams, boolean bigEndian) {
         this.buffer = buffer;

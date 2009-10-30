@@ -53,7 +53,7 @@ import java.util.logging.Logger;
  * This dictionary will read in all the words and its pronunciation(s) at startup. Therefore, if the dictionary is big,
  * it will take longer to load and will consume more memory.
  */
-@SuppressWarnings({"JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc"})
+
 public class FullDictionary implements Dictionary {
 
     // ----------------------------------
@@ -166,7 +166,7 @@ public class FullDictionary implements Dictionary {
      * @param inputStream  the InputStream of the dictionary
      * @param isFillerDict true if this is a filler dictionary, false otherwise
      * @throws java.io.IOException if there is an error reading the dictionary
-     * @return
+
      */
     @SuppressWarnings({"unchecked"})
     protected Map<String, Object> loadDictionary(InputStream inputStream, boolean isFillerDict)
@@ -212,7 +212,7 @@ public class FullDictionary implements Dictionary {
     /**
      * Converts the spelling/Pronunciations mappings in the dictionary into spelling/Word mappings.
      *
-     * @param dictionary
+
      * @param isFillerDict if true this is a filler dictionary
      */
     @SuppressWarnings({"unchecked"})
@@ -253,7 +253,7 @@ public class FullDictionary implements Dictionary {
      * <pre>
      *  "LEAD(2)" returns "LEAD"
      *  "LEAD" returns "LEAD"
-     *  @param word
+
      *  the word to be stripped
      * <p/>
      *  @return the given word but with all characters from the first

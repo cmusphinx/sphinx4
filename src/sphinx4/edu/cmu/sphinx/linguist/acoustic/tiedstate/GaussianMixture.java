@@ -23,7 +23,7 @@ import edu.cmu.sphinx.util.LogMath;
  * <p/>
  * All scores and weights are maintained in LogMath log base.
  */
-@SuppressWarnings({"JavaDoc", "JavaDoc", "JavaDoc"})
+
 public class GaussianMixture implements Senone, Cloneable {
 
     // these data element in a senone may be shared with other senones
@@ -44,7 +44,6 @@ public class GaussianMixture implements Senone, Cloneable {
      * @param logMath           the log math
      * @param logMixtureWeights the mixture weights for this senone in LogMath log base
      * @param mixtureComponents the mixture components for this senone
-     * @param id
      */
     public GaussianMixture(LogMath logMath, float[] logMixtureWeights,
                            MixtureComponent[] mixtureComponents, long id) {
@@ -231,8 +230,8 @@ public class GaussianMixture implements Senone, Cloneable {
     }
 
 
-    /** @param index
-     * @return the (log-scaled) mixture weight of the component density <code>index</code> */
+
+    /** @return the (log-scaled) mixture weight of the component density <code>index</code> */
     public float getLogComponentWeight(int index) {
         return logMixtureWeights[index];
     }

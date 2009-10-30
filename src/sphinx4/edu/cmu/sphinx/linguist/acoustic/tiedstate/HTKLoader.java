@@ -75,7 +75,7 @@ import java.util.logging.Logger;
  * work for standard 3ph models (it supports state/transition tying).
  * 
  */
-@SuppressWarnings({"JavaDoc", "JavaDoc", "JavaDoc"})
+
 public class HTKLoader implements Loader {
 
 	/** The log math component for the system. */
@@ -271,7 +271,7 @@ public class HTKLoader implements Loader {
 	/**
 	 * Loads the AcousticModel from an HTK MMF
 	 * 
-	 * @param MMFname
+
 	 *            the name of the acoustic model; if null we just load from the
 	 *            default location
      * @throws java.io.IOException
@@ -306,9 +306,9 @@ public class HTKLoader implements Loader {
 	 * Creates the senone pool from the rest of the pools.
 	 * assumes the means and variances are in the same order
 	 * 
-	 * @param distFloor
+
 	 *            the lowest allowed score
-	 * @param varianceFloor
+
 	 *            the lowest allowed variance
 	 * @return the senone pool
 	 */
@@ -360,7 +360,7 @@ public class HTKLoader implements Loader {
 	/**
 	 * Reads the next word (text separated by whitespace) from the given stream.
 	 * 
-	 * @param dis
+
 	 *            the input stream
 	 * @return the next word
 	 * @throws IOException
@@ -384,7 +384,7 @@ public class HTKLoader implements Loader {
 	/**
 	 * Reads a single char from the stream.
 	 * 
-	 * @param dis
+
 	 *            the stream to read
 	 * @return the next character on the stream
 	 * @throws IOException
@@ -397,7 +397,7 @@ public class HTKLoader implements Loader {
 	/**
 	 * Read an integer from the input stream, byte-swapping as necessary.
 	 * 
-	 * @param dis
+
 	 *            the inputstream
 	 * @return an integer value
 	 * @throws IOException
@@ -414,7 +414,7 @@ public class HTKLoader implements Loader {
 	/**
 	 * Read a float from the input stream, byte-swapping as necessary.
 	 * 
-	 * @param dis
+
 	 *            the inputstream
 	 * @return a floating pint value
 	 * @throws IOException
@@ -435,9 +435,9 @@ public class HTKLoader implements Loader {
 	 * If a data point is non-zero and below 'floor' make it equal to floor
 	 * (don't floor zero values though).
 	 * 
-	 * @param data
+
 	 *            the data to floor
-	 * @param floor
+
 	 *            the floored value
 	 */
 	protected void nonZeroFloor(float[] data, float floor) {
@@ -451,9 +451,9 @@ public class HTKLoader implements Loader {
 	/**
 	 * If a data point is below 'floor' make it equal to floor.
 	 * 
-	 * @param data
+
 	 *            the data to floor
-	 * @param floor
+
 	 *            the floored value
 	 */
 	private void floorData(float[] data, float floor) {
@@ -467,7 +467,7 @@ public class HTKLoader implements Loader {
 	/**
 	 * Normalize the given data.
 	 * 
-	 * @param data
+
 	 *            the data to normalize
 	 */
 	protected void normalize(float[] data) {
@@ -485,9 +485,9 @@ public class HTKLoader implements Loader {
 	/**
 	 * Dump the data
 	 * 
-	 * @param name
+
 	 *            the name of the data
-	 * @param data
+
 	 *            the data itself
 	 */
 	private void dumpData(String name, float[] data) {
@@ -500,7 +500,7 @@ public class HTKLoader implements Loader {
 	/**
 	 * Convert to log math.
 	 * 
-	 * @param data
+
 	 *            the data to normalize
 	 */
 	// linearToLog returns a float, so zero values in linear scale
@@ -515,9 +515,9 @@ public class HTKLoader implements Loader {
 	 * Reads the given number of floats from the stream and returns them in an
 	 * array of floats.
 	 * 
-	 * @param dis
+
 	 *            the stream to read data from
-	 * @param size
+
 	 *            the number of floats to read
 	 * @return an array of size float elements
 	 * @throws IOException
@@ -536,11 +536,11 @@ public class HTKLoader implements Loader {
 	 * Loads the model file. A set of density arrays are created and
 	 * placed in the given pool.
 	 * 
-	 * @param useCDUnits
+
 	 *            if true, loads also the context dependent units
-	 * @param htkmods
+
 	 *            the set of HTK models
-	 * @param path
+
 	 *            the path to a density file
 	 * @throws IOException
 	 *             if an error occurs while loading the data
@@ -773,8 +773,8 @@ public class HTKLoader implements Loader {
 	/**
 	 * Returns true if the given senone sequence IDs are the same.
 	 * 
-	 * @param ssid1
-     * @param ssid2
+
+
      * @return true if the given senone sequence IDs are the same, false
 	 *         otherwise
 	 */
@@ -794,7 +794,7 @@ public class HTKLoader implements Loader {
 	/**
 	 * Gets the senone sequence representing the given senones.
 	 * 
-	 * @param stateid
+
 	 *            is the array of senone state ids
 	 * @return the senone sequence associated with the states
 	 */
@@ -809,7 +809,7 @@ public class HTKLoader implements Loader {
 	/**
 	 * Creates a pool with a single identity matrix in it.
 	 * 
-	 * @param name
+
 	 *            the name of the pool
 	 * @return the pool with the matrix
 	 */
@@ -833,7 +833,7 @@ public class HTKLoader implements Loader {
 	/**
 	 * Creates a pool with a single zero vector in it.
 	 * 
-	 * @param name
+
 	 *            the name of the pool
 	 * @return the pool with the vector
 	 */

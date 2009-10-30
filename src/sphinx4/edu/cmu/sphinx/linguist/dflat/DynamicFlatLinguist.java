@@ -39,7 +39,7 @@ import java.util.logging.Logger;
  * <p/>
  * Note that all probabilties are maintained in the log math domain
  */
-@SuppressWarnings({"JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc"})
+
 public class DynamicFlatLinguist implements Linguist, Configurable {
 
     /** A sphinx property used to define the grammar to use when building the search graph */
@@ -684,7 +684,7 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
          *
          * @param lc         the current left context
          * @param nextBaseID the desired next base ID
-         * @return
+
          */
         SearchStateArc[] getNextGrammarStates(int lc, int nextBaseID) {
             GrammarArc[] nextNodes = node.getSuccessors();
@@ -730,7 +730,7 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
          *
          * @param arcs     the set of arcs to filter
          * @param nextBase the ID of the desired next unit
-         * @return
+
          */
         GrammarArc[] filter(GrammarArc[] arcs, int nextBase) {
             if (nextBase != ANY) {
@@ -752,7 +752,7 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
          *
          * @param node   the grammar node
          * @param unitID the id of the unit
-         * @return
+
          */
         private boolean hasEntryContext(GrammarNode node, int unitID) {
             Set<Unit> unitSet = nodeToUnitSetMap.get(node);
@@ -765,7 +765,7 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
          *
          * @param p        the set of pronunciations to filter
          * @param nextBase the ID of the desired initial unit
-         * @return
+
          */
         Pronunciation[] filter(Pronunciation[] p, int nextBase) {
             return p;

@@ -123,7 +123,7 @@ import java.util.logging.Logger;
  * override those values by specifying them in the configuration file.
  * </p>
  */
-@SuppressWarnings({"JavaDoc", "JavaDoc", "JavaDoc"})
+
 public class Sphinx3Loader implements Loader {
 
     /**
@@ -957,8 +957,8 @@ public class Sphinx3Loader implements Loader {
     /**
      * Returns true if the given senone sequence IDs are the same.
      *
-     * @param ssid1
-     * @param ssid2
+
+
      * @return true if the given senone sequence IDs are the same, false otherwise
      */
     protected boolean sameSenoneSequence(int[] ssid1, int[] ssid2) {

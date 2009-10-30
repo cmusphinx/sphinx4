@@ -29,7 +29,7 @@ import java.util.*;
  * <p/>
  * Note that all probabilties are maintained in the LogMath log base
  */
-@SuppressWarnings({"JavaDoc"})
+
 public class GrammarNode {
 
     private final int identity;            // the node id
@@ -230,7 +230,7 @@ public class GrammarNode {
      * @param level        the indent level
      * @param visitedNodes the set of visited nodes
      * @param logProb      the probability of the transition (in logMath log domain)
-     * @return
+
      */
     private String traverse(int level, Set<GrammarNode> visitedNodes, float logProb) {
         StringBuilder dump = new StringBuilder();

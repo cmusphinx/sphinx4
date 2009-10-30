@@ -46,7 +46,7 @@ import java.util.*;
  * <p/>
  * Note that all probabilties are maintained in the log math domain
  */
-@SuppressWarnings({"JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc"})
+
 public class FlatLinguist implements Linguist, Configurable {
 
     /**
@@ -421,7 +421,7 @@ public class FlatLinguist implements Linguist, Configurable {
      * GrammarJob queue. While there are jobs left on the grammar job queue, a job is removed from the queue and the
      * associated grammar node is expanded and attached to the tails. GrammarJobs for the successors are added to the
      * grammar job queue.
-     * @return
+
      */
     protected Collection<SentenceHMMState> compileGrammar() {
         initialGrammarState = grammar.getInitialNode();
@@ -496,7 +496,7 @@ public class FlatLinguist implements Linguist, Configurable {
     /**
      * Returns a new GState for the given GrammarNode.
      *
-     * @param grammarNode
+
      * @return a new GState for the given GrammarNode
      */
     protected GState createGState(GrammarNode grammarNode) {
@@ -516,7 +516,7 @@ public class FlatLinguist implements Linguist, Configurable {
     /**
      * Start the search at the indicated node
      *
-     * @param initialNode
+
      */
     protected void addStartingPath(GrammarNode initialNode) {
         // guarantees a starting path into the initial node by
@@ -557,7 +557,7 @@ public class FlatLinguist implements Linguist, Configurable {
      * @param logAcousticProbability  the log acoustic probability
      * @param logLanguageProbability  the log language probability
      * @param logInsertionProbability the log insertion probability
-     * @return
+
      */
     protected SentenceHMMStateArc getArc(SentenceHMMState nextState,
                                          float logAcousticProbability, float logLanguageProbability,
@@ -715,7 +715,7 @@ public class FlatLinguist implements Linguist, Configurable {
         /**
          * Retrieves the set of trailing contexts for this node. the trailing contexts are the set of Unit[] with a size
          * equal to the maximum left context size that align with the end of the node
-         * @return
+
          */
         Collection<UnitContext> getEndingContexts() {
             Collection<UnitContext> endingContexts = new ArrayList<UnitContext>();
@@ -779,7 +779,7 @@ public class FlatLinguist implements Linguist, Configurable {
          * Pushes the given left context into the successor states. If a successor state is empty, continue to push into
          * this empty states successors
          *
-         * @param visitedSet
+
          * @param leftContext the context to push
          */
         void pushLeftContexts(Set<GrammarNode> visitedSet, Collection<UnitContext> leftContext) {
@@ -822,8 +822,8 @@ public class FlatLinguist implements Linguist, Configurable {
 
         /**
          * Returns the entry points for a given context pair
-         * @param contextPair
-         * @return
+
+
          */
         private List<SearchState> getEntryPoints(ContextPair contextPair) {
             return entryPoints.get(contextPair);
@@ -883,7 +883,7 @@ public class FlatLinguist implements Linguist, Configurable {
          *
          * @param list    the list of contexts
          * @param context the context to check
-         * @return
+
          */
         private boolean listContains(List<Unit[]> list, Unit[] context) {
             for (Unit[] item : list) {
@@ -1215,7 +1215,7 @@ public class FlatLinguist implements Linguist, Configurable {
          * @param left  the entry left context
          * @param units the set of units
          * @param index the index of the current unit
-         * @return
+
          */
         private Unit[] getLC(UnitContext left, Unit[] units, int index) {
             Unit[] leftUnits = left.getUnits();
@@ -1242,7 +1242,7 @@ public class FlatLinguist implements Linguist, Configurable {
          * @param units the set of units
          * @param index the index of the current unit
          * @param right the exiting right context
-         * @return
+
          */
         private Unit[] getRC(Unit[] units, int index, UnitContext right) {
             Unit[] rightUnits = right.getUnits();
@@ -1317,7 +1317,7 @@ public class FlatLinguist implements Linguist, Configurable {
          *
          * @param prevLeftContext the previous left context
          * @param unit            the current unit
-         * @return
+
          */
         UnitContext generateNextLeftContext(UnitContext prevLeftContext,
                                             Unit unit) {
@@ -1453,7 +1453,7 @@ public class FlatLinguist implements Linguist, Configurable {
          *
          * @param sourceList the set of source states
          * @param destList   the set of destinatin states.
-         * @param logLangProb
+
          */
         private void connect(List<SearchState> sourceList, List<SearchState> destList, float logLangProb) {
             for (SearchState source : sourceList) {

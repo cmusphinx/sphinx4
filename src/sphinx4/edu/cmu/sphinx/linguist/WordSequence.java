@@ -22,7 +22,7 @@ import java.util.List;
  * This class can be used to keep track of a word sequence.  This class is an immutable class. It can never be modified
  * once it is created (except, perhaps for transient, cached things such as a precalculated hashcode).
  */
-@SuppressWarnings({"JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc"})
+
 public final class WordSequence {
 
     private final Word[] words;
@@ -246,10 +246,9 @@ public final class WordSequence {
     }
 
 
-    /** Returns a subsequence with both <code>startIndex</code> and <code>stopIndex</code> exclusive.
-     * @param startIndex
-     * @param stopIndex
-     * @return*/
+    /**
+     * @return a subsequence with both <code>startIndex</code> and <code>stopIndex</code> exclusive.
+     */
     public WordSequence getSubSequence(int startIndex, int stopIndex) {
         List<Word> subseqWords = new ArrayList<Word>();
 
@@ -261,8 +260,9 @@ public final class WordSequence {
     }
 
 
-    /** Returns the words of the <code>WordSequence</code>.
-     * @return*/
+    /**
+     * @return the words of the <code>WordSequence</code>.
+     */
     public Word[] getWords() {
         return getSubSequence(0, size()).words; //create a copy yo keep the class imutable
     }

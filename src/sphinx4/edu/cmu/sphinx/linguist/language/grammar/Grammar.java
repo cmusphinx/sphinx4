@@ -33,7 +33,7 @@ import java.util.logging.Logger;
  * <p/>
  * Note that all grammar probabilities are maintained in LogMath log domain.
  */
-@SuppressWarnings({"JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc"})
+
 public abstract class Grammar implements Configurable, GrammarInterface {
 
     /** Property to control the the dumping of the grammar */
@@ -341,7 +341,7 @@ public abstract class Grammar implements Configurable, GrammarInterface {
      *
      * @param bogusText dummy variable
      * @throws NoSuchMethodException if called with reference sentence
-     * @return
+
      */
     protected GrammarNode createGrammar(String bogusText)
             throws NoSuchMethodException {
@@ -365,7 +365,7 @@ public abstract class Grammar implements Configurable, GrammarInterface {
      *
      * @param identity the id for this node
      * @param alts     the set of alternative word lists for this GrammarNode
-     * @return
+
      */
     protected GrammarNode createGrammarNode(int identity, String[][] alts) {
         GrammarNode node;
@@ -396,7 +396,7 @@ public abstract class Grammar implements Configurable, GrammarInterface {
      * created. The grammar id is automatically assigned
      *
      * @param word the word for this grammar node
-     * @return
+
      */
 
     protected GrammarNode createGrammarNode(String word) {
@@ -422,7 +422,7 @@ public abstract class Grammar implements Configurable, GrammarInterface {
      *
      * @param identity the id for this node
      * @param word     the word for this grammar node
-     * @return
+
      */
     protected GrammarNode createGrammarNode(int identity, String word) {
         GrammarNode node;

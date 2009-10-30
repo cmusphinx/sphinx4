@@ -15,7 +15,7 @@ package edu.cmu.sphinx.linguist.dictionary;
 import java.io.Serializable;
 
 /** Provides a classification of words */
-@SuppressWarnings({"JavaDoc"})
+
 public class WordClassification implements Serializable {
 
     private final String classificationName;

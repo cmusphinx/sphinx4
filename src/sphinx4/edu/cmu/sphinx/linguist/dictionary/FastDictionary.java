@@ -60,7 +60,7 @@ import java.util.logging.Logger;
  * <p/>
  * In the above example, the words "one" and "zero" have two pronunciations each.
  */
-@SuppressWarnings({"JavaDoc", "JavaDoc", "JavaDoc"})
+
 public class FastDictionary implements Dictionary {
 
 
@@ -365,8 +365,8 @@ public class FastDictionary implements Dictionary {
      * Processes a dictionary entry. When loaded the dictionary just loads each line of the dictionary into the hash
      * table, assuming that most words are not going to be used. Only when a word is actually used is its pronunciations
      * massaged into an array of pronunciations.
-     * @param word
-     * @return
+
+
      */
     private Word processEntry(String word) {
         List<Pronunciation> pList = new LinkedList<Pronunciation>();

@@ -58,7 +58,7 @@ import java.util.logging.Logger;
  * the non-required left or right context, the index of a transition matrix, and, for each state, the index of a mean
  * vector, a variance vector, and a set of mixture weights.
  */
-@SuppressWarnings({"UnnecessaryLocalVariable", "JavaDoc", "JavaDoc", "JavaDoc"})
+@SuppressWarnings({"UnnecessaryLocalVariable"})
 public class TiedStateAcousticModel implements AcousticModel {
 
     /** The property that defines the component used to load the acoustic model */
@@ -321,8 +321,8 @@ public class TiedStateAcousticModel implements AcousticModel {
      * 'left' or 'right' may be null to indicate that the match should succeed on any context.
      *
      * @param unit the unit
-     * @param position
-     * @return
+
+
      */
     public SenoneSequence getCompositeSenoneSequence(Unit unit,
                                                      HMMPosition position) {
@@ -489,7 +489,7 @@ public class TiedStateAcousticModel implements AcousticModel {
      * silence filler context
      *
      * @param unit the unit of interest
-     * @param position
+
      * @return the associated hmm or null
      */
     private SenoneHMM getHMMInSilenceContext(Unit unit, HMMPosition position) {

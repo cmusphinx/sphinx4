@@ -96,9 +96,9 @@ public class MappingDictionary extends FastDictionary implements Dictionary {
 	 * Gets a context independent unit. There should only be one instance of any
 	 * CI unit
 	 * 
-	 * @param name
+
 	 *            the name of the unit
-	 * @param isFiller
+
 	 *            if true, the unit is a filler unit
 	 * @return the unit
 	 */

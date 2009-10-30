@@ -13,7 +13,7 @@
 package edu.cmu.sphinx.linguist.acoustic;
 
 /** Represents a unit of speech. Units may represent phones, words or any other suitable unit */
-@SuppressWarnings({"JavaDoc"})
+
 public class Unit {
 
     private final String name;
@@ -175,7 +175,8 @@ public class Unit {
 
 
     /** gets the key for this unit
-     * @return*/
+     * @return the key
+     */
     private String getKey() {
         return toString();
     }

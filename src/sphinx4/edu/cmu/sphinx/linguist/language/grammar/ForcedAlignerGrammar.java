@@ -22,7 +22,7 @@ import java.util.StringTokenizer;
  * <p/>
  * Note that all grammar probabilities are maintained in the LogMath log base
  */
-@SuppressWarnings({"JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc"})
+
 public class ForcedAlignerGrammar extends Grammar {
 
     protected GrammarNode finalNode;
@@ -60,9 +60,9 @@ public class ForcedAlignerGrammar extends Grammar {
      * Create a branch of the grammar that corresponds to a transcript.  For each word create a node, and link the nodes
      * with arcs.  The branch is connected to the initial node iNode, and the final node fNode.
      *
-     * @param iNode
-     * @param fNode
-     * @param transcript
+
+
+
      * @return the first node of this branch
      * @throws NoSuchMethodException
      */

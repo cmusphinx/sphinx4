@@ -19,7 +19,7 @@ import edu.cmu.sphinx.linguist.acoustic.HMMState;
 import java.io.Serializable;
 
 /** Represents a hmmState in an SentenceHMMS */
-@SuppressWarnings({"JavaDoc"})
+
 public class HMMStateState extends SentenceHMMState
         implements Serializable, HMMSearchState {
 
@@ -77,7 +77,7 @@ public class HMMStateState extends SentenceHMMState
     /**
      * Calculate the acoustic score for this state
      *
-     * @param feature
+
      * @return the acoustic score for this state
      */
     public float getScore(Data feature) {

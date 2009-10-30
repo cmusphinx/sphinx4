@@ -27,7 +27,7 @@ import java.util.Collection;
  * <p/>
  * Note that all scores are maintained in LogMath log base
  */
-@SuppressWarnings({"JavaDoc", "JavaDoc", "JavaDoc"})
+
 public class CompositeSenone implements Senone, Serializable {
 
     private final static int MAX_SENONES = 20000;
@@ -43,7 +43,7 @@ public class CompositeSenone implements Senone, Serializable {
      * a factory method that creates a CompositeSenone from a list of senones.
      *
      * @param senoneCollection the Collection of senones
-     * @param weight
+
      * @return a composite senone
      */
     public static CompositeSenone create(Collection<Senone> senoneCollection,
@@ -56,7 +56,7 @@ public class CompositeSenone implements Senone, Serializable {
      * Constructs a CompositeSenone given the set of constiuent senones
      *
      * @param senones the set of constiuent senones
-     * @param weight
+
      */
     public CompositeSenone(Senone[] senones, float weight) {
         this.senones = senones;

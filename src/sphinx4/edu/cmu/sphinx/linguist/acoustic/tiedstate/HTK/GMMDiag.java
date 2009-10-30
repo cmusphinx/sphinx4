@@ -24,7 +24,7 @@ import java.util.StringTokenizer;
  * @author Christophe Cerisara
  * 
  */
-@SuppressWarnings({"JavaDoc", "JavaDoc", "JavaDoc"})
+
 public class GMMDiag {
 	public int nT;
 	public String nom;
@@ -85,7 +85,7 @@ public class GMMDiag {
 	/**
 	 * Saves in proprietary format
 	 * 
-	 * @param name
+
 	 */
 	public void save(String name) {
 		try {
@@ -110,7 +110,7 @@ public class GMMDiag {
 	/**
 	 * Load from text proprietary format
 	 * 
-	 * @param name
+
 	 */
 	public void load(String name) {
 		try {
@@ -517,7 +517,7 @@ public class GMMDiag {
 	 * 2 GMMs are considered to be equal when all of their parameters do not
 	 * differ from more than 1%
 	 * 
-	 * @param g
+
 	 * @return if GMMs are equal
 	 */
 	public boolean isEqual(GMMDiag g) {

@@ -17,7 +17,7 @@ import java.util.*;
  * 
  * @author Christophe Cerisara
  */
-@SuppressWarnings({"JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc"})
+
 public class HMMSet {
 	private GMMDiag g;
 	private int nGaussians;
@@ -151,9 +151,9 @@ public class HMMSet {
 
 	/**
 	 * 
-	 * @param hmmidx
+
 	 *            index of the HMM (begins at 0)
-	 * @param stateidx
+
 	 *            index of the state WITHIN the HMM ! (begins at 1, as in MMF)
 	 * @return index of the state in the vector of all the states of the HMMSet
 	 *         !
@@ -274,11 +274,11 @@ public class HMMSet {
 	 * WARNING To be compliant with sphinx3 models, we remove the first
 	 * non-emitting state !
 	 * 
-	 * @param f
-	 * @param n
-	 * @param autresEtats
+
+
+
 	 * @throws IOException
-     * @return
+
 	 */
 	private SingleHMM loadHMM(BufferedReader f, String n,
 			List<GMMDiag> autresEtats) throws IOException {
@@ -447,9 +447,9 @@ public class HMMSet {
 	/**
 	 * Read until the last line of the file but it may leave one last line
 	 * so it can loose GCONST.
-     * @param f
-     * @param n
-     * @param prem
+
+
+
      * @throws java.io.IOException
      */
 	private void loadHTKGauss(BufferedReader f, int n, String prem)

@@ -122,7 +122,7 @@ import java.util.logging.Logger;
  * therefore are cached. The effect of using this EndNode optimization is to reduce the space required by the tree by
  * about 300mb and the time required to generate the tree from about 60 seconds to about 6 seconds.
  */
-@SuppressWarnings({"JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc", "JavaDoc"})
+
 public class LexTreeLinguist implements Linguist {
 
     /** A sphinx property used to define the grammar to use when building the search graph */
@@ -475,8 +475,8 @@ public class LexTreeLinguist implements Linguist {
          *
          * @param node         the node associated with this state
          * @param wordSequence the history of words up until this point
-         * @param smearTerm
-         * @param smearProb
+
+
          */
         LexTreeState(Node node, WordSequence wordSequence, float smearTerm,
                      float smearProb) {
@@ -669,7 +669,7 @@ public class LexTreeLinguist implements Linguist {
         /**
          * Returns the list of successors to this state
          *
-         * @param theNode
+
          * @return a list of SearchState objects
          */
         protected SearchStateArc[] getSuccessors(Node theNode) {
@@ -697,8 +697,8 @@ public class LexTreeLinguist implements Linguist {
          * Creates a word search state for the given word node
          *
          * @param wordNode the wordNode
-         * @param lastUnit
-         * @param previous
+
+
          * @return the search state for the wordNode
          */
         protected SearchStateArc createWordStateArc(WordNode wordNode,
@@ -739,7 +739,7 @@ public class LexTreeLinguist implements Linguist {
          * Creates a unit search state for the given unit node
          *
          * @param hmmNode the unit node
-         * @param previous
+
          * @return the search state
          */
         SearchStateArc createUnitStateArc(HMMNode hmmNode, LexTreeState previous) {
@@ -858,12 +858,12 @@ public class LexTreeLinguist implements Linguist {
         /**
          * Constructs a LexTreeUnitState
          *
-         * @param endNode
+
          * @param wordSequence the history of words
-         * @param smearTerm
-         * @param smearProb
-         * @param languageProbability
-         * @param insertionProbability
+
+
+
+
          */
         LexTreeEndUnitState(EndNode endNode, WordSequence wordSequence,
                             float smearTerm, float smearProb, float languageProbability,
@@ -1001,12 +1001,12 @@ public class LexTreeLinguist implements Linguist {
         /**
          * Constructs a LexTreeUnitState
          *
-         * @param hmmNode
+
          * @param wordSequence the history of words
-         * @param smearTerm
-         * @param smearProb
-         * @param languageProbability
-         * @param insertionProbability
+
+
+
+
          */
         LexTreeUnitState(HMMNode hmmNode, WordSequence wordSequence,
                          float smearTerm, float smearProb, float languageProbability,
@@ -1019,13 +1019,13 @@ public class LexTreeLinguist implements Linguist {
         /**
          * Constructs a LexTreeUnitState
          *
-         * @param hmmNode
+
          * @param wordSequence the history of words
-         * @param smearTerm
-         * @param smearProb
-         * @param languageProbability
-         * @param insertionProbability
-         * @param parentNode
+
+
+
+
+
          */
         LexTreeUnitState(HMMNode hmmNode, WordSequence wordSequence,
                          float smearTerm, float smearProb, float languageProbability,
@@ -1161,13 +1161,13 @@ public class LexTreeLinguist implements Linguist {
          *
          * @param hmmNode              the hmm state associated with this unit
          * @param wordSequence         the word history
-         * @param smearTerm
-         * @param smearProb
-         * @param hmmState
+
+
+
          * @param languageProbability  the probability of the transition
          * @param insertionProbability the probability of the transition
          * @param acousticProbability  the probability of the transition occuring
-         * @param parentNode
+
          */
         LexTreeHMMState(HMMNode hmmNode, WordSequence wordSequence,
                         float smearTerm, float smearProb, HMMState hmmState,
@@ -1356,13 +1356,13 @@ public class LexTreeLinguist implements Linguist {
         /**
          * Constructs a NonEmittingLexTreeHMMState
          *
-         * @param smearTerm
-         * @param smearProb
+
+
          * @param hmmState     the hmm state associated with this unit
-         * @param hmmNode
+
          * @param wordSequence the word history
          * @param probability  the probability of the transition occuring
-         * @param parentNode
+
          */
         LexTreeNonEmittingHMMState(HMMNode hmmNode, WordSequence wordSequence,
                                    float smearTerm, float smearProb, HMMState hmmState,
@@ -1391,10 +1391,10 @@ public class LexTreeLinguist implements Linguist {
          * Constructs a LexTreeWordState
          *
          * @param wordNode       the word node
-         * @param lastNode
+
          * @param wordSequence   the sequence of words triphone context
-         * @param smearTerm
-         * @param smearProb
+
+
          * @param logProbability the probability of this word occuring
          */
         LexTreeWordState(WordNode wordNode, HMMNode lastNode,
@@ -1554,8 +1554,8 @@ public class LexTreeLinguist implements Linguist {
          * @param wordNode       the word node
          * @param lastNode       the previous word node
          * @param wordSequence   the sequence of words triphone context
-         * @param smearTerm
-         * @param smearProb
+
+
          * @param logProbability the probability of this word occuring
          */
         LexTreeEndWordState(WordNode wordNode, HMMNode lastNode,
@@ -1598,7 +1598,7 @@ public class LexTreeLinguist implements Linguist {
     /**
      * Retrieves the unigram smear from the given node
      *
-     * @param node
+
      * @return the unigram smear
      */
     private float getUnigramSmear(Node node) {
