@@ -46,7 +46,6 @@ import java.util.*;
  * <p/>
  * Note that all probabilties are maintained in the log math domain
  */
-
 public class FlatLinguist implements Linguist, Configurable {
 
     /**
@@ -421,7 +420,6 @@ public class FlatLinguist implements Linguist, Configurable {
      * GrammarJob queue. While there are jobs left on the grammar job queue, a job is removed from the queue and the
      * associated grammar node is expanded and attached to the tails. GrammarJobs for the successors are added to the
      * grammar job queue.
-
      */
     protected Collection<SentenceHMMState> compileGrammar() {
         initialGrammarState = grammar.getInitialNode();
@@ -496,7 +494,6 @@ public class FlatLinguist implements Linguist, Configurable {
     /**
      * Returns a new GState for the given GrammarNode.
      *
-
      * @return a new GState for the given GrammarNode
      */
     protected GState createGState(GrammarNode grammarNode) {
@@ -516,7 +513,6 @@ public class FlatLinguist implements Linguist, Configurable {
     /**
      * Start the search at the indicated node
      *
-
      */
     protected void addStartingPath(GrammarNode initialNode) {
         // guarantees a starting path into the initial node by
@@ -557,7 +553,6 @@ public class FlatLinguist implements Linguist, Configurable {
      * @param logAcousticProbability  the log acoustic probability
      * @param logLanguageProbability  the log language probability
      * @param logInsertionProbability the log insertion probability
-
      */
     protected SentenceHMMStateArc getArc(SentenceHMMState nextState,
                                          float logAcousticProbability, float logLanguageProbability,

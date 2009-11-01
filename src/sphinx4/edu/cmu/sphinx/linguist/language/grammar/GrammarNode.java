@@ -230,7 +230,6 @@ public class GrammarNode {
      * @param level        the indent level
      * @param visitedNodes the set of visited nodes
      * @param logProb      the probability of the transition (in logMath log domain)
-
      */
     private String traverse(int level, Set<GrammarNode> visitedNodes, float logProb) {
         StringBuilder dump = new StringBuilder();

@@ -1598,7 +1598,6 @@ public class LexTreeLinguist implements Linguist {
     /**
      * Retrieves the unigram smear from the given node
      *
-
      * @return the unigram smear
      */
     private float getUnigramSmear(Node node) {

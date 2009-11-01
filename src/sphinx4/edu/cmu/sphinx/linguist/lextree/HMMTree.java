@@ -793,9 +793,7 @@ class Node {
      * the previously added node, otherwise we add this. Also, we record the base unit of the child in the set of right
      * context
      *
-     * @param hmm the hmm to add
-
-     * @return the node that holds the hmm (new or old)
+     * @param hmm the hmm to add\n     * @return the node that holds the hmm (new or old)
      */
     Node addSuccessor(HMM hmm, float probability) {
         Node child = null;
@@ -819,7 +817,6 @@ class Node {
      * set of right context
      *
      * @param pronunciation the pronunciation to add
-
      * @return the node that holds the pronunciation (new or old)
      */
     WordNode addSuccessor(Pronunciation pronunciation, float probability) {
@@ -870,7 +867,6 @@ class Node {
      * Gets a word node associated with the pronunciation.
      *
      * @param p the pronunciation
-
      * @return the word node
      */
     private WordNode getWordNode(Pronunciation p, float probability) {
@@ -1113,7 +1109,6 @@ class HMMNode extends UnitNode {
      * Creates the node, wrapping the given hmm
      *
      * @param hmm the hmm to hold
-
      */
     HMMNode(HMM hmm, float probablilty) {
         super(probablilty);

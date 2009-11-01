@@ -22,7 +22,6 @@ class TrigramBuffer extends NGramBuffer {
      *
      * @param trigramsOnDisk the byte[] with trigrams
      * @param numberNGrams   the number of trigram follows in the byte[]
-
      */
     public TrigramBuffer(byte[] trigramsOnDisk,
                          int numberNGrams, boolean bigEndian) {

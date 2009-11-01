@@ -43,7 +43,6 @@ public class CompositeSenone implements Senone, Serializable {
      * a factory method that creates a CompositeSenone from a list of senones.
      *
      * @param senoneCollection the Collection of senones
-
      * @return a composite senone
      */
     public static CompositeSenone create(Collection<Senone> senoneCollection,
@@ -56,7 +55,6 @@ public class CompositeSenone implements Senone, Serializable {
      * Constructs a CompositeSenone given the set of constiuent senones
      *
      * @param senones the set of constiuent senones
-
      */
     public CompositeSenone(Senone[] senones, float weight) {
         this.senones = senones;

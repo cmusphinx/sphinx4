@@ -957,8 +957,6 @@ public class Sphinx3Loader implements Loader {
     /**
      * Returns true if the given senone sequence IDs are the same.
      *
-
-
      * @return true if the given senone sequence IDs are the same, false otherwise
      */
     protected boolean sameSenoneSequence(int[] ssid1, int[] ssid2) {

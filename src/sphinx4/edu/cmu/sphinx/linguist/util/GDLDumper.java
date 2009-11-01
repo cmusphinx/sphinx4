@@ -253,7 +253,6 @@ public class GDLDumper extends LinguistDumper {
      * Formats the given floating point number for edge labels.
      *
      * @param value the floating point value to format
-
      */
     private String formatEdgeLabel(double value) {
         if (value == 1.0) {

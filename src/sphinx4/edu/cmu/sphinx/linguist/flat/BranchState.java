@@ -8,8 +8,6 @@ public class BranchState extends SentenceHMMState {
     /**
      * Creates a branch state
      *
-
-
      * @param nodeID the grammar node id
      */
     public BranchState(String leftContext, String rightContext, int nodeID) {

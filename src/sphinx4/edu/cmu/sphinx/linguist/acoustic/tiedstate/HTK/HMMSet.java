@@ -447,9 +447,6 @@ public class HMMSet {
 	/**
 	 * Read until the last line of the file but it may leave one last line
 	 * so it can loose GCONST.
-
-
-
      * @throws java.io.IOException
      */
 	private void loadHTKGauss(BufferedReader f, int n, String prem)

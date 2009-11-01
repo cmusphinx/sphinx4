@@ -77,7 +77,6 @@ public class HMMStateState extends SentenceHMMState
     /**
      * Calculate the acoustic score for this state
      *
-
      * @return the acoustic score for this state
      */
     public float getScore(Data feature) {

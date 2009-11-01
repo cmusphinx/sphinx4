@@ -22,7 +22,6 @@ class BigramBuffer extends NGramBuffer {
      *
      * @param bigramsOnDisk the byte[] with bigrams
      * @param numberNGrams  the number of bigram follows in the byte[]
-
      */
     public BigramBuffer(byte[] bigramsOnDisk,
                         int numberNGrams, boolean bigEndian) {

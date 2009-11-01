@@ -290,7 +290,6 @@ public class SimpleNGramModel implements LanguageModel {
      * @param format        the format of the model
      * @param location      the URL location of the model
      * @param unigramWeight the unigram weight
-
      * @throws IOException if an error occurs while loading
      */
     private void load(String format, URL location, float unigramWeight,
@@ -399,7 +398,6 @@ public class SimpleNGramModel implements LanguageModel {
      * Reads the next line from the LM file. Keeps track of line number.
      *
      * @throws IOException if an error occurs while reading the input or an EOF is encountered.
-
      */
     private String readLine() throws IOException {
         String line;
@@ -457,7 +455,6 @@ public class SimpleNGramModel implements LanguageModel {
     /**
      * Generates a 'corrupt' IO exception
      *
-
      * @throws IOException with the given string
      */
     private void corrupt(String why) throws IOException {

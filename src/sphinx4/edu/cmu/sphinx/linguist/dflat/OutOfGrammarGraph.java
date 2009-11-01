@@ -39,7 +39,6 @@ public class OutOfGrammarGraph {
      * Creates an OutOfGrammarGraph
      *
      * @param model                        the acoustic model
-
      *                                     probability of branching to this graph
      * @param logPhoneInsertionProbability probability of inserting a phone
      */

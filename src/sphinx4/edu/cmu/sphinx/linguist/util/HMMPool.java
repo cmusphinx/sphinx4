@@ -47,8 +47,6 @@ public class HMMPool {
      * Constructs a HMMPool object.
      *
      * @param model the model to use for the pool
-
-
      */
     public HMMPool(AcousticModel model, Logger logger, UnitManager unitManager) {
         this.logger = logger;
@@ -293,7 +291,6 @@ public class HMMPool {
     /**
      * Given an ID, build up a name for display
      *
-
      * @return the name baed on the ID
      */
     private String getUnitNameFromID(int id) {

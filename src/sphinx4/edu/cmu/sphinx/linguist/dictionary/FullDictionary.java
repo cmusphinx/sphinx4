@@ -166,7 +166,6 @@ public class FullDictionary implements Dictionary {
      * @param inputStream  the InputStream of the dictionary
      * @param isFillerDict true if this is a filler dictionary, false otherwise
      * @throws java.io.IOException if there is an error reading the dictionary
-
      */
     @SuppressWarnings({"unchecked"})
     protected Map<String, Object> loadDictionary(InputStream inputStream, boolean isFillerDict)
@@ -212,7 +211,6 @@ public class FullDictionary implements Dictionary {
     /**
      * Converts the spelling/Pronunciations mappings in the dictionary into spelling/Word mappings.
      *
-
      * @param isFillerDict if true this is a filler dictionary
      */
     @SuppressWarnings({"unchecked"})
@@ -253,7 +251,6 @@ public class FullDictionary implements Dictionary {
      * <pre>
      *  "LEAD(2)" returns "LEAD"
      *  "LEAD" returns "LEAD"
-
      *  the word to be stripped
      * <p/>
      *  @return the given word but with all characters from the first

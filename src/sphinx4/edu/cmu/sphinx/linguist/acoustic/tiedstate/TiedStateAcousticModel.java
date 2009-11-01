@@ -321,8 +321,6 @@ public class TiedStateAcousticModel implements AcousticModel {
      * 'left' or 'right' may be null to indicate that the match should succeed on any context.
      *
      * @param unit the unit
-
-
      */
     public SenoneSequence getCompositeSenoneSequence(Unit unit,
                                                      HMMPosition position) {
@@ -489,7 +487,6 @@ public class TiedStateAcousticModel implements AcousticModel {
      * silence filler context
      *
      * @param unit the unit of interest
-
      * @return the associated hmm or null
      */
     private SenoneHMM getHMMInSilenceContext(Unit unit, HMMPosition position) {
