@@ -1,14 +1,17 @@
 package edu.cmu.sphinx.tools.batch;
 
 import edu.cmu.sphinx.decoder.search.Token;
+import edu.cmu.sphinx.frontend.DataProcessor;
 import edu.cmu.sphinx.linguist.language.grammar.BatchForcedAlignerGrammar;
 import edu.cmu.sphinx.linguist.language.grammar.ForcedAlignerGrammar;
+import edu.cmu.sphinx.recognizer.Recognizer;
 import edu.cmu.sphinx.result.Result;
 import edu.cmu.sphinx.util.props.PropertyException;
 import edu.cmu.sphinx.util.props.PropertySheet;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.List;
 
 /**
  * Copyright 1999-2002 Carnegie Mellon University. Portions Copyright 2002 Sun Microsystems, Inc. Portions Copyright
@@ -57,6 +60,37 @@ public class BatchForcedAlignerRecognizer extends BatchNISTRecognizer {
         }
     }
 
+
+    public BatchForcedAlignerRecognizer(
+            BatchForcedAlignerGrammar bfaGrammar,
+            Recognizer recognizer,
+            List<DataProcessor> inputDataProcessors,
+            String ctlFile,
+            String dataDir,
+            String refFile,
+            String ctmFile,
+            int bitsPerSample,
+            int samplesPerSecond,
+            int framesPerSecond,
+            int channelCount
+    ) {
+        super(recognizer,
+                inputDataProcessors,
+                ctlFile,
+                dataDir,
+                refFile,
+                ctmFile,
+                bitsPerSample,
+                samplesPerSecond,
+                framesPerSecond,
+                channelCount);
+
+        this.bfaGrammar = bfaGrammar;
+    }
+
+    public BatchForcedAlignerRecognizer() {
+
+    }
 
     /*
     * (non-Javadoc)

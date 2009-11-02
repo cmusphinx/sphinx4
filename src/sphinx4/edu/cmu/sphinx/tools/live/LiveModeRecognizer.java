@@ -79,7 +79,20 @@ public class LiveModeRecognizer implements Configurable {
     private GapInsertionDetector gapInsertionDetector;
     private final NISTAlign aligner = new NISTAlign(true, true);
 
+    public LiveModeRecognizer( Recognizer recognizer, ConcatFileDataSource dataSource, int skip, boolean showGapInsertions, String hypothesisFile, int alignInterval ) {
+        this.skip = skip;
+        this.recognizer = recognizer;
+        this.dataSource = dataSource;
+        this.showGapInsertions = showGapInsertions;
+        this.hypothesisFile = hypothesisFile;
+        this.alignInterval = alignInterval;
+        this.referenceSource = dataSource;
+    }
 
+    public LiveModeRecognizer() {
+
+    }
+    
     /*
     * (non-Javadoc)
     *

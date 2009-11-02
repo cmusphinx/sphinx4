@@ -141,6 +141,14 @@ public abstract class AbstractSausageMaker implements ConfidenceScorer, Configur
 
     protected Lattice lattice;
 
+    public AbstractSausageMaker(float languageWieght) {
+        this.languageWeight = languageWeight;     
+    }
+
+    public AbstractSausageMaker() {
+
+    }
+
 
     /** @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet) */
     @Override

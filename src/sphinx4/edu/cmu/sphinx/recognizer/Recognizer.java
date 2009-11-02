@@ -72,6 +72,15 @@ public class Recognizer implements Configurable, ResultProducer {
     private List monitors;
 
 
+    public Recognizer(Decoder decoder, List monitors) {
+        this.decoder = decoder;
+        this.monitors = monitors;
+        name = null;
+    }
+
+    public Recognizer() {
+    }
+
     /* (non-Javadoc)
     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
     */

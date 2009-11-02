@@ -57,15 +57,21 @@ import java.util.logging.Logger;
  */
 public class BatchModeRecognizer implements Configurable {
 
-    /** The SphinxProperty name for how many files to skip for every decode. */
+    /**
+     * The SphinxProperty name for how many files to skip for every decode.
+     */
     @S4Integer(defaultValue = 0)
     public final static String PROP_SKIP = "skip";
 
-    /** The SphinxProperty name for how many utterances to process */
+    /**
+     * The SphinxProperty name for how many utterances to process
+     */
     @S4Integer(defaultValue = 1000000)
     public final static String PROP_COUNT = "count";
 
-    /** The SphinxProperty that specified which batch job is to be run. */
+    /**
+     * The SphinxProperty that specified which batch job is to be run.
+     */
     @S4Integer(defaultValue = 0)
     public final static String PROP_WHICH_BATCH = "whichBatch";
 
@@ -78,15 +84,21 @@ public class BatchModeRecognizer implements Configurable {
     @S4Integer(defaultValue = 1)
     public final static String PROP_TOTAL_BATCHES = "totalBatches";
 
-    /** The SphinxProperty that defines whether or not the decoder should use the pooled batch manager */
+    /**
+     * The SphinxProperty that defines whether or not the decoder should use the pooled batch manager
+     */
     @S4Boolean(defaultValue = false)
     public final static String PROP_USE_POOLED_BATCH_MANAGER = "usePooledBatchManager";
 
-    /** The Sphinx property that specifies the recognizer to use */
+    /**
+     * The Sphinx property that specifies the recognizer to use
+     */
     @S4Component(type = Recognizer.class)
     public final static String PROP_RECOGNIZER = "recognizer";
 
-    /** The sphinx property that specifies the input source */
+    /**
+     * The sphinx property that specifies the input source
+     */
     @S4ComponentList(type = BaseDataProcessor.class)
     public final static String PROP_INPUT_DATA_PROCESSORS = "inputDataProcessors";
 
@@ -107,6 +119,32 @@ public class BatchModeRecognizer implements Configurable {
 
     protected BatchItem curBatchItem;
     protected ConfigurationManager cm;
+
+    public BatchModeRecognizer(
+            Recognizer recognizer,
+            List<DataProcessor> inputDataProcessors,
+            int skip,
+            int utteranceId,
+            int whichBatch,
+            int totalBatches,
+            boolean usePooledBatchManager
+    ) {
+        logger = Logger.getLogger(getClass().getName());
+        cm = null;
+
+        this.skip = skip;
+        this.utteranceId = utteranceId;
+        this.whichBatch = whichBatch;
+        this.totalBatches = totalBatches;
+        this.usePooledBatchManager = usePooledBatchManager;
+
+        this.recognizer = recognizer;
+        this.inputDataProcessors = inputDataProcessors;
+    }
+
+    public BatchModeRecognizer() {
+
+    }
 
 
     /*
@@ -150,7 +188,9 @@ public class BatchModeRecognizer implements Configurable {
     }
 
 
-    /** Decodes the batch of audio files */
+    /**
+     * Decodes the batch of audio files
+     */
     public void decode(String batchFile) throws IOException {
         BatchItem batchItem;
         int count = 0;
@@ -371,7 +411,7 @@ public class BatchModeRecognizer implements Configurable {
             @Override
             public String execute(CommandInterpreter ci, String[] args) {
                 Result result = null;
-                
+
                 if (args.length != 1) {
                     ci.putResponse("Usage: batchRecognize");
                 } else {
@@ -405,7 +445,7 @@ public class BatchModeRecognizer implements Configurable {
             @Override
             public String execute(CommandInterpreter ci, String[] args) {
                 Result result = null;
-                
+
                 if (args.length != 1 && args.length != 2) {
                     ci.putResponse("Usage: batchNext [norec]");
                 } else {

@@ -75,6 +75,23 @@ public final class LogMath implements Configurable, Serializable {
         lastInstance = null;
     }
 
+    public LogMath(float logBase, boolean useAddTable) {
+        this.logger = Logger.getLogger(getClass().getName());
+
+        this.logBase = logBase;
+        this.useAddTable = useAddTable;
+
+        init();
+
+        if (lastInstance != null)
+            System.err.println("Creating new instance of LogMath while another instance is already present");
+
+        lastInstance = this;
+    }
+
+    public LogMath() {
+        
+    }
 
     @Override
     public void newProperties(PropertySheet ps) throws PropertyException {

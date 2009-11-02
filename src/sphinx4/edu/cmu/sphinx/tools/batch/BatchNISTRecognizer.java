@@ -15,6 +15,7 @@ import java.io.*;
 import java.net.URL;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * Copyright 1999-2002 Carnegie Mellon University. Portions Copyright 2002 Sun Microsystems, Inc. Portions Copyright
@@ -63,23 +64,33 @@ public class BatchNISTRecognizer extends BatchModeRecognizer {
     protected int channelCount;
     protected int bytesPerFrame;
 
-    /** The sphinx property that specifies the file containing the corpus utterance audio */
+    /**
+     * The sphinx property that specifies the file containing the corpus utterance audio
+     */
     @S4String(defaultValue = "<raw data directory not set>")
     public final static String PROP_DATA_DIR = "dataDirectory";
 
-    /** The sphinx property that specifies the file containing the corpus utterance audio */
+    /**
+     * The sphinx property that specifies the file containing the corpus utterance audio
+     */
     @S4String(defaultValue = "<ctl file not set>")
     public final static String PROP_CTL_FILE = "ctlFile";
 
-    /** The sphinx property that specifies the file containing the transcripts of the corpus */
+    /**
+     * The sphinx property that specifies the file containing the transcripts of the corpus
+     */
     @S4String(defaultValue = "<ref file not set>")
     public final static String PROP_REF_FILE = "refFile";
 
-    /** The sphinx property that specifies the the directory where the output XXX files should be placed */
+    /**
+     * The sphinx property that specifies the the directory where the output XXX files should be placed
+     */
     @S4String(defaultValue = "<ctm file not set>")
     public final static String PROP_CTM_FILE = "ctmFile";
 
-    /** The sphinx properties that specify the format of the PCM audio in the data file */
+    /**
+     * The sphinx properties that specify the format of the PCM audio in the data file
+     */
     @S4Integer(defaultValue = 16)
     public final static String PROP_BITS_PER_SAMPLE = "bitsPerSample";
     @S4Integer(defaultValue = 1)
@@ -89,6 +100,47 @@ public class BatchNISTRecognizer extends BatchModeRecognizer {
     @S4Integer(defaultValue = 100)
     public final static String PROP_FRAMES_PER_SECOND = "framesPerSecond";
 
+
+    public BatchNISTRecognizer(
+            Recognizer recognizer,
+            List<DataProcessor> inputDataProcessors,
+            String ctlFile,
+            String dataDir,
+            String refFile,
+            String ctmFile,
+            int bitsPerSample,
+            int samplesPerSecond,
+            int framesPerSecond,
+            int channelCount
+    ) {
+        this.logger = Logger.getLogger(getClass().getName());
+        this.recognizer = recognizer;
+        this.inputDataProcessors = inputDataProcessors;
+        this.dataDir = dataDir;
+        this.ctlFile = ctlFile;
+        this.refFile = refFile;
+        this.ctmFile = ctmFile;
+
+        this.bitsPerSample = bitsPerSample;
+        this.channelCount = channelCount;
+        this.samplesPerSecond = samplesPerSecond;
+        this.framesPerSecond = framesPerSecond;
+
+        this.bytesPerFrame = ((bitsPerSample / 8) * channelCount * samplesPerSecond) / framesPerSecond;
+
+        logger.info(
+                "BatchNISTRecognizer:\n" +
+                        "  dataDirectory=" + dataDir + '\n' +
+                        "  ctlFile=" + ctlFile + '\n' +
+                        "  bitsPerSample=" + bitsPerSample + '\n' +
+                        "  channelCount=" + channelCount + '\n' +
+                        "  samplesPerSecond=" + samplesPerSecond + '\n' +
+                        "  framesPerSecond=" + framesPerSecond + '\n');
+    }
+
+    public BatchNISTRecognizer() {
+
+    }
 
     /*
     * (non-Javadoc)
@@ -317,7 +369,7 @@ public class BatchNISTRecognizer extends BatchModeRecognizer {
             if (!spelling.startsWith("<")) {
                 String[] names = utt.name.split("_");
                 out.write((names[0] + '_' + names[1] + '_' + names[2]
-                    + " 1 " + (utt.startOffset + startFrame) / 100.0 + ' ' + (endFrame - startFrame) / 100.0 + ' ').getBytes());
+                        + " 1 " + (utt.startOffset + startFrame) / 100.0 + ' ' + (endFrame - startFrame) / 100.0 + ' ').getBytes());
                 out.write(hex2Binary(spelling));
                 out.write(" 0.700000\n".getBytes());
             }

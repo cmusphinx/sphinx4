@@ -46,6 +46,14 @@ public class MAPConfidenceScorer implements ConfidenceScorer, Configurable {
     private boolean dumpLattice;
     private boolean dumpSausage;
 
+    public MAPConfidenceScorer(float languageWeight, boolean dumpLattice, boolean dumpSausage) {
+        this.languageWeight = languageWeight;
+        this.dumpLattice = dumpLattice;
+        this.dumpSausage = dumpSausage;
+    }
+
+    public MAPConfidenceScorer() {
+    }
 
     /*
      * (non-Javadoc)
