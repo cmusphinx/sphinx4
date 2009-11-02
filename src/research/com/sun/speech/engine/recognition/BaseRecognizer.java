@@ -33,7 +33,7 @@ import java.util.*;
  * Also contains utility routines for: <UL> <LI>Loading imported grammars and resolving inter-grammar references.
  * <p/>
  * <LI>Printing/dumping grammars in an extensible way (used to dump grammar to under-lying recognizer implementation via
- * ascii strins)
+ * ASCII strings)
  * <p/>
  * <LI>Routines for copying grammars from one recognizer implementation to another. </UL>
  *
@@ -58,9 +58,8 @@ public class BaseRecognizer extends BaseEngine
     // grammar loading.
     protected boolean reloadAll;
 
-//////////////////////
-// Begin Constructors
-
+    //////////////////////
+    // Begin Constructors
     //////////////////////
 
 

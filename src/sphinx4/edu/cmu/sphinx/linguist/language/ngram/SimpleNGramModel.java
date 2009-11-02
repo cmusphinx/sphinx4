@@ -25,7 +25,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.*;
-import java.util.logging.Logger;
 
 /**
  * An ASCII ARPA language model loader. This loader makes no attempt to optimize storage, so it can only load very small
@@ -50,7 +49,6 @@ public class SimpleNGramModel implements LanguageModel {
     private float unigramWeight;
     private Dictionary dictionary;
     private int desiredMaxDepth;
-    private Logger logger;
     private int maxNGram;
     private Map<WordSequence, Probability> map;
     private Set<String> vocabulary;
@@ -61,7 +59,6 @@ public class SimpleNGramModel implements LanguageModel {
 
     public SimpleNGramModel( String format, URL urlLocation, float unigramWeight, LogMath logMath, 
                              int desiredMaxDepth, Dictionary dictionary ) {
-        logger = Logger.getLogger(getClass().getName());
         this.format = format;
         this.urlLocation = urlLocation;
         this.unigramWeight = unigramWeight;
@@ -89,7 +86,6 @@ public class SimpleNGramModel implements LanguageModel {
             throw new RuntimeException("Can't change properties after allocation");
         }
 
-        logger = ps.getLogger();
         format = ps.getString(PROP_FORMAT);
         urlLocation = ConfigurationManagerUtils.getResource(PROP_LOCATION, ps);
         unigramWeight = ps.getFloat(PROP_UNIGRAM_WEIGHT);
@@ -99,12 +95,7 @@ public class SimpleNGramModel implements LanguageModel {
         map = new HashMap<WordSequence, Probability>();
         vocabulary = new HashSet<String>();
     }
-
-    @Override
-    public Logger getLogger() {
-        return logger;
-    }
-
+    
     /*
     * (non-Javadoc)
     *

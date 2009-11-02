@@ -26,6 +26,7 @@ import edu.cmu.sphinx.util.TimerPool;
 import edu.cmu.sphinx.util.Utilities;
 
 import java.util.*;
+import java.util.logging.Logger;
 
 
 /**
@@ -49,6 +50,7 @@ class HMMTree {
     private final float languageWeight;
     private final Map<Object, HMMNode[]> endNodeMap;
     private WordNode sentenceEndWordNode;
+    private Logger logger;
 
 
     /**
@@ -68,6 +70,8 @@ class HMMTree {
         this.endNodeMap = new HashMap<Object, HMMNode[]>();
         this.addFillerWords = addFillerWords;
         this.languageWeight = languageWeight;
+        
+        logger = Logger.getLogger(HMMTree.class.getSimpleName());
 
         TimerPool.getTimer(this,"Create HMMTree").start();
         compile();
@@ -267,7 +271,7 @@ class HMMTree {
                 rc = units[i + 1];
                 HMM hmm = getHMM(baseUnit, lc, rc, HMMPosition.INTERNAL);
                 if (hmm == null) {
-                    lm.getLogger().severe("Missing HMM for unit " + baseUnit.getName() + " with lc=" + lc.getName() + " rc=" + rc.getName());
+                    logger.severe("Missing HMM for unit " + baseUnit.getName() + " with lc=" + lc.getName() + " rc=" + rc.getName());
                 } else {
                     curNode = curNode.addSuccessor(hmm, probability);
                 }
@@ -305,25 +309,25 @@ class HMMTree {
         int rid = hmmPool.getID(rc);
 
         if (!hmmPool.isValidID(bid)) {
-            lm.getLogger().severe("Bad HMM Unit: " + base.getName());
+            logger.severe("Bad HMM Unit: " + base.getName());
             return null;
         }
         if (!hmmPool.isValidID(lid)) {
-            lm.getLogger().severe("Bad HMM Unit: " + lc.getName());
+            logger.severe("Bad HMM Unit: " + lc.getName());
             return null;
         }
         if (!hmmPool.isValidID(rid)) {
-            lm.getLogger().severe("Bad HMM Unit: " + rc.getName());
+            logger.severe("Bad HMM Unit: " + rc.getName());
             return null;
         }
         id = hmmPool.buildID(bid, lid, rid);
         if (id < 0) {
-            lm.getLogger().severe("Unable to build HMM Unit ID for " + base.getName() + " lc=" + lc.getName() + " rc=" + rc.getName());
+            logger.severe("Unable to build HMM Unit ID for " + base.getName() + " lc=" + lc.getName() + " rc=" + rc.getName());
             return null;
         }
         HMM hmm = hmmPool.getHMM(id, pos);
         if (hmm == null) {
-            lm.getLogger().severe("Missing HMM Unit for " + base.getName() + " lc=" + lc.getName() + " rc=" + rc.getName());
+            logger.severe("Missing HMM Unit for " + base.getName() + " lc=" + lc.getName() + " rc=" + rc.getName());
         }
 
         return hmm;

@@ -14,7 +14,6 @@ import edu.cmu.sphinx.util.props.S4Component;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.logging.Logger;
 
 /**
  * An LM that computes a probability of a word sequence by
@@ -45,8 +44,6 @@ public class ClassBasedLanguageModel implements LanguageModel {
     // ----------------------------
     // Configuration data
     // ----------------------------
-    private Logger logger;
-    private LogMath logMath;
     private LanguageModel classLM;
     private Set<String> vocabulary;
 
@@ -55,10 +52,8 @@ public class ClassBasedLanguageModel implements LanguageModel {
     private ClassMap classMap;
 
     public ClassBasedLanguageModel(ClassMap classMap, LanguageModel classLM, LogMath logMath ) {
-        this.logger = Logger.getLogger(getClass().getName());
         this.classMap = classMap;
         this.classLM = classLM;
-        this.logMath = logMath;
     }
 
     public ClassBasedLanguageModel() {
@@ -72,8 +67,6 @@ public class ClassBasedLanguageModel implements LanguageModel {
      */
     @Override
     public void newProperties(PropertySheet ps) throws PropertyException {
-        logger = ps.getLogger();
-
         if (allocated) {
             throw new PropertyException(
                     ClassBasedLanguageModel.class.getName(),
@@ -82,8 +75,6 @@ public class ClassBasedLanguageModel implements LanguageModel {
         }
         classMap = (ClassMap) ps.getComponent(PROP_CLASS_MAP);
         classLM = (LanguageModel) ps.getComponent(PROP_CLASS_LANGUAGE_MODEL);
-        logMath = (LogMath) ps.getComponent(PROP_LOG_MATH);
-
     }
 
     /*
@@ -183,12 +174,6 @@ public class ClassBasedLanguageModel implements LanguageModel {
     public int getMaxDepth() {
         return classLM.getMaxDepth();
     }
-
-    @Override
-    public Logger getLogger() {
-        return logger;
-    }
-
 
     /**
      * Converts a vocabulary of the class LM to a word vocabulary.

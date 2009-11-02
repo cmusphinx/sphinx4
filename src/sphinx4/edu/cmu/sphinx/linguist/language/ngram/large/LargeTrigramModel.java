@@ -18,6 +18,7 @@ import edu.cmu.sphinx.linguist.dictionary.Word;
 import edu.cmu.sphinx.linguist.language.ngram.LanguageModel;
 import edu.cmu.sphinx.util.LogMath;
 import edu.cmu.sphinx.util.TimerPool;
+import edu.cmu.sphinx.linguist.util.LRUCache;
 import edu.cmu.sphinx.util.props.*;
 
 import java.io.*;
@@ -91,12 +92,6 @@ public class LargeTrigramModel implements LanguageModel {
     public static final int BYTES_PER_TRIGRAM = 4;
 
     private final static int SMEAR_MAGIC = 0xC0CAC01A; // things go better 
-
-    @Override
-    public Logger getLogger() {
-        return logger;
-    }
-
 
     // ------------------------------
     // Configuration data
@@ -244,7 +239,7 @@ public class LargeTrigramModel implements LanguageModel {
         buildUnigramIDMap(dictionary);
         loadedBigramBuffers = new BigramBuffer[unigrams.length];
 
-	if (maxDepth <= 0 || maxDepth > loader.getMaxDepth()) {
+        if (maxDepth <= 0 || maxDepth > loader.getMaxDepth()) {
             maxDepth = loader.getMaxDepth();
         }
 
@@ -1097,34 +1092,4 @@ public class LargeTrigramModel implements LanguageModel {
     }
 
 
-}
-
-/** An LRU cache */
-
-class LRUCache<K, V> extends LinkedHashMap<K, V> {
-
-	private static final long serialVersionUID = 1L;
-	final int maxSize;
-
-
-    /**
-     * Creates an LRU cache with the given maximum size
-     *
-     * @param maxSize the maximum size of the cache
-     */
-    LRUCache(int maxSize) {
-        this.maxSize = maxSize;
-    }
-
-
-    /**
-     * Determines if the eldest entry in the map should be removed.
-     *
-     * @param eldest the eldest entry
-     * @return true if the eldest entry should be removed
-     */
-    @Override
-    protected boolean removeEldestEntry(Map.Entry<K,V> eldest) {
-        return size() > maxSize;
-    }
 }

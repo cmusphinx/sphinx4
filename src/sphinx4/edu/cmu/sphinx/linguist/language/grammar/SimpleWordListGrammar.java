@@ -14,8 +14,6 @@ package edu.cmu.sphinx.linguist.language.grammar;
 import edu.cmu.sphinx.util.ExtendedStreamTokenizer;
 import edu.cmu.sphinx.util.LogMath;
 import edu.cmu.sphinx.util.props.*;
-import edu.cmu.sphinx.linguist.language.ngram.LanguageModel;
-import edu.cmu.sphinx.linguist.dictionary.*;
 
 import java.io.IOException;
 import java.util.*;
@@ -43,15 +41,15 @@ import java.util.*;
  */
 public class SimpleWordListGrammar extends Grammar implements Configurable {
 
-    /** Sphinx property that defines the location of the word list grammar */
+    /** The property that defines the location of the word list grammar */
     @S4String(defaultValue = "spelling.gram")
     public final static String PROP_PATH = "path";
 
-    /** Sphinx property that if true, indicates that this is a looping grammar */
+    /** The property that if true, indicates that this is a looping grammar */
     @S4Boolean(defaultValue = true)
     public final static String PROP_LOOP = "isLooping";
 
-    /** Sphinx property that defines the logMath component. */
+    /** The property that defines the logMath component. */
     @S4Component(type = LogMath.class)
     public final static String PROP_LOG_MATH = "logMath";
 

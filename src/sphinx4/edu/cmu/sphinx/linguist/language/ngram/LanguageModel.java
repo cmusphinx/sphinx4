@@ -17,7 +17,6 @@ import edu.cmu.sphinx.util.props.*;
 
 import java.io.IOException;
 import java.util.Set;
-import java.util.logging.Logger;
 
 /**
  * Represents the generic interface to an N-Gram language model.
@@ -27,28 +26,31 @@ import java.util.logging.Logger;
 
 public interface LanguageModel extends Configurable {
 
-    /** The SphinxProperty specifying the format of the language model. */
+    /** The property specifying the format of the language model. */
     @S4String(defaultValue = "arpa")
     public final static String PROP_FORMAT = "format";
 
-    /** The Sphinx Property specifying the location of the language model. */
+    /** The property specifying the location of the language model. */
     @S4String(defaultValue = ".")
     public final static String PROP_LOCATION = "location";
 
-    /** The Sphinx Property specifying the unigram weight */
+    /** The property specifying the unigram weight */
     @S4Double(defaultValue = 1.0)
     public final static String PROP_UNIGRAM_WEIGHT = "unigramWeight";
-    /**
-     * The Sphinx Property specifying the maximum depth reported by the language model (from a getMaxDepth()) call. If
-     * this property is set to (-1) (the default) the language model reports the implicit depth of the model. This
-     * property allows a deeper language model to be used. For instance, a trigram language model could be used as a
-     * bigram model by setting this property to 2. Note if this property is set to a value greater than the implicit
-     * depth, the implicit depth is used. Legal values for this property are 1..N and -1.
-     */
+	/**
+	 * The Sphinx Property specifying the maximum depth reported by the language
+	 * model (from a getMaxDepth()) call. If this property is set to (-1) (the
+	 * default) the language model reports the implicit depth of the model. This
+	 * property allows a deeper language model to be used. For instance, a
+	 * trigram language model could be used as a bigram model by setting this
+	 * property to 2. Note if this property is set to a value greater than the
+	 * implicit depth, the implicit depth is used. Legal values for this
+	 * property are 1..N and -1.
+	 */
     @S4Integer(defaultValue = -1)
     public final static String PROP_MAX_DEPTH = "maxDepth";
 
-    /** The Sphinx Property specifying the dictionary to use */
+    /** The property specifying the dictionary to use */
     @S4Component(type = Dictionary.class)
     public final static String PROP_DICTIONARY = "dictionary";
 
@@ -71,7 +73,7 @@ public interface LanguageModel extends Configurable {
 
 
     /**
-     * Gets the ngram probability of the word sequence represented by the word list
+     * Gets the n-gram probability of the word sequence represented by the word list
      *
      * @param wordSequence the wordSequence
      * @return the probability of the word sequence in LogMath log base
@@ -89,7 +91,7 @@ public interface LanguageModel extends Configurable {
 
 
     /**
-     * Returns the set of words in the lanaguage model. The set is unmodifiable.
+     * Returns the set of words in the language model. The set is unmodifiable.
      *
      * @return the unmodifiable set of words
      */
@@ -99,16 +101,7 @@ public interface LanguageModel extends Configurable {
     /**
      * Returns the maximum depth of the language model
      *
-     * @return the maximum depth of the language mdoel
+     * @return the maximum depth of the language model
      */
     public int getMaxDepth();
-
-
-    /**
-     * Used for reporting errors and warnings during loading
-     *
-     * @return the logger used by the LanguageModel
-     */
-    public Logger getLogger();
-
 }

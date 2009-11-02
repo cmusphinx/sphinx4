@@ -358,21 +358,6 @@ public class Lattice {
         return n;
     }
 
-
-    /**
-     * Add a Node that represents the theory that a given word was spoken over a given period of time.
-     *
-     * @param word
-     * @param beginTime
-     * @param endTime
-     * @return the new Node
-     */
-    public Node addNode(String word, int beginTime, int endTime) {
-        Word w = new Word(word, new Pronunciation[0], false);
-        return addNode(w, beginTime, endTime);
-    }
-
-
     /**
      * Add a Node with a given ID that represents the theory that a given word was spoken over a given period of time.
      * This method is used when loading Lattices from .LAT files.

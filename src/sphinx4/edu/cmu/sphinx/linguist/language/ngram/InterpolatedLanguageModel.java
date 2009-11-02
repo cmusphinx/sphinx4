@@ -11,7 +11,6 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Logger;
 
 /**
  * Simple interpolated LM implementation.
@@ -20,25 +19,23 @@ import java.util.logging.Logger;
  */
 public class InterpolatedLanguageModel implements LanguageModel {
     /**
-     * Sphinx property that defines the logMath component.
+     * The property that defines the logMath component.
      */
     @S4Component(type = LogMath.class)
     public final static String PROP_LOG_MATH = "logMath";
 
     /**
-     * Sphinx property that defines the language models to be interpolated.
+     * The property that defines the language models to be interpolated.
      */
     @S4ComponentList(type = LanguageModel.class)
     public final static String PROP_LANGUAGE_MODELS = "languageModels";
 
     /**
-     * Sphinx property that defines the language models weights
+     * The property that defines the language models weights
      */
     @S4StringList
     public final static String PROP_LANGUAGE_MODEL_WEIGHTS = "languageModelWeights";
 
-
-    private Logger logger;
     private LogMath logMath;
     private boolean allocated = false;
 
@@ -50,7 +47,6 @@ public class InterpolatedLanguageModel implements LanguageModel {
     private static final double EPSILON = 0.001;
 
     InterpolatedLanguageModel(LogMath logMath, List<LanguageModel> languageModels, float [] floats ) {
-        this.logger = Logger.getLogger(getClass().getName());
         this.languageModels = languageModels;
         this.numberOfLanguageModels = languageModels.size();
 
@@ -74,7 +70,6 @@ public class InterpolatedLanguageModel implements LanguageModel {
 
     @Override
     public void newProperties(PropertySheet ps) throws PropertyException {
-        logger = ps.getLogger();
         if (allocated) {
             throw new RuntimeException("Can't change properties after allocation");
         }
@@ -88,7 +83,7 @@ public class InterpolatedLanguageModel implements LanguageModel {
             throw new RuntimeException("Number of weights not equal to number of language models");
         }
 
-        // convert Strings to floats and assing weights.
+        // convert Strings to floats and assign weights.
         float[] floats = new float[items.size()];
         weights = new float[floats.length];
         float weightSum = 0;
@@ -196,10 +191,5 @@ public class InterpolatedLanguageModel implements LanguageModel {
             }
         }
         return maxDepth;
-    }
-
-    @Override
-    public Logger getLogger() {
-        return logger;
     }
 }

@@ -17,7 +17,6 @@ import edu.cmu.sphinx.util.props.S4Component;
 
 import java.io.IOException;
 import java.util.*;
-import java.util.logging.Logger;
 
 /* A model that optimizes the search by giving a preference to 
  * the list of keywords.
@@ -34,12 +33,6 @@ public class KeywordOptimizerModel implements LanguageModel {
     // Configuration data
     // ----------------------------
     private LanguageModel parent;
-    private Logger logger;
-
-    @Override
-    public Logger getLogger() {
-        return logger;
-    }
 
     public KeywordOptimizerModel( LanguageModel parent ) {
         this.parent = parent;

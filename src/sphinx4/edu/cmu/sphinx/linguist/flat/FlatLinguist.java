@@ -40,71 +40,72 @@ import java.util.*;
  * <p/>
  * <ul> <li>Zero or one word per grammar node <li> No fan-in allowed ever <li> No composites (yet) <li> Only Unit,
  * HMMState, and pronunciation states (and the initial/final grammar state are in the graph (no word, alternative or
- * grammar states attached). <li> Only valid tranisitions (matching contexts) are allowed <li> No tree organization of
+ * grammar states attached). <li> Only valid transitions (matching contexts) are allowed <li> No tree organization of
  * units <li> Branching grammar states are  allowed </ul>
  * <p/>
  * <p/>
- * Note that all probabilties are maintained in the log math domain
+ * Note that all probabilities are maintained in the log math domain
  */
 public class FlatLinguist implements Linguist, Configurable {
 
     /**
-     * A sphinx property used to define the grammar to use when building the search graph
+     * The property used to define the grammar to use when building the search graph
      */
     @S4Component(type = Grammar.class)
     public final static String PROP_GRAMMAR = "grammar";
 
     /**
-     * A sphinx property used to define the unit manager to use when building the search graph
+     * The property used to define the unit manager to use when building the search graph
      */
     @S4Component(type = UnitManager.class)
     public final static String PROP_UNIT_MANAGER = "unitManager";
 
     /**
-     * A sphinx property used to define the acoustic model to use when building the search graph
+     * The property used to define the acoustic model to use when building the search graph
      */
     @S4Component(type = AcousticModel.class)
     public final static String PROP_ACOUSTIC_MODEL = "acousticModel";
+    
     /**
-     * Sphinx property that defines the name of the logmath to be used by this search manager.
+     * The property that defines the name of the logmath to be used by this search manager.
      */
-
     @S4Component(type = LogMath.class)
     public final static String PROP_LOG_MATH = "logMath";
 
     /**
-     * Sphinx property used to determine whether or not the gstates are dumped.
+     * The property used to determine whether or not the gstates are dumped.
      */
     @S4Boolean(defaultValue = false)
     public final static String PROP_DUMP_GSTATES = "dumpGstates";
 
     /**
-     * Sphinx property that specifies whether to add a branch for detecting out-of-grammar utterances.
+     * The property that specifies whether to add a branch for detecting out-of-grammar utterances.
      */
     @S4Boolean(defaultValue = false)
     public final static String PROP_ADD_OUT_OF_GRAMMAR_BRANCH = "addOutOfGrammarBranch";
 
     /**
-     * Sphinx property for the probability of entering the out-of-grammar branch.
+     * The property for the probability of entering the out-of-grammar branch.
      */
     @S4Double(defaultValue = 1.0)
     public final static String PROP_OUT_OF_GRAMMAR_PROBABILITY = "outOfGrammarProbability";
 
     /**
-     * Sphinx property for the acoustic model used for the CI phone loop.
+     * The property for the acoustic model used for the CI phone loop.
      */
     @S4Component(type = AcousticModel.class)
     public static final String PROP_PHONE_LOOP_ACOUSTIC_MODEL = "phoneLoopAcousticModel";
 
     /**
-     * Sphinx property for the probability of inserting a CI phone in the out-of-grammar ci phone loop
+     * The property for the probability of inserting a CI phone in the out-of-grammar ci phone loop
      */
     @S4Double(defaultValue = 1.0)
     public static final String PROP_PHONE_INSERTION_PROBABILITY = "phoneInsertionProbability";
 
     /**
-     * Property to control whether compilation progress is displayed on stdout. If this property is true, a 'dot' is
-     * displayed for every 1000 search states added to the search space
+     * Property to control whether compilation progress is displayed on standard output. 
+     * If this property is true, a 'dot' is  displayed for every 1000 search states added
+     *  to the search space
      */
     @S4Boolean(defaultValue = false)
     public final static String PROP_SHOW_COMPILATION_PROGRESS = "showCompilationProgress";
@@ -183,7 +184,7 @@ public class FlatLinguist implements Linguist, Configurable {
     }
 
     /*
-            // hookup to all of the components
+        // hook up to all of the components
         setupAcousticModel(ps);
         logMath = (LogMath) ps.getComponent(PROP_LOG_MATH);
         grammar = (Grammar) ps.getComponent(PROP_GRAMMAR);
@@ -860,12 +861,11 @@ public class FlatLinguist implements Linguist, Configurable {
          * @param dest        where the contexts are added
          * @param newContexts the list of new contexts
          */
-        private void addWithNoDuplicates(List<Unit[]> dest, List newContexts) {
+        private void addWithNoDuplicates(List<Unit[]> dest, List<Unit []> newContexts) {
             // this could potentially be a bottleneck, but the contexts
             // lists should be fairly small (<100) items, so this approach
             // should be fast enough.
-            for (Object newContext : newContexts) {
-                Unit[] context = (Unit[]) newContext;
+            for (Unit[] context : newContexts) {
                 if (!listContains(dest, context)) {
                     dest.add(context);
                 }
@@ -874,7 +874,7 @@ public class FlatLinguist implements Linguist, Configurable {
 
 
         /**
-         * Deterimes if the give list contains the given context
+         * Determines if the give list contains the given context
          *
          * @param list    the list of contexts
          * @param context the context to check
@@ -929,7 +929,7 @@ public class FlatLinguist implements Linguist, Configurable {
             } else {
                 //if the node is empty, populate the set of entry and exit
                 //points with a branch state. The branch state
-                // branches to the succesor entry points for this
+                // branches to the successor entry points for this
                 // state
                 // the exit point should consist of the set of
                 // incoming left contexts and outgoing right contexts
@@ -1447,7 +1447,7 @@ public class FlatLinguist implements Linguist, Configurable {
          * connect all the states in the source list to the states in the destination list
          *
          * @param sourceList the set of source states
-         * @param destList   the set of destinatin states.
+         * @param destList   the set of destination states.
 
          */
         private void connect(List<SearchState> sourceList, List<SearchState> destList, float logLangProb) {
@@ -1798,7 +1798,7 @@ class ContextPair {
 
     /**
      * Gets the ContextPair for the given set of contexts. This is a factory method. If the ContextPair already exists,
-     * return that one, othewise, create it and store it so it can be reused.
+     * return that one, otherwise, create it and store it so it can be reused.
      *
      * @param left  the left context
      * @param right the right context
