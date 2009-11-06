@@ -25,6 +25,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * An AudioFileDataSource generates a stream of audio data from a given audio file. All required information concerning
@@ -62,27 +63,28 @@ public class AudioFileDataSource extends BaseDataProcessor {
 
     private File curAudioFile;
 
-    public AudioFileDataSource(int bytesPerRead, List<? extends Configurable> listeners) {
+    public AudioFileDataSource(int bytesPerRead, List<AudioFileProcessListener> listeners) {
+        this.logger = Logger.getLogger(getClass().getName()); 
         create(bytesPerRead,listeners);
     }
 
     public AudioFileDataSource() {
-
     }
     
     @Override
     public void newProperties(PropertySheet ps) throws PropertyException {
         super.newProperties(ps);
-        create(ps.getInt(PROP_BYTES_PER_READ),ps.getComponentList(AUDIO_FILE_LISTENERS));
+        create(ps.getInt(PROP_BYTES_PER_READ), (List<AudioFileProcessListener>) ps.getComponentList(AUDIO_FILE_LISTENERS));
     }
 
-    private void create( int bytesPerRead, List<? extends Configurable> listeners ) {
+    private void create( int bytesPerRead, List<AudioFileProcessListener> listeners ) {
         this.bytesPerRead = bytesPerRead;
 
-        // attach all pool-listeners
-        for (Configurable configurable : listeners) {
-            assert configurable instanceof AudioFileProcessListener;
-            addNewFileListener((AudioFileProcessListener) configurable);
+        if( listeners != null ) {
+            // attach all pool-listeners
+            for (AudioFileProcessListener configurable : listeners) {
+                addNewFileListener(configurable);
+            }
         }
 
         initialize();

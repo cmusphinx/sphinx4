@@ -51,7 +51,7 @@ public abstract class AbstractScorer extends ConfigurableAdapter implements Acou
      * applied and the token scores will be returned unchanged.
      */
     public AbstractScorer(BaseDataProcessor frontEnd, ScoreNormalizer scoreNormalizer) {
-
+        initLogger();
         this.frontEnd = frontEnd;
         this.scoreNormalizer = scoreNormalizer;
     }

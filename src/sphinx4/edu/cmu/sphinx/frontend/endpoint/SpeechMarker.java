@@ -42,7 +42,7 @@ import java.util.ListIterator;
 public class SpeechMarker extends BaseDataProcessor {
 
     /**
-     * A property for the minimum amount of time in speech (in milliseconds) to be considered 
+     * A property for the minimum amount of time in speech (in milliseconds) to be considered
      * as utterance start.
      */
     @S4Integer(defaultValue = 200)
@@ -50,27 +50,35 @@ public class SpeechMarker extends BaseDataProcessor {
     private int startSpeechTime;
 
 
-    /** A property for the amount of time in silence (in milliseconds) to be 
-     * considered as utterance end. */
+    /**
+     * A property for the amount of time in silence (in milliseconds) to be
+     * considered as utterance end.
+     */
     @S4Integer(defaultValue = 500)
     public static final String PROP_END_SILENCE = "endSilence";
     private int endSilenceTime;
 
 
-    /** A property for the amount of time (in milliseconds) before speech start 
-     * to be included as speech data. */
+    /**
+     * A property for the amount of time (in milliseconds) before speech start
+     * to be included as speech data.
+     */
     @S4Integer(defaultValue = 100)
     public static final String PROP_SPEECH_LEADER = "speechLeader";
     private int speechLeader;
 
-    /** A property for number of frames to keep in buffer. Should be enough to let
-     * insert the SpeechStartSignal. */
+    /**
+     * A property for number of frames to keep in buffer. Should be enough to let
+     * insert the SpeechStartSignal.
+     */
     @S4Integer(defaultValue = 50)
     public static final String PROP_SPEECH_LEADER_FRAMES = "speechLeaderFrames";
     private int speechLeaderFrames;
 
-    /** A property for the amount of time (in milliseconds) after speech ends to be 
-     * included as speech data. */
+    /**
+     * A property for the amount of time (in milliseconds) after speech ends to be
+     * included as speech data.
+     */
     @S4Integer(defaultValue = 100)
     public static final String PROP_SPEECH_TRAILER = "speechTrailer";
     private int speechTrailer;
@@ -85,7 +93,7 @@ public class SpeechMarker extends BaseDataProcessor {
         this.endSilenceTime = endSilenceTime;
         this.speechLeader = speechLeader;
         this.speechLeaderFrames = speechLeaderFrames;
-        this.speechTrailer = speechTrailer;        
+        this.speechTrailer = speechTrailer;
     }
 
     public SpeechMarker() {
@@ -103,7 +111,9 @@ public class SpeechMarker extends BaseDataProcessor {
     }
 
 
-    /** Initializes this SpeechMarker */
+    /**
+     * Initializes this SpeechMarker
+     */
     @Override
     public void initialize() {
         super.initialize();
@@ -111,7 +121,9 @@ public class SpeechMarker extends BaseDataProcessor {
     }
 
 
-    /** Resets this SpeechMarker to a starting state. */
+    /**
+     * Resets this SpeechMarker to a starting state.
+     */
     private void reset() {
         inSpeech = false;
         this.outputQueue = new ArrayList<Data>();
@@ -135,7 +147,7 @@ public class SpeechMarker extends BaseDataProcessor {
                     if (audio instanceof SpeechClassifiedData) {
                         SpeechClassifiedData data = (SpeechClassifiedData) audio;
 
-            	        sendToQueue(audio);
+                        sendToQueue(audio);
 
                         if (data.isSpeech()) {
                             boolean speechStarted = handleFirstSpeech(data);
@@ -145,10 +157,10 @@ public class SpeechMarker extends BaseDataProcessor {
                             }
                         }
                     } else if (audio instanceof DataStartSignal) {
-                	reset();
-                	sendToQueue(audio);
+                        reset();
+                        sendToQueue(audio);
                     } else {
-                    	sendToQueue(audio);
+                        sendToQueue(audio);
                     }
                 } else {
                     if (audio instanceof SpeechClassifiedData) {
@@ -163,12 +175,12 @@ public class SpeechMarker extends BaseDataProcessor {
                         sendToQueue(audio);
                         inSpeech = false;
                     } else if (audio instanceof DataStartSignal) {
-			reset();
-			sendToQueue(audio);
+                        reset();
+                        sendToQueue(audio);
                     }
                 }
             } else {
-            	break;
+                break;
             }
         }
 
@@ -217,6 +229,7 @@ public class SpeechMarker extends BaseDataProcessor {
      * @param audio the SpeechClassifiedData to handle
      * @return true if utterance/speech has started for real, false otherwise
      * @throws edu.cmu.sphinx.frontend.DataProcessingException
+     *
      */
     private boolean handleFirstSpeech(SpeechClassifiedData audio)
             throws DataProcessingException {
@@ -225,7 +238,7 @@ public class SpeechMarker extends BaseDataProcessor {
         // System.out.println("Entering handleFirstSpeech()");
         // try to read more that 'startSpeechTime' amount of
         // audio that is labeled as speech (the condition for speech start)
-        
+
         while (speechTime < startSpeechTime) {
             Data next = readData();
 
@@ -247,7 +260,9 @@ public class SpeechMarker extends BaseDataProcessor {
     }
 
 
-    /** Backtrack from the current position to add a SPEECH_START Signal to the outputQueue. */
+    /**
+     * Backtrack from the current position to add a SPEECH_START Signal to the outputQueue.
+     */
     private void addSpeechStart() {
         long lastCollectTime = 0;
         int silenceLength = 0, initalSpeechLength = 0;
@@ -286,6 +301,7 @@ public class SpeechMarker extends BaseDataProcessor {
      * @param audio a non-speech frame
      * @return true if speech has really ended, false if speech has not ended
      * @throws edu.cmu.sphinx.frontend.DataProcessingException
+     *
      */
     private boolean readEndFrames(SpeechClassifiedData audio) throws
             DataProcessingException {
@@ -380,7 +396,7 @@ public class SpeechMarker extends BaseDataProcessor {
         return true;
     }
 
-    public boolean inSpeech () {
-    	return inSpeech;
+    public boolean inSpeech() {
+        return inSpeech;
     }
 }

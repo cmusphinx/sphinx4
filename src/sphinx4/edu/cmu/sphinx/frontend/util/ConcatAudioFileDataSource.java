@@ -33,7 +33,7 @@ public class ConcatAudioFileDataSource extends AudioFileDataSource implements Re
 
     List<URL> batchFiles;
 
-    public ConcatAudioFileDataSource(int bytesPerRead, List<? extends Configurable> listeners) {
+    public ConcatAudioFileDataSource(int bytesPerRead, List<AudioFileProcessListener> listeners) {
         super(bytesPerRead,listeners);
     }
 

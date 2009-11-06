@@ -15,6 +15,7 @@ package edu.cmu.sphinx.instrumentation;
 import edu.cmu.sphinx.decoder.search.Token;
 import edu.cmu.sphinx.result.Result;
 import edu.cmu.sphinx.util.props.*;
+import edu.cmu.sphinx.recognizer.Recognizer;
 
 /** Tracks and reports recognition accuracy based upon the highest scoring path in a Result. */
 public class BestPathAccuracyTracker extends AccuracyTracker {
@@ -24,6 +25,16 @@ public class BestPathAccuracyTracker extends AccuracyTracker {
     public final static String PROP_SHOW_FULL_PATH = "showFullPath";
 
     private boolean showFullPath;
+
+    public BestPathAccuracyTracker(Recognizer recognizer, boolean showSummary, boolean showDetails, boolean showResults, boolean showAlignedResults, boolean showRawResults, boolean showFullPath) {
+        super(recognizer, showSummary, showDetails, showResults, showAlignedResults, showRawResults);
+        this.showFullPath = showFullPath;
+    }
+
+    public BestPathAccuracyTracker() {
+
+    }
+
 
     /*
     * (non-Javadoc)

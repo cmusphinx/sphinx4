@@ -82,11 +82,6 @@ public final class LogMath implements Configurable, Serializable {
         this.useAddTable = useAddTable;
 
         init();
-
-        if (lastInstance != null)
-            System.err.println("Creating new instance of LogMath while another instance is already present");
-
-        lastInstance = this;
     }
 
     public LogMath() {

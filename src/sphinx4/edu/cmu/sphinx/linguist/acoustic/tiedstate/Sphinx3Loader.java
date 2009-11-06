@@ -1206,7 +1206,7 @@ public class Sphinx3Loader implements Loader {
         DataInputStream dis;
         try {
             dis = readS3BinaryHeader(path, props);
-        } catch (Exception e) {
+        } catch (IOException e) {
             return null;
         }
 

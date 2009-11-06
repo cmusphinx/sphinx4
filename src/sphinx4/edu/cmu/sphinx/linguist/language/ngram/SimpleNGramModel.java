@@ -57,8 +57,8 @@ public class SimpleNGramModel implements LanguageModel {
     protected String fileName;
     private boolean allocated;
 
-    public SimpleNGramModel( String format, URL urlLocation, float unigramWeight, LogMath logMath, 
-                             int desiredMaxDepth, Dictionary dictionary ) {
+    public SimpleNGramModel( String format, URL urlLocation, Dictionary dictionary, float unigramWeight, LogMath logMath, 
+                             int desiredMaxDepth ) {
         this.format = format;
         this.urlLocation = urlLocation;
         this.unigramWeight = unigramWeight;

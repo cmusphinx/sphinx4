@@ -87,6 +87,7 @@
 	             compile_zipcity,
                      compile_sphinx_wavfile,
                      compile_sphinx_transcriber,
+                     compile_sphinx_raw,
 	             compile_tags"
             description="Compiles Sphinx-4 demos"/>
 
@@ -283,6 +284,25 @@
              manifest="${demo_src_dir}/edu/cmu/sphinx/demo/transcriber/transcriber.Manifest"
              basedir="${demo_classes_dir}"
              includes="edu/cmu/sphinx/demo/transcriber/**"
+             filesonly="true"
+             compress="true"/>
+    </target>
+
+    <target name="compile_sphinx_raw">
+        <mkdir dir="${demo_classes_dir}/edu/cmu/sphinx/demo/raw"/>
+        <javac debug="true"
+               listfiles="true"
+               deprecation="true"
+               srcdir="${demo_src_dir}"
+               includes="edu/cmu/sphinx/demo/raw/**"
+               destdir="${demo_classes_dir}">
+            <classpath refid="libs"/>
+        </javac>
+        <mkdir dir="${bin_dir}"/>
+        <jar destfile="${bin_dir}/Raw.jar"
+             manifest="${demo_src_dir}/edu/cmu/sphinx/demo/raw/raw.Manifest"
+             basedir="${demo_classes_dir}"
+             includes="edu/cmu/sphinx/demo/raw/**"
              filesonly="true"
              compress="true"/>
     </target>

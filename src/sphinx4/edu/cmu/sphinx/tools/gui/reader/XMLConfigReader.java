@@ -14,8 +14,9 @@
 
 package edu.cmu.sphinx.tools.gui.reader;
 
+import edu.cmu.sphinx.util.props.RawPropertyData;
+import edu.cmu.sphinx.util.props.SaxLoader;
 import edu.cmu.sphinx.tools.gui.ConfigProperties;
-import edu.cmu.sphinx.util.props.*;
 
 import java.io.File;
 import java.io.IOException;

@@ -15,6 +15,7 @@ package edu.cmu.sphinx.jsapi;
 import com.sun.speech.engine.recognition.BaseRecognizer;
 import edu.cmu.sphinx.linguist.language.grammar.Grammar;
 import edu.cmu.sphinx.linguist.language.grammar.GrammarNode;
+import edu.cmu.sphinx.linguist.dictionary.Dictionary;
 import edu.cmu.sphinx.util.LogMath;
 import edu.cmu.sphinx.util.props.*;
 
@@ -26,6 +27,7 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * Defines a BNF-style grammar based on JSGF grammar rules in a file.
@@ -177,6 +179,18 @@ public class JSGFGrammar extends Grammar {
 
     private boolean loadGrammar = true;
     private GrammarNode firstNode;
+
+    public JSGFGrammar(URL baseURL, LogMath logMath, String grammarName, boolean showGrammar,boolean optimizeGrammar,boolean addSilenceWords, boolean addFillerWords, Dictionary dictionary ) {
+        super(showGrammar,optimizeGrammar,addSilenceWords,addFillerWords,dictionary );
+        this.baseURL = baseURL;
+        this.logMath = logMath;
+        this.grammarName = grammarName;
+        loadGrammar = true;
+    }
+
+    public JSGFGrammar() {
+
+    }
 
 
     /*
