@@ -1,0 +1,11 @@
+This directory contains a example Groovy script.  This example reimplements the Transciber application. 
+
+Groovy is a popular choice for Java based scripting, and is a good choice for rapid development with Sphinx4.
+
+To try this script, install Groovy from here
+
+    http://groovy.codehaus.org/
+
+Then cd to src/scripts/groovy and type the following to the shell
+
+    groovy -cp ../../../lib/sphinx4.jar:../../../lib/jsapi.jar GroovyTranscriber.groovy ../../../
