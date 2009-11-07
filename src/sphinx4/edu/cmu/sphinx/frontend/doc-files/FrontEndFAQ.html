@@ -253,20 +253,12 @@ and type:
     </span>
 
 <p>
-    The SpeechClassifier property 'threshold' controls how sensitive
-    the endpointer is. It is empirically determined that the value of 13
-    is optimal for most environments. A lower threshold will make the
-    LevelTracker more sensitive, that is, mark more audio as speech.
-    A higher threshold will make the endpointer less sensitive,
-    that is, mark less audio as speech.
-
-<p>
-    It is also important to understand the operation of the
-    <b>mergeSpeechSegment</b> property of the
-    NonSpeechDataFilter when using the audio endpointer. Refer to the
-    <a href="../endpoint/NonSpeechDataFilter.html">
-        Javadoc for NonSpeechDataFilter</a> for details about its operation.
-
+    The SpeechClassifier property 'threshold' controls how sensitive the
+    endpointer is. It is empirically determined that the value of 13 is
+    optimal for most environments. A lower threshold will make the
+    endpointer more sensitive, that is, mark more audio as speech. A
+    higher threshold will make the endpointer less sensitive, that is,
+    mark less audio as speech.
 <hr>
 
 Copyright 1999-2004 Carnegie Mellon University.<br>
