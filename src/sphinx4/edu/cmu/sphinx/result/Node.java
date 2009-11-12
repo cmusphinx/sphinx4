@@ -221,6 +221,14 @@ public class Node {
         return leavingEdges;
     }
 
+    /**
+     * Returns a copy of the Edges to this Node, so that the underlying data structure will not be modified.
+     *
+     * @return a copy of the edges to this node
+     */
+    public Collection<Edge> getCopyOfEnteringEdges() {
+        return new ArrayList<Edge>(enteringEdges);
+    }
 
     /**
      * Returns a copy of the Edges from this Node, so that the underlying data structure will not be modified.
@@ -230,7 +238,6 @@ public class Node {
     public Collection<Edge> getCopyOfLeavingEdges() {
         return new ArrayList<Edge>(leavingEdges);
     }
-
 
     /**
      * Add an Edge from this Node

@@ -13,14 +13,14 @@ package edu.cmu.sphinx.result;
 
 import java.util.Collection;
 import java.util.ArrayList;
+import java.util.List;
 
 import edu.cmu.sphinx.linguist.WordSequence;
 import edu.cmu.sphinx.linguist.dictionary.Word;
 import edu.cmu.sphinx.linguist.language.ngram.LanguageModel;
 
 /**
- * Class used to collapse all equivalent paths in a Lattice.  Results in a Lattices that is deterministic (no Node has
- * Edges to two or more equivalent Nodes), and minimal (no Node has Edge from two or more equivalent Nodes).
+ * Class rescore the lattice with the new Language model.
  */
 
 public class LatticeRescorer {
@@ -45,8 +45,49 @@ public class LatticeRescorer {
     	return node.getWord().getSpelling().equals("<sil>");
     }
     
-    public void rescore () {
+    // Ensures each node has unique context
+    public void expand() {
+    	List<Node> nodeQueue = lattice.sortNodes();
     	
+    	while (nodeQueue.size() > 0) {
+
+    		Node node = nodeQueue.remove(0);
+    		
+    		if (node.getLeavingEdges().size() < 1) {
+    			continue;
+    		}
+    		
+    		Collection<Edge> enteringEdges = node.getCopyOfEnteringEdges();
+    		if (enteringEdges.size() > 1) {
+    			for (Edge e : enteringEdges) {
+    				Node newNode = new Node(node.getWord(), node.getBeginTime(), node.getEndTime());
+    				lattice.addNode(newNode);
+    				lattice.addEdge(e.getFromNode(), newNode, e.getAcousticScore(), e.getLMScore());
+    				for (Edge e1 : node.getCopyOfLeavingEdges()) {
+    					Node toNode = e1.getToNode();
+    					if (!nodeQueue.contains(toNode)) {
+   						nodeQueue.add(toNode);
+    					}
+    					lattice.addEdge(newNode, toNode, e1.getAcousticScore(), e1.getLMScore());
+    					lattice.removeEdge(e1);
+    				}
+    				nodeQueue.add(newNode);
+    			}
+    			lattice.removeNodeAndEdges(node);
+    		}
+    	}
+    }
+    
+    public void removeFillers () {    	
+    	for (Node node : lattice.sortNodes()) {
+    		if (isFillerNode(node)) {
+    			lattice.removeNodeAndCrossConnectEdges(node);
+    			assert lattice.checkConsistency();
+    		}
+    	}
+    }
+
+    private void rescoreEdges() {
     	for (Edge edge : lattice.edges) {
     		
     		if (isFillerNode(edge.getToNode()))
@@ -62,13 +103,10 @@ public class LatticeRescorer {
     				wordList.add(0, node.getWord());
     				i++;
     			}
-    			System.out.println ("Checking node '" + node + "'");
     			
     			Collection<Edge> enteringEdges = node.getEnteringEdges();
-    			
-    			if (enteringEdges.size() > 1) {
-    				System.err.println ("Too many " + enteringEdges.size() + " entering edges to " + node);
-    			}
+
+    			assert enteringEdges.size() <= 1;
 
     			if (i == depth)
     				break;
@@ -82,6 +120,18 @@ public class LatticeRescorer {
     		float prob = model.getProbability(seq) * languageWeigth;
     		System.out.println ("Changing prob of sequence " + seq + " from " + edge.getLMScore() + " to " + prob);
     		edge.setLMScore(prob);
-    	}
+    	}    	
+    }
+    public void rescore () {
+    	
+    	removeFillers();
+    
+        lattice.dumpAISee("before.gdl", "before");
+
+        expand();
+    	
+        lattice.dumpAISee("after.gdl", "after");
+
+        rescoreEdges ();
     }
 }
