@@ -1,0 +1,11 @@
+This directory contains a example Python script.  This example reimplements the Transciber application. 
+
+Python is a popular choice for Java based scripting, and is a good choice for rapid development with Sphinx4.
+
+To try this script, install Jython from here
+
+    http://www.jython.org/
+
+Then cd to src/scripts/python and type the following to the shell
+
+    java -jar <Jython Home>/jython.jar PythonTrancriber.py
