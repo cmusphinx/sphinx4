@@ -325,11 +325,11 @@ public class SpeechMarker extends BaseDataProcessor {
                     silenceLength += getAudioTime(data);
                 }
                 lastCollectTime = data.getCollectTime();
-            } else if (current instanceof DataStartSignal) {
-                throw new Error("Too many starts");
-            } else if (current instanceof DataEndSignal  || current instanceof SpeechEndSignal) {
+            } else if (current instanceof DataStartSignal || current instanceof SpeechEndSignal) {
                 i.next(); // put the SPEECH_START after the UTTERANCE_START
                 break;
+            } else if (current instanceof DataEndSignal) {
+                throw new Error("Illegal signal " + current);
             }
         }
 
