@@ -11,8 +11,8 @@ public class BranchState extends SentenceHMMState {
      * @param nodeID the grammar node id
      */
     public BranchState(String leftContext, String rightContext, int nodeID) {
-        super('B' + '[' + leftContext + ',' +
-                rightContext + ']', null, nodeID);
+        super("B[" + leftContext + "," +
+                rightContext + "]", null, nodeID);
     }
 
 
