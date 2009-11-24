@@ -68,8 +68,22 @@ WARRANTIES.
      </ul>
   </li>
   <br>
-  <li><a href="#interpretResult">Interpreting the Recognition Result</a>
-  </li>
+      <li><a href="#configurationOptions">Two ways of configuring Sphinx4</a>
+      <ul>
+          <li><a href="#configurationManagement">Configuration Management</a></li>
+          <li><a href="#rawConfiguration">Raw Configuration</a></li>
+      </ul>
+      </li>
+      <br>
+      <li><a href="#interpretResult">Interpreting the Recognition Result</a></li>
+      <br>
+      <li><a href="#writingScripts">Writing Sphinx4 Scripts</a>
+      <ul>
+          <li><a href="#groovyExample">Groovy</a></li>
+          <li><a href="#pythonExample">Python</a></li>
+          <li><a href="#clojure">Clojure</a></li>
+      </ul>
+     </li>
   </ol>
 
   <hr>  
@@ -1145,9 +1159,170 @@ demo. Therefore, please refer to those sections for explanations.
 This concludes the walkthrough of the simple HelloNGram example.
 </p>
 
-<hr>  
+<hr>
 
-<h2><a name="interpretResult">3. Interpreting the Recognition Result</a></h2>
+  <h2><a name="configurationOptions">3.  Two ways of configuring Sphinx4</a></h2>
+
+  <p>
+      There are two options for configuring Sphinx4.  Both methods work in many types of applications, and the choice is really just a question of taste.
+  </p>
+  <h3><a name="configurationManagement">Configuration Management</a></h3>
+
+  <p>
+      In ConfiguationManagement the configuration is described by an XML file which is interpreted when the application initializes.
+      ConfigurationManagement is described in detail here <a href="../javadoc/edu/cmu/sphinx/util/props/doc-files/ConfigurationManagement.html">Sphinx-4 Configuration Management</a>.
+      ConfigurationManagement offers the advantage of keeping the configuration and the code separate.  With this choice one can alter the configuration without touching the application code.
+      Here is an example of the front end configuration described by XML.
+  </p>
+  <pre>
+      &lt;!-- ******************************************************** --&gt;
+      &lt;!-- The live frontend configuration                          --&gt;
+      &lt;!-- ******************************************************** --&gt;
+      &lt;component name="epFrontEnd" type="edu.cmu.sphinx.frontend.FrontEnd"&gt;
+          &lt;propertylist name="pipeline"&gt;
+              &lt;item&gt;audioFileDataSource &lt;/item&gt;
+              &lt;item&gt;dataBlocker &lt;/item&gt;
+              &lt;item&gt;speechClassifier &lt;/item&gt;
+              &lt;item&gt;speechMarker &lt;/item&gt;
+              &lt;item&gt;nonSpeechDataFilter &lt;/item&gt;
+              &lt;item&gt;preemphasizer &lt;/item&gt;
+              &lt;item&gt;windower &lt;/item&gt;
+              &lt;item&gt;fft &lt;/item&gt;
+              &lt;item&gt;melFilterBank &lt;/item&gt;
+              &lt;item&gt;dct &lt;/item&gt;
+              &lt;item&gt;liveCMN &lt;/item&gt;
+              &lt;item&gt;featureExtraction &lt;/item&gt;
+          &lt;/propertylist&gt;
+      &lt;/component&gt;
+
+      &lt;!-- ******************************************************** --&gt;
+      &lt;!-- The frontend pipelines                                   --&gt;
+      &lt;!-- ******************************************************** --&gt;
+
+      &lt;component name="audioFileDataSource" type="edu.cmu.sphinx.frontend.util.AudioFileDataSource"/&gt;
+
+      &lt;component name="dataBlocker" type="edu.cmu.sphinx.frontend.DataBlocker"/&gt;
+
+      &lt;component name="speechClassifier" type="edu.cmu.sphinx.frontend.endpoint.SpeechClassifier"/&gt;
+
+      &lt;component name="nonSpeechDataFilter"
+                 type="edu.cmu.sphinx.frontend.endpoint.NonSpeechDataFilter"/&gt;
+
+      &lt;component name="speechMarker" type="edu.cmu.sphinx.frontend.endpoint.SpeechMarker" /&gt;
+
+      &lt;component name="preemphasizer"
+                 type="edu.cmu.sphinx.frontend.filter.Preemphasizer"/&gt;
+
+      &lt;component name="windower"
+                 type="edu.cmu.sphinx.frontend.window.RaisedCosineWindower"&gt;
+      &lt;/component&gt;
+
+      &lt;component name="fft"
+              type="edu.cmu.sphinx.frontend.transform.DiscreteFourierTransform"&gt;
+      &lt;/component&gt;
+
+      &lt;component name="melFilterBank"
+          type="edu.cmu.sphinx.frontend.frequencywarp.MelFrequencyFilterBank"&gt;
+      &lt;/component&gt;
+
+      &lt;component name="dct"
+              type="edu.cmu.sphinx.frontend.transform.DiscreteCosineTransform"/&gt;
+
+      &lt;component name="liveCMN"
+                 type="edu.cmu.sphinx.frontend.feature.LiveCMN"/&gt;
+
+      &lt;component name="featureExtraction"
+                 type="edu.cmu.sphinx.frontend.feature.DeltasFeatureExtractor"/&gt;      
+  </pre>
+  <h3><a name="rawConfiguration">Raw Configuration</a></h3>
+  <p>
+  The other configuration option is to call the constructors directly.  This is referred to as "raw" configuration.
+  </p>
+  <p>Raw configuration is useful when the configuation is not easily described by a static XML structure.  This occurs
+      in applications that require extremely complex, or dynamic configuration</p>
+  <p>Raw configuration is also preferred when writing <a href="#writingScripts">scripts</a>.  In this case it is not desirable to separate the configuration and the code.
+  </p>
+  <p>
+      Here is an example of "raw" configuration:
+  </p>
+  <pre>
+      protected void initFrontEnd() {
+
+           this.dataBlocker = new DataBlocker(
+                   10 // blockSizeMs
+           );
+           this.speechClassifier = new SpeechClassifier(
+                   10,     // frameLengthMs,
+                   0.003, // adjustment,
+                   10,     // threshold,
+                   0       // minSignal
+           );
+
+           this.speechMarker = new SpeechMarker(
+                   200, // startSpeechTime,
+                   500, // endSilenceTime,
+                   100, // speechLeader,
+                   50,  // speechLeaderFrames
+                   100  // speechTrailer
+           );
+
+           this.nonSpeechDataFilter = new NonSpeechDataFilter();
+
+           this.premphasizer = new Preemphasizer(
+                   0.97 // preemphasisFactor
+           );
+           this.windower = new RaisedCosineWindower(
+                   0.46, // double alpha
+                   25.625f, // windowSizeInMs
+                   10.0f // windowShiftInMs
+           );
+           this.fft = new DiscreteFourierTransform(
+                   -1, // numberFftPoints
+                   false // invert
+           );
+           this.melFilterBank = new MelFrequencyFilterBank(
+                   130.0, // minFreq,
+                   6800.0, // maxFreq,
+                   40 // numberFilters
+           );
+           this.dct = new DiscreteCosineTransform(
+                   40, // numberMelFilters,
+                   13  // cepstrumSize
+           );
+           this.cmn = new LiveCMN(
+                   12.0, // initialMean,
+                   100,  // cmnWindow,
+                   160   // cmnShiftWindow
+           );
+           this.featureExtraction = new DeltasFeatureExtractor(
+                   3 // window
+           );
+
+           ArrayList pipeline = new ArrayList();
+           pipeline.add(audioDataSource);
+           pipeline.add(dataBlocker);
+           pipeline.add(speechClassifier);
+           pipeline.add(speechMarker);
+           pipeline.add(nonSpeechDataFilter);
+           pipeline.add(premphasizer);
+           pipeline.add(windower);
+           pipeline.add(fft);
+           pipeline.add(melFilterBank);
+           pipeline.add(dct);
+           pipeline.add(cmn);
+           pipeline.add(featureExtraction);
+
+           this.frontend = new FrontEnd(pipeline);
+
+       }
+  </pre>
+  <p>This example was taken from the RawTranscriber demo.</p>
+  <br><a href="../src/apps/edu/cmu/sphinx/demo/raw/RawTranscriber.java">RawTranscriber.java</a>
+  <br><a href="../src/apps/edu/cmu/sphinx/demo/raw/TranscriberConfiguration.java">TranscriberConfiguration.java</a>
+  <br><a href="../src/apps/edu/cmu/sphinx/demo/raw/CommonConfiguration.java">CommonConfiguration.java</a>
+
+
+<h2><a name="interpretResult">4. Interpreting the Recognition Result</a></h2>
 
 <p>
 As you can see from the above examples, the Recognizer returns a Result object
@@ -1180,6 +1355,244 @@ please refer to the <a href="../javadoc/edu/cmu/sphinx/result/Result.html">
 javadoc for Result</a>. 
 </p>
 
+  <h2><a name="writingScripts">5. Writing Scripts</a></h2>
+  <p>
+  One of the huge advantages of working in Java is the wealth of scripting options.  These options include Groovy, Ruby, Python and Clojure and many other choices to suit every programming taste and philosophy.
+  All these languages compile to the JVM, and are are trivially able to call Java code.  Hence Sphinx4 can be scripted in any of these popular languages.
+  </p>
+  <p>While the XML configuration files can be used with scripting languages, it is generally more elegant and readable to call
+      Java constructors directly.  Compare the following Front End set up from the Goovy, 
+      Python and Clojure examples to the <a href="#configurationOptions">XML and Raw configurations described above</a>.</p>
+  <h3><a name="groovyExample">Groovy Example</a></h3>
+  <a href="../src/scripts/groovy/GroovyTranscriber.groovy">GroovyTranscriber.groovy</a>
+  <pre>
+    // init audio data
+    def audioSource = new AudioFileDataSource(3200, null)
+
+    def audioURL = (args.length > 1) ?
+      new File(args[0]).toURI().toURL() :
+      new URL("file:" + root + "/src/apps/edu/cmu/sphinx/demo/transcriber/10001-90210-01803.wav")
+
+    audioSource.setAudioFile(audioURL, null)
+
+    // init front end
+    def dataBlocker = new DataBlocker(
+            10 // blockSizeMs
+    )
+
+    def speechClassifier = new SpeechClassifier(
+            10,     // frameLengthMs,
+            0.003, // adjustment,
+            10,     // threshold,
+            0       // minSignal
+    )
+
+    def speechMarker = new SpeechMarker(
+            200, // startSpeechTime,
+            500, // endSilenceTime,
+            100, // speechLeader,
+            50,  // speechLeaderFrames
+            100  // speechTrailer
+    )
+
+    def nonSpeechDataFilter = new NonSpeechDataFilter()
+
+    def premphasizer = new Preemphasizer(
+            0.97 // preemphasisFactor
+    )
+    def windower = new RaisedCosineWindower(
+            0.46, // double alpha
+            25.625f, // windowSizeInMs
+            10.0f // windowShiftInMs
+    )
+    def fft = new DiscreteFourierTransform(
+            -1, // numberFftPoints
+            false // invert
+    )
+    def melFilterBank = new MelFrequencyFilterBank(
+            130.0, // minFreq,
+            6800.0, // maxFreq,
+            40 // numberFilters
+    )
+    def dct = new DiscreteCosineTransform(
+            40, // numberMelFilters,
+            13  // cepstrumSize
+    )
+    def cmn = new LiveCMN(
+            12.0, // initialMean,
+            100,  // cmnWindow,
+            160   // cmnShiftWindow
+    )
+    def featureExtraction = new DeltasFeatureExtractor(
+            3 // window
+    )
+
+    def pipeline = [
+            audioSource,
+            dataBlocker,
+            speechClassifier,
+            speechMarker,
+            nonSpeechDataFilter,
+            premphasizer,
+            windower,
+            fft,
+            melFilterBank,
+            dct,
+            cmn,
+            featureExtraction
+    ]
+
+    def frontend = new FrontEnd(pipeline)
+  </pre>
+  <h3><a name="pythonExample">Python Example</a></h3>
+  <a href="../src/scripts/groovy/PythonTranscriber.py">PythonTranscriber.py</a>
+  <pre>
+      # init audio data
+      audioSource = AudioFileDataSource(3200, None)
+      audioURL =  URL("file:" + root + "/src/apps/edu/cmu/sphinx/demo/transcriber/10001-90210-01803.wav")
+
+      audioSource.setAudioFile(audioURL, None)
+
+      # init front end
+      dataBlocker = DataBlocker(
+              10 # blockSizeMs
+      )
+      speechClassifier = SpeechClassifier(
+              10,     # frameLengthMs,
+              0.003, # adjustment,
+              10,     # threshold,
+              0       # minSignal
+      )
+
+      speechMarker = SpeechMarker(
+              200, # startSpeechTime,
+              500, # endSilenceTime,
+              100, # speechLeader,
+              50,  # speechLeaderFrames
+              100  # speechTrailer
+      )
+
+      nonSpeechDataFilter = NonSpeechDataFilter()
+
+      premphasizer = Preemphasizer(
+              0.97 # preemphasisFactor
+      )
+      windower = RaisedCosineWindower(
+              0.46, # double alpha
+              25.625, # windowSizeInMs
+              10.0 # windowShiftInMs
+      )
+      fft = DiscreteFourierTransform(
+              -1, # numberFftPoints
+              false # invert
+      )
+      melFilterBank = MelFrequencyFilterBank(
+              130.0, # minFreq,
+              6800.0, # maxFreq,
+              40 # numberFilters
+      )
+      dct = DiscreteCosineTransform(
+              40, # numberMelFilters,
+              13  # cepstrumSize
+      )
+      cmn = LiveCMN(
+              12.0, # initialMean,
+              100,  # cmnWindow,
+              160   # cmnShiftWindow
+      )
+      featureExtraction = DeltasFeatureExtractor(
+              3 # window
+      )
+
+      pipeline = [
+              audioSource,
+              dataBlocker,
+              speechClassifier,
+              speechMarker,
+              nonSpeechDataFilter,
+              premphasizer,
+              windower,
+              fft,
+              melFilterBank,
+              dct,
+              cmn,
+              featureExtraction
+      ]
+
+      frontend = FrontEnd(pipeline)
+  </pre>
+  <h3><a name="clojureExample">Clojure Example</a></h3>
+  <a href="../src/scripts/groovy/ClojureTranscriber.clj">ClojureTranscriber.clj</a>
+  <pre>
+      ;; init audio data
+      (def audioSource (new AudioFileDataSource 3200 nil))
+      (def audioURL (new URL (str "file:" root "/src/apps/edu/cmu/sphinx/demo/transcriber/10001-90210-01803.wav")))
+      (.setAudioFile audioSource audioURL nil)
+
+      ;;init front end
+      (def dataBlocker (new DataBlocker
+        10)) ;; blockSizeMs
+
+      (def speechClassifier (new SpeechClassifier
+        10  ;; frameLengthMs
+        0.003 ;; adjustment
+        10  ;; threshold
+        0)) ;; minSignal
+
+      (def speechMarker (new SpeechMarker
+        200 ;; startSpeechTime
+        500 ;; endSilenceTime
+        100 ;; speechLeader
+        50  ;; speechLeaderFrames
+        100)) ;; speechTrailer
+
+      (def nonSpeechDataFilter (new NonSpeechDataFilter))
+
+      (def premphasizer (new Preemphasizer
+        0.97)) ;; preemphasisFactor
+
+      (def windower (new RaisedCosineWindower
+        0.46 ;; double alpha
+        25.625 ;; windowSizeInMs
+        10.0)) ;; windowShiftInMs
+
+      (def fft (new DiscreteFourierTransform
+        -1 ;; numberFftPoints
+        false)) ;; invert
+
+      (def melFilterBank (new MelFrequencyFilterBank
+        130.0 ;; minFreq
+        6800.0 ;; maxFreq
+        40)) ;; numberFilters
+
+      (def dct (new DiscreteCosineTransform
+        40 ;; numberMelFilters
+        13)) ;; cepstrumSize
+
+      (def cmn (new LiveCMN
+        12.0 ;; initialMean
+        100 ;; cmnWindow
+        160)) ;; cmnShiftWindow
+
+      (def featureExtraction (new DeltasFeatureExtractor
+        3)) ;; window
+
+      (def pipeline [
+        audioSource
+        dataBlocker
+        speechClassifier
+        speechMarker
+        nonSpeechDataFilter
+        premphasizer
+        windower
+        fft
+        melFilterBank
+        dct
+        cmn
+        featureExtraction])
+
+      (def frontend (new FrontEnd pipeline))
+  </pre>
   </span>
 </body>
 
