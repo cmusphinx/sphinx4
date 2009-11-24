@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src/apps"/>
+	<classpathentry kind="src" path="src/test"/>
+	<classpathentry kind="src" path="src/research"/>
+	<classpathentry kind="src" path="src/sphinx4"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="/home/shmyrev/work/sphinx4/lib/js.jar"/>
+	<classpathentry kind="lib" path="/home/shmyrev/work/sphinx4/lib/jsapi.jar"/>
+	<classpathentry kind="lib" path="/home/shmyrev/work/sphinx4/lib/junit-4.4.jar"/>
+	<classpathentry kind="output" path="bld"/>
+</classpath>
