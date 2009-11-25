@@ -40,6 +40,7 @@ public class Result {
     private AlternateHypothesisManager alternateHypothesisManager;
     private boolean isFinal;
     private final int currentFrameNumber;
+    private String reference;
     private final LogMath logMath;
 
 
@@ -527,5 +528,26 @@ public class Result {
         }
         return valid;
     }
+
+
+    /**
+     * Sets the reference text
+     *
+     * @param ref the reference text
+     */
+    public void setReferenceText(String ref) {
+        reference = ref;
+    }
+
+
+    /**
+     * Retrieves the reference text. The reference text is a transcript of the text that was spoken.
+     *
+     * @return the reference text or null if no reference text exists.
+     */
+    public String getReferenceText() {
+        return reference;
+    }
+
 }
 

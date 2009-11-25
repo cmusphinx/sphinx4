@@ -65,6 +65,7 @@ public class Decoder extends AbstractDecoder {
         do {
             result = searchManager.recognize(featureBlockSize);
             if (result != null) {
+                result.setReferenceText(referenceText);
                 fireResultListeners(result);
             }
         } while (result != null && !result.isFinal());
