@@ -37,7 +37,7 @@
 (def root "../../..")
 
 ;; init common 
-;;(Logger/setLevel (.getLogger Logger "") (Level/WARNING))
+(.setLevel (Logger/getLogger "") Level/WARNING)
 (def logMath (new LogMath 1.0001 true))
 
 (def absoluteBeamWidth -1)
