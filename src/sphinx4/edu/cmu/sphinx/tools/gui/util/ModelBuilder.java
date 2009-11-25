@@ -474,11 +474,7 @@ public class ModelBuilder implements GUIFileActionListener {
         } catch (FileNotFoundException e) {
             throw new ConfigurableUtilException("file not found " + e.getMessage(),
                     ConfigurableUtilException.UTIL_BUILDER);
-        } catch (IOException e) {
-            throw new ConfigurableUtilException("Classpath loader error " + e.getMessage(),
-                    ConfigurableUtilException.UTIL_PATHHACKER);
         }
-
     }//end scan method
 
 

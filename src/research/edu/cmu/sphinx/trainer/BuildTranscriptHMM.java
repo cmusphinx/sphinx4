@@ -21,8 +21,6 @@ import edu.cmu.sphinx.linguist.dictionary.Dictionary;
 import edu.cmu.sphinx.linguist.dictionary.Pronunciation;
 import edu.cmu.sphinx.util.LogMath;
 
-import java.util.Map;
-
 /** This class builds an HMM from a transcript, at increasing levels of details. */
 public class BuildTranscriptHMM {
 
@@ -30,8 +28,6 @@ public class BuildTranscriptHMM {
     private Graph phonemeGraph;
     private Graph contextDependentPhoneGraph;
     private Graph hmmGraph;
-    private Map dictionaryMap;
-    private String context;
     private TrainerDictionary dictionary;
     private AcousticModel acousticModel;
 
@@ -84,7 +80,6 @@ public class BuildTranscriptHMM {
         dictionary = (TrainerDictionary) transcriptDict;
 
         transcript.startWordIterator();
-        int numWords = transcript.numberOfWords();
         /* Shouldn't node and edge be part of the graph class? */
 
         /* The wordgraph must always begin with the <s> */
@@ -115,8 +110,6 @@ public class BuildTranscriptHMM {
                     new Node(NodeType.SILENCE_WITH_LOOPBACK);
             graph.linkNodes(initialNode, silLoopBack);
 
-            Node prevNode = initialNode;
-
             // Create links with words from the transcript
             for (transcript.startWordIterator();
                  transcript.hasMoreWords();) {
@@ -136,8 +129,6 @@ public class BuildTranscriptHMM {
                 graph.linkNodes(silLoopBack, dummyWordBeginNode);
                 // Add word ending dummy node
                 Node dummyWordEndNode = new Node(NodeType.DUMMY);
-                // Update prevNode
-                prevNode = dummyWordEndNode;
                 for (int i = 0; i < numberOfPronunciations; i++) {
                     String wordAlternate
                             = pronunciations[i].getWord().getSpelling();
@@ -207,7 +198,6 @@ public class BuildTranscriptHMM {
      * @return an HMM graph for a context dependent phoneme graph
      */
     public Graph buildHMMGraph(Graph cdGraph) {
-        boolean notTraversed = false;
         Graph hmmGraph = new Graph();
 
         hmmGraph.copyGraph(cdGraph);

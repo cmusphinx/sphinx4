@@ -1,14 +1,12 @@
 package edu.cmu.sphinx.demo.raw;
 
 import edu.cmu.sphinx.demo.raw.CommonConfiguration;
-import edu.cmu.sphinx.frontend.util.AudioFileDataSource;
 import edu.cmu.sphinx.jsapi.JSGFGrammar;
 import edu.cmu.sphinx.linguist.acoustic.UnitManager;
 import edu.cmu.sphinx.linguist.acoustic.tiedstate.Sphinx3Loader;
 import edu.cmu.sphinx.linguist.acoustic.tiedstate.TiedStateAcousticModel;
 import edu.cmu.sphinx.linguist.dictionary.FastDictionary;
 import edu.cmu.sphinx.linguist.flat.FlatLinguist;
-import edu.cmu.sphinx.util.LogMath;
 
 import java.net.MalformedURLException;
 import java.net.URL;

@@ -175,7 +175,6 @@ public class BeamFinder implements ResultListener,
      *
      * @param result the result to process
      */
-    @SuppressWarnings({"unchecked"})
     private void process(Result result) {
         if (result.isFinal()) {
             collectStatistics(result);

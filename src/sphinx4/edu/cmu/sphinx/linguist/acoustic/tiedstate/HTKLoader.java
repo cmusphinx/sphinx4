@@ -148,7 +148,6 @@ public class HTKLoader implements Loader {
 	// --------------------------------------
 	private String name;
 	private Logger logger;
-	private boolean binary;
 	private int vectorLength;
 	private String location;
 	private String model;
@@ -172,7 +171,6 @@ public class HTKLoader implements Loader {
 
             this.logMath = logMath;
             this.unitManager = unitManager;
-            this.binary = isBinary;
             this.vectorLength = vectorLength;
             this.model = model;
             this.tie1ph = tie1ph;
@@ -194,9 +192,6 @@ public class HTKLoader implements Loader {
 
 		logMath = (LogMath) ps.getComponent(PROP_LOG_MATH);
 		unitManager = (UnitManager) ps.getComponent(PROP_UNIT_MANAGER);
-
-		String isBinary = (String) properties.get(PROP_IS_BINARY);
-		binary = isBinary != null ? Boolean.valueOf(isBinary) : ps.getBoolean(PROP_IS_BINARY);
 
 		String length = (String) properties.get(PROP_VECTOR_LENGTH);
 		vectorLength = length != null ? Integer.parseInt(length) : ps.getInt(PROP_VECTOR_LENGTH);
@@ -451,9 +446,7 @@ public class HTKLoader implements Loader {
 	/**
 	 * If a data point is below 'floor' make it equal to floor.
 	 * 
-
 	 *            the data to floor
-
 	 *            the floored value
 	 */
 	private void floorData(float[] data, float floor) {

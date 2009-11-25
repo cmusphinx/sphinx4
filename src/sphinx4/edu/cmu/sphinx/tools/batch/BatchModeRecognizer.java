@@ -28,32 +28,41 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Proxy;
 import java.net.URL;
 import java.util.List;
 import java.util.logging.Logger;
 
 /**
- * Decodes a batch file containing a list of files to decode. The files can be either audio files or cepstral files, but
- * defaults to audio files. The audio data should be 16-bit, 16kHz, PCM-linear data. Since this classes makes use of
- * Java Sound, it supports all the audio file formats that are supported by Java Sound. If the audio file does not
- * correspond to a format supported by Java Sound, it is treated as a raw audio file (i.e., one without a header). Audio
- * file formats differ in the endian order of the audio data. Therefore, it is important to specify it correctly in the
- * configuration of the <a href="../../frontend/util/StreamDataSource.html">StreamDataSource</a>. Note that in the ideal
- * situation, the audio format of the data should be passed into the StreamDataSource, so that no extra configuration is
- * needed. This will be fixed in future releases.
+ * Decodes a batch file containing a list of files to decode. The files can be
+ * either audio files or cepstral files, but defaults to audio files. The audio
+ * data should be 16-bit, 16kHz, PCM-linear data. Since this classes makes use
+ * of Java Sound, it supports all the audio file formats that are supported by
+ * Java Sound. If the audio file does not correspond to a format supported by
+ * Java Sound, it is treated as a raw audio file (i.e., one without a header).
+ * Audio file formats differ in the endian order of the audio data. Therefore,
+ * it is important to specify it correctly in the configuration of the <a
+ * href="../../frontend/util/StreamDataSource.html">StreamDataSource</a>. Note
+ * that in the ideal situation, the audio format of the data should be passed
+ * into the StreamDataSource, so that no extra configuration is needed. This
+ * will be fixed in future releases.
  * <p/>
  * To run this BatchModeRecognizer:
+ * 
  * <pre>
  * java BatchModeRecognizer &lt;xmlConfigFile&gt; &lt;batchFile&gt;
  * </pre>
- * where <code>xmlConfigFile</code> is an XML-based configuration file and <code>batchFile</code> is a file listing all
- * the files to decode and transcript of those files. For information about the configuration file, refer to the
- * document <a href="../../util/props/doc-files/ConfigurationManagement.html"> Sphinx-4 Configuration Management</a>.
- * For information about the batch file, refer to the <a href="../../../../../../index.html#batch_files"> batch file
+ * 
+ * where <code>xmlConfigFile</code> is an XML-based configuration file and
+ * <code>batchFile</code> is a file listing all the files to decode and
+ * transcript of those files. For information about the configuration file,
+ * refer to the document <a
+ * href="../../util/props/doc-files/ConfigurationManagement.html"> Sphinx-4
+ * Configuration Management</a>. For information about the batch file, refer to
+ * the <a href="../../../../../../index.html#batch_files"> batch file
  * description</a>.
  * <p/>
- * This class will send recognition results to the logger if the log level is set to INFO.
+ * This class will send recognition results to the logger if the log level is
+ * set to INFO.
  */
 public class BatchModeRecognizer implements Configurable {
 
@@ -171,9 +180,8 @@ public class BatchModeRecognizer implements Configurable {
         inputDataProcessors = (List<DataProcessor>) ps.getComponentList(PROP_INPUT_DATA_PROCESSORS);
     }
 
-
     /**
-     * Sets the batch file to use for this recogition
+     * Sets the batch file to use for this recognition
      *
      * @param batchFile the name of the batch file
      * @throws IOException if the file could not be opened or read.
@@ -344,7 +352,7 @@ public class BatchModeRecognizer implements Configurable {
                     ci.putResponse("Usage: set component property value");
                 } else {
 //                    System.err.println("tried to configure the CM with " + args );
-                    setProperty(args[1], args[3], args[2], BatchModeRecognizer.this.cm);
+                    ConfigurationManagerUtils.setProperty(BatchModeRecognizer.this.cm, args[1], args[3], args[2]);
                 }
                 return "";
             }
@@ -674,29 +682,5 @@ public class BatchModeRecognizer implements Configurable {
         }
         logger.info("BatchDecoder: " + count + " files decoded");
         return result;
-    }
-
-
-    private static void setProperty(String componentName, String propName, String propValue, ConfigurationManager cm) {
-
-        PropertySheet ps = cm.getPropertySheet(componentName);
-        try {
-            Proxy wrapper = ps.getProperty(propName, Object.class).getAnnotation();
-            if (wrapper instanceof S4Component) {
-                ps.setComponent(propName, propValue, cm.lookup(propValue));
-            } else if (wrapper instanceof S4Boolean)
-                ps.setBoolean(propName, Boolean.valueOf(propValue));
-            else if (wrapper instanceof S4Integer)
-                ps.setInt(propName, Integer.valueOf(propValue));
-            else if (wrapper instanceof S4String)
-                ps.setString(propName, propValue);
-            else if (wrapper instanceof S4Double)
-                ps.setDouble(propName, Double.valueOf(propValue));
-            else if (wrapper instanceof S4ComponentList)
-                throw new RuntimeException("to set component lists please use PS.setComponentList()");
-//                   ps.setComponentList(propName, null, cm.lookup(propValue));
-        } catch (PropertyException e) {
-            e.printStackTrace();
-        }
     }
 }

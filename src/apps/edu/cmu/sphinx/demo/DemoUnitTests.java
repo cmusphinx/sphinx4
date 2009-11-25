@@ -1,6 +1,5 @@
 package edu.cmu.sphinx.demo;
 
-import edu.cmu.sphinx.demo.lattice.LatticeDemo;
 import edu.cmu.sphinx.demo.transcriber.Transcriber;
 import edu.cmu.sphinx.demo.wavfile.WavFile;
 import edu.cmu.sphinx.frontend.util.AudioFileDataSource;

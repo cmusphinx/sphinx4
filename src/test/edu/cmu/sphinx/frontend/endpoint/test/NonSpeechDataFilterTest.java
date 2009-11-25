@@ -12,7 +12,6 @@ import edu.cmu.sphinx.util.props.ConfigurationManager;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**

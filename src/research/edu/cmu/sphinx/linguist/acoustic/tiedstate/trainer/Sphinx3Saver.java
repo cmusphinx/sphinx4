@@ -344,7 +344,7 @@ class Sphinx3Saver implements Saver {
     }
 
     /**
-     * Saves the sphinx3 densityfile, a set of density arrays are created and placed in the given pool.
+     * Saves the sphinx3 density file, a set of density arrays are created and placed in the given pool.
      *
      * @param pool   the pool to be saved
      * @param path   the name of the data
@@ -469,20 +469,9 @@ class Sphinx3Saver implements Saver {
     }
 
     /**
-     * swap a 32 bit word
-     *
-     * @param val the value to swap
-     * @return the swapped value
-     */
-    private int byteSwap(int val) {
-        return ((0xff & (val >> 24)) | (0xff00 & (val >> 8)) |
-                (0xff0000 & (val << 8)) | (0xff000000 & (val << 24)));
-    }
-
-    /**
      * Writes an integer to the output stream, byte-swapping as necessary
      *
-     * @param dos the outputstream
+     * @param dos the output stream
      * @param val an integer value
      * @throws IOException on error
      */

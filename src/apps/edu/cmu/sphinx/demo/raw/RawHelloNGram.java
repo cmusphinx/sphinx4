@@ -1,8 +1,6 @@
 package edu.cmu.sphinx.demo.raw;
 
-import edu.cmu.sphinx.util.props.ConfigurationManager;
 import edu.cmu.sphinx.recognizer.Recognizer;
-import edu.cmu.sphinx.frontend.util.Microphone;
 import edu.cmu.sphinx.frontend.util.AudioFileDataSource;
 import edu.cmu.sphinx.result.Result;
 

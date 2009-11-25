@@ -14,7 +14,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Some static utitity methods which ease the handling of system configurations.
+ * Some static utility methods which ease the handling of system configurations.
  *
  * @author Holger Brandl
  */
@@ -30,16 +30,16 @@ public final class ConfigurationManagerUtils {
     public static final String CM_FILE_SUFFIX = ".sxl";
 
 
-    // disabled constructor because the class is just a collection of utitilites for handling system configurations
+    // disabled constructor because the class is just a collection of utilities for handling system configurations
     private ConfigurationManagerUtils() {
     }
 
 
     /**
-     * Validates that only annoated property names have been used to setup this instance of {@code
+     * Validates that only annotated property names have been used to setup this instance of {@code
      * edu.cmu.sphinx.util.props.ConfigurationManager}.
      *
-     * @return {@code true} if it is a valid confiuration.
+     * @return {@code true} if it is a valid configuration.
      */
     public boolean validateConfiguration(ConfigurationManager cm) {
         for (String compName : cm.getComponentNames()) {
@@ -85,7 +85,7 @@ public final class ConfigurationManagerUtils {
                 Object value = ps.getRaw(propertyName);
                 String svalue;
 
-                if (value instanceof List) {
+                if (value instanceof List<?>) {
                     continue;
                 } else if (value instanceof String) {
                     svalue = (String) value;
@@ -147,7 +147,7 @@ public final class ConfigurationManagerUtils {
         String cmPrefix = getLogPrefix(cm);
         Logger cmRootLogger = Logger.getLogger(cmPrefix.substring(0, cmPrefix.length() - 1));
 
-        // we need to determine the root-level here, beacuse the logManager will reset it
+        // we need to determine the root-level here, because the logManager will reset it
         Level rootLevel = Logger.getLogger("").getLevel();
 
         configureLogger(cmRootLogger);
@@ -206,7 +206,7 @@ public final class ConfigurationManagerUtils {
      * This method will automatically rename all components of <code>subCM</code> for which there is component named the
      * same in the <code>baseCM</code> .
      * <p/>
-     * Note: This is ie. required when merging two system configurations into one.
+     * Note: This is required when merging two system configurations into one.
      *
      * @return A map which maps all renamed component names to their new names.
      */
@@ -320,7 +320,7 @@ public final class ConfigurationManagerUtils {
 
 
     /**
-     * Show the configuration for the compnent with the given name
+     * Show the configuration for the component with the given name
      *
      * @param name the component name
      */
@@ -341,9 +341,9 @@ public final class ConfigurationManagerUtils {
             obj = properties.getRaw(propertyName);
             if (obj instanceof String) {
                 System.out.println(obj);
-            } else if (obj instanceof List) {
-                List l = (List) obj;
-                for (Iterator k = l.iterator(); k.hasNext();) {
+            } else if (obj instanceof List<?>) {
+                List<?> l = (List<?>) obj;
+                for (Iterator<?> k = l.iterator(); k.hasNext();) {
                     System.out.print(k.next());
                     if (k.hasNext()) {
                         System.out.print(", ");
@@ -364,18 +364,18 @@ public final class ConfigurationManagerUtils {
      * List types cannot currently be set from system properties.
      *
      * @param rawMap the map of raw property values
-     * @param global global properies
+     * @param global global properties
      * @throws PropertyException if an attempt is made to set a parameter for an unknown component.
      */
     static void applySystemProperties(Map<String, RawPropertyData> rawMap, Map<String, String> global)
             throws PropertyException {
         Properties props = System.getProperties();
-        for (Enumeration e = props.keys(); e.hasMoreElements();) {
+        for (Enumeration<?> e = props.keys(); e.hasMoreElements();) {
             String param = (String) e.nextElement();
             String value = props.getProperty(param);
 
-            // search for params of the form component[param]=value
-            // thise go in the property sheet for the component
+            // search for parameters of the form component[parameter]=value
+            // these go in the property sheet for the component
             int lb = param.indexOf('[');
             int rb = param.indexOf(']');
 
@@ -393,11 +393,10 @@ public final class ConfigurationManagerUtils {
                 }
             }
 
-            // look for params of the form foo=fum
+            // look for parameters of the form foo=bar
             // these go in the global map
 
             else if (param.indexOf('.') == -1) {
-//                String symbolName = "${" + param + "}";
                 global.put(param, value);
             }
         }
@@ -561,7 +560,7 @@ public final class ConfigurationManagerUtils {
 
 
     /**
-     * Why do we need this method? The reason is, that we would like to avoid this method ot be part of the
+     * Why do we need this method? The reason is, that we would like to avoid this method to be part of the
      * <code>PropertySheet</code>-API. In some circumstances it is nevertheless required to get access to the managing
      * <code>ConfigurationManager</code>.
      */
@@ -570,7 +569,7 @@ public final class ConfigurationManagerUtils {
     }
 
 
-    /** Returns a map of all component-properties of this config-manager (including their associeted property-sheets. */
+    /** Returns a map of all component-properties of this config-manager (including their associated property-sheets. */
     public static Map<String, List<PropertySheet>> listAllsPropNames(ConfigurationManager cm) {
         Map<String, List<PropertySheet>> allProps = new HashMap<String, List<PropertySheet>>();
 
@@ -617,12 +616,12 @@ public final class ConfigurationManagerUtils {
 
 
     /**
-     * Attempts to set the value of an arbitrary component-property. If the property-name is ambiguous  with resepect to
-     * the given <code>ConfiguratioManager</code> an extended syntax (componentName->propName) can be used to acess the
+     * Attempts to set the value of an arbitrary component-property. If the property-name is ambiguous  with respect to
+     * the given <code>ConfiguratioManager</code> an extended syntax (componentName->propName) can be used to access the
      * property.
      * <p/>
-     * Beside component properties it is also possible to modify the class of a configurable, but this is only allowd if
-     * the confiurable under question has not been instantiated yet. Furthermore the user has to ensure to set all
+     * Beside component properties it is also possible to modify the class of a configurable, but this is only allowed if
+     * the configurable under question has not been instantiated yet. Furthermore the user has to ensure to set all
      * mandatory component properties.
      */
     public static void setProperty(ConfigurationManager cm, String propName, String propValue) {
@@ -651,26 +650,31 @@ public final class ConfigurationManagerUtils {
                     + cm.getConfigURL() + "'. Use 'componentName->propName' to disambiguate your request.");
         }
 
-        String compName;
+        String componentName;
 
         // if disambiguation syntax is used find the correct PS first
         if (propName.contains("->")) {
             String[] splitProp = propName.split("->");
-            compName = splitProp[0];
+            componentName = splitProp[0];
             propName = splitProp[1];
         } else {
-            compName = allProps.get(propName).get(0).getInstanceName();
+            componentName = allProps.get(propName).get(0).getInstanceName();
         }
+        
+        setProperty(cm, componentName, propName, propValue);
+    }
+
+    public static void setProperty(ConfigurationManager cm, String componentName, String propName, String propValue) {
+
+        // now set the property
+        PropertySheet ps = cm.getPropertySheet(componentName);
+        if (ps == null)
+            throw new RuntimeException("Component '" + propName + "' is not registered to this system configuration '");
 
         // set the value to null if the string content is 'null
         if (propValue.equals("null"))
             propValue = null;
-
-        // now set the property
-        PropertySheet ps = cm.getPropertySheet(compName);
-        if (ps == null)
-            throw new RuntimeException("Component '" + propName + "' is not registered to this system configuration '");
-
+        
         switch (ps.getType(propName)) {
             case BOOLEAN:
                 ps.setBoolean(propName, Boolean.valueOf(propValue));
@@ -699,8 +703,7 @@ public final class ConfigurationManagerUtils {
                 throw new RuntimeException("unknown property-type");
         }
     }
-
-
+    
     public static URL getURL(File file) {
         try {
             return file.toURI().toURL();

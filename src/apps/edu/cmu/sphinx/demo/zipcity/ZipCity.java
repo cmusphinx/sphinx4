@@ -312,7 +312,6 @@ public class ZipCity extends JFrame {
         private final static float DEFAULT_LONG = 120;
 
         private final static int WIDTH_OFFSET = 10;
-        private final static int HEIGHT_OFFSET = 8;
         private final static int MARGIN = 10;
         private Graphics g; 
         private Dimension size;

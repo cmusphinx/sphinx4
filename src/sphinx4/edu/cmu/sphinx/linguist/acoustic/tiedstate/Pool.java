@@ -32,7 +32,7 @@ public class Pool<T> {
      */
     public Pool(String name) {
         this.name = name;
-        pool = new ArrayList();
+        pool = new ArrayList<T>();
     }
 
     /**

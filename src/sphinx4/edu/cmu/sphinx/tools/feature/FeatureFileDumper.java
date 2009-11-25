@@ -33,7 +33,7 @@ import java.util.logging.Logger;
 public class FeatureFileDumper {
 
     private FrontEnd frontEnd;
-    private List allFeatures;
+    private List<float []> allFeatures;
     // Initialize this to an invalid number
     private int featureLength = -1;
 
@@ -45,7 +45,7 @@ public class FeatureFileDumper {
     /**
      * Constructs a FeatureFileDumper.
      *
-     * @param cm             the Sphinx configuration manager
+     * @param cm             the configuration manager
      * @param inputAudioFile the input audio file
      */
     public FeatureFileDumper(ConfigurationManager cm, String frontEndName,
@@ -58,7 +58,7 @@ public class FeatureFileDumper {
                     .lookup("streamDataSource");
             audioSource.setInputStream(new FileInputStream(inputAudioFile),
                     "audio");
-            allFeatures = new LinkedList();
+            allFeatures = new LinkedList<float []>();
             getAllFeatures();
             logger.info("Frames: " + allFeatures.size());
         } catch (Exception e) {
@@ -82,7 +82,11 @@ public class FeatureFileDumper {
                         featureLength = featureData.length;
                         logger.info("Feature length: " + featureLength);
                     }
-                    allFeatures.add(featureData);
+                    float [] convertedData = new float[featureData.length];
+                    for (int i = 0; i < featureData.length; i++) {
+                    	convertedData[i] = (float)featureData[i];
+                    }
+                    allFeatures.add(convertedData);
                 } else if (feature instanceof FloatData) {
                     float[] featureData = ((FloatData) feature).getValues();
                     if (featureLength < 0) {
@@ -119,17 +123,9 @@ public class FeatureFileDumper {
                 outputFile));
         outStream.writeInt(getNumberDataPoints());
 
-        for (Object data : allFeatures) {
-            if (data instanceof double[]) {
-                double[] feature = (double[])data;
-                for (double val : feature) {
-                    outStream.writeFloat((float)val);
-                }
-            } else if (data instanceof float[]) {
-                float[] feature = (float[])data;
-                for (float val : feature) {
-                    outStream.writeFloat(val);
-                }
+        for (float[] feature : allFeatures) {
+            for (float val : feature) {
+                outStream.writeFloat(val);
             }
         }
 
@@ -147,19 +143,10 @@ public class FeatureFileDumper {
         ps.print(getNumberDataPoints());
         ps.print(' ');
 
-        for (Object data : allFeatures) {
-            if (data instanceof double[]) {
-                double[] feature = (double[])data;
-                for (double val : feature) {
-                    ps.print(val);
-                    ps.print(' ');
-                }
-            } else if (data instanceof float[]) {
-                float[] feature = (float[])data;
-                for (float val : feature) {
-                    ps.print(val);
-                    ps.print(' ');
-                }
+        for (float[] feature : allFeatures) {
+            for (float val : feature) {
+                ps.print(val);
+                ps.print(' ');
             }
         }
 

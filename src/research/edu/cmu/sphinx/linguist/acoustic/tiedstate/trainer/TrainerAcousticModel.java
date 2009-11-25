@@ -21,7 +21,6 @@ import edu.cmu.sphinx.util.props.*;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.logging.Logger;
 
 /** Represents the generic interface to the Acoustic Model for sphinx4 */
 public class TrainerAcousticModel extends TiedStateAcousticModel {
