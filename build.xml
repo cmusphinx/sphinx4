@@ -248,16 +248,11 @@
             description="Build just the srcs">
         <mkdir dir="${classes_dir}"/>
         <javac debug="true"
-               srcdir="${src_dir}/sphinx4"
                deprecation="true"
                destdir="${classes_dir}">
-            <patternset refid="${patternset_to_compile}"/>
-            <classpath refid="libs"/>
-        </javac>
-        <javac debug="true"
-               srcdir="${src_dir}/research"
-               deprecation="true"
-               destdir="${classes_dir}">
+            <src path="${src_dir}/sphinx4"/>
+            <src path="${src_dir}/research"/>
+            <src path="${src_dir}/jsapi"/>
             <patternset refid="${patternset_to_compile}"/>
             <classpath refid="libs"/>
         </javac>
@@ -289,7 +284,7 @@
     <!-- *                                                        * -->
     <!-- ********************************************************** -->
     <target name="jars"
-            depends="sphinx4_jar,batch_jar,tags_jar,audiotool_jar"
+            depends="jsapi10base_jar,sphinx4_jar,batch_jar,tags_jar,audiotool_jar"
             description="Builds all the jar files"/>
 
 
@@ -298,7 +293,7 @@
 
     <target name="sphinx4_jar"
             depends="compile_src"
-            description="Create ${lib_dir}/sphinx4.jar">
+            description="Create ${sphinx4_jar}">
         <mkdir dir="${lib_dir}"/>
         <jar destfile="${sphinx4_jar}"
              manifest="${src_dir}/sphinx4/edu/cmu/sphinx/sphinx4.manifest"
@@ -308,11 +303,24 @@
              basedir="${classes_dir}"/>
     </target>
 
+    <!-- jsapi10base.jar -->
+    <property name="jsapi10base_jar" value="${lib_dir}/jsapi10base.jar"/>
+
+    <target name="jsapi10base_jar"
+            depends="compile_src"
+            description="Create ${jsapi10base_jar}">
+        <mkdir dir="${lib_dir}"/>
+        <jar destfile="${jsapi10base_jar}"
+             compress="true"
+             includes="edu/cmu/sphinx/jsapi/**,com/sun/speech/**"
+             basedir="${classes_dir}"/>
+    </target>
+
     <property name="batch_jar" value="${lib_dir}/batch.jar"/>
 
     <target name="batch_jar"
             depends="compile_src"
-            description="Create ${lib_dir}/batch.jar">
+            description="Create ${batch_jar}">
         <mkdir dir="${lib_dir}"/>
         <jar destfile="${batch_jar}"
              compress="true"
@@ -340,7 +348,7 @@
 
     <target name="audiotool_jar"
             depends="compile_src"
-            description="Create ${bin_dir}/AudioTool.jar">
+            description="Create ${audiotool_jar}">
         <mkdir dir="${bin_dir}"/>
         <jar destfile="${audiotool_jar}"
              manifest="${src_dir}/sphinx4/edu/cmu/sphinx/tools/audio/Manifest"
