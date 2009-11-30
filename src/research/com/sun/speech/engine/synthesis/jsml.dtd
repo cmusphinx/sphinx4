@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+
+Copyright 1998-2001 Sun Microsystems, Inc.
+All Rights Reserved.  Use is subject to license terms.
+ 
+See the file "license.terms" for information on usage and
+redistribution of this file, and for a DISCLAIMER OF ALL 
+WARRANTIES.
+
+-->
+
+<!-- **************************************************** -->
+<!-- DTD: Java Speech API Markup Language - v0.6          -->
+<!--                                                      -->
+<!-- JSML specification available at:                     -->
+<!--  http://java.sun.com/products/java-media/speech/     -->
+<!--                                                      -->
+<!-- Note: JSML is interpreted by speech synthesizers     -->
+<!-- with a non-validating parser, so strictly speaking   -->
+<!-- a DTD is not required.  This DTD is intended         -->
+<!-- to be used by development tools such as format       -->
+<!-- checkers to verify JSML documents.                   -->
+<!-- **************************************************** -->
+
+<!-- **************************************************** -->
+<!-- Revision history:                                    -->
+<!--                                                      -->
+<!--   created 1 December 1998   by William Walker        -->
+<!--                             v0.5 specification       -->
+<!--   revised 12 October 1999   by Andrew Hunt           -->
+<!--                             v0.6 specification       -->
+<!-- **************************************************** -->
+
+<!-- **************************************************** -->
+<!-- The complete set of JSML elements:                   -->
+<!--   Structural: jsml, div                              -->
+<!--   Production: voice, sayas, phoneme, emphasis,       -->
+<!--               break, prosody                         -->
+<!--   Miscellaneous: marker, engine                      -->
+<!-- **************************************************** -->
+
+<!-- **************************************************** -->
+<!-- Define common entities -->
+<!-- **************************************************** -->
+
+<!-- The set of production elements -->
+<!ENTITY % production 'voice|sayas|phoneme|emphasis|break|prosody'>
+
+<!-- The set of miscellaneous elements -->
+<!ENTITY % miscellaneous 'marker|engine'>
+
+<!-- The mark attribute present on all elements -->
+<!ENTITY % att-mark  'mark CDATA #IMPLIED'>
+
+<!-- **************************************************** -->
+<!-- JSML structural elements and attributes              -->
+<!-- **************************************************** -->
+
+<!-- Root JSML element -->
+<!ELEMENT jsml (#PCDATA | div | %production; | %miscellaneous;)*>
+
+<!ATTLIST jsml   lang 	CDATA	#IMPLIED
+		 %att-mark; >
+
+<!-- preserve white space - it is significant in JSML -->
+<!ATTLIST jsml xml:space (default|preserve) "preserve">
+
+
+<!-- div: text structure element -->
+<!ELEMENT div (#PCDATA | div | %production; | %miscellaneous;)*>
+
+<!ATTLIST div   type	(para|paragraph|sent|sentence) #REQUIRED
+		%att-mark;>
+
+
+<!-- **************************************************** -->
+<!-- JSML production elements and attributes              -->
+<!-- **************************************************** -->
+
+<!-- "voice" requests a change in speaking voice -->
+<!ELEMENT voice (#PCDATA | div | %production; | %miscellaneous;)*>
+
+<!ATTLIST voice	gender   (male | female | neutral) #IMPLIED
+		age      CDATA                     #IMPLIED
+		variant  CDATA                     #IMPLIED
+		name     CDATA                     #IMPLIED
+		%att-mark;>
+
+
+<!-- "sayas" indicates the type of text contained by the element -->
+<!ELEMENT sayas (#PCDATA)>
+
+<!-- The set of sayas classes -->
+<!-- We do not enumerate all possible formats here -->
+<!ENTITY % sayastypes 'literal|date|time|name|phone|net|address|currency|measure|number'>
+
+<!ATTLIST sayas	class  (%sayastypes;|CDATA)  #REQUIRED
+		%att-mark;>
+
+
+<!-- "phoneme": contained text is a phonemic string of IPA characters -->
+<!ELEMENT phoneme (#PCDATA)>
+
+<!ATTLIST phoneme  original  CDATA  #IMPLIED
+		   %att-mark;>
+
+
+<!-- "emphasis": specify stress for contained text -->
+<!ELEMENT emphasis (#PCDATA | %production; | %miscellaneous;)*>
+
+<!ATTLIST emphasis  level  (none|moderate|strong) "moderate"
+		    %att-mark;>
+
+<!-- "break": insert a pause or other boundary -->
+<!ELEMENT break EMPTY>
+
+<!ATTLIST break	size  (none|small|medium|large) "medium"
+		time  CDATA                     #IMPLIED
+		%att-mark;>
+
+<!-- "prosody": set acoustic properties for contained text -->
+<!ELEMENT prosody (#PCDATA | div | %production; | %miscellaneous;)*>
+
+<!ATTLIST prosody rate    CDATA  #IMPLIED
+                  volume  CDATA  #IMPLIED
+                  pitch   CDATA  #IMPLIED
+                  range   CDATA  #IMPLIED
+                  %att-mark;>
+
+<!-- "marker": insert a callback request -->
+<!ELEMENT marker EMPTY>
+
+<!ATTLIST marker %att-mark;>
+
+
+<!-- "engine": insert synthesizer-specific data -->
+<!ELEMENT engine (#PCDATA | div | %production; | %miscellaneous;)*>
+
+<!ATTLIST engine name  CDATA  #IMPLIED
+		 data  CDATA  #REQUIRED
+		 %att-mark; >
