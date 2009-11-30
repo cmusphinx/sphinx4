@@ -121,14 +121,14 @@ public class SynthesizerMonitor extends EngineMonitor {
     // Inherited javadoc.
     //
     protected String engineStateString(long state) {
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
 
-        appendBuffer(buf,super.engineStateString(state));
+        appendBuilder(buf,super.engineStateString(state));
         
         if ((state & Synthesizer.QUEUE_EMPTY) != 0)
-            appendBuffer(buf, "QUEUE_EMPTY");
+        	appendBuilder(buf, "QUEUE_EMPTY");
         if ((state & Synthesizer.QUEUE_NOT_EMPTY) != 0)
-            appendBuffer(buf, "QUEUE_NOT_EMPTY");
+        	appendBuilder(buf, "QUEUE_NOT_EMPTY");
         
         return buf.toString();
     }
