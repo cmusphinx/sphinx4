@@ -52,9 +52,9 @@ public class BaseResult
 
 
     /** Create a result with a result string */
-    public BaseResult(Grammar G, String S) {
-        grammar = G;
-        tryTokens(G, S);
+    public BaseResult(Grammar gram, String str) {
+        grammar = gram;
+        tryTokens(gram, str);
     }
 
 
@@ -62,21 +62,21 @@ public class BaseResult
      * Copy a result. If the result to be copied is a BaseResult then clone it otherwise create a BaseResult and copy
      * the tokens onto it.
      */
-    static BaseResult copyResult(Result R) {
+    static BaseResult copyResult(Result result) {
         BaseResult copy = null;
-        if (R instanceof BaseResult) {
+        if (result instanceof BaseResult) {
             try {
-                copy = (BaseResult) ((BaseResult) R).clone();
+                copy = (BaseResult) ((BaseResult) result).clone();
             } catch (CloneNotSupportedException e) {
                 System.out.println("ERROR: " + e);
             }
             return copy;
         } else {
-            copy = new BaseResult(R.getGrammar());
-            copy.nTokens = R.numTokens();
+            copy = new BaseResult(result.getGrammar());
+            copy.nTokens = result.numTokens();
             copy.theText = new String[copy.nTokens];
-            for (int i = 0; i < R.numTokens(); i++) {
-                copy.theText[i] = R.getBestToken(i).getSpokenText();
+            for (int i = 0; i < result.numTokens(); i++) {
+                copy.theText[i] = result.getBestToken(i).getSpokenText();
             }
             return copy;
         }

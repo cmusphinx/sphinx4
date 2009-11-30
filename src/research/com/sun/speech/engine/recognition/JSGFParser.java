@@ -18,7 +18,7 @@ public class JSGFParser implements JSGFParserConstants {
     static JSGFParser parser;
 
 
-    // This main method simplly checks the syntax of a jsgf Grammar
+    // This main method simply checks the syntax of a jsgf Grammar
     //
     public static void main(String args[]) {
         if (args.length == 0) {

@@ -26,11 +26,11 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar, Seriali
     /**
      * Create a new BaseRuleGrammar
      *
-     * @param R    the BaseRecognizer for this Grammar.
+     * @param rec    the BaseRecognizer for this Grammar.
      * @param name the name of this Grammar.
      */
-    public BaseRuleGrammar(BaseRecognizer R, String name) {
-        super(R, name);
+    public BaseRuleGrammar(BaseRecognizer rec, String name) {
+        super(rec, name);
     }
 
     /**
