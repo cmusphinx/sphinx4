@@ -22,6 +22,7 @@
     <property name="frontend" value="mfcFrontEnd"/>
     <property name="recognizer" value="recognizer"/>
     <property name="showCreations" value="false"/>
+    <property name="keepAllTokens" value="false"/>
 
     
     <!-- ******************************************************** -->
@@ -64,7 +65,7 @@
         <property name="buildWordLattice" value="true"/>
         <property name="acousticLookaheadFrames" value="1.7"/>
         <property name="relativeBeamWidth" value="${relativeBeamWidth}"/>
-	<property name="keepAllTokens" value="true"/>
+	<property name="keepAllTokens" value="${keepAllTokens}"/>
     </component>
 
     <component name="activeList"
@@ -162,7 +163,7 @@
     <!-- ******************************************************** -->
     <component name="trigramModel" 
                type="edu.cmu.sphinx.linguist.language.ngram.SimpleNGramModel">
-        <property name="location" value="hellongram.trigram.lm"/>
+        <property name="location" value="test/edu/cmu/sphinx/result/test/hellongram.trigram.lm"/>
         <property name="logMath" value="logMath"/>
         <property name="dictionary" value="dictionary"/>
         <property name="maxDepth" value="3"/>
@@ -210,35 +211,11 @@
         </propertylist>
     </component>
 
-    <!-- ******************************************************** -->
-    <!-- The live frontend configuration                          -->
-    <!-- ******************************************************** -->
-    <component name="epFrontEnd" type="edu.cmu.sphinx.frontend.FrontEnd">
-        <propertylist name="pipeline">
-            <item>streamDataSource </item>
-            <item>speechClassifier </item>
-            <item>speechMarker </item>
-            <item>nonSpeechDataFilter </item>
-            <item>preemphasizer </item>
-            <item>windower </item>
-            <item>fft </item>
-            <item>melFilterBank </item>
-            <item>dct </item>
-            <item>batchCMN </item>
-            <item>featureExtraction </item>
-        </propertylist>
-    </component>
-
     <component name="streamDataSource"
                type="edu.cmu.sphinx.frontend.util.StreamDataSource">
 	<property name="bigEndianData" value="false"/>
     </component>
-    
-    <component name="microphone" 
-                type="edu.cmu.sphinx.frontend.util.Microphone">
-        <property name="closeBetweenUtterances" value="false"/>
-    </component>
-    
+        
     <component name="speechClassifier" 
                 type="edu.cmu.sphinx.frontend.endpoint.SpeechClassifier">
         <property name="threshold" value="13"/>
@@ -323,4 +300,13 @@
         <property name="logBase" value="1.0001"/>
         <property name="useAddTable" value="true"/>
     </component>
+
+
+    <component name="confidenceScorer"
+               type="edu.cmu.sphinx.result.MAPConfidenceScorer">
+        <property name="languageWeight" value="${languageWeight}"/>
+	<property name="dumpLattice" value="true"/>
+	<property name="dumpSausage" value="true"/>
+    </component>
+
 </config>
