@@ -12,21 +12,38 @@
 
 package edu.cmu.sphinx.jsapi;
 
-import com.sun.speech.engine.recognition.BaseRecognizer;
-import edu.cmu.sphinx.linguist.language.grammar.Grammar;
-import edu.cmu.sphinx.linguist.language.grammar.GrammarNode;
-import edu.cmu.sphinx.linguist.dictionary.Dictionary;
-import edu.cmu.sphinx.util.LogMath;
-import edu.cmu.sphinx.util.props.*;
-
-import javax.speech.EngineException;
-import javax.speech.recognition.*;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+
+import javax.speech.EngineException;
+import javax.speech.recognition.GrammarException;
+import javax.speech.recognition.GrammarSyntaxDetail;
+import javax.speech.recognition.Recognizer;
+import javax.speech.recognition.Rule;
+import javax.speech.recognition.RuleAlternatives;
+import javax.speech.recognition.RuleCount;
+import javax.speech.recognition.RuleGrammar;
+import javax.speech.recognition.RuleName;
+import javax.speech.recognition.RuleParse;
+import javax.speech.recognition.RuleSequence;
+import javax.speech.recognition.RuleTag;
+import javax.speech.recognition.RuleToken;
+
+import com.sun.speech.engine.recognition.BaseRecognizer;
+
+import edu.cmu.sphinx.linguist.dictionary.Dictionary;
+import edu.cmu.sphinx.linguist.language.grammar.Grammar;
+import edu.cmu.sphinx.linguist.language.grammar.GrammarNode;
+import edu.cmu.sphinx.util.LogMath;
+import edu.cmu.sphinx.util.props.ConfigurationManagerUtils;
+import edu.cmu.sphinx.util.props.PropertyException;
+import edu.cmu.sphinx.util.props.PropertySheet;
+import edu.cmu.sphinx.util.props.S4Component;
+import edu.cmu.sphinx.util.props.S4String;
 
 /**
  * Defines a BNF-style grammar based on JSGF grammar rules in a file.

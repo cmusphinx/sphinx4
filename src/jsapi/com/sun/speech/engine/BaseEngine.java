@@ -7,9 +7,20 @@
  */
 package com.sun.speech.engine;
 
-import javax.speech.*;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
+
+import javax.speech.AudioException;
+import javax.speech.AudioManager;
+import javax.speech.Engine;
+import javax.speech.EngineEvent;
+import javax.speech.EngineException;
+import javax.speech.EngineListener;
+import javax.speech.EngineModeDesc;
+import javax.speech.EngineProperties;
+import javax.speech.EngineStateError;
+import javax.speech.SpeechEvent;
+import javax.speech.VocabManager;
 
 /**
  * Supports the JSAPI 1.0 <code>Engine</code> interface. Actual JSAPI implementations might want to extend or modify
@@ -96,8 +107,9 @@ abstract public class BaseEngine implements Engine, SpeechEventDispatcher {
     public void waitEngineState(long state)
             throws InterruptedException, IllegalArgumentException {
         synchronized (engineStateLock) {
-            while (!testEngineState(state))
+            while (!testEngineState(state)) {
                 engineStateLock.wait();
+            }
         }
     }
 
@@ -569,8 +581,9 @@ abstract public class BaseEngine implements Engine, SpeechEventDispatcher {
         if (engineListeners == null) {
             return;
         }
-        for (EngineListener el : engineListeners)
+        for (EngineListener el : engineListeners) {
             el.engineResumed(event);
+        }
     }
 
 

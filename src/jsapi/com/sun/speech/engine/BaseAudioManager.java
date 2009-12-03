@@ -7,13 +7,15 @@
  */
 package com.sun.speech.engine;
 
-import javax.speech.AudioListener;
-import javax.speech.AudioManager;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.speech.AudioListener;
+import javax.speech.AudioManager;
+
 /**
- * Supports the JSAPI 1.0 <code>AudioManager</code> interface.  Actual JSAPI implementations might want to extend or
+ * Supports the JSAPI 1.0 <code>AudioManager</code> interface. 
+ * Actual JSAPI implementations might want to extend or
  * modify this implementation.
  */
 public class BaseAudioManager implements AudioManager {
