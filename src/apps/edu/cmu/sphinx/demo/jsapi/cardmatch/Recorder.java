@@ -24,19 +24,19 @@ public interface Recorder {
      *
      * @return <code>true</code> if the recording was started properly
      */
-    public boolean startRecording();
+    boolean startRecording();
 
     /**
      * Stops recording.
      *
      * @return <code>true</code> if the recording was started properly
      */
-    public boolean stopRecording();
+    boolean stopRecording();
 
     /**
      * Returns true if this Recorder is recording.
      *
      * @return <code>true</code> if this Recorder is recording
      */
-    public boolean isRecording();
+    boolean isRecording();
 }
