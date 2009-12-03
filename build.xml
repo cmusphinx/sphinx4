@@ -312,7 +312,7 @@
     </target>
 
     <!-- jsapi10base.jar -->
-    <property name="jsapi10base_jar" value="${lib_dir}/jsapi10base.jar"/>
+    <property name="jsapi10base_jar" value="${lib_dir}/jsapi-1.0-base.jar"/>
 
     <target name="jsapi10base_jar"
             depends="compile_src"
