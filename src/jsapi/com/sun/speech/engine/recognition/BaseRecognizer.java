@@ -12,6 +12,7 @@ import com.sun.speech.engine.BaseEngine;
 import com.sun.speech.engine.BaseEngineProperties;
 import com.sun.speech.engine.SpeechEventDispatcher;
 import com.sun.speech.engine.SpeechEventUtilities;
+import com.sun.speech.engine.recognition.parser.JSGFParser;
 
 import javax.speech.*;
 import javax.speech.recognition.*;

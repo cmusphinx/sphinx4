@@ -553,6 +553,23 @@
         </jar>
     </target>
 
+    <!-- ********************************************************** -->
+    <!-- *                                                        * -->
+    <!-- * Generates the parser                                   * -->
+    <!-- *                                                        * -->
+    <!-- ********************************************************** -->
+
+    <target name="javacc">
+      <sequential>
+        <javacc
+          target="${src_dir}/jsapi/com/sun/speech/engine/recognition/jsgf.jj"
+          outputDirectory="${src_dir}/jsapi/com/sun/speech/engine/recognition"
+        />
+        <fixcrlf srcdir="@{outputDir}" includes="*.java">
+          <containsregexp expression="Generated.*By.*JavaCC"/>
+        </fixcrlf>
+      </sequential>
+    </target>
 
     <!-- ********************************************************** -->
     <!-- *                                                        * -->

@@ -8,6 +8,9 @@
 package com.sun.speech.engine.recognition;
 
 import javax.speech.recognition.*;
+
+import com.sun.speech.engine.recognition.parser.JSGFParser;
+
 import java.io.Serializable;
 import java.util.*;
 
@@ -535,7 +538,7 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar, Seriali
     String grammarDocComment;
 
              /** Add a new RuleGrammar comment. */
-    void addRuleDocComment(String rname, String comment) {
+    public void addRuleDocComment(String rname, String comment) {
         ruleDocComments.put(rname, comment);
     }
 
@@ -545,7 +548,7 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar, Seriali
     }
 
     /** Add a new import comment. */
-    void addImportDocComment(RuleName imp, String comment) {
+    public void addImportDocComment(RuleName imp, String comment) {
         importDocComments.put(imp.toString(), comment);
     }
 
@@ -555,7 +558,7 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar, Seriali
     }
 
     /** Add the Grammar comment. */
-    void addGrammarDocComment(String comment) {
+    public void addGrammarDocComment(String comment) {
         grammarDocComment = comment;
     }
 
@@ -565,7 +568,7 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar, Seriali
     }
 
     /** annote the specified rule with its line number from the source file. This is used for debugging purposes. */
-    void setSourceLine(String ruleName, int i) {
+    public void setSourceLine(String ruleName, int i) {
         GRule r = getGRule(ruleName);
         /* TODO : exception */
         if (r == null) {
@@ -582,7 +585,7 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar, Seriali
     }
 
     /** add a sample sentence to the list of sample sentences that go with the specified rule */
-    void addSampleSentence(String ruleName, String sample) {
+    public void addSampleSentence(String ruleName, String sample) {
         GRule r = getGRule(ruleName);
         /* TODO : exception */
         if (r == null) {

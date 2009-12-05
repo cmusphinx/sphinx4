@@ -293,7 +293,6 @@ public class RecognizerUtilities {
         */
         List<RuleGrammar> nr = new ArrayList<RuleGrammar>();
         for (RuleGrammar grammar : NRG) {
-            RuleGrammar NG = null;
             int k = 0;
             for (String rname : grammar.listRuleNames()) {
                 Rule r1 = grammar.getRuleInternal(rname);
