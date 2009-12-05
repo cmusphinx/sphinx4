@@ -10,8 +10,8 @@
  * using JSAPI.
  */
 /**
- * This grammar can be compiled with javacc, which is available at
- *   http://www.webgain.com/products/java_cc/
+ * This grammar can be compiled with JavaCC version 5.0, which is available at
+ * https://javacc.dev.java.net/ 
  */
 options
 {
