@@ -14,10 +14,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 
-import javax.speech.recognition.Grammar;
-import javax.speech.recognition.GrammarException;
-import javax.speech.recognition.GrammarSyntaxDetail;
-import javax.speech.recognition.Recognizer;
 import javax.speech.recognition.Rule;
 import javax.speech.recognition.RuleAlternatives;
 import javax.speech.recognition.RuleCount;
@@ -106,7 +102,7 @@ public class JSGFParser implements JSGFParserConstants {
     }
     try
     {
-      parser.GrammarUnit(null);
+      parser.GrammarUnit();
       System.out.println("JSGF Parser Version " + version + ":  JSGF Grammar parsed successfully.");
     }
     catch (ParseException e)
@@ -118,7 +114,7 @@ public class JSGFParser implements JSGFParserConstants {
   /**
      * newGrammarFromJSGF - Once JavaCC supports Readers we will change this
      */
-  public static RuleGrammar newGrammarFromJSGF(InputStream i, Recognizer R) throws GrammarException
+  public static RuleGrammar newGrammarFromJSGF(InputStream i) throws GrammarParseException
   {
     RuleGrammar G = null;
     if (parser == null)
@@ -131,16 +127,13 @@ public class JSGFParser implements JSGFParserConstants {
     }
     try
     {
-      G = parser.GrammarUnit(R);
+      G = parser.GrammarUnit();
       return G;
     }
     catch (ParseException e)
     {
       Token etoken = e.currentToken;
-      GrammarSyntaxDetail gsd = new GrammarSyntaxDetail(null, null, null, null, etoken.beginLine, etoken.beginColumn, e.getMessage());
-      GrammarSyntaxDetail gsda [] = new GrammarSyntaxDetail [1];
-      gsda [0] = gsd;
-      GrammarException ge = new GrammarException("Grammar Error", gsda);
+      GrammarParseException ge = new GrammarParseException(etoken.beginLine, etoken.beginColumn, "Grammar Error", e.getMessage());
       throw ge;
     }
   }
@@ -148,7 +141,7 @@ public class JSGFParser implements JSGFParserConstants {
   /**
      * newGrammarFromJSGF - Once JavaCC supports Readers we will change this
      */
-  public static RuleGrammar newGrammarFromJSGF(Reader i, Recognizer R) throws GrammarException
+  public static RuleGrammar newGrammarFromJSGF(Reader i) throws GrammarParseException
   {
     RuleGrammar G = null;
     if (parser == null)
@@ -161,16 +154,13 @@ public class JSGFParser implements JSGFParserConstants {
     }
     try
     {
-      G = parser.GrammarUnit(R);
+      G = parser.GrammarUnit();
       return G;
     }
     catch (ParseException e)
     {
       Token etoken = e.currentToken;
-      GrammarSyntaxDetail gsd = new GrammarSyntaxDetail(null, null, null, null, etoken.beginLine, etoken.beginColumn, e.getMessage());
-      GrammarSyntaxDetail gsda [] = new GrammarSyntaxDetail [1];
-      gsda [0] = gsd;
-      GrammarException ge = new GrammarException("Grammar Error", gsda);
+      GrammarParseException ge = new GrammarParseException(etoken.beginLine, etoken.beginColumn, "Grammar Error", e.getMessage());
       throw ge;
     }
   }
@@ -294,22 +284,25 @@ public class JSGFParser implements JSGFParserConstants {
   /**
      * newGrammarFromURL
      */
-  public static RuleGrammar newGrammarFromJSGF(URL u, Recognizer R) throws GrammarException, IOException
+  public static RuleGrammar newGrammarFromJSGF(URL url) throws GrammarParseException, IOException
   {
-    BufferedInputStream i = new BufferedInputStream(u.openStream(), 256);
-    JSGFEncoding encoding = getJSGFEncoding(i);
-    Reader rdr;
+    Reader reader;
+
+        BufferedInputStream stream = new BufferedInputStream(url.openStream(), 256);
+    JSGFEncoding encoding = getJSGFEncoding(stream);
+
     if ((encoding != null) && (encoding.encoding != null))
     {
       System.out.println("Grammar Character Encoding \u005c"" + encoding.encoding + "\u005c"");
-      rdr = new InputStreamReader(i, encoding.encoding);
+      reader = new InputStreamReader(stream, encoding.encoding);
     }
     else
     {
-      if (encoding == null) System.out.println("WARNING: Grammar missing self identifying header");
-      rdr = new InputStreamReader(i);
+      if (encoding == null)
+                System.out.println("WARNING: Grammar missing self identifying header");
+      reader = new InputStreamReader(stream);
     }
-    return newGrammarFromJSGF(rdr, R);
+    return newGrammarFromJSGF(reader);
   }
 
   /**
@@ -337,7 +330,7 @@ public class JSGFParser implements JSGFParserConstants {
   /**
      * Parse an apparent rulename reference.
      */
-  public static RuleName parseRuleName(String text) throws GrammarException
+  public static RuleName parseRuleName(String text) throws GrammarParseException
   {
     RuleName r = null;
     try
@@ -349,7 +342,7 @@ public class JSGFParser implements JSGFParserConstants {
     }
     catch (ParseException e)
     {
-      throw new GrammarException("JSGF Parser Version " + version + " error", null);
+      throw new GrammarParseException("JSGF Parser Version " + version + " error");
     }
     return r;
   }
@@ -357,7 +350,7 @@ public class JSGFParser implements JSGFParserConstants {
   /**
      * Parse and apparent import declaration
      */
-  public static RuleName parseImport(String text) throws GrammarException
+  public static RuleName parseImport(String text) throws GrammarParseException
   {
     RuleName r = null;
     try
@@ -369,7 +362,7 @@ public class JSGFParser implements JSGFParserConstants {
     }
     catch (ParseException e)
     {
-      throw new GrammarException("JSGF Parser Version 0.1 error", null);
+      throw new GrammarParseException("JSGF Parser Version " + version + " error");
     }
     return r;
   }
@@ -377,14 +370,9 @@ public class JSGFParser implements JSGFParserConstants {
   /**
     * extract @xxxx keywords from documention comments
     */
-  static void extractKeywords(Grammar G, String rname, String comment)
+  static void extractKeywords(BaseRuleGrammar grammar, String rname, String comment)
   {
-    if (!(G instanceof BaseRuleGrammar))
-    {
-      return;
-    }
     String sample;
-    BaseRuleGrammar JG = (BaseRuleGrammar) G;
     int i = comment.indexOf("@example ");
     while (i > 0)
     {
@@ -400,11 +388,11 @@ public class JSGFParser implements JSGFParserConstants {
         i = j;
       }
       i = comment.indexOf("@example ", i);
-        JG.addSampleSentence(rname, sample);
+        grammar.addSampleSentence(rname, sample);
     }
   }
 
-  final public RuleGrammar GrammarUnit(Recognizer R) throws ParseException {
+  final public RuleGrammar GrammarUnit() throws ParseException {
   RuleGrammar G = null;
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case IDENTIFIER:
@@ -414,7 +402,7 @@ public class JSGFParser implements JSGFParserConstants {
       jj_la1[0] = jj_gen;
       ;
     }
-    G = GrammarDeclaration(R);
+    G = GrammarDeclaration();
     label_1:
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
@@ -445,23 +433,15 @@ public class JSGFParser implements JSGFParserConstants {
     throw new Error("Missing return statement in function");
   }
 
-  final public RuleGrammar GrammarDeclaration(Recognizer R) throws ParseException {
+  final public RuleGrammar GrammarDeclaration() throws ParseException {
   String s;
   RuleGrammar G = null;
   Token t = null;
     t = jj_consume_token(GRAMMAR);
     s = Name();
     jj_consume_token(26);
-    if (R != null) try
-    {
-      G = R.newRuleGrammar(s);
-    }
-    catch (IllegalArgumentException ge)
-    {
-      System.out.println("ERROR " + ge);
-    }
-    ;
-    if (G != null && G instanceof BaseRuleGrammar && t != null && t.specialToken != null)
+    G = new BaseRuleGrammar (null, s);
+    if (G != null && t != null && t.specialToken != null)
     {
       if (t.specialToken.image != null && t.specialToken.image.startsWith("/**"))
       {
