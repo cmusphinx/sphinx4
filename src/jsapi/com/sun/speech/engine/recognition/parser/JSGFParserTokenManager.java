@@ -12,14 +12,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
-import javax.speech.recognition.Rule;
-import javax.speech.recognition.RuleAlternatives;
-import javax.speech.recognition.RuleCount;
-import javax.speech.recognition.RuleGrammar;
-import javax.speech.recognition.RuleName;
-import javax.speech.recognition.RuleSequence;
-import javax.speech.recognition.RuleTag;
-import javax.speech.recognition.RuleToken;
+import javax.speech.recognition.*;
 import com.sun.speech.engine.recognition.BaseRuleGrammar;
 
 /** Token Manager. */
@@ -1175,7 +1168,7 @@ void MoreLexicalActions()
       case 7 :
          image.append(input_stream.GetSuffix(jjimageLen));
          jjimageLen = 0;
-    input_stream.backup(1);
+        input_stream.backup(1);
          break;
       default :
          break;
