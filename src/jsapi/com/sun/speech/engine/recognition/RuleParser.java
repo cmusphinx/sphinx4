@@ -21,7 +21,7 @@ public class RuleParser {
     private Recognizer theRec;
 
     /*
-    * parse a text string against a particular rule from a particluar grammar
+    * parse a text string against a particular rule from a particlar grammar
     * returning a RuleParse data structure is successful and null otherwise
     */
     public static RuleParse parse(String text, Recognizer R, RuleGrammar G, String ruleName) {
@@ -57,9 +57,9 @@ public class RuleParser {
                 System.out.println("BAD RULENAME " + rName);
                 continue;
             }
-            List<tokenPos> p = rp.parse(G, startRule, inputTokens, 0);
+            List<TokenPos> p = rp.parse(G, startRule, inputTokens, 0);
             if (p != null && !p.isEmpty()) {
-                for (tokenPos tp : p) {
+                for (TokenPos tp : p) {
                     if (tp.getPos() == inputTokens.length) {
                         res.add(new RuleParse(new RuleName(rName), (Rule)tp));
                     }
@@ -73,7 +73,7 @@ public class RuleParser {
     * parse routine called recursively while traversing the Rule structure
     * in a depth first manner. Returns a list of valid parses.
     */
-    private List<tokenPos> parse(RuleGrammar grammar, Rule r, String[] input, int pos) {
+    private List<TokenPos> parse(RuleGrammar grammar, Rule r, String[] input, int pos) {
 
         //System.out.println("PARSE " + r.getClass().getName() + ' ' + pos + ' ' + r);
 
@@ -97,15 +97,15 @@ public class RuleParser {
     /*
      * RULE REFERENCES
      */
-    private List<tokenPos> parse(RuleGrammar grammar, RuleName rn, String[] input, int pos) {
+    private List<TokenPos> parse(RuleGrammar grammar, RuleName rn, String[] input, int pos) {
         if (rn.getFullGrammarName() == null) {
             rn.setRuleName(grammar.getName() + '.' + rn.getSimpleRuleName());
         }
         String simpleName = rn.getSimpleRuleName();
         if (simpleName.equals("VOID")) return null;
         if (simpleName.equals("NULL")) {
-            List<tokenPos> res = new ArrayList<tokenPos>();
-            res.add(new jsgfRuleParse(rn, RuleName.NULL, pos));
+            List<TokenPos> res = new ArrayList<TokenPos>();
+            res.add(new ParsedRuleParse(rn, RuleName.NULL, pos));
             return res;
         }
         Rule ruleref = grammar.getRule(simpleName);
@@ -133,18 +133,18 @@ public class RuleParser {
                 return null;
             }
         }
-        List<tokenPos> p = parse(grammar, ruleref, input, pos);
+        List<TokenPos> p = parse(grammar, ruleref, input, pos);
         if (p == null) {
             return null;
         }
-        List<tokenPos> res = new ArrayList<tokenPos>();
-        for (tokenPos tp : p) {
-            if (tp instanceof emptyToken) {
+        List<TokenPos> res = new ArrayList<TokenPos>();
+        for (TokenPos tp : p) {
+            if (tp instanceof ParsedEmptyToken) {
                 res.add(tp);
                 continue;
             }
             try {
-                res.add(new jsgfRuleParse(rn, (Rule)tp, tp.getPos()));
+                res.add(new ParsedRuleParse(rn, (Rule)tp, tp.getPos()));
             } catch (IllegalArgumentException e) {
                 System.out.println("ERROR " + e);
             }
@@ -155,7 +155,7 @@ public class RuleParser {
     /*
      * LITERAL TOKENS
      */
-    private List<tokenPos> parse(RuleGrammar grammar, RuleToken rt, String[] input, int pos) {
+    private List<TokenPos> parse(RuleGrammar grammar, RuleToken rt, String[] input, int pos) {
         if (pos >= input.length) {
             return null;
         }
@@ -163,10 +163,10 @@ public class RuleParser {
         // TODO: what about case sensitivity ??????
         String tText = rt.getText().toLowerCase();
         if (tText.equals(input[pos]) || (input[pos].equals("%")) || (input[pos].equals("*"))) {
-            List<tokenPos> res = new ArrayList<tokenPos>();
-            res.add(new jsgfRuleToken(rt.getText(), pos + 1));
+            List<TokenPos> res = new ArrayList<TokenPos>();
+            res.add(new ParsedRuleToken(rt.getText(), pos + 1));
             if (input[pos].equals("*")) {
-                res.add(new jsgfRuleToken(rt.getText(), pos));
+                res.add(new ParsedRuleToken(rt.getText(), pos));
             }
             return res;
         } else {
@@ -191,8 +191,8 @@ public class RuleParser {
                 pos++;
                 j++;
             }
-            List<tokenPos> res = new ArrayList<tokenPos>();
-            res.add(new jsgfRuleToken(rt.getText(), pos));
+            List<TokenPos> res = new ArrayList<TokenPos>();
+            res.add(new ParsedRuleToken(rt.getText(), pos));
             return res;
         }
     }
@@ -200,10 +200,10 @@ public class RuleParser {
     /*
     * ALTERNATIVES
     */
-    private List<tokenPos> parse(RuleGrammar grammar, RuleAlternatives ra, String[] input, int pos) {
-        List<tokenPos> res = new ArrayList<tokenPos>();
+    private List<TokenPos> parse(RuleGrammar grammar, RuleAlternatives ra, String[] input, int pos) {
+        List<TokenPos> res = new ArrayList<TokenPos>();
         for (Rule rule : ra.getRules()) {
-            List<tokenPos> p = parse(grammar, rule, input, pos);
+            List<TokenPos> p = parse(grammar, rule, input, pos);
             if (p != null)
                 res.addAll(p);
         }
@@ -213,27 +213,27 @@ public class RuleParser {
     /*
     * RULESEQUENCE
     */
-    private List<tokenPos> parse(RuleGrammar grammar, RuleSequence rs, String[] input, int pos) {
+    private List<TokenPos> parse(RuleGrammar grammar, RuleSequence rs, String[] input, int pos) {
         Rule[] rarry = rs.getRules();
         if (rarry == null || rarry.length == 0) {
             return null;
         }
-        List<tokenPos> p = parse(grammar, rarry[0], input, pos);
+        List<TokenPos> p = parse(grammar, rarry[0], input, pos);
         if (p == null) {
             return null;
         }
-        List<tokenPos> res = new ArrayList<tokenPos>();
+        List<TokenPos> res = new ArrayList<TokenPos>();
         //System.out.println("seq sz" + p.size());
-        for (tokenPos tp : p) {
+        for (TokenPos tp : p) {
             //System.out.println("seq  " + p.get(j));
             int nPos = tp.getPos();
             if (rarry.length == 1) {
-                if (tp instanceof emptyToken) {
+                if (tp instanceof ParsedEmptyToken) {
                     res.add(tp);
                     continue;
                 }
                 try {
-                    res.add(new jsgfRuleSequence(new Rule[] { (Rule)tp }, tp.getPos()));
+                    res.add(new ParsedRuleSequence(new Rule[] { (Rule)tp }, tp.getPos()));
                 } catch (IllegalArgumentException e) {
                     System.out.println(e);
                 }
@@ -242,20 +242,20 @@ public class RuleParser {
             Rule[] nra = Arrays.copyOfRange(rarry, 1, rarry.length);
             RuleSequence nrs = new RuleSequence(nra);
             //System.out.println("2parse " + nPos + nrs);
-            List<tokenPos> q = parse(grammar, nrs, input, nPos);
+            List<TokenPos> q = parse(grammar, nrs, input, nPos);
             if (q == null) {
                 continue;
             }
             //System.out.println("2 seq sz " + p.size());
-            for (tokenPos tp1 : q) {
+            for (TokenPos tp1 : q) {
                 //System.out.println("2 seq  " + q.get(k));
                 //System.out.println("tp " + tp);
                 //System.out.println("tp1 " + tp1);
-                if (tp1 instanceof emptyToken) {
+                if (tp1 instanceof ParsedEmptyToken) {
                     res.add(tp);
                     continue;
                 }       
-                if (tp instanceof emptyToken) {
+                if (tp instanceof ParsedEmptyToken) {
                     res.add(tp1);
                     continue;
                 }
@@ -270,7 +270,7 @@ public class RuleParser {
                     ra = new Rule[] { (Rule)tp, (Rule)tp1 };
                 }
                 try {
-                    res.add(new jsgfRuleSequence(ra, tp1.getPos()));
+                    res.add(new ParsedRuleSequence(ra, tp1.getPos()));
                 } catch (IllegalArgumentException e) {
                     System.out.println(e);
                 }
@@ -282,20 +282,20 @@ public class RuleParser {
     /*
     * TAGS
     */
-    private List<tokenPos> parse(RuleGrammar grammar, RuleTag rtag, String[] input, int pos) {
+    private List<TokenPos> parse(RuleGrammar grammar, RuleTag rtag, String[] input, int pos) {
         String theTag = rtag.getTag();
         //System.out.println("tag="+theTag);
-        List<tokenPos> p = parse(grammar, rtag.getRule(), input, pos);
+        List<TokenPos> p = parse(grammar, rtag.getRule(), input, pos);
         if (p == null) {
             return null;
         }
-        List<tokenPos> res = new ArrayList<tokenPos>();
-        for (tokenPos tp : p) {
-            if (tp instanceof emptyToken) {
+        List<TokenPos> res = new ArrayList<TokenPos>();
+        for (TokenPos tp : p) {
+            if (tp instanceof ParsedEmptyToken) {
                 res.add(tp);
                 continue;
             }
-            res.add(new jsgfRuleTag((Rule)tp, theTag, tp.getPos()));
+            res.add(new ParsedRuleTag((Rule)tp, theTag, tp.getPos()));
         }
         return res;
     }
@@ -303,13 +303,13 @@ public class RuleParser {
     //
     // RULECOUNT (e.g. [], *, or + )
     //
-    private List<tokenPos> parse(RuleGrammar grammar, RuleCount rc, String[] input, int pos) {
+    private List<TokenPos> parse(RuleGrammar grammar, RuleCount rc, String[] input, int pos) {
         int rcount = rc.getCount();
-        emptyToken empty = new emptyToken(pos);
-        List<tokenPos> p = parse(grammar, rc.getRule(), input, pos);
+        ParsedEmptyToken empty = new ParsedEmptyToken(pos);
+        List<TokenPos> p = parse(grammar, rc.getRule(), input, pos);
         if (p == null) {
             if (rcount == RuleCount.ONCE_OR_MORE) return null;
-            List<tokenPos> res = new ArrayList<tokenPos>();
+            List<TokenPos> res = new ArrayList<TokenPos>();
             res.add(empty);
             return res;
         }
@@ -322,7 +322,7 @@ public class RuleParser {
         for (int m = 2; m <= input.length - pos; m++) {
             Rule[] ar = new Rule[m];
             Arrays.fill(ar, rc.getRule());
-            List<tokenPos> q = parse(grammar, new RuleSequence(ar), input, pos);
+            List<TokenPos> q = parse(grammar, new RuleSequence(ar), input, pos);
             if (q == null) {
                 return p;
             }
@@ -348,16 +348,16 @@ public class RuleParser {
     /* interface for keeping track of where a token occurs in the
     * tokenized input string
     */
-    interface tokenPos {
+    interface TokenPos {
         public int getPos();
     }
 
     /* extension of RuleToken with tokenPos interface */
-    class jsgfRuleToken extends RuleToken implements tokenPos {
+    class ParsedRuleToken extends RuleToken implements TokenPos {
 
         int pos;
 
-        public jsgfRuleToken(String x, int pos) {
+        public ParsedRuleToken(String x, int pos) {
             super(x);
             this.pos = pos;
         }
@@ -368,19 +368,19 @@ public class RuleParser {
 
     }
 
-    class emptyToken extends jsgfRuleToken {
+    class ParsedEmptyToken extends ParsedRuleToken {
 
-        public emptyToken(int pos) {
+        public ParsedEmptyToken(int pos) {
             super("EMPTY", pos);
         }
     }
 
     /* extension of RuleTag with tokenPos interface */
-    class jsgfRuleTag extends RuleTag implements tokenPos {
+    class ParsedRuleTag extends RuleTag implements TokenPos {
 
         int pos;
 
-        public jsgfRuleTag(Rule r, String x, int pos) {
+        public ParsedRuleTag(Rule r, String x, int pos) {
             super(r, x);
             this.pos = pos;
         }
@@ -392,11 +392,11 @@ public class RuleParser {
     }
 
     /* extension of RuleSequence with tokenPos interface */
-    class jsgfRuleSequence extends RuleSequence implements tokenPos {
+    class ParsedRuleSequence extends RuleSequence implements TokenPos {
 
         int pos;
 
-        public jsgfRuleSequence(Rule rules[], int pos) {
+        public ParsedRuleSequence(Rule rules[], int pos) {
             super(rules);
             this.pos = pos;
         }
@@ -408,11 +408,11 @@ public class RuleParser {
     }
 
     /* extension of RuleParse with tokenPos interface */
-    class jsgfRuleParse extends RuleParse implements tokenPos {
+    class ParsedRuleParse extends RuleParse implements TokenPos {
 
         int pos;
 
-        public jsgfRuleParse(RuleName rn, Rule r, int pos) throws IllegalArgumentException {
+        public ParsedRuleParse(RuleName rn, Rule r, int pos) throws IllegalArgumentException {
             super(rn, r);
             this.pos = pos;
         }
