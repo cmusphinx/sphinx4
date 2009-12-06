@@ -50,11 +50,9 @@ public class BaseGrammar
         activationMode = RECOGNIZER_FOCUS;
     }
 
-//////////////////////
-// Begin Grammar Methods
-
     //////////////////////
-
+    // Begin Grammar Methods
+    //////////////////////
 
     /** Return a reference to the recognizer that owns this Grammar. From javax.speech.recognition.Grammar. */
     public Recognizer getRecognizer() {
@@ -163,15 +161,14 @@ public class BaseGrammar
     public void removeResultListener(ResultListener listener) {
         resultListeners.remove(listener);
     }
-//////////////////////
-// End Grammar Methods
-//////////////////////
-
-//////////////////////
-// Begin utility methods for sending GrammarEvents
-
+    
+    //////////////////////
+    // End Grammar Methods
     //////////////////////
 
+    //////////////////////
+    // Begin utility methods for sending GrammarEvents
+    //////////////////////
 
     /**
      * Utility function to generate GRAMMAR_ACTIVATED event and post it to the event queue.  Eventually
@@ -225,13 +222,13 @@ public class BaseGrammar
         for (GrammarListener gl : grammarListeners)
             gl.grammarDeactivated(event);
     }
-//////////////////////
-// End utility methods for sending GrammarEvents
-//////////////////////
 
-//////////////////////
-// Begin utility methods for sending ResultEvents
+    //////////////////////
+    // End utility methods for sending GrammarEvents
+    //////////////////////
 
+    //////////////////////
+    // Begin utility methods for sending ResultEvents
     //////////////////////
 
 
@@ -361,21 +358,18 @@ public class BaseGrammar
         for (ResultListener rl : resultListeners)
             rl.trainingInfoReleased(event);
     }
-//////////////////////
-// End utility methods for sending ResultEvents
-//////////////////////
-
-//////////////////////
-// NON-JSAPI METHODS
-
+    //////////////////////
+    // End utility methods for sending ResultEvents
     //////////////////////
 
+    //////////////////////
+    // NON-JSAPI METHODS
+    //////////////////////
 
     /** Set the name of this Grammar. */
     public void setName(String name) {
         myName = name;
     }
-
 
     /**
      * Dispatch a SpeechEvent.  This is a method from SpeechEventDispatcher. The dispatcher should notify all listeners
@@ -417,4 +411,3 @@ public class BaseGrammar
         }
     }
 }
-

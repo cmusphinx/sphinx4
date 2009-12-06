@@ -14,6 +14,8 @@ import java.util.ArrayList;
 import java.util.StringTokenizer;
 import javax.speech.recognition.*;
 import com.sun.speech.engine.recognition.BaseRuleGrammar;
+import com.sun.speech.engine.recognition.RuleGrammarFactory;
+import com.sun.speech.engine.recognition.BaseRuleGrammarFactory;
 
 /** Token Manager. */
 public class JSGFParserTokenManager implements JSGFParserConstants

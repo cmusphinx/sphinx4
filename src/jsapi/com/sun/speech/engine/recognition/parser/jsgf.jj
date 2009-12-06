@@ -39,6 +39,8 @@ import java.util.StringTokenizer;
 
 import javax.speech.recognition.*;
 import com.sun.speech.engine.recognition.BaseRuleGrammar;
+import com.sun.speech.engine.recognition.RuleGrammarFactory;
+import com.sun.speech.engine.recognition.BaseRuleGrammarFactory;
 
 class JSGFEncoding {
     public String version;
@@ -62,7 +64,7 @@ public class JSGFParser {
 
     static JSGFParser parser = null;
 
-    // This main method simplly checks the syntax of a jsgf Grammar
+    // This main method simply checks the syntax of a jsgf Grammar
     //
     public static void main(String args []) {
         if (args.length == 0) {
@@ -70,7 +72,7 @@ public class JSGFParser {
             parser = new JSGFParser(System.in);
         }
         else if (args.length > 0) {
-            System.out.println("JSGF Parser Version " + version + " :  Reading from file " + args [0] + " . . .");
+            System.out.println("JSGF Parser Version " + version + ":  Reading from file " + args [0] + " . . .");
             try {
                 URL codeBase = null;
                 File f = new File(".");
@@ -104,7 +106,7 @@ public class JSGFParser {
             return;
         }
         try {
-            parser.GrammarUnit();
+            parser.GrammarUnit(new BaseRuleGrammarFactory (null));
             System.out.println("JSGF Parser Version " + version + ":  JSGF Grammar parsed successfully.");
         } catch (ParseException e) {
             System.out.println("JSGF Parser Version " + version + ":  Encountered errors during parse." + e.getMessage());
@@ -114,7 +116,7 @@ public class JSGFParser {
     /**
      * newGrammarFromJSGF - Once JavaCC supports Readers we will change this
      */
-    public static RuleGrammar newGrammarFromJSGF(InputStream i) throws GrammarParseException
+    public static RuleGrammar newGrammarFromJSGF(InputStream i, RuleGrammarFactory factory) throws GrammarParseException
     {
         RuleGrammar G = null;
         if (parser == null) {
@@ -123,7 +125,7 @@ public class JSGFParser {
             parser.ReInit(i);
         }
         try {
-            G = parser.GrammarUnit();
+            G = parser.GrammarUnit(factory);
             return G;
         } catch (ParseException e) {
             Token etoken = e.currentToken;
@@ -135,7 +137,7 @@ public class JSGFParser {
     /**
      * newGrammarFromJSGF - Once JavaCC supports Readers we will change this
      */
-    public static RuleGrammar newGrammarFromJSGF(Reader i) throws GrammarParseException
+    public static RuleGrammar newGrammarFromJSGF(Reader i, RuleGrammarFactory factory) throws GrammarParseException
     {
         RuleGrammar G = null;
         if (parser == null) {
@@ -144,7 +146,7 @@ public class JSGFParser {
             parser.ReInit(i);
         }
         try {
-            G = parser.GrammarUnit();
+            G = parser.GrammarUnit(factory);
             return G;
         } catch (ParseException e){
             Token etoken = e.currentToken;
@@ -247,7 +249,7 @@ public class JSGFParser {
     /**
      * newGrammarFromURL
      */
-    public static RuleGrammar newGrammarFromJSGF(URL url) throws GrammarParseException, IOException
+    public static RuleGrammar newGrammarFromJSGF(URL url, RuleGrammarFactory factory) throws GrammarParseException, IOException
     {
         Reader reader;
         BufferedInputStream stream = new BufferedInputStream(url.openStream(), 256);
@@ -259,7 +261,7 @@ public class JSGFParser {
             if (encoding == null) System.out.println("WARNING: Grammar missing self identifying header");
             reader = new InputStreamReader(stream);
         }
-        return newGrammarFromJSGF(reader);
+        return newGrammarFromJSGF(reader, factory);
     }
 
     /**
@@ -460,12 +462,12 @@ TOKEN : /* IDENTIFIERS */
 |   < #DIGIT : [ "\u0030"-"\u0039", "\u0660"-"\u0669", "\u06f0"-"\u06f9", "\u0966"-"\u096f", "\u09e6"-"\u09ef", "\u0a66"-"\u0a6f", "\u0ae6"-"\u0aef", "\u0b66"-"\u0b6f", "\u0be7"-"\u0bef", "\u0c66"-"\u0c6f", "\u0ce6"-"\u0cef", "\u0d66"-"\u0d6f", "\u0e50"-"\u0e59", "\u0ed0"-"\u0ed9", "\u1040"-"\u1049" ] >
 }
 
-RuleGrammar GrammarUnit() :
+RuleGrammar GrammarUnit(RuleGrammarFactory factory) :
 {
     RuleGrammar G = null;
 }
 {
-    [ IdentHeader() ] G = GrammarDeclaration()
+    [ IdentHeader() ] G = GrammarDeclaration(factory)
     (
         ImportDeclaration(G)
     )*
@@ -478,7 +480,7 @@ RuleGrammar GrammarUnit() :
     }
 }
 
-RuleGrammar GrammarDeclaration() :
+RuleGrammar GrammarDeclaration(RuleGrammarFactory factory) :
 {
     String s;
     RuleGrammar G = null;
@@ -487,7 +489,7 @@ RuleGrammar GrammarDeclaration() :
 {
     t = < GRAMMAR > s = Name() ";"
     {
-        G = new BaseRuleGrammar(null, s);
+        G = factory.newGrammar (s);
         if (G != null && t != null && t.specialToken != null) {
             if (t.specialToken.image != null && t.specialToken.image.startsWith("/**")) {
                 BaseRuleGrammar JG = (BaseRuleGrammar) G;

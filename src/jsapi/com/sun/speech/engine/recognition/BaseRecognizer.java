@@ -51,8 +51,6 @@ public class BaseRecognizer extends BaseEngine implements Recognizer,
 		SpeechEventDispatcher {
 
 	protected final List<ResultListener> resultListeners = new ArrayList<ResultListener>();
-	protected Map<String, RuleGrammar> grammarList = new HashMap<String, RuleGrammar>();
-	protected boolean caseSensitiveGrammarNames = true;
 	protected boolean hasModalGrammars;
 
 	protected boolean supportsNULL = true;
@@ -65,6 +63,9 @@ public class BaseRecognizer extends BaseEngine implements Recognizer,
 	// grammar loading.
 	protected boolean reloadAll;
 
+	// Grammar manager 
+	protected BaseRecognizerGrammarManager grammarManager;
+	
 	// ////////////////////
 	// Begin Constructors
 	// ////////////////////
@@ -90,6 +91,7 @@ public class BaseRecognizer extends BaseEngine implements Recognizer,
 		super(mode);
 		this.reloadAll = reloadAll;
 		audioManager = new BaseRecognizerAudioManager();
+		grammarManager = new BaseRecognizerGrammarManager(true);
 	}
 
 	// ////////////////////
@@ -183,9 +185,9 @@ public class BaseRecognizer extends BaseEngine implements Recognizer,
 	public RuleGrammar newRuleGrammar(String name)
 			throws IllegalArgumentException, EngineStateError {
 		checkEngineState(DEALLOCATED | DEALLOCATING_RESOURCES);
-		BaseRuleGrammar G = new BaseRuleGrammar(this, name);
-		storeGrammar(G);
-		return G;
+		BaseRuleGrammar grammar = new BaseRuleGrammar(this, name);
+		grammarManager.storeGrammar(grammar);
+		return grammar;
 	}
 
 	/**
@@ -202,39 +204,49 @@ public class BaseRecognizer extends BaseEngine implements Recognizer,
 			IOException, EngineStateError {
 		checkEngineState(DEALLOCATED | DEALLOCATING_RESOURCES);
 
-		RuleGrammar G = loadFromReader(JSGFinput);
-		if (G == null) {
+		RuleGrammar grammar = loadFromReader(JSGFinput);
+		if (grammar == null) {
 			throw new IOException(); // Should never happen
 		}
-		if (G.getName() != null) {
-			storeGrammar(G);
+		if (grammar.getName() != null) {
+			grammarManager.storeGrammar(grammar);
 		}
-		return G;
+		return grammar;
 	}
 
-	static RuleGrammar loadFromReader(Reader url) {
+	RuleGrammar loadFromReader(Reader reader) {
 		RuleGrammar result = null;
 		try {
-			result = JSGFParser.newGrammarFromJSGF(url);
+			result = JSGFParser.newGrammarFromJSGF(reader, new BaseRuleGrammarFactory(this));
 		} catch (GrammarParseException e) {
 		}
 		return result;
 	}
 
-	static RuleGrammar loadFromUrl(URL url) throws IOException {
+	RuleGrammar loadFromUrl(URL url) throws IOException {
 		RuleGrammar result = null;
 		try {
-			result = JSGFParser.newGrammarFromJSGF(url);
+			result = JSGFParser.newGrammarFromJSGF(url, new BaseRuleGrammarFactory(this));
 		} catch (GrammarParseException e) {
 			e.printStackTrace();
 		}
 		return result;
 	}
 
-	static RuleGrammar loadFromStream(InputStream stream) {
+	static RuleGrammar loadFromUrl(URL url, Recognizer r) throws IOException {
 		RuleGrammar result = null;
 		try {
-			result = JSGFParser.newGrammarFromJSGF(stream);
+			result = JSGFParser.newGrammarFromJSGF(url, new BaseRuleGrammarFactory(r));
+		} catch (GrammarParseException e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
+	
+	RuleGrammar loadFromStream(InputStream stream) {
+		RuleGrammar result = null;
+		try {
+			result = JSGFParser.newGrammarFromJSGF(stream, new BaseRuleGrammarFactory(this));
 		} catch (GrammarParseException e) {
 		}
 		return result;
@@ -257,7 +269,7 @@ public class BaseRecognizer extends BaseEngine implements Recognizer,
 		return loadJSGF(baseURL, grammarName, true, false, null);
 	}
 
-	private static URL gnameToURL(URL baseURL, String grammarName)
+	private static URL grammarNameToURL (URL baseURL, String grammarName)
 			throws MalformedURLException {
 
 		// Convert each period in the grammar name to a slash "/"
@@ -292,11 +304,11 @@ public class BaseRecognizer extends BaseEngine implements Recognizer,
 			EngineStateError {
 		checkEngineState(DEALLOCATED | DEALLOCATING_RESOURCES);
 
-		URL grammarURL = gnameToURL(context, grammarName);
+		URL grammarURL = grammarNameToURL(context, grammarName);
 
-		RuleGrammar G = loadFromUrl(grammarURL);
+		RuleGrammar grammar = loadFromUrl(grammarURL);
 
-		if (G == null) {
+		if (grammar == null) {
 			throw new IOException(); // Should never happen
 		}
 
@@ -305,13 +317,13 @@ public class BaseRecognizer extends BaseEngine implements Recognizer,
 			if (loadedGrammars != null) {
 				grammarList = new ArrayList<RuleGrammar>(loadedGrammars);
 			}
-			loadImports(this, G, context, true, reloadGrammars, grammarList);
+			loadImports(this, grammar, context, true, reloadGrammars, grammarList);
 		}
 
-		if (G.getName() != null) {
-			storeGrammar(G);
+		if (grammar.getName() != null) {
+			grammarManager.storeGrammar(grammar);
 		}
-		return G;
+		return grammar;
 	}
 
 	/**
@@ -322,7 +334,7 @@ public class BaseRecognizer extends BaseEngine implements Recognizer,
 	 */
 	public RuleGrammar getRuleGrammar(String name) throws EngineStateError {
 		checkEngineState(DEALLOCATED | DEALLOCATING_RESOURCES);
-		return retrieveGrammar(name);
+		return grammarManager.retrieveGrammar(name);
 	}
 
 	/**
@@ -331,11 +343,8 @@ public class BaseRecognizer extends BaseEngine implements Recognizer,
 	 */
 	public RuleGrammar[] listRuleGrammars() throws EngineStateError {
 		checkEngineState(DEALLOCATED | DEALLOCATING_RESOURCES);
-		if (grammarList == null) {
-			return new RuleGrammar[0];
-		}
-		return grammarList.values()
-				.toArray(new RuleGrammar[grammarList.size()]);
+		Collection<RuleGrammar> grammars = grammarManager.grammars(); 
+		return grammars.toArray(new RuleGrammar[grammars.size()]);
 	}
 
 	/**
@@ -348,8 +357,7 @@ public class BaseRecognizer extends BaseEngine implements Recognizer,
 	public void deleteRuleGrammar(RuleGrammar grammar)
 			throws IllegalArgumentException, EngineStateError {
 		checkEngineState(DEALLOCATED | DEALLOCATING_RESOURCES);
-		String name = grammar.getName();
-		grammarList.remove(name);
+		grammarManager.remove(grammar);
 	}
 
 	/**
@@ -403,8 +411,8 @@ public class BaseRecognizer extends BaseEngine implements Recognizer,
 
 		// GRAMMAR_CHANGES_COMMITTED events are sent in commitChangesInternal
 
-		// Activate or Deactivate any grammars
-		checkForModalGrammars();
+		// Activate or deactivate any grammars
+		hasModalGrammars = grammarManager.checkForModalGrammars();
 		notifyGrammarActivation();
 
 		if (goBackToListening) {
@@ -518,7 +526,7 @@ public class BaseRecognizer extends BaseEngine implements Recognizer,
 	}
 
 	/**
-	 * Create a new gramar by reading in a grammar stored in a vendor-specific
+	 * Create a new grammar by reading in a grammar stored in a vendor-specific
 	 * format. Since BaseGrammar is serializable we just use read/write object
 	 * to store/restore grammars. From javax.speech.recognition.Recognizer.
 	 */
@@ -717,35 +725,14 @@ public class BaseRecognizer extends BaseEngine implements Recognizer,
 	// ////////////////////
 	// NON-JSAPI METHODS
 
-	// ////////////////////
-
-	/** Add a grammar to the grammar list. */
-	protected void storeGrammar(RuleGrammar G) {
-		if (caseSensitiveGrammarNames) {
-			grammarList.put(G.getName(), G);
-		} else {
-			grammarList.put(G.getName().toLowerCase(), G);
-		}
-	}
-
-	/** Retrieve a grammar from the grammar list. */
-	protected RuleGrammar retrieveGrammar(String name) {
-		return grammarList.get(caseSensitiveGrammarNames ? name : name
-				.toLowerCase());
-	}
-
-	/**
-	 * NOT JSAPI. In the mean time since the above method is not implemented we
-	 * support loading JSGF grammars from an InputStream which is non-standard
-	 */
 	public RuleGrammar loadJSGF(InputStream JSGFinput) throws GrammarException,
 			IOException, EngineStateError {
 		checkEngineState(DEALLOCATED | DEALLOCATING_RESOURCES);
-		RuleGrammar G = loadFromStream(JSGFinput);
-		if ((G != null) && (G.getName() != null)) {
-			storeGrammar(G);
+		RuleGrammar grammar = loadFromStream(JSGFinput);
+		if ((grammar != null) && (grammar.getName() != null)) {
+			grammarManager.storeGrammar(grammar);
 		}
-		return G;
+		return grammar;
 	}
 
 	/** Let listeners know the recognizer rejected something. NOT JSAPI. */
@@ -986,7 +973,7 @@ public class BaseRecognizer extends BaseEngine implements Recognizer,
 	protected void changeEnabled(List<String> enabled) {
 	}
 
-	/** Called to propogate new rule to underying recognizer. */
+	/** Called to propagate new rule to underlying recognizer. */
 	protected void changeRule(String gname, String ruleName, Rule rule,
 			boolean isPublic) {
 	}
@@ -1019,9 +1006,9 @@ public class BaseRecognizer extends BaseEngine implements Recognizer,
 			RuleGrammar GI = R.getRuleGrammar(gname);
 
 			if (GI == null) {
-				URL grammarURL = gnameToURL(context, ruleName
+				URL grammarURL = grammarNameToURL(context, ruleName
 						.getFullGrammarName());
-				G2 = loadFromUrl(grammarURL);
+				G2 = loadFromUrl(grammarURL, R);
 				if (G2 != null) {
 					if (grams != null) {
 						grams.add(G2);
@@ -1036,7 +1023,7 @@ public class BaseRecognizer extends BaseEngine implements Recognizer,
 	}
 
 	/**
-	 * Load grammars imported by a fullqualified Rule Token if they are not
+	 * Load grammars imported by a fully qualified Rule Token if they are not
 	 * already loaded.
 	 * 
 	 * @param r
@@ -1067,13 +1054,13 @@ public class BaseRecognizer extends BaseEngine implements Recognizer,
 					RuleName rn = new RuleName(rule.substring(index + 1,
 							rule.indexOf('>', index + 1)).trim());
 					index = rule.indexOf('>', index) + 1;
-					// check for full qualified rulename
+					// check for full qualified rule name
 					if (rn.getFullGrammarName() != null) {
 						String gname = rn.getFullGrammarName();
 						RuleGrammar GI = r.getRuleGrammar(gname);
 						if (GI == null) {
-							URL grammarURL = gnameToURL(context, gname);
-							RuleGrammar G2 = loadFromUrl(grammarURL);
+							URL grammarURL = grammarNameToURL(context, gname);
+							RuleGrammar G2 = loadFromUrl(grammarURL, r);
 							if (G2 != null) {
 								if (grams != null) {
 									grams.add(G2);
@@ -1102,23 +1089,6 @@ public class BaseRecognizer extends BaseEngine implements Recognizer,
 	}
 
 	/**
-	 * Determine if the Recognizer has any modal grammars. This sets the global
-	 * flag named hasModalGrammars.
-	 */
-	protected void checkForModalGrammars() {
-		hasModalGrammars = false;
-		if (grammarList == null) {
-			return;
-		}
-		for (RuleGrammar rg : grammarList.values()) {
-			if (rg.getActivationMode() == Grammar.RECOGNIZER_MODAL) {
-				hasModalGrammars = true;
-				return;
-			}
-		}
-	}
-
-	/**
 	 * Determine if the given Grammar is active. This is a combination of the
 	 * enabled state and activation modes of the Grammar as well as the current
 	 * focus state of the recognizer. NOT JSAPI.
@@ -1141,10 +1111,7 @@ public class BaseRecognizer extends BaseEngine implements Recognizer,
 
 	/** Notify any grammars if their activation state has been changed. */
 	protected void notifyGrammarActivation() {
-		if (grammarList == null) {
-			return;
-		}
-		for (RuleGrammar rg : grammarList.values()) {
+		for (RuleGrammar rg : grammarManager.grammars()) {
 			boolean active = isActive(rg);
 			BaseRuleGrammar brg = (BaseRuleGrammar) rg;
 			if (active != brg.grammarActive) {
@@ -1243,7 +1210,6 @@ public class BaseRecognizer extends BaseEngine implements Recognizer,
 			break;
 
 		// Defer to BaseEngine to handle the rest.
-		//
 		default:
 			super.dispatchSpeechEvent(event);
 			break;

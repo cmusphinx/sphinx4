@@ -44,9 +44,7 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar, Seriali
     public void setEnabled(boolean enabled) {
         super.setEnabled(enabled);
         for (GRule g : rules.values())
-//            if (g.isPublic) {
             g.isEnabled = enabled;
-//            }
     }
 
     /** Parse partial JSGF text to a Rule object. From javax.speech.recognition.RuleGrammar. */
@@ -145,7 +143,6 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar, Seriali
         GRule r = getKnownGRule(ruleName);
         if (r.isEnabled != enabled) {
             r.isEnabled = enabled;
-            //sjagrammarChanged=true;
         }
     }
 
@@ -567,7 +564,7 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar, Seriali
         return grammarDocComment;
     }
 
-    /** annote the specified rule with its line number from the source file. This is used for debugging purposes. */
+    /** annotate the specified rule with its line number from the source file. This is used for debugging purposes. */
     public void setSourceLine(String ruleName, int i) {
         GRule r = getGRule(ruleName);
         /* TODO : exception */
@@ -623,7 +620,6 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar, Seriali
 
     /** Internal class used to hold rules and their attributes */
     class GRule implements Serializable {
-
         String ruleName;
         Rule rule;
         boolean isPublic;
