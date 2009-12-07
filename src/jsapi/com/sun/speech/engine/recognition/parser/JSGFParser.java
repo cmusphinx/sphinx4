@@ -296,19 +296,16 @@ public class JSGFParser implements JSGFParserConstants {
     * extract @xxxx keywords from documention comments
     */
     static void extractKeywords(BaseRuleGrammar grammar, String rname, String comment) {
-        String sample;
-        int i = comment.indexOf("@example ");
-        while (i > 0) {
-            int j = comment.indexOf('\u005cn', i);
+        int i = 0;
+        while ((i = comment.indexOf("@example ", i) + 9) > 9) {
+            int j = Math.max(comment.indexOf('\u005cr', i), comment.indexOf('\u005cn', i));
             if (j < 0) {
-                sample = comment.substring(i + 8);
-                i = - 1;
-            } else {
-                sample = comment.substring(i + 8, j);
-                i = j;
+                j = comment.length();
+                if (comment.endsWith(("*/")))
+                    j -= 2;
             }
-            i = comment.indexOf("@example ", i);
-            grammar.addSampleSentence(rname, sample);
+            grammar.addSampleSentence(rname, comment.substring(i, j).trim());
+            i = j + 1;
         }
     }
 
