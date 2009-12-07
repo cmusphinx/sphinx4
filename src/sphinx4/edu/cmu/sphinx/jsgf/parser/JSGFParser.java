@@ -45,17 +45,17 @@ public class JSGFParser implements JSGFParserConstants {
 
     // This main method simply checks the syntax of a jsgf Grammar
     //
-    public static void main(String args []) {
+    public static void main(String[] args) {
         if (args.length == 0) {
             System.out.println("JSGF Parser Version " + version + ":  Reading from standard input . . .");
             parser = new JSGFParser(System.in);
         }
         else if (args.length > 0) {
-            System.out.println("JSGF Parser Version " + version + ":  Reading from file " + args [0] + " . . .");
+            System.out.println("JSGF Parser Version " + version + ":  Reading from file " + args[0] + " . . .");
             try {
                 URL codeBase = null;
                 File f = new File(".");
-                String path = f.getAbsolutePath() + "/" + args [0];
+                String path = f.getAbsolutePath() + "/" + args[0];
                 try {
                     codeBase = new URL("file:" + path);
                 } catch (MalformedURLException e) {
@@ -74,7 +74,7 @@ public class JSGFParser implements JSGFParserConstants {
                 }
                 parser = new JSGFParser(rdr);
             } catch (Exception e) {
-                System.out.println("JSGF Parser Version " + version + ":  File " + args [0] + " not found.");
+                System.out.println("JSGF Parser Version " + version + ":  File " + args[0] + " not found.");
                 return;
             }
         } else {
@@ -127,7 +127,7 @@ public class JSGFParser implements JSGFParserConstants {
         try {
             grammar = parser.GrammarUnit(factory);
             return grammar;
-        } catch (ParseException e){
+        } catch (ParseException e) {
             Token etoken = e.currentToken;
             GrammarParseException ge = new GrammarParseException(etoken.beginLine, etoken.beginColumn, "Grammar Error", e.getMessage());
             throw ge;
@@ -136,8 +136,8 @@ public class JSGFParser implements JSGFParserConstants {
 
     private static JSGFEncoding getJSGFEncoding(BufferedInputStream is) {
         int i = 0;
-        byte b [] = new byte [2];
-        byte c [] = new byte [80];
+        byte[] b = new byte[2];
+        byte[] c = new byte[80];
         is.mark(256);
         /* read 2 bytes */
         try {
@@ -145,46 +145,44 @@ public class JSGFParser implements JSGFParserConstants {
                 is.reset();
                 return null;
             }
-            // UTF-8
-            if ((b [0] == 0x23) && (b [1] == 0x4A)) {
+            if ((b[0] == 0x23) && (b[1] == 0x4A)) {
+                // UTF-8
                 i = 0;
-                c [i++] = b [0];
-                c [i++] = b [1];
+                c[i++] = b[0];
+                c[i++] = b[1];
                 while (i < 80) {
                     if (is.read(b, 0, 1) != 1) {
                         is.reset();
                         return null;
                     }
-                    if ((b [0] == 0x0A) || (b [0] == 0x0D)) break;
-                    c [i++] = b [0];
+                    if ((b[0] == 0x0A) || (b[0] == 0x0D)) break;
+                    c[i++] = b[0];
                 }
-            } else if ((b [0] == 0x23) && (b [1] == 0x00)) {
+            } else if ((b[0] == 0x23) && (b[1] == 0x00)) {
                 // UTF-16 BE
                 i = 0;
-                c [i++] = b [0];
+                c[i++] = b[0];
                 while (i < 80) {
                     if (is.read(b, 0, 2) != 2) {
                         is.reset();
                         return null;
                     }
-                    if (b [1] != 0) return null;
-                    if ((b [0] == 0x0A) || (b [0] == 0x0D)) break;
-                    c [i++] = b [0];
+                    if (b[1] != 0) return null;
+                    if ((b[0] == 0x0A) || (b[0] == 0x0D)) break;
+                    c[i++] = b[0];
                 }
-             } else {
+             } else if ((b[0] == 0x00) && (b[1] == 0x23)) {
                 // UTF-16 LE
-                if ((b [0] == 0x00) && (b [1] == 0x23)) {
-                    i = 0;
-                    c [i++] = b [1];
-                    while (i < 80) {
-                        if (is.read(b, 0, 2) != 2) {
-                            is.reset();
-                            return null;
-                        }
-                        if (b [0] != 0) return null;
-                        if ((b [1] == 0x0A) || (b [1] == 0x0D)) break;
-                        c [i++] = b [1];
+                i = 0;
+                c[i++] = b[1];
+                while (i < 80) {
+                    if (is.read(b, 0, 2) != 2) {
+                        is.reset();
+                        return null;
                     }
+                    if (b[0] != 0) return null;
+                    if ((b[1] == 0x0A) || (b[1] == 0x0D)) break;
+                    c[i++] = b[1];
                 }
             }
         }
@@ -265,19 +263,16 @@ public class JSGFParser implements JSGFParserConstants {
     * extract @keywords from documentation comments
     */
     static void extractKeywords(RuleGrammar grammar, String rname, String comment) {
-        String sample;
-        int i = comment.indexOf("@example ");
-        while (i > 0) {
-            int j = comment.indexOf('\u005cn', i);
+        int i = 0;
+        while ((i = comment.indexOf("@example ", i) + 9) > 9) {
+            int j = Math.max(comment.indexOf('\u005cr', i), comment.indexOf('\u005cn', i));
             if (j < 0) {
-                sample = comment.substring(i + 8);
-                i = - 1;
-            } else {
-                sample = comment.substring(i + 8, j);
-                i = j;
+                j = comment.length();
+                if (comment.endsWith(("*/")))
+                    j -= 2;
             }
-            i = comment.indexOf("@example ", i);
-            grammar.addSampleSentence(rname, sample);
+            grammar.addSampleSentence(rname, comment.substring(i, j).trim());
+            i = j + 1;
         }
     }
 
@@ -397,7 +392,7 @@ public class JSGFParser implements JSGFParserConstants {
 
   final public String Name() throws ParseException {
     Token t1, t2;
-    StringBuffer sb = new StringBuffer();
+    StringBuilder sb = new StringBuilder();
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case IDENTIFIER:
       t1 = jj_consume_token(IDENTIFIER);
@@ -471,10 +466,10 @@ public class JSGFParser implements JSGFParserConstants {
   }
 
   final public RuleAlternatives alternatives() throws ParseException {
-    ArrayList < Rule > ruleList = new ArrayList < Rule > ();
+    ArrayList<Rule> ruleList = new ArrayList<Rule>();
     Rule r;
     float w;
-    ArrayList<Float> weights = new ArrayList <Float> ();
+    ArrayList<Float>weights = new ArrayList<Float>();
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case GRAMMAR:
     case IMPORT:
@@ -506,14 +501,14 @@ public class JSGFParser implements JSGFParserConstants {
       w = weight();
       r = sequence();
                 ruleList.add(r);
-                weights.add (w);
+                weights.add(w);
       label_5:
       while (true) {
         jj_consume_token(33);
         w = weight();
         r = sequence();
                     ruleList.add(r);
-                    weights.add (w);
+                    weights.add(w);
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
         case 33:
           ;
@@ -566,7 +561,7 @@ public class JSGFParser implements JSGFParserConstants {
 
   final public RuleSequence sequence() throws ParseException {
     Rule rule;
-    ArrayList < Rule > ruleList = new ArrayList < Rule > ();
+    ArrayList<Rule> ruleList = new ArrayList<Rule>();
     label_6:
     while (true) {
       rule = item();
@@ -614,7 +609,7 @@ public class JSGFParser implements JSGFParserConstants {
 
   final public Rule item() throws ParseException {
     Rule r;
-    ArrayList < String > tags = null;
+    ArrayList<String> tags = null;
     int count =-1;
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case GRAMMAR:
@@ -740,9 +735,9 @@ public class JSGFParser implements JSGFParserConstants {
     throw new Error("Missing return statement in function");
   }
 
-  final public ArrayList < String > tags() throws ParseException {
+  final public ArrayList<String> tags() throws ParseException {
     Token token;
-    ArrayList < String > tags = new ArrayList < String > ();
+    ArrayList<String> tags = new ArrayList<String>();
     label_7:
     while (true) {
       token = jj_consume_token(TAG);
@@ -798,7 +793,6 @@ public class JSGFParser implements JSGFParserConstants {
     jj_consume_token(28);
     s = Name();
     jj_consume_token(31);
-        System.out.println ("Parsing rule ref with name " + s);
         RuleName rn = new RuleName(s);
         {if (true) return rn;}
     throw new Error("Missing return statement in function");
