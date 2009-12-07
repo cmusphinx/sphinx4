@@ -35,6 +35,7 @@ import java.io.StringReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.StringTokenizer;
 
 import javax.speech.recognition.*;
@@ -66,17 +67,17 @@ public class JSGFParser {
 
     // This main method simply checks the syntax of a jsgf Grammar
     //
-    public static void main(String args []) {
+    public static void main(String[] args) {
         if (args.length == 0) {
             System.out.println("JSGF Parser Version " + version + ":  Reading from standard input . . .");
             parser = new JSGFParser(System.in);
         }
         else if (args.length > 0) {
-            System.out.println("JSGF Parser Version " + version + ":  Reading from file " + args [0] + " . . .");
+            System.out.println("JSGF Parser Version " + version + ":  Reading from file " + args[0] + " . . .");
             try {
                 URL codeBase = null;
                 File f = new File(".");
-                String path = f.getAbsolutePath() + "/" + args [0];
+                String path = f.getAbsolutePath() + "/" + args[0];
                 try {
                     codeBase = new URL("file:" + path);
                 } catch (MalformedURLException e) {
@@ -95,7 +96,7 @@ public class JSGFParser {
                 }
                 parser = new JSGFParser(rdr);
             } catch (Exception e) {
-                System.out.println("JSGF Parser Version " + version + ":  File " + args [0] + " not found.");
+                System.out.println("JSGF Parser Version " + version + ":  File " + args[0] + " not found.");
                 return;
             }
         } else {
@@ -106,7 +107,7 @@ public class JSGFParser {
             return;
         }
         try {
-            parser.GrammarUnit(new BaseRuleGrammarFactory (null));
+            parser.GrammarUnit(new BaseRuleGrammarFactory(null));
             System.out.println("JSGF Parser Version " + version + ":  JSGF Grammar parsed successfully.");
         } catch (ParseException e) {
             System.out.println("JSGF Parser Version " + version + ":  Encountered errors during parse." + e.getMessage());
@@ -148,7 +149,7 @@ public class JSGFParser {
         try {
             G = parser.GrammarUnit(factory);
             return G;
-        } catch (ParseException e){
+        } catch (ParseException e) {
             Token etoken = e.currentToken;
             GrammarParseException ge = new GrammarParseException(etoken.beginLine, etoken.beginColumn, "Grammar Error", e.getMessage());
             throw ge;
@@ -157,8 +158,8 @@ public class JSGFParser {
 
     private static JSGFEncoding getJSGFEncoding(BufferedInputStream is) {
         int i = 0;
-        byte b [] = new byte [2];
-        byte c [] = new byte [80];
+        byte[] b = new byte[2];
+        byte[] c = new byte[80];
         is.mark(256);
         /* read 2 bytes */
         try {
@@ -166,46 +167,44 @@ public class JSGFParser {
                 is.reset();
                 return null;
             }
-            // UTF-8
-            if ((b [0] == 0x23) && (b [1] == 0x4A)) {
+            if ((b[0] == 0x23) && (b[1] == 0x4A)) {
+                // UTF-8
                 i = 0;
-                c [i++] = b [0];
-                c [i++] = b [1];
+                c[i++] = b[0];
+                c[i++] = b[1];
                 while (i < 80) {
                     if (is.read(b, 0, 1) != 1) {
                         is.reset();
                         return null;
                     }
-                    if ((b [0] == 0x0A) || (b [0] == 0x0D)) break;
-                    c [i++] = b [0];
+                    if ((b[0] == 0x0A) || (b[0] == 0x0D)) break;
+                    c[i++] = b[0];
                 }
-            } else if ((b [0] == 0x23) && (b [1] == 0x00)) {
+            } else if ((b[0] == 0x23) && (b[1] == 0x00)) {
                 // UTF-16 BE
                 i = 0;
-                c [i++] = b [0];
+                c[i++] = b[0];
                 while (i < 80) {
                     if (is.read(b, 0, 2) != 2) {
                         is.reset();
                         return null;
                     }
-                    if (b [1] != 0) return null;
-                    if ((b [0] == 0x0A) || (b [0] == 0x0D)) break;
-                    c [i++] = b [0];
+                    if (b[1] != 0) return null;
+                    if ((b[0] == 0x0A) || (b[0] == 0x0D)) break;
+                    c[i++] = b[0];
                 }
-             } else {
+             } else if ((b[0] == 0x00) && (b[1] == 0x23)) {
                 // UTF-16 LE
-                if ((b [0] == 0x00) && (b [1] == 0x23)) {
-                    i = 0;
-                    c [i++] = b [1];
-                    while (i < 80) {
-                        if (is.read(b, 0, 2) != 2) {
-                            is.reset();
-                            return null;
-                        }
-                        if (b [0] != 0) return null;
-                        if ((b [1] == 0x0A) || (b [1] == 0x0D)) break;
-                        c [i++] = b [1];
+                i = 0;
+                c[i++] = b[1];
+                while (i < 80) {
+                    if (is.read(b, 0, 2) != 2) {
+                        is.reset();
+                        return null;
                     }
+                    if (b[0] != 0) return null;
+                    if ((b[1] == 0x0A) || (b[1] == 0x0D)) break;
+                    c[i++] = b[1];
                 }
             }
         }
@@ -486,10 +485,10 @@ RuleGrammar GrammarDeclaration(RuleGrammarFactory factory) :
 {
     t = < GRAMMAR > s = Name() ";"
     {
-        G = factory.newGrammar (s);
+        G = factory.newGrammar(s);
         if (G != null && t != null && t.specialToken != null) {
             if (t.specialToken.image != null && t.specialToken.image.startsWith("/**")) {
-                BaseRuleGrammar JG = (BaseRuleGrammar) G;
+                BaseRuleGrammar JG = (BaseRuleGrammar)G;
                 JG.addGrammarDocComment(t.specialToken.image);
             }
         }
@@ -531,7 +530,7 @@ void ImportDeclaration(RuleGrammar G) :
             G.addImport(r);
             if (G instanceof BaseRuleGrammar && t != null && t.specialToken != null) {
                 if (t.specialToken.image != null && t.specialToken.image.startsWith("/**")) {
-                    BaseRuleGrammar JG = (BaseRuleGrammar) G;
+                    BaseRuleGrammar JG = (BaseRuleGrammar)G;
                     JG.addImportDocComment(r, t.specialToken.image);
                 }
             }
@@ -546,7 +545,7 @@ String Name() :
  */
 {
     Token t1, t2;
-    StringBuffer sb = new StringBuffer();
+    StringBuilder sb = new StringBuilder();
 }
 {
     (
@@ -592,7 +591,7 @@ void RuleDeclaration(RuleGrammar G) :
             if (G != null) {
                 G.setRule(s, r, pub);
                 if (G instanceof BaseRuleGrammar) {
-                    BaseRuleGrammar JG = (BaseRuleGrammar) G;
+                    BaseRuleGrammar JG = (BaseRuleGrammar)G;
                     String docComment = null;
                     if ((t != null) && (t.specialToken != null) && (t.specialToken.image != null)) docComment = t.specialToken.image;
                     else if ((t1 != null) && (t1.specialToken != null) && (t1.specialToken.image != null)) docComment = t1.specialToken.image;
@@ -611,10 +610,10 @@ void RuleDeclaration(RuleGrammar G) :
 
 RuleAlternatives alternatives() :
 {
-    ArrayList < Rule > ruleList = new ArrayList < Rule > ();
+    ArrayList<Rule> ruleList = new ArrayList<Rule>();
     Rule r;
     float w;
-    float wa [ ] = new float [ 25 ];
+    float[] wa = new float[25];
     int cnt = 0;
 }
 {
@@ -625,32 +624,26 @@ RuleAlternatives alternatives() :
             w = weight() r = sequence()
             {
                 ruleList.add(r);
-                wa [ cnt++ ] = w;
+                wa[cnt++] = w;
             }
             (
                 "|" w = weight() r = sequence()
                 {
                     ruleList.add(r);
                     // make array bigger if needed
-                    if (cnt > (wa.length - 1)) {
-                        float watmp [ ] = new float [ wa.length + 25 ];
-                        System.arraycopy(wa, 0, watmp, 0, wa.length);
-                        wa = watmp;
+                    if (cnt >= wa.length) {
+                        wa = Arrays.copyOf(wa, wa.length + 25);
                     }
-                    wa [ cnt++ ] = w;
+                    wa[cnt++] = w;
                 }
             )+
         )
     )
     {
-        Rule rarry [ ] = new Rule [ ruleList.size() ];
-        ruleList.toArray(rarry);
-        RuleAlternatives ra = new RuleAlternatives(rarry);
+        RuleAlternatives ra = new RuleAlternatives(ruleList.toArray(new Rule[ruleList.size()]));
         if (cnt != 0) {
-            float wa1 [ ] = new float [ cnt ];
-            System.arraycopy(wa, 0, wa1, 0, cnt);
             try {
-                ra.setWeights(wa1);
+                ra.setWeights(Arrays.copyOf(wa, cnt));
             } catch (IllegalArgumentException e) {
                 System.out.println("ERROR " + e);
             }
@@ -679,7 +672,7 @@ String ruleDef() :
 RuleSequence sequence() :
 {
     Rule rule;
-    ArrayList < Rule > ruleList = new ArrayList < Rule > ();
+    ArrayList<Rule> ruleList = new ArrayList<Rule>();
 }
 {
     (
@@ -689,9 +682,7 @@ RuleSequence sequence() :
         }
     )+
     {
-        Rule ruleArray [ ] = new Rule [ ruleList.size() ];
-        ruleList.toArray(ruleArray);
-        return new RuleSequence(ruleArray);
+        return new RuleSequence(ruleList.toArray(new Rule[ruleList.size()]));
     }
 }
 
@@ -709,7 +700,7 @@ float weight() :
 Rule item() :
 {
     Rule r;
-    ArrayList < String > tags = null;
+    ArrayList<String> tags = null;
     int count =-1;
 }
 {
@@ -755,10 +746,10 @@ Rule item() :
     }
 }
 
-ArrayList < String > tags() :
+ArrayList<String> tags() :
 {
     Token token;
-    ArrayList < String > tags = new ArrayList < String > ();
+    ArrayList<String> tags = new ArrayList<String>();
 }
 {
     ( token = < TAG > { tags.add(token.image); } )+
