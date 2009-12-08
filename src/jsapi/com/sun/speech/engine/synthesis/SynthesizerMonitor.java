@@ -97,7 +97,7 @@ public class SynthesizerMonitor extends EngineMonitor {
                 engine.testEngineState(Synthesizer.QUEUE_NOT_EMPTY));
 
 	    Synthesizer synth = (Synthesizer) engine;
-	    int queueSize = countElements(synth.enumerateQueue());
+	    int queueSize = countElements (synth.enumerateQueue());
 	    queueSizeLabel.setText("Queue Size: " + queueSize + "  ");
         }
     }
@@ -109,13 +109,13 @@ public class SynthesizerMonitor extends EngineMonitor {
      *
      * @return the number of elements in the enumeration
      */
-    private int countElements(Enumeration e) {
-	int count = 0;
-	while (e.hasMoreElements()) {
-	    e.nextElement();
-	    count++;
-	}
-	return count;
+    private int countElements(Enumeration<?> e) {
+    	int count = 0;
+    	while (e.hasMoreElements()) {
+    		e.nextElement();
+    		count++;
+    	}
+    	return count;
     }
     
     // Inherited javadoc.

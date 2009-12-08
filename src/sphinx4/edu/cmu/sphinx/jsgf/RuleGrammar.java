@@ -51,10 +51,10 @@ public class RuleGrammar {
 	/**
 	 * Create a new RuleGrammar
 	 * 
-	 * @param rec
-	 *            the BaseRecognizer for this Grammar.
 	 * @param name
 	 *            the name of this Grammar.
+	 * @param manager
+	 *            the manager for the created Grammars
 	 */
 	public RuleGrammar(String name, RuleGrammarManager manager) {
 		this.name = name;

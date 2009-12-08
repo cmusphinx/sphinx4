@@ -215,7 +215,7 @@ abstract public class BaseSynthesizer extends BaseEngine
      *   if this <code>Synthesizer</code> in the <code>DEALLOCATED</code> or 
      *   <code>DEALLOCATING_RESOURCES</code> states
      */
-    abstract public Enumeration enumerateQueue() throws EngineStateError;
+    abstract public Enumeration<?> enumerateQueue() throws EngineStateError;
 
     /**
      * Cancels the item at the top of the queue.

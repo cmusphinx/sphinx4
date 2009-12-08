@@ -37,6 +37,7 @@ public class SphinxEngineCentral implements EngineCentral {
      * @return a list of RecognizerModeDesc objects describing the available sphinx recognition engines that match
      *         <code> require </code>. Returns <code> null </code> if no engines match.
      */
+    @SuppressWarnings("unchecked")
     public EngineList createEngineList(EngineModeDesc require) {
         if (require == null || sphinxModeDesc.match(require)) {
             EngineList el = new EngineList();
