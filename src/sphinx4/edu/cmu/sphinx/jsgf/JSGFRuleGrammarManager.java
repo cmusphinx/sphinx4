@@ -39,6 +39,7 @@ public class JSGFRuleGrammarManager {
 	
 	/** Add a grammar to the grammar list. */
 	protected void storeGrammar(JSGFRuleGrammar grammar) {
+		// System.out.println ("Storing grammar " + grammar.getName());
 		if (caseSensitiveNames) {
 			grammars.put(grammar.getName(), grammar);
 		} else {
@@ -48,6 +49,10 @@ public class JSGFRuleGrammarManager {
 
 	/** Retrieve a grammar from the grammar list. */
 	public JSGFRuleGrammar retrieveGrammar(String name) {
+		// System.out.println ("Looking for grammar " + name);
+		// for (String key : grammars.keySet()) {
+		//  	System.out.println ("    " + key);
+		// }
 		return grammars.get(caseSensitiveNames ? name : name
 				.toLowerCase());
 	}

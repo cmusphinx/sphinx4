@@ -13,11 +13,10 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 import edu.cmu.sphinx.jsgf.rule.*;
-import edu.cmu.sphinx.jsgf.ManagedRuleGrammarFactory;
-import edu.cmu.sphinx.jsgf.RuleGrammar;
-import edu.cmu.sphinx.jsgf.RuleGrammarFactory;
-import edu.cmu.sphinx.jsgf.RuleGrammarManager;
-import edu.cmu.sphinx.jsgf.GrammarParseException;
+import edu.cmu.sphinx.jsgf.JSGFRuleGrammar;
+import edu.cmu.sphinx.jsgf.JSGFRuleGrammarFactory;
+import edu.cmu.sphinx.jsgf.JSGFRuleGrammarManager;
+import edu.cmu.sphinx.jsgf.JSGFGrammarParseException;
 
 /** Token Manager. */
 public class JSGFParserTokenManager implements JSGFParserConstants

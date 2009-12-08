@@ -18,13 +18,13 @@ import java.util.ArrayList;
 
 /**
  * Implementation of javax.speech.recognition.Grammar.
- *
- * @version 1.9 01/27/99 13:43:51
  */
 public class BaseGrammar
         implements Grammar, Serializable, SpeechEventDispatcher {
 
-    public transient BaseRecognizer myRec;
+	private static final long serialVersionUID = 1L;
+
+	public transient BaseRecognizer recognizer;
     protected final transient List<GrammarListener> grammarListeners = new ArrayList<GrammarListener>();
     protected final transient List<ResultListener> resultListeners = new ArrayList<ResultListener>();
     protected String myName;
@@ -42,7 +42,7 @@ public class BaseGrammar
      * @param name the name of this Grammar.
      */
     public BaseGrammar(BaseRecognizer R, String name) {
-        myRec = R;
+        recognizer = R;
         myName = name;
         grammarActive = false;
         grammarEnabled = true;
@@ -56,7 +56,7 @@ public class BaseGrammar
 
     /** Return a reference to the recognizer that owns this Grammar. From javax.speech.recognition.Grammar. */
     public Recognizer getRecognizer() {
-        return myRec;
+        return recognizer;
     }
 
 
@@ -113,7 +113,7 @@ public class BaseGrammar
      * of the Grammar. From javax.speech.recognition.Grammar.
      */
     public boolean isActive() {
-        return myRec.isActive(this);
+        return recognizer.isActive(this);
     }
 
 

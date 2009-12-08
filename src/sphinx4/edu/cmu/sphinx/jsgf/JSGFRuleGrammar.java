@@ -54,6 +54,7 @@ public class JSGFRuleGrammar {
 		public boolean isEnabled;
 		public JSGFRule rule;
 		public ArrayList<String> samples;
+		public boolean isChanged;
 
 		public JSGFRuleState (JSGFRule rule,
 							  boolean isEnabled, 
@@ -168,6 +169,8 @@ public class JSGFRuleGrammar {
 	 */
 	public JSGFRule getRule(String ruleName) {
 		JSGFRuleState state = rules.get(ruleName);
+		if (state == null)
+				return null;
 		return state.rule;
 	}
 
@@ -220,6 +223,7 @@ public class JSGFRuleGrammar {
 	 *            the name of the rule.
 	 */
 	public JSGFRuleName resolve(JSGFRuleName ruleName) throws JSGFGrammarException {
+		// System.out.println ("Resolving " + ruleName);
 		JSGFRuleName rn = new JSGFRuleName(ruleName.getRuleName());
 
 		String simpleName = rn.getSimpleRuleName();
@@ -272,17 +276,17 @@ public class JSGFRuleGrammar {
 		// Check each import statement for a possible match
 		for (JSGFRuleName importName : imports) {
 			// TO-DO: update for JSAPI 1.0
-			String iSimpleName = importName.getSimpleRuleName();
-			String iGrammarName = importName.getSimpleGrammarName();
-			String iFullGrammarName = importName.getFullGrammarName();
+			String importSimpleName = importName.getSimpleRuleName();
+			String importGrammarName = importName.getSimpleGrammarName();
+			String importFullGrammarName = importName.getFullGrammarName();
 
 			// Check for badly formed import name
-			if (iFullGrammarName == null)
+			if (importFullGrammarName == null)
 				throw new JSGFGrammarException("Error: badly formed import "
 						+ ruleName);
 
 			// Get the imported grammar
-			JSGFRuleGrammar gref = manager.retrieveGrammar(fullGrammarName);
+			JSGFRuleGrammar gref = manager.retrieveGrammar(importFullGrammarName);
 			if (gref == null) {
 				System.out.println("Warning: import of unknown grammar "
 						+ ruleName + " in " + name);
@@ -290,25 +294,25 @@ public class JSGFRuleGrammar {
 			}
 
 			// If import includes simpleName, test that it really exists
-			if (!iSimpleName.equals("*") && gref.getRule(iSimpleName) == null) {
+			if (!importSimpleName.equals("*") && gref.getRule(importSimpleName) == null) {
 				System.out.println("Warning: import of undefined rule "
 						+ ruleName + " in " + name);
 				continue;
 			}
 
 			// Check for fully-qualified or qualified reference
-			if (iFullGrammarName.equals(fullGrammarName)
-					|| iGrammarName.equals(fullGrammarName)) {
+			if (importFullGrammarName.equals(fullGrammarName)
+					|| importGrammarName.equals(fullGrammarName)) {
 				// Know that either
 				// import <ipkg.igram.???> matches <pkg.gram.???>
 				// OR
 				// import <ipkg.igram.???> matches <gram.???>
 				// (ipkg may be null)
 
-				if (iSimpleName.equals("*")) {
+				if (importSimpleName.equals("*")) {
 					if (gref.getRule(simpleName) != null) {
 						// import <pkg.gram.*> matches <pkg.gram.rulename>
-						matches.add(new JSGFRuleName(iFullGrammarName + '.'
+						matches.add(new JSGFRuleName(importFullGrammarName + '.'
 								+ simpleName));
 					}
 					continue;
@@ -316,10 +320,10 @@ public class JSGFRuleGrammar {
 					// Now testing
 					// import <ipkg.igram.iRuleName> against <??.gram.ruleName>
 					//
-					if (iSimpleName.equals(simpleName)) {
+					if (importSimpleName.equals(simpleName)) {
 						// import <pkg.gram.rulename> exact match for
 						// <???.gram.rulename>
-						matches.add(new JSGFRuleName(iFullGrammarName + '.'
+						matches.add(new JSGFRuleName(importFullGrammarName + '.'
 								+ simpleName));
 					}
 					continue;
@@ -335,10 +339,10 @@ public class JSGFRuleGrammar {
 			// Now test
 			// import <ipkg.igram.*> against <simpleName>
 
-			if (iSimpleName.equals("*")) {
+			if (importSimpleName.equals("*")) {
 				if (gref.getRule(simpleName) != null) {
 					// import <pkg.gram.*> matches <simpleName>
-					matches.add(new JSGFRuleName(iFullGrammarName + '.'
+					matches.add(new JSGFRuleName(importFullGrammarName + '.'
 							+ simpleName));
 				}
 				continue;
@@ -347,8 +351,8 @@ public class JSGFRuleGrammar {
 			// Finally test
 			// import <ipkg.igram.iSimpleName> against <simpleName>
 
-			if (iSimpleName.equals(simpleName)) {
-				matches.add(new JSGFRuleName(iFullGrammarName + '.' + simpleName));
+			if (importSimpleName.equals(simpleName)) {
+				matches.add(new JSGFRuleName(importFullGrammarName + '.' + simpleName));
 				continue;
 			}
 		}
@@ -465,6 +469,14 @@ public class JSGFRuleGrammar {
 			state.isEnabled = enabled;
 	}
 
+	public boolean isEnabled(String ruleName) {
+		JSGFRuleState state = rules.get(ruleName);
+		if (state != null) {
+			return state.isEnabled;
+		}
+		return false;
+	}
+
 	/**
 	 * Set the enabled state of the listed rule.
 	 * 
@@ -518,5 +530,15 @@ public class JSGFRuleGrammar {
 					.append(';').append(LINE_SEPARATOR);
 		}
 		return sb.toString();
+	}
+
+	public boolean isRuleChanged(String ruleName) {
+		JSGFRuleState state = rules.get(ruleName);
+		return state.isChanged;
+	}
+	
+	public void setRuleChanged (String ruleName, boolean changed) {
+		JSGFRuleState state = rules.get(ruleName);
+		state.isChanged = changed;
 	}
 }

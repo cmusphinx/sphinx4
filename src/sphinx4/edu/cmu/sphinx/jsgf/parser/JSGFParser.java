@@ -15,11 +15,10 @@ import java.util.ArrayList;
 import java.util.StringTokenizer;
 
 import edu.cmu.sphinx.jsgf.rule.*;
-import edu.cmu.sphinx.jsgf.ManagedRuleGrammarFactory;
-import edu.cmu.sphinx.jsgf.RuleGrammar;
-import edu.cmu.sphinx.jsgf.RuleGrammarFactory;
-import edu.cmu.sphinx.jsgf.RuleGrammarManager;
-import edu.cmu.sphinx.jsgf.GrammarParseException;
+import edu.cmu.sphinx.jsgf.JSGFRuleGrammar;
+import edu.cmu.sphinx.jsgf.JSGFRuleGrammarFactory;
+import edu.cmu.sphinx.jsgf.JSGFRuleGrammarManager;
+import edu.cmu.sphinx.jsgf.JSGFGrammarParseException;
 
 class JSGFEncoding {
     public String version;
@@ -85,7 +84,7 @@ public class JSGFParser implements JSGFParserConstants {
             return;
         }
         try {
-            parser.GrammarUnit(new ManagedRuleGrammarFactory (new RuleGrammarManager()));
+            parser.GrammarUnit(new JSGFRuleGrammarFactory (new JSGFRuleGrammarManager()));
             System.out.println("JSGF Parser Version " + version + ":  JSGF Grammar parsed successfully.");
         } catch (ParseException e) {
             System.out.println("JSGF Parser Version " + version + ":  Encountered errors during parse." + e.getMessage());
@@ -95,9 +94,9 @@ public class JSGFParser implements JSGFParserConstants {
     /**
      * newGrammarFromJSGF - Once JavaCC supports Readers we will change this
      */
-    public static RuleGrammar newGrammarFromJSGF(InputStream i, RuleGrammarFactory factory) throws GrammarParseException
+    public static JSGFRuleGrammar newGrammarFromJSGF(InputStream i, JSGFRuleGrammarFactory factory) throws JSGFGrammarParseException
     {
-        RuleGrammar grammar = null;
+        JSGFRuleGrammar grammar = null;
         if (parser == null) {
             parser = new JSGFParser(i);
         } else {
@@ -108,7 +107,7 @@ public class JSGFParser implements JSGFParserConstants {
             return grammar;
         } catch (ParseException e) {
             Token etoken = e.currentToken;
-            GrammarParseException ge = new GrammarParseException(etoken.beginLine, etoken.beginColumn, "Grammar Error", e.getMessage());
+            JSGFGrammarParseException ge = new JSGFGrammarParseException(etoken.beginLine, etoken.beginColumn, "Grammar Error", e.getMessage());
             throw ge;
         }
     }
@@ -116,9 +115,9 @@ public class JSGFParser implements JSGFParserConstants {
     /**
      * newGrammarFromJSGF - Once JavaCC supports Readers we will change this
      */
-    public static RuleGrammar newGrammarFromJSGF(Reader i, RuleGrammarFactory factory) throws GrammarParseException
+    public static JSGFRuleGrammar newGrammarFromJSGF(Reader i, JSGFRuleGrammarFactory factory) throws JSGFGrammarParseException
     {
-        RuleGrammar grammar = null;
+        JSGFRuleGrammar grammar = null;
         if (parser == null) {
             parser = new JSGFParser(i);
         } else {
@@ -129,7 +128,7 @@ public class JSGFParser implements JSGFParserConstants {
             return grammar;
         } catch (ParseException e) {
             Token etoken = e.currentToken;
-            GrammarParseException ge = new GrammarParseException(etoken.beginLine, etoken.beginColumn, "Grammar Error", e.getMessage());
+            JSGFGrammarParseException ge = new JSGFGrammarParseException(etoken.beginLine, etoken.beginColumn, "Grammar Error", e.getMessage());
             throw ge;
         }
     }
@@ -226,7 +225,7 @@ public class JSGFParser implements JSGFParserConstants {
     /**
      * newGrammarFromURL
      */
-    public static RuleGrammar newGrammarFromJSGF(URL url, RuleGrammarFactory factory) throws GrammarParseException, IOException
+    public static JSGFRuleGrammar newGrammarFromJSGF(URL url, JSGFRuleGrammarFactory factory) throws JSGFGrammarParseException, IOException
     {
         Reader reader;
         BufferedInputStream stream = new BufferedInputStream(url.openStream(), 256);
@@ -244,8 +243,8 @@ public class JSGFParser implements JSGFParserConstants {
     /**
      * ruleForJSGF
      */
-    public static Rule ruleForJSGF(String text) {
-        Rule r = null;
+    public static JSGFRule ruleForJSGF(String text) {
+        JSGFRule r = null;
         try {
             StringReader sread = new StringReader(text);
             if (parser == null) parser = new JSGFParser(sread);
@@ -262,7 +261,7 @@ public class JSGFParser implements JSGFParserConstants {
     /**
     * extract @keywords from documentation comments
     */
-    static void extractKeywords(RuleGrammar grammar, String rname, String comment) {
+    static void extractKeywords(JSGFRuleGrammar grammar, String rname, String comment) {
         int i = 0;
         while ((i = comment.indexOf("@example ", i) + 9) > 9) {
             int j = Math.max(comment.indexOf('\u005cr', i), comment.indexOf('\u005cn', i));
@@ -276,8 +275,8 @@ public class JSGFParser implements JSGFParserConstants {
         }
     }
 
-  final public RuleGrammar GrammarUnit(RuleGrammarFactory factory) throws ParseException {
-    RuleGrammar grammar = null;
+  final public JSGFRuleGrammar GrammarUnit(JSGFRuleGrammarFactory factory) throws ParseException {
+    JSGFRuleGrammar grammar = null;
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case IDENTIFIER:
       IdentHeader();
@@ -317,9 +316,9 @@ public class JSGFParser implements JSGFParserConstants {
     throw new Error("Missing return statement in function");
   }
 
-  final public RuleGrammar GrammarDeclaration(RuleGrammarFactory factory) throws ParseException {
+  final public JSGFRuleGrammar GrammarDeclaration(JSGFRuleGrammarFactory factory) throws ParseException {
     String s;
-    RuleGrammar grammar = null;
+    JSGFRuleGrammar grammar = null;
     Token t = null;
     t = jj_consume_token(GRAMMAR);
     s = Name();
@@ -327,7 +326,7 @@ public class JSGFParser implements JSGFParserConstants {
         grammar = factory.newGrammar (s);
         if (grammar != null && t != null && t.specialToken != null) {
             if (t.specialToken.image != null && t.specialToken.image.startsWith("/**")) {
-                RuleGrammar JG = (RuleGrammar) grammar;
+                JSGFRuleGrammar JG = (JSGFRuleGrammar) grammar;
                 JG.addGrammarDocComment(t.specialToken.image);
             }
         }
@@ -357,7 +356,7 @@ public class JSGFParser implements JSGFParserConstants {
     jj_consume_token(26);
   }
 
-  final public void ImportDeclaration(RuleGrammar grammar) throws ParseException {
+  final public void ImportDeclaration(JSGFRuleGrammar grammar) throws ParseException {
     boolean all = false;
     String name;
     Token t = null;
@@ -378,12 +377,12 @@ public class JSGFParser implements JSGFParserConstants {
     jj_consume_token(26);
         // import all rules if .*
         if (all) name = name + ".*";
-        RuleName r = new RuleName(name);
+        JSGFRuleName r = new JSGFRuleName(name);
         if (grammar != null) {
             grammar.addImport(r);
-            if (grammar instanceof RuleGrammar && t != null && t.specialToken != null) {
+            if (grammar instanceof JSGFRuleGrammar && t != null && t.specialToken != null) {
                 if (t.specialToken.image != null && t.specialToken.image.startsWith("/**")) {
-                    RuleGrammar JG = (RuleGrammar) grammar;
+                    JSGFRuleGrammar JG = (JSGFRuleGrammar) grammar;
                     JG.addImportDocComment(r, t.specialToken.image);
                 }
             }
@@ -428,10 +427,10 @@ public class JSGFParser implements JSGFParserConstants {
     throw new Error("Missing return statement in function");
   }
 
-  final public void RuleDeclaration(RuleGrammar grammar) throws ParseException {
+  final public void RuleDeclaration(JSGFRuleGrammar grammar) throws ParseException {
     boolean pub = false;
     String s;
-    Rule r;
+    JSGFRule r;
     Token t = null;
     Token t1 = null;
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
@@ -461,13 +460,13 @@ public class JSGFParser implements JSGFParserConstants {
                 }
             }
         } catch (IllegalArgumentException e) {
-            System.out.println("ERROR SETTING RULE " + s);
+            System.out.println("ERROR SETTING JSGFRule " + s);
         }
   }
 
-  final public RuleAlternatives alternatives() throws ParseException {
-    ArrayList<Rule> ruleList = new ArrayList<Rule>();
-    Rule r;
+  final public JSGFRuleAlternatives alternatives() throws ParseException {
+    ArrayList<JSGFRule> ruleList = new ArrayList<JSGFRule>();
+    JSGFRule r;
     float w;
     ArrayList<Float>weights = new ArrayList<Float>();
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
@@ -524,7 +523,7 @@ public class JSGFParser implements JSGFParserConstants {
       jj_consume_token(-1);
       throw new ParseException();
     }
-        RuleAlternatives ra = new RuleAlternatives(ruleList);
+        JSGFRuleAlternatives ra = new JSGFRuleAlternatives(ruleList);
         if (weights.size() > 0) {
                 ra.setWeights(weights);
         }
@@ -559,13 +558,13 @@ public class JSGFParser implements JSGFParserConstants {
     throw new Error("Missing return statement in function");
   }
 
-  final public RuleSequence sequence() throws ParseException {
-    Rule rule;
-    ArrayList<Rule> ruleList = new ArrayList<Rule>();
+  final public JSGFRuleSequence sequence() throws ParseException {
+    JSGFRule JSGFRule;
+    ArrayList<JSGFRule> ruleList = new ArrayList<JSGFRule>();
     label_6:
     while (true) {
-      rule = item();
-            ruleList.add(rule);
+      JSGFRule = item();
+            ruleList.add(JSGFRule);
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case GRAMMAR:
       case IMPORT:
@@ -583,7 +582,7 @@ public class JSGFParser implements JSGFParserConstants {
         break label_6;
       }
     }
-        {if (true) return new RuleSequence(ruleList);}
+        {if (true) return new JSGFRuleSequence(ruleList);}
     throw new Error("Missing return statement in function");
   }
 
@@ -607,8 +606,8 @@ public class JSGFParser implements JSGFParserConstants {
     throw new Error("Missing return statement in function");
   }
 
-  final public Rule item() throws ParseException {
-    Rule r;
+  final public JSGFRule item() throws ParseException {
+    JSGFRule r;
     ArrayList<String> tags = null;
     int count =-1;
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
@@ -642,11 +641,11 @@ public class JSGFParser implements JSGFParserConstants {
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
         case 30:
           jj_consume_token(30);
-                    count = RuleCount.ZERO_OR_MORE;
+                    count = JSGFRuleCount.ZERO_OR_MORE;
           break;
         case 35:
           jj_consume_token(35);
-                    count = RuleCount.ONCE_OR_MORE;
+                    count = JSGFRuleCount.ONCE_OR_MORE;
           break;
         default:
           jj_la1[15] = jj_gen;
@@ -677,11 +676,11 @@ public class JSGFParser implements JSGFParserConstants {
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
         case 30:
           jj_consume_token(30);
-                    count = RuleCount.ZERO_OR_MORE;
+                    count = JSGFRuleCount.ZERO_OR_MORE;
           break;
         case 35:
           jj_consume_token(35);
-                                                              count = RuleCount.ONCE_OR_MORE;
+                                                                  count = JSGFRuleCount.ONCE_OR_MORE;
           break;
         default:
           jj_la1[18] = jj_gen;
@@ -706,7 +705,7 @@ public class JSGFParser implements JSGFParserConstants {
       jj_consume_token(38);
       r = alternatives();
       jj_consume_token(39);
-                                         count = RuleCount.OPTIONAL;
+                                         count = JSGFRuleCount.OPTIONAL;
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case TAG:
         tags = tags();
@@ -721,14 +720,14 @@ public class JSGFParser implements JSGFParserConstants {
       jj_consume_token(-1);
       throw new ParseException();
     }
-        if (count != - 1) r = new RuleCount(r, count);
+        if (count != - 1) r = new JSGFRuleCount(r, count);
         if (tags != null) {
             for (String tag : tags) {
                 if (tag.charAt(0) == '{') {
                     tag = tag.substring(1, tag.length() - 1);
                     tag = tag.replace('\u005c\u005c', ' ');
                 }
-                r = new RuleTag(r, tag);
+                r = new JSGFRuleTag(r, tag);
             }
         }
         {if (true) return r;}
@@ -755,7 +754,7 @@ public class JSGFParser implements JSGFParserConstants {
     throw new Error("Missing return statement in function");
   }
 
-  final public Rule terminal() throws ParseException {
+  final public JSGFRule terminal() throws ParseException {
     Token t;
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case IDENTIFIER:
@@ -783,22 +782,22 @@ public class JSGFParser implements JSGFParserConstants {
     }
         String tn = t.image;
         if (tn.startsWith("\u005c"") && tn.endsWith("\u005c"")) tn = tn.substring(1, tn.length() - 1);
-        RuleToken rt = new RuleToken(tn);
+        JSGFRuleToken rt = new JSGFRuleToken(tn);
         {if (true) return rt;}
     throw new Error("Missing return statement in function");
   }
 
-  final public RuleName ruleRef() throws ParseException {
+  final public JSGFRuleName ruleRef() throws ParseException {
     String s;
     jj_consume_token(28);
     s = Name();
     jj_consume_token(31);
-        RuleName rn = new RuleName(s);
+        JSGFRuleName rn = new JSGFRuleName(s);
         {if (true) return rn;}
     throw new Error("Missing return statement in function");
   }
 
-  final public RuleName importRef() throws ParseException {
+  final public JSGFRuleName importRef() throws ParseException {
     String s;
     boolean all = false;
     jj_consume_token(28);
@@ -815,7 +814,7 @@ public class JSGFParser implements JSGFParserConstants {
     }
     jj_consume_token(31);
         if (all) s = s + ".*";
-        RuleName rn = new RuleName(s);
+        JSGFRuleName rn = new JSGFRuleName(s);
         {if (true) return rn;}
     throw new Error("Missing return statement in function");
   }

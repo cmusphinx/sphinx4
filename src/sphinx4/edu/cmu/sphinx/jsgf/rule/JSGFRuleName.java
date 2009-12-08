@@ -28,13 +28,16 @@ public class JSGFRuleName extends JSGFRule {
 	}
 
 	public JSGFRuleName(String name) {
+		// System.out.println ("Building rule name " + name);
 		setRuleName(name);
 	}
 
 	public String getFullGrammarName() {
+		// System.out.println ("Getting full grammar name from " + fullRuleName);
 		if (packageName != null) {
 			return packageName + "." + simpleGrammarName;
 		}
+		// System.out.println ("Result is " + simpleGrammarName);
 		return simpleGrammarName;
 	}
 
