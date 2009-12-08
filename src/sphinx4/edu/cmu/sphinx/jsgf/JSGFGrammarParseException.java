@@ -7,7 +7,7 @@
  */
 package edu.cmu.sphinx.jsgf;
 
-public class GrammarParseException extends Exception
+public class JSGFGrammarParseException extends Exception
 {
 
 	private static final long serialVersionUID = 1L;
@@ -16,13 +16,13 @@ public class GrammarParseException extends Exception
 	public String message;
 	public String details;
 
-	public GrammarParseException (int lineNumber, int charNumber, String message, String details) {
+	public JSGFGrammarParseException (int lineNumber, int charNumber, String message, String details) {
 		this.lineNumber = lineNumber;
 		this.charNumber = charNumber;
 		this.message = message;
 		this.details = details;
 	}
-	public GrammarParseException (String message) {
+	public JSGFGrammarParseException (String message) {
      	this.message = message;
     }
 }

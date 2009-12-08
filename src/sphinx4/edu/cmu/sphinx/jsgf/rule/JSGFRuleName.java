@@ -9,22 +9,25 @@ package edu.cmu.sphinx.jsgf.rule;
 
 import java.util.StringTokenizer;
 
-public class RuleName extends Rule {
+public class JSGFRuleName extends JSGFRule {
+	
 	protected String fullRuleName;
+	
 	protected String packageName;
 	protected String simpleGrammarName;
 	protected String simpleRuleName;
+
 	public String resolvedRuleName;
 
-	public static RuleName NULL = new RuleName("NULL");
+	public static JSGFRuleName NULL = new JSGFRuleName("NULL");
 
-	public static RuleName VOID = new RuleName("VOID");
+	public static JSGFRuleName VOID = new JSGFRuleName("VOID");
 
-	public RuleName() {
+	public JSGFRuleName() {
 		setRuleName("NULL");
 	}
 
-	public RuleName(String name) {
+	public JSGFRuleName(String name) {
 		setRuleName(name);
 	}
 
@@ -132,7 +135,7 @@ public class RuleName extends Rule {
 		}
 	}
 
-	private static String stripRuleName(String name) {
+	public static String stripRuleName(String name) {
 		if ((name.startsWith("<")) && (name.endsWith(">"))) {
 			return name.substring(1, name.length() - 1);
 		}

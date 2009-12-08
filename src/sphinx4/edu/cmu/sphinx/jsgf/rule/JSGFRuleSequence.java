@@ -9,29 +9,29 @@ package edu.cmu.sphinx.jsgf.rule;
 
 import java.util.List;
 
-public class RuleSequence extends Rule {
-	protected List<Rule> rules;
+public class JSGFRuleSequence extends JSGFRule {
+	protected List<JSGFRule> rules;
 
-	public RuleSequence() {
+	public JSGFRuleSequence() {
 		setRules(null);
 	}
 
-	public RuleSequence(List<Rule> rules) {
+	public JSGFRuleSequence(List<JSGFRule> rules) {
 		setRules(rules);
 	}
 
-	public void append(Rule rule) {
+	public void append(JSGFRule rule) {
 		if (rules == null) {
 			throw new NullPointerException("null rule to append");
 		}
 		rules.add(rule);
 	}
 
-	public List<Rule> getRules() {
+	public List<JSGFRule> getRules() {
 		return rules;
 	}
 
-	public void setRules(List<Rule> rules) {
+	public void setRules(List<JSGFRule> rules) {
 		this.rules = rules;
 	}
 
@@ -45,8 +45,8 @@ public class RuleSequence extends Rule {
 			if (i > 0)
 				localStringBuffer.append(' ');
 
-			Rule r = rules.get(i);
-			if ((r instanceof RuleAlternatives) || (r instanceof RuleSequence))
+			JSGFRule r = rules.get(i);
+			if ((r instanceof JSGFRuleAlternatives) || (r instanceof JSGFRuleSequence))
 				localStringBuffer.append("( " + r.toString() + " )");
 			else {
 				localStringBuffer.append(r.toString());

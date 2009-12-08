@@ -7,14 +7,14 @@
  */
 package edu.cmu.sphinx.jsgf.rule;
 
-public class RuleToken extends Rule {
+public class JSGFRuleToken extends JSGFRule {
 	protected String text;
 
-	public RuleToken() {
+	public JSGFRuleToken() {
 		setText(null);
 	}
 
-	public RuleToken(String text) {
+	public JSGFRuleToken(String text) {
 		setText(text);
 	}
 

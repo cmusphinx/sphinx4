@@ -214,8 +214,8 @@ public class JSGFGrammar extends Grammar {
 	// ---------------------
 	// Configurable data
 	// ---------------------
-	private RuleGrammar ruleGrammar;
-	private RuleGrammarManager manager;
+	private JSGFRuleGrammar ruleGrammar;
+	private JSGFRuleGrammarManager manager;
 	private RuleStack ruleStack;
 	private String grammarName;
 	private URL baseURL;
@@ -263,7 +263,7 @@ public class JSGFGrammar extends Grammar {
 	 * 
 	 * @return the RuleGrammar
 	 */
-	public RuleGrammar getRuleGrammar() {
+	public JSGFRuleGrammar getRuleGrammar() {
 		return ruleGrammar;
 	}
 
@@ -323,25 +323,25 @@ public class JSGFGrammar extends Grammar {
 	 *            the Rule to parse
 	 * @return a grammar graph
 	 */
-	private GrammarGraph parseRule(Rule rule) throws GrammarException {
+	private GrammarGraph parseRule(JSGFRule rule) throws JSGFGrammarException {
 		GrammarGraph result;
 
 		if (rule != null) {
 			logger.fine("parseRule: " + rule);
 		}
 
-		if (rule instanceof RuleAlternatives) {
-			result = parseRuleAlternatives((RuleAlternatives) rule);
-		} else if (rule instanceof RuleCount) {
-			result = parseRuleCount((RuleCount) rule);
-		} else if (rule instanceof RuleName) {
-			result = parseRuleName((RuleName) rule);
-		} else if (rule instanceof RuleSequence) {
-			result = parseRuleSequence((RuleSequence) rule);
-		} else if (rule instanceof RuleTag) {
-			result = parseRuleTag((RuleTag) rule);
-		} else if (rule instanceof RuleToken) {
-			result = parseRuleToken((RuleToken) rule);
+		if (rule instanceof JSGFRuleAlternatives) {
+			result = parseRuleAlternatives((JSGFRuleAlternatives) rule);
+		} else if (rule instanceof JSGFRuleCount) {
+			result = parseRuleCount((JSGFRuleCount) rule);
+		} else if (rule instanceof JSGFRuleName) {
+			result = parseRuleName((JSGFRuleName) rule);
+		} else if (rule instanceof JSGFRuleSequence) {
+			result = parseRuleSequence((JSGFRuleSequence) rule);
+		} else if (rule instanceof JSGFRuleTag) {
+			result = parseRuleTag((JSGFRuleTag) rule);
+		} else if (rule instanceof JSGFRuleToken) {
+			result = parseRuleToken((JSGFRuleToken) rule);
 		} else {
 			throw new IllegalArgumentException("Unsupported Rule type: " + rule);
 		}
@@ -355,8 +355,8 @@ public class JSGFGrammar extends Grammar {
 	 *            the RuleName rule to parse
 	 * @return a grammar graph
 	 */
-	private GrammarGraph parseRuleName(RuleName initialRuleName)
-			throws GrammarException {
+	private GrammarGraph parseRuleName(JSGFRuleName initialRuleName)
+			throws JSGFGrammarException {
 		logger.fine("parseRuleName: " + initialRuleName);
 		GrammarGraph result = ruleStack.contains(initialRuleName.getRuleName());
 
@@ -366,27 +366,27 @@ public class JSGFGrammar extends Grammar {
 			result = new GrammarGraph();
 			ruleStack.push(initialRuleName.getRuleName(), result);
 		}
-		RuleName ruleName = ruleGrammar.resolve(initialRuleName);
+		JSGFRuleName ruleName = ruleGrammar.resolve(initialRuleName);
 
-		if (ruleName == RuleName.NULL) {
+		if (ruleName == JSGFRuleName.NULL) {
 			result.getStartNode().add(result.getEndNode(), 0.0f);
-		} else if (ruleName == RuleName.VOID) {
+		} else if (ruleName == JSGFRuleName.VOID) {
 			// no connection for void
 		} else {
 			if (ruleName == null) {
-				throw new GrammarException("Can't resolve " + initialRuleName
+				throw new JSGFGrammarException("Can't resolve " + initialRuleName
 						+ " g " + initialRuleName.getFullGrammarName());
 			}
-			RuleGrammar rg = manager.retrieveGrammar(ruleName
+			JSGFRuleGrammar rg = manager.retrieveGrammar(ruleName
 					.getFullGrammarName());
 			if (rg == null) {
-				throw new GrammarException("Can't resolve grammar name "
+				throw new JSGFGrammarException("Can't resolve grammar name "
 						+ ruleName.getFullGrammarName());
 			}
 
-			Rule rule = rg.getRule(ruleName.getSimpleRuleName());
+			JSGFRule rule = rg.getRule(ruleName.getSimpleRuleName());
 			if (rule == null) {
-				throw new GrammarException("Can't resolve rule: "
+				throw new JSGFGrammarException("Can't resolve rule: "
 						+ ruleName.getRuleName());
 			}
 			GrammarGraph ruleResult = parseRule(rule);
@@ -406,8 +406,8 @@ public class JSGFGrammar extends Grammar {
 	 *            the RuleCount object to parse
 	 * @return a grammar graph
 	 */
-	private GrammarGraph parseRuleCount(RuleCount ruleCount)
-			throws GrammarException {
+	private GrammarGraph parseRuleCount(JSGFRuleCount ruleCount)
+			throws JSGFGrammarException {
 		logger.fine("parseRuleCount: " + ruleCount);
 		GrammarGraph result = new GrammarGraph();
 		int count = ruleCount.getCount();
@@ -418,13 +418,13 @@ public class JSGFGrammar extends Grammar {
 
 		// if this is optional, add a bypass arc
 
-		if (count == RuleCount.ZERO_OR_MORE || count == RuleCount.OPTIONAL) {
+		if (count == JSGFRuleCount.ZERO_OR_MORE || count == JSGFRuleCount.OPTIONAL) {
 			result.getStartNode().add(result.getEndNode(), 0.0f);
 		}
 
 		// if this can possibly occur more than once, add a loopback
 
-		if (count == RuleCount.ONCE_OR_MORE || count == RuleCount.ZERO_OR_MORE) {
+		if (count == JSGFRuleCount.ONCE_OR_MORE || count == JSGFRuleCount.ZERO_OR_MORE) {
 			newNodes.getEndNode().add(newNodes.getStartNode(), 0.0f);
 		}
 		return result;
@@ -437,18 +437,18 @@ public class JSGFGrammar extends Grammar {
 	 *            the RuleAlternatives to parse
 	 * @return a grammar graph
 	 */
-	private GrammarGraph parseRuleAlternatives(RuleAlternatives ruleAlternatives)
-			throws GrammarException {
+	private GrammarGraph parseRuleAlternatives(JSGFRuleAlternatives ruleAlternatives)
+			throws JSGFGrammarException {
 		logger.fine("parseRuleAlternatives: " + ruleAlternatives);
 		GrammarGraph result = new GrammarGraph();
 
-		List<Rule> rules = ruleAlternatives.getRules();
+		List<JSGFRule> rules = ruleAlternatives.getRules();
 		List<Float> weights = ruleAlternatives.getWeights();
 		normalizeWeights(weights);
 
 		// expand each alternative, and connect them in parallel
 		for (int i = 0; i < rules.size(); i++) {
-			Rule rule = rules.get(i);
+			JSGFRule rule = rules.get(i);
 			float weight = 0.0f;
 			if (weights != null) {
 				weight = weights.get(i);
@@ -495,20 +495,20 @@ public class JSGFGrammar extends Grammar {
 	 *            the RuleSequence to parse
 	 * @return the first and last GrammarNodes of the network
 	 */
-	private GrammarGraph parseRuleSequence(RuleSequence ruleSequence)
-			throws GrammarException {
+	private GrammarGraph parseRuleSequence(JSGFRuleSequence ruleSequence)
+			throws JSGFGrammarException {
 
 		GrammarNode startNode = null;
 		GrammarNode endNode = null;
 		logger.fine("parseRuleSequence: " + ruleSequence);
 
-		List<Rule> rules = ruleSequence.getRules();
+		List<JSGFRule> rules = ruleSequence.getRules();
 
 		GrammarNode lastGrammarNode = null;
 
 		// expand and connect each rule in the sequence serially
 		for (int i = 0; i < rules.size(); i++) {
-			Rule rule = rules.get(i);
+			JSGFRule rule = rules.get(i);
 			GrammarGraph newNodes = parseRule(rule);
 
 			// first node
@@ -537,9 +537,9 @@ public class JSGFGrammar extends Grammar {
 	 *            the RuleTag to parse
 	 * @return the first and last GrammarNodes of the network
 	 */
-	private GrammarGraph parseRuleTag(RuleTag ruleTag) throws GrammarException {
+	private GrammarGraph parseRuleTag(JSGFRuleTag ruleTag) throws JSGFGrammarException {
 		logger.fine("parseRuleTag: " + ruleTag);
-		Rule rule = ruleTag.getRule();
+		JSGFRule rule = ruleTag.getRule();
 		return parseRule(rule);
 	}
 
@@ -550,7 +550,7 @@ public class JSGFGrammar extends Grammar {
 	 *            the RuleToken that contains the word
 	 * @return a GrammarNode with the word in the given RuleToken
 	 */
-	private GrammarGraph parseRuleToken(RuleToken ruleToken) {
+	private GrammarGraph parseRuleToken(JSGFRuleToken ruleToken) {
 
 		GrammarNode node = createGrammarNode(ruleToken.getText());
 		return new GrammarGraph(node, node);
@@ -591,10 +591,10 @@ public class JSGFGrammar extends Grammar {
 	public void commitChanges() throws IOException {
 		try {
 			if (loadGrammar) {
-				manager = new RuleGrammarManager();
+				manager = new JSGFRuleGrammarManager();
 				URL url = grammarNameToURL(baseURL, grammarName);
 				ruleGrammar = JSGFParser.newGrammarFromJSGF(url,
-						new ManagedRuleGrammarFactory(manager));
+						new JSGFRuleGrammarFactory(manager));
 				ruleGrammar.setEnabled(true);
 				loadGrammar = false;
 			}
@@ -615,7 +615,7 @@ public class JSGFGrammar extends Grammar {
 					String fullName = getFullRuleName(ruleName);
 					GrammarGraph publicRuleGraph = new GrammarGraph();
 					ruleStack.push(fullName, publicRuleGraph);
-					Rule rule = ruleGrammar.getRule(ruleName);
+					JSGFRule rule = ruleGrammar.getRule(ruleName);
 					GrammarGraph graph = parseRule(rule);
 					ruleStack.pop();
 
@@ -630,11 +630,11 @@ public class JSGFGrammar extends Grammar {
 			if (logger.isLoggable(Level.FINEST)) {
 				dumpGrammar();
 			}
-		} catch (GrammarException g) {
+		} catch (JSGFGrammarException g) {
 			g.printStackTrace();
 		} catch (MalformedURLException mue) {
 			throw new IOException("bad base grammar url " + baseURL + ' ' + mue);
-		} catch (GrammarParseException e) {
+		} catch (JSGFGrammarParseException e) {
 			e.printStackTrace();
 		}
 	}
@@ -645,10 +645,10 @@ public class JSGFGrammar extends Grammar {
 	 * @param ruleName
 	 *            the partial name
 	 * @return the fully resolved name
-	 * @throws GrammarException
+	 * @throws JSGFGrammarException
 	 */
-	private String getFullRuleName(String ruleName) throws GrammarException {
-		RuleName rname = ruleGrammar.resolve(new RuleName(ruleName));
+	private String getFullRuleName(String ruleName) throws JSGFGrammarException {
+		JSGFRuleName rname = ruleGrammar.resolve(new JSGFRuleName(ruleName));
 		return rname.getRuleName();
 	}
 
@@ -656,7 +656,7 @@ public class JSGFGrammar extends Grammar {
 	private void dumpGrammar() {
 		System.out.println("Imported rules { ");
 
-		for (RuleName imp : ruleGrammar.getImports()) {
+		for (JSGFRuleName imp : ruleGrammar.getImports()) {
 			System.out
 					.println("  Import " + imp.getRuleName());
 		}

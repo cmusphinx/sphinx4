@@ -7,16 +7,16 @@
  */
 package edu.cmu.sphinx.jsgf.rule;
 
-public class RuleTag extends Rule {
-	protected Rule rule;
+public class JSGFRuleTag extends JSGFRule {
+	protected JSGFRule rule;
 	protected String tag;
 
-	public RuleTag() {
+	public JSGFRuleTag() {
 		setRule(null);
 		setTag(null);
 	}
 
-	public RuleTag(Rule rule, String tag) {
+	public JSGFRuleTag(JSGFRule rule, String tag) {
 		setRule(rule);
 		setTag(tag);
 	}
@@ -36,7 +36,7 @@ public class RuleTag extends Rule {
 		return stringBuilder.toString();
 	}
 
-	public Rule getRule() {
+	public JSGFRule getRule() {
 		return rule;
 	}
 
@@ -44,7 +44,7 @@ public class RuleTag extends Rule {
 		return tag;
 	}
 
-	public void setRule(Rule rule) {
+	public void setRule(JSGFRule rule) {
 		this.rule = rule;
 	}
 
@@ -58,7 +58,7 @@ public class RuleTag extends Rule {
 	public String toString() {
 		String str = " {" + escapeTag(tag) + "}";
 
-		if ((rule instanceof RuleToken) || (rule instanceof RuleName)) {
+		if ((rule instanceof JSGFRuleToken) || (rule instanceof JSGFRuleName)) {
 			return rule.toString() + str;
 		}
 		return "(" + rule.toString() + ")" + str;

@@ -9,32 +9,32 @@ package edu.cmu.sphinx.jsgf.rule;
 
 import java.util.List;
 
-public class RuleAlternatives extends Rule {
-	protected List<Rule> rules;
+public class JSGFRuleAlternatives extends JSGFRule {
+	protected List<JSGFRule> rules;
 	protected List<Float> weights;
 
-	public RuleAlternatives() {
+	public JSGFRuleAlternatives() {
 	}
 	
-	public RuleAlternatives(List<Rule> rules) {
+	public JSGFRuleAlternatives(List<JSGFRule> rules) {
 		setRules(rules);
 		weights = null;
 	}
 
-	public RuleAlternatives(List<Rule> rules, List<Float> weights)
+	public JSGFRuleAlternatives(List<JSGFRule> rules, List<Float> weights)
 			throws IllegalArgumentException {
 		assert (rules.size() == weights.size());
 		setRules(rules);
 		setWeights(weights);
 	}
 
-	public void append(Rule rule) {
+	public void append(JSGFRule rule) {
 		assert rule != null;
 		rules.add(rule);
 		weights.add(1.0f);
 	}
 
-	public List<Rule> getRules() {
+	public List<JSGFRule> getRules() {
 		return rules;
 	}
 
@@ -42,7 +42,7 @@ public class RuleAlternatives extends Rule {
 		return weights;
 	}
 
-	public void setRules(List<Rule> rules) {
+	public void setRules(List<JSGFRule> rules) {
 		if ((weights != null) && (rules.size() != weights.size())) {
 			weights = null;
 		}
@@ -95,8 +95,8 @@ public class RuleAlternatives extends Rule {
 			if (weights != null)
 				stringBuffer.append("/" + weights.get(i) + "/ ");
 
-			Rule r = rules.get(i);
-			if (rules.get(i) instanceof RuleAlternatives)
+			JSGFRule r = rules.get(i);
+			if (rules.get(i) instanceof JSGFRuleAlternatives)
 				stringBuffer.append("( " + r.toString() + " )");
 			else {
 				stringBuffer.append(r.toString());

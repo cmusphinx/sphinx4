@@ -7,20 +7,20 @@
  */
 package edu.cmu.sphinx.jsgf.rule;
 
-public class RuleCount extends Rule {
-	protected Rule rule;
+public class JSGFRuleCount extends JSGFRule {
+	protected JSGFRule rule;
 	protected int count;
 
 	public static int OPTIONAL = 2;
 	public static int ONCE_OR_MORE = 3;
 	public static int ZERO_OR_MORE = 4;
 
-	public RuleCount() {
+	public JSGFRuleCount() {
 		setRule(null);
 		setCount(OPTIONAL);
 	}
 
-	public RuleCount(Rule rule, int count) {
+	public JSGFRuleCount(JSGFRule rule, int count) {
 		setRule(rule);
 		setCount(count);
 	}
@@ -29,7 +29,7 @@ public class RuleCount extends Rule {
 		return count;
 	}
 
-	public Rule getRule() {
+	public JSGFRule getRule() {
 		return rule;
 	}
 
@@ -41,7 +41,7 @@ public class RuleCount extends Rule {
 		this.count = count;
 	}
 
-	public void setRule(Rule rule) {
+	public void setRule(JSGFRule rule) {
 		this.rule = rule;
 	}
 
@@ -51,7 +51,7 @@ public class RuleCount extends Rule {
 		}
 		String str = null;
 
-		if ((rule instanceof RuleToken) || (rule instanceof RuleName))
+		if ((rule instanceof JSGFRuleToken) || (rule instanceof JSGFRuleName))
 			str = rule.toString();
 		else {
 			str = '(' + rule.toString() + ')';

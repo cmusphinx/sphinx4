@@ -16,28 +16,28 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
-import edu.cmu.sphinx.jsgf.rule.Rule;
-import edu.cmu.sphinx.jsgf.rule.RuleAlternatives;
-import edu.cmu.sphinx.jsgf.rule.RuleCount;
-import edu.cmu.sphinx.jsgf.rule.RuleName;
-import edu.cmu.sphinx.jsgf.rule.RuleSequence;
-import edu.cmu.sphinx.jsgf.rule.RuleTag;
-import edu.cmu.sphinx.jsgf.rule.RuleToken;
+import edu.cmu.sphinx.jsgf.rule.JSGFRule;
+import edu.cmu.sphinx.jsgf.rule.JSGFRuleAlternatives;
+import edu.cmu.sphinx.jsgf.rule.JSGFRuleCount;
+import edu.cmu.sphinx.jsgf.rule.JSGFRuleName;
+import edu.cmu.sphinx.jsgf.rule.JSGFRuleSequence;
+import edu.cmu.sphinx.jsgf.rule.JSGFRuleTag;
+import edu.cmu.sphinx.jsgf.rule.JSGFRuleToken;
 
-public class RuleGrammar {
+public class JSGFRuleGrammar {
 
 	/** Line delimiter. */
 	private static final String LINE_SEPARATOR = System
 			.getProperty("line.separator");
 
-	protected final Map<String, Rule> rules = new HashMap<String, Rule>();
-	protected final List<RuleName> imports = new ArrayList<RuleName>();
+	protected final Map<String, JSGFRuleState> rules = new HashMap<String, JSGFRuleState>();
+	protected final List<JSGFRuleName> imports = new ArrayList<JSGFRuleName>();
 	protected final List<String> importedRules = new ArrayList<String>();
 
 	protected final Map<String, Collection<String>> ruleTags = new HashMap<String, Collection<String>>();
 
 	private String name;
-	private RuleGrammarManager manager;
+	private JSGFRuleGrammarManager manager;
 
 	/** Storage for documentation comments for rules for JSGF doc. */
 	Properties ruleDocComments = new Properties();
@@ -48,6 +48,23 @@ public class RuleGrammar {
 	/** Storage for documentation comments for the grammar for JSGF doc. */
 	String grammarDocComment;
 
+	/* Holds the state of the rule in grammar */
+	class JSGFRuleState {
+		public boolean isPublic;
+		public boolean isEnabled;
+		public JSGFRule rule;
+		public ArrayList<String> samples;
+
+		public JSGFRuleState (JSGFRule rule,
+							  boolean isEnabled, 
+							  boolean isPublic) {
+			this.rule = rule;
+			this.isPublic = isPublic;
+			this.isEnabled = isEnabled;
+			this.samples = new ArrayList<String>();
+		}
+	}
+
 	/**
 	 * Create a new RuleGrammar
 	 * 
@@ -56,7 +73,7 @@ public class RuleGrammar {
 	 * @param manager
 	 *            the manager for the created Grammars
 	 */
-	public RuleGrammar(String name, RuleGrammarManager manager) {
+	public JSGFRuleGrammar(String name, JSGFRuleGrammarManager manager) {
 		this.name = name;
 		this.manager = manager;
 	}
@@ -72,14 +89,14 @@ public class RuleGrammar {
 	 * @param importName
 	 *            the name of the rule(s) to import.
 	 */
-	public void addImport(RuleName importName) {
+	public void addImport(JSGFRuleName importName) {
 		if (!imports.contains(importName)) {
 			imports.add(importName);
 		}
 	}
 
 	/** Add a new import comment. */
-	public void addImportDocComment(RuleName imp, String comment) {
+	public void addImportDocComment(JSGFRuleName imp, String comment) {
 		importDocComments.put(imp.toString(), comment);
 	}
 
@@ -93,11 +110,11 @@ public class RuleGrammar {
 	 * specified rule
 	 */
 	public void addSampleSentence(String ruleName, String sample) {
-		Rule r = getRule(ruleName);
-		if (r == null) {
+		JSGFRuleState state = rules.get(ruleName);
+		if (state == null) {
 			return;
 		}
-		r.samples.add(sample);
+		state.samples.add(sample);
 	}
 
 	/**
@@ -116,7 +133,7 @@ public class RuleGrammar {
 	}
 
 	/** Retrieve an import comment. */
-	public String getImportDocComment(RuleName imp) {
+	public String getImportDocComment(JSGFRuleName imp) {
 		return importDocComments.getProperty(imp.toString(), null);
 	}
 
@@ -132,11 +149,11 @@ public class RuleGrammar {
 	 * Gets the Rule with the given name after it has been stripped, or throws
 	 * an Exception if it is unknown.
 	 */
-	private Rule getKnownRule(String ruleName) {
-		Rule r = getRule(ruleName);
-		if (r == null)
+	private JSGFRule getKnownRule(String ruleName) {
+		JSGFRuleState state = rules.get(ruleName);
+		if (state == null)
 			throw new IllegalArgumentException("Unknown Rule: " + ruleName);
-		return r;
+		return state.rule;
 	}
 
 	public String getName() {
@@ -149,9 +166,9 @@ public class RuleGrammar {
 	 * @param ruleName
 	 *            the name of the rule.
 	 */
-	public Rule getRule(String ruleName) {
-		Rule r = rules.get(ruleName);
-		return r;
+	public JSGFRule getRule(String ruleName) {
+		JSGFRuleState state = rules.get(ruleName);
+		return state.rule;
 	}
 
 	/** Retrieve a RuleGrammar comment. */
@@ -167,11 +184,14 @@ public class RuleGrammar {
 	 */
 	public boolean isRulePublic(String ruleName)
 			throws IllegalArgumentException {
-		return getKnownRule(ruleName).isPublic;
+		JSGFRuleState state = rules.get(ruleName);
+		if (state == null)
+			return false;
+		return state.isPublic;
 	}
 
 	/** List the current imports. */
-	public List<RuleName> getImports () {
+	public List<JSGFRuleName> getImports () {
 		return imports;
 	}
 
@@ -186,7 +206,7 @@ public class RuleGrammar {
 	 * @param importName
 	 *            the name of the rule(s) to remove.
 	 */
-	public void removeImport(RuleName importName)
+	public void removeImport(JSGFRuleName importName)
 			throws IllegalArgumentException {
 		if (imports.contains(importName)) {
 			imports.remove(importName);
@@ -199,8 +219,8 @@ public class RuleGrammar {
 	 * @param ruleName
 	 *            the name of the rule.
 	 */
-	public RuleName resolve(RuleName ruleName) throws GrammarException {
-		RuleName rn = new RuleName(ruleName.getRuleName());
+	public JSGFRuleName resolve(JSGFRuleName ruleName) throws JSGFGrammarException {
+		JSGFRuleName rn = new JSGFRuleName(ruleName.getRuleName());
 
 		String simpleName = rn.getSimpleRuleName();
 		String grammarName = rn.getSimpleGrammarName();
@@ -209,29 +229,29 @@ public class RuleGrammar {
 
 		// Check for badly formed RuleName
 		if (packageName != null && grammarName == null) {
-			throw new GrammarException("Error: badly formed rulename " + rn);
+			throw new JSGFGrammarException("Error: badly formed rulename " + rn);
 		}
 
 		if (ruleName.getSimpleRuleName().equals("NULL")) {
-			return RuleName.NULL;
+			return JSGFRuleName.NULL;
 		}
 
 		if (ruleName.getSimpleRuleName().equals("VOID")) {
-			return RuleName.VOID;
+			return JSGFRuleName.VOID;
 		}
 
 		// Check simple case: a local rule reference
 		if (fullGrammarName == null && this.getRule(simpleName) != null) {
-			return new RuleName(name + '.' + simpleName);
+			return new JSGFRuleName(name + '.' + simpleName);
 		}
 
 		// Check for fully-qualified reference
 		if (fullGrammarName != null) {
-			RuleGrammar g = manager.retrieveGrammar(fullGrammarName);
+			JSGFRuleGrammar g = manager.retrieveGrammar(fullGrammarName);
 			if (g != null) {
 				if (g.getRule(simpleName) != null) {
 					// we have a successful resolution
-					return new RuleName(fullGrammarName + '.' + simpleName);
+					return new JSGFRuleName(fullGrammarName + '.' + simpleName);
 				}
 			}
 		}
@@ -241,16 +261,16 @@ public class RuleGrammar {
 		// size()=0 if rn is unresolvable
 		// size()=1 if rn is properly resolvable
 		// size()>1 if rn is an ambiguous reference
-		List<RuleName> matches = new ArrayList<RuleName>();
+		List<JSGFRuleName> matches = new ArrayList<JSGFRuleName>();
 
 		// Get list of imports
 		// Add local grammar to simply the case of checking for
 		// a qualified or fully-qualified local reference.
-		List<RuleName> imports = new ArrayList<RuleName>(this.imports);
-		imports.add(new RuleName(name + ".*"));
+		List<JSGFRuleName> imports = new ArrayList<JSGFRuleName>(this.imports);
+		imports.add(new JSGFRuleName(name + ".*"));
 
 		// Check each import statement for a possible match
-		for (RuleName importName : imports) {
+		for (JSGFRuleName importName : imports) {
 			// TO-DO: update for JSAPI 1.0
 			String iSimpleName = importName.getSimpleRuleName();
 			String iGrammarName = importName.getSimpleGrammarName();
@@ -258,11 +278,11 @@ public class RuleGrammar {
 
 			// Check for badly formed import name
 			if (iFullGrammarName == null)
-				throw new GrammarException("Error: badly formed import "
+				throw new JSGFGrammarException("Error: badly formed import "
 						+ ruleName);
 
 			// Get the imported grammar
-			RuleGrammar gref = manager.retrieveGrammar(fullGrammarName);
+			JSGFRuleGrammar gref = manager.retrieveGrammar(fullGrammarName);
 			if (gref == null) {
 				System.out.println("Warning: import of unknown grammar "
 						+ ruleName + " in " + name);
@@ -288,7 +308,7 @@ public class RuleGrammar {
 				if (iSimpleName.equals("*")) {
 					if (gref.getRule(simpleName) != null) {
 						// import <pkg.gram.*> matches <pkg.gram.rulename>
-						matches.add(new RuleName(iFullGrammarName + '.'
+						matches.add(new JSGFRuleName(iFullGrammarName + '.'
 								+ simpleName));
 					}
 					continue;
@@ -299,7 +319,7 @@ public class RuleGrammar {
 					if (iSimpleName.equals(simpleName)) {
 						// import <pkg.gram.rulename> exact match for
 						// <???.gram.rulename>
-						matches.add(new RuleName(iFullGrammarName + '.'
+						matches.add(new JSGFRuleName(iFullGrammarName + '.'
 								+ simpleName));
 					}
 					continue;
@@ -318,7 +338,7 @@ public class RuleGrammar {
 			if (iSimpleName.equals("*")) {
 				if (gref.getRule(simpleName) != null) {
 					// import <pkg.gram.*> matches <simpleName>
-					matches.add(new RuleName(iFullGrammarName + '.'
+					matches.add(new JSGFRuleName(iFullGrammarName + '.'
 							+ simpleName));
 				}
 				continue;
@@ -328,7 +348,7 @@ public class RuleGrammar {
 			// import <ipkg.igram.iSimpleName> against <simpleName>
 
 			if (iSimpleName.equals(simpleName)) {
-				matches.add(new RuleName(iFullGrammarName + '.' + simpleName));
+				matches.add(new JSGFRuleName(iFullGrammarName + '.' + simpleName));
 				continue;
 			}
 		}
@@ -343,64 +363,64 @@ public class RuleGrammar {
 			StringBuilder b = new StringBuilder();
 			b.append("Warning: ambiguous reference ").append(rn).append(" in ")
 					.append(name).append(" to ");
-			for (RuleName tmp : matches)
+			for (JSGFRuleName tmp : matches)
 				b.append(tmp).append(" and ");
 			b.setLength(b.length() - 5);
-			throw new GrammarException(b.toString());
+			throw new JSGFGrammarException(b.toString());
 		}
 	}
 
 	/** Resolve and link up all rule references contained in all rules. */
-	protected void resolveAllRules() throws GrammarException {
+	public void resolveAllRules() throws JSGFGrammarException {
 		StringBuilder b = new StringBuilder();
 
 		// First make sure that all imports are resolvable
-		for (RuleName ruleName : imports) {
+		for (JSGFRuleName ruleName : imports) {
 			String grammarName = ruleName.getFullGrammarName();
-			RuleGrammar GI = manager.retrieveGrammar(grammarName);
+			JSGFRuleGrammar GI = manager.retrieveGrammar(grammarName);
 			if (GI == null) {
 				b.append("Undefined grammar ").append(grammarName).append(
 						" imported in ").append(name).append('\n');
 			}
 		}
 		if (b.length() > 0) {
-			throw new GrammarException(b.toString());
+			throw new JSGFGrammarException(b.toString());
 		}
 
-		for (Rule r : rules.values())
-			resolveRule(r);
+		for (JSGFRuleState state : rules.values())
+			resolveRule(state.rule);
 	}
 
 	/** Resolve the given rule. */
-	protected void resolveRule(Rule r) throws GrammarException {
+	protected void resolveRule(JSGFRule r) throws JSGFGrammarException {
 
-		if (r instanceof RuleToken) {
+		if (r instanceof JSGFRuleToken) {
 			return;
 		}
 
-		if (r instanceof RuleAlternatives) {
-			for (Rule rule : ((RuleAlternatives) r).getRules()) {
+		if (r instanceof JSGFRuleAlternatives) {
+			for (JSGFRule rule : ((JSGFRuleAlternatives) r).getRules()) {
 				resolveRule(rule);
 			}
 			return;
 		}
 
-		if (r instanceof RuleSequence) {
-			for (Rule rule : ((RuleSequence) r).getRules()) {
+		if (r instanceof JSGFRuleSequence) {
+			for (JSGFRule rule : ((JSGFRuleSequence) r).getRules()) {
 				resolveRule(rule);
 			}
 			return;
 		}
 
-		if (r instanceof RuleCount) {
-			resolveRule(((RuleCount) r).getRule());
+		if (r instanceof JSGFRuleCount) {
+			resolveRule(((JSGFRuleCount) r).getRule());
 			return;
 		}
 
-		if (r instanceof RuleTag) {
-			RuleTag rt = (RuleTag) r;
+		if (r instanceof JSGFRuleTag) {
+			JSGFRuleTag rt = (JSGFRuleTag) r;
 
-			Rule rule = rt.getRule();
+			JSGFRule rule = rt.getRule();
 			String ruleStr = rule.toString();
 
 			// add the tag the tag-table
@@ -415,12 +435,12 @@ public class RuleGrammar {
 			return;
 		}
 
-		if (r instanceof RuleName) {
-			RuleName rn = (RuleName) r;
-			RuleName resolved = resolve(rn);
+		if (r instanceof JSGFRuleName) {
+			JSGFRuleName rn = (JSGFRuleName) r;
+			JSGFRuleName resolved = resolve(rn);
 
 			if (resolved == null) {
-				throw new GrammarException("Unresolvable rulename in grammar "
+				throw new JSGFGrammarException("Unresolvable rulename in grammar "
 						+ name + ": " + rn);
 			} else {
 				// [[[WDW - This forces all rule names to be fully resolved.
@@ -431,7 +451,7 @@ public class RuleGrammar {
 			}
 		}
 
-		throw new GrammarException("Unknown rule type");
+		throw new JSGFGrammarException("Unknown rule type");
 	}
 
 	/**
@@ -441,8 +461,8 @@ public class RuleGrammar {
 	 *            the new desired state of the enabled property.
 	 */
 	public void setEnabled(boolean enabled) {
-		for (Rule g : rules.values())
-			g.isEnabled = enabled;
+		for (JSGFRuleState state : rules.values())
+			state.isEnabled = enabled;
 	}
 
 	/**
@@ -455,9 +475,9 @@ public class RuleGrammar {
 	 */
 	public void setEnabled(String ruleName, boolean enabled)
 			throws IllegalArgumentException {
-		Rule r = getKnownRule(ruleName);
-		if (r.isEnabled != enabled) {
-			r.isEnabled = enabled;
+		JSGFRuleState state = rules.get(ruleName);
+		if (state.isEnabled != enabled) {
+			state.isEnabled = enabled;
 		}
 	}
 
@@ -472,11 +492,10 @@ public class RuleGrammar {
 	 * @param isPublic
 	 *            whether this rule is public or not.
 	 */
-	public void setRule(String ruleName, Rule rule, boolean isPublic)
+	public void setRule(String ruleName, JSGFRule rule, boolean isPublic)
 			throws NullPointerException, IllegalArgumentException {
-		rule.ruleName = ruleName;
-		rule.isPublic = isPublic;
-		rules.put(ruleName, rule);
+		JSGFRuleState state = new JSGFRuleState (rule, true, isPublic);
+		rules.put(ruleName, state);
 	}
 
 	/**
@@ -490,11 +509,12 @@ public class RuleGrammar {
 		sb.append(LINE_SEPARATOR);
 		sb.append("grammar ").append(name).append(';').append(LINE_SEPARATOR);
 		sb.append(LINE_SEPARATOR);
-		for (Rule entry : rules.values()) {
-			if (entry.isPublic) {
+		for (String ruleName : rules.keySet()) {
+			JSGFRuleState state = rules.get(ruleName);
+			if (state.isPublic) {
 				sb.append("public ");
 			}
-			sb.append('<').append(entry.ruleName).append("> = ").append(entry)
+			sb.append('<').append(ruleName).append("> = ").append(state.rule)
 					.append(';').append(LINE_SEPARATOR);
 		}
 		return sb.toString();

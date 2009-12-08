@@ -7,18 +7,17 @@
  */
 package edu.cmu.sphinx.jsgf;
 
-public class ManagedRuleGrammarFactory implements RuleGrammarFactory {
+public class JSGFRuleGrammarFactory {
 	
-	RuleGrammarManager manager;
-	public ManagedRuleGrammarFactory (RuleGrammarManager manager) {
+	JSGFRuleGrammarManager manager;
+	public JSGFRuleGrammarFactory (JSGFRuleGrammarManager manager) {
 		this.manager = manager;
 	}
 	
-	@Override
-	public RuleGrammar newGrammar(String name) {
-		assert manager != null;
+	public JSGFRuleGrammar newGrammar(String name) {
 		
-		RuleGrammar grammar = new RuleGrammar(name, manager);
+		assert manager != null;
+		JSGFRuleGrammar grammar = new JSGFRuleGrammar(name, manager);
 		manager.storeGrammar(grammar);
 		return grammar;
 	}

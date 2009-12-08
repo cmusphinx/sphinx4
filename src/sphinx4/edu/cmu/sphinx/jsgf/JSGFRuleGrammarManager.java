@@ -11,30 +11,34 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-public class RuleGrammarManager {
-	protected Map<String, RuleGrammar> grammars;
+public class JSGFRuleGrammarManager {
+	protected Map<String, JSGFRuleGrammar> grammars;
 	protected boolean caseSensitiveNames = true;
 
-	RuleGrammarManager (boolean caseSensitiveNames) {
+	JSGFRuleGrammarManager (boolean caseSensitiveNames) {
 		this.caseSensitiveNames = caseSensitiveNames; 
-		grammars = new HashMap<String, RuleGrammar>();
+		grammars = new HashMap<String, JSGFRuleGrammar>();
 	}
 	
-	public RuleGrammarManager () {
-		grammars = new HashMap<String, RuleGrammar>();
+	public JSGFRuleGrammarManager () {
+		grammars = new HashMap<String, JSGFRuleGrammar>();
 	}
 	
-	Collection<RuleGrammar> grammars() {
+	public Collection<JSGFRuleGrammar> grammars() {
 		return grammars.values();
 	}
 
-	public void remove(RuleGrammar grammar) {
+	public void remove(JSGFRuleGrammar grammar) {
 		String name = grammar.getName();
 		grammars.remove(name);
 	}
 
+	public void remove(String name) {
+		grammars.remove(name);
+	}
+	
 	/** Add a grammar to the grammar list. */
-	protected void storeGrammar(RuleGrammar grammar) {
+	protected void storeGrammar(JSGFRuleGrammar grammar) {
 		if (caseSensitiveNames) {
 			grammars.put(grammar.getName(), grammar);
 		} else {
@@ -43,13 +47,13 @@ public class RuleGrammarManager {
 	}
 
 	/** Retrieve a grammar from the grammar list. */
-	protected RuleGrammar retrieveGrammar(String name) {
+	public JSGFRuleGrammar retrieveGrammar(String name) {
 		return grammars.get(caseSensitiveNames ? name : name
 				.toLowerCase());
 	}
 
-	public void linkGrammars() throws GrammarException {
-        for (RuleGrammar grammar : grammars.values()) {
+	public void linkGrammars() throws JSGFGrammarException {
+        for (JSGFRuleGrammar grammar : grammars.values()) {
                 grammar.resolveAllRules();
         }
 	}

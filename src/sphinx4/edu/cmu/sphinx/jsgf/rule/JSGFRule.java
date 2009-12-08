@@ -5,13 +5,13 @@
  * redistribution of this file, and for a DISCLAIMER OF ALL 
  * WARRANTIES.
  */
-package edu.cmu.sphinx.jsgf;
+package edu.cmu.sphinx.jsgf.rule;
 
-public class GrammarException extends Exception {
-
-	private static final long serialVersionUID = 1L;
+public class JSGFRule {
 	
-	public GrammarException(String message) {
-		super(message);
+	public String ruleName;
+
+	public String toString() {
+		return ruleName;
 	}
 }
