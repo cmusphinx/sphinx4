@@ -347,7 +347,7 @@
             description="Create ${lib_dir}/tags.jar">
         <mkdir dir="${lib_dir}"/>
         <jar destfile="${tags_jar}"
-             manifest="${src_dir}/research/edu/cmu/sphinx/tools/tags/Manifest"
+             manifest="${src_dir}/jsapi/edu/cmu/sphinx/tools/tags/Manifest"
              compress="true"
              includes="edu/cmu/sphinx/tools/tags/**"
              basedir="${classes_dir}"/>
