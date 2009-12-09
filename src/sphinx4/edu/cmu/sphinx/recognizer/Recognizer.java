@@ -69,10 +69,10 @@ public class Recognizer implements Configurable, ResultProducer {
     private State currentState = State.DEALLOCATED;
 
     private final List<StateListener> stateListeners = Collections.synchronizedList(new ArrayList<StateListener>());
-    private List monitors;
+    private List<ResultListener> monitors;
 
 
-    public Recognizer(Decoder decoder, List monitors) {
+    public Recognizer(Decoder decoder, List<ResultListener> monitors) {
         this.decoder = decoder;
         this.monitors = monitors;
         name = null;
@@ -87,7 +87,7 @@ public class Recognizer implements Configurable, ResultProducer {
     @Override
     public void newProperties(PropertySheet ps) throws PropertyException {
         decoder = (Decoder) ps.getComponent(PROP_DECODER);
-        monitors = ps.getComponentList(PROP_MONITORS);
+        monitors = ps.getComponentList(PROP_MONITORS, ResultListener.class);
 
         name = ps.getInstanceName();
     }
@@ -196,11 +196,9 @@ public class Recognizer implements Configurable, ResultProducer {
 
     /** Resets the monitors monitoring this recognizer */
     public void resetMonitors() {
-        for (Object o : monitors) {
-            if (o instanceof Resetable) {
-                Resetable r = (Resetable)o;
-                r.reset();
-            }
+        for (ResultListener listener : monitors) {
+            if (listener instanceof Resetable)
+              ((Resetable)listener).reset();
         }
     }
 

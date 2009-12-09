@@ -1564,28 +1564,12 @@ public class FlatLinguist implements Linguist, Configurable {
          * @param name       the name of the collection
          * @param collection the collection to dump
          */
-        private void dumpCollection(String name, Collection collection) {
+        private void dumpCollection(String name, Collection<?> collection) {
             System.out.println("     " + name);
-            for (Object aCollection : collection) {
-                System.out.println("         " + aCollection);
+            for (Object obj : collection) {
+                System.out.println("         " + obj);
             }
         }
-
-
-        /**
-         * Dumps the given map
-         *
-         * @param name the name of the map
-         * @param map  the map to dump
-         */
-        private void dumpMap(String name, Map map) {
-            System.out.println("     " + name);
-            for (Object key : map.keySet()) {
-                Object value = map.get(key);
-                System.out.println("         key:" + key + "  val: " + value);
-            }
-        }
-
 
         /**
          * Returns the string representation of the object

@@ -20,7 +20,6 @@ import edu.cmu.sphinx.util.MatrixUtils;
  *
  * @see Data
  */
-@SuppressWarnings({"UnnecessaryLocalVariable"})
 public class FloatData implements Data, Cloneable {
 
     private final float[] values;

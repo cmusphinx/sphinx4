@@ -14,6 +14,7 @@
 package edu.cmu.sphinx.linguist.acoustic.tiedstate;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
@@ -23,7 +24,6 @@ import java.util.Properties;
 public class PropertiesDumper {
 
     private final Properties props;
-
 
     /** Dumps the properties file 'model.props' that is in the same directory as this class.
      * @param argv*/
@@ -69,38 +69,20 @@ public class PropertiesDumper {
     @Override
     public String toString() {
         StringBuilder result = new StringBuilder().append(props.get("description")).append('\n');
-        List list = Collections.list(props.propertyNames());
+        List<?> propnames = Collections.list(props.propertyNames());
+        List<String> list = new ArrayList<String>();
+        for (Object obj : propnames) {
+            if (obj instanceof String) {
+                list.add((String)obj);
+            }
+        }
         Collections.sort(list);
-        for (Object item : list) {
-            String key = (String)item;
+        for (String key : list) {
             String value = (String)props.get(key);
             result.append("\n\t").append(key).append(": ").append(value);
         }
         result.append('\n');
         return result.toString();
-    }
-
-
-    /**
-     * Converts strings like "thisIsAString" into "This Is A String".
-     *
-     * @param original the original string
-     * @return a readable form of strings like "thisIsAString"
-     */
-    private String getReadableForm(String original) {
-        if (original.isEmpty())
-            return original;
-        StringBuilder sb = new StringBuilder(original.length() * 2);
-        int i = 0;
-        sb.append(Character.toUpperCase(original.charAt(i++)));
-        for (; i < original.length(); i++) {
-            char c = original.charAt(i);
-            if (Character.isUpperCase(c)) {
-                sb.append(' ');
-            }
-            sb.append(c);
-        }
-        return sb.toString();
     }
 }
 

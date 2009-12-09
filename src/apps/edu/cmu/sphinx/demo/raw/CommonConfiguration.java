@@ -103,7 +103,7 @@ abstract public class CommonConfiguration {
     protected ActiveListFactory activeListFactory;
     protected ActiveListFactory wordActiveListFactory;
     protected SearchManager searchManager;
-    protected List monitors;
+    protected List<ResultListener> monitors;
     protected Decoder decoder;
     protected Recognizer recognizer;
 
@@ -179,7 +179,7 @@ abstract public class CommonConfiguration {
                 3 // window
         );
 
-        ArrayList pipeline = new ArrayList();
+        ArrayList<DataProcessor> pipeline = new ArrayList<DataProcessor>();
         pipeline.add(audioDataSource);
         pipeline.add(dataBlocker);
         pipeline.add(speechClassifier);
@@ -217,7 +217,7 @@ abstract public class CommonConfiguration {
 
         this.recognizer = new Recognizer(decoder, monitors);
 
-        this.monitors = new ArrayList();
+        this.monitors = new ArrayList<ResultListener>();
         this.monitors.add(new BestPathAccuracyTracker(recognizer, false, false, false, false, false, false));
         this.monitors.add(new MemoryTracker(recognizer, false, false));
         this.monitors.add(new SpeedTracker(recognizer, frontend, true, false, false, false));

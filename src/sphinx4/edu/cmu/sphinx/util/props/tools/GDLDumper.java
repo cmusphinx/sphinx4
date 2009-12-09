@@ -39,7 +39,7 @@ public class GDLDumper {
                     out.println("edge: {source: \"" + name
                             + "\" target: \"" + val + "\"}");
                 } else if (propType == PropertyType.COMPONENT_LIST) {
-                    List list = (List) val;
+                    List<?> list = (List<?>) val;
                     for (Object listElement : list) {
                         out.println("edge: {source: \"" + name
                                 + "\" target: \"" + listElement + "\"}");
@@ -97,7 +97,7 @@ public class GDLDumper {
     public static String getColor(ConfigurationManager ConfigurationManager, String componentName) {
         try {
             Configurable c = ConfigurationManager.lookup(componentName);
-            Class cls = c.getClass();
+            Class<? extends Configurable> cls = c.getClass();
             if (cls.getName().indexOf(".recognizer") > 1) {
                 return "cyan";
             } else if (cls.getName().indexOf(".tools") > 1) {

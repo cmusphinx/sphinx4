@@ -34,8 +34,8 @@ public class FrameDecoder extends AbstractDecoder implements DataProcessor {
     private boolean isRecognizing;
     private Result result;
 
-    public FrameDecoder( SearchManager searchManager, boolean fireNonFinalResults, boolean autoAllocate, List<? extends Configurable> listeners) {
-        super(searchManager,fireNonFinalResults,autoAllocate,listeners);
+    public FrameDecoder( SearchManager searchManager, boolean fireNonFinalResults, boolean autoAllocate, List<ResultListener> listeners) {
+        super(searchManager, fireNonFinalResults, autoAllocate, listeners);
     }    
 
     /**

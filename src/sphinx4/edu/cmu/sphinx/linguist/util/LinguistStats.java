@@ -15,10 +15,10 @@ import edu.cmu.sphinx.linguist.*;
 
 import java.util.*;
 
-/** A linguist processor that dumps out stats about the search space */
+/** A linguist processor that dumps out statistics about the search space */
 public class LinguistStats extends LinguistProcessor {
 
-    private final Map<Class, Integer> stateCountByType = new HashMap<Class, Integer>();
+    private final Map<Class<? extends SearchState>, Integer> stateCountByType = new HashMap<Class<? extends SearchState>, Integer>();
 
     public LinguistStats( Linguist linguist ) {
         super(linguist);
@@ -28,7 +28,7 @@ public class LinguistStats extends LinguistProcessor {
         
     }
 
-    /** Dumps the stats of the linguist */
+    /** Dumps the statistics of the linguist */
     @Override
     public void run() {
         Linguist linguist = getLinguist();
@@ -47,13 +47,13 @@ public class LinguistStats extends LinguistProcessor {
                     SearchState nextState = arcs[i].getState();
                     queue.add(nextState);
                 }
-                // DEBUG: dump out the unique word states
-                if (false && state instanceof WordSearchState) {
-                    System.out.println("WS: " + state);
-                }
-                if (false && state instanceof HMMSearchState) {
-                    System.out.println("HS: " + state);
-                }
+                // Dump out the unique word states for debugging
+                // if (state instanceof WordSearchState) {
+                //    System.out.println("WS: " + state);
+                // }
+                // if (false && state instanceof HMMSearchState) {
+                //    System.out.println("HS: " + state);
+                // }
             }
         }
         System.out.println("# ----------- linguist stats ------------ ");
@@ -79,7 +79,7 @@ public class LinguistStats extends LinguistProcessor {
 
     /** Dumps all of the class counts */
     private void dumpStateTypeCounts() {
-        for (Map.Entry<Class, Integer> entry : stateCountByType.entrySet())
+        for (Map.Entry<Class<? extends SearchState>, Integer> entry : stateCountByType.entrySet())
             System.out.println("# " + entry.getKey() + ": " + entry.getValue());
     }
 }

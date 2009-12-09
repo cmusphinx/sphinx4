@@ -243,7 +243,7 @@ public class ConcatFileDataSource extends StreamDataSource implements ReferenceS
      * into an Enumeration, and then fed it to a SequenceInputStream, giving the illusion that the audio files are
      * concatenated, but only logically.
      */
-    class InputStreamEnumeration implements Enumeration {
+    class InputStreamEnumeration implements Enumeration<InputStream> {
 
         private final int totalFiles;
         private boolean inSilence;
@@ -288,7 +288,7 @@ public class ConcatFileDataSource extends StreamDataSource implements ReferenceS
          *
          * @return the next element of this enumeration.
          */
-        public Object nextElement() {
+        public InputStream nextElement() {
             InputStream stream = null;
             if (nextFile == null) {
                 nextFile = readNext();

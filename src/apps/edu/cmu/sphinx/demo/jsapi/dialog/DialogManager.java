@@ -355,7 +355,6 @@ public class DialogManager implements Configurable {
 * Provides the default behavior for dialog node. Applications will
 * typically extend this class and override methods as appropriate
 */
-@SuppressWarnings({"UnnecessaryLocalVariable"})
 class DialogNodeBehavior {
     private DialogManager.DialogNode node;
 

@@ -139,7 +139,7 @@ public class SausageMaker extends AbstractSausageMaker {
      * @param p2 the second list
      * @return the string edit distance between the two lists
      */
-    protected static int stringEditDistance(List p1, List p2) {
+    protected static int stringEditDistance(List<?> p1, List<?> p2) {
         if (p1.isEmpty()) {
             return p2.size();
         }

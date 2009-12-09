@@ -62,8 +62,8 @@ public class RecognizerMonitor implements StateListener, Monitor {
     @Override
     public void newProperties(PropertySheet ps) throws PropertyException {
         initRecognizer((Recognizer) ps.getComponent(PROP_RECOGNIZER));
-        allocatedMonitors = (List) ps.getComponentList(PROP_ALLOCATED_MONITORS);
-        deallocatedMonitors = (List) ps.getComponentList(PROP_DEALLOCATED_MONITORS);
+        allocatedMonitors = ps.getComponentList(PROP_ALLOCATED_MONITORS, Runnable.class);
+        deallocatedMonitors = ps.getComponentList(PROP_DEALLOCATED_MONITORS, Runnable.class);
     }
 
     private void initRecognizer(Recognizer newRecognizer) {

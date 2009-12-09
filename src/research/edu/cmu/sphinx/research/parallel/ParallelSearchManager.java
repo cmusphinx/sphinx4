@@ -157,9 +157,7 @@ public class ParallelSearchManager implements SearchManager {
 
     /** @param message the debug message to print */
     private void debugPrint(String message) {
-        if (false) {
-            System.out.println(message);
-        }
+        // System.out.println(message);
     }
 
 
@@ -302,6 +300,7 @@ public class ParallelSearchManager implements SearchManager {
 
 
     /** Prints all the active lists. */
+    @SuppressWarnings("unused")
     private void printActiveLists() {
         debugPrint(" CombinedActiveList: " + combinedActiveList.size());
         for (Iterator<FeatureStream> i = linguist.getFeatureStreams(); i.hasNext();) {

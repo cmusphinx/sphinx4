@@ -150,9 +150,8 @@ public class BatchNISTRecognizer extends BatchModeRecognizer {
     @Override
     public void newProperties(PropertySheet ps) throws PropertyException {
         logger = ps.getLogger();
-        //cm = ps.getPropertyManager();
         recognizer = (Recognizer) ps.getComponent(PROP_RECOGNIZER);
-        inputDataProcessors = (List<DataProcessor>) ps.getComponentList(PROP_INPUT_DATA_PROCESSORS);
+        inputDataProcessors = ps.getComponentList(PROP_INPUT_DATA_PROCESSORS, DataProcessor.class);
         dataDir = ps.getString(PROP_DATA_DIR);
         ctlFile = ps.getString(PROP_CTL_FILE);
         refFile = ps.getString(PROP_REF_FILE);
@@ -177,7 +176,6 @@ public class BatchNISTRecognizer extends BatchModeRecognizer {
 
 
     protected class CTLException extends Exception {
-
         CTLException(String msg) {
             super(msg);
         }

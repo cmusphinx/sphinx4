@@ -32,10 +32,9 @@ import edu.cmu.sphinx.util.props.*;
  * @version 1.0
  * @see LinearPredictor
  */
-@SuppressWarnings({"UnnecessaryLocalVariable"})
 public class PLPCepstrumProducer extends BaseDataProcessor {
 
-    /** The name of the Sphinx Property for the number of filters in the filterbank. */
+    /** The name of the Sphinx Property for the number of filters in the filter bank. */
     @S4Integer(defaultValue = 32)
     public static final String PROP_NUMBER_FILTERS = "numberFilters";
 
@@ -171,7 +170,7 @@ public class PLPCepstrumProducer extends BaseDataProcessor {
 
         LinearPredictor LPC = new LinearPredictor(LPCOrder);
         // Compute LPC Parameters
-        double[] LPCcoeffs = LPC.getARFilter(autocor);
+        LPC.getARFilter(autocor);
         // Compute LPC Cepstra
         double[] cepstrumDouble = LPC.getData(cepstrumSize);
 

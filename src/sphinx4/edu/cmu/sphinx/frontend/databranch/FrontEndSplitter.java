@@ -22,7 +22,7 @@ public class FrontEndSplitter extends BaseDataProcessor implements DataProducer 
 
     @S4ComponentList(type = Configurable.class, beTolerant = true)
     public static final String PROP_DATA_LISTENERS = "dataListeners";
-    private final List<DataListener> listeners = new ArrayList<DataListener>();
+    private List<DataListener> listeners = new ArrayList<DataListener>();
 
     public FrontEndSplitter() {
     }
@@ -31,11 +31,7 @@ public class FrontEndSplitter extends BaseDataProcessor implements DataProducer 
     public void newProperties(PropertySheet ps) throws PropertyException {
         super.newProperties(ps);
 
-        List<? extends Configurable> list = ps.getComponentList(PROP_DATA_LISTENERS);
-        for (Configurable configurable : list) {
-            assert configurable instanceof DataListener;
-            addDataListener((DataListener) configurable);
-        }
+        listeners = ps.getComponentList(PROP_DATA_LISTENERS, DataListener.class);
     }
 
 

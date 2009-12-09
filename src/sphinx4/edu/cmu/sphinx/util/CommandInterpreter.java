@@ -176,29 +176,6 @@ public class CommandInterpreter extends Thread {
             }
         });
 
-        if (false) {
-            add("argtest", new CommandInterface() {
-                @Override
-                public String execute(CommandInterpreter ci, String[] args) {
-                    StringBuilder b = new StringBuilder(80);
-
-                    System.out.println("arg length is " + args.length);
-                    for (String arg : args) {
-                        b.append(arg);
-                        b.append('\n');
-                    }
-                    putResponse(b.toString());
-                    return "";
-                }
-
-
-                @Override
-                public String getHelp() {
-                    return "argument test";
-                }
-            });
-        }
-
         add("quit", new CommandInterface() {
             @Override
             public String execute(CommandInterpreter ci, String[] args) {

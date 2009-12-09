@@ -23,7 +23,6 @@ import java.util.*;
 
 
 /** Represents a single state in an SentenceHMM */
-@SuppressWarnings({"UnnecessaryLocalVariable"})
 public abstract class SentenceHMMState implements Serializable, SearchState {
 
     private final static int MASK_IS_FINAL = 0x1;
@@ -421,8 +420,8 @@ public abstract class SentenceHMMState implements Serializable, SearchState {
             }
             sb.append(getName());
 
-            String base = (isEmitting() ? "*" : "") + getName()
-                    + getWhich() + (isFinal() ? "!" : "");
+            // String base = (isEmitting() ? "*" : "") + getName()
+            //       + getWhich() + (isFinal() ? "!" : "");
 
             if (parent != null) {
                 sb.append('_');
@@ -519,17 +518,7 @@ public abstract class SentenceHMMState implements Serializable, SearchState {
     public SentenceHMMState getParent() {
         return parent;
     }
-
-
-    /**
-     * Sets the parent state for this state
-     *
-     * @param parent the parent state
-     */
-    private void setParent(SentenceHMMState parent) {
-        this.parent = parent;
-    }
-
+    
 
     /**
      * Searches the set of arcs for an arc that points to a state with an identical value
@@ -615,16 +604,6 @@ public abstract class SentenceHMMState implements Serializable, SearchState {
         } else {
             return Color.GREEN;
         }
-    }
-
-
-    /**
-     * Sets the state number for this state
-     *
-     * @param stateNumber the state number
-     */
-    private void setStateNumber(int stateNumber) {
-        this.stateNumber = stateNumber;
     }
 
 

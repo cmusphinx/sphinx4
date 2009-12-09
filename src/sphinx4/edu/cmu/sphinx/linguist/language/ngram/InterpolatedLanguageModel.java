@@ -74,7 +74,7 @@ public class InterpolatedLanguageModel implements LanguageModel {
             throw new RuntimeException("Can't change properties after allocation");
         }
         logMath = (LogMath) ps.getComponent(PROP_LOG_MATH);
-        languageModels = (List<LanguageModel>) ps.getComponentList(PROP_LANGUAGE_MODELS);
+        languageModels = ps.getComponentList(PROP_LANGUAGE_MODELS, LanguageModel.class);
         numberOfLanguageModels = languageModels.size();
 
         // read weights as a String List.

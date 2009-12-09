@@ -25,7 +25,7 @@ public class DummyFrontEnd implements Configurable {
 
     public void newProperties(PropertySheet ps) throws PropertyException {
         useMfccs = ps.getBoolean(PROP_USE_MFFCS);
-        dataProcs = (List<Configurable>) ps.getComponentList(DATA_PROCS);
+        dataProcs = ps.getComponentList(DATA_PROCS, Configurable.class);
     }
 
 

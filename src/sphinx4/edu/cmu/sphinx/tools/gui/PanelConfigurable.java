@@ -31,6 +31,8 @@ import java.util.List;
  */
 public class PanelConfigurable extends javax.swing.JPanel {
 
+    private static final long serialVersionUID = 1L;
+
     private final PanelMediator _pm;
 
     private static final int COMBO_NEUTRAL = 1;
@@ -243,12 +245,12 @@ public class PanelConfigurable extends javax.swing.JPanel {
     }
 
     /* private method to fill up the property value jlist with stored value from the model */
-    private void initPropValue(Iterator newvalue){
+    private void initPropValue(Iterator<?> newValue){
         DefaultListModel model = (DefaultListModel)jListPropVal.getModel();
         model.clear();
-        if ( newvalue != null){
-            for (;newvalue.hasNext();){
-                model.addElement(newvalue.next());
+        if ( newValue != null){
+            for (;newValue.hasNext();){
+                model.addElement(newValue.next());
             }
         }
     }
@@ -595,8 +597,12 @@ public class PanelConfigurable extends javax.swing.JPanel {
         if ( delval != null && (classname != null) &&
                 ( setname != null) && (prop != null) )
         {
-            List<String> newlist = new ArrayList(
-                    Arrays.asList(((DefaultListModel)jListPropVal.getModel()).toArray()));
+            List<String> newlist = new ArrayList<String>();
+            Object[] values = ((DefaultListModel)jListPropVal.getModel()).toArray();
+            for (Object obj : values) {
+                if (obj instanceof String) 
+                    newlist.add ((String)obj);
+            }
             if( newlist.remove(delval) ){
                 try {
                     if(newlist.isEmpty()){ // list is now empty
@@ -623,9 +629,12 @@ public class PanelConfigurable extends javax.swing.JPanel {
             String prop = (String)jListInner.getSelectedValue();
             String setname = (String)jComboName.getSelectedItem();
 
-            List<String> newlist = new ArrayList(
-                    Arrays.asList(((DefaultListModel)jListPropVal.getModel()).toArray()));
-            newlist.add(newval);
+            List<String> newlist = new ArrayList<String>();
+            Object[] values = ((DefaultListModel)jListPropVal.getModel()).toArray();
+            for (Object obj : values) {
+                if (obj instanceof String) 
+                    newlist.add ((String)obj);
+            }
 
             if ( !newval.isEmpty() && (classname != null) &&
                     ( setname != null) && (prop != null) )
@@ -1188,18 +1197,18 @@ public class PanelConfigurable extends javax.swing.JPanel {
          *         a <code>List</code> would be represented as a semi-colon separated
          *          <code>String</code>
          */
-        private Iterator getPropertyValue(String classname,String setName,String propname){
+        private Iterator<?> getPropertyValue(String classname,String setName, String propname){
             if( _ccmap.containsKey(classname) ){
                 ConfigurableComponent cc = _ccmap.get(classname);
                 Object propval = cc.getConfigurationPropValue(setName,propname);
                 if (propval != null){
                     if (propval instanceof String){
-                        List retlist = new ArrayList();
-                        retlist.add(propval);
+                        List<String> retlist = new ArrayList<String>();
+                        retlist.add((String)propval);
                         return retlist.iterator();
                     }
                     else { // instance of List
-                        return ((List)propval).iterator();
+                        return ((List<?>)propval).iterator();
                     }
                 }
                 else
@@ -1249,7 +1258,6 @@ public class PanelConfigurable extends javax.swing.JPanel {
                 ConfigurableComponent cc = _ccmap.get(classname);
 
                 if(cc.containsConfigurationSet(setName) && cc.containsProperty(propname)){
-                    ConfigurableProperty cp = cc.getProperty(propname);
                     if(isValidPropertyValue(classname,propname,propval)){
                         return true;
                     }
@@ -1345,20 +1353,20 @@ public class PanelConfigurable extends javax.swing.JPanel {
     } // end inner class
 
     private class PanelMediatorException extends java.lang.Exception {
+
+        private static final long serialVersionUID = 1L;
+
         private final static int INVALID_CLASSNAME = 1;
         private final static int DUPLICATE_SET_NAME = 2;
         private final static int INVALID_SETNAME = 3;
         private final static int INVALID_PROPNAME = 4;
         private final static int INVALID_VALUE = 5;
 
-        private final int _mode;
-
         /**
          * Creates a new instance of <code>PanelMediatorException</code> with detail message.
          */
         private PanelMediatorException(int mode, String msg) {
             super(msg);
-            _mode = mode;
         }
     } // end inner exception class 
 
@@ -1387,6 +1395,8 @@ class ListItem {
 
  class MyCellRenderer extends JLabel implements ListCellRenderer {
 
+    private static final long serialVersionUID = 1L;
+
     public MyCellRenderer () {
         // Don't paint behind the component
         setOpaque(true);
@@ -1397,15 +1407,15 @@ class ListItem {
     public Component getListCellRendererComponent(JList list,
             Object value, // value to display
             int index,    // cell index
-            boolean iss,  // is selected
-            boolean chf)  // cell has focus?
+            boolean selected,  // is selected
+            boolean hasFocus)  // cell has focus?
     {
       // Set the text and color background for rendering
       setText(((ListItem)value).getValue());
       setBackground(((ListItem)value).getColor());
 
       // Set a border if the list item is selected
-        if (iss) {
+        if (selected) {
             setBorder(BorderFactory.createLineBorder(Color.blue, 2));
         } else {
             setBorder(BorderFactory.createLineBorder(list.getBackground(), 2));

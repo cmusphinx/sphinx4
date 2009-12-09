@@ -112,7 +112,7 @@ public class BatchClient implements Configurable {
         String result = clientFrontEnd.decode(is, file);
         decodeTimer.stop();
 
-        boolean match = aligner.align(reference, result);
+        aligner.align(reference, result);
         aligner.printSentenceSummary();
         aligner.printTotalSummary();
 
@@ -140,10 +140,7 @@ public class BatchClient implements Configurable {
             System.exit(1);
         }
 
-        String context = "batch";
-        String propertiesFile = argv[0];
         String batchFile = argv[1];
-        String pwd = System.getProperty("user.dir");
 
         try {
             Map<String, Object> props = new HashMap<String, Object>();

@@ -116,13 +116,11 @@ public class SimpleActiveListFactory extends ActiveListFactory {
                 if (!tokenList.remove(oldToken)) {
                     // Some optional debugging code here to dump out the paths
                     // when this "should never happen" error happens
-                    if (false) {
-                        System.out.println("SimpleActiveList: remove "
-                                + oldToken + " missing, but replaced by "
-                                + newToken);
-                        oldToken.dumpTokenPath(true);
-                        newToken.dumpTokenPath(true);
-                    }
+                    // System.out.println("SimpleActiveList: remove "
+                    //         + oldToken + " missing, but replaced by "
+                    //         + newToken);
+                    // oldToken.dumpTokenPath(true);
+                    // newToken.dumpTokenPath(true);
                 }
             }
         }

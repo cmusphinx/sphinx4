@@ -433,7 +433,7 @@ class Sphinx3Saver implements Saver {
 
         writeWord(dos, "s3\n");
 
-        for (Enumeration e = props.keys(); e.hasMoreElements();) {
+        for (Enumeration<Object> e = props.keys(); e.hasMoreElements();) {
             String name = (String) e.nextElement();
             String value = props.getProperty(name);
             writeWord(dos, name + ' ' + value + '\n');

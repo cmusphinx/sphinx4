@@ -75,7 +75,7 @@ public class SimpleActiveListManager implements ActiveListManager {
     public void newProperties(PropertySheet ps) throws PropertyException {
         logger = ps.getLogger();
 
-        activeListFactories = (List<ActiveListFactory>)ps.getComponentList(PROP_ACTIVE_LIST_FACTORIES);
+        activeListFactories = ps.getComponentList(PROP_ACTIVE_LIST_FACTORIES, ActiveListFactory.class);
         checkPriorLists = ps.getBoolean(PROP_CHECK_PRIOR_LISTS_EMPTY);
     }
 
@@ -182,12 +182,12 @@ public class SimpleActiveListManager implements ActiveListManager {
      * @return an Iterator of non-emitting ActiveLists
      */
     @Override
-    public Iterator getNonEmittingListIterator() {
+    public Iterator<ActiveList> getNonEmittingListIterator() {
         return (new NonEmittingListIterator());
     }
 
 
-    private class NonEmittingListIterator implements Iterator {
+    private class NonEmittingListIterator implements Iterator<ActiveList> {
 
         private int listPtr;
 
@@ -204,7 +204,7 @@ public class SimpleActiveListManager implements ActiveListManager {
 
 
         @Override
-        public Object next() throws NoSuchElementException {
+        public ActiveList next() throws NoSuchElementException {
             listPtr++;
 
             if (listPtr >= currentActiveLists.length) {

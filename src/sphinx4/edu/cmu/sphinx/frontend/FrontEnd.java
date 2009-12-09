@@ -157,7 +157,7 @@ public class FrontEnd extends BaseDataProcessor {
     @Override
     public void newProperties(PropertySheet ps) throws PropertyException {
         super.newProperties(ps);
-        this.frontEndList = (List<DataProcessor>) ps.getComponentList(PROP_PIPELINE);
+        frontEndList = ps.getComponentList(PROP_PIPELINE, DataProcessor.class);
         init();
     }
 

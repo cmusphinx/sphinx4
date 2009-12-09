@@ -33,7 +33,6 @@ import edu.cmu.sphinx.util.props.*;
  * @version 1.0
  * @see PLPFilter
  */
-@SuppressWarnings({"UnnecessaryLocalVariable"})
 public class PLPFrequencyFilterBank extends BaseDataProcessor {
 
     /** The name of the Sphinx Property for the number of filters in the filterbank. */

@@ -103,7 +103,6 @@ public class SameStampScoreCombiner implements ScoreCombiner {
      */
     private double getCombinedScore(List<ParallelToken> sameStampTokenList) {
         Map<String, ParallelToken> uniqueMap = new HashMap<String, ParallelToken>();
-        int combineTime = -1;
 
         // first retain the highest scoring token from each stream 
         for (ParallelToken token : sameStampTokenList) {

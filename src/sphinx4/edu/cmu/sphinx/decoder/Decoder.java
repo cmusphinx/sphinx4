@@ -16,7 +16,6 @@ import edu.cmu.sphinx.result.Result;
 import edu.cmu.sphinx.util.props.PropertyException;
 import edu.cmu.sphinx.util.props.PropertySheet;
 import edu.cmu.sphinx.util.props.S4Integer;
-import edu.cmu.sphinx.util.props.Configurable;
 import edu.cmu.sphinx.decoder.search.SearchManager;
 
 import java.util.List;
@@ -24,7 +23,7 @@ import java.util.List;
 /** The primary decoder class */
 public class Decoder extends AbstractDecoder {
 
-    /** The sphinx property name for the number of features to recognize at once. */
+    /** A property for the number of features to recognize at once. */
     @S4Integer(defaultValue = 100000)
     public final static String PROP_FEATURE_BLOCK_SIZE = "featureBlockSize";
     private int featureBlockSize;
@@ -44,11 +43,11 @@ public class Decoder extends AbstractDecoder {
      * @param searchManager
      * @param fireNonFinalResults
      * @param autoAllocate
-     * @param resultListener
+     * @param resultListeners
      * @param featureBlockSize
      */
-    public Decoder( SearchManager searchManager, boolean fireNonFinalResults, boolean autoAllocate, List<? extends Configurable> resultListener, int featureBlockSize) {
-        super( searchManager, fireNonFinalResults, autoAllocate, resultListener);
+    public Decoder( SearchManager searchManager, boolean fireNonFinalResults, boolean autoAllocate, List<ResultListener> resultListeners, int featureBlockSize) {
+        super( searchManager, fireNonFinalResults, autoAllocate, resultListeners);
         this.featureBlockSize = featureBlockSize;
     }
     

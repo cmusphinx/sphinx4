@@ -13,7 +13,6 @@ import java.util.logging.Logger;
  *
  * @author Holger Brandl
  */
-@SuppressWarnings({"CastToIncompatibleInterface", "CastToIncompatibleInterface"})
 public class PropertySheet implements Cloneable {
 
     public static final String COMP_LOG_LEVEL = "logLevel";
@@ -79,7 +78,7 @@ public class PropertySheet implements Cloneable {
 
 
     /** Returns the property names <code>name</code> which is still wrapped into the annotation instance. */
-    public S4PropWrapper getProperty(String name, Class propertyClass) throws PropertyException {
+    public S4PropWrapper getProperty(String name, Class<?> propertyClass) throws PropertyException {
         if (!propValues.containsKey(name))
             throw new InternalConfigurationException(getInstanceName(), name,
                     "Unknown property '" + name + "' ! Make sure that you've annotated it.");
@@ -270,7 +269,7 @@ public class PropertySheet implements Cloneable {
         S4PropWrapper s4PropWrapper = getProperty(name, S4Component.class);
 
         S4Component s4Component = (S4Component) s4PropWrapper.getAnnotation();
-        Class expectedType = s4Component.type();
+        Class<? extends Configurable> expectedType = s4Component.type();
 
         Object propVal = propValues.get(name);
         if (propVal == null || propVal instanceof String) {
@@ -357,29 +356,38 @@ public class PropertySheet implements Cloneable {
 
     /**
      * Gets a list of components associated with the given parameter name
-     *
-     * @param name the parameter name
+     * 
+     * @param name
+     *            the parameter name
+     * @param tclass
+     *            the class of the list elements
      * @return the component associated with the name
      * @throws edu.cmu.sphinx.util.props.PropertyException
-     *          if the component does not exist or is of the wrong type.
+     *             if the component does not exist or is of the wrong type.
      */
-    public List<? extends Configurable> getComponentList(String name) throws InternalConfigurationException {
+    public <T> List<T> getComponentList(String name, Class<T> tclass)
+            throws InternalConfigurationException {
         getProperty(name, S4ComponentList.class);
 
-        List components = (List) propValues.get(name);
+        List<Configurable> components = (List<Configurable>) propValues
+                .get(name);
 
         assert registeredProperties.get(name).getAnnotation() instanceof S4ComponentList;
-        S4ComponentList annotation = (S4ComponentList) registeredProperties.get(name).getAnnotation();
+        S4ComponentList annotation = (S4ComponentList) registeredProperties
+                .get(name).getAnnotation();
 
-        // no componets names are available and no comp-list was yet loaded
+        // no components names are available and no component list was yet
+        // loaded
         // therefore load the default list of components from the annotation
         if (components == null) {
-            List<Class<? extends Configurable>> defClasses = Arrays.asList(annotation.defaultList());
+            List<Class<? extends Configurable>> defClasses = Arrays
+                    .asList(annotation.defaultList());
 
-	// if (annotation.mandatory() && defClasses.isEmpty())
-	//      throw new InternalConfigurationException(getInstanceName(), name, "mandatory property is not set!");
+            // if (annotation.mandatory() && defClasses.isEmpty())
+            // throw new InternalConfigurationException(getInstanceName(), name,
+            // "mandatory property is not set!");
 
-            components = new ArrayList();
+            components = new ArrayList<Configurable>();
 
             for (Class<? extends Configurable> defClass : defClasses) {
                 components.add(ConfigurationManager.getInstance(defClass));
@@ -388,7 +396,8 @@ public class PropertySheet implements Cloneable {
             propValues.put(name, components);
         }
 
-        if (!components.isEmpty() && !(components.get(0) instanceof Configurable)) {
+        if (!components.isEmpty()
+                && !(components.get(0) instanceof Configurable)) {
 
             List<Configurable> list = new ArrayList<Configurable>();
 
@@ -398,22 +407,31 @@ public class PropertySheet implements Cloneable {
                 if (configurable != null) {
                     list.add(configurable);
                 } else if (!annotation.beTolerant()) {
-                    throw new InternalConfigurationException(name, (String) componentName,
-                            "lookup of list-element '" + componentName + "' failed!");
+                    throw new InternalConfigurationException(name,
+                            (String) componentName, "lookup of list-element '"
+                                    + componentName + "' failed!");
                 }
             }
 
             propValues.put(name, list);
         }
 
-        return (List<? extends Configurable>) propValues.get(name);
+        List<?> values = (List<?>) propValues.get(name);
+        ArrayList<T> result = new ArrayList<T>();
+        for (Object obj : values) {
+            if (tclass.isInstance(obj)) {
+                result.add(tclass.cast(obj));
+            } else {
+                throw new InternalConfigurationException(getInstanceName(),
+                        name, "Not all elements have the same type");
+            }
+        }
+        return result;
     }
-
 
     public String getInstanceName() {
         return instanceName;
     }
-
 
     public void setInstanceName(String newInstanceName) {
         this.instanceName = newInstanceName;

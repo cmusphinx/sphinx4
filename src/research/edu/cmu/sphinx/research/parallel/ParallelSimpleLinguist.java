@@ -79,7 +79,7 @@ public class ParallelSimpleLinguist extends FlatLinguist {
      */
     protected void setupAcousticModel(PropertySheet ps)
             throws PropertyException {
-        featureStreams = (List)ps.getComponentList(PROP_FEATURE_STREAMS);
+        featureStreams = ps.getComponentList(PROP_FEATURE_STREAMS, FeatureStream.class);
     }
 
 

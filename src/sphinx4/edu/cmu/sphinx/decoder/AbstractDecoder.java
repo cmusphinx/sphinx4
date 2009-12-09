@@ -46,7 +46,7 @@ public abstract class AbstractDecoder implements ResultProducer, Configurable {
      * @param autoAllocate
      * @param resultListeners
      */
-    public AbstractDecoder(SearchManager searchManager, boolean fireNonFinalResults, boolean autoAllocate, List<? extends Configurable> resultListeners) {
+    public AbstractDecoder(SearchManager searchManager, boolean fireNonFinalResults, boolean autoAllocate, List<ResultListener> resultListeners) {
         String name = getClass().getName();
              init( name, Logger.getLogger(name),
                    searchManager, fireNonFinalResults, autoAllocate, resultListeners);        
@@ -62,10 +62,10 @@ public abstract class AbstractDecoder implements ResultProducer, Configurable {
 
     @Override
     public void newProperties(PropertySheet ps) throws PropertyException {
-        init( ps.getInstanceName(), ps.getLogger(), (SearchManager) ps.getComponent(PROP_SEARCH_MANAGER), ps.getBoolean(FIRE_NON_FINAL_RESULTS), ps.getBoolean(AUTO_ALLOCATE), ps.getComponentList(PROP_RESULT_LISTENERS));
+        init( ps.getInstanceName(), ps.getLogger(), (SearchManager) ps.getComponent(PROP_SEARCH_MANAGER), ps.getBoolean(FIRE_NON_FINAL_RESULTS), ps.getBoolean(AUTO_ALLOCATE), ps.getComponentList(PROP_RESULT_LISTENERS, ResultListener.class));
     }
 
-    private void init(String name, Logger logger, SearchManager searchManager, boolean fireNonFinalResults, boolean autoAllocate, List<? extends Configurable> listeners) {
+    private void init(String name, Logger logger, SearchManager searchManager, boolean fireNonFinalResults, boolean autoAllocate, List<ResultListener> listeners) {
         this.name = name;
         this.logger = logger;
 
@@ -76,8 +76,8 @@ public abstract class AbstractDecoder implements ResultProducer, Configurable {
             searchManager.allocate();
         }
 
-        for (Configurable configurable : listeners) {
-            addResultListener((ResultListener) configurable);
+        for (ResultListener listener : listeners) {
+            addResultListener(listener);
         }
     }
 

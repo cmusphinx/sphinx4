@@ -93,7 +93,7 @@ public class SenoneHMMState implements HMMState {
      * @return the acoustic scores for the components of this state.
      */
     public float[] calculateComponentScore(Data feature) {
-        SenoneSequence ss = hmm.getSenoneSequence();
+        hmm.getSenoneSequence();
         return senone.calculateComponentScore(feature);
     }
 

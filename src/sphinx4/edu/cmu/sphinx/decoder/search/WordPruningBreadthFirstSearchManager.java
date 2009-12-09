@@ -510,7 +510,7 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
     /**
      * Keeps track of and reports all of the active word histories for the given active list
      *
-     * @param activeList the activelist to track
+     * @param activeList the active list to track
      */
     private void monitorWords(ActiveList activeList) {
         WordTracker tracker = new WordTracker(currentFrameNumber);
@@ -925,7 +925,7 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
      *
      * @return the best token map
      */
-    protected Map getBestTokenMap() {
+    protected Map<Object, Object> getBestTokenMap() {
         return bestTokenMap;
     }
 
@@ -1049,10 +1049,6 @@ class SinglePathThroughHMMKey {
                     other.hmmSearchState.getLexState())
                     && hmmSearchState.getWordHistory().equals(
                     other.hmmSearchState.getWordHistory());
-            if (equal && false) {
-                System.out.println("SPTHK A: " + hmmSearchState);
-                System.out.println("SPTHK B: " + other.hmmSearchState);
-            }
             return equal;
         }
         return false;

@@ -58,7 +58,6 @@ import java.util.logging.Logger;
  * the non-required left or right context, the index of a transition matrix, and, for each state, the index of a mean
  * vector, a variance vector, and a set of mixture weights.
  */
-@SuppressWarnings({"UnnecessaryLocalVariable"})
 public class TiedStateAcousticModel implements AcousticModel {
 
     /** The property that defines the component used to load the acoustic model */
@@ -158,33 +157,16 @@ public class TiedStateAcousticModel implements AcousticModel {
      */
     private HMM getCompositeHMM(Unit unit, HMMPosition position) {
 
+        Unit ciUnit = unitManager.getUnit(unit.getName(), unit.isFiller(),
+                Context.EMPTY_CONTEXT);
 
-        if (true) { // use a true composite
-            Unit ciUnit = unitManager.getUnit(unit.getName(),
-                    unit.isFiller(), Context.EMPTY_CONTEXT);
+        SenoneSequence compositeSequence = getCompositeSenoneSequence(unit,
+                position);
 
-            SenoneSequence compositeSequence =
-                    getCompositeSenoneSequence(unit, position);
-
-            SenoneHMM contextIndependentHMM = (SenoneHMM)
-                    lookupNearestHMM(ciUnit,
-                            HMMPosition.UNDEFINED, true);
-            float[][] tmat = contextIndependentHMM.getTransitionMatrix();
-            return new SenoneHMM(unit, compositeSequence, tmat, position);
-        } else { // BUG: just a test. use CI units instead of composites
-            Unit ciUnit = lookupUnit(unit.getName());
-
-            assert unit.isContextDependent();
-            if (ciUnit == null) {
-                logger.severe("Can't find HMM for " + unit.getName());
-            }
-            assert ciUnit != null;
-            assert !ciUnit.isContextDependent();
-
-            HMMManager mgr = loader.getHMMManager();
-            HMM hmm = mgr.get(HMMPosition.UNDEFINED, ciUnit);
-            return hmm;
-        }
+        SenoneHMM contextIndependentHMM = (SenoneHMM) lookupNearestHMM(ciUnit,
+                HMMPosition.UNDEFINED, true);
+        float[][] tmat = contextIndependentHMM.getTransitionMatrix();
+        return new SenoneHMM(unit, compositeSequence, tmat, position);
     }
 
 
@@ -441,19 +423,7 @@ public class TiedStateAcousticModel implements AcousticModel {
     private SenoneHMM lookupHMM(Unit unit, HMMPosition position) {
         return (SenoneHMM) loader.getHMMManager().get(position, unit);
     }
-
-
-    /**
-     * Creates a string useful for tagging a composite senone sequence
-     *
-     * @param base    the base unit
-     * @param context the context
-     * @return the tag associated with the composite senone sequence
-     */
-    private String makeTag(Unit base, Context context) {
-        return '(' + base.getName() + '-' + context + ')';
-    }
-
+    
 
     /** Dumps information about this model to the logger */
     protected void logInfo() {
@@ -526,21 +496,6 @@ public class TiedStateAcousticModel implements AcousticModel {
             }
         }
         return hmm;
-    }
-
-
-    /**
-     * Some debugging code that looks for illformed contexts
-     *
-     * @param msg the message associated with the check
-     * @param c   the context to check
-     */
-    private void checkNull(String msg, Unit[] c) {
-        for (int i = 0; i < c.length; i++) {
-            if (c[i] == null) {
-                System.out.println("null at index " + i + " of " + msg);
-            }
-        }
     }
 
 

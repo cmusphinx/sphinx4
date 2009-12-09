@@ -67,7 +67,7 @@ public class Token implements Scoreable {
     private int location;
     private Data myData;
 
-    private static Set predecessorClasses;
+    private static Set<Class<? extends SearchState>> predecessorClasses;
 
     /**
      * A collection of arbitrary properties assigned to this token. This field becomes lazy intitialized to reduce
@@ -84,7 +84,7 @@ public class Token implements Scoreable {
      *
      * @param bpClasses
      */
-    public static void setPredecessorClass(Set bpClasses) {
+    public static void setPredecessorClass(Set<Class <? extends SearchState>> bpClasses) {
         predecessorClasses = bpClasses;
     }
 

@@ -12,21 +12,16 @@
 
 package edu.cmu.sphinx.trainer;
 
-
-import edu.cmu.sphinx.frontend.Data;
-
-import java.util.Collection;
-
 /** Provides mechanisms for handling tokens in the trainer. */
 public class TrainerToken /* extends Token */ {
 
-    private Collection linkToParent;
-    private Collection linkToChild;
-    private float alpha;
-    private float beta;
-
-    private Node state;
-    private boolean isEmitting;
-    private Data dataVector;
-    private int timeStamp;
+    // private Collection linkToParent;
+    // private Collection linkToChild;
+    // private float alpha;
+    // private float beta;
+    // 
+    // private Node state;
+    // private boolean isEmitting;
+    // private Data dataVector;
+    // private int timeStamp;
 }

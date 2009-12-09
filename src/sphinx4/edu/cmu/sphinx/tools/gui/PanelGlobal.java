@@ -29,6 +29,7 @@ import java.util.HashMap;
  */
  class PanelGlobal extends javax.swing.JPanel implements GUIFileActionListener {
     
+    private static final long serialVersionUID = 1L;
     private final String _title;
     private final GUIMediator _gm;
      
@@ -154,7 +155,9 @@ import java.util.HashMap;
                 "Property Name", "Property Value"
             }
         ) {
-            final Class[] types = new Class [] {
+
+            private static final long serialVersionUID = 1L;
+            final Class<?>[] types = new Class [] {
                 java.lang.String.class, java.lang.String.class
             };
             final boolean[] canEdit = new boolean [] {
@@ -162,7 +165,7 @@ import java.util.HashMap;
             };
 
             @Override
-            public Class getColumnClass(int columnIndex) {
+            public Class<?> getColumnClass(int columnIndex) {
                 return types [columnIndex];
             }
 

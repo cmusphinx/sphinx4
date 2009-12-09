@@ -202,7 +202,7 @@ public class ModelBuilder implements GUIFileActionListener {
      */
     public Map<String, String> getclasslist(String classtype) {
         try {
-            Class searchclass = Class.forName(classtype);
+            Class<?> searchclass = Class.forName(classtype);
             Map<String, String> myreturn = new HashMap<String, String>();
             if (_classes != null && classtype != null && !classtype.trim().isEmpty()) {
                 for (ConfigurableComponent cc : _classes.values()) {
@@ -523,7 +523,7 @@ public class ModelBuilder implements GUIFileActionListener {
      * @param field Field that we are want to create a Configurable Property from
      * @return ConfigurableProperty
      */
-    private ConfigurableProperty createProperty(Class c, Field field) throws ConfigurableUtilException {
+    private ConfigurableProperty createProperty(Class<?> c, Field field) throws ConfigurableUtilException {
         ConfigurableProperty cp;
         try {
             cp = CreatePropertyHelper.createProperty(field, c);
@@ -548,7 +548,7 @@ public class ModelBuilder implements GUIFileActionListener {
         //  from annotation of the property
         //  in sphinx4 source code
 
-        private static Class _class;
+        private static Class<?> _class;
         private static String _fieldname;
         private static Field _field;
 
@@ -616,7 +616,7 @@ public class ModelBuilder implements GUIFileActionListener {
         } // end processAnnotation
 
 
-        private static ConfigurableProperty createProperty(Field f, Class c) throws IllegalAccessException {
+        private static ConfigurableProperty createProperty(Field f, Class<?> c) throws IllegalAccessException {
             _class = c;
             _field = f;
             _fieldname = f.getName();

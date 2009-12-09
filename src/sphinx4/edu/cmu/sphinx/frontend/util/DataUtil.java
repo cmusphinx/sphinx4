@@ -24,7 +24,6 @@ import java.text.DecimalFormat;
 
 
 /** Defines utility methods for manipulating data values. */
-@SuppressWarnings({"UnnecessaryLocalVariable"})
 public class DataUtil {
 
     private static final int HEXADECIMAL = 1;

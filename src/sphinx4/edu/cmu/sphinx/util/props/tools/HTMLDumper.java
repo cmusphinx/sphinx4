@@ -82,8 +82,8 @@ public class HTMLDumper {
             obj = properties.getRaw(propertyName);
             if (obj instanceof String) {
                 out.println("<td>" + obj + "</td></tr>");
-            } else if (obj instanceof List) {
-                List l = (List) obj;
+            } else if (obj instanceof List<?>) {
+                List<?> l = (List<?>) obj;
                 out.println("    <td><ul>");
                 for (Object listElement : l) {
                     out.println("        <li>" + listElement + "</li>");

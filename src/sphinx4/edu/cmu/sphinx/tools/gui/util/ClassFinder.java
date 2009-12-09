@@ -146,9 +146,8 @@ public class ClassFinder {
      * @param c class to be examined
      * @return boolean true if the class passes the filter
      */
-    private static boolean filterField(Class c) {
+    private static boolean filterField(Class<?> c) {
 
-        String classname = c.getName();
         Field[] publicFields = c.getFields();
 
         // will check all the public fields

@@ -46,7 +46,7 @@ public class DataBufferProcessor extends BaseDataProcessor implements DataListen
 
     @S4ComponentList(type = Configurable.class, beTolerant = true)
     public static final String DATA_LISTENERS = "dataListeners";
-    private final List<DataListener> dataListeners = new ArrayList<DataListener>();
+    private List<DataListener> dataListeners = new ArrayList<DataListener>();
 
     /**
      * @param maxBufferSize The maximal size of the buffer in frames. The oldest frames will be removed if the buffer grows out of bounds.
@@ -85,11 +85,7 @@ public class DataBufferProcessor extends BaseDataProcessor implements DataListen
         if (waitIfEmpty) // if false we don't need the value
             waitTime = ps.getInt(PROP_WAIT_TIME_MS);
 
-        List<? extends Configurable> list = ps.getComponentList(DATA_LISTENERS);
-        for (Configurable configurable : list) {
-            assert configurable instanceof DataListener;
-            addDataListener((DataListener) configurable);
-        }
+        dataListeners = ps.getComponentList(DATA_LISTENERS, DataListener.class);
     }
 
 

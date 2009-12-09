@@ -61,7 +61,7 @@ class SimpleTrainManager implements TrainManager {
         minimumImprovement = ps.getFloat(PROP_MINIMUM_IMPROVEMENT);
         maxIteration = ps.getInt(PROP_MAXIMUM_ITERATION);
 
-        acousticModels = (List<AcousticModel>) ps.getComponentList(AM_COLLECTION);
+        acousticModels = ps.getComponentList(AM_COLLECTION, AcousticModel.class);
     }
 
 

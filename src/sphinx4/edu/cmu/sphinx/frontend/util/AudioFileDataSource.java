@@ -74,7 +74,7 @@ public class AudioFileDataSource extends BaseDataProcessor {
     @Override
     public void newProperties(PropertySheet ps) throws PropertyException {
         super.newProperties(ps);
-        create(ps.getInt(PROP_BYTES_PER_READ), (List<AudioFileProcessListener>) ps.getComponentList(AUDIO_FILE_LISTENERS));
+        create(ps.getInt(PROP_BYTES_PER_READ), ps.getComponentList(AUDIO_FILE_LISTENERS, AudioFileProcessListener.class));
     }
 
     private void create( int bytesPerRead, List<AudioFileProcessListener> listeners ) {

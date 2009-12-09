@@ -27,7 +27,6 @@ import java.text.DecimalFormat;
 public class Timer {
 
     private final static DecimalFormat timeFormatter = new DecimalFormat("###0.0000");
-    private final static DecimalFormat percentFormatter = new DecimalFormat("###0.00%");
 
     private final String name;
 
@@ -89,7 +88,6 @@ public class Timer {
             notReliable = true; // start called while timer already running
             System.out.println
                     (getName() + " timer.start() called without a stop()");
-            // throw new IllegalStateException("timer stutter start " + name);
         }
         startTime = System.currentTimeMillis();
     }
@@ -105,7 +103,6 @@ public class Timer {
             notReliable = true; // start called while timer already running
             System.out.println
                     (getName() + " timer.start() called without a stop()");
-            // throw new IllegalStateException("timer stutter start " + name);
         }
         if (time > System.currentTimeMillis()) {
             throw new IllegalStateException
@@ -231,10 +228,9 @@ public class Timer {
     }
 
 
-    /** Shows brief timing stats. */
+    /** Shows brief timing statistics . */
     private void showTimesShort() {
         double avgTime = 0.0;
-        double totTime = sum / 1000.0;
 
         if (count == 0) {
             return;
