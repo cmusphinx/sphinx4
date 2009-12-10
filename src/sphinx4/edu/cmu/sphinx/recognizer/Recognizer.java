@@ -15,6 +15,7 @@ package edu.cmu.sphinx.recognizer;
 import edu.cmu.sphinx.decoder.Decoder;
 import edu.cmu.sphinx.decoder.ResultProducer;
 import edu.cmu.sphinx.decoder.ResultListener;
+import edu.cmu.sphinx.instrumentation.Monitor;
 import edu.cmu.sphinx.instrumentation.Resetable;
 import edu.cmu.sphinx.result.Result;
 import edu.cmu.sphinx.util.props.*;
@@ -58,7 +59,7 @@ public class Recognizer implements Configurable, ResultProducer {
     public final static String PROP_DECODER = "decoder";
 
     /** Property name for the set of monitors for this recognizer */
-    @S4ComponentList(type = StateListener.class)
+    @S4ComponentList(type = Monitor.class)
     public final static String PROP_MONITORS = "monitors";
 
     /** Defines the possible states of the recognizer. */
@@ -69,10 +70,10 @@ public class Recognizer implements Configurable, ResultProducer {
     private State currentState = State.DEALLOCATED;
 
     private final List<StateListener> stateListeners = Collections.synchronizedList(new ArrayList<StateListener>());
-    private List<ResultListener> monitors;
+    private List<Monitor> monitors;
 
 
-    public Recognizer(Decoder decoder, List<ResultListener> monitors) {
+    public Recognizer(Decoder decoder, List<Monitor> monitors) {
         this.decoder = decoder;
         this.monitors = monitors;
         name = null;
@@ -87,7 +88,7 @@ public class Recognizer implements Configurable, ResultProducer {
     @Override
     public void newProperties(PropertySheet ps) throws PropertyException {
         decoder = (Decoder) ps.getComponent(PROP_DECODER);
-        monitors = ps.getComponentList(PROP_MONITORS, ResultListener.class);
+        monitors = ps.getComponentList(PROP_MONITORS, Monitor.class);
 
         name = ps.getInstanceName();
     }
@@ -196,7 +197,7 @@ public class Recognizer implements Configurable, ResultProducer {
 
     /** Resets the monitors monitoring this recognizer */
     public void resetMonitors() {
-        for (ResultListener listener : monitors) {
+        for (Monitor listener : monitors) {
             if (listener instanceof Resetable)
               ((Resetable)listener).reset();
         }

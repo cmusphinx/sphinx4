@@ -26,6 +26,7 @@ import edu.cmu.sphinx.frontend.util.AudioFileDataSource;
 import edu.cmu.sphinx.frontend.window.RaisedCosineWindower;
 import edu.cmu.sphinx.instrumentation.BestPathAccuracyTracker;
 import edu.cmu.sphinx.instrumentation.MemoryTracker;
+import edu.cmu.sphinx.instrumentation.Monitor;
 import edu.cmu.sphinx.instrumentation.SpeedTracker;
 import edu.cmu.sphinx.linguist.Linguist;
 import edu.cmu.sphinx.linguist.acoustic.AcousticModel;
@@ -103,7 +104,7 @@ abstract public class CommonConfiguration {
     protected ActiveListFactory activeListFactory;
     protected ActiveListFactory wordActiveListFactory;
     protected SearchManager searchManager;
-    protected List<ResultListener> monitors;
+    protected List<Monitor> monitors;
     protected Decoder decoder;
     protected Recognizer recognizer;
 
@@ -217,7 +218,7 @@ abstract public class CommonConfiguration {
 
         this.recognizer = new Recognizer(decoder, monitors);
 
-        this.monitors = new ArrayList<ResultListener>();
+        this.monitors = new ArrayList<Monitor>();
         this.monitors.add(new BestPathAccuracyTracker(recognizer, false, false, false, false, false, false));
         this.monitors.add(new MemoryTracker(recognizer, false, false));
         this.monitors.add(new SpeedTracker(recognizer, frontend, true, false, false, false));
