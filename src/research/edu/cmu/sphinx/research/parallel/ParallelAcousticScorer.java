@@ -39,7 +39,7 @@ public class ParallelAcousticScorer extends AbstractScorer {
      * @return the best scoring scorable, or null if there are no more frames to score
      */
     public Data calculateScores(List<? extends Scoreable> scoreableList) {
-        frontEnd = getFrontEnd((List<ParallelToken>)scoreableList);
+        frontEnd = getFrontEnd(scoreableList);
         return super.calculateScores(scoreableList);
     }
 
@@ -64,7 +64,10 @@ public class ParallelAcousticScorer extends AbstractScorer {
      *
      * @return the acoustic model name of the Tokens
      */
-    private FrontEnd getFrontEnd(List<ParallelToken> activeList) {
-        return activeList.isEmpty() ? null : activeList.get(0).getFeatureStream().getFrontEnd();
+    private FrontEnd getFrontEnd(List<? extends Scoreable> activeList) {
+       Scoreable scoreable =  activeList.isEmpty() ? null : activeList.get(0);
+       if (scoreable == null || !(scoreable instanceof ParallelToken))
+    	   throw new RuntimeException("Scorer doesn't support anything except list of ParallelTokens");
+       return ((ParallelToken)scoreable).getFeatureStream().getFrontEnd();
     }
 }

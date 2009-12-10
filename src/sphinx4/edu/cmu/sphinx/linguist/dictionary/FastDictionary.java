@@ -66,9 +66,9 @@ public class FastDictionary implements Dictionary {
 
     /**
      * The name of the SphinxProperty for the custom dictionary file paths. This addenda property points to a possibly
-     * empty list of urls to dictionary addenda.  Each addendum should contain word pronunciations in the same Sphinx-3
+     * empty list of URLs to dictionary addenda.  Each addendum should contain word pronunciations in the same Sphinx-3
      * dictionary format as the main dictionary.  Words in the addendum are added after the words in the main dictionary
-     * and will override previously specified pronunciations.  If you wish to extend the set of pronunications for a
+     * and will override previously specified pronunciations.  If you wish to extend the set of pronunciations for a
      * particular word, add a new pronunciation by number.  For example, in the following addendum, given that the
      * aforementioned main dictionary is specified, the pronunciation for 'EIGHT' will be overridden by the addenda,
      * while the pronunciation for 'SIX' and 'ZERO' will be augmented and a new pronunciation for 'ELEVEN' will be
@@ -100,7 +100,7 @@ public class FastDictionary implements Dictionary {
     // -------------------------------
     // working data
     // -------------------------------
-    protected Map<String, Object> dictionary;
+    protected Map<String, String> dictionary;
 
     protected final static String FILLER_TAG = "-F-";
     protected Set<String> fillerWords;
@@ -183,7 +183,7 @@ public class FastDictionary implements Dictionary {
     @Override
     public void allocate() throws IOException {
         if (!allocated) {
-            dictionary = new HashMap<String, Object>();
+            dictionary = new HashMap<String, String>();
             Timer loadTimer = TimerPool.getTimer(this, "DictionaryLoad");
             fillerWords = new HashSet<String>();
 
@@ -356,7 +356,7 @@ public class FastDictionary implements Dictionary {
     private Word createWord(String text, Pronunciation[] pronunciation,
                             boolean isFiller) {
         Word word = new Word(text, pronunciation, isFiller);
-        dictionary.put(text, word);
+        dictionary.put(text, word.toString());
         return word;
     }
 
@@ -434,14 +434,12 @@ public class FastDictionary implements Dictionary {
     @Override
     public String toString() {
 
-        SortedMap<String, Object> sorted = new TreeMap<String, Object>(dictionary);
+        SortedMap<String, String> sorted = new TreeMap<String, String>(dictionary);
         StringBuilder result = new StringBuilder();
 
-        for (Map.Entry<String, Object> entry : sorted.entrySet()) {
-            result.append(entry.getKey()).append('\n');
-            for (Pronunciation pronunciation : (List<Pronunciation>) entry.getValue()) {
-                result.append("   ").append(pronunciation).append('\n');
-            }
+        for (Map.Entry<String, String> entry : sorted.entrySet()) {
+            result.append(entry.getKey());
+            result.append("   ").append(entry.getValue()).append('\n');
         }
 
         return result.toString();

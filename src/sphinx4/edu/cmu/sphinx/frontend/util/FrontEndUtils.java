@@ -27,6 +27,6 @@ public class FrontEndUtils {
         }
 
 
-        return (T) dp;
+        return predecClass.cast(dp);
     }
 }

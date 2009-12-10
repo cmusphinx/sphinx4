@@ -17,7 +17,6 @@ import edu.cmu.sphinx.frontend.endpoint.SpeechEndSignal;
 import edu.cmu.sphinx.frontend.endpoint.SpeechStartSignal;
 import edu.cmu.sphinx.result.Result;
 import edu.cmu.sphinx.decoder.search.SearchManager;
-import edu.cmu.sphinx.util.props.Configurable;
 
 import java.util.List;
 

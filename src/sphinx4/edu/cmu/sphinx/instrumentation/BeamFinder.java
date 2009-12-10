@@ -190,7 +190,7 @@ public class BeamFinder implements ResultListener,
                     assert scoreDiff >= 0;
 
                     token.getTokenProps().put(TOKEN_RANK, new TokenRank(rank++, scoreDiff));
-                    // checkRank(token);
+                    assert tokenIsRanked(token);
                 }
             }
         }
@@ -198,23 +198,24 @@ public class BeamFinder implements ResultListener,
 
 
     /**
-     * Checks to make sure that all upstream tokens are ranked. Primarily used fro debugging
+     * Checks to make sure that all upstream tokens are ranked. Primarily used for debugging
      *
      * @param token the token to check
      */
-    @SuppressWarnings({"UnusedDeclaration"})
-    private void checkRank(Token token) {
+    private boolean tokenIsRanked(Token token) {
         while (token != null) {
             if (token.isEmitting()) {
                 if (token.getTokenProps().get(TOKEN_RANK) == null) {
                     if (token.getFrameNumber() != 0) {
                         System.out.println("MISSING " + token);
+                        return false;
                     }
                 } else {
                 }
             }
             token = token.getPredecessor();
         }
+        return true;
     }
 
 
