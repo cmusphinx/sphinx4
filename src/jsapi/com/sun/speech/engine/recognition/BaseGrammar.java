@@ -20,11 +20,11 @@ import java.util.ArrayList;
  * Implementation of javax.speech.recognition.Grammar.
  */
 public class BaseGrammar
-        implements Grammar, Serializable, SpeechEventDispatcher {
+    implements Grammar, Serializable, SpeechEventDispatcher {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	public transient BaseRecognizer recognizer;
+    public transient BaseRecognizer recognizer;
     protected final transient List<GrammarListener> grammarListeners = new ArrayList<GrammarListener>();
     protected final transient List<ResultListener> resultListeners = new ArrayList<ResultListener>();
     protected String myName;

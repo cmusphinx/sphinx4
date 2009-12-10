@@ -9,24 +9,28 @@ grammar test;
 import <polite.startPolite>;
 import <polite.endPolite>;
 
+
+/* Test right recursion */
+
 public <rightRecursion> = <action> | (<action> and <rightRecursion> ) ;
 <action> = stop | start;
 
 
 /*
- * BUG: this is valid JSGF, but the ruleGrammar.parse
+ * TODO: 
+ * This is valid JSGF, but the ruleGrammar.parse
  * method generates a stack overflow (although the
  * decoder and the JSGF grammar deal with it just fine
+ *
+ * public <nestedRightRecursion> = something | <Y> ;
+ * <Y> = another | <nestedRightRecursion> ;
  */
 
-/*
-public <nestedRightRecursion> = something | <Y> ;
-<Y> = another | <nestedRightRecursion> ;
-*/
+/* Repeat test */
+public <repeatTest> = <startPolite>* don't crash;
 
-public <kleene> = <polite>* don't crash;
-<polite> =  please | kindly | oh mighty computer;
 
+/* Test grammar with NULL */
 
 public <nulltest> = <ones> <twos> <threes>;
 
@@ -35,8 +39,8 @@ public <nulltest> = <ones> <twos> <threes>;
 <threes> = <NULL> (three [and] three);
 
 
+/* Counters */
 
-public <command> = <startPolite> <caction> <endPolite>;
-
-<caction> = go* | stop+;
+public <command> = <startPolite> <commandAction> <endPolite>;
+<commandAction> = go* | stop+;
 

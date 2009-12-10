@@ -26,7 +26,7 @@ import java.util.*;
 /** Implementation of javax.speech.recognition.RuleGrammar. */
 public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar, Serializable {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
     private JSGFRuleGrammar jsgfGrammar;
     
@@ -62,7 +62,15 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar, Seriali
      * JSAPI
      */ 
      public JSGFRule convert (Rule rule) {
+         
+         if (rule == null)
+             return null;
+         
     	if (rule instanceof RuleName) {
+    	    if (rule == RuleName.NULL) 
+    	        return JSGFRuleName.NULL;
+    	    if (rule == RuleName.VOID)
+    	        return JSGFRuleName.NULL;
     		return new JSGFRuleName (((RuleName)rule).getRuleName());
     	}
     	if (rule instanceof RuleAlternatives) {
@@ -112,9 +120,18 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar, Seriali
      * JSAPI 
      */
     private Rule convert (JSGFRule rule) {
+        
+        if (rule == null)
+            return null;
+        
     	if (rule instanceof JSGFRuleName) {
-    		JSGFRuleName ruleName = (JSGFRuleName)rule;
-    		return new RuleName (ruleName.getRuleName());
+            if (rule == JSGFRuleName.NULL) 
+                return RuleName.NULL;
+            if (rule == JSGFRuleName.VOID)
+                return RuleName.NULL;
+
+            JSGFRuleName ruleName = (JSGFRuleName)rule;
+            return new RuleName (ruleName.getRuleName());
     	}
     	
     	if (rule instanceof JSGFRuleAlternatives) {
