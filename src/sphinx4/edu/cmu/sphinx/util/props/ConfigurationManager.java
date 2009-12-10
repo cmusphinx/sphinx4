@@ -8,7 +8,7 @@ import java.util.logging.Logger;
 
 
 /**
- * Manages a set of <code>Configurable</code>s, their parametrization and the relationships between them. Configurations
+ * Manages a set of <code>Configurable</code>s, their parameterization and the relationships between them. Configurations
  * can be specified either by xml or on-the-fly during runtime.
  *
  * @see edu.cmu.sphinx.util.props.Configurable
@@ -63,8 +63,8 @@ public class ConfigurationManager implements Cloneable {
         ConfigurationManagerUtils.applySystemProperties(rawPropertyMap, globalProperties);
         ConfigurationManagerUtils.configureLogger(this);
 
-        // we can't config the configuration manager with itself so we
-        // do some of these config items manually.
+        // we can't configure the configuration manager with itself so we
+        // do some of these configure items manually.
         String showCreations = globalProperties.get("showCreations");
         if (showCreations != null)
             this.showCreations = "true".equals(showCreations);
@@ -85,11 +85,10 @@ public class ConfigurationManager implements Cloneable {
             if (rpd != null) {
                 String className = rpd.getClassName();
                 try {
-                    Class cls = Class.forName(className);
-
+                    Class<?> cls = Class.forName(className);
+                    
                     // now load the property-sheet by using the class annotation
-//                    PropertySheet propertySheet = new PropertySheet(cls, this, rpd.flatten(globalProperties));
-                    PropertySheet propertySheet = new PropertySheet(cls, instanceName, this, rpd);
+                    PropertySheet propertySheet = new PropertySheet(cls.asSubclass(Configurable.class), instanceName, this, rpd);
 
                     symbolTable.put(instanceName, propertySheet);
 
@@ -130,7 +129,7 @@ public class ConfigurationManager implements Cloneable {
 
     /**
      * Returns all names of configurables registered to this instance. The resulting set includes instantiated and
-     * noninstantiated components.
+     * non-instantiated components.
      *
      * @return all component named registered to this instance of <code>ConfigurationManager</code>
      */
@@ -143,13 +142,13 @@ public class ConfigurationManager implements Cloneable {
      * Looks up a configurable component by name. Creates it if necessary
      *
      * @param instanceName the name of the component
-     * @return the compnent, or null if a component was not found.
+     * @return the component, or null if a component was not found.
      * @throws InternalConfigurationException If the requested object could not be properly created, or is not a
      *                                        configurable object, or if an error occured while setting a component
      *                                        property.
      */
     public Configurable lookup(String instanceName) throws InternalConfigurationException {
-        // apply all new propeties to the model
+        // apply all new properties to the model
         instanceName = getStrippedComponentName(instanceName);
 
         PropertySheet ps = getPropertySheet(instanceName);
@@ -183,7 +182,7 @@ public class ConfigurationManager implements Cloneable {
         if (matchPropSheets.size() > 1)
             throw new IllegalArgumentException("more than one match to type " + confClass + ": " + matchPropSheets);
 
-        return (C) lookup(matchPropSheets.get(0).getInstanceName());
+        return confClass.cast(lookup(matchPropSheets.get(0).getInstanceName()));
     }
 
 
@@ -294,7 +293,7 @@ public class ConfigurationManager implements Cloneable {
     }
 
 
-    /** @param subCM The subconfiguration that shouwld be  to this instance */
+    /** @param subCM The subconfiguration that should be  to this instance */
     public void addSubConfiguration(ConfigurationManager subCM) {
         addSubConfiguration(subCM, false);
     }
@@ -303,8 +302,8 @@ public class ConfigurationManager implements Cloneable {
     /**
      * Adds a subconfiguration to this instance by registering all subCM-components and all its global properties.
      *
-     * @param subCM                The subconfiguration that shouwld be  to this instance
-     * @param doOverrideComponents If <code>true</code> non-instantiated components will be overriden by elements of
+     * @param subCM                The subconfiguration that should be  to this instance
+     * @param doOverrideComponents If <code>true</code> non-instantiated components will be overridden by elements of
      *                             subCM even if already being registered to this CM-instance. The same holds for global
      *                             properties.
      * @throws RuntimeException if an already instantiated component in this instance is redefined in subCM.
@@ -335,7 +334,7 @@ public class ConfigurationManager implements Cloneable {
 
         globalProperties.putAll(subCM.globalProperties);
 
-        // correct the reference to the cm
+        // correct the reference to the configuration manager
         for (PropertySheet ps : subCM.symbolTable.values()) {
             ps.setCM(this);
         }
@@ -369,7 +368,7 @@ public class ConfigurationManager implements Cloneable {
 
 
     /**
-     * Returns the url of the xml-configuration which defined this configuration or <code>null</code>  if it was created
+     * Returns the URL of the XML configuration which defined this configuration or <code>null</code>  if it was created
      * dynamically.
      */
     public URL getConfigURL() {
@@ -457,8 +456,8 @@ public class ConfigurationManager implements Cloneable {
 
 
     /**
-     * Test wether the given configuration manager instance equals this instance in terms of same configuration. This
-     * This equals implemenation does not care about instantiation of components.
+     * Test whether the given configuration manager instance equals this instance in terms of same configuration. This
+     * This equals implementation does not care about instantiation of components.
      */
     @Override
     public boolean equals(Object obj) {
@@ -521,8 +520,8 @@ public class ConfigurationManager implements Cloneable {
 
     /**
      * Creates an instance of the given <code>Configurable</code> by using the default parameters as defined by the
-     * class annotations to parameterize the component. Default prarmeters will be overrided if a their names are
-     * containd in the given <code>props</code>-map
+     * class annotations to parameterize the component. Default parameters will be overridden if a their names are
+     * contained in the given <code>props</code>-map
      */
     public static <C extends Configurable> C getInstance(Class<C> targetClass, Map<String, Object> props) throws PropertyException {
         return getInstance(targetClass, props, null);
@@ -532,14 +531,14 @@ public class ConfigurationManager implements Cloneable {
 
     /**
      * Creates an instance of the given <code>Configurable</code> by using the default parameters as defined by the
-     * class annotations to parameterize the component. Default prarmeters will be overrided if a their names are
-     * containd in the given <code>props</code>-map. The component is used to create a parameterized logger for the
+     * class annotations to parameterize the component. Default parameters will be overridden if a their names are
+     * contained in the given <code>props</code>-map. The component is used to create a parameterized logger for the
      * Configurable being created.
      */
     public static <C extends Configurable> C getInstance(Class<C> targetClass, Map<String, Object> props, String compName) throws PropertyException {
         PropertySheet ps = getPropSheetInstanceFromClass(targetClass, props, compName, new ConfigurationManager());
         Configurable configurable = ps.getOwner();
-        return (C) configurable;
+        return targetClass.cast(configurable);
     }
 
 
@@ -553,8 +552,8 @@ public class ConfigurationManager implements Cloneable {
         for (Map.Entry<String, Object> entry : defaultProps.entrySet()) {
             Object property = entry.getValue();
 
-            if (property instanceof Class)
-                property = ((Class) property).getName();
+            if (property instanceof Class<?>)
+                property = ((Class<?>) property).getName();
 
             rpd.getProperties().put(entry.getKey(), property);
         }

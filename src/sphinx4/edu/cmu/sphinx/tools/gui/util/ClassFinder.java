@@ -19,12 +19,13 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * This class is used mainly to facilitate scanning all the folders of sphinx system, and to filter classes that are
@@ -39,7 +40,8 @@ public class ClassFinder {
 
     private static final String COMMON_SPHINX_PACKAGE = "edu";
 
-
+    private static final Logger logger = Logger.getLogger("ClassFinder");
+    
     /**
      * find a File, open it and return the content as BufferedReader
      *
@@ -85,7 +87,7 @@ public class ClassFinder {
      * recursively goes down to the bottom level
      *
      * @param startDir     String name directory to list
-     * @param startPackage String preceeding package names
+     * @param startPackage String preceding package names
      * @param classList    Set of .class files e.g. "nextDir.nextclass", that passes the filter, and will be in the
      *                     model startDir and '.class' extension not included as package name
      * @throws ClassNotFoundException, FileNotFoundException
@@ -107,26 +109,16 @@ public class ClassFinder {
             } else if (tempFile.endsWith(".class")) {
                 // removes the .class extension
                 // if it's a file, check if it's a java .class file
-                // System.out.println("=== check class" + tempFile);
+                logger.log(Level.FINE, "Checking class" + tempFile);
                 validateFile(file);
                 try {
                     String classname = startPackage + '.' + tempFile.substring(0, tempFile.length() - 6);
                     Class<?> addclass = Class.forName(classname);
-                    /* change this to URLClassLoader                                       
-                      Class addclass =  Thread.currentThread().getContextClassLoader().loadClass(classname);
-                      System.err.println(classname);
-                      addclass.getFields();
-                    */
-                    /* this part will check both the class and methods of the class 
-                     if ( filterClass(addclass) && filterField(addclass)){                            
-                        classList.add(addclass); 
-                    } */
-                    /* change: only check the class type, no checking for its methods */
                     if (filterClass(addclass)) {
                         // if it's an interface, shouldn't display because interface cannot be instantiated
                         if (!addclass.isInterface() && !Modifier.isAbstract(addclass.getModifiers())) {
                             classList.add(addclass);
-                            // System.out.println("=== add class" + tempFile);
+                        	logger.log(Level.FINE, "Adding class" + tempFile);
                         }
                     }
 
@@ -141,47 +133,22 @@ public class ClassFinder {
 
 
     /**
-     * check this class based on its fields if it has public static final PROP_  fields
-     *
-     * @param c class to be examined
-     * @return boolean true if the class passes the filter
-     */
-    private static boolean filterField(Class<?> c) {
-
-        Field[] publicFields = c.getFields();
-
-        // will check all the public fields
-        // if any of them is with modifier 'public static final' and starts with 'PROP_'        
-        for (Field field : publicFields) {
-            int m = field.getModifiers();
-            String fieldname = field.getName();
-            if (Modifier.isPublic(m) && Modifier.isStatic(m) && Modifier.isFinal(m)) {
-
-                if (fieldname.startsWith("PROP_"))
-                    return true;
-            }
-        }
-        return false;
-    }
-
-
-    /**
      * check this class, if one of its ancestor classes or interfaces implements 'edu.cmu.sphinx.util.props.Configurable'
      *
      * @param c class to be examined
      * @return boolean true if the class passes the filter
      */
-    private static boolean filterClass(Class c) {
+    private static boolean filterClass(Class<?> c) {
 
         String interfaceName;
-        Class superclass;
+        Class<?> superclass;
 
         //check the implemented interfaces
-        Class[] theInterfaces = c.getInterfaces();
+        Class<?>[] theInterfaces = c.getInterfaces();
 
-        for (Class cls : theInterfaces) {
+        for (Class<?> cls : theInterfaces) {
             interfaceName = cls.getName();
-            //System.out.println("***This class "+c.getName()+" has interface "+interfaceName);
+            logger.log(Level.FINE, "The class " + c.getName() + " has interface " + interfaceName);
             if (interfaceName.equalsIgnoreCase("edu.cmu.sphinx.util.props.Configurable")) {
                 return true;
             } else if (interfaceName.startsWith(COMMON_SPHINX_PACKAGE)) {

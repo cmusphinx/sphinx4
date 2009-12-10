@@ -278,7 +278,7 @@ public final class ConfigurationManagerUtils {
 
                 case COMPONENT_LIST:
                     sb.append("\n\t\t<propertylist name=\"").append(propName).append("\">");
-                    List<String> compNames = (List<String>) ps.getRawNoReplacement(propName);
+                    List<String> compNames = toStringList(ps.getRawNoReplacement(propName));
                     for (String compName : compNames)
                         sb.append("\n\t\t\t<item>").append(compName).append("</item>");
                     sb.append("\n\t\t</propertylist>");
@@ -426,7 +426,7 @@ public final class ConfigurationManagerUtils {
                 switch (propSheet.getType(propName)) {
 
                     case COMPONENT_LIST:
-                        List<String> compNames = (List<String>) propSheet.getRawNoReplacement(propName);
+                        List<String> compNames = toStringList(propSheet.getRawNoReplacement(propName));
                         for (int i = 0; i < compNames.size(); i++) {
                             String compName = compNames.get(i);
                             if (compName.equals(oldName)) {
@@ -475,7 +475,7 @@ public final class ConfigurationManagerUtils {
             String resourceName = jarMatcher.group(2);
 
             try {
-                Class cls = Class.forName(className);
+                Class<?> cls = Class.forName(className);
                 url = cls.getResource(resourceName);
                 if (url == null) {
                     // getResource doesn't usually find directories
@@ -524,21 +524,21 @@ public final class ConfigurationManagerUtils {
      * @return <code>true</code> if <code>aClass</code> is either equal to <code>poosibleParent</code>, a subclass of
      *         it, or implements it if <code>possibleParent</code> is an interface.
      */
-    public static boolean isDerivedClass(Class aClass, Class possibleParent) {
+    public static boolean isDerivedClass(Class<?> aClass, Class<?> possibleParent) {
         return aClass.equals(possibleParent)
                 || (possibleParent.isInterface() && ConfigurationManagerUtils.isImplementingInterface(aClass, possibleParent))
                 || ConfigurationManagerUtils.isSubClass(aClass, possibleParent);
     }
 
 
-    public static boolean isImplementingInterface(Class aClass, Class interfaceClass) {
+    public static boolean isImplementingInterface(Class<?> aClass, Class<?> interfaceClass) {
         assert interfaceClass.isInterface();
 
         Class<?> superClass = aClass.getSuperclass();
         if (superClass != null && isImplementingInterface(superClass, interfaceClass))
             return true;
 
-        for (Class curInterface : aClass.getInterfaces()) {
+        for (Class<?> curInterface : aClass.getInterfaces()) {
             if (curInterface.equals(interfaceClass) || isImplementingInterface(curInterface, interfaceClass))
                 return true;
         }
@@ -547,7 +547,7 @@ public final class ConfigurationManagerUtils {
     }
 
 
-    public static boolean isSubClass(Class aClass, Class possibleSuperclass) {
+    public static boolean isSubClass(Class<?> aClass, Class<?> possibleSuperclass) {
         while (aClass != null && !aClass.equals(Object.class)) {
             aClass = aClass.getSuperclass();
 
@@ -636,7 +636,7 @@ public final class ConfigurationManagerUtils {
         // if a configurable-class should be modified
         if (configurableNames.contains(propName)) {
             try {
-                final Class<? extends Configurable> confClass = (Class<? extends Configurable>) Class.forName(propValue);
+                final Class<? extends Configurable> confClass = Class.forName(propValue).asSubclass(Configurable.class);
                 ConfigurationManagerUtils.setClass(cm.getPropertySheet(propName), confClass);
             } catch (ClassNotFoundException e) {
                 throw new RuntimeException(e);
@@ -732,5 +732,18 @@ public final class ConfigurationManagerUtils {
             throw new RuntimeException("configurable " + ps.getInstanceName() + "has already been instantiated");
 
         ps.setConfigurableClass(confClass);
+    }
+
+    
+    public static List<String> toStringList (Object obj) {
+        List<String> result = new ArrayList<String>();
+        if (!(obj instanceof List<?>))
+            return null;
+        for (Object o : (List<?>)obj) {
+            if (o instanceof String) {
+                result.add((String)o);
+            }
+        }
+        return result;        
     }
 }

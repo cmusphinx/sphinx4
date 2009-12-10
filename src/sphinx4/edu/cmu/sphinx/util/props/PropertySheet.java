@@ -349,7 +349,7 @@ public class PropertySheet implements Cloneable {
     public List<String> getStringList(String name) throws InternalConfigurationException {
         getProperty(name, S4StringList.class);
 
-        return toStringList (propValues.get(name));
+        return ConfigurationManagerUtils.toStringList (propValues.get(name));
     }
     
     /**
@@ -806,19 +806,7 @@ public class PropertySheet implements Cloneable {
     public String toString() {
         return getInstanceName() + "; isInstantiated=" + isInstanciated() + "; props=" + rawProps.keySet();
     }
-    
-    private List<String> toStringList (Object obj) {
-        List<String> result = new ArrayList<String>();
-        if (!(obj instanceof List<?>))
-            return null;
-        for (Object o : (List<?>)obj) {
-            if (o instanceof String) {
-                result.add((String)o);
-            }
-        }
-        return result;        
-    }
-    
+        
     @Override
     protected PropertySheet clone() throws CloneNotSupportedException {
         PropertySheet ps = (PropertySheet)super.clone();
@@ -831,7 +819,7 @@ public class PropertySheet implements Cloneable {
         // make deep copy of raw-lists
         for (String regProp : ps.getRegisteredProperties()) {
             if (getType(regProp) == PropertyType.COMPONENT_LIST) {
-                ps.rawProps.put(regProp, toStringList(rawProps.get(regProp)));
+                ps.rawProps.put(regProp, ConfigurationManagerUtils.toStringList(rawProps.get(regProp)));
                 ps.propValues.put(regProp, null);
             }
         }
