@@ -22,8 +22,6 @@ import java.util.ArrayList;
 public class BaseGrammar
     implements Grammar, Serializable, SpeechEventDispatcher {
 
-    private static final long serialVersionUID = 1L;
-
     public transient BaseRecognizer recognizer;
     protected final transient List<GrammarListener> grammarListeners = new ArrayList<GrammarListener>();
     protected final transient List<ResultListener> resultListeners = new ArrayList<ResultListener>();

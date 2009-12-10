@@ -32,7 +32,7 @@ import java.util.logging.Logger;
  * Triphone selection algorithm:
  * 
  * 1) Look for a triphone that matches exactly in terms of unit, unit 
- * context and word position. Word position can be one of 'begining', 
+ * context and word position. Word position can be one of 'beginning', 
  * 'end', 'internal', 'single' and 'unknown'. 
  * 2) If not found, try to find a match at any word position. 
  * 3) If still not found, if any of the context units are non-silence  
@@ -50,7 +50,7 @@ import java.util.logging.Logger;
  * Remark2: HTK does nearly never backoff to monophones, whereas S4 might do it.
  * Hence, all 1ph must be present, which is not always the case in HTK models.
  * In this file, we have simply tied all 1phs to the first 3ph found with the
- * same basephone. This is clearly not the best option, this may impact the
+ * same base phone. This is clearly not the best option, this may impact the
  * performances. A better alternative should be proposed.
  * 
  * Remark3: HTK is case-sensitive, while S4 requires upper-case names. A good

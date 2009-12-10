@@ -21,10 +21,7 @@ import java.util.*;
  */
 public class ConfusionSet extends TreeMap<Double, Set<WordResult>> {
 
-	private static final long serialVersionUID = 1L;
-
-
-	/**
+    /**
      * Add a word hypothesis to this confusion set.
      *
      * @param word the hypothesis to add

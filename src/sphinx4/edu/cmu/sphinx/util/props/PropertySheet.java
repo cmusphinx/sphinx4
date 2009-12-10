@@ -9,7 +9,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * A property sheet which defines a collection of properties for a single component in the system.
+ * A property sheet which defines a collection of properties for a single component
+ * in the system.
  *
  * @author Holger Brandl
  */
@@ -112,9 +113,6 @@ public class PropertySheet implements Cloneable {
                 if (!isDefDefined)
                     throw new InternalConfigurationException(getInstanceName(), name, "mandatory property is not set!");
             }
-	    // else if(!isDefDefined)
-	    //     throw new InternalConfigurationException(getInstanceName(), name, "no default value for non-mandatory property");
-
             propValues.put(name, isDefDefined ? s4String.defaultValue() : null);
         }
 
@@ -326,7 +324,8 @@ public class PropertySheet implements Cloneable {
 
         if (propValues.get(propName) != null)
             try {
-                defClass = (Class<? extends Configurable>) Class.forName((String) propValues.get(propName));
+                Class<?> objClass = Class.forName((String) propValues.get(propName));
+                defClass = objClass.asSubclass(Configurable.class);
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();
             }
@@ -340,7 +339,6 @@ public class PropertySheet implements Cloneable {
         return defClass;
     }
 
-
     /**
      * Gets a list of float numbers associated with the given parameter name
      *
@@ -350,10 +348,10 @@ public class PropertySheet implements Cloneable {
      */
     public List<String> getStringList(String name) throws InternalConfigurationException {
         getProperty(name, S4StringList.class);
-        return (List<String>) propValues.get(name);
+
+        return toStringList (propValues.get(name));
     }
     
-
     /**
      * Gets a list of components associated with the given parameter name
      * 
@@ -808,7 +806,19 @@ public class PropertySheet implements Cloneable {
     public String toString() {
         return getInstanceName() + "; isInstantiated=" + isInstanciated() + "; props=" + rawProps.keySet();
     }
-
+    
+    private List<String> toStringList (Object obj) {
+        List<String> result = new ArrayList<String>();
+        if (!(obj instanceof List<?>))
+            return null;
+        for (Object o : (List<?>)obj) {
+            if (o instanceof String) {
+                result.add((String)o);
+            }
+        }
+        return result;        
+    }
+    
     @Override
     protected PropertySheet clone() throws CloneNotSupportedException {
         PropertySheet ps = (PropertySheet)super.clone();
@@ -821,7 +831,7 @@ public class PropertySheet implements Cloneable {
         // make deep copy of raw-lists
         for (String regProp : ps.getRegisteredProperties()) {
             if (getType(regProp) == PropertyType.COMPONENT_LIST) {
-                ps.rawProps.put(regProp, new ArrayList<String>((Collection<? extends String>) rawProps.get(regProp)));
+                ps.rawProps.put(regProp, toStringList(rawProps.get(regProp)));
                 ps.propValues.put(regProp, null);
             }
         }

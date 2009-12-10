@@ -29,7 +29,6 @@ import java.util.HashMap;
  */
  class PanelGlobal extends javax.swing.JPanel implements GUIFileActionListener {
     
-    private static final long serialVersionUID = 1L;
     private final String _title;
     private final GUIMediator _gm;
      
@@ -156,7 +155,6 @@ import java.util.HashMap;
             }
         ) {
 
-            private static final long serialVersionUID = 1L;
             final Class<?>[] types = new Class [] {
                 java.lang.String.class, java.lang.String.class
             };

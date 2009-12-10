@@ -391,7 +391,6 @@ class Sphinx3Saver implements Saver {
         //System.out.println("vectorLength " + vectorLength.length);
         //System.out.println("rawLength " + rawLength);
 
-        int r = 0;
         for (int i = 0; i < numStates; i++) {
             for (int j = 0; j < numStreams; j++) {
                 for (int k = 0; k < numGaussiansPerState; k++) {

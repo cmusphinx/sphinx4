@@ -8,6 +8,7 @@ package edu.cmu.sphinx.jsgf.parser;
  */
 
 public
+@SuppressWarnings("all")
 class JavaCharStream
 {
   /** Whether parser is static. */

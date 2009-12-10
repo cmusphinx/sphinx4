@@ -26,8 +26,6 @@ import java.util.*;
 /** Implementation of javax.speech.recognition.RuleGrammar. */
 public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar, Serializable {
 
-    private static final long serialVersionUID = 1L;
-
     private JSGFRuleGrammar jsgfGrammar;
     
     /**

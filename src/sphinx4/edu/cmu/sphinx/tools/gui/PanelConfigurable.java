@@ -31,8 +31,6 @@ import java.util.List;
  */
 public class PanelConfigurable extends javax.swing.JPanel {
 
-    private static final long serialVersionUID = 1L;
-
     private final PanelMediator _pm;
 
     private static final int COMBO_NEUTRAL = 1;
@@ -1354,8 +1352,6 @@ public class PanelConfigurable extends javax.swing.JPanel {
 
     private class PanelMediatorException extends java.lang.Exception {
 
-        private static final long serialVersionUID = 1L;
-
         private final static int INVALID_CLASSNAME = 1;
         private final static int DUPLICATE_SET_NAME = 2;
         private final static int INVALID_SETNAME = 3;
@@ -1394,8 +1390,6 @@ class ListItem {
   } // end ListItem class
 
  class MyCellRenderer extends JLabel implements ListCellRenderer {
-
-    private static final long serialVersionUID = 1L;
 
     public MyCellRenderer () {
         // Don't paint behind the component

@@ -20,6 +20,7 @@ import edu.cmu.sphinx.jsgf.JSGFRuleGrammarFactory;
 import edu.cmu.sphinx.jsgf.JSGFRuleGrammarManager;
 import edu.cmu.sphinx.jsgf.JSGFGrammarParseException;
 
+@SuppressWarnings("all")
 class JSGFEncoding {
     public String version;
 

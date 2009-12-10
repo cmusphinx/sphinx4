@@ -73,34 +73,43 @@ public class ConfigConverter {
     private final static String XML_CLOSE_TAG = "\" > \n";
     private final static String XML_QUOTE = "\"";
             
-    // a helper method to write the information from a single RawPropertyData 
-    private void writeComponent(StringBuilder sb, RawPropertyData rpd){
+    // a helper method to write the information from a single RawPropertyData
+    private void writeComponent(StringBuilder sb, RawPropertyData rpd) {
         String name = rpd.getName();
         String classname = rpd.getClassName();
         Map<String, Object> properties = rpd.getProperties();
-        if (name != null && classname != null) { // if the rpd is valid
-            sb.append(XML_COMPONENT).append(name).append(XML_QUOTE + XML_TYPE).append(classname).append(XML_CLOSE_TAG);
-            
-            for (Map.Entry<String, Object> entry : properties.entrySet()) {
-                String propName = entry.getKey();
-                Object propVal = entry.getValue();
-                if (propName != null && propVal != null) {
-                    if (propVal instanceof String) {
-                        sb.append(XML_PROP).append(propName).append(XML_QUOTE + XML_VALUE).append(propVal).append(XML_CLOSE_ELEMENT);
-                    } else { // value is a list
-                        sb.append(XML_PROPLIST).append(propName).append(XML_CLOSE_TAG);
-                        // iterate the propertyList
-                        for (String item : (List<String>)propVal) {
-                            if (item != null && !item.trim().isEmpty()){
-                                sb.append(XML_ITEM).append(item).append(XML_ITEM_CLOSE);
-                            }
+        if (name == null || classname == null) {
+            return;
+        }
+        sb.append(XML_COMPONENT).append(name).append(XML_QUOTE + XML_TYPE)
+                .append(classname).append(XML_CLOSE_TAG);
+
+        for (Map.Entry<String, Object> entry : properties.entrySet()) {
+            String propName = entry.getKey();
+            Object propVal = entry.getValue();
+            if (propName == null && propVal == null) {
+                continue;
+            }
+            if (propVal instanceof String) {
+                sb.append(XML_PROP).append(propName).append(
+                        XML_QUOTE + XML_VALUE).append(propVal).append(
+                        XML_CLOSE_ELEMENT);
+            } else if (propVal instanceof List<?>) {
+                sb.append(XML_PROPLIST).append(propName).append(XML_CLOSE_TAG);
+                // iterate the propertyList
+                for (Object obj : (List<?>) propVal) {
+                    if (obj instanceof String) {
+                        String item = (String) obj;
+                        if (item != null && !item.trim().isEmpty()) {
+                            sb.append(XML_ITEM).append(item).append(
+                                    XML_ITEM_CLOSE);
                         }
-                        sb.append(XML_PROPLIST_CLOSE);
                     }
                 }
+                sb.append(XML_PROPLIST_CLOSE);
             }
-            sb.append(XML_COMPONENT_CLOSE);
         }
+        sb.append(XML_COMPONENT_CLOSE);
     }
     
     /**

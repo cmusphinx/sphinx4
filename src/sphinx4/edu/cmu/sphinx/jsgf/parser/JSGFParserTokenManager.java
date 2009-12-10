@@ -19,6 +19,7 @@ import edu.cmu.sphinx.jsgf.JSGFRuleGrammarManager;
 import edu.cmu.sphinx.jsgf.JSGFGrammarParseException;
 
 /** Token Manager. */
+@SuppressWarnings("all")
 public class JSGFParserTokenManager implements JSGFParserConstants
 {
 

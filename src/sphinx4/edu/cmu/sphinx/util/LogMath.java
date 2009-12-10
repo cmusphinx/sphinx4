@@ -21,18 +21,17 @@ import java.util.logging.Logger;
  * SphinxProperty: <br> <code> edu.cmu.sphinx.util.LogMath.logBase </code><br>
  */
 public final class LogMath implements Configurable, Serializable {
-
+   
     /**
-     * Sphinx property to get the Log base. According to forum discussionss a value between 1.00001 and 1.0004 should be
-     * used for speech reocgnition. Going above 1.0005 will probably hurt.
+     * A property to get the Log base. According to forum discussions a value 
+     * between 1.00001 and 1.0004 should be used for speech recognition. Going 
+     * above 1.0005 will probably hurt.
      */
-//    @S4Double(defaultValue = Math.E)
     @S4Double(defaultValue = 1.0001)
     public final static String PROP_LOG_BASE = "logBase";
 
-
     /**
-     * Sphinx property that controls whether we use the old, slow (but correct) method of performing the LogMath.add by
+     * A property that controls whether we use the old, slow (but correct) method of performing the LogMath.add by
      * doing the actual computation.
      */
     @S4Boolean(defaultValue = true)

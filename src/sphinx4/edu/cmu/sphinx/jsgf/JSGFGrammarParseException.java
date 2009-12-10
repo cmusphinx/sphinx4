@@ -9,8 +9,6 @@ package edu.cmu.sphinx.jsgf;
 
 public class JSGFGrammarParseException extends Exception
 {
-
-	private static final long serialVersionUID = 1L;
 	public int lineNumber;
 	public int charNumber;
 	public String message;

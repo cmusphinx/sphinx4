@@ -32,8 +32,6 @@ public class ScorerTests {
 
     Scoreable testToken = new Token(1.f, 1.f, null) {
 
-        private static final long serialVersionUID = 1L;
-
         @Override
         public float calculateScore(Data feature) {
             return -1;

@@ -1635,9 +1635,7 @@ public class LexTreeLinguist implements Linguist {
 
     class ArcCache extends LinkedHashMap<LexTreeState, SearchStateArc[]> {
 
-		private static final long serialVersionUID = 1L;
-
-		@Override
+	@Override
         protected boolean removeEldestEntry(Map.Entry<LexTreeState, SearchStateArc[]> eldest) {
             return size() > maxArcCacheSize;
         }

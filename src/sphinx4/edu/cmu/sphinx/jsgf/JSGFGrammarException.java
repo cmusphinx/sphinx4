@@ -9,8 +9,6 @@ package edu.cmu.sphinx.jsgf;
 
 public class JSGFGrammarException extends Exception {
 
-	private static final long serialVersionUID = 1L;
-	
 	public JSGFGrammarException(String message) {
 		super(message);
 	}

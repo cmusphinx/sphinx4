@@ -58,9 +58,6 @@ public class VUMeterPanel extends JPanel {
         }
     }
 
-    private int lastLevel = -1;
-
-
     /**
      * Paint the component.  This will be called by AWT/Swing.
      *
@@ -71,14 +68,7 @@ public class VUMeterPanel extends JPanel {
         super.paintComponent(g);
 
         if (vu != null) {
-
-//            System.out.println(lastLevel);
-
-//            if (vu.getIsClipping()) {
-//                paintClippingVUMeter(g);
-//            } else {
             paintVUMeter(g);
-//            }
         }
     }
 
@@ -101,24 +91,18 @@ public class VUMeterPanel extends JPanel {
         assert level >= 0;
         assert level < numberOfLights;
 
-//        if (level == lastLevel) return;
-        lastLevel = level;
-//
         Dimension sz = getSize();
         int w = sz.width;
         int h = (sz.height / numberOfLights);
-//
-//        assert h > 2;
-//        assert w > 2;
 
         g.setColor(Color.BLACK);
         g.fillRect(0, 0, sz.width - 1, sz.height - 1);
-//
+
         for (int i = 0; i < level; i++) {
             setLevelColor(i, g);
             g.fillRect(1, sz.height - (i * h) + 1, w - 2, h - 2);
         }
-//
+
         setLevelColor(peak, g);
         g.fillRect(1, sz.height - (peak * h) + 1, w - 2, h - 2);
 
@@ -138,8 +122,6 @@ public class VUMeterPanel extends JPanel {
 
 
     private void paintClippingVUMeter(Graphics g) {
-
-        lastLevel = -1;
 
         Dimension sz = getSize();
         int w = sz.width;
