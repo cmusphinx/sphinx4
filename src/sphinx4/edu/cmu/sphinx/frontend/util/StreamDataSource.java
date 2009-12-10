@@ -203,8 +203,7 @@ public class StreamDataSource extends BaseDataProcessor {
                 closeDataStream();
             }
         } catch (IOException ioe) {
-            ioe.printStackTrace();
-            throw new DataProcessingException("Error reading data");
+            throw new DataProcessingException("Error reading data", ioe);
         }
         // turn it into an Data object
         double[] doubleData;

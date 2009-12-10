@@ -9,8 +9,6 @@
  * WARRANTIES.
  *
  */
-
-
 package edu.cmu.sphinx.frontend;
 
 /** Thrown to indicate that a DataProcessor has problems processing incoming Data objects. */
@@ -21,13 +19,32 @@ public class DataProcessingException extends RuntimeException {
         super();
     }
 
-
     /**
-     * Constructs a DataProcessingException with the specified detailed message.
+     * Constructs a DataProcessingException with the specified detail message.
      *
-     * @param message the detailed message
+     * @param message the detail message
      */
     public DataProcessingException(String message) {
         super(message);
     }
+
+    /**
+     * Constructs a DataProcessingException with the specified detail message and cause.
+     *
+     * @param message the detail message
+     * @param cause the cause
+     */
+    public DataProcessingException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    /**
+     * Constructs a DataProcessingException with the specified cause.
+     *
+     * @param cause the cause
+     */
+    public DataProcessingException(Throwable cause) {
+        super(cause);
+    }
 }
+

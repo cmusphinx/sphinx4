@@ -92,8 +92,7 @@ public class SocketDataSource extends BaseDataProcessor {
                 }
             }
         } catch (IOException ioe) {
-            throw new DataProcessingException
-                    ("Error reading from the network.");
+            throw new DataProcessingException("Error reading from the network", ioe);
         }
     }
 

@@ -169,8 +169,7 @@ public class StreamCepstrumSource extends BaseDataProcessor {
                 }
                 curPoint++;
             } catch (IOException ioe) {
-                throw new DataProcessingException
-                        ("IOException closing cepstrum stream.");
+                throw new DataProcessingException("IOException closing cepstrum stream", ioe);
             }
         } else if (curPoint > numPoints) {
             data = null;
@@ -192,8 +191,7 @@ public class StreamCepstrumSource extends BaseDataProcessor {
                     }
                     curPoint++;
                 } catch (IOException ioe) {
-                    throw new DataProcessingException
-                            ("IOException reading from cepstrum stream.");
+                    throw new DataProcessingException("IOException reading from cepstrum stream", ioe);
                 }
             }
 
