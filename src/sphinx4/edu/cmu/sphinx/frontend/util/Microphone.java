@@ -18,6 +18,8 @@ import javax.sound.sampled.*;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -117,7 +119,7 @@ public class Microphone extends BaseDataProcessor {
     private AudioFormat finalFormat;
     private AudioInputStream audioStream;
     private TargetDataLine audioLine;
-    private DataList audioList;
+    private BlockingQueue<Data> audioList;
     private Utterance currentUtterance;
     private boolean doConversion;
     private final int audioBufferSize = 160000;
@@ -223,7 +225,7 @@ public class Microphone extends BaseDataProcessor {
     @Override
     public void initialize() {
         super.initialize();
-        audioList = new DataList();
+        audioList = new LinkedBlockingQueue<Data>();
 
         DataLine.Info info
                 = new DataLine.Info(TargetDataLine.class, desiredFormat);
@@ -689,7 +691,7 @@ public class Microphone extends BaseDataProcessor {
      * Clears all cached audio data.
      */
     public void clear() {
-        audioList = new DataList();
+        audioList.clear();
     }
 
 
@@ -708,7 +710,11 @@ public class Microphone extends BaseDataProcessor {
         Data output = null;
 
         if (!utteranceEndReached) {
-            output = audioList.remove();
+            try {
+                output = audioList.take();
+            } catch (InterruptedException ie) {
+                throw new DataProcessingException("cannot take Data from audioList", ie);
+            }
             if (output instanceof DataEndSignal) {
                 utteranceEndReached = true;
             }
@@ -723,76 +729,13 @@ public class Microphone extends BaseDataProcessor {
 
 
     /**
-     * Returns true if there is more data in the Microphone. This happens either if getRecording() return true, or if
-     * the buffer in the Microphone has a size larger than zero.
+     * Returns true if there is more data in the Microphone.
+     * This happens either if the a DataEndSignal data was not taken from the buffer,
+     * or if the buffer in the Microphone is not yet empty.
      *
      * @return true if there is more data in the Microphone
      */
     public boolean hasMoreData() {
-        boolean moreData;
-        synchronized (audioList) {
-            moreData = (!utteranceEndReached || audioList.size() > 0);
-        }
-        return moreData;
-    }
-}
-
-
-/**
- * Manages the data as a FIFO queue
- */
-class DataList {
-
-    private final List<Data> list;
-
-
-    /**
-     * Creates a new data list
-     */
-    public DataList() {
-        list = new LinkedList<Data>();
-    }
-
-
-    /**
-     * Adds a data to the queue
-     *
-     * @param data the data to add
-     */
-    public synchronized void add(Data data) {
-        list.add(data);
-        notify();
-    }
-
-
-    /**
-     * Returns the current size of the queue
-     *
-     * @return the size of the queue
-     */
-    public synchronized int size() {
-        return list.size();
-    }
-
-
-    /**
-     * Removes the oldest item on the queue
-     *
-     * @return the oldest item
-     */
-    public synchronized Data remove() {
-        try {
-            while (list.isEmpty()) {
-                // System.out.println("Waiting...");
-                wait();
-            }
-        } catch (InterruptedException ie) {
-            ie.printStackTrace();
-        }
-        Data data = list.remove(0);
-        if (data == null) {
-            System.out.println("DataList is returning null.");
-        }
-        return data;
+        return !(utteranceEndReached && audioList.isEmpty());
     }
 }
