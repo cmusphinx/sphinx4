@@ -406,8 +406,6 @@ public class NISTAlign {
      */
     public void printTotalSummary() {
         if (totalSentences > 0) {
-            float wordErrorRate = getTotalWordErrorRate();
-
             System.out.print(
                     "   Accuracy: " + toPercentage("##0.000%",
                             getTotalWordAccuracy()));

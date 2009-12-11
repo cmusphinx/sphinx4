@@ -166,7 +166,6 @@ class AsyncStreamReader extends Thread
 {
 	private final StringBuffer fBuffer;
 	private final InputStream fInputStream;
-	private final String fThreadId;
 	private boolean fStop;
 	
 	private final String fNewLine;
@@ -175,8 +174,6 @@ class AsyncStreamReader extends Thread
 	{
 		fInputStream = inputStream;
 		fBuffer = buffer;
-		fThreadId = threadId;
-
 		
 		fNewLine = System.getProperty("line.separator");
 	}	
@@ -191,7 +188,7 @@ class AsyncStreamReader extends Thread
 		try {
 			readCommandOutput();
 		} catch (Exception ex) {
-			//ex.printStackTrace(); //DEBUG
+			ex.printStackTrace();
 		}
 	}
 	
@@ -204,16 +201,10 @@ class AsyncStreamReader extends Thread
             fBuffer.append(line).append(fNewLine);
 		}		
 		bufOut.close();
-		//printToConsole("END OF: " + fThreadId); //DEBUG
 	}
 	
 	public void stopReading() {
 		fStop = true;
-	}
-
-	
-	private synchronized void printToConsole(String line) {
-		System.out.println(line);
 	}
 }
  

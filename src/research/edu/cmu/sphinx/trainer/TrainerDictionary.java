@@ -13,14 +13,11 @@
 package edu.cmu.sphinx.trainer;
 
 import edu.cmu.sphinx.linguist.acoustic.Unit;
-import edu.cmu.sphinx.linguist.dictionary.Dictionary;
 import edu.cmu.sphinx.linguist.dictionary.FullDictionary;
 import edu.cmu.sphinx.linguist.dictionary.Pronunciation;
 
 /** Dummy trainer dictionary. */
 public class TrainerDictionary extends FullDictionary {
-
-    static private Dictionary dictionary;
 
     static final String UTTERANCE_BEGIN_SYMBOL = "<s>";
     static final String UTTERANCE_END_SYMBOL = "</s>";

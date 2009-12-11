@@ -16,7 +16,6 @@
 package edu.cmu.sphinx.frontend.util;
 
 import edu.cmu.sphinx.frontend.*;
-import edu.cmu.sphinx.util.ExtendedStreamTokenizer;
 import edu.cmu.sphinx.util.Utilities;
 import edu.cmu.sphinx.util.props.*;
 
@@ -57,7 +56,6 @@ public class StreamHTKCepstrum extends BaseDataProcessor {
     @S4Integer(defaultValue = 16000)
     public static final String PROP_SAMPLE_RATE = "sampleRate";
  
-    private ExtendedStreamTokenizer est; // for ASCII files
     private DataInputStream binaryStream; // for binary files
     private int numPoints;
     private int curPoint;
@@ -95,6 +93,7 @@ public class StreamHTKCepstrum extends BaseDataProcessor {
         sampleRate = ps.getInt(PROP_SAMPLE_RATE);
         frameShift = DataUtil.getSamplesPerWindow(sampleRate, frameShiftMs);
         frameSize = DataUtil.getSamplesPerShift(sampleRate, frameSizeMs);
+        logger = ps.getLogger();
     }
 
 
@@ -119,31 +118,35 @@ public class StreamHTKCepstrum extends BaseDataProcessor {
     public void setInputStream(InputStream stream)
             throws IOException {
         {
-        	binaryStream = new DataInputStream(new BufferedInputStream(stream));
+            // TODO: update sampleRate
+            binaryStream = new DataInputStream(new BufferedInputStream(stream));
             if (bigEndian) {
-            	// number of frames
             	numPoints = binaryStream.readInt();
                 int sampPeriod = binaryStream.readInt();
-                // TODO: update sampleRate
-                // Number of bytes per frame
                 short sampSize = binaryStream.readShort();
-                cepstrumLength = sampSize / 4;
-                System.out.println ("Sample size " + sampSize);
-                // Number of floats to read
-                numPoints *= cepstrumLength;
                 short parmKind = binaryStream.readShort();
-                System.out.println("BigEndian");
+
+                cepstrumLength = sampSize / 4;
+                numPoints *= cepstrumLength;
+
+                logger.info("Sample period is " + sampPeriod);
+                logger.info("Sample size " + sampSize);
+                logger.info("Parameter kind " + parmKind);
+                logger.info("BigEndian");
             } else {
                 numPoints = Utilities.readLittleEndianInt(binaryStream);
+
                 int sampPeriod = Utilities.readLittleEndianInt(binaryStream);
-                // TODO: update sampleRate
-                // number of bytes per frame
                 short sampSize = readLittleEndianShort(binaryStream);
-                cepstrumLength = sampSize/4;
-                // Number of floats to read
-                numPoints *= cepstrumLength;
                 short parmKind = readLittleEndianShort(binaryStream);
-                System.out.println("LittleEndian");
+
+                cepstrumLength = sampSize/4;
+                numPoints *= cepstrumLength;
+
+                logger.info("Sample period is " + sampPeriod);
+                logger.info("Sample size " + sampSize);
+                logger.info("Parameter kind " + parmKind);
+                logger.info("LittleEndian");
             }
             System.out.println("Frames: " + numPoints / cepstrumLength);
         }

@@ -12,7 +12,6 @@
 
 package edu.cmu.sphinx.research.bushderby;
 
-import edu.cmu.sphinx.decoder.search.ActiveList;
 import edu.cmu.sphinx.decoder.search.SimpleBreadthFirstSearchManager;
 import edu.cmu.sphinx.decoder.search.Token;
 import edu.cmu.sphinx.linguist.*;
@@ -28,6 +27,7 @@ import edu.cmu.sphinx.util.props.S4Boolean;
 import edu.cmu.sphinx.util.props.S4Double;
 
 import java.util.*;
+import java.util.logging.Logger;
 
 
 /**
@@ -53,6 +53,7 @@ public class BushderbySearchManager extends SimpleBreadthFirstSearchManager {
             PROP_PREFIX + "filterSuccessors";
 
     private LanguageModel languageModel;
+    private Logger logger;
 
     private boolean filterSuccessors;
 
@@ -66,7 +67,7 @@ public class BushderbySearchManager extends SimpleBreadthFirstSearchManager {
     */
     public void newProperties(PropertySheet ps) throws PropertyException {
         super.newProperties(ps);
-
+        logger = ps.getLogger();
         bushderbyEta = ps.getDouble(PROP_BUSHDERBY_ETA);
         filterSuccessors = ps.getBoolean(PROP_FILTER_SUCCESSORS);
 
@@ -95,13 +96,11 @@ public class BushderbySearchManager extends SimpleBreadthFirstSearchManager {
         int pass = 0;
         boolean moreTokensToExpand = true;
 
-        ActiveList oldActiveList = getActiveList();
-
         Iterator<Token> iterator = getActiveList().iterator();
 
-        //todo fixme!!
-//        setResultList(new LinkedList());
-//        setActiveList(getActiveList().createNew());
+        // TODO: fixme!!
+        // setResultList(new LinkedList());
+        // setActiveList(getActiveList().createNew());
 
         while (moreTokensToExpand) {
             pass++;
@@ -116,10 +115,7 @@ public class BushderbySearchManager extends SimpleBreadthFirstSearchManager {
                 !delayedExpansionList.isEmpty()) {
                 finalizeBushderby(delayedExpansionList.iterator());
                 iterator = delayedExpansionList.iterator();
-                if (false) {
-                    System.out.println("Pass " + pass + " Processing " +
-                            delayedExpansionList.size() + " delayed tokens");
-                }
+                logger.finest("Pass " + pass + " Processing " + delayedExpansionList.size() + " delayed tokens");
             } else {
                 moreTokensToExpand = false;
             }
@@ -140,10 +136,7 @@ public class BushderbySearchManager extends SimpleBreadthFirstSearchManager {
             if (isGreenState(state)) {
                 float logNewScore = (float)
                         (token.getWorkingScore() / bushderbyEta);
-                if (false) {
-                    System.out.println("OS: " + token.getScore() + " NS: "
-                            + logNewScore);
-                }
+                logger.finest("OS: " + token.getScore() + " NS: " + logNewScore);
                 token.setScore(logNewScore);
             }
         }
@@ -272,10 +265,7 @@ public class BushderbySearchManager extends SimpleBreadthFirstSearchManager {
                         (float)(logCurrentScore * bushderbyEta));
                     bestToken.setWorkingScore(logWorkingScore);
                 }
-                if (false) {
-                    System.out.println("CS: " + logCurrentScore +
-                        " WS: " + logWorkingScore);
-                }
+                logger.finest("CS: " + logCurrentScore + " WS: " + logWorkingScore);
             }
         }
     }

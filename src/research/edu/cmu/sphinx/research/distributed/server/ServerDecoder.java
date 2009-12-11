@@ -12,7 +12,10 @@
 
 package edu.cmu.sphinx.research.distributed.server;
 
-import edu.cmu.sphinx.decoder.Decoder;
+import edu.cmu.sphinx.frontend.FrontEnd;
+import edu.cmu.sphinx.recognizer.Recognizer;
+import edu.cmu.sphinx.result.Result;
+import edu.cmu.sphinx.util.props.ConfigurationManager;
 
 import java.io.DataInputStream;
 import java.io.EOFException;
@@ -27,18 +30,18 @@ import java.net.Socket;
  */
 public class ServerDecoder extends BaseServer {
 
-    private Decoder decoder;
+    private Recognizer recognizer;
+    private FrontEnd frontend;
 
 
     /**
      * Constructs a default ServerDecoder.
-     *
-     * @param context the context of this ServerDecoder
-     * @throws InstantiationException if an initialization error occurs
-     * @throws IOException            if an I/O error occurs
+     * @param recognizer The recognizer that does the job
+     * @param frontend Frontend for input pipeline;
      */
-    public ServerDecoder(Decoder d) {
-        decoder = d;
+    public ServerDecoder(Recognizer recognizer, FrontEnd frontend) {
+        this.recognizer = recognizer;
+        this.frontend = frontend;
     }
 
 
@@ -56,9 +59,6 @@ public class ServerDecoder extends BaseServer {
 
     /** Handles recognition requests from sockets. */
     class RecognitionHandler implements Runnable {
-
-        // the Socket to communicate with
-        private Socket socket;
 
         private DataInputStream reader;
         private PrintWriter writer;
@@ -80,14 +80,12 @@ public class ServerDecoder extends BaseServer {
          * @param socket the Socket to be used
          */
         private void setSocket(Socket socket) {
-            this.socket = socket;
             if (socket != null) {
                 try {
                     reader = new DataInputStream(socket.getInputStream());
                     writer = new PrintWriter(socket.getOutputStream(), true);
 
-//                    decoder.getRecognizer().getFrontEnd().setDataSource
-//                        (new SocketDataSource(socket));
+                    frontend.setDataSource(new SocketDataSource(socket));
 
                 } catch (IOException ioe) {
                     ioe.printStackTrace();
@@ -113,14 +111,12 @@ public class ServerDecoder extends BaseServer {
 
         /** Handles the recognition request. */
         public void run() {
-            String line = null;
             try {
-                int recognition;
                 // "1" from the client signals a recognition request
-                while ((recognition = reader.readInt()) == 1) {
-//                    Result result = decoder.decode();
-//                    String resultString = result.getBestResultNoFiller();
-//                    sendLine(resultString);
+                while (reader.readInt() == 1) {
+                	Result result = recognizer.recognize();
+                    String resultString = result.getBestResultNoFiller();
+                    sendLine(resultString);
                 }
             } catch (EOFException eofe) {
                 System.out.println("RecognitionHandler: EOF reached");
@@ -141,20 +137,16 @@ public class ServerDecoder extends BaseServer {
 
         if (argv.length < 1) {
             System.out.println
-                    ("Usage: ServerDecoder propertiesFile");
+                    ("Usage: ServerDecoder <configurationXML>");
             System.exit(1);
         }
-
-        String context = "ServerDecoder";
-        String propertiesFile = argv[0];
-        String pwd = System.getProperty("user.dir");
-
         try {
-//            SphinxProperties.initContext(context, new URL("file://" + pwd + "/" + propertiesFile));
-
             assert false : "not implemented yet";
-
-            ServerDecoder decoder = new ServerDecoder(null);
+        	ConfigurationManager cm = new ConfigurationManager (argv[0]);
+        	Recognizer recognizer = (Recognizer)cm.lookup("recognizer");
+        	FrontEnd frontend = (FrontEnd)cm.lookup("frontend");
+        	
+            ServerDecoder decoder = new ServerDecoder(recognizer, frontend);
             (new Thread(decoder)).start();
         } catch (Exception e) {
             e.printStackTrace();

@@ -181,7 +181,7 @@ public class ZipCity extends JFrame {
                     } else {
                         String location = zipInfo.getCity() + ", " 
                             + zipInfo.getState();
-                        setMessage("");
+                        setMessage(location);
                         currentInfo = zipInfo;
                     }
                 }

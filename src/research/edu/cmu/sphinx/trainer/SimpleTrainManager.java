@@ -202,7 +202,6 @@ class SimpleTrainManager implements TrainManager {
     public void trainContextIndependentModels(String context)
             throws IOException {
         UtteranceGraph uttGraph;
-        TranscriptGraph transcriptGraph;
         TrainerScore[] score;
         TrainerScore[] nextScore;
 

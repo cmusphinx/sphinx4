@@ -135,23 +135,27 @@ public class Trainer implements Configurable {
     /**
      * Main method of this Trainer.
      *
-     * @param argv argv[0] : SphinxProperties file
+     * @param argv argv[0] : XML configuration file
      */
     public static void main(String[] argv) {
 
-        if (argv.length < 1) {
+        if (argv.length > 1) {
             System.out.println
-                    ("Usage: Trainer propertiesFile");
+                    ("Usage: Trainer [config]");
             System.exit(1);
         }
+    	String context = "trainer";
 
-        String context = "trainer";
-        String propertiesFile = argv[0];
-        String pwd = System.getProperty("user.dir");
-
-        //            SphinxProperties.initContext(context, new URL("file:///" + pwd + "/" + propertiesFile));
-
-        Trainer trainer = ConfigurationManager.getInstance(Trainer.class);
-        trainer.processStages(context);
+        if (argv.length == 0) {
+        	Trainer trainer = ConfigurationManager.getInstance(Trainer.class);
+        	trainer.processStages(context);
+        } else {
+       
+        	String configFile = argv[0];
+        
+        	ConfigurationManager cm = new ConfigurationManager(configFile);
+        	Trainer trainer = (Trainer)cm.lookup (context);
+        	trainer.processStages(context);
+        }
     }
 }

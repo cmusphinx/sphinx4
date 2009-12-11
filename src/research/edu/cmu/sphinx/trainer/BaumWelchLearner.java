@@ -14,7 +14,6 @@ package edu.cmu.sphinx.trainer;
 
 import edu.cmu.sphinx.frontend.*;
 import edu.cmu.sphinx.frontend.util.StreamDataSource;
-import edu.cmu.sphinx.linguist.acoustic.HMM;
 import edu.cmu.sphinx.linguist.acoustic.HMMState;
 import edu.cmu.sphinx.linguist.acoustic.tiedstate.SenoneHMM;
 import edu.cmu.sphinx.linguist.acoustic.tiedstate.SenoneHMMState;
@@ -59,7 +58,6 @@ public class BaumWelchLearner implements Learner {
     private TrainerScore[][] scoreArray;
     private int lastFeatureIndex;
     private int currentFeatureIndex;
-    private float[] alphas;
     private float[] betas;
     private float[] outputProbs;
     private float[] componentScores;
@@ -178,7 +176,6 @@ public class BaumWelchLearner implements Learner {
         List<TrainerScore[]> scoreList = new ArrayList<TrainerScore[]>();
         int numStates = graph.size();
         TrainerScore[] score = new TrainerScore[numStates];
-        alphas = new float[numStates];
         betas = new float[numStates];
         outputProbs = new float[numStates];
 
@@ -208,7 +205,6 @@ public class BaumWelchLearner implements Learner {
                 // See if it's the last state in the HMM, i.e., if
                 // it's non-emitting.
                 HMMState state = (HMMState) node.getObject();
-                HMM hmm = state.getHMM();
                 if (!state.isEmitting()) {
                     probCurrentFrame[index] = 0.0f;
                 }
@@ -246,7 +242,6 @@ public class BaumWelchLearner implements Learner {
                 // See if it's the last state in the HMM, i.e., if
                 // it's non-emitting.
                 HMMState state = (HMMState) node.getObject();
-                HMM hmm = state.getHMM();
                 if (!state.isEmitting()) {
                     probCurrentFrame[index] = 0.0f;
                 }
@@ -549,10 +544,8 @@ public class BaumWelchLearner implements Learner {
         for (int indexNode = graph.size() - 1; indexNode >= 0; indexNode--) {
             Node node = graph.getNode(indexNode);
             HMMState state = null;
-            HMM hmm = null;
             if (node.isType("STATE")) {
                 state = (HMMState) node.getObject();
-                hmm = state.getHMM();
                 if (state.isEmitting()) {
                     continue;
                 }
