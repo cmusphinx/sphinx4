@@ -119,7 +119,7 @@ public class StreamFactory {
             try {
                 URI newURI = new URI(absoluteLocation);
                 ZipFile zipFile =
-                        new ZipFile(new File(new URI(absoluteLocation)));
+                        new ZipFile(new File(newURI));
                 ZipEntry entry = zipFile.getEntry(file);
                 if (entry != null) {
                     stream = zipFile.getInputStream(entry);

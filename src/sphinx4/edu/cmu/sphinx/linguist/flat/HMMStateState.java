@@ -84,11 +84,6 @@ public class HMMStateState extends SentenceHMMState
     }
 
 
-    /** empty contructor */
-    private HMMStateState() {
-    }
-
-
     /**
      * Returns the state order for this state type
      *

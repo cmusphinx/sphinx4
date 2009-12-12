@@ -12,7 +12,6 @@
 
 package edu.cmu.sphinx.linguist.acoustic.tiedstate.trainer;
 
-import edu.cmu.sphinx.frontend.Data;
 import edu.cmu.sphinx.frontend.FloatData;
 import edu.cmu.sphinx.linguist.acoustic.HMMState;
 import edu.cmu.sphinx.linguist.acoustic.HMM;
@@ -31,18 +30,13 @@ class HMMPoolManager {
     private Pool<float[]> variancePool;
     private Pool<float[][]> matrixPool;
     private Pool<float[]> mixtureWeightsPool;
-    private Pool<float[][]> meanTransformationMatrixPool;
-    private Pool<float[]> meanTransformationVectorPool;
-    private Pool<float[][]> varianceTransformationMatrixPool;
-    private Pool<float[]> varianceTransformationVectorPool;
-
+    
     private Pool<Buffer> meansBufferPool;
     private Pool<Buffer> varianceBufferPool;
     private Pool<Buffer[]> matrixBufferPool;
     private Pool<Buffer> mixtureWeightsBufferPool;
 
     private Pool<Senone> senonePool;
-    private int vectorLength;
     private LogMath logMath;
 
     private float logMixtureWeightFloor;
@@ -151,7 +145,6 @@ class HMMPoolManager {
         int senoneID;
         TrainerScore thisScore = score[index];
 
-        Data feature = thisScore.getData();
         // We should be doing this just once per utterance...
         // currentLogLikelihood = thisScore.getLogLikelihood();
 

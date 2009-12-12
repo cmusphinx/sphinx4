@@ -129,7 +129,6 @@ public class GapInsertionDetector {
                     "<referenceFile> <hypothesisFile>");
         }
         try {
-            String context = "gid";
             String referenceFile = argv[0];
             String hypothesisFile = argv[1];
 

@@ -29,7 +29,7 @@ import java.util.logging.Logger;
 
 /**
  * Creates a dictionary by reading in an ASCII-based Sphinx-3 format dictionary. Each line of the dictionary specifies
- * the word, followed by spaces or tab, followed by the pronuncation (by way of the list of phones) of the word. Each
+ * the word, followed by spaces or tab, followed by the pronunciation (by way of the list of phones) of the word. Each
  * word can have more than one pronunciations. For example, a digits dictionary will look like:
  * <p/>
  * <pre>
@@ -70,8 +70,8 @@ public class FullDictionary implements Dictionary {
     private UnitManager unitManager;
 
 
-    private Map<String, Object> wordDictionary;
-    private Map<String, Object> fillerDictionary;
+    private Map<String, Word> wordDictionary;
+    private Map<String, Word> fillerDictionary;
     private Timer loadTimer;
 
         public FullDictionary(
@@ -140,6 +140,7 @@ public class FullDictionary implements Dictionary {
             fillerDictionary =
                     loadDictionary(fillerDictionaryFile.openStream(), true);
             loadTimer.stop();
+            logger.finest(dumpToString());
             allocated = true;
         }
     }
@@ -167,10 +168,9 @@ public class FullDictionary implements Dictionary {
      * @param isFillerDict true if this is a filler dictionary, false otherwise
      * @throws java.io.IOException if there is an error reading the dictionary
      */
-    @SuppressWarnings({"unchecked"})
-    protected Map<String, Object> loadDictionary(InputStream inputStream, boolean isFillerDict)
+    protected Map<String, Word> loadDictionary(InputStream inputStream, boolean isFillerDict)
             throws IOException {
-        Map<String, Object> dictionary = new HashMap<String, Object>();
+        Map<String, List<Pronunciation>> pronunciationList = new HashMap<String, List<Pronunciation>>();
         ExtendedStreamTokenizer est = new ExtendedStreamTokenizer(inputStream,
                 true);
         String word;
@@ -183,7 +183,7 @@ public class FullDictionary implements Dictionary {
                 units.add(getCIUnit(unitText, isFillerDict));
             }
             Unit[] unitsArray = units.toArray(new Unit[units.size()]);
-            List<Pronunciation> pronunciations = (List<Pronunciation>) dictionary.get(word);
+            List<Pronunciation> pronunciations = pronunciationList.get(word);
             if (pronunciations == null) {
                 pronunciations = new LinkedList<Pronunciation>();
             }
@@ -199,12 +199,11 @@ public class FullDictionary implements Dictionary {
                         null, null, 1.0f);
                 pronunciations.add(pronunciation2);
             }
-            dictionary.put(word, pronunciations);
+            pronunciationList.put(word, pronunciations);
         }
         inputStream.close();
         est.close();
-        createWords(dictionary, isFillerDict);
-        return dictionary;
+        return createWords(pronunciationList, isFillerDict);
     }
 
 
@@ -213,21 +212,20 @@ public class FullDictionary implements Dictionary {
      *
      * @param isFillerDict if true this is a filler dictionary
      */
-    @SuppressWarnings({"unchecked"})
-    protected void createWords(Map<String, Object> dictionary, boolean isFillerDict) {
-        for (Map.Entry<String, Object> entry : dictionary.entrySet()) {
+    protected HashMap<String, Word> createWords(Map<String, List<Pronunciation>> pronunciationList, boolean isFillerDict) {
+        HashMap <String, Word> result = new HashMap <String, Word>();
+        for (Map.Entry<String, List<Pronunciation>> entry : pronunciationList.entrySet()) {
             String spelling = entry.getKey();
-            List<Pronunciation> pronunciations = (List<Pronunciation>)entry.getValue();
+            List<Pronunciation> pronunciations = entry.getValue();
             Pronunciation[] pros = new Pronunciation[pronunciations.size()];
-            for (int i = 0; i < pros.length; i++) {
-                pros[i] = pronunciations.get(i);
-            }
+            pronunciations.toArray(pros);
             Word word = new Word(spelling, pros, isFillerDict);
             for (Pronunciation pro : pros) {
                 pro.setWord(word);
             }
-            dictionary.put(spelling, word);
+            result.put(spelling, word);
         }
+        return result;
     }
 
 
