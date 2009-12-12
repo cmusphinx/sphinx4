@@ -31,7 +31,7 @@ public class Utilities {
      * Returns a string with the given number of spaces.
      *
      * @param padding the number of spaces in the string
-     * @return a string of length 'padding' containg only the SPACE char.
+     * @return a string of length 'padding' containing only the SPACE char.
      */
     public static String pad(int padding) {
         if (padding > 0) {
@@ -51,7 +51,7 @@ public class Utilities {
      *
      * @param string    the string to be padded
      * @param minLength the desired length of the string
-     * @return a string of length conntaining string padded with whitespace or truncated
+     * @return a string of length containing string padded with whitespace or truncated
      */
     public static String pad(String string, int minLength) {
         String result = string;
@@ -68,9 +68,9 @@ public class Utilities {
     /**
      * Pads with spaces or truncates the given int to guarantee that it is exactly the desired length.
      *
-     * @param val       the val to be padded
+     * @param val       the value to be padded
      * @param minLength the desired length of the string
-     * @return a string of length conntaining string padded with whitespace or truncated
+     * @return a string of length containing string padded with whitespace or truncated
      */
     public static String pad(int val, int minLength) {
         return pad(String.valueOf(val), minLength);
@@ -80,9 +80,9 @@ public class Utilities {
     /**
      * Pads with spaces or truncates the given double to guarantee that it is exactly the desired length.
      *
-     * @param val       the val to be padded
+     * @param val       the value to be padded
      * @param minLength the desired length of the string
-     * @return a string of length conntaining string padded with whitespace or truncated
+     * @return a string of length containing string padded with whitespace or truncated
      */
     public static String pad(double val, int minLength) {
         return pad(String.valueOf(val), minLength);

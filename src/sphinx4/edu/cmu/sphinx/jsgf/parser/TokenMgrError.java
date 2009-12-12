@@ -6,6 +6,14 @@ package edu.cmu.sphinx.jsgf.parser;
 @SuppressWarnings("all")
 public class TokenMgrError extends Error
 {
+
+  /**
+   * The version identifier for this Serializable class.
+   * Increment only if the <i>serialized</i> form of the
+   * class changes.
+   */
+  private static final long serialVersionUID = 1L;
+
   /*
    * Ordinals for various reasons why an Error of this type can be thrown.
    */

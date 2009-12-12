@@ -101,6 +101,7 @@ public class FastDictionary implements Dictionary {
     // working data
     // -------------------------------
     protected Map<String, String> dictionary;
+    protected Map<String, Word> wordDictionary;
 
     protected final static String FILLER_TAG = "-F-";
     protected Set<String> fillerWords;
@@ -184,6 +185,8 @@ public class FastDictionary implements Dictionary {
     public void allocate() throws IOException {
         if (!allocated) {
             dictionary = new HashMap<String, String>();
+            wordDictionary = new HashMap<String, Word>();
+            
             Timer loadTimer = TimerPool.getTimer(this, "DictionaryLoad");
             fillerWords = new HashSet<String>();
 
@@ -322,26 +325,28 @@ public class FastDictionary implements Dictionary {
      */
     @Override
     public Word getWord(String text) {
-        Word word = null;
         text = text.toLowerCase();
-
-        Object object = dictionary.get(text);
-
-        if (object == null) { // deal with 'not found' case
+        Word wordObject = wordDictionary.get(text);
+        
+        if (wordObject != null) {
+            return wordObject; 
+        }
+        
+        String word = dictionary.get (text);
+        if (word == null) { // deal with 'not found' case
             logger.warning("Missing word: " + text);
             if (wordReplacement != null) {
-                word = getWord(wordReplacement);
+                wordObject = getWord(wordReplacement);
             } else if (allowMissingWords) {
                 if (createMissingWords) {
-                    word = createWord(text, null, false);
+                    wordObject = createWord(text, null, false);
                 }
             }
-        } else if (object instanceof String) { // first lookup for this string
-            word = processEntry(text);
-        } else if (object instanceof Word) {
-            word = (Word) object;
+        } else { // first lookup for this string
+            wordObject = processEntry(text);
         }
-        return word;
+        
+        return wordObject;
     }
 
 
@@ -385,7 +390,6 @@ public class FastDictionary implements Dictionary {
                 String tag = st.nextToken();
                 isFiller = tag.startsWith(FILLER_TAG);
                 int unitCount = st.countTokens();
-                dictionary.remove(lookupWord);
 
                 Unit[] units = new Unit[unitCount];
                 for (int i = 0; i < units.length; i++) {
@@ -410,6 +414,7 @@ public class FastDictionary implements Dictionary {
         for (Pronunciation pronunciation : pronunciations) {
             pronunciation.setWord(wordObject);
         }
+        wordDictionary.put (word, wordObject);
 
         return wordObject;
     }

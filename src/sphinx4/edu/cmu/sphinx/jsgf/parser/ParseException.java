@@ -15,6 +15,13 @@ package edu.cmu.sphinx.jsgf.parser;
 public class ParseException extends Exception {
 
   /**
+   * The version identifier for this Serializable class.
+   * Increment only if the <i>serialized</i> form of the
+   * class changes.
+   */
+  private static final long serialVersionUID = 1L;
+
+  /**
    * This constructor is used by the method "generateParseException"
    * in the generated parser.  Calling this constructor generates
    * a new object of this type with the fields "currentToken",
