@@ -83,7 +83,7 @@ class Sphinx3Saver implements Saver {
 
     private Map<String, Unit>  contextIndependentUnits;
     private HMMManager hmmManager;
-    private LogMath logMath;
+    protected LogMath logMath;
     private boolean binary;
     private String location;
     private boolean swap;
@@ -485,7 +485,7 @@ class Sphinx3Saver implements Saver {
     /**
      * Writes a float to the output stream, byte-swapping as necessary
      *
-     * @param dos the inputstream
+     * @param dos the input stream
      * @param val a float value
      * @throws IOException on error
      */
@@ -497,35 +497,7 @@ class Sphinx3Saver implements Saver {
             dos.writeFloat(val);
         }
     }
-
-    // Do we need the method nonZeroFloor??
-    /**
-     * If a data point is non-zero and below 'floor' make it equal to floor (don't floor zero values though).
-     *
-     * @param data  the data to floor
-     * @param floor the floored value
-     */
-    private void nonZeroFloor(float[] data, float floor) {
-        for (int i = 0; i < data.length; i++) {
-            if (data[i] != 0.0 && data[i] < floor) {
-                data[i] = floor;
-            }
-        }
-    }
-
-    /**
-     * If a data point is below 'floor' make it equal to floor.
-     *
-     * @param data  the data to floor
-     * @param floor the floored value
-     */
-    private void floorData(float[] data, float floor) {
-        for (int i = 0; i < data.length; i++) {
-            if (data[i] < floor) {
-                data[i] = floor;
-            }
-        }
-    }
+    
 
     /**
      * Normalize the given data
@@ -558,31 +530,6 @@ class Sphinx3Saver implements Saver {
         }
     }
 
-    /**
-     * Convert to log math
-     *
-     * @param data the data to normalize
-     */
-    // linearToLog returns a float, so zero values in linear scale
-    // should return -Float.MAX_VALUE.
-    private void convertToLogMath(float[] data) {
-        for (int i = 0; i < data.length; i++) {
-            data[i] = logMath.linearToLog(data[i]);
-        }
-    }
-
-    /**
-     * Convert from log math
-     *
-     * @param in  the data in log scale
-     * @param out the data in linear scale
-     */
-    protected void convertFromLogMath(float[] in, float[] out) {
-        assert in.length == out.length;
-        for (int i = 0; i < in.length; i++) {
-            out[i] = (float) logMath.logToLinear(in[i]);
-        }
-    }
 
     /**
      * Writes the given number of floats from an array of floats to a stream.
@@ -789,7 +736,7 @@ class Sphinx3Saver implements Saver {
             pw.print("mixw [" + i + " 0] ");
             float[] mixtureWeight = new float[numGaussiansPerState];
             float[] logMixtureWeight = pool.get(i);
-            convertFromLogMath(logMixtureWeight, mixtureWeight);
+            logMath.logToLinear(logMixtureWeight, mixtureWeight);
 
             float sum = 0.0f;
             for (int j = 0; j < numGaussiansPerState; j++) {
@@ -846,7 +793,7 @@ class Sphinx3Saver implements Saver {
         for (int i = 0; i < numStates; i++) {
             float[] mixtureWeight = new float[numGaussiansPerState];
             float[] logMixtureWeight = pool.get(i);
-            convertFromLogMath(logMixtureWeight, mixtureWeight);
+            logMath.logToLinear(logMixtureWeight, mixtureWeight);
 
             writeFloatArray(dos, mixtureWeight);
         }
@@ -976,7 +923,7 @@ class Sphinx3Saver implements Saver {
             for (int j = 0; j < numRows; j++) {
                 logTmatRow = tmat[j];
                 tmatRow = new float[logTmatRow.length];
-                convertFromLogMath(logTmatRow, tmatRow);
+                logMath.logToLinear(logTmatRow, tmatRow);
                 writeFloatArray(dos, tmatRow);
             }
         }

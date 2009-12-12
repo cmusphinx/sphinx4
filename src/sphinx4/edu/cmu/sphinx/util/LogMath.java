@@ -476,25 +476,19 @@ public final class LogMath implements Configurable, Serializable {
     }
 
 
-    /** Converts a vector from linear domain to logdomain using a given <code>LogMath</code>-instance for conversion. */
-    public static float[] linearToLog(float[] vector, LogMath logMath) {
-        float[] logMixtureWeights = new float[vector.length];
+    /** Converts a vector from linear domain to log domain using a given <code>LogMath</code>-instance for conversion. */
+    public void linearToLog(float[] vector) {
         int nbGaussians = vector.length;
         for (int i = 0; i < nbGaussians; i++) {
-            logMixtureWeights[i] = logMath.linearToLog(vector[i]);
+            vector[i] = linearToLog(vector[i]);
         }
-        return logMixtureWeights;
     }
 
-
+    
     /** Converts a vector from log to linear domain using a given <code>LogMath</code>-instance for conversion. */
-    public static double[] logToLinear(float[] vector, LogMath logMath) {
-        double[] logMixtureWeights = new double[vector.length];
-
+    public void logToLinear(float[] vector, float[] out) {
         for (int i = 0; i < vector.length; i++) {
-            logMixtureWeights[i] = logMath.logToLinear(vector[i]);
+            out[i] = (float)logToLinear(vector[i]);
         }
-
-        return logMixtureWeights;
     }
 }

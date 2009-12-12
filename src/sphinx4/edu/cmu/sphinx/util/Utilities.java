@@ -254,6 +254,55 @@ public class Utilities {
         return Float.intBitsToFloat
                 (swapInteger(Float.floatToRawIntBits(floatValue)));
     }
+    
+
+    /**
+     * If a data point is below 'floor' make it equal to floor.
+     *
+     * @param data  the data to floor
+     * @param floor the floored value
+     */
+    public static void floorData(float[] data, float floor) {
+        for (int i = 0; i < data.length; i++) {
+            if (data[i] < floor) {
+                data[i] = floor;
+            }
+        }
+    }
+    /**
+     * If a data point is non-zero and below 'floor' make it equal to floor
+     * (don't floor zero values though).
+     * 
+     * @param data
+     *            the data to floor
+     * @param floor
+     *            the floored value
+     */
+    public static void nonZeroFloor(float[] data, float floor) {
+        for (int i = 0; i < data.length; i++) {
+            if (data[i] != 0.0 && data[i] < floor) {
+                data[i] = floor;
+            }
+        }
+    }
+    
+
+    /**
+     * Normalize the given data.
+     * 
+     * @data the data to normalize
+     */
+    public static void normalize(float[] data) {
+        float sum = 0;
+        for (float val : data) {
+            sum += val;
+        }
+        if (sum != 0.0f) {
+            for (int i = 0; i < data.length; i++) {
+                data[i] = data[i] / sum;
+            }
+        }
+    }
 }
 
   

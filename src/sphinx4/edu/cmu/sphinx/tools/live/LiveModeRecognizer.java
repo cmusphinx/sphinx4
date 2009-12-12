@@ -30,10 +30,6 @@ import java.util.List;
  */
 public class LiveModeRecognizer implements Configurable {
 
-    /** The SphinxProperty name for how many files to skip for every decode. */
-    @S4Integer(defaultValue = 0)
-    public final static String PROP_SKIP = "skip";
-
     /** The Sphinx property that specifies the recognizer to use */
     @S4Component(type = Recognizer.class)
     public final static String PROP_RECOGNIZER = "recognizer";
@@ -62,7 +58,6 @@ public class LiveModeRecognizer implements Configurable {
     // -------------------------------
     // Configuration data
     // --------------------------------
-    private int skip;
     private Recognizer recognizer;
     private ConcatFileDataSource dataSource;
     private String hypothesisFile;
@@ -76,11 +71,9 @@ public class LiveModeRecognizer implements Configurable {
 
     private FileWriter hypothesisTranscript;
     private ReferenceSource referenceSource;
-    private GapInsertionDetector gapInsertionDetector;
     private final NISTAlign aligner = new NISTAlign(true, true);
 
     public LiveModeRecognizer( Recognizer recognizer, ConcatFileDataSource dataSource, int skip, boolean showGapInsertions, String hypothesisFile, int alignInterval ) {
-        this.skip = skip;
         this.recognizer = recognizer;
         this.dataSource = dataSource;
         this.showGapInsertions = showGapInsertions;
@@ -100,7 +93,6 @@ public class LiveModeRecognizer implements Configurable {
     */
     @Override
     public void newProperties(PropertySheet ps) throws PropertyException {
-        skip = ps.getInt(PROP_SKIP);
         recognizer = (Recognizer) ps.getComponent(PROP_RECOGNIZER);
         dataSource = (ConcatFileDataSource) ps.getComponent(PROP_INPUT_SOURCE);
         showGapInsertions = ps.getBoolean(PROP_SHOW_GAP_INSERTIONS);

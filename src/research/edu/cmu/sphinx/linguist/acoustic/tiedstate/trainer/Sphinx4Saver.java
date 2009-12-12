@@ -100,13 +100,9 @@ class Sphinx4Saver extends Sphinx3Saver {
     protected void saveTransitionMatricesBinary(Pool<float[][]> pool, String path, boolean append)
             throws IOException {
 
-        LogMath logMath = super.getLogMath();
-
         logger.info("Saving transition matrices to: ");
         logger.info(path);
         Properties props = new Properties();
-
-        int checkSum = 0;
 
         String strCheckSum = super.getCheckSum();
         boolean doCheckSum = super.getDoCheckSum();
@@ -156,7 +152,7 @@ class Sphinx4Saver extends Sphinx3Saver {
             for (int j = 0; j < numStates - 1; j++) {
                 logTmatRow = tmat[j];
                 tmatRow = new float[logTmatRow.length];
-                convertFromLogMath(logTmatRow, tmatRow);
+                logMath.logToLinear(logTmatRow, tmatRow);
                 writeFloatArray(dos, tmatRow);
             }
         }

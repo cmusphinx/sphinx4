@@ -16,8 +16,6 @@ import edu.cmu.sphinx.util.props.*;
 
 import javax.sound.sampled.*;
 import java.io.IOException;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.logging.Level;

@@ -225,7 +225,6 @@ public class HTKLoader implements Loader {
     @Override
     public void load() throws IOException {
         if (!loaded) {
-            // TODO: what is this all about?
             hmmManager = new HMMManager();
             contextIndependentUnits = new LinkedHashMap<String, Unit>();
             // dummy pools for these elements
@@ -426,77 +425,6 @@ public class HTKLoader implements Loader {
         return val;
     }
 
-    // Do we need the method nonZeroFloor??
-    /**
-     * If a data point is non-zero and below 'floor' make it equal to floor
-     * (don't floor zero values though).
-     * 
-     * @data the data to floor
-     * @floor the floored value
-     */
-    protected void nonZeroFloor(float[] data, float floor) {
-        for (int i = 0; i < data.length; i++) {
-            if (data[i] != 0.0 && data[i] < floor) {
-                data[i] = floor;
-            }
-        }
-    }
-
-    /**
-     * If a data point is below 'floor' make it equal to floor.
-     * 
-     * @data the data to floor
-     * @floor the floored value
-     */
-    private void floorData(float[] data, float floor) {
-        for (int i = 0; i < data.length; i++) {
-            if (data[i] < floor) {
-                data[i] = floor;
-            }
-        }
-    }
-
-    /**
-     * Normalize the given data.
-     * 
-     * @data the data to normalize
-     */
-    protected void normalize(float[] data) {
-        float sum = 0;
-        for (float val : data) {
-            sum += val;
-        }
-        if (sum != 0.0f) {
-            for (int i = 0; i < data.length; i++) {
-                data[i] = data[i] / sum;
-            }
-        }
-    }
-
-    /**
-     * Dump the data
-     * 
-     * the name of the data the data itself
-     */
-    private void dumpData(String name, float[] data) {
-        System.out.println(" ----- " + name + " -----------");
-        for (int i = 0; i < data.length; i++) {
-            System.out.println(name + ' ' + i + ": " + data[i]);
-        }
-    }
-
-    /**
-     * Convert to log math.
-     * 
-     * the data to normalize
-     */
-    // linearToLog returns a float, so zero values in linear scale
-    // should return -Float.MAX_VALUE.
-    protected void convertToLogMath(float[] data) {
-        for (int i = 0; i < data.length; i++) {
-            data[i] = logMath.linearToLog(data[i]);
-        }
-    }
 
     /**
      * Reads the given number of floats from the stream and returns them in an
@@ -555,8 +483,6 @@ public class HTKLoader implements Loader {
                     break;
                 String name = hmm.getName();
                 String attribute;
-                // TODO: this is not general enough !
-                // TODO: read the fillers from a file or a prop
                 if (name.equals("sil") || name.equals("sp")
                         || name.equals("bb") || name.equals("xx")
                         || name.equals("hh"))
@@ -612,8 +538,7 @@ public class HTKLoader implements Loader {
                 String name = hmm.getBaseName();
                 if (!contextIndependentUnits.containsKey(name)) {
                     String attribute;
-                    // TODO: this is not general enough !
-                    // TODO: read the fillers from a file or a prop
+                    
                     if (name.equals("SIL") || name.equals("SP")
                             || name.equals("BB") || name.equals("XX")
                             || name.equals("HH"))
@@ -976,9 +901,7 @@ public class HTKLoader implements Loader {
         }
 
         public Pool<float[]> htkVars(String path, float floor) {
-            // TODO: take into account var floor
             Pool<float[]> pool = new Pool<float[]>(path);
-            // I suppose this is the number of shared states
             int numStates = getNumStates();
             int numStreams = 1;
             int numGaussiansPerState = getGMMSize();
@@ -994,6 +917,7 @@ public class HTKLoader implements Loader {
                         // TODO: check: shall we put inverse vars here ?
                         vars[k] = gmm.getVar(j, k);
                     }
+                    Utilities.floorData(vars, varianceFloor);
                     int id = i * numGaussiansPerState + j;
                     // the order of the vars is the order in the HMMSet.gmms
                     // vector which is the order of appearance in the MMF file
@@ -1004,9 +928,7 @@ public class HTKLoader implements Loader {
         }
 
         public Pool<float[]> htkWeights(String path, float floor) {
-            // TODO: take into account weights floor
             Pool<float[]> pool = new Pool<float[]>(path);
-            // Suppose this is the number of shared states
             int numStates = getNumStates();
             int numStreams = 1;
             int numGaussiansPerState = getGMMSize();
@@ -1019,7 +941,8 @@ public class HTKLoader implements Loader {
                 for (int j = 0; j < numGaussiansPerState; j++) {
                     logWeights[j] = gmm.getWeight(j);
                 }
-                convertToLogMath(logWeights);
+                Utilities.floorData(logWeights, mixtureWeightFloor);
+                logMath.linearToLog(logWeights);
                 // the order of the weights is the order in the HMMSet.gmms
                 // vector which is the order of appearance in the MMF file
                 pool.put(i, logWeights);

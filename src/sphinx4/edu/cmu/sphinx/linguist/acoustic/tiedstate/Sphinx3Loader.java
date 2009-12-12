@@ -224,7 +224,7 @@ public class Sphinx3Loader implements Loader {
     private float[][] transformMatrix;
     private Map<String, Unit> contextIndependentUnits;
     private HMMManager hmmManager;
-    private LogMath logMath;
+    protected LogMath logMath;
     private UnitManager unitManager;
     private Properties properties;
     private boolean swap;
@@ -619,7 +619,7 @@ public class Sphinx3Loader implements Loader {
             for (int j = 0; j < numStreams; j++) {
                 for (int k = 0; k < numGaussiansPerState; k++) {
                     float[] density = readFloatArray(dis, vectorLength[j]);
-                    floorData(density, floor);
+                    Utilities.floorData(density, floor);
                     pool.put(i * numGaussiansPerState + k, density);
                 }
             }
@@ -783,71 +783,6 @@ public class Sphinx3Loader implements Loader {
         return Float.intBitsToFloat(val);
     }
 
-    // Do we need the method nonZeroFloor??
-    /**
-     * If a data point is non-zero and below 'floor' make it equal to floor
-     * (don't floor zero values though).
-     * 
-     * @param data
-     *            the data to floor
-     * @param floor
-     *            the floored value
-     */
-    protected void nonZeroFloor(float[] data, float floor) {
-        for (int i = 0; i < data.length; i++) {
-            if (data[i] != 0.0 && data[i] < floor) {
-                data[i] = floor;
-            }
-        }
-    }
-
-    /**
-     * If a data point is below 'floor' make it equal to floor.
-     * 
-     * @param data
-     *            the data to floor
-     * @param floor
-     *            the floored value
-     */
-    private void floorData(float[] data, float floor) {
-        for (int i = 0; i < data.length; i++) {
-            if (data[i] < floor) {
-                data[i] = floor;
-            }
-        }
-    }
-
-    /**
-     * Normalize the given data.
-     * 
-     * @param data
-     *            the data to normalize
-     */
-    protected void normalize(float[] data) {
-        float sum = 0;
-        for (float val : data) {
-            sum += val;
-        }
-        if (sum != 0.0f) {
-            for (int i = 0; i < data.length; i++) {
-                data[i] = data[i] / sum;
-            }
-        }
-    }
-
-    /**
-     * Convert to log math.
-     * 
-     * @param data
-     *            the data to normalize
-     */
-    // linearToLog returns a float, so zero values in linear scale
-    // should return -Float.MAX_VALUE.
-    protected void convertToLogMath(float[] data) {
-        for (int i = 0; i < data.length; i++) {
-            data[i] = logMath.linearToLog(data[i]);
-        }
-    }
 
     /**
      * Reads the given number of floats from the stream and returns them in an
@@ -1112,7 +1047,7 @@ public class Sphinx3Loader implements Loader {
                 }
                 logMixtureWeight[j] = val;
             }
-            convertToLogMath(logMixtureWeight);
+            logMath.linearToLog(logMixtureWeight);
             pool.put(i, logMixtureWeight);
         }
         est.close();
@@ -1166,9 +1101,9 @@ public class Sphinx3Loader implements Loader {
 
         for (int i = 0; i < numStates; i++) {
             float[] logMixtureWeight = readFloatArray(dis, numGaussiansPerState);
-            normalize(logMixtureWeight);
-            floorData(logMixtureWeight, floor);
-            convertToLogMath(logMixtureWeight);
+            Utilities.normalize(logMixtureWeight);
+            Utilities.floorData(logMixtureWeight, floor);
+            logMath.linearToLog(logMixtureWeight);
             pool.put(i, logMixtureWeight);
         }
         
@@ -1279,13 +1214,13 @@ public class Sphinx3Loader implements Loader {
             float[][] tmat = new float[numStates][];
             // last row should be zeros
             tmat[numStates - 1] = new float[numStates];
-            convertToLogMath(tmat[numStates - 1]);
+            logMath.linearToLog(tmat[numStates - 1]);
 
             for (int j = 0; j < numRows; j++) {
                 tmat[j] = readFloatArray(dis, numStates);
-                nonZeroFloor(tmat[j], 0f);
-                normalize(tmat[j]);
-                convertToLogMath(tmat[j]);
+                Utilities.nonZeroFloor(tmat[j], 0f);
+                Utilities.normalize(tmat[j]);
+                logMath.linearToLog(tmat[j]);
             }
             pool.put(i, tmat);
         }

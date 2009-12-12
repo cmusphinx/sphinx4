@@ -38,7 +38,6 @@ import java.util.logging.Logger;
  */
 class ModelInitializerLoader implements Loader {
 
-    private final static String FILLER = "filler";
     private final static String SILENCE_CIPHONE = "SIL";
 
     public final static String MODEL_VERSION = "0.3";
@@ -117,17 +116,11 @@ class ModelInitializerLoader implements Loader {
         String location = ps.getString(LOCATION);
         String phone = ps.getString(PHONE_LIST);
         String dataDir = ps.getString(DATA_DIR);
-        String propsFile = ps.getString(PROP_FILE);
 
         logger.info("Creating Sphinx3 acoustic model: " + modelName);
         logger.info("    Path      : " + location);
         logger.info("    phonelist : " + phone);
         logger.info("    dataDir   : " + dataDir);
-
-        // load the acoustic properties file (am.props),
-        // create a different URL depending on the data format
-
-        String format = StreamFactory.resolve(location);
 
         // load the HMM model file
         boolean useCDUnits = ps.getBoolean(PROP_USE_CD_UNITS);
@@ -298,19 +291,6 @@ class ModelInitializerLoader implements Loader {
             for (int i = 0; i < data.length; i++) {
                 data[i] = data[i] * sum;
             }
-        }
-    }
-
-    /**
-     * Convert to log math.
-     *
-     * @param data the data to normalize
-     */
-    // linearToLog returns a float, so zero values in linear scale
-    // should return -Float.MAX_VALUE.
-    private void convertToLogMath(float[] data) {
-        for (int i = 0; i < data.length; i++) {
-            data[i] = logMath.linearToLog(data[i]);
         }
     }
 
@@ -501,7 +481,7 @@ class ModelInitializerLoader implements Loader {
             floorData(logMixtureWeight, floor);
             // Normalize, so the numbers are not all too low
             normalize(logMixtureWeight);
-            convertToLogMath(logMixtureWeight);
+            logMath.linearToLog(logMixtureWeight);
             pool.put(state, logMixtureWeight);
         }
     }
@@ -553,7 +533,7 @@ class ModelInitializerLoader implements Loader {
                 }
             }
             normalize(tmat[j]);
-            convertToLogMath(tmat[j]);
+            logMath.linearToLog(tmat[j]);
         }
         pool.put(hmmId, tmat);
     }

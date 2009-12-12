@@ -18,6 +18,7 @@ import static edu.cmu.sphinx.linguist.acoustic.tiedstate.Pool.Feature.*;
 import edu.cmu.sphinx.util.ExtendedStreamTokenizer;
 import edu.cmu.sphinx.util.LogMath;
 import edu.cmu.sphinx.util.StreamFactory;
+import edu.cmu.sphinx.util.Utilities;
 import edu.cmu.sphinx.util.props.ConfigurationManager;
 import edu.cmu.sphinx.util.props.PropertyException;
 import edu.cmu.sphinx.util.props.PropertySheet;
@@ -53,7 +54,7 @@ class Sphinx4Loader extends Sphinx3Loader {
     }
 
     /**
-     * Loads the sphinx4 densityfile, a set of density arrays are created and placed in the given pool.
+     * Loads the sphinx4 density file, a set of density arrays are created and placed in the given pool.
      *
      * {@inheritDoc}
      */
@@ -330,14 +331,14 @@ class Sphinx4Loader extends Sphinx3Loader {
             float[][] tmat = new float[numStates][];
             // last row should be zeros
             tmat[numStates - 1] = new float[numStates];
-            convertToLogMath(tmat[numStates - 1]);
+            logMath.linearToLog(tmat[numStates - 1]);
 
             for (int j = 0; j < numStates - 1; j++) {
                 tmat[j] = readFloatArray(dis, numStates);
                 count += numStates;
-                nonZeroFloor(tmat[j], 0f);
-                normalize(tmat[j]);
-                convertToLogMath(tmat[j]);
+                Utilities.nonZeroFloor(tmat[j], 0f);
+                Utilities.normalize(tmat[j]);
+                logMath.linearToLog(tmat[j]);
             }
             pool.put(i, tmat);
         }

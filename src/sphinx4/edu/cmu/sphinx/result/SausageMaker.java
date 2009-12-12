@@ -33,7 +33,10 @@ public class SausageMaker extends AbstractSausageMaker {
     /** Construct an empty sausage maker */
     public SausageMaker() {
     }
-
+    
+    public SausageMaker(float languageWieght) {
+        this.languageWeight = languageWieght;
+    }
 
     /**
      * Construct a sausage maker
