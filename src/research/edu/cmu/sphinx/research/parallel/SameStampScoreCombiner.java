@@ -141,22 +141,6 @@ public class SameStampScoreCombiner implements ScoreCombiner {
 
         return logTotalScore;
     }
-
-
-    private void checkSameTime(List<ParallelToken> tokenList) {
-        System.out.print("SameTimeList: ");
-        for (ParallelToken token : tokenList) {
-            System.out.print(tokenToString(token));
-        }
-        System.out.println();
-    }
-
-
-    private String tokenToString(ParallelToken token) {
-        return (" (" + token.getLastCombineTime() + ',' +
-                token.getModelName() + ',' +
-                token.getFeatureScore() + ") ");
-    }
 }
 
 

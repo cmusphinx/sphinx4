@@ -23,7 +23,6 @@ public class RawWriter {
     private final OutputStream outputStream;
     private final int bytesPerSample;
     private boolean signedData;
-    private final boolean bigEndian;
 
 
     /**
@@ -41,7 +40,6 @@ public class RawWriter {
             System.err.println("Unsupported audio encoding: " + encoding);
             System.exit(-1);
         }
-        this.bigEndian = audioFormat.isBigEndian();
     }
 
 

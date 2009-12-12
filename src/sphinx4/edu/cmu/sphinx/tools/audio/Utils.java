@@ -164,7 +164,6 @@ public class Utils {
             BufferedInputStream stream = new BufferedInputStream(
                     new FileInputStream(filename));
             AudioInputStream ais = AudioSystem.getAudioInputStream(stream);
-            AudioFormat format = ais.getFormat();
             AudioData audioData = new AudioData(ais);
             stream.close();
             return audioData;

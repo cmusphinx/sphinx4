@@ -64,7 +64,7 @@ public class SausageMaker extends AbstractSausageMaker {
      * @param cluster the cluster to examine
      * @return the latest begin time
      */
-    private int getLatestBeginTime(List<Node> cluster) {
+    public int getLatestBeginTime(List<Node> cluster) {
         if (cluster.isEmpty()) {
             return -1;
         }
@@ -84,7 +84,7 @@ public class SausageMaker extends AbstractSausageMaker {
      * @param cluster the cluster to examine
      * @return the earliest end time
      */
-    private int getEarliestEndTime(List<Node> cluster) {
+    public int getEarliestEndTime(List<Node> cluster) {
         if (cluster.isEmpty()) {
             return -1;
         }

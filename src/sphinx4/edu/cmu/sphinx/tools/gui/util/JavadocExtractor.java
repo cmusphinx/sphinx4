@@ -35,29 +35,20 @@ public class JavadocExtractor {
                 if( ! source_path.trim().endsWith("/")){ // add '/' at the end of path
                     source_path = source_path.concat("/");
                 }
-                String source_file = classname.replace('.', '/') + ".java"; // convert classname to filepath
-//                StringTokenizer stoken = new StringTokenizer(class_path.trim(),";");
-//                String new_class_path = new String();
-//                if (stoken.countTokens() > 1){
-//                    while( stoken.hasMoreTokens() ){
-//                        String current = new String("\""+stoken.nextToken().trim()+"\";");
-//                        new_class_path = new_class_path.concat(current);
-//                    }
-//                } else { // only one or zero token available                    
-//                    new_class_path = new String ("\""+class_path+"\"");
-//                }
+                String source_file = classname.replace('.', '/') + ".java"; // convert class name to file path
                 String commandLine = "javadoc -docletpath \"" + class_path +
                     "\" -doclet edu.cmu.sphinx.tools.gui.util.DocletHelper \"" +
                     source_path.trim() + source_file.trim() + '\"';
-//                System.out.println("commandLine :" + commandLine);
-                SysCommandExecutor cmdExecutor = SysCommandExecutor.getInstance(); 		   		
-                int exitStatus = cmdExecutor.runCommand(commandLine);
 
-                String cmdError = cmdExecutor.getCommandError();
+                SysCommandExecutor cmdExecutor = SysCommandExecutor.getInstance(); 		   		
+                cmdExecutor.runCommand(commandLine);
+
+                // String cmdError = cmdExecutor.getCommandError();
+                // for debugging: System.out.println(cmdOutput);
+                // for debugging: System.err.println(cmdError);
+                
                 _last_comment = cmdExecutor.getCommandOutput(); 
                 _last_class = classname;
-                // for debugging: System.out.println(cmdOutput);
-                // for debugging:System.err.println(cmdError);
             }catch(Exception e){
                    System.err.println("Exception "+e.getMessage());
             }
@@ -73,26 +64,26 @@ public class JavadocExtractor {
      * @param source_path Absolute path to the source code root directory; 
      *              must end in '\' or '/'
      * @param prop_name Name of property to be searched
-     * @return Javadoc comment for the property that belongs to classname
+     * @return Javadoc comment for the property that belongs to class name
      */
     public static String getJavadocComment(String classname, String class_path,
             String source_path, String prop_name)
     {
-        String allcomment;
+        String allComment;
         
         if (source_path == null || source_path.trim().isEmpty()) { // no path to source code
             return null;
         }
         
         if ( _last_class == null || ! _last_class.trim().equals(classname.trim())){
-            allcomment = extractJavadocComment(classname,class_path,source_path);
+            allComment = extractJavadocComment(classname,class_path,source_path);
         }
-        else allcomment = _last_comment;
-        //  System.out.println("comment : " + allcomment);        
+        else allComment = _last_comment;
+        //  System.out.println("comment : " + allComment);        
         
         // do processing for the comment
         // one property comment block is defined by a '==='
-        String[] comments = allcomment.split("={3}"); 
+        String[] comments = allComment.split("={3}"); 
         
          // index 0 is javadoc's result comment
         for (int i=1; i<comments.length;i++){

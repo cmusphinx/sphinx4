@@ -43,11 +43,6 @@ public class WavWriter extends BaseDataProcessor {
     /** Default value for PROP_BITS_PER_SAMPLE. */
     private int bitsPerSample = 16;
 
-    /** The SphinxProperty specifying whether the input data is big-endian. */
-    @S4Boolean(defaultValue = true)
-    public static final String PROP_BIG_ENDIAN_DATA = "bigEndianData";
-    /** The default value for PROP_IS_DATA_BIG_ENDIAN. */
-    private boolean isBigEndian = true;
 
     /** The SphinxProperty specifying whether the input data is signed. */
     @S4Boolean(defaultValue = true)
@@ -67,7 +62,7 @@ public class WavWriter extends BaseDataProcessor {
     private int sampleRate;
     private boolean isInSpeech;
 
-    public WavWriter(String dumpFilePath, boolean isCompletePath, int bitsPerSample, boolean isBigEndian, boolean isSigned, boolean captureUtts) {
+    public WavWriter(String dumpFilePath, boolean isCompletePath, int bitsPerSample, boolean isSigned, boolean captureUtts) {
 	    initLogger();
 
         this.dumpFilePath = dumpFilePath;
@@ -78,7 +73,6 @@ public class WavWriter extends BaseDataProcessor {
             throw new Error("StreamDataSource: bits per sample must be a multiple of 8.");
         }
 
-        this.isBigEndian = isBigEndian;
         this.isSigned = isSigned;
         this.captureUtts = captureUtts;
 
@@ -103,7 +97,6 @@ public class WavWriter extends BaseDataProcessor {
             throw new Error("StreamDataSource: bits per sample must be a multiple of 8.");
         }
 
-        isBigEndian = ps.getBoolean(PROP_BIG_ENDIAN_DATA);
         isSigned = ps.getBoolean(PROP_SIGNED_DATA);
         captureUtts = ps.getBoolean(PROP_CAPTURE_UTTERANCES);
 

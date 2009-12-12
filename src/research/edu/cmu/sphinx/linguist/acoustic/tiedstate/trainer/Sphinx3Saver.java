@@ -455,18 +455,7 @@ class Sphinx3Saver implements Saver {
         dos.writeBytes(word);
     }
 
-    /**
-     * Writes a single char to the stream
-     *
-     * @param dos       the stream to read
-     * @param character the next character on the stream
-     * @throws IOException if an error occurs
-     */
-    private void writeChar(DataOutputStream dos, char character)
-            throws IOException {
-        dos.writeByte(character);
-    }
-
+    
     /**
      * Writes an integer to the output stream, byte-swapping as necessary
      *
@@ -497,38 +486,6 @@ class Sphinx3Saver implements Saver {
             dos.writeFloat(val);
         }
     }
-    
-
-    /**
-     * Normalize the given data
-     *
-     * @param data the data to normalize
-     */
-    private void normalize(float[] data) {
-        float sum = 0;
-        for (float val : data) {
-            sum += val;
-        }
-
-        if (sum != 0.0f) {
-            for (int i = 0; i < data.length; i++) {
-                data[i] = data[i] / sum;
-            }
-        }
-    }
-
-    /**
-     * Dump the data
-     *
-     * @param name the name of the data
-     * @param data the data itself
-     */
-    private void dumpData(String name, float[] data) {
-        System.out.println(" ----- " + name + " -----------");
-        for (int i = 0; i < data.length; i++) {
-            System.out.println(name + ' ' + i + ": " + data[i]);
-        }
-    }
 
 
     /**
@@ -546,7 +503,7 @@ class Sphinx3Saver implements Saver {
     }
 
     /**
-     * Saves the sphinx3 densityfile, a set of density arrays are created and placed in the given pool.
+     * Saves the sphinx3 density file, a set of density arrays are created and placed in the given pool.
      *
      * @param useCDUnits   if true, uses context dependent units
      * @param outputStream the open output stream to use
@@ -599,8 +556,6 @@ class Sphinx3Saver implements Saver {
         pw.println("#");
         pw.println("# Columns definitions");
         pw.println("#base lft  rt p attrib tmat      ... state id's ...");
-
-        int numStatePerHMM = numStateMap / (numTri + numBase);
 
         // Save the base phones
         for (HMM hmm0 : hmmManager) {
@@ -687,22 +642,6 @@ class Sphinx3Saver implements Saver {
         outputStream.close();
     }
 
-    /**
-     * Gets the senone sequence representing the given senones
-     *
-     * @param stateid is the array of senone state ids
-     * @return the senone sequence associated with the states
-     */
-    private SenoneSequence getSenoneSequence(int[] stateid) {
-        Senone[] senones = new Senone[stateid.length];
-
-        for (int i = 0; i < stateid.length; i++) {
-            senones[i] = senonePool.get(stateid[i]);
-        }
-
-        // TODO: Is there any advantage in trying to pool these?
-        return new SenoneSequence(senones);
-    }
 
     /**
      * Saves the mixture weights
@@ -768,7 +707,6 @@ class Sphinx3Saver implements Saver {
         logger.info(path);
 
         Properties props = new Properties();
-        int checkSum = 0;
 
         props.setProperty("version", MIXW_FILE_VERSION);
         if (doCheckSum) {

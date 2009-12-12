@@ -1,15 +1,21 @@
+/*
+ * Copyright 1999-2004 Carnegie Mellon University.  
+ * Portions Copyright 2002-2004 Sun Microsystems, Inc.  
+ * Portions Copyright 2002-2004 Mitsubishi Electric Research Laboratories.
+ * All Rights Reserved.  Use is subject to license terms.
+ * 
+ * See the file "license.terms" for information on usage and
+ * redistribution of this file, and for a DISCLAIMER OF ALL 
+ * WARRANTIES.
+ *
+ */
 package edu.cmu.sphinx.frontend.util;
 
 import javax.swing.*;
 import java.awt.*;
 
 /**
- * Copyright 1999-2006 Carnegie Mellon University. All Rights Reserved.  Use is subject to license terms.
- * <p/>
- * See the file "license.terms" for information on usage and redistribution of this file, and for a DISCLAIMER OF ALL
- * WARRANTIES.
- * <p/>
- * User: Peter Wolf Date: Apr 30, 2006 Time: 9:10:44 AM
+ * @author Peter Wolf
  */
 public class VUMeterPanel extends JPanel {
 
@@ -118,23 +124,6 @@ public class VUMeterPanel extends JPanel {
             g.setColor(Color.YELLOW);
         else
             g.setColor(Color.RED);
-    }
-
-
-    private void paintClippingVUMeter(Graphics g) {
-
-        Dimension sz = getSize();
-        int w = sz.width;
-        int h = (sz.height / numberOfLights);
-
-        g.setColor(Color.LIGHT_GRAY);
-        g.fillRect(0, 0, sz.width - 1, sz.height - 1);
-
-        g.setColor(Color.RED);
-        for (int i = 0; i < numberOfLights; i++) {
-            g.fillRect(1, (i * h) + 1, w - 1, h - 2);
-        }
-
     }
 }
 

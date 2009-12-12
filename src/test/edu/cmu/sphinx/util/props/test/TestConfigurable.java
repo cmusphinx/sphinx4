@@ -59,7 +59,7 @@ public class TestConfigurable implements Configurable {
             String instanceName = "testconf";
             cm.addConfigurable(TestConfigurable.class, instanceName);
 
-            Configurable configurable = cm.lookup(instanceName);
+            cm.lookup(instanceName);
             Assert.fail("add didn't fail without given default frontend");
         } catch (NullPointerException e) {
         } catch (PropertyException e) {
