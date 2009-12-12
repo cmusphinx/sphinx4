@@ -729,8 +729,8 @@ public class Sphinx3Loader implements Loader {
     /**
      *  Validates checksum in the stream
      *  
-     *  @dis input stream
-     *  @doChecksum validates
+     *  @param dis input stream
+     *  @param doCheckSum validates
      *  @throws IOException on error
      **/
     private void validateChecksum(DataInputStream dis, boolean doCheckSum) throws IOException {

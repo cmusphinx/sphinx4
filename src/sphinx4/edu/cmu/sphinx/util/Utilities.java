@@ -273,10 +273,8 @@ public class Utilities {
      * If a data point is non-zero and below 'floor' make it equal to floor
      * (don't floor zero values though).
      * 
-     * @param data
-     *            the data to floor
-     * @param floor
-     *            the floored value
+     * @param data the data to floor
+     * @param floor the floored value
      */
     public static void nonZeroFloor(float[] data, float floor) {
         for (int i = 0; i < data.length; i++) {
@@ -290,7 +288,7 @@ public class Utilities {
     /**
      * Normalize the given data.
      * 
-     * @data the data to normalize
+     * @param data the data to normalize
      */
     public static void normalize(float[] data) {
         float sum = 0;

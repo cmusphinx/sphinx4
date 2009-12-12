@@ -268,7 +268,7 @@ public class HTKLoader implements Loader {
      * Loads the AcousticModel from an HTK MMF
      * 
      * 
-     * the name of the acoustic model; if null we just load from the default
+     * @param MMFname the name of the acoustic model; if null we just load from the default
      * location
      * 
      * @throws java.io.IOException
@@ -302,8 +302,8 @@ public class HTKLoader implements Loader {
      * Creates the senone pool from the rest of the pools. assumes the means and
      * variances are in the same order
      * 
-     * @distFloor the lowest allowed score
-     * @varianceFloor the lowest allowed variance
+     * @param distFloor the lowest allowed score
+     * @param varianceFloor the lowest allowed variance
      * @return the senone pool
      */
     private Pool<Senone> createSenonePool(float distFloor, float varianceFloor) {
@@ -393,8 +393,7 @@ public class HTKLoader implements Loader {
      * Read an integer from the input stream, byte-swapping as necessary.
      * 
      * 
-     * the inputstream
-     * 
+     * @param dis the input stream
      * @return an integer value
      * @throws IOException
      *             on error
@@ -411,7 +410,8 @@ public class HTKLoader implements Loader {
      * Read a float from the input stream, byte-swapping as necessary. the input
      * stream
      * 
-     * @return a floating pint value
+     * @param dis the input stream
+     * @return a floating value
      * @throws IOException
      *             on error
      */
@@ -430,8 +430,8 @@ public class HTKLoader implements Loader {
      * Reads the given number of floats from the stream and returns them in an
      * array of floats.
      * 
-     * the stream to read data from the number of floats to read
-     * 
+     * @param dis the stream to read data from the number of floats to read
+     * @param size size of the array
      * @return an array of size float elements
      * @throws IOException
      *             if an exception occurs
@@ -450,16 +450,14 @@ public class HTKLoader implements Loader {
      * the given pool.
      * 
      * 
-     * if true, loads also the context dependent units
-     * 
-     * the set of HTK models
-     * 
-     * the path to a density file
+     * @param useCDUnits if true, loads also the context dependent units
+     * @param htkModels the set of HTK models
+     * @param path the path to a density file
      * 
      * @throws IOException
      *             if an error occurs while loading the data
      */
-    protected void loadHMMPool(boolean useCDUnits, HTKStruct htkmods,
+    protected void loadHMMPool(boolean useCDUnits, HTKStruct htkModels,
             String path) throws IOException {
         int numStatePerHMM;
 
@@ -476,7 +474,7 @@ public class HTKLoader implements Loader {
          * the same base name found...
          */
         if (!tie1ph) {
-            for (Iterator<SingleHMM> monoPhones = htkmods.hmmsHTK.get1phIt(); monoPhones
+            for (Iterator<SingleHMM> monoPhones = htkModels.hmmsHTK.get1phIt(); monoPhones
                     .hasNext();) {
                 SingleHMM hmm = monoPhones.next();
                 if (hmm == null)
@@ -502,7 +500,7 @@ public class HTKLoader implements Loader {
                     if (hmm.isEmitting(ii)) {
                         HMMState s = hmm.getState(ii);
                         // we use the index of HMM in MMF file
-                        stid[j] = htkmods.hmmsHTK.getStateIdx(s);
+                        stid[j] = htkModels.hmmsHTK.getStateIdx(s);
                         j++;
                         // assert stid[j] >= 0 && stid[j] <
                         // numContextIndependentTiedState;
@@ -531,8 +529,8 @@ public class HTKLoader implements Loader {
             }
         } else {
             // build the 1ph by tying to the first 3ph
-            for (int i = 0; i < htkmods.hmmsHTK.getNhmms(); i++) {
-                SingleHMM hmm = htkmods.hmmsHTK.getHMM(i);
+            for (int i = 0; i < htkModels.hmmsHTK.getNhmms(); i++) {
+                SingleHMM hmm = htkModels.hmmsHTK.getHMM(i);
                 if (hmm == null)
                     break;
                 String name = hmm.getBaseName();
@@ -559,7 +557,7 @@ public class HTKLoader implements Loader {
                         if (hmm.isEmitting(ii)) {
                             HMMState s = hmm.getState(ii);
                             // We get an index of HMM in MMF file
-                            stid[j] = htkmods.hmmsHTK.getStateIdx(s);
+                            stid[j] = htkModels.hmmsHTK.getStateIdx(s);
                             j++;
                             // assert stid[j] >= 0 && stid[j] <
                             // numContextIndependentTiedState;
@@ -600,7 +598,7 @@ public class HTKLoader implements Loader {
         SenoneSequence lastSenoneSequence = null;
 
         List<String> HMMdejavu = new ArrayList<String>();
-        for (Iterator<SingleHMM> triPhones = htkmods.hmmsHTK.get3phIt(); triPhones
+        for (Iterator<SingleHMM> triPhones = htkModels.hmmsHTK.get3phIt(); triPhones
                 .hasNext();) {
             SingleHMM hmm = triPhones.next();
             if (hmm == null)
@@ -638,7 +636,7 @@ public class HTKLoader implements Loader {
             for (int ii = 0; ii < numStatePerHMM; ii++) {
                 if (hmm.isEmitting(ii)) {
                     HMMState s = hmm.getState(ii);
-                    stid[j] = htkmods.hmmsHTK.getStateIdx(s);
+                    stid[j] = htkModels.hmmsHTK.getStateIdx(s);
                     j++;
                     // assert stid[j] >= 0 && stid[j] <
                     // numContextIndependentTiedState;
@@ -707,13 +705,13 @@ public class HTKLoader implements Loader {
     /**
      * Gets the senone sequence representing the given senones.
      * 
-     * @stateid is the array of senone state ids
+     * @param stateId is the array of senone state ids
      * @return the senone sequence associated with the states
      */
-    protected SenoneSequence getSenoneSequence(int[] stateid) {
-        Senone[] senones = new Senone[stateid.length];
-        for (int i = 0; i < stateid.length; i++) {
-            senones[i] = senonePool.get(stateid[i]);
+    protected SenoneSequence getSenoneSequence(int[] stateId) {
+        Senone[] senones = new Senone[stateId.length];
+        for (int i = 0; i < stateId.length; i++) {
+            senones[i] = senonePool.get(stateId[i]);
         }
         return new SenoneSequence(senones);
     }
@@ -721,7 +719,7 @@ public class HTKLoader implements Loader {
     /**
      * Creates a pool with a single identity matrix in it.
      * 
-     * @name the name of the pool
+     * @param name the name of the pool
      * @return the pool with the matrix
      */
     private Pool<float[][]> createDummyMatrixPool(String name) {
@@ -743,10 +741,8 @@ public class HTKLoader implements Loader {
 
     /**
      * Creates a pool with a single zero vector in it.
-     * 
-     * 
-     * the name of the pool
-     * 
+     *
+     * @param name the name of the pool
      * @return the pool with the vector
      */
     private Pool<float[]> createDummyVectorPool(String name) {
