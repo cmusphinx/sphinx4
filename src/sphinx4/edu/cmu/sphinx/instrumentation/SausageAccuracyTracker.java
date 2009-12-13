@@ -28,11 +28,17 @@ public class SausageAccuracyTracker extends AccuracyTracker {
     @S4Boolean(defaultValue = false)
     public final static String PROP_SHOW_FULL_PATH = "showFullPath";
 
+    /** The property with language model weight for posterior probability computation */
+    @S4Double(defaultValue = 10.5f)
+    public final static String PROP_LANGUAGE_WEIGHT = "languageWeight";
+
     private boolean showFullPath;
+    private float languageModelWeight;
     
-    public SausageAccuracyTracker(Recognizer recognizer, boolean showSummary, boolean showDetails, boolean showResults, boolean showAlignedResults, boolean showRawResults, boolean showFullPath) {
+    public SausageAccuracyTracker(Recognizer recognizer, boolean showSummary, boolean showDetails, boolean showResults, boolean showAlignedResults, boolean showRawResults, boolean showFullPath, float languageWeight) {
         super(recognizer, showSummary, showDetails, showResults, showAlignedResults, showRawResults);
         this.showFullPath = showFullPath;
+        this.languageModelWeight = languageWeight;
     }
 
     public SausageAccuracyTracker() {
@@ -49,6 +55,7 @@ public class SausageAccuracyTracker extends AccuracyTracker {
     public void newProperties(PropertySheet ps) throws PropertyException {
         super.newProperties(ps);
         showFullPath = ps.getBoolean(PROP_SHOW_FULL_PATH);
+        languageModelWeight = ps.getFloat(PROP_LANGUAGE_WEIGHT);
     }
 
 
@@ -82,7 +89,8 @@ public class SausageAccuracyTracker extends AccuracyTracker {
         if (result.isFinal() && ref != null) {
             Lattice lattice = new Lattice(result);
             LatticeOptimizer optimizer = new LatticeOptimizer(lattice);
-            optimizer.optimize();                
+            optimizer.optimize();           
+            lattice.computeNodePosteriors(languageModelWeight);
             SausageMaker sausageMaker = new SausageMaker(lattice);
             Sausage sausage = sausageMaker.makeSausage();
             sausage.removeFillers();
