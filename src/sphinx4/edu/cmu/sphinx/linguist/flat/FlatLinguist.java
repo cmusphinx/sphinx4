@@ -22,6 +22,7 @@ import edu.cmu.sphinx.linguist.dictionary.Word;
 import edu.cmu.sphinx.linguist.language.grammar.Grammar;
 import edu.cmu.sphinx.linguist.language.grammar.GrammarArc;
 import edu.cmu.sphinx.linguist.language.grammar.GrammarNode;
+import edu.cmu.sphinx.util.Cache;
 import edu.cmu.sphinx.util.LogMath;
 import edu.cmu.sphinx.util.StatisticsVariable;
 import edu.cmu.sphinx.util.TimerPool;
@@ -167,7 +168,7 @@ public class FlatLinguist implements Linguist, Configurable {
     private transient Collection<SentenceHMMState> stateSet;
     private String name;
     protected Map<GrammarNode, GState> nodeStateMap;
-    protected Map<SearchStateArc, SearchStateArc> arcPool;
+    protected Cache<SentenceHMMStateArc> arcPool;
     protected GrammarNode initialGrammarState;
 
     protected SearchGraph searchGraph;
@@ -396,7 +397,7 @@ public class FlatLinguist implements Linguist, Configurable {
         initialGrammarState = grammar.getInitialNode();
 
         nodeStateMap = new HashMap<GrammarNode, GState>();
-        arcPool = new HashMap<SearchStateArc, SearchStateArc>();
+        arcPool = new Cache<SentenceHMMStateArc>();
 
         List<GState> gstateList = new ArrayList<GState>();
         TimerPool.getTimer(this, "compile").start();
@@ -532,14 +533,10 @@ public class FlatLinguist implements Linguist, Configurable {
                 logAcousticProbability,
                 logLanguageProbability * languageWeight,
                 logInsertionProbability);
-        SentenceHMMStateArc pooledArc = (SentenceHMMStateArc) arcPool.get(arc);
-        if (pooledArc == null) {
-            arcPool.put(arc, arc);
-            pooledArc = arc;
-            actualArcs.value++;
-        }
-        totalArcs.value++;
-        return pooledArc;
+        SentenceHMMStateArc pooledArc = arcPool.cache(arc);
+        actualArcs.value = arcPool.getMisses();
+        totalArcs.value = arcPool.getHits() + arcPool.getMisses();
+        return pooledArc == null ? arc : pooledArc;
     }
 
 
@@ -1604,20 +1601,15 @@ public class FlatLinguist implements Linguist, Configurable {
  */
 class UnitContext {
 
-    private static final Map<UnitContext, UnitContext> unitContextMap = new HashMap<UnitContext, UnitContext>();
+    private static final Cache<UnitContext> unitContextCache = new Cache<UnitContext>();
     private final Unit[] context;
     private int hashCode = 12;
-    private static int foldedCount;
     public final static UnitContext EMPTY = new UnitContext(new Unit[0]);
-    public final static UnitContext SILENCE;
-
+    public final static UnitContext SILENCE = new UnitContext(new Unit[] { UnitManager.SILENCE });
 
     static {
-        Unit[] silenceUnit = new Unit[1];
-        silenceUnit[0] = UnitManager.SILENCE;
-        SILENCE = new UnitContext(silenceUnit);
-        unitContextMap.put(EMPTY, EMPTY);
-        unitContextMap.put(SILENCE, SILENCE);
+        unitContextCache.cache(EMPTY);
+        unitContextCache.cache(SILENCE);
     }
 
 
@@ -1644,14 +1636,8 @@ class UnitContext {
      */
     static UnitContext get(Unit[] units) {
         UnitContext newUC = new UnitContext(units);
-        UnitContext oldUC = unitContextMap.get(newUC);
-        if (oldUC == null) {
-            unitContextMap.put(newUC, newUC);
-        } else {
-            foldedCount++;
-            newUC = oldUC;
-        }
-        return newUC;
+        UnitContext cachedUC = unitContextCache.cache(newUC);
+        return cachedUC == null ? newUC :  cachedUC;
     }
 
 
@@ -1709,7 +1695,7 @@ class UnitContext {
      */
     public static void dumpInfo() {
         System.out.println("Total number of UnitContexts : "
-                + unitContextMap.size() + " folded: " + foldedCount);
+            + unitContextCache.getMisses() + " folded: " + unitContextCache.getHits());
     }
 
 
@@ -1730,7 +1716,7 @@ class UnitContext {
  */
 class ContextPair {
 
-    static final Map<ContextPair, ContextPair> contextPairMap = new HashMap<ContextPair, ContextPair>();
+    static final Cache<ContextPair> contextPairCache = new Cache<ContextPair>();
     private final UnitContext left;
     private final UnitContext right;
     private final int hashCode;
@@ -1760,13 +1746,8 @@ class ContextPair {
      */
     static ContextPair get(UnitContext left, UnitContext right) {
         ContextPair newCP = new ContextPair(left, right);
-        ContextPair oldCP = contextPairMap.get(newCP);
-        if (oldCP == null) {
-            contextPairMap.put(newCP, newCP);
-        } else {
-            newCP = oldCP;
-        }
-        return newCP;
+        ContextPair cachedCP = contextPairCache.cache(newCP);
+        return cachedCP == null ? newCP : cachedCP;
     }
 
 

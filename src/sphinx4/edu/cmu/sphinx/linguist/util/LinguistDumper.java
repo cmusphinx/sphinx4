@@ -12,6 +12,7 @@
 package edu.cmu.sphinx.linguist.util;
 
 import edu.cmu.sphinx.linguist.*;
+import edu.cmu.sphinx.util.Cache;
 import edu.cmu.sphinx.util.props.*;
 
 import java.io.FileNotFoundException;
@@ -171,7 +172,7 @@ public class LinguistDumper extends LinguistProcessor {
     }
 
 
-    final Map<SearchState, SearchState> eqStates = new HashMap<SearchState, SearchState>();
+    final Cache<SearchState> eqStates = new Cache<SearchState>();
     final Map<String, SearchState> eqSigs = new HashMap<String, SearchState>();
 
 
@@ -183,9 +184,9 @@ public class LinguistDumper extends LinguistProcessor {
      */
     @SuppressWarnings("unused")
     private void equalCheck(SearchState state) {
-        SearchState eqState = eqStates.get(state);
+        SearchState eqState = eqStates.cache(state);
         SearchState eqSig = eqSigs.get(state.getSignature());
-        if ((eqState == null || eqSig == null) && !(eqState == eqSig)) {
+        if (eqState == null ^ eqSig == null) {
             System.out.println("Missing one: ");
             System.out.println("  state val: " + state);
             System.out.println("  state sig: " + state.getSignature());
@@ -199,7 +200,6 @@ public class LinguistDumper extends LinguistProcessor {
             }
         }
         if (eqState == null) {
-            eqStates.put(state, state);
             eqState = state;
         }
         if (eqSig == null) {
