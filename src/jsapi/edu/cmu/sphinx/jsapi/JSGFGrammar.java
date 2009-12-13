@@ -197,15 +197,13 @@ public class JSGFGrammar extends Grammar {
 
     private boolean loadGrammar = true;
     private GrammarNode firstNode;
-    private Logger logger;
 
     public JSGFGrammar(URL baseURL, LogMath logMath, String grammarName, boolean showGrammar,boolean optimizeGrammar,boolean addSilenceWords, boolean addFillerWords, Dictionary dictionary ) {
         super(showGrammar,optimizeGrammar,addSilenceWords,addFillerWords,dictionary );
         this.baseURL = baseURL;
         this.logMath = logMath;
-        this.logger = Logger.getLogger(getClass().getName());
         this.grammarName = grammarName;
-        loadGrammar = true;
+        this.loadGrammar = true;
     }
 
     public JSGFGrammar() {

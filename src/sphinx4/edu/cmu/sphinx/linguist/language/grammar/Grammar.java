@@ -59,7 +59,7 @@ public abstract class Grammar implements Configurable, GrammarInterface {
     // ----------------------------
     // Configuration data
     // -----------------------------
-    private Logger logger;
+    protected Logger logger;
 
     private boolean showGrammar;
     private boolean optimizeGrammar = true;
