@@ -203,6 +203,7 @@ public class JSGFGrammar extends Grammar {
         super(showGrammar,optimizeGrammar,addSilenceWords,addFillerWords,dictionary );
         this.baseURL = baseURL;
         this.logMath = logMath;
+        this.logger = Logger.getLogger(getClass().getName());
         this.grammarName = grammarName;
         loadGrammar = true;
     }
