@@ -13,12 +13,16 @@
 package edu.cmu.sphinx.instrumentation;
 
 import edu.cmu.sphinx.decoder.search.Token;
+import edu.cmu.sphinx.result.Lattice;
+import edu.cmu.sphinx.result.LatticeOptimizer;
 import edu.cmu.sphinx.result.Result;
+import edu.cmu.sphinx.result.Sausage;
+import edu.cmu.sphinx.result.SausageMaker;
 import edu.cmu.sphinx.util.props.*;
 import edu.cmu.sphinx.recognizer.Recognizer;
 
 /** Tracks and reports recognition accuracy based upon the highest scoring path in a Result. */
-public class BestPathAccuracyTracker extends AccuracyTracker {
+public class SausageAccuracyTracker extends AccuracyTracker {
 
     /** The property that define whether the full token path is displayed */
     @S4Boolean(defaultValue = false)
@@ -26,12 +30,12 @@ public class BestPathAccuracyTracker extends AccuracyTracker {
 
     private boolean showFullPath;
     
-    public BestPathAccuracyTracker(Recognizer recognizer, boolean showSummary, boolean showDetails, boolean showResults, boolean showAlignedResults, boolean showRawResults, boolean showFullPath) {
+    public SausageAccuracyTracker(Recognizer recognizer, boolean showSummary, boolean showDetails, boolean showResults, boolean showAlignedResults, boolean showRawResults, boolean showFullPath) {
         super(recognizer, showSummary, showDetails, showResults, showAlignedResults, showRawResults);
         this.showFullPath = showFullPath;
     }
 
-    public BestPathAccuracyTracker() {
+    public SausageAccuracyTracker() {
 
     }
 
@@ -76,8 +80,14 @@ public class BestPathAccuracyTracker extends AccuracyTracker {
     public void newResult(Result result) {
         String ref = result.getReferenceText();
         if (result.isFinal() && ref != null) {
-            String hyp = result.getBestResultNoFiller();
-            getAligner().align(ref, hyp);
+            Lattice lattice = new Lattice(result);
+            LatticeOptimizer optimizer = new LatticeOptimizer(lattice);
+            optimizer.optimize();                
+            SausageMaker sausageMaker = new SausageMaker(lattice);
+            Sausage sausage = sausageMaker.makeSausage();
+            sausage.removeFillers();
+                
+            getAligner().alignSausage(ref, sausage);
             showFullPath(result);
             showDetails(result.toString());
         }

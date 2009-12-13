@@ -89,7 +89,7 @@ public class NISTAlign {
      * Ordered list of words from rawReference after the annotation has been removed.  Updated with each call to
      * 'align'.
      */
-    private LinkedList<Object> referenceWords;
+    private LinkedList<Object> referenceItems;
 
     /** Aligned list of words from rawReference.  Created in alignWords.  Updated with each call to 'align'. */
     private LinkedList<String> alignedReferenceWords;
@@ -101,7 +101,7 @@ public class NISTAlign {
      * Ordered list of words from rawHypothesis after the annotation has been removed.  Updated with each call to
      * 'align'.
      */
-    private LinkedList<Object> hypothesisWords;
+    private LinkedList<Object> hypothesisItems;
 
     /** Aligned list of words from rawHypothesis.  Created in alignWords.  Updated with each call to 'align'. */
     private LinkedList<String> alignedHypothesisWords;
@@ -181,10 +181,10 @@ public class NISTAlign {
         annotationIndex = rawReference.indexOf('(');
         if (annotationIndex != -1) {
             referenceAnnotation = rawReference.substring(annotationIndex);
-            referenceWords = toList(rawReference.substring(0, annotationIndex));
+            referenceItems = toList(rawReference.substring(0, annotationIndex));
         } else {
             referenceAnnotation = null;
-            referenceWords = toList(rawReference);
+            referenceItems = toList(rawReference);
         }
 
         // Strip the annotation off the hypothesis string.
@@ -194,10 +194,10 @@ public class NISTAlign {
         //
         annotationIndex = rawHypothesis.indexOf('(');
         if (annotationIndex != -1) {
-            hypothesisWords = toList(
+            hypothesisItems = toList(
                     rawHypothesis.substring(0, annotationIndex));
         } else {
-            hypothesisWords = toList(rawHypothesis);
+            hypothesisItems = toList(rawHypothesis);
         }
 
         // Reset the counts for this sentence.
@@ -210,24 +210,24 @@ public class NISTAlign {
         // aligned lists of strings.  This has the side effect of
         // creating alignedReferenceWords and alignedHypothesisWords.
         //
-        alignWords(backtrace(createBacktraceTable(referenceWords,
-                hypothesisWords, new  Comparator () {
+        alignWords(backtrace(createBacktraceTable(referenceItems,
+                hypothesisItems, new  Comparator () {
                     @Override
-                    public boolean isSimilar(Object a, Object b) {
-                        if (a instanceof String && b instanceof String) {
-                            return ((String)a).equals((String)b);
+                    public boolean isSimilar(Object ref, Object hyp) {
+                        if (ref instanceof String && hyp instanceof String) {
+                            return ((String)ref).equals((String)hyp);
                         }
                         return false;
                     }          
         })), new StringRenderer () {
 
             @Override
-            public String getRef(Object a, Object b) {
-                return (String)a;
+            public String getRef(Object ref, Object hyp) {
+                return (String)ref;
             }
             @Override
-            public String getHyp(Object a, Object b) {
-                return (String)b;
+            public String getHyp(Object ref, Object hyp) {
+                return (String)hyp;
             }
             
         });
@@ -268,15 +268,15 @@ public class NISTAlign {
         annotationIndex = rawReference.indexOf('(');
         if (annotationIndex != -1) {
             referenceAnnotation = rawReference.substring(annotationIndex);
-            referenceWords = toList(rawReference.substring(0, annotationIndex));
+            referenceItems = toList(rawReference.substring(0, annotationIndex));
         } else {
             referenceAnnotation = null;
-            referenceWords = toList(rawReference);
+            referenceItems = toList(rawReference);
         }
 
-        hypothesisWords = new LinkedList<Object>();
+        hypothesisItems = new LinkedList<Object>();
         for (Iterator<ConfusionSet> it = hypothesis.iterator(); it.hasNext();) {
-            hypothesisWords.add(it.next());
+            hypothesisItems.add(it.next());
         }
         
         // Reset the counts for this sentence.
@@ -289,13 +289,13 @@ public class NISTAlign {
         // aligned lists of strings.  This has the side effect of
         // creating alignedReferenceWords and alignedHypothesisWords.
         //
-        alignWords(backtrace(createBacktraceTable(referenceWords,
-                hypothesisWords, new  Comparator () {
+        alignWords(backtrace(createBacktraceTable(referenceItems,
+                hypothesisItems, new  Comparator () {
                     @Override
-                    public boolean isSimilar(Object a, Object b) {
-                        if (a instanceof String && b instanceof ConfusionSet) {
-                            String ref = (String)a;
-                            ConfusionSet set = (ConfusionSet)b;
+                    public boolean isSimilar(Object refObject, Object hypObject) {
+                        if (refObject instanceof String && hypObject instanceof ConfusionSet) {
+                            String ref = (String)refObject;
+                            ConfusionSet set = (ConfusionSet)hypObject;
                             if (set.containsWord(ref)) {
                                 return true;
                             }
@@ -305,14 +305,14 @@ public class NISTAlign {
         })), new StringRenderer() {
             
             @Override
-            public String getRef(Object a, Object b) {
-                return (String)a;
+            public String getRef(Object ref, Object hyp) {
+                return (String)ref;
             }
             
             @Override
-            public String getHyp(Object a, Object b) {
-                String ref = (String)a;
-                ConfusionSet set = (ConfusionSet) b;
+            public String getHyp(Object refObject, Object hypObject) {
+                String ref = (String)refObject;
+                ConfusionSet set = (ConfusionSet)hypObject;
                 if (set.containsWord(ref))
                      return ref;
                 String res = set.getBestHypothesis().toString();
@@ -340,7 +340,7 @@ public class NISTAlign {
      * @return the reference string
      */
     public String getReference() {
-        return toString(referenceWords);
+        return toString(referenceItems);
     }
 
 
@@ -351,7 +351,7 @@ public class NISTAlign {
      * @return the hypothesis string
      */
     public String getHypothesis() {
-        return toString(hypothesisWords);
+        return toString(hypothesisItems);
     }
 
 
@@ -497,8 +497,8 @@ public class NISTAlign {
      */
     public void printSentenceSummary() {
         if (showResults) {
-            System.out.println("REF:       " + toString(referenceWords));
-            System.out.println("HYP:       " + toString(hypothesisWords));
+            System.out.println("REF:       " + toString(referenceItems));
+            System.out.println("HYP:       " + toString(hypothesisItems));
         }
 
         if (showAlignedResults) {
@@ -568,7 +568,7 @@ public class NISTAlign {
         System.out.println("Correct          = "
                 + toPercentage("##0.0%",
                 correct,
-                referenceWords.size())
+                referenceItems.size())
                 + padLeft(5, correct)
                 + "   ("
                 + padLeft(6, totalWordsCorrect)
@@ -576,7 +576,7 @@ public class NISTAlign {
         System.out.println("Errors           = "
                 + toPercentage("##0.0%",
                 sentenceErrors,
-                referenceWords.size())
+                referenceItems.size())
                 + padLeft(5, sentenceErrors)
                 + "   ("
                 + padLeft(6, totalSentencesWithErrors)
@@ -674,10 +674,7 @@ public class NISTAlign {
         System.out.println();
     }
 
-    interface Comparator {
-        public boolean isSimilar (Object a, Object b);
-    }
-
+    
     /**
      * Creates the backtrace table.  This is magic.  The basic idea is that the penalty table contains a set of penalty
      * values based on some strategically selected numbers.  I'm not quite sure what they are, but they help determine
@@ -789,8 +786,8 @@ public class NISTAlign {
      */
     LinkedList<Integer> backtrace(int[][] backtraceTable) {
         LinkedList<Integer> list = new LinkedList<Integer>();
-        int i = referenceWords.size();
-        int j = hypothesisWords.size();
+        int i = referenceItems.size();
+        int j = hypothesisItems.size();
         while ((i >= 0) && (j >= 0)) {
             list.add(backtraceTable[i][j]);
             switch (backtraceTable[i][j]) {
@@ -815,12 +812,8 @@ public class NISTAlign {
         }
         return list;
     }
-    
-    public interface StringRenderer {
-        String getRef (Object a, Object b);
-        String getHyp (Object a, Object b);
-    }
 
+    
     /**
      * Based on the backtrace information, words are aligned as appropriate with insertions and deletions causing
      * asterisks to be placed in the word lists.  This generates the alignedReferenceWords and alignedHypothesisWords
@@ -829,8 +822,8 @@ public class NISTAlign {
      * @param backtrace the backtrace list created in backtrace
      */
     void alignWords(LinkedList<Integer> backtrace, StringRenderer renderer) {
-        ListIterator<Object> referenceWordsIterator = referenceWords.listIterator();
-        ListIterator<Object> hypothesisWordsIterator = hypothesisWords.listIterator();
+        ListIterator<Object> referenceWordsIterator = referenceItems.listIterator();
+        ListIterator<Object> hypothesisWordsIterator = hypothesisItems.listIterator();
         String referenceWord;
         String hypothesisWord;
         Object a = null;
@@ -918,8 +911,8 @@ public class NISTAlign {
         if (deletions != 0) {
             totalSentencesWithDeletions++;
         }
-        totalReferenceWords += referenceWords.size();
-        totalHypothesisWords += hypothesisWords.size();
+        totalReferenceWords += referenceItems.size();
+        totalHypothesisWords += hypothesisItems.size();
         totalAlignedWords += alignedReferenceWords.size();
 
         totalWordsCorrect += correct;
@@ -1061,5 +1054,15 @@ public class NISTAlign {
             System.out.println("Usage: align <reference file> <hypothesis file>");
             System.out.println();
         }
+    }
+
+    interface Comparator {
+        public boolean isSimilar (Object ref, Object hyp);
+    }
+    
+    
+    public interface StringRenderer {
+        String getRef (Object ref, Object hyp);
+        String getHyp (Object ref, Object hyp);
     }
 }
