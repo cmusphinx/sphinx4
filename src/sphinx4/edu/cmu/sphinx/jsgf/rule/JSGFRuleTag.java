@@ -22,7 +22,7 @@ public class JSGFRuleTag extends JSGFRule {
 	}
 
 	private String escapeTag(String tag) {
-		StringBuffer stringBuilder = new StringBuffer(tag);
+		StringBuilder stringBuilder = new StringBuilder(tag);
 
 		if ((tag.indexOf('}') >= 0) || (tag.indexOf('\\') >= 0)
 				|| (tag.indexOf('{') >= 0)) {

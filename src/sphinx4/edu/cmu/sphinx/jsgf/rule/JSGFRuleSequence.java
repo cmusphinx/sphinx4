@@ -39,19 +39,19 @@ public class JSGFRuleSequence extends JSGFRule {
 		if (rules.size() == 0) {
 			return "<NULL>";
 		}
-		StringBuffer localStringBuffer = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 
 		for (int i = 0; i < rules.size(); ++i) {
 			if (i > 0)
-				localStringBuffer.append(' ');
+				sb.append(' ');
 
 			JSGFRule r = rules.get(i);
 			if ((r instanceof JSGFRuleAlternatives) || (r instanceof JSGFRuleSequence))
-				localStringBuffer.append("( " + r.toString() + " )");
+				sb.append("( ").append(r).append(" )");
 			else {
-				localStringBuffer.append(r.toString());
+				sb.append(r);
 			}
 		}
-		return localStringBuffer.toString();
+		return sb.toString();
 	}
 }

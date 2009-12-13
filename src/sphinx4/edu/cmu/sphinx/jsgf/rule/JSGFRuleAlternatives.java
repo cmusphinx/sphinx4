@@ -86,22 +86,22 @@ public class JSGFRuleAlternatives extends JSGFRule {
 		if (rules == null || rules.size() == 0) {
 			return "<VOID>";
 		}
-		StringBuffer stringBuffer = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 
 		for (int i = 0; i < rules.size(); ++i) {
 			if (i > 0)
-				stringBuffer.append(" | ");
+				sb.append(" | ");
 
 			if (weights != null)
-				stringBuffer.append("/" + weights.get(i) + "/ ");
+				sb.append("/" + weights.get(i) + "/ ");
 
 			JSGFRule r = rules.get(i);
 			if (rules.get(i) instanceof JSGFRuleAlternatives)
-				stringBuffer.append("( " + r.toString() + " )");
+				sb.append("( ").append(r).append(" )");
 			else {
-				stringBuffer.append(r.toString());
+				sb.append(r);
 			}
 		}
-		return stringBuffer.toString();
+		return sb.toString();
 	}
 }

@@ -140,7 +140,7 @@ public class BaseVoice extends Voice {
      *
      */
     public String toString() {
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
 
         if (getName() != null) {
             buf.append(getName());

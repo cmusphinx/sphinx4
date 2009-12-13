@@ -164,12 +164,12 @@ abstract public class BaseSynthesizer extends BaseEngine
      *   in the given bit pattern.
      */
     protected String stateToString(long state) {
-	StringBuffer buf = new StringBuffer();
+	    StringBuilder buf = new StringBuilder();
         if ((state & Synthesizer.QUEUE_EMPTY) != 0)
             buf.append(" QUEUE_EMPTY ");
         if ((state & Synthesizer.QUEUE_NOT_EMPTY) != 0)
             buf.append(" QUEUE_NOT_EMPTY ");
-	return super.stateToString(state) + buf.toString();
+	    return super.stateToString(state) + buf.toString();
     }
 
     /**
