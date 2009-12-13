@@ -193,7 +193,6 @@ class HMMTree {
         for (Word word : words) {
             for (int j = 0; j < word.getPronunciations().length; j++) {
                 Pronunciation p = word.getPronunciations()[j];
-                System.out.println ("Word is " + word + " j is " + j + " Pronunciation is " + p );
                 Unit first = p.getUnits()[0];
                 Unit last = p.getUnits()[p.getUnits().length - 1];
                 entryPoints.add(first);

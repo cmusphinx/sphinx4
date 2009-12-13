@@ -13,19 +13,28 @@
 package edu.cmu.sphinx.instrumentation;
 
 import edu.cmu.sphinx.decoder.search.Token;
+import edu.cmu.sphinx.result.Lattice;
+import edu.cmu.sphinx.result.LatticeOptimizer;
 import edu.cmu.sphinx.result.Result;
+import edu.cmu.sphinx.result.Sausage;
+import edu.cmu.sphinx.result.SausageMaker;
 import edu.cmu.sphinx.util.props.*;
 import edu.cmu.sphinx.recognizer.Recognizer;
 
 /** Tracks and reports recognition accuracy based upon the highest scoring path in a Result. */
 public class BestPathAccuracyTracker extends AccuracyTracker {
 
-    /** A sphinx property that define whether the full token path is displayed */
+    /** The property that define whether the full token path is displayed */
     @S4Boolean(defaultValue = false)
     public final static String PROP_SHOW_FULL_PATH = "showFullPath";
 
-    private boolean showFullPath;
+    /** The property that define whether the full token path is displayed */
+    @S4Boolean(defaultValue = false)
+    public final static String ALIGN_SAUSAGE = "alignSausage";
 
+    private boolean showFullPath;
+    private boolean alignSausage;
+    
     public BestPathAccuracyTracker(Recognizer recognizer, boolean showSummary, boolean showDetails, boolean showResults, boolean showAlignedResults, boolean showRawResults, boolean showFullPath) {
         super(recognizer, showSummary, showDetails, showResults, showAlignedResults, showRawResults);
         this.showFullPath = showFullPath;
@@ -45,6 +54,7 @@ public class BestPathAccuracyTracker extends AccuracyTracker {
     public void newProperties(PropertySheet ps) throws PropertyException {
         super.newProperties(ps);
         showFullPath = ps.getBoolean(PROP_SHOW_FULL_PATH);
+        alignSausage = ps.getBoolean(ALIGN_SAUSAGE);
     }
 
 
@@ -76,10 +86,23 @@ public class BestPathAccuracyTracker extends AccuracyTracker {
     public void newResult(Result result) {
         String ref = result.getReferenceText();
         if (result.isFinal() && ref != null) {
-            String hyp = result.getBestResultNoFiller();
-            getAligner().align(ref, hyp);
-            showFullPath(result);
-            showDetails(result.toString());
+            if (!alignSausage) {
+                String hyp = result.getBestResultNoFiller();
+                getAligner().align(ref, hyp);
+                showFullPath(result);
+                showDetails(result.toString());
+            } else {
+                Lattice lattice = new Lattice(result);
+                LatticeOptimizer optimizer = new LatticeOptimizer(lattice);
+                optimizer.optimize();                
+                SausageMaker sausageMaker = new SausageMaker(lattice);
+                Sausage sausage = sausageMaker.makeSausage();
+                sausage.removeFillers();
+                
+                getAligner().alignSausage(ref, sausage);
+                showFullPath(result);
+                showDetails(result.toString());
+            }
         }
     }
 }

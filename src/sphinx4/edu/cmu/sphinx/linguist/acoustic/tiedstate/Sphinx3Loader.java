@@ -734,9 +734,11 @@ public class Sphinx3Loader implements Loader {
      *  @throws IOException on error
      **/
     private void validateChecksum(DataInputStream dis, boolean doCheckSum) throws IOException {
+        if (!doCheckSum)
+            return;
         int oldCheckSum = (int)calculatedCheckSum;
         int checkSum = readInt(dis);
-        if (doCheckSum && checkSum != oldCheckSum) {
+        if (checkSum != oldCheckSum) {
             throw new IOException("Invalid checksum "
                     + Long.toHexString(calculatedCheckSum) + " must be "
                     + Integer.toHexString(checkSum));

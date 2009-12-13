@@ -152,7 +152,7 @@ public class ConfusionSet extends TreeMap<Double, Set<WordResult>> {
                 b.append(wordResult).append(',');
             if (!entry.getValue().isEmpty())
                 b.setLength(b.length() - 1);
-
+            b.append(' ');
         }
         return b.toString();
     }
