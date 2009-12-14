@@ -208,8 +208,6 @@ class Sphinx3Saver implements Saver {
             saveTransitionMatricesAscii(matrixPool, dataDir + "transition_matrices.ascii", true);
         }
 
-        //	senonePool = createSenonePool(distFloor);
-
         // save the HMM model file
 
         saveHMMPool(useCDUnits, StreamFactory.getOutputStream(location, modelName, true), location + File.separator + modelName);
@@ -220,58 +218,7 @@ class Sphinx3Saver implements Saver {
         return contextIndependentUnits;
     }
 
-    /**
-     * Creates the senone pool from the rest of the pools.
-     *
-     * @param distFloor the lowest allowed score
-     * @return the senone pool
-     */
-    private Pool<Senone> createSenonePool(float distFloor, float varianceFloor) {
-        Pool<Senone> pool = new Pool<Senone>("senones");
-        int numMixtureWeights = mixtureWeightsPool.size();
-
-        int numMeans = meansPool.size();
-        int numVariances = variancePool.size();
-        int numGaussiansPerSenone = mixtureWeightsPool.getFeature(NUM_GAUSSIANS_PER_STATE, 0);
-        int numSenones = mixtureWeightsPool.getFeature(NUM_SENONES, 0);
-        int whichGaussian = 0;
-
-        logger.fine("NG " + numGaussiansPerSenone);
-        logger.fine("NS " + numSenones);
-        logger.fine("NMIX " + numMixtureWeights);
-        logger.fine("NMNS " + numMeans);
-        logger.fine("NMNS " + numVariances);
-
-        assert numGaussiansPerSenone > 0;
-        assert numMixtureWeights == numSenones;
-        assert numVariances == numSenones * numGaussiansPerSenone;
-        assert numMeans == numSenones * numGaussiansPerSenone;
-
-        for (int i = 0; i < numSenones; i++) {
-            MixtureComponent[] mixtureComponents = new
-                    MixtureComponent[numGaussiansPerSenone];
-            for (int j = 0; j < numGaussiansPerSenone; j++) {
-                mixtureComponents[j] = new MixtureComponent(
-                    logMath,
-                    meansPool.get(whichGaussian),
-                    meanTransformationMatrixPool.get(0),
-                    meanTransformationVectorPool.get(0),
-                    variancePool.get(whichGaussian),
-                    varianceTransformationMatrixPool.get(0),
-                    varianceTransformationVectorPool.get(0),
-                    distFloor,
-                    varianceFloor);
-
-                whichGaussian++;
-            }
-
-            Senone senone = new GaussianMixture(logMath, mixtureWeightsPool.get(i), mixtureComponents, i);
-
-            pool.put(i, senone);
-        }
-        return pool;
-    }
-
+    
     /**
      * Loads the Sphinx 3 acoustic model properties file, which is basically a normal system properties file.
      *

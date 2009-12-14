@@ -268,19 +268,6 @@ class MyMusicBehavior extends MyBehavior {
         getGrammar().commitChanges();
         grammarChanged();
     }
-
-
-    /**
-     * Dumps out the rules of the given rule grammar, used for debugging.
-     *
-     * @param rg the rule grammar to dump
-     */
-    private void dumpGrammar(RuleGrammar rg) {
-        for (String ruleName : rg.listRuleNames()) {
-            String enabled = rg.isEnabled(ruleName) ? "ON" : "OFF";
-            System.out.println("Rule: " + ruleName + ' ' + rg.getRule(ruleName) + ' ' + enabled);
-        }
-    }
 }
 
 /**

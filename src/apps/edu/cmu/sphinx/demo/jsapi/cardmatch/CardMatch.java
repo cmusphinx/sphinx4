@@ -26,10 +26,8 @@ import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.StringTokenizer;
 
 /** A recording device. */
 public class CardMatch implements Recorder, Configurable {
@@ -123,30 +121,6 @@ public class CardMatch implements Recorder, Configurable {
 
         cardMatchFrame.setVisible(true);
 
-    }
-
-
-    /**
-     * Returns an array of all the image file names.
-     *
-     * @param props the SphinxProperties to get the file names from
-     * @return an array of all the image file names
-     */
-    private String[] getImageFiles(String files) {
-
-        if (files == null) {
-            throw new IllegalStateException("No image files");
-        } else {
-            List<String> fileList = new ArrayList<String>();
-            StringTokenizer tokenizer = new StringTokenizer(files);
-            while (tokenizer.hasMoreTokens()) {
-                String name = tokenizer.nextToken();
-                if (!name.isEmpty()) {
-                    fileList.add(name);
-                }
-            }
-            return fileList.toArray(new String[fileList.size()]);
-        }
     }
 
 

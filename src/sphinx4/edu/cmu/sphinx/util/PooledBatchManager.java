@@ -99,6 +99,12 @@ public class PooledBatchManager implements BatchManager {
     /** Stops processing the batch */
     @Override
     public void stop() throws IOException {
+        lock();
+        try {
+            closeStdout();
+        } finally {
+            unlock();
+        }
     }
 
 
@@ -113,7 +119,7 @@ public class PooledBatchManager implements BatchManager {
     }
 
 
-    /** Creates the test directiories as necessary */
+    /** Creates the test directories as necessary */
     private void createDirectories() throws IOException {
         if (!topDir.isDirectory()) {
             topDir.mkdir();
@@ -204,7 +210,7 @@ public class PooledBatchManager implements BatchManager {
 
 
     /**
-     * Given an 'in process' file, generate the corresonding completed file.
+     * Given an 'in process' file, generate the corresponding completed file.
      *
      * @param file the in process file
      * @return the completed file
@@ -215,7 +221,7 @@ public class PooledBatchManager implements BatchManager {
 
 
     /**
-     * Given an 'input' file, generate the corresonding inProcess file.
+     * Given an 'input' file, generate the corresponding inProcess file.
      *
      * @param file the in process file
      * @return the completed file

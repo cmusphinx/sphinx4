@@ -361,20 +361,7 @@ public class CardMatchFrame extends JFrame {
 	    return resultsPanel;
     }
 
-
-    /**
-     * Speaks the given string of text.
-     *
-     * @param text the text to speak
-     */
-    private void speak(String text) {
-        if (voice != null) {
-            voice.speak(text);
-        } else {
-	        System.out.println("Speak: " + text);
-	    }
-    }
-
+    
     /**
      * Speaks the given prompt
      *

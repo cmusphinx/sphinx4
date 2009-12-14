@@ -162,7 +162,6 @@ public class SenoneHMMState implements HMMState {
             List<HMMStateArc> list = new ArrayList<HMMStateArc>();
             float[][] transitionMatrix = hmm.getTransitionMatrix();
 
-            // dumpMatrix("arc", transitionMatrix);
             for (int i = 0; i < transitionMatrix.length; i++) {
                 if (transitionMatrix[state][i] > LogMath.getLogZero()) {
                     HMMStateArc arc = new HMMStateArc(hmm.getState(i),
@@ -173,23 +172,6 @@ public class SenoneHMMState implements HMMState {
             arcs = list.toArray(new HMMStateArc[list.size()]);
         }
         return arcs;
-    }
-
-
-    /**
-     * Dumps out a matrix
-     *
-     * @param title  the title for the dump
-     * @param matrix the matrix to dump
-     */
-    private void dumpMatrix(String title, float[][] matrix) {
-        System.out.println(" -- " + title + " --- ");
-        for (float[] row : matrix) {
-            for (float val : row) {
-                System.out.print(" " + val);
-            }
-            System.out.println();
-        }
     }
 
 
@@ -206,7 +188,7 @@ public class SenoneHMMState implements HMMState {
 
 
     /**
-     * returns a string represntation of this object
+     * returns a string representation of this object
      *
      * @return a string representation
      */

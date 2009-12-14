@@ -388,10 +388,11 @@ public class FlatLinguist implements Linguist, Configurable {
      * GrammarJobs for the successors are added to the grammar job queue.
      */
     /**
-     * Compiles the grammar into a sentence hmm. A GrammarJob is created for the initial grammar node and added to the
-     * GrammarJob queue. While there are jobs left on the grammar job queue, a job is removed from the queue and the
-     * associated grammar node is expanded and attached to the tails. GrammarJobs for the successors are added to the
-     * grammar job queue.
+     * Compiles the grammar into a sentence hmm. A GrammarJob is created for the
+     * initial grammar node and added to the GrammarJob queue. While there are
+     * jobs left on the grammar job queue, a job is removed from the queue and
+     * the associated grammar node is expanded and attached to the tails.
+     * GrammarJobs for the successors are added to the grammar job queue.
      */
     protected Collection<SentenceHMMState> compileGrammar() {
         initialGrammarState = grammar.getInitialNode();
@@ -820,42 +821,7 @@ public class FlatLinguist implements Linguist, Configurable {
         private List<SearchState> getExitPoints(ContextPair contextPair) {
             return exitPoints.get(contextPair);
         }
-
-
-        /**
-         * Add the items on the newContexts list to the dest list. Duplicate items are not added.
-         *
-         * @param dest        where the contexts are added
-         * @param newContexts the list of new contexts
-         */
-        private void addWithNoDuplicates(List<Unit[]> dest, List<Unit []> newContexts) {
-            // this could potentially be a bottleneck, but the contexts
-            // lists should be fairly small (<100) items, so this approach
-            // should be fast enough.
-            for (Unit[] context : newContexts) {
-                if (!listContains(dest, context)) {
-                    dest.add(context);
-                }
-            }
-        }
-
-
-        /**
-         * Determines if the give list contains the given context
-         *
-         * @param list    the list of contexts
-         * @param context the context to check
-
-         */
-        private boolean listContains(List<Unit[]> list, Unit[] context) {
-            for (Unit[] item : list) {
-                if (Unit.isContextMatch(item, context)) {
-                    return true;
-                }
-            }
-            return false;
-        }
-
+        
 
         /**
          * Collects the right contexts for this node and pushes this nodes ending context into the next next set of
@@ -917,11 +883,11 @@ public class FlatLinguist implements Linguist, Configurable {
 
         /**
          * Adds the set of empty entry points. The list of entry points are tagged with a context pair. The context pair
-         * represent the left context for the state and the starting contesxt for the state, this allows states to be
+         * represent the left context for the state and the starting context for the state, this allows states to be
          * hooked up properly. However, we may be transitioning from states that have no right hand context (CI units
          * such as SIL fall into this category). In this case we'd normally have no place to transition to since we add
          * entry points for each starting context. To make sure that there are entry points for empty contexts if
-         * necesary, we go through the list of entry points and find all left contexts that have a right hand context
+         * necessary, we go through the list of entry points and find all left contexts that have a right hand context
          * size of zero. These entry points will need an entry point with an empty starting context. These entries are
          * synthesized and added to the the list of entry points.
          */
