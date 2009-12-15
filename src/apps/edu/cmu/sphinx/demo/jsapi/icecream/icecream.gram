@@ -1,0 +1,11 @@
+#JSGF V1.0;
+
+/**
+ * JSGF Grammar for icecream example
+ */
+
+grammar icecream;
+
+public <icecream> =  strawberry  | 
+                     chocolate   |
+                     vanilla;

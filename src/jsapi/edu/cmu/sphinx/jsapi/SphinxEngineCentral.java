@@ -30,7 +30,7 @@ public class SphinxEngineCentral implements EngineCentral {
 
 
     /**
-     * Create an EngineList containin and EngineModeDesc object for each mode of operation of the Sphinx speech engine.
+     * Create an EngineList containing and EngineModeDesc object for each mode of operation of the Sphinx speech engine.
      *
      * @param require describes the constraints to be placed on engines placed on the engine list. null matches all
      *                engines. Note that require is guaranteed to be of type RecognizerModeDesc.

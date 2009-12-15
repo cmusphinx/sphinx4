@@ -13,28 +13,62 @@
 
 package edu.cmu.sphinx.jsapi;
 
+import java.util.Locale;
+
 import javax.speech.Engine;
 import javax.speech.EngineCreate;
 import javax.speech.EngineException;
 import javax.speech.recognition.RecognizerModeDesc;
-import java.util.Locale;
 
-/** Provides information about a specific operationg mode of a sphinx recognition engine. */
+/**
+ * Provides information about a specific operating mode of a sphinx recognition
+ * engine.
+ */
 public class SphinxRecognizerModeDesc extends RecognizerModeDesc
         implements EngineCreate {
 
-    public SphinxRecognizerModeDesc() {
-        super("Sphinx 4",        // engine name
-                "tidigits",            // mode name
-                Locale.US,
-                Boolean.FALSE,            // running?
-                Boolean.TRUE,            // dictationGrammarSupported
-                null);                // profile[]
-    }
-
+    /** Name of the sphinx configuration file if any. */
+    private final String configFile;
 
     /**
-     * Creats an engine with the properties specified by this SphinxRecognizerModeDesc
+     * Constructs a new object. 
+     */
+    public SphinxRecognizerModeDesc() {
+        super("Sphinx 4",      // engine name
+              null,            // mode name
+              Locale.US,
+              Boolean.FALSE,   // running?
+              Boolean.TRUE,    // dictationGrammarSupported
+              null);           // profile[]
+        configFile = "/sphinx4.config.xml";
+    }
+
+    /**
+     * Retrieves the configuration file.
+     * @return the name of the configuration file,
+     *          <code>/sphinx4.config.xml</code> if none specified
+     */
+    public String getConfigFile() {
+        return configFile;
+    }
+
+    /**
+     * Constructs a new object.
+     * @param config name of the configuration file as a resource. 
+     */
+    public SphinxRecognizerModeDesc(String config) {
+        super("Sphinx 4",      // engine name
+              null,            // mode name
+              Locale.US,
+              Boolean.FALSE,   // running?
+              Boolean.TRUE,    // dictationGrammarSupported
+              null);           // profile[]
+        configFile = config;
+    }
+
+    /**
+     * Creates an engine with the properties specified by this
+     * SphinxRecognizerModeDesc
      *
      * @return a SphinxRecognizer
      * @throws IllegalArgumentException if the properties of the SphinxRecognizerModeDesc do not refer to a known engine
@@ -44,10 +78,6 @@ public class SphinxRecognizerModeDesc extends RecognizerModeDesc
      */
     public Engine createEngine()
             throws IllegalArgumentException, EngineException, SecurityException {
-        SphinxRecognizer r = new SphinxRecognizer(this);
-        if (r == null) {
-            throw new EngineException();
-        }
-        return r;
+        return new SphinxRecognizer(this);
     }
 }

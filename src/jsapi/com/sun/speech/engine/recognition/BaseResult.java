@@ -566,19 +566,19 @@ public class BaseResult
 
 
     /** Try to set the Grammar and tokens of this result.  NOT JSAPI. */
-    public boolean tryTokens(Grammar G, String S) {
-        if ((S == null) || (G == null)) {
+    public boolean tryTokens(Grammar g, String str) {
+        if ((str == null) || (g == null)) {
             return false;
         }
 
-        if (G instanceof RuleGrammar) {
+        if (g instanceof RuleGrammar) {
             try {
-                RuleParse rp = ((RuleGrammar) G).parse(S, null);
+                RuleParse rp = ((RuleGrammar) g).parse(str, null);
                 if (rp != null) {
-                    grammar = G;
+                    grammar = g;
                     tags = rp.getTags();
                     ruleName = rp.getRuleName().getSimpleRuleName();
-                    StringTokenizer st = new StringTokenizer(S);
+                    StringTokenizer st = new StringTokenizer(str);
                     nTokens = st.countTokens();
                     int i = 0;
                     theText = new String[nTokens];

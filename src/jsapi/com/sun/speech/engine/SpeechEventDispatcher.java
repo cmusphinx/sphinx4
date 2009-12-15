@@ -17,10 +17,11 @@ import javax.speech.SpeechEvent;
 public interface SpeechEventDispatcher {
 
     /**
-     * Dispatches a <code>SpeechEvent</code> to all appropriate <code>SpeechEventListeners</code> on the object that
-     * implements this interface.
+     * Dispatches a <code>SpeechEvent</code> to all appropriate
+     * <code>SpeechEventListeners</code> on the object that implements this
+     * interface.
      *
-     * @param event the event to dispactch
+     * @param event the event to dispatch
      */
     public void dispatchSpeechEvent(SpeechEvent event);
 }
