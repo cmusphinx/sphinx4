@@ -43,7 +43,7 @@ It usually includes three steps:
 <ul>
 <li>Definining a dictionary and a language model</li>
 <li>Definining a model and a model loader</li>
-<li>Optionally (configure a frontend)</li>
+<li>Cconfigure a frontend (optinal)</li>
 </ul>
 
 <h2>Take existing config</h2>
@@ -108,7 +108,7 @@ Again, let's define a model in config file:
 
 <pre>
   &lt;component name="sphinx3Loader"
-   	     type="com.pcng.recognizer.sphinx.PropertySheetFirstSphix3Loader"&gt;
+   	     type="edu.cmu.sphinx.linguist.acoustic.tiedstate.Sphinx3Loader"&gt;
 	&lt;property name="logMath" value="logMath"/&gt;
 	&lt;property name="unitManager" value="unitManager"/&gt;
         &lt;property name="dataLocation" value="<b>the path to the model folder
@@ -117,7 +117,7 @@ Again, let's define a model in config file:
 	       for example &lt;your_training_folder&gt;/model_parameters/&lt;your_model_name&gt;.cd_cont_&lt;senones&gt;/mdef</b>"/&gt;
   &lt;/component>
 
-  &lt;component name="pcng" type="edu.cmu.sphinx.linguist.acoustic.tiedstate.TiedStateAcousticModel"&gt;
+  &lt;component name="acousticModel" type="edu.cmu.sphinx.linguist.acoustic.tiedstate.TiedStateAcousticModel"&gt;
     &lt;property name="loader" value="sphinx3Loader"/&gt;
     &lt;property name="unitManager" value="unitManager"/&gt;
   &lt;/component>
@@ -156,10 +156,9 @@ frontend accordingly. Here are required changes:
 
 </pre>    
 
-<p>
-<b>That's all. Start your application with a new configuration and it will recognize using
-new model.</b> 
-</p>
+<h2>
+That's all. Start your application with a new configuration and it will recognize using
+new model.</h2> 
 
 <p>
 For more information on configuration see <a href="../javadoc">Javadoc</a> and <a href="ProgrammersGuide.html">Programmer's Documentation</a>.
