@@ -52,7 +52,9 @@ from Lattice demo.
 
 You can use the same phonetic dictionary and the same model as was used
 for training and initial testing. They are located located in the folder
-<code>&lt;your_training_folder&gt;/etc/&lt;your_model_name&gt;.dic</code>.
+<code>&lt;your_training_folder&gt;/etc/</code> and have names like <code>&lt;your_model_name&gt;.dic</code> 
+and <code>&lt;your_model_name&gt;.lm.DMP</code>. If you don't have LM yet, you can create it with
+cmuclmtk and later convert to DMP format with <code>sphinx3_lm_convert</code> from sphinx3 package.
 
 Do the following changes in model and dictionary configuration, just point to the 
 files:
@@ -65,7 +67,7 @@ files:
     &lt;property name="dictionary" value="dictionary"/&gt;
     &lt;property name="location" 
 	value="<b>the name of the language model file 
-	       for example &lt;your_training_folder&gt;/etc/&lt;your_model_name&gt;.lm</b>"/&gt;
+	       for example &lt;your_training_folder&gt;/etc/&lt;your_model_name&gt;.lm.DMP</b>"/&gt;
   &lt;/component>
 
   &lt;component name="dictionary" type="edu.cmu.sphinx.linguist.dictionary.FastDictionary"&gt;
