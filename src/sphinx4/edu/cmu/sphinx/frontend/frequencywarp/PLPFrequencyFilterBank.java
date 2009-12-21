@@ -40,11 +40,11 @@ public class PLPFrequencyFilterBank extends BaseDataProcessor {
     public static final String PROP_NUMBER_FILTERS = "numberFilters";
 
     /** The name of the Sphinx Property for the center frequency of the lowest filter in the filterbank. */
-    @S4Integer(defaultValue = 130)
+    @S4Double(defaultValue = 130.0)
     public static final String PROP_MIN_FREQ = "minimumFrequency";
 
     /** The name of the Sphinx Property for the center frequency of the highest filter in the filterbank. */
-    @S4Integer(defaultValue = 3600)
+    @S4Double(defaultValue = 3600.0)
     public static final String PROP_MAX_FREQ = "maximumFrequency";
 
     private int sampleRate;

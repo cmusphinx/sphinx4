@@ -16,40 +16,31 @@
 </head>
 <body bgcolor="white">
 
+<h1>Description</h1>
+<p>
 Provides an tool that generates different types of features
 (MFCC, PLP, spectrum) from audio files.
+</p>
 
 <p>
-
-    To create MFCC cepstrum using this program, go to the
-    <code>edu/cmu/sphinx/tools/feature</code> directory, and type:
-
-<pre>ant -Dinput="input file" -Doutput="output file" cepstra_producer</pre>
+This program takes in an audio file, does frontend signal processing to it, and then dumps 
+the resulting Feature into a separate file. Also it can process a list of files at once.
+</p>
 
 <p>
+Available options:
+</p>
+ 
+<ul>
+<li>-config configFile - the XML configuration file</li> 
+<li>-name frontendName - the name of the feature extractor inside the configuration file</li>
+<li>-i audioFile - the name of the audio file</li>
+<li>-ctl controlFile - the name of the input file for batch processing</li>
+<li>-o outputFile - the name of the output file or output folder</li>
+<li>-format binary/ascii - output file format</li>
+</ul>
 
-    To create a binary PLP cepstrum file using this program, type:
-
-<pre>ant -Dinput="input file" -Doutput="output file" plp_producer</pre>
-
-<p>
-
-    To create a binary spectra file, type:
-
-<pre>ant -Dinput="input file" -Doutput="output file" spectra_producer</pre>
-
-<p>
-
-    As you might notice by comparing the files cepstra_dump.props and
-    spectra_dump.props in the "edu/cmu/sphinx/tools/feature" directory,
-    the only difference in setup between dumping different types of features
-    is in the sequence of data processors as specified in the properties file.
-    If you give it a difference data processor sequence, it will give you
-    different output.
-
-<p>
-
-    <b>Binary File Format</b>
+<h1>Binary File Format</h1>
 
 <p>
 
@@ -58,23 +49,7 @@ Provides an tool that generates different types of features
     that reads this file to check the endianness of the file by comparing
     with the file size. The rest of the file is simply the data points.
     Each data point is a 4-byte floating point number, in big-endian order.
-
-    <!--
-    <h2>Package Specification</h2>
-
-    <ul>
-      <li><a href=""> </a>
-    </ul>
-
-    <h2>Related Documentation</h2>
-
-    For overviews, tutorials, examples, guides, and tool documentation,
-    please see:
-    <ul>
-      <li><a href=""></a>
-    </ul>
-
-    -->
+</p>
 
 </body>
 </html>
