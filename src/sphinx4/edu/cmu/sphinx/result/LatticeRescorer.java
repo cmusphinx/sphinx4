@@ -11,16 +11,16 @@
  */
 package edu.cmu.sphinx.result;
 
-import java.util.Collection;
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import edu.cmu.sphinx.linguist.WordSequence;
 import edu.cmu.sphinx.linguist.dictionary.Word;
 import edu.cmu.sphinx.linguist.language.ngram.LanguageModel;
+import edu.cmu.sphinx.util.LogMath;
 
 /**
- * Class rescore the lattice with the new Language model.
+ * Class to rescore the lattice with the new Language model.
  */
 
 public class LatticeRescorer {
@@ -32,7 +32,7 @@ public class LatticeRescorer {
 
     /**
      * Create a new Lattice optimizer
-     *
+     * 
      * @param lattice
      */
     public LatticeRescorer(Lattice lattice, LanguageModel model) {
@@ -41,97 +41,63 @@ public class LatticeRescorer {
         depth = model.getMaxDepth();
     }
 
-    private boolean isFillerNode (Node node) {
-    	return node.getWord().getSpelling().equals("<sil>");
+    private boolean isFillerNode(Node node) {
+        return node.getWord().getSpelling().equals("<sil>");
     }
-    
-    // Ensures each node has unique context
-    public void expand() {
-    	List<Node> nodeQueue = lattice.sortNodes();
-    	
-    	while (nodeQueue.size() > 0) {
 
-    		Node node = nodeQueue.remove(0);
-    		
-    		if (node.getLeavingEdges().size() < 1) {
-    			continue;
-    		}
-    		
-    		Collection<Edge> enteringEdges = node.getCopyOfEnteringEdges();
-    		if (enteringEdges.size() > 1) {
-    			for (Edge e : enteringEdges) {
-    				Node newNode = new Node(node.getWord(), node.getBeginTime(), node.getEndTime());
-    				lattice.addNode(newNode);
-    				lattice.addEdge(e.getFromNode(), newNode, e.getAcousticScore(), e.getLMScore());
-    				for (Edge e1 : node.getCopyOfLeavingEdges()) {
-    					Node toNode = e1.getToNode();
-    					if (!nodeQueue.contains(toNode)) {
-   						nodeQueue.add(toNode);
-    					}
-    					lattice.addEdge(newNode, toNode, e1.getAcousticScore(), e1.getLMScore());
-    					lattice.removeEdge(e1);
-    				}
-    				nodeQueue.add(newNode);
-    			}
-    			lattice.removeNodeAndEdges(node);
-    		}
-    	}
-    }
-    
-    public void removeFillers () {    	
-    	for (Node node : lattice.sortNodes()) {
-    		if (isFillerNode(node)) {
-    			lattice.removeNodeAndCrossConnectEdges(node);
-    			assert lattice.checkConsistency();
-    		}
-    	}
+    public void removeFillers() {
+        for (Node node : lattice.sortNodes()) {
+            if (isFillerNode(node)) {
+                lattice.removeNodeAndCrossConnectEdges(node);
+                assert lattice.checkConsistency();
+            }
+        }
     }
 
     private void rescoreEdges() {
-    	for (Edge edge : lattice.edges) {
-    		
-    		if (isFillerNode(edge.getToNode()))
-    			continue;
+        for (Edge edge : lattice.edges) {
 
-    		ArrayList<Word> wordList = new ArrayList<Word> ();
-    		wordList.add (edge.getToNode().getWord());
-    		Node node = edge.fromNode;
-    		    		
-    		int i = 1;
-    		while (true) {
-    			if (!isFillerNode(node)) {
-    				wordList.add(0, node.getWord());
-    				i++;
-    			}
-    			
-    			Collection<Edge> enteringEdges = node.getEnteringEdges();
+            if (isFillerNode(edge.getToNode()))
+                continue;
 
-    			assert enteringEdges.size() <= 1;
+            List<String> paths = allPathsTo("", edge, depth);
 
-    			if (i == depth)
-    				break;
-    			if (enteringEdges.isEmpty())
-    				break;
+            float minProb = LogMath.getLogZero();
+            for (String path : paths) {
+                List<Word> wordList = new LinkedList<Word>();
+                for (String pathWord : path.split(" ")) {
+                    wordList.add(new Word(pathWord, null, false));
+                }
+                wordList.add(edge.getToNode().getWord());
 
-    			Edge prevEdge = enteringEdges.iterator().next();
-    			node = prevEdge.fromNode;
-    		}
-    		WordSequence seq = new WordSequence (wordList);
-    		float prob = model.getProbability(seq) * languageWeigth;
-    		System.out.println ("Changing prob of sequence " + seq + " from " + edge.getLMScore() + " to " + prob);
-    		edge.setLMScore(prob);
-    	}    	
+                WordSequence seq = new WordSequence(wordList);
+                float prob = model.getProbability(seq) * languageWeigth;
+                if (minProb < prob)
+                    minProb = prob;
+            }
+            edge.setLMScore(minProb);
+        }
     }
-    public void rescore () {
-    	
-    	removeFillers();
-    
-        lattice.dumpAISee("before.gdl", "before");
 
-        expand();
-    	
-        lattice.dumpAISee("after.gdl", "after");
+    protected List<String> allPathsTo(String path, Edge edge, int currentDepth) {
+        List<String> l = new LinkedList<String>();
+        String p = edge.getFromNode().getWord().toString() + ' ' + path;
 
-        rescoreEdges ();
+        if (currentDepth == 2
+                || edge.getFromNode().equals(lattice.getInitialNode())) {
+            l.add(p);
+        } else {
+            for (Edge e : edge.getFromNode().getEnteringEdges()) {
+                l.addAll(allPathsTo(p, e, currentDepth - 1));
+            }
+        }
+        return l;
+    }
+
+    public void rescore() {
+
+        removeFillers();
+
+        rescoreEdges();
     }
 }

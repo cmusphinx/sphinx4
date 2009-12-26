@@ -190,7 +190,7 @@ public final class WordSequence {
 
 
     /**
-     * Returns a string represntation of this word sequence. The format is: [ID_0][ID_1][ID_2].
+     * Returns a string representation of this word sequence. The format is: [ID_0][ID_1][ID_2].
      *
      * @return the string
      */
@@ -264,6 +264,6 @@ public final class WordSequence {
      * @return the words of the <code>WordSequence</code>.
      */
     public Word[] getWords() {
-        return getSubSequence(0, size()).words; //create a copy yo keep the class imutable
+        return getSubSequence(0, size()).words; //create a copy to keep the class immutable
     }
 }
