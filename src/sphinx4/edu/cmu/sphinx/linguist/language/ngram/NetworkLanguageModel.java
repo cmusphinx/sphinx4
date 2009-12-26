@@ -51,6 +51,24 @@ public class NetworkLanguageModel implements LanguageModel {
     LRUCache<WordSequence, Float> cache;
 
     private boolean allocated;
+
+    /**
+     * Creates network language model client
+     * @param host      server host
+     * @param port      server port
+     * @param location  URL of the file with vocabulary (only needed for 1-stage model)
+     * @param maxDepth  depth of the model
+     * @param logMath   logMath
+     */
+    public NetworkLanguageModel(String host, int port, URL location,
+            int maxDepth, LogMath logMath) {
+        this.host = host;
+        this.port = port;
+        this.maxDepth = maxDepth;
+        this.location = location;
+        this.logMath = logMath;
+    }
+    
     /*
 	* (non-Javadoc)
 	*
