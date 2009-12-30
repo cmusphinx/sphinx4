@@ -13,6 +13,7 @@
 
 package tests.search;
 
+import edu.cmu.sphinx.decoder.scorer.Scoreable;
 import edu.cmu.sphinx.decoder.search.Partitioner;
 import edu.cmu.sphinx.decoder.search.Token;
 
@@ -70,10 +71,10 @@ public class PartitionerTest {
                 assert (lowestScore > tokens[i].getScore());
             }
         
-            Collections.sort(firstList, Token.COMPARATOR);
+            Collections.sort(firstList, Scoreable.COMPARATOR);
             
             List<Token> secondList = Arrays.asList(tokens);
-            Collections.sort(secondList, Token.COMPARATOR);
+            Collections.sort(secondList, Scoreable.COMPARATOR);
             
             for (Iterator<Token> i1 = firstList.iterator(), i2 = secondList.iterator();
                  i1.hasNext() && i2.hasNext(); ) {

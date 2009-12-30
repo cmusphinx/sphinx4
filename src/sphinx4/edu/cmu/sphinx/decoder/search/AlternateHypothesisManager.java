@@ -13,6 +13,8 @@
 package edu.cmu.sphinx.decoder.search;
 
 
+import edu.cmu.sphinx.decoder.scorer.Scoreable;
+
 import java.util.*;
 
 /**
@@ -72,7 +74,7 @@ public class AlternateHypothesisManager {
 
         for (Map.Entry<Token, List<Token>> entry : viterbiLoserMap.entrySet()) {
             List<Token> list = entry.getValue();
-            Collections.sort(list, Token.COMPARATOR);
+            Collections.sort(list, Scoreable.COMPARATOR);
             List<Token> newList = list.subList(0, list.size() > max ? max : list.size());
             viterbiLoserMap.put(entry.getKey(), newList);
         }

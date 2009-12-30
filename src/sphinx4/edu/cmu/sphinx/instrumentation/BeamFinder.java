@@ -12,6 +12,7 @@
 
 package edu.cmu.sphinx.instrumentation;
 
+import edu.cmu.sphinx.decoder.scorer.Scoreable;
 import edu.cmu.sphinx.decoder.search.Token;
 import edu.cmu.sphinx.recognizer.Recognizer;
 import edu.cmu.sphinx.recognizer.Recognizer.State;
@@ -181,7 +182,7 @@ public class BeamFinder implements ResultListener,
         } else {
             List<Token> tokenList = result.getActiveTokens().getTokens();
             if (!tokenList.isEmpty()) {
-                Collections.sort(tokenList, Token.COMPARATOR);
+                Collections.sort(tokenList, Scoreable.COMPARATOR);
                 Token bestToken = tokenList.get(0);
                 int rank = 0;
                 for (Token token : tokenList) {

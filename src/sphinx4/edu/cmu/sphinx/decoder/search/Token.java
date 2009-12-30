@@ -34,20 +34,6 @@ import java.util.*;
  */
 public class Token implements Scoreable {
 
-    /** a token comparator that is used to order tokens in descending order */
-    public final static Comparator<Token> COMPARATOR = new Comparator<Token>() {
-        @Override
-        public int compare(Token t1, Token t2) {
-            if (t1.getScore() > t2.getScore()) {
-                return -1;
-            } else if (t1.getScore() == t2.getScore()) {
-                return 0;
-            } else {
-                return 1;
-            }
-        }
-    };
-
     private static int curCount;
     private static int lastCount;
     private static final DecimalFormat scoreFmt = new DecimalFormat("0.0000000E00");

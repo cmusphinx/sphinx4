@@ -12,6 +12,7 @@
  */
 package edu.cmu.sphinx.decoder.search;
 
+import edu.cmu.sphinx.decoder.scorer.Scoreable;
 import edu.cmu.sphinx.linguist.WordSearchState;
 import edu.cmu.sphinx.linguist.dictionary.Word;
 import edu.cmu.sphinx.util.props.PropertyException;
@@ -131,7 +132,7 @@ public class WordActiveListFactory extends ActiveListFactory {
         public ActiveList purge() {
             int fillerCount = 0;
             Map<Word, Integer> countMap = new HashMap<Word, Integer>();
-            Collections.sort(tokenList, Token.COMPARATOR);
+            Collections.sort(tokenList, Scoreable.COMPARATOR);
             // remove word duplicates
             for (Iterator<Token> i = tokenList.iterator(); i.hasNext();) {
                 Token token = i.next();

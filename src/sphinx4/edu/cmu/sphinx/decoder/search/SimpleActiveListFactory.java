@@ -12,6 +12,7 @@
  */
 package edu.cmu.sphinx.decoder.search;
 
+import edu.cmu.sphinx.decoder.scorer.Scoreable;
 import edu.cmu.sphinx.util.props.PropertyException;
 import edu.cmu.sphinx.util.props.PropertySheet;
 import edu.cmu.sphinx.util.LogMath;
@@ -134,7 +135,7 @@ public class SimpleActiveListFactory extends ActiveListFactory {
         @Override
         public ActiveList purge() {
             if (absoluteBeamWidth > 0 && tokenList.size() > absoluteBeamWidth) {
-                Collections.sort(tokenList, Token.COMPARATOR);
+                Collections.sort(tokenList, Scoreable.COMPARATOR);
                 tokenList = tokenList.subList(0, absoluteBeamWidth);
             }
             return this;

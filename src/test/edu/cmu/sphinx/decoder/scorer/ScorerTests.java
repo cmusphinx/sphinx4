@@ -47,16 +47,16 @@ public class ScorerTests {
 
     @Test
     public void waitUntilSpeechStart() {
-        List<Class<? extends AbstractScorer>> scorerClasses = new ArrayList<Class<? extends AbstractScorer>>(); 
+        List<Class<? extends SimpleAcousticScorer>> scorerClasses = new ArrayList<Class<? extends SimpleAcousticScorer>>();
         scorerClasses.add(SimpleAcousticScorer.class);
         scorerClasses.add(ThreadedAcousticScorer.class);
 
-        for (Class<? extends AbstractScorer> scorerClass : scorerClasses) {
+        for (Class<? extends SimpleAcousticScorer> scorerClass : scorerClasses) {
             System.err.println("testing: " + scorerClass.getSimpleName());
             DataBufferProcessor dummyFrontEnd = createDummyFrontEnd();
 
             Map<String, Object> props = new HashMap<String, Object>();
-            props.put(AbstractScorer.FEATURE_FRONTEND, dummyFrontEnd);
+            props.put(SimpleAcousticScorer.FEATURE_FRONTEND, dummyFrontEnd);
             AcousticScorer scorer = ConfigurationManager.getInstance(scorerClass, props);
 
             int startBufferSize = dummyFrontEnd.getBufferSize();
@@ -103,7 +103,7 @@ public class ScorerTests {
         Map<String, Object> props = new HashMap<String, Object>();
         DataBufferProcessor dummyFrontEnd = createDummyFrontEnd();
 
-        props.put(AbstractScorer.FEATURE_FRONTEND, dummyFrontEnd);
+        props.put(SimpleAcousticScorer.FEATURE_FRONTEND, dummyFrontEnd);
         props.put(ThreadedAcousticScorer.PROP_NUM_THREADS, 4);
         props.put(ConfigurationManagerUtils.GLOBAL_COMMON_LOGLEVEL, "FINEST");
         AcousticScorer scorer = ConfigurationManager.getInstance(ThreadedAcousticScorer.class, props);

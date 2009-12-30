@@ -16,6 +16,7 @@ package edu.cmu.sphinx.decoder.search;
 
 import edu.cmu.sphinx.decoder.pruner.Pruner;
 import edu.cmu.sphinx.decoder.scorer.AcousticScorer;
+import edu.cmu.sphinx.decoder.scorer.Scoreable;
 import edu.cmu.sphinx.frontend.Data;
 import edu.cmu.sphinx.linguist.*;
 import edu.cmu.sphinx.linguist.acoustic.HMM;
@@ -1141,7 +1142,7 @@ class TokenHeap {
 
     /** Orders the heap after an insert */
     private void fixupInsert() {
-        Arrays.sort(tokens, 0, curSize - 1, Token.COMPARATOR);
+        Arrays.sort(tokens, 0, curSize - 1, Scoreable.COMPARATOR);
     }
 
     /**
