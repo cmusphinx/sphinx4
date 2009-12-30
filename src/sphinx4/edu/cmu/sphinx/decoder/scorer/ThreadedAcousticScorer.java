@@ -27,7 +27,7 @@ import java.util.ListIterator;
  * <p/>
  * All scores are maintained in LogMath log base
  */
-public class ThreadedAcousticScorer extends AbstractScorer {
+public class ThreadedAcousticScorer extends SimpleAcousticScorer {
 
     /**
      * A SphinxProperty name that controls the number of threads that are used to score hmm states. If the isCpuRelative
@@ -185,8 +185,8 @@ public class ThreadedAcousticScorer extends AbstractScorer {
 
 
     @Override
-    protected Data doScoring(List<? extends Scoreable> scoreableList, Data data) {
-        Scoreable best;
+    protected <T extends Scoreable> T doScoring(List<T> scoreableList, Data data) {
+        T best;
 
         currentData = data;
 
@@ -216,11 +216,11 @@ public class ThreadedAcousticScorer extends AbstractScorer {
 //                }
             }
 
-            best = semaphore.pend();
+            best = (T)semaphore.pend();
 
         } else {
             ScoreableJob job = new ScoreableJob(scoreableList, 0, scoreableList.size());
-            best = scoreScoreables(job);
+            best = (T)scoreScoreables(job);
         }
 
         currentData = null;
