@@ -25,11 +25,11 @@ import edu.cmu.sphinx.util.props.S4Component;
  * read the vocabulary from a vocabulary file though.
  */
 public class NetworkLanguageModel implements LanguageModel {
-    
-	/** Sphinx property that defines the logMath component. */
+
+    /** Sphinx property that defines the logMath component. */
     @S4Component(type = LogMath.class)
     public final static String PROP_LOG_MATH = "logMath";
-    
+
     /** The property specifying the host of the language model server. */
     @S4String(defaultValue = "localhost")
     public final static String PROP_HOST = "host";
@@ -39,12 +39,12 @@ public class NetworkLanguageModel implements LanguageModel {
     public final static String PROP_PORT = "port";
 
     LogMath logMath;
-    
+
     private String host;
     private int port;
     private URL location;
     int maxDepth;
-    
+
     Socket socket;
     private BufferedReader inReader;
     private PrintWriter outWriter;
@@ -54,30 +54,41 @@ public class NetworkLanguageModel implements LanguageModel {
 
     /**
      * Creates network language model client
-     * @param host      server host
-     * @param port      server port
-     * @param location  URL of the file with vocabulary (only needed for 1-stage model)
-     * @param maxDepth  depth of the model
-     * @param logMath   logMath
+     * 
+     * @param host
+     *            server host
+     * @param port
+     *            server port
+     * @param location
+     *            URL of the file with vocabulary (only needed for 1-stage
+     *            model)
+     * @param maxDepth
+     *            depth of the model
+     * @param logMath
+     *            logMath
      */
-    public NetworkLanguageModel(String host, int port, URL location,
-            int maxDepth, LogMath logMath) {
+    public NetworkLanguageModel(String host, int port, URL location, int maxDepth, LogMath logMath) {
         this.host = host;
         this.port = port;
         this.maxDepth = maxDepth;
         this.location = location;
         this.logMath = logMath;
     }
-    
-    /*
-	* (non-Javadoc)
-	*
-	* @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
-	*/
-	@Override
-	public void newProperties(PropertySheet ps) throws PropertyException {
 
-		if (allocated) {
+    public NetworkLanguageModel() {
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util
+     * .props.PropertySheet)
+     */
+    @Override
+    public void newProperties(PropertySheet ps) throws PropertyException {
+
+        if (allocated) {
             throw new RuntimeException("Can't change properties after allocation");
         }
         host = ps.getString(PROP_HOST);
@@ -87,105 +98,104 @@ public class NetworkLanguageModel implements LanguageModel {
 
         maxDepth = ps.getInt(PROP_MAX_DEPTH);
         if (maxDepth == -1)
-        	maxDepth = 3;
-	}
-	
-	@Override
-	public void allocate() throws IOException {
-		allocated = true;
-		
-		socket = new Socket (host, port);
-	    inReader = new BufferedReader
-           (new InputStreamReader(socket.getInputStream()));
-	    outWriter = new PrintWriter(socket.getOutputStream(), true);
-	    String greeting = inReader.readLine();
-	    if (!greeting.equals("probserver ready")) {
-	    	throw new IOException("Incorrect input");
-	    }
-	    cache = new LRUCache<WordSequence, Float>(1000);
-	}
+            maxDepth = 3;
+    }
 
-	@Override
-	public void deallocate() {
-		allocated = false;
-		try {
-			socket.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
+    @Override
+    public void allocate() throws IOException {
+        allocated = true;
 
-	@Override
-	public int getMaxDepth() {
-		return maxDepth;
-	}
+        socket = new Socket(host, port);
+        inReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        outWriter = new PrintWriter(socket.getOutputStream(), true);
+        String greeting = inReader.readLine();
+        if (!greeting.equals("probserver ready")) {
+            throw new IOException("Incorrect input");
+        }
+        cache = new LRUCache<WordSequence, Float>(1000);
+    }
 
-	@Override
-	public float getProbability(WordSequence wordSequence) {
-		
-		Float probability = cache.get(wordSequence);
-		
-		if (probability != null) {
-			return probability.floatValue();
-		}
-		
-		StringBuilder builder = new StringBuilder();
-		if (wordSequence.size() == 0) 
-			return 0.0f;
-		for (Word w : wordSequence.getWords()) {
-			builder.append (w.toString());
-			builder.append(' ');
-		}
-		outWriter.println(builder.toString());
-		String result = "0";
-		try {
-			result = inReader.readLine();
-			if (result.charAt(0) == 0)
-				result = result.substring(1);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+    @Override
+    public void deallocate() {
+        allocated = false;
+        try {
+            socket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
-		if (!result.equals("-inf"))
-			probability = logMath.log10ToLog(Float.parseFloat(result));
-		else
-			probability = LogMath.getLogZero();
-			
-		cache.put(wordSequence, probability);
-		return probability.floatValue();
-	}
+    @Override
+    public int getMaxDepth() {
+        return maxDepth;
+    }
 
-	@Override
-	public float getSmear(WordSequence wordSequence) {
-		return 0.0f;
-	}
+    @Override
+    public float getProbability(WordSequence wordSequence) {
 
-	@Override
-	public Set<String> getVocabulary() {
-		Set<String> result = new HashSet<String>();
-		try {
-			BufferedReader reader = new BufferedReader (new InputStreamReader(location.openStream()));
-			String line;
-			while (true) {
-				line = reader.readLine();
-				if (line == null)
-					break;
-				if (line.length() == 0)
-					continue;
-				result.add(line.trim());
-		    }
-			reader.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return result;
-	}
+        Float probability = cache.get(wordSequence);
 
-	@Override
-	public void start() {
-	}
+        if (probability != null) {
+            return probability.floatValue();
+        }
 
-	@Override
-	public void stop() {
-	}
+        StringBuilder builder = new StringBuilder();
+        if (wordSequence.size() == 0)
+            return 0.0f;
+        for (Word w : wordSequence.getWords()) {
+            builder.append(w.toString());
+            builder.append(' ');
+        }
+        outWriter.println(builder.toString());
+        String result = "0";
+        try {
+            result = inReader.readLine();
+            if (result.charAt(0) == 0)
+                result = result.substring(1);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        if (!result.equals("-inf"))
+            probability = logMath.log10ToLog(Float.parseFloat(result));
+        else
+            probability = LogMath.getLogZero();
+
+        cache.put(wordSequence, probability);
+        return probability.floatValue();
+    }
+
+    @Override
+    public float getSmear(WordSequence wordSequence) {
+        return 0.0f;
+    }
+
+    @Override
+    public Set<String> getVocabulary() {
+        Set<String> result = new HashSet<String>();
+        try {
+            BufferedReader reader = new BufferedReader(new InputStreamReader(location.openStream()));
+            String line;
+            while (true) {
+                line = reader.readLine();
+                if (line == null)
+                    break;
+                if (line.length() == 0)
+                    continue;
+                result.add(line.trim());
+            }
+            reader.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    @Override
+    public void start() {
+    }
+
+    @Override
+    public void stop() {
+    }
 }
