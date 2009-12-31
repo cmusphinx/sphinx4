@@ -1,3 +1,14 @@
+/*
+ * Copyright 1999-2004 Carnegie Mellon University.
+ * Portions Copyright 2004 Sun Microsystems, Inc.
+ * Portions Copyright 2004 Mitsubishi Electric Research Laboratories.
+ * All Rights Reserved.  Use is subject to license terms.
+ *
+ * See the file "license.terms" for information on usage and
+ * redistribution of this file, and for a DISCLAIMER OF ALL
+ * WARRANTIES.
+ *
+ **/
 package edu.cmu.sphinx.demo.raw;
 
 import edu.cmu.sphinx.frontend.util.AudioFileDataSource;
@@ -11,19 +22,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.net.MalformedURLException;
 
-/**
- * User: peter
- * Date: Nov 2, 2009
- * Time: 2:38:51 PM
- * <p/>
- * Copyright 1999-2004 Carnegie Mellon University.
- * Portions Copyright 2004 Sun Microsystems, Inc.
- * Portions Copyright 2004 Mitsubishi Electric Research Laboratories.
- * All Rights Reserved.  Use is subject to license terms.
- * <p/>
- * See the file "license.terms" for information on usage and
- * redistribution of this file, and for a DISCLAIMER OF ALL
- * WARRANTIES.
+/** 
+ * @author Peter Wolf
  */
 public class RawTranscriber {
 
@@ -34,17 +34,16 @@ public class RawTranscriber {
     public static void run(String[] args) throws MalformedURLException {
         System.out.println("\nRunning RawTranscriber...");
 
-        if( args.length < 1 ) {
-            throw new Error( "USAGE: RawTranscriber <sphinx4 root> [<WAV file>]" );
+        if (args.length < 1) {
+            throw new Error("USAGE: RawTranscriber <sphinx4 root> [<WAV file>]");
         }
 
         String root = args[0];
 
-        URL audioURL = (args.length > 1) ?
-            new File(args[0]).toURI().toURL() :
-            new URL("file:"+root+"/src/apps/edu/cmu/sphinx/demo/transcriber/10001-90210-01803.wav");
+        URL audioURL = (args.length > 1) ? new File(args[1]).toURI().toURL() : new URL("file:" + root
+                + "/src/apps/edu/cmu/sphinx/demo/transcriber/10001-90210-01803.wav");
 
-        // get a recognizer configurred for the Transcriber task
+        // get a recognizer configured for the Transcriber task
         TranscriberConfiguration config = new TranscriberConfiguration(root);
         Recognizer recognizer = config.getRecognizer();
 
@@ -55,7 +54,8 @@ public class RawTranscriber {
         AudioFileDataSource audioSource = config.getAudioFileDataSource();
         audioSource.setAudioFile(audioURL, null);
 
-        // Loop unitl last utterance in the audio file has been decoded, in which case the recognizer will return null.
+        // Loop until last utterance in the audio file has been decoded, in
+        // which case the recognizer will return null.
         Result result;
         while ((result = recognizer.recognize()) != null) {
             String resultText = result.getBestResultNoFiller();
