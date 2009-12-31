@@ -35,15 +35,15 @@ import edu.cmu.sphinx.util.props.*;
  */
 public class PLPFrequencyFilterBank extends BaseDataProcessor {
 
-    /** The name of the Sphinx Property for the number of filters in the filterbank. */
+    /** The property for the number of filters in the filterbank. */
     @S4Integer(defaultValue = 32)
     public static final String PROP_NUMBER_FILTERS = "numberFilters";
 
-    /** The name of the Sphinx Property for the center frequency of the lowest filter in the filterbank. */
+    /** The property for the center frequency of the lowest filter in the filterbank. */
     @S4Double(defaultValue = 130.0)
     public static final String PROP_MIN_FREQ = "minimumFrequency";
 
-    /** The name of the Sphinx Property for the center frequency of the highest filter in the filterbank. */
+    /** The property for the center frequency of the highest filter in the filterbank. */
     @S4Double(defaultValue = 3600.0)
     public static final String PROP_MAX_FREQ = "maximumFrequency";
 

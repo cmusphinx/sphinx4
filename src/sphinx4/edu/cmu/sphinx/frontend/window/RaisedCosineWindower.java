@@ -52,17 +52,17 @@ import java.util.Map;
  */
 public class RaisedCosineWindower extends BaseDataProcessor {
 
-    /** The SphinxProperty name for window size in milliseconds. */
+    /** The property for window size in milliseconds. */
     @S4Double(defaultValue = 25.625)
     public static final String PROP_WINDOW_SIZE_MS = "windowSizeInMs";
     private float windowSizeInMs;
 
-    /** The SphinxProperty name for window shift in milliseconds, which has a default value of 10F. */
+    /** The property for window shift in milliseconds, which has a default value of 10F. */
     @S4Double(defaultValue = 10.0)
     public static final String PROP_WINDOW_SHIFT_MS = "windowShiftInMs";
     private float windowShiftInMs;
 
-    /** The name of the SphinxProperty for the alpha value of the Window, which is the value for the RaisedCosineWindow. */
+    /** The property for the alpha value of the Window, which is the value for the RaisedCosineWindow. */
     @S4Double(defaultValue = 0.46)
     public static final String PROP_ALPHA = "alpha";
     private double alpha;

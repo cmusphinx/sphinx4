@@ -32,25 +32,25 @@ public class SpeedTracker
         SignalListener,
         Monitor {
 
-    /** A Sphinx property that defines which recognizer to monitor */
+    /** The property that defines which recognizer to monitor */
     @S4Component(type = Recognizer.class)
     public final static String PROP_RECOGNIZER = "recognizer";
-    /** A Sphinx property that defines which frontend to monitor */
+    /** The property that defines which frontend to monitor */
     @S4Component(type = FrontEnd.class)
     public final static String PROP_FRONTEND = "frontend";
-    /** A sphinx property that define whether summary accuracy information is displayed */
+    /** The property that defines whether summary accuracy information is displayed */
     @S4Boolean(defaultValue = true)
     public final static String PROP_SHOW_SUMMARY = "showSummary";
 
-    /** A sphinx property that define whether detailed accuracy information is displayed */
+    /** The property that defines whether detailed accuracy information is displayed */
     @S4Boolean(defaultValue = true)
     public final static String PROP_SHOW_DETAILS = "showDetails";
 
-    /** A sphinx property that define whether detailed response information is displayed */
+    /** The property that defines whether detailed response information is displayed */
     @S4Boolean(defaultValue = false)
     public final static String PROP_SHOW_RESPONSE_TIME = "showResponseTime";
 
-    /** A sphinx property that define whether detailed timer information is displayed */
+    /** The property that defines whether detailed timer information is displayed */
     @S4Boolean(defaultValue = false)
     public final static String PROP_SHOW_TIMERS = "showTimers";
 

@@ -26,7 +26,7 @@ import java.util.*;
  */
 public class LinguistDumper extends LinguistProcessor {
 
-    /** A sphinx property name for the destination of the LinguistDumper */
+    /** The property for the destination of the LinguistDumper */
     @S4String(defaultValue = "linguistDump.txt")
     public final static String PROP_FILENAME = "filename";
 

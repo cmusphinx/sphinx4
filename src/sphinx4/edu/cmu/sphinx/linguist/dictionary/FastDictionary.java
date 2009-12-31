@@ -65,7 +65,7 @@ public class FastDictionary implements Dictionary {
 
 
     /**
-     * The name of the SphinxProperty for the custom dictionary file paths. This addenda property points to a possibly
+     * The property for the custom dictionary file paths. This addenda property points to a possibly
      * empty list of URLs to dictionary addenda.  Each addendum should contain word pronunciations in the same Sphinx-3
      * dictionary format as the main dictionary.  Words in the addendum are added after the words in the main dictionary
      * and will override previously specified pronunciations.  If you wish to extend the set of pronunciations for a

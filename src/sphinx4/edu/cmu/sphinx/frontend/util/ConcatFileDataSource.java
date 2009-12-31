@@ -74,31 +74,31 @@ import java.util.Random;
  */
 public class ConcatFileDataSource extends StreamDataSource implements ReferenceSource {
 
-    /** The SphinxProperty that specifies which file to start at. */
+    /** The property that specifies which file to start at. */
     @S4Integer(defaultValue = 1)
     public static final String PROP_START_FILE = "startFile";
 
-    /** The SphinxProperty that specifies the number of files to skip for every file read. */
+    /** The property that specifies the number of files to skip for every file read. */
     @S4Integer(defaultValue = 0)
     public static final String PROP_SKIP = "skip";
 
-    /** The SphinxProperty that specifies the total number of files to read. The default value should be no limit. */
+    /** The property that specifies the total number of files to read. The default value should be no limit. */
     @S4Integer(defaultValue = -1)
     public static final String PROP_TOTAL_FILES = "totalFiles";
 
     /**
-     * The SphinxProperty that specifies the silence audio file, if any. If this property is null, then no silences are
+     * The property that specifies the silence audio file, if any. If this property is null, then no silences are
      * added in between files.
      */
     @S4String
     public static final String PROP_SILENCE_FILE = "silenceFile";
 
-    /** The SphinxProperty that specifies whether to add random silence. */
+    /** The property that specifies whether to add random silence. */
     @S4Boolean(defaultValue = false)
     public static final String PROP_ADD_RANDOM_SILENCE = "addRandomSilence";
 
     /**
-     * The SphinxProperty that specifies the maximum number of times the silence file is added  between files. If
+     * The property that specifies the maximum number of times the silence file is added  between files. If
      * PROP_ADD_RANDOM_SILENCE is set to true, the number of times the silence file is added is between 1 and this
      * value. If PROP_ADD_RANDOM_SILENCE is set to false, this value will be the number of times the silence file is
      * added. So if PROP_MAX_SILENCE is set to 3, then the silence file will be added three times between files.
@@ -107,13 +107,13 @@ public class ConcatFileDataSource extends StreamDataSource implements ReferenceS
     public static final String PROP_MAX_SILENCE = "maxSilence";
 
     /**
-     * The SphinxProperty that specifies the name of the transcript file. If this property is set, a transcript file
+     * The property that specifies the name of the transcript file. If this property is set, a transcript file
      * will be created. No transcript file will be created if this property is not set.
      */
     @S4String
     public static final String PROP_TRANSCRIPT_FILE = "transcriptFile";
 
-    /** SphinxProperty for the file containing a list of audio files to read from. */
+    /** The property for the file containing a list of audio files to read from. */
     @S4String
     public static final String PROP_BATCH_FILE = "batchFile";
 

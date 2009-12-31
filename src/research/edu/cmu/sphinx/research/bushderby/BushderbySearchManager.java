@@ -43,11 +43,11 @@ public class BushderbySearchManager extends SimpleBreadthFirstSearchManager {
     private final static String PROP_PREFIX =
             "edu.cmu.sphinx.research.bushderby.BushderbySearchManager.";
 
-    /** The sphinx property for the Bushderby eta value. */
+    /** The property for the Bushderby eta value. */
     @S4Double(defaultValue = 1E99)
     public final static String PROP_BUSHDERBY_ETA = PROP_PREFIX + "bushderbyEta";
 
-    /** The sphinx property that defines whether to filter successor states during the search. */
+    /** The property that defines whether to filter successor states during the search. */
     @S4Boolean(defaultValue = false)
     public final static String PROP_FILTER_SUCCESSORS =
             PROP_PREFIX + "filterSuccessors";

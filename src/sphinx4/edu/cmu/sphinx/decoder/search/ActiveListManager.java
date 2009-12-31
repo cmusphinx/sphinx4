@@ -21,12 +21,12 @@ import java.util.Iterator;
 /** An active list is maintained as a sorted list */
 public interface ActiveListManager extends Configurable {
 
-    /** Sphinx4 property that specifies the absolute word beam width */
+    /** The property that specifies the absolute word beam width */
     @S4Integer(defaultValue = 2000)
     public final static String PROP_ABSOLUTE_WORD_BEAM_WIDTH =
             "absoluteWordBeamWidth";
 
-    /** Sphinx4 property that specifies the relative word beam width */
+    /** The property that specifies the relative word beam width */
     @S4Double(defaultValue = 0.0)
     public final static String PROP_RELATIVE_WORD_BEAM_WIDTH =
             "relativeWordBeamWidth";

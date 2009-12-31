@@ -43,7 +43,7 @@ class SimpleTrainManager implements TrainManager {
     private List<? extends AcousticModel> acousticModels;
 
     /**
-     * A SphinxProperty name for the boolean property that controls whether or not the recognizer will display detailed
+     * The property for the boolean property that controls whether or not the recognizer will display detailed
      * memory information while it is running. The default value is <code>true</code>.
      */
     @S4Boolean(defaultValue = false)

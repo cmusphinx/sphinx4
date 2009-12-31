@@ -99,11 +99,11 @@ import java.util.*;
 
 public class FSTGrammar extends Grammar {
 
-    /** A property for the location of the FST n-gram file. */
+    /** The property for the location of the FST n-gram file. */
     @S4String(defaultValue = "default.arpa_gram")
     public final static String PROP_PATH = "path";
 
-    /** A property that defines the logMath component. */
+    /** The property that defines the logMath component. */
     @S4Component(type = LogMath.class)
     public final static String PROP_LOG_MATH = "logMath";
 

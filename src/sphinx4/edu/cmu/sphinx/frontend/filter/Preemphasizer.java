@@ -40,7 +40,7 @@ import edu.cmu.sphinx.util.props.*;
  */
 public class Preemphasizer extends BaseDataProcessor {
 
-    /** The name of the SphinxProperty for preemphasis factor/alpha. */
+    /** The property for preemphasis factor/alpha. */
     @S4Double(defaultValue = 0.97)
     public static final String PROP_PREEMPHASIS_FACTOR = "factor";
 

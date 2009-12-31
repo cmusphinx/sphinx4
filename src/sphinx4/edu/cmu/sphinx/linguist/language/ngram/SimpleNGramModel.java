@@ -36,7 +36,7 @@ import java.util.*;
 
 public class SimpleNGramModel implements LanguageModel {
 
-    /** Sphinx property that defines the logMath component. */
+    /** The property that defines the logMath component. */
     @S4Component(type = LogMath.class)
     public final static String PROP_LOG_MATH = "logMath";
     // ----------------------------

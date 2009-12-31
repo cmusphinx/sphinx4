@@ -43,21 +43,21 @@ import java.util.logging.Logger;
  */
 public class DialogManager implements Configurable {
     /**
-     * Sphinx property that defines the name of the grammar component 
+     * The property that defines the name of the grammar component 
      * to be used by this dialog manager
      */
     @S4Component(type = JSGFGrammar.class)
     public final static String PROP_JSGF_GRAMMAR = "jsgfGrammar";
 
     /**
-     * Sphinx property that defines the name of the microphone to be used 
+     * The property that defines the name of the microphone to be used 
      * by this dialog manager
      */
     @S4Component(type = Microphone.class)
     public final static String PROP_MICROPHONE = "microphone";
 
     /**
-     * Sphinx property that defines the name of the recognizer to be used by
+     * The property that defines the name of the recognizer to be used by
      * this dialog manager
      */
     @S4Component(type = Recognizer.class)

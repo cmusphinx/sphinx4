@@ -26,15 +26,15 @@ public class RejectionTracker implements
         Monitor,
         StateListener {
 
-    /** A Sphinx property that defines which recognizer to monitor */
+    /** The property that defines which recognizer to monitor */
     @S4Component(type = Recognizer.class)
     public final static String PROP_RECOGNIZER = "recognizer";
 
-    /** A sphinx property that define whether summary accuracy information is displayed */
+    /** The property that defines whether summary accuracy information is displayed */
     @S4Boolean(defaultValue = true)
     public final static String PROP_SHOW_SUMMARY = "showSummary";
 
-    /** A sphinx property that define whether detailed accuracy information is displayed */
+    /** The property that defines whether detailed accuracy information is displayed */
     @S4Boolean(defaultValue = true)
     public final static String PROP_SHOW_DETAILS = "showDetails";
 

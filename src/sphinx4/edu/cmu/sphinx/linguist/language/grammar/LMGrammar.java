@@ -32,7 +32,7 @@ import java.util.Set;
  */
 public class LMGrammar extends Grammar {
 
-    /** A sphinx property for the language model to be used by this grammar */
+    /** The property for the language model to be used by this grammar */
     @S4Component(type = LanguageModel.class)
     public final static String PROP_LANGUAGE_MODEL = "languageModel";
     // ------------------------

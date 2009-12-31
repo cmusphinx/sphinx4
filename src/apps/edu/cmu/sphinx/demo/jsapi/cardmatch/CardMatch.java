@@ -32,31 +32,31 @@ import java.util.List;
 /** A recording device. */
 public class CardMatch implements Recorder, Configurable {
 
-    /** The sphinx property for the recognizer to use */
+    /** The property for the recognizer to use */
     @S4Component(type = Recognizer.class)
     public static final String PROP_RECOGNIZER = "recognizer";
 
-    /** The sphinx property for the microphone to use */
+    /** The property for the microphone to use */
     @S4Component(type = Microphone.class)
     public static final String PROP_MICROPHONE = "microphone";
 
-    /** The sphinx property for the grammar to use */
+    /** The property for the grammar to use */
     @S4Component(type = JSGFGrammar.class)
     public static final String PROP_GRAMMAR = "grammar";
 
-    /** The SphinxProperty for the number of cards in this game. */
+    /** The property for the number of cards in this game. */
     @S4Integer(defaultValue = 6)
     public static final String PROP_NUM_CARDS = "numberOfCards";
 
-    /** The SphinxProperty for the image files. */
+    /** The property for the image files. */
     @S4String(defaultValue = "")
     public static final String PROP_IMAGE_FILES = "imageFiles";
 
-    /** The SphinxProperty specifying whether to do endpointing. */
+    /** The property specifying whether to do endpointing. */
     @S4Boolean(defaultValue = false)
     public static final String PROP_DO_ENDPOINTING = "doEndpointing";
 
-    /** The SphinxProperty specifying whether to use a voice. */
+    /** The property specifying whether to use a voice. */
     @S4Boolean(defaultValue = false)
     public static final String PROP_USE_VOICE = "useVoice";
 

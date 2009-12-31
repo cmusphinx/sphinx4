@@ -24,7 +24,7 @@ import edu.cmu.sphinx.recognizer.Recognizer;
 /** Tracks and reports recognition accuracy based upon the highest scoring path in a Result. */
 public class SausageAccuracyTracker extends AccuracyTracker {
 
-    /** The property that define whether the full token path is displayed */
+    /** The property that defines whether the full token path is displayed */
     @S4Boolean(defaultValue = false)
     public final static String PROP_SHOW_FULL_PATH = "showFullPath";
 

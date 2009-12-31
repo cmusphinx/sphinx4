@@ -28,11 +28,11 @@ public interface ControlFile extends Configurable {
     @S4String(defaultValue = "train.trans")
     String PROP_TRANSCRIPT_FILE = "transcriptFile";
 
-    /** The SphinxProperty name for which batch partition to process. */
+    /** The property for which batch partition to process. */
     @S4Integer(defaultValue = 1)
     public final static String PROP_WHICH_BATCH = "whichBatch";
 
-    /** The SphinxProperty name for the total number of batch partitions. */
+    /** The property for the total number of batch partitions. */
     @S4Integer(defaultValue = 1)
     public final static String PROP_TOTAL_BATCHES = "totalBatches";
 

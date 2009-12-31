@@ -11,7 +11,7 @@ import java.util.logging.Logger;
 /** An abstract decoder which implements all functionality which is indpendent of the used decoding-pardigm (pull/push). */
 public abstract class AbstractDecoder implements ResultProducer, Configurable {
 
-    /** The sphinx property name for the name of the search manager to use */
+    /** The property that defines the name of the search manager to use */
     @S4Component(type = SearchManager.class)
     public final static String PROP_SEARCH_MANAGER = "searchManager";
     protected SearchManager searchManager;

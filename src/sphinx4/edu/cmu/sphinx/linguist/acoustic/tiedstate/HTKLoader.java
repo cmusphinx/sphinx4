@@ -98,11 +98,11 @@ public class HTKLoader implements Loader {
     @S4Boolean(defaultValue = true)
     public final static String PROP_TIE_1PH = "tie1ph";
 
-    /** The SphinxProperty for the name of the acoustic properties file. */
+    /** The property for the name of the acoustic properties file. */
     @S4String(defaultValue = "model.props")
     public final static String PROP_PROPERTIES_FILE = "propertiesFile";
 
-    /** The SphinxProperty for the length of feature vectors. */
+    /** The property for the length of feature vectors. */
     @S4Integer(defaultValue = 39)
     public final static String PROP_VECTOR_LENGTH = "vectorLength";
 

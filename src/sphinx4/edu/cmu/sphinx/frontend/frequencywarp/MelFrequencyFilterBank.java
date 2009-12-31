@@ -64,15 +64,15 @@ import edu.cmu.sphinx.util.props.*;
  */
 public class MelFrequencyFilterBank extends BaseDataProcessor {
 
-    /** The name of the Sphinx Property for the number of filters in the filterbank. */
+    /** The property for the number of filters in the filterbank. */
     @S4Integer(defaultValue = 40)
     public static final String PROP_NUMBER_FILTERS = "numberFilters";
 
-    /** The name of the Sphinx Property for the minimum frequency covered by the filterbank. */
+    /** The property for the minimum frequency covered by the filterbank. */
     @S4Double(defaultValue = 130.0)
     public static final String PROP_MIN_FREQ = "minimumFrequency";
 
-    /** The name of the Sphinx Property for the maximum frequency covered by the filterbank. */
+    /** The property for the maximum frequency covered by the filterbank. */
     @S4Double(defaultValue = 6800.0)
     public static final String PROP_MAX_FREQ = "maximumFrequency";
 

@@ -41,7 +41,7 @@ public class RandomSampleRepeater extends BaseDataProcessor {
 
 
     /**
-     * Property about the width of the uniform distribution which determines the distance between
+     * The property about the width of the uniform distribution which determines the distance between
      * different repeated-sample-insertion-points.
      */
     @S4Double(defaultValue = 100.0)
@@ -51,7 +51,7 @@ public class RandomSampleRepeater extends BaseDataProcessor {
 
 
     /**
-     * Property about using random seed or not for the randomization process. if not the stream
+     * The property about using random seed or not for the randomization process. if not the stream
      * will be randomized every time in the same manner.
      */
     @S4Boolean(defaultValue = true)
@@ -59,7 +59,7 @@ public class RandomSampleRepeater extends BaseDataProcessor {
     private boolean useRandSeed;
 
 
-    /** SphinxProperty for the sample rate. */
+    /** The property for the sample rate. */
     @S4Integer(defaultValue = 16000)
     public static final String PROP_SAMPLE_RATE = "sampleRate";
     private int sampleRate;

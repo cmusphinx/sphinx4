@@ -27,17 +27,17 @@ import java.util.List;
  */
 public class MAPConfidenceScorer implements ConfidenceScorer, Configurable {
 
-    /** Sphinx property that defines the language model weight. */
+    /** The property that defines the language model weight. */
     @S4Double(defaultValue = 1.0)
     public final static String PROP_LANGUAGE_WEIGHT = "languageWeight";
 
 
-    /** Sphinx property that specifies whether to dump the lattice. */
+    /** The property that specifies whether to dump the lattice. */
     @S4Boolean(defaultValue = false)
     public final static String PROP_DUMP_LATTICE = "dumpLattice";
 
 
-    /** Sphinx property that specifies whether to dump the sausage. */
+    /** The property that specifies whether to dump the sausage. */
     @S4Boolean(defaultValue = false)
     public final static String PROP_DUMP_SAUSAGE = "dumpSausage";
 

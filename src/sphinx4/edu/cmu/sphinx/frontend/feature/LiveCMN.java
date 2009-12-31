@@ -42,18 +42,18 @@ import edu.cmu.sphinx.util.props.S4Integer;
 public class LiveCMN extends BaseDataProcessor {
 
 
-    /** The name of the SphinxProperty for the initial cepstral mean. This is a front-end dependent magic number. */
+    /** The property for the initial cepstral mean. This is a front-end dependent magic number. */
     @S4Double(defaultValue = 12.0)
     public static final String PROP_INITIAL_MEAN = "initialMean";
     private double initialMean;     // initial mean, magic number
 
-    /** The name of the SphinxProperty for the live CMN window size. */
+    /** The property for the live CMN window size. */
     @S4Integer(defaultValue = 100)
     public static final String PROP_CMN_WINDOW = "cmnWindow";
     private int cmnWindow;
 
     /**
-     * The name of the SphinxProperty for the CMN shifting window. The shifting window specifies how many cepstrum after
+     * The property for the CMN shifting window. The shifting window specifies how many cepstrum after
      * which we re-calculate the cepstral mean.
      */
     @S4Integer(defaultValue = 160)

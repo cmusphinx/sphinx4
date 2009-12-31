@@ -125,47 +125,47 @@ import java.util.logging.Logger;
 
 public class LexTreeLinguist implements Linguist {
 
-    /** A sphinx property used to define the grammar to use when building the search graph */
+    /** The property that defines the grammar to use when building the search graph */
     @S4Component(type = Grammar.class)
     public final static String PROP_GRAMMAR = "grammar";
 
-    /** A sphinx property used to define the acoustic model to use when building the search graph */
+    /** The property that defines the acoustic model to use when building the search graph */
     @S4Component(type = AcousticModel.class)
     public final static String PROP_ACOUSTIC_MODEL = "acousticModel";
 
-    /** A sphinx property used to define the unit manager to use when building the search graph */
+    /** The property that defines the unit manager to use when building the search graph */
     @S4Component(type = UnitManager.class, defaultClass = UnitManager.class)
     public final static String PROP_UNIT_MANAGER = "unitManager";
 
-    /** Sphinx property that defines the name of the logmath to be used by this search manager. */
+    /** The property that defines the name of the logmath to be used by this search manager. */
     @S4Component(type = LogMath.class)
     public final static String PROP_LOG_MATH = "logMath";
 
     /**
-     * Sphinx property used to determine whether or not the gstates are dumped. * A sphinx property that determines
-     * whether or not full word histories are used to determine when two states are equal.
+     * The property that determines whether or not full word histories are used to 
+     * determine when two states are equal.
      */
     @S4Boolean(defaultValue = true)
     public final static String PROP_FULL_WORD_HISTORIES = "fullWordHistories";
 
-    /** A sphinx property for the language model to be used by this grammar */
+    /** The property for the language model to be used by this grammar */
     @S4Component(type = LanguageModel.class)
     public final static String PROP_LANGUAGE_MODEL = "languageModel";
 
-    /** Property that defines the dictionary to use for this grammar */
+    /** The property that defines the dictionary to use for this grammar */
     @S4Component(type = Dictionary.class)
     public final static String PROP_DICTIONARY = "dictionary";
 
-    /** A sphinx property that defines the size of the arc cache (zero to disable the cache). */
+    /** The property that defines the size of the arc cache (zero to disable the cache). */
     @S4Integer(defaultValue = 0)
     public final static String PROP_CACHE_SIZE = "cacheSize";
 
-    /** Property that controls whether filler words are automatically added to the vocabulary */
+    /** The property that controls whether filler words are automatically added to the vocabulary */
     @S4Boolean(defaultValue = false)
     public final static String PROP_ADD_FILLER_WORDS = "addFillerWords";
 
     /**
-     * Property to control whether or not the linguist will generate unit states.   When this property is false the
+     * The property to control whether or not the linguist will generate unit states.   When this property is false the
      * linguist may omit UnitSearchState states.  For some search algorithms this will allow for a faster search with
      * more compact results.
      */
@@ -173,12 +173,12 @@ public class LexTreeLinguist implements Linguist {
     public final static String PROP_GENERATE_UNIT_STATES = "generateUnitStates";
 
 
-    /** A sphinx property that determines whether or not unigram probabilities are smeared through the lex tree */
+    /** The property that determines whether or not unigram probabilities are smeared through the lex tree */
     @S4Boolean(defaultValue = false)
     public final static String PROP_WANT_UNIGRAM_SMEAR = "wantUnigramSmear";
 
 
-    /** A sphinx property that determines the weight of the smear */
+    /** The property that determines the weight of the smear */
     @S4Double(defaultValue = 1.0)
     public final static String PROP_UNIGRAM_SMEAR_WEIGHT = "unigramSmearWeight";
 

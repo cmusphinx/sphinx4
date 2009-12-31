@@ -32,27 +32,27 @@ import java.io.InputStream;
  */
 public class StreamHTKCepstrum extends BaseDataProcessor {
 
-    /** The SphinxProperty specifying whether the input is in binary. */
+    /** The property specifying whether the input is in binary. */
     @S4Boolean(defaultValue = true)
     public final static String PROP_BINARY = "binary";
 
-    /** The SphinxProperty specifying whether the input is big endian. */
+    /** The property specifying whether the input is big endian. */
     @S4Boolean(defaultValue = true)
     public final static String PROP_BIGENDIAN = "bigEndian";
     
-    /** The sphinx property  name for frame size in milliseconds. */
+    /** The property  name for frame size in milliseconds. */
     @S4Double(defaultValue = 25.625)
     public static final String PROP_FRAME_SIZE_MS = "frameSizeInMs";
 
-    /** The sphinx property  name for frame shift in milliseconds, which has a default value of 10F. */
+    /** The property  name for frame shift in milliseconds, which has a default value of 10F. */
     @S4Double(defaultValue = 10.0)
     public static final String PROP_FRAME_SHIFT_MS = "frameShiftInMs";
     
-    /** The sphinx property  specifying the length of the cepstrum data. */
+    /** The property  specifying the length of the cepstrum data. */
     @S4Integer(defaultValue = 13)
     public static final String PROP_CEPSTRUM_LENGTH = "cepstrumLength";
     
-    /** The sphinx property that defines the sample rate */
+    /** The property that defines the sample rate */
     @S4Integer(defaultValue = 16000)
     public static final String PROP_SAMPLE_RATE = "sampleRate";
  

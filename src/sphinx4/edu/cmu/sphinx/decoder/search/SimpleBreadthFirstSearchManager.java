@@ -44,49 +44,49 @@ import java.io.IOException;
 // TODO - need to add in timing code.
 public class SimpleBreadthFirstSearchManager implements SearchManager {
 
-    /** Property that defines the name of the linguist to be used by this search manager. */
+    /** The property that defines the name of the linguist to be used by this search manager. */
     @S4Component(type = Linguist.class)
     public final static String PROP_LINGUIST = "linguist";
 
-    /** Property that defines the name of the linguist to be used by this search manager. */
+    /** The property that defines the name of the linguist to be used by this search manager. */
     @S4Component(type = Pruner.class)
     public final static String PROP_PRUNER = "pruner";
 
-    /** Property that defines the name of the scorer to be used by this search manager. */
+    /** The property that defines the name of the scorer to be used by this search manager. */
     @S4Component(type = AcousticScorer.class)
     public final static String PROP_SCORER = "scorer";
 
-    /** Property that defines the name of the logmath to be used by this search manager. */
+    /** The property that defines the name of the logmath to be used by this search manager. */
     @S4Component(type = LogMath.class)
     public final static String PROP_LOG_MATH = "logMath";
 
-    /** Property that defines the name of the active list factory to be used by this search manager. */
+    /** The property that defines the name of the active list factory to be used by this search manager. */
     @S4Component(type = ActiveListFactory.class)
     public final static String PROP_ACTIVE_LIST_FACTORY = "activeListFactory";
 
     /**
-     * A property than, when set to <code>true</code> will cause the recognizer to count up all the tokens in the
+     * The property that when set to <code>true</code> will cause the recognizer to count up all the tokens in the
      * active list after every frame.
      */
     @S4Boolean(defaultValue = false)
     public final static String PROP_SHOW_TOKEN_COUNT = "showTokenCount";
 
     /**
-     * Property that sets the minimum score relative to the maximum score in the word list for pruning. Words with a
+     * The property that sets the minimum score relative to the maximum score in the word list for pruning. Words with a
      * score less than relativeBeamWidth * maximumScore will be pruned from the list
      */
     @S4Double(defaultValue = 0.0)
     public final static String PROP_RELATIVE_WORD_BEAM_WIDTH = "relativeWordBeamWidth";
 
     /**
-     * A property that controls whether or not relative beam pruning will be performed on the entry into a
+     * The property that controls whether or not relative beam pruning will be performed on the entry into a
      * state.
      */
     @S4Boolean(defaultValue = false)
     public final static String PROP_WANT_ENTRY_PRUNING = "wantEntryPruning";
 
     /**
-     * A property that controls the number of frames processed for every time the decode growth step is skipped.
+     * The property that controls the number of frames processed for every time the decode growth step is skipped.
      * Setting this property to zero disables grow skipping. Setting this number to a small integer will increase the
      * speed of the decoder but will also decrease its accuracy. The higher the number, the less often the grow code is
      * skipped.

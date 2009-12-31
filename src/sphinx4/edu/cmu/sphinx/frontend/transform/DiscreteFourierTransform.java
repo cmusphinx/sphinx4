@@ -52,11 +52,11 @@ import edu.cmu.sphinx.util.props.*;
  */
 public class DiscreteFourierTransform extends BaseDataProcessor {
 
-    /** The name of the SphinxProperty for the number of points in the Fourier Transform. */
+    /** The property for the number of points in the Fourier Transform. */
     @S4Integer(defaultValue = -1)
     public static final String PROP_NUMBER_FFT_POINTS = "numberFftPoints";
 
-    /** The name of the SphinxProperty for the invert transform. */
+    /** The property for the invert transform. */
     @S4Boolean(defaultValue = false)
     public static final String PROP_INVERT = "invert";
 

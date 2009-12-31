@@ -24,19 +24,19 @@ import java.util.Set;
  */
 public class ClassBasedLanguageModel implements LanguageModel {
     /**
-     * Sphinx property that defines the logMath component.
+     * The property that defines the logMath component.
      */
     @S4Component(type = LogMath.class)
     public final static String PROP_LOG_MATH = "logMath";
 
     /**
-     * Sphinx property that defines the classLanguageModel component.
+     * The property that defines the classLanguageModel component.
      */
     @S4Component(type = LanguageModel.class)
     public final static String PROP_CLASS_LANGUAGE_MODEL = "classLanguageModel";
 
     /**
-     * Sphinx property that defines the classMap component.
+     * The property that defines the classMap component.
      */
     @S4Component(type = ClassMap.class)
     public final static String PROP_CLASS_MAP = "classMap";

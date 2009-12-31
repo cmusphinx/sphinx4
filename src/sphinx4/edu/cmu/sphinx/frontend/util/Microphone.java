@@ -35,13 +35,13 @@ import java.util.logging.Logger;
 public class Microphone extends BaseDataProcessor {
 
     /**
-     * SphinxProperty for the sample rate of the data.
+     * The property for the sample rate of the data.
      */
     @S4Integer(defaultValue = 16000)
     public static final String PROP_SAMPLE_RATE = "sampleRate";
 
     /**
-     * Sphinx property that specifies whether or not the microphone will release the audio between utterances.  On
+     * The property that specifies whether or not the microphone will release the audio between utterances.  On
      * certain systems (Linux for one), closing and reopening the audio does not work too well. The default is false for
      * Linux systems, true for others.
      */
@@ -49,45 +49,45 @@ public class Microphone extends BaseDataProcessor {
     public final static String PROP_CLOSE_BETWEEN_UTTERANCES = "closeBetweenUtterances";
 
     /**
-     * The Sphinx property that specifies the number of milliseconds of audio data to read each time from the underlying
+     * The property that specifies the number of milliseconds of audio data to read each time from the underlying
      * Java Sound audio device.
      */
     @S4Integer(defaultValue = 10)
     public final static String PROP_MSEC_PER_READ = "msecPerRead";
 
     /**
-     * SphinxProperty for the number of bits per value.
+     * The property for the number of bits per value.
      */
     @S4Integer(defaultValue = 16)
     public static final String PROP_BITS_PER_SAMPLE = "bitsPerSample";
 
     /**
-     * Property specifying the number of channels.
+     * The property specifying the number of channels.
      */
     @S4Integer(defaultValue = 1)
     public static final String PROP_CHANNELS = "channels";
 
     /**
-     * Property specify the endianness of the data.
+     * The property specify the endianness of the data.
      */
     @S4Boolean(defaultValue = true)
     public static final String PROP_BIG_ENDIAN = "bigEndian";
 
     /**
-     * Property specify whether the data is signed.
+     * The property specify whether the data is signed.
      */
     @S4Boolean(defaultValue = true)
     public static final String PROP_SIGNED = "signed";
 
     /**
-     * The Sphinx property that specifies whether to keep the audio data of an utterance around until the next utterance
+     * The property that specifies whether to keep the audio data of an utterance around until the next utterance
      * is recorded.
      */
     @S4Boolean(defaultValue = false)
     public final static String PROP_KEEP_LAST_AUDIO = "keepLastAudio";
 
     /**
-     * The Sphinx property that specifies how to convert stereo audio to mono. Currently, the possible values are
+     * The property that specifies how to convert stereo audio to mono. Currently, the possible values are
      * "average", which averages the samples from at each channel, or "selectChannel", which chooses audio only from
      * that channel. If you choose "selectChannel", you should also specify which channel to use with the
      * "selectChannel" property.
@@ -96,13 +96,13 @@ public class Microphone extends BaseDataProcessor {
     public final static String PROP_STEREO_TO_MONO = "stereoToMono";
 
     /**
-     * The Sphinx property that specifies the channel to use if the audio is stereo
+     * The property that specifies the channel to use if the audio is stereo
      */
     @S4Integer(defaultValue = 0)
     public final static String PROP_SELECT_CHANNEL = "selectChannel";
 
     /**
-     * The Sphinx property that specifies the mixer to use.  The value can be "default," (which means let the
+     * The property that specifies the mixer to use.  The value can be "default," (which means let the
      * AudioSystem decide), "last," (which means select the last Mixer supported by the AudioSystem), which appears to
      * be what is often used for USB headsets, or an integer value which represents the index of the Mixer.Info that is
      * returned by AudioSystem.getMixerInfo(). To get the list of Mixer.Info objects, run the AudioTool application with

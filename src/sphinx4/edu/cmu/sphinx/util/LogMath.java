@@ -18,12 +18,12 @@ import java.util.logging.Logger;
 
 /**
  * Provides a set of methods for performing simple math in the log domain. The logarithmic base can be set by the
- * SphinxProperty: <br> <code> edu.cmu.sphinx.util.LogMath.logBase </code><br>
+ * property: <br> <code> edu.cmu.sphinx.util.LogMath.logBase </code><br>
  */
 public final class LogMath implements Configurable, Serializable {
    
     /**
-     * A property to get the Log base. According to forum discussions a value 
+     * The property to get the Log base. According to forum discussions a value 
      * between 1.00001 and 1.0004 should be used for speech recognition. Going 
      * above 1.0005 will probably hurt.
      */
@@ -31,7 +31,7 @@ public final class LogMath implements Configurable, Serializable {
     public final static String PROP_LOG_BASE = "logBase";
 
     /**
-     * A property that controls whether we use the old, slow (but correct) method of performing the LogMath.add by
+     * The property that controls whether we use the old, slow (but correct) method of performing the LogMath.add by
      * doing the actual computation.
      */
     @S4Boolean(defaultValue = true)

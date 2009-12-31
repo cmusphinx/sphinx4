@@ -35,7 +35,7 @@ import java.util.logging.Logger;
 class Sphinx3Saver implements Saver {
 
     /**
-     * The SphinxProperty specifying whether the transition matrices of the acoustic model is in sparse form, i.e.,
+     * The property specifying whether the transition matrices of the acoustic model is in sparse form, i.e.,
      * omitting the zeros of the non-transitioning states.
      */
     @S4Boolean(defaultValue = true)

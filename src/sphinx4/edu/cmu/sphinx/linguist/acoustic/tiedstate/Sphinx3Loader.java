@@ -159,19 +159,19 @@ public class Sphinx3Loader implements Loader {
     public final static String PROP_DATA_LOCATION = "dataLocation";
 
     /**
-     * The SphinxProperty for the name of the acoustic properties file.
+     * The property for the name of the acoustic properties file.
      */
     @S4String(defaultValue = "model.props")
     public final static String PROP_PROPERTIES_FILE = "propertiesFile";
 
     /**
-     * The SphinxProperty for the length of feature vectors.
+     * The property for the length of feature vectors.
      */
     @S4Integer(defaultValue = 39)
     public final static String PROP_VECTOR_LENGTH = "vectorLength";
 
     /**
-     * The SphinxProperty specifying whether the transition matrices of the
+     * The property specifying whether the transition matrices of the
      * acoustic model is in sparse form, i.e., omitting the zeros of the
      * non-transitioning states.
      */
@@ -179,7 +179,7 @@ public class Sphinx3Loader implements Loader {
     public final static String PROP_SPARSE_FORM = "sparseForm";
 
     /**
-     * The SphinxProperty specifying whether context-dependent units should be
+     * The property specifying whether context-dependent units should be
      * used.
      */
     @S4Boolean(defaultValue = true)

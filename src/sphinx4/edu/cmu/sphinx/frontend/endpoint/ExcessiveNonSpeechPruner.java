@@ -13,7 +13,7 @@ import edu.cmu.sphinx.util.props.*;
 public class ExcessiveNonSpeechPruner extends BaseDataProcessor {
 
     /**
-     * The Sphinx Property for the maximum amount of (subsequent) none-speech time (in ms) to be preserved in the speech
+     * The property for the maximum amount of (subsequent) none-speech time (in ms) to be preserved in the speech
      * stream.
      */
     @S4Integer(defaultValue = Integer.MAX_VALUE)

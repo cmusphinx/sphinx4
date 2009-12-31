@@ -30,23 +30,23 @@ import java.util.List;
  */
 public class LiveModeRecognizer implements Configurable {
 
-    /** The Sphinx property that specifies the recognizer to use */
+    /** The property that specifies the recognizer to use */
     @S4Component(type = Recognizer.class)
     public final static String PROP_RECOGNIZER = "recognizer";
 
-    /** The Sphinx property that specifies the source of the transcript */
+    /** The property that specifies the source of the transcript */
     @S4Component(type = ConcatFileDataSource.class)
     public final static String PROP_INPUT_SOURCE = "inputSource";
 
-    /** SphinxProperty specifying whether to print out the gap insertion errors. */
+    /** The property specifying whether to print out the gap insertion errors. */
     @S4Boolean(defaultValue = false)
     public static final String PROP_SHOW_GAP_INSERTIONS = "showGapInsertions";
 
-    /** SphinxProperty specifying the transcript file. */
+    /** The property specifying the transcript file. */
     @S4String(defaultValue = "hypothesis.txt")
     public final static String PROP_HYPOTHESIS_TRANSCRIPT = "hypothesisTranscript";
 
-    /** SphinxProperty specifying the number of files to decode before alignment is performed. */
+    /** The property specifying the number of files to decode before alignment is performed. */
     @S4Integer(defaultValue = -1)
     public final static String PROP_ALIGN_INTERVAL = "alignInterval";
 

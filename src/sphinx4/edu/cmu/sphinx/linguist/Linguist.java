@@ -104,7 +104,7 @@ public interface Linguist extends Configurable {
     @S4Double(defaultValue = 1.0)
     public final static String PROP_FILLER_INSERTION_PROBABILITY = "fillerInsertionProbability";
 
-    /** Sphinx property that defines the language weight for the search */
+    /** The property that defines the language weight for the search */
     @S4Double(defaultValue = 1.0)
     public final static String PROP_LANGUAGE_WEIGHT = "languageWeight";
 

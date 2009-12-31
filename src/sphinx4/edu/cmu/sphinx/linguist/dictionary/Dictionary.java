@@ -32,27 +32,27 @@ public interface Dictionary extends Configurable {
     /** Spelling of the 'word' that marks a silence */
     public static final String SILENCE_SPELLING = "<sil>";
 
-    /** The name of the SphinxProperty for the dictionary file path. */
+    /** The property for the dictionary file path. */
     @S4String
     public static final String PROP_DICTIONARY = "dictionaryPath";
 
-    /** The name of the SphinxProperty for the filler dictionary file path. */
+    /** The property for the filler dictionary file path. */
     @S4String
     public static final String PROP_FILLER_DICTIONARY = "fillerPath";
 
-    /** The name of the SphinxProperty that specifies whether to add a duplicate SIL-ending pronunication. */
+    /** The property that specifies whether to add a duplicate SIL-ending pronunication. */
     @S4Boolean(defaultValue = false)
     public static final String PROP_ADD_SIL_ENDING_PRONUNCIATION = "addSilEndingPronunciation";
 
     /**
-     * The name of the SphinxProperty that specifies the word to substitute when a lookup fails to find the word in the
+     * The property that specifies the word to substitute when a lookup fails to find the word in the
      * dictionary. If this is not set, no substitute is performed.
      */
     @S4String(mandatory = false)
     public static final String PROP_WORD_REPLACEMENT = "wordReplacement";
 
     /**
-     * The name of the SphinxProperty that specifies whether the dictionary should return null if a word is not found in
+     * The property that specifies whether the dictionary should return null if a word is not found in
      * the dictionary, or whether it should throw an error. If true, a null is returned for words that are not found in
      * the dictionary (and the 'PROP_WORD_REPLACEMENT' property is not set).
      */
@@ -60,7 +60,7 @@ public interface Dictionary extends Configurable {
     public static final String PROP_ALLOW_MISSING_WORDS = "allowMissingWords";
 
     /**
-     * The SphinxProperty that specifies whether the Dictionary.getWord() method should return a Word object even if the
+     * The property that specifies whether the Dictionary.getWord() method should return a Word object even if the
      * word does not exist in the dictionary. If this property is true, and property allowMissingWords is also true, the
      * method will return a Word, but the Word will have null Pronunciations. Otherwise, the method will return null.
      * This property is usually only used for testing purposes.
@@ -68,7 +68,7 @@ public interface Dictionary extends Configurable {
     @S4Boolean(defaultValue = false)
     public static final String PROP_CREATE_MISSING_WORDS = "createMissingWords";
 
-    /** The sphinx property that defines the name of the unit manager that is used to convert strings to Unit objects */
+    /** The property that defines the name of the unit manager that is used to convert strings to Unit objects */
     @S4Component(type = UnitManager.class, defaultClass = UnitManager.class)
     public static final String PROP_UNIT_MANAGER = "unitManager";
 

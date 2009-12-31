@@ -12,7 +12,7 @@ import java.util.LinkedList;
  */
 public class DataBlocker extends BaseDataProcessor {
 
-    /** The SphinxProperty name for the block size of generated data-blocks in milliseconds. */
+    /** The property for the block size of generated data-blocks in milliseconds. */
     @S4Double(defaultValue = 10)
     public static final String PROP_BLOCK_SIZE_MS = "blockSizeMs";
 

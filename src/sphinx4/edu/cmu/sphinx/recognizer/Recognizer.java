@@ -54,11 +54,11 @@ import java.util.List;
  */
 public class Recognizer implements Configurable, ResultProducer {
 
-    /** Property name for the decoder to be used by this recognizer. */
+    /** The property for the decoder to be used by this recognizer. */
     @S4Component(type = Decoder.class)
     public final static String PROP_DECODER = "decoder";
 
-    /** Property name for the set of monitors for this recognizer */
+    /** The property for the set of monitors for this recognizer */
     @S4ComponentList(type = Monitor.class)
     public final static String PROP_MONITORS = "monitors";
 

@@ -42,35 +42,35 @@ import java.util.logging.Logger;
 
 public class DynamicFlatLinguist implements Linguist, Configurable {
 
-    /** A sphinx property used to define the grammar to use when building the search graph */
+    /** The property used to define the grammar to use when building the search graph */
     @S4Component(type = Grammar.class)
     public final static String GRAMMAR = "grammar";
 
-    /** A sphinx property used to define the unit manager to use when building the search graph */
+    /** The property used to define the unit manager to use when building the search graph */
     @S4Component(type = UnitManager.class)
     public final static String UNIT_MANAGER = "unitManager";
 
-    /** A sphinx property used to define the acoustic model to use when building the search graph */
+    /** The property used to define the acoustic model to use when building the search graph */
     @S4Component(type = AcousticModel.class)
     public final static String ACOUSTIC_MODEL = "acousticModel";
 
-    /** Sphinx property that specifies whether to add a branch for detecting out-of-grammar utterances. */
+    /** The property that specifies whether to add a branch for detecting out-of-grammar utterances. */
     @S4Boolean(defaultValue = false)
     public final static String ADD_OUT_OF_GRAMMAR_BRANCH = "addOutOfGrammarBranch";
 
-    /** Sphinx property for the probability of entering the out-of-grammar branch. */
+    /** The property for the probability of entering the out-of-grammar branch. */
     @S4Double(defaultValue = 1.0)
     public final static String OUT_OF_GRAMMAR_PROBABILITY = "outOfGrammarProbability";
 
-    /** Sphinx property for the probability of inserting a CI phone in the out-of-grammar ci phone loop */
+    /** The property for the probability of inserting a CI phone in the out-of-grammar ci phone loop */
     @S4Double(defaultValue = 1.0)
     public static final String PHONE_INSERTION_PROBABILITY = "phoneInsertionProbability";
 
-    /** Sphinx property for the acoustic model to use to build the phone loop that detects out of grammar utterances. */
+    /** The property for the acoustic model to use to build the phone loop that detects out of grammar utterances. */
     @S4Component(type = AcousticModel.class)
     public final static String PHONE_LOOP_ACOUSTIC_MODEL = "phoneLoopAcousticModel";
 
-    /** Sphinx property that defines the name of the logmath to be used by this search manager. */
+    /** The property that defines the name of the logmath to be used by this search manager. */
     @S4Component(type = LogMath.class)
     public final static String PROP_LOG_MATH = "logMath";
     private final static float logOne = LogMath.getLogOne();

@@ -30,7 +30,7 @@ public class Dither extends BaseDataProcessor {
     private double minValue;
 
 
-    /** The name of the sphinx property about using random seed or not */
+    /** The property about using random seed or not */
     @S4Boolean(defaultValue = false)
     public static final String PROP_USE_RANDSEED = "useRandSeed";
     private boolean useRandSeed;

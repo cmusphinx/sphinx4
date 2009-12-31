@@ -65,25 +65,25 @@ public class BatchNISTRecognizer extends BatchModeRecognizer {
     protected int bytesPerFrame;
 
     /**
-     * The sphinx property that specifies the file containing the corpus utterance audio
+     * The property that specifies the file containing the corpus utterance audio
      */
     @S4String(defaultValue = "<raw data directory not set>")
     public final static String PROP_DATA_DIR = "dataDirectory";
 
     /**
-     * The sphinx property that specifies the file containing the corpus utterance audio
+     * The property that specifies the file containing the corpus utterance audio
      */
     @S4String(defaultValue = "<ctl file not set>")
     public final static String PROP_CTL_FILE = "ctlFile";
 
     /**
-     * The sphinx property that specifies the file containing the transcripts of the corpus
+     * The property that specifies the file containing the transcripts of the corpus
      */
     @S4String(defaultValue = "<ref file not set>")
     public final static String PROP_REF_FILE = "refFile";
 
     /**
-     * The sphinx property that specifies the the directory where the output XXX files should be placed
+     * The property that specifies the the directory where the output XXX files should be placed
      */
     @S4String(defaultValue = "<ctm file not set>")
     public final static String PROP_CTM_FILE = "ctmFile";

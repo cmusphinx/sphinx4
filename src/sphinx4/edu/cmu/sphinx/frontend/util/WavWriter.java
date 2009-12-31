@@ -37,20 +37,20 @@ public class WavWriter extends BaseDataProcessor {
     /** The default value for PROP_RAND_STREAM_START */
     private String dumpFilePath;
 
-    /** SphinxProperty for the number of bits per value. */
+    /** The property for the number of bits per value. */
     @S4Integer(defaultValue = 16)
     public static final String PROP_BITS_PER_SAMPLE = "bitsPerSample";
     /** Default value for PROP_BITS_PER_SAMPLE. */
     private int bitsPerSample = 16;
 
 
-    /** The SphinxProperty specifying whether the input data is signed. */
+    /** The property specifying whether the input data is signed. */
     @S4Boolean(defaultValue = true)
     public static final String PROP_SIGNED_DATA = "signedData";
     /** The default value of PROP_SIGNED_DATA. */
     private boolean isSigned = true;
 
-    /** The SphinxProperty specifying whether the input data is signed. */
+    /** The property specifying whether the input data is signed. */
     @S4Boolean(defaultValue = false)
     public static final String PROP_CAPTURE_UTTERANCES = "captureUtterances";
     /** The default value of PROP_SIGNED_DATA. */

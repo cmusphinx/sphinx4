@@ -26,14 +26,14 @@ import edu.cmu.sphinx.util.props.S4Integer;
 public class FrameDropper extends BaseDataProcessor {
 
     /**
-     * The SphinxProperty that specifies dropping one in every Nth frame. If N=2, we drop every other frame. If N=3, we
+     * The property that specifies dropping one in every Nth frame. If N=2, we drop every other frame. If N=3, we
      * drop every third frame, etc..
      */
     @S4Integer(defaultValue = -1)
     public static final String PROP_DROP_EVERY_NTH_FRAME
             = "dropEveryNthFrame";
 
-    /** The SphinxProperty that specifies whether to replace the Nth frame with the previous frame. */
+    /** The property that specifies whether to replace the Nth frame with the previous frame. */
     @S4Boolean(defaultValue = false)
     public static final String PROP_REPLACE_NTH_WITH_PREVIOUS
             = "replaceNthWithPrevious";

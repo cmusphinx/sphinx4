@@ -38,7 +38,7 @@ public interface LanguageModel extends Configurable {
     @S4Double(defaultValue = 1.0)
     public final static String PROP_UNIGRAM_WEIGHT = "unigramWeight";
 	/**
-	 * The Sphinx Property specifying the maximum depth reported by the language
+	 * The property specifying the maximum depth reported by the language
 	 * model (from a getMaxDepth()) call. If this property is set to (-1) (the
 	 * default) the language model reports the implicit depth of the model. This
 	 * property allows a deeper language model to be used. For instance, a

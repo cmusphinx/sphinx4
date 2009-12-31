@@ -23,15 +23,15 @@ import java.util.Locale;
 /** Dumps the data */
 public class DataDumper extends BaseDataProcessor {
 
-    /** The Sphinx property that specifies whether data dumping is enabled */
+    /** The property that specifies whether data dumping is enabled */
     @S4Boolean(defaultValue = true)
     public final static String PROP_ENABLE = "enable";
 
-    /** The Sphinx property that specifies the format of the output. */
+    /** The property that specifies the format of the output. */
     @S4String(defaultValue = "0.00000E00;-0.00000E00")
     public final static String PROP_OUTPUT_FORMAT = "outputFormat";
 
-    /** The Sphinx property that enables the output of signals. */
+    /** The property that enables the output of signals. */
     @S4Boolean(defaultValue = true)
     public final static String PROP_OUTPUT_SIGNALS = "outputSignals";
 

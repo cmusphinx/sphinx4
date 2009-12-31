@@ -38,40 +38,40 @@ import java.util.logging.Logger;
 public class LargeTrigramModel implements LanguageModel {
 
     /**
-     * A property for the name of the file that logs all the queried N-grams. If this property is set to null, it
+     * The property for the name of the file that logs all the queried N-grams. If this property is set to null, it
      * means that the queried N-grams are not logged.
      */
     @S4String(mandatory = false)
     public static final String PROP_QUERY_LOG_FILE = "queryLogFile";
 
-    /** A property that defines that maxium number of trigrams to be cached */
+    /** The property that defines that maxium number of trigrams to be cached */
     @S4Integer(defaultValue = 100000)
     public static final String PROP_TRIGRAM_CACHE_SIZE = "trigramCacheSize";
 
-    /** A property that defines the maximum number of bigrams to be cached. */
+    /** The property that defines the maximum number of bigrams to be cached. */
     @S4Integer(defaultValue = 50000)
     public static final String PROP_BIGRAM_CACHE_SIZE = "bigramCacheSize";
 
-    /** A property that controls whether the bigram and trigram caches are cleared after every utterance */
+    /** The property that controls whether the bigram and trigram caches are cleared after every utterance */
     @S4Boolean(defaultValue = false)
     public static final String PROP_CLEAR_CACHES_AFTER_UTTERANCE = "clearCachesAfterUtterance";
 
-    /** A property that defines the language weight for the search */
+    /** The property that defines the language weight for the search */
     @S4Double(defaultValue = 1.0)
     public final static String PROP_LANGUAGE_WEIGHT = "languageWeight";
 
-    /** A property that defines the logMath component. */
+    /** The property that defines the logMath component. */
     @S4Component(type = LogMath.class)
     public final static String PROP_LOG_MATH = "logMath";
 
     /**
-     * A property that controls whether or not the language model will apply the language weight and word insertion
+     * The property that controls whether or not the language model will apply the language weight and word insertion
      * probability
      */
     @S4Boolean(defaultValue = false)
     public final static String PROP_APPLY_LANGUAGE_WEIGHT_AND_WIP = "applyLanguageWeightAndWip";
 
-    /** Word insertion probability property */
+    /** The property for the word insertion probability. */
     @S4Double(defaultValue = 1.0)
     public final static String PROP_WORD_INSERTION_PROBABILITY = "wordInsertionProbability";
 

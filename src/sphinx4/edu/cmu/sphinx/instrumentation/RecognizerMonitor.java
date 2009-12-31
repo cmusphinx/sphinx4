@@ -25,15 +25,15 @@ import java.util.List;
  */
 public class RecognizerMonitor implements StateListener, Monitor {
 
-    /** the sphinx property for the recognizer to monitor */
+    /** The property for the recognizer to monitor */
     @S4Component(type = Recognizer.class)
     public final static String PROP_RECOGNIZER = "recognizer";
 
-    /** The sphinx property that defines all of the monitors to call when the recognizer is allocated */
+    /** The property that defines all of the monitors to call when the recognizer is allocated */
     @S4ComponentList(type = Configurable.class)
     public final static String PROP_ALLOCATED_MONITORS = "allocatedMonitors";
 
-    /** The sphinx property that defines all of the monitors to call when the recognizer is deallocated */
+    /** The property that defines all of the monitors to call when the recognizer is deallocated */
     @S4ComponentList(type = Configurable.class)
     public final static String PROP_DEALLOCATED_MONITORS = "deallocatedMonitors";
 

@@ -17,7 +17,7 @@ import edu.cmu.sphinx.util.props.*;
 /** A standard interface for a linguist processor */
 public class LinguistProcessor implements Configurable, Runnable {
 
-    /** The sphinx property that defines the name of the linguist to process */
+    /** The property that defines the name of the linguist to process */
     @S4Component(type = Linguist.class)
     public final static String PROP_LINGUIST = "linguist";
 

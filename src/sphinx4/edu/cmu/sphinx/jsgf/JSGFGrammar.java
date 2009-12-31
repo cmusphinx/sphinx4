@@ -199,15 +199,15 @@ import edu.cmu.sphinx.util.props.S4String;
 
 public class JSGFGrammar extends Grammar {
 
-	/** A property that defines the location of the JSGF grammar file. */
+	/** The property that defines the location of the JSGF grammar file. */
 	@S4String
 	public final static String PROP_BASE_GRAMMAR_URL = "grammarLocation";
 
-	/** A property that defines the location of the JSGF grammar file. */
+	/** The property that defines the location of the JSGF grammar file. */
 	@S4String(defaultValue = "default.gram")
 	public final static String PROP_GRAMMAR_NAME = "grammarName";
 
-	/** A property that defines the logMath component. */
+	/** The property that defines the logMath component. */
 	@S4Component(type = LogMath.class)
 	public final static String PROP_LOG_MATH = "logMath";
 

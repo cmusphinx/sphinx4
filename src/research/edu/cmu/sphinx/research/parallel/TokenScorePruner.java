@@ -36,11 +36,11 @@ public abstract class TokenScorePruner implements Pruner {
     @S4Integer(defaultValue = 0)
     public static final String PROP_RELATIVE_BEAM_WIDTH = "relativeBeamWidth";
 
-    /** Sphinx property that defines the name of the logmath to be used by this search manager. */
+    /** The property that defines the name of the logmath to be used by this search manager. */
     @S4Component(type = LogMath.class)
     public final static String PROP_LOG_MATH = "logMath";
 
-    /** Sphinx property that defines the name of the active list factory to be used by this search manager. */
+    /** The property that defines the name of the active list factory to be used by this search manager. */
     public final static String PROP_ACTIVE_LIST_FACTORY = "activeListFactory";
 
     private String name;

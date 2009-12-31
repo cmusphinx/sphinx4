@@ -27,26 +27,26 @@ import java.util.logging.Logger;
  */
 public class ConfigMonitor implements Configurable, Runnable, Monitor {
 
-    /** Sphinx property that is used to indicate whether or not this monitor should show the current configuration. */
+    /** The property that is used to indicate whether or not this monitor should show the current configuration. */
     @S4Boolean(defaultValue = false)
     public final static String PROP_SHOW_CONFIG = "showConfig";
 
     /**
-     * Sphinx property that is used to indicate whether or not this monitor should dump the configuration in an HTML
+     * The property that is used to indicate whether or not this monitor should dump the configuration in an HTML
      * document
      */
     @S4Boolean(defaultValue = false)
     public final static String PROP_SHOW_CONFIG_AS_HTML = "showConfigAsHTML";
 
     /**
-     * Sphinx property that is used to indicate whether or not this monitor should dump the configuration in an GDL
+     * The property that is used to indicate whether or not this monitor should dump the configuration in an GDL
      * document
      */
     @S4Boolean(defaultValue = false)
     public final static String PROP_SHOW_CONFIG_AS_GDL = "showConfigAsGDL";
 
     /**
-     * Sphinx property that is used to indicate whether or not this monitor should save the configuration in an XML
+     * The property that is used to indicate whether or not this monitor should save the configuration in an XML
      * document
      */
     @S4Boolean(defaultValue = false)

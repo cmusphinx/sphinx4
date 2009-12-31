@@ -36,23 +36,23 @@ import java.util.List;
 public class BeamFinder implements ResultListener,
         Resetable, StateListener {
 
-    /** A Sphinx property that defines which recognizer to monitor */
+    /** The property that defines which recognizer to monitor */
     @S4Component(type = Recognizer.class)
     public final static String PROP_RECOGNIZER = "recognizer";
 
-    /** A Sphinx property that defines which recognizer to monitor */
+    /** The property that defines which recognizer to monitor */
     @S4Component(type = LogMath.class)
     public final static String PROP_LOG_MATH = "logMath";
 
-    /** A sphinx property that define whether summary accuracy information is displayed */
+    /** The property that defines whether summary accuracy information is displayed */
     @S4Boolean(defaultValue = true)
     public final static String PROP_SHOW_SUMMARY = "showSummary";
 
-    /** A sphinx property that define whether detailed accuracy information is displayed */
+    /** The property that defines whether detailed accuracy information is displayed */
     @S4Boolean(defaultValue = true)
     public final static String PROP_SHOW_DETAILS = "showDetails";
 
-    /** A sphinx property that define whether this beam tracker is enabled */
+    /** The property that defines whether this beam tracker is enabled */
     @S4Boolean(defaultValue = true)
     public final static String PROP_ENABLED = "enable";
 

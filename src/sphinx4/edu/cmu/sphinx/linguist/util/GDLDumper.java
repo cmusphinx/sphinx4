@@ -23,19 +23,19 @@ import java.util.*;
 
 public class GDLDumper extends LinguistDumper {
 
-    /** The SphinxProperty specifying whether to skip HMMs during dumping. */
+    /** The property specifying whether to skip HMMs during dumping. */
     @S4Boolean(defaultValue = true)
     public static final String PROP_SKIP_HMMS = "skipHMMs";
 
-    /** The SphinxProperty to specify whether to use vertical graph layout. */
+    /** The property to specify whether to use vertical graph layout. */
     @S4Boolean(defaultValue = false)
     public static final String PROP_VERTICAL_LAYOUT = "verticalLayout";
 
-    /** The SphinxProperty to specify whether to dump arc labels. */
+    /** The property to specify whether to dump arc labels. */
     @S4Boolean(defaultValue = true)
     public static final String PROP_DUMP_ARC_LABELS = "dumpArcLabels";
 
-    /** The SphinxProperty to specify the log math */
+    /** The property to specify the log math */
     @S4Component(type = LogMath.class)
     public static final String PROP_LOG_MATH = "logMath";
 

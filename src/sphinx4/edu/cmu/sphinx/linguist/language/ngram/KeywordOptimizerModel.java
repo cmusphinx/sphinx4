@@ -23,7 +23,7 @@ import java.util.*;
  */
 public class KeywordOptimizerModel implements LanguageModel {
 
-    /** Sphinx property that defines the parent language model. */
+    /** The property that defines the parent language model. */
     @S4Component(type = LanguageModel.class)
     public final static String PROP_PARENT = "parent";
     

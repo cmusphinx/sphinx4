@@ -26,7 +26,7 @@ import edu.cmu.sphinx.util.props.S4Component;
  */
 public class NetworkLanguageModel implements LanguageModel {
 
-    /** Sphinx property that defines the logMath component. */
+    /** The property that defines the logMath component. */
     @S4Component(type = LogMath.class)
     public final static String PROP_LOG_MATH = "logMath";
 

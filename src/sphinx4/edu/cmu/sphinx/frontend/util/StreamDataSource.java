@@ -27,23 +27,23 @@ import java.io.InputStream;
  */
 public class StreamDataSource extends BaseDataProcessor {
 
-    /** SphinxProperty for the sample rate. */
+    /** The property for the sample rate. */
     @S4Integer(defaultValue = 16000)
     public static final String PROP_SAMPLE_RATE = "sampleRate";
 
-    /** SphinxProperty for the number of bytes to read from the InputStream each time. */
+    /** The property for the number of bytes to read from the InputStream each time. */
     @S4Integer(defaultValue = 3200)
     public static final String PROP_BYTES_PER_READ = "bytesPerRead";
 
-    /** SphinxProperty for the number of bits per value. */
+    /** The property for the number of bits per value. */
     @S4Integer(defaultValue = 16)
     public static final String PROP_BITS_PER_SAMPLE = "bitsPerSample";
 
-    /** The SphinxProperty specifying whether the input data is big-endian. */
+    /** The property specifying whether the input data is big-endian. */
     @S4Boolean(defaultValue = true)
     public static final String PROP_BIG_ENDIAN_DATA = "bigEndianData";
 
-    /** The SphinxProperty specifying whether the input data is signed. */
+    /** The property specifying whether the input data is signed. */
     @S4Boolean(defaultValue = true)
     public static final String PROP_SIGNED_DATA = "signedData";
 

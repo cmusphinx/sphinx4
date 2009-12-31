@@ -19,7 +19,7 @@ import edu.cmu.sphinx.util.props.*;
 public abstract class ActiveListFactory implements Configurable {
 
 
-    /** Sphinx property that defines the name of the logmath to be used by this search manager. */
+    /** The property that defines the name of the logmath to be used by this search manager. */
     @S4Component(type = LogMath.class)
     public final static String PROP_LOG_MATH = "logMath";
 

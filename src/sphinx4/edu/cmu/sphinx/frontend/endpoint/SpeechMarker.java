@@ -54,7 +54,7 @@ import java.util.ListIterator;
 public class SpeechMarker extends BaseDataProcessor {
 
     /**
-     * A property for the minimum amount of time in speech (in milliseconds) to be considered
+     * The property for the minimum amount of time in speech (in milliseconds) to be considered
      * as utterance start.
      */
     @S4Integer(defaultValue = 200)
@@ -63,7 +63,7 @@ public class SpeechMarker extends BaseDataProcessor {
 
 
     /**
-     * A property for the amount of time in silence (in milliseconds) to be
+     * The property for the amount of time in silence (in milliseconds) to be
      * considered as utterance end.
      */
     @S4Integer(defaultValue = 500)
@@ -72,7 +72,7 @@ public class SpeechMarker extends BaseDataProcessor {
 
 
     /**
-     * A property for the amount of time (in milliseconds) before speech start
+     * The property for the amount of time (in milliseconds) before speech start
      * to be included as speech data.
      */
     @S4Integer(defaultValue = 50)
@@ -80,7 +80,7 @@ public class SpeechMarker extends BaseDataProcessor {
     private int speechLeader;
 
     /**
-     * A property for number of frames to keep in buffer. Should be enough to let
+     * The property for number of frames to keep in buffer. Should be enough to let
      * insert the SpeechStartSignal.
      */
     @S4Integer(defaultValue = 30)
@@ -88,7 +88,7 @@ public class SpeechMarker extends BaseDataProcessor {
     private int speechLeaderFrames;
 
     /**
-     * A property for the amount of time (in milliseconds) after speech ends to be
+     * The property for the amount of time (in milliseconds) after speech ends to be
      * included as speech data.
      */
     @S4Integer(defaultValue = 50)
@@ -96,7 +96,7 @@ public class SpeechMarker extends BaseDataProcessor {
     private int speechTrailer;
     
     /**
-     * A property to decrease end silence while we are reading speech. This
+     * The property to decrease end silence while we are reading speech. This
      * allows marker to adapt to the fast speech with small pauses. This 
      * is relative decrease to speechTrailer per second of speech, so that 
      * utterance shouldn't be longer than this amount of seconds.

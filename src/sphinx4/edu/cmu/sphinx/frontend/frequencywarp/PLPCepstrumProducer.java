@@ -34,16 +34,16 @@ import edu.cmu.sphinx.util.props.*;
  */
 public class PLPCepstrumProducer extends BaseDataProcessor {
 
-    /** The name of the Sphinx Property for the number of filters in the filter bank. */
+    /** The property for the number of filters in the filter bank. */
     @S4Integer(defaultValue = 32)
     public static final String PROP_NUMBER_FILTERS = "numberFilters";
 
-    /** The SphinxProperty specifying the length of the cepstrum data. */
+    /** The property specifying the length of the cepstrum data. */
     @S4Integer(defaultValue = 13)
     public static final String PROP_CEPSTRUM_LENGTH
             = "cepstrumLength";
 
-    /** The SphinxProperty specifying the LPC order. */
+    /** The property specifying the LPC order. */
     @S4Integer(defaultValue = 14)
     public static final String PROP_LPC_ORDER = "lpcOrder";
 

@@ -28,11 +28,11 @@ public class Trainer implements Configurable {
     @S4Component(type = TrainManager.class)
     public static final String TRAIN_MANAGER = "trainManager";
 
-    /** The SphinxProperty name for the initial trainer stage to be processed. */
+    /** The property for the initial trainer stage to be processed. */
     @S4String(defaultValue = "_00_INITIALIZATION")
     public final static String PROP_INITIAL_STAGE = "initialStage";
 
-    /** The SphinxProperty name for the final trainer stage to be processed. */
+    /** The property for the final trainer stage to be processed. */
     @S4String(defaultValue = "_40_TIED_CD_TRAIN")
     public final static String PROP_FINAL_STAGE = "finalStage";
 

@@ -23,7 +23,7 @@ import java.util.List;
 /** The primary decoder class */
 public class Decoder extends AbstractDecoder {
 
-    /** A property for the number of features to recognize at once. */
+    /** The property for the number of features to recognize at once. */
     @S4Integer(defaultValue = 100000)
     public final static String PROP_FEATURE_BLOCK_SIZE = "featureBlockSize";
     private int featureBlockSize;

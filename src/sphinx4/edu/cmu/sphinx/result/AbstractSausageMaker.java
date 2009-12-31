@@ -133,7 +133,7 @@ public abstract class AbstractSausageMaker implements ConfidenceScorer, Configur
         }
     }
 
-    /** Sphinx property that defines the language model weight. */
+    /** The property that defines the language model weight. */
     @S4Double(defaultValue = 1.0)
     public final static String PROP_LANGUAGE_WEIGHT = "languageWeight";
 

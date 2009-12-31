@@ -24,7 +24,7 @@ import java.util.*;
  */
 public abstract class AbstractFeatureExtractor extends BaseDataProcessor {
 
-    /** The name of the SphinxProperty for the window of the DeltasFeatureExtractor. */
+    /** The property for the window of the DeltasFeatureExtractor. */
     @S4Integer(defaultValue = 3)
     public static final String PROP_FEATURE_WINDOW = "windowSize";
 

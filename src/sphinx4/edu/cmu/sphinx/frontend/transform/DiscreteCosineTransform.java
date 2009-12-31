@@ -28,11 +28,11 @@ import edu.cmu.sphinx.util.props.*;
  */
 public class DiscreteCosineTransform extends BaseDataProcessor {
 
-    /** The name of the Sphinx Property for the number of filters in the filterbank. */
+    /** The property for the number of filters in the filterbank. */
     @S4Integer(defaultValue = 40)
     public static final String PROP_NUMBER_FILTERS = "numberFilters";
 
-    /** The name of the sphinx property for the size of the ceptrum */
+    /** The property for the size of the ceptrum */
     @S4Integer(defaultValue = 13)
     public static final String PROP_CEPSTRUM_LENGTH = "cepstrumLength";
 

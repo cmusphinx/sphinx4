@@ -30,7 +30,7 @@ import java.util.ListIterator;
 public class ThreadedAcousticScorer extends SimpleAcousticScorer {
 
     /**
-     * A SphinxProperty name that controls the number of threads that are used to score hmm states. If the isCpuRelative
+     * The property that controls the number of threads that are used to score hmm states. If the isCpuRelative
      * property is false, then is is the exact number of threads that are used to score hmm states. If the isCpuRelative
      * property is true, then this value is combined with the number of available proessors on the system. If you want
      * to have one thread per CPU available to score states, set the NUM_THREADS property to 0 and the isCpuRelative to
@@ -44,9 +44,9 @@ public class ThreadedAcousticScorer extends SimpleAcousticScorer {
 
 
     /**
-     * A sphinx property name that controls whether the number of available CPUs on the system is used when determining
+     * The property that controls whether the number of available CPUs on the system is used when determining
      * the number of threads to use for scoring. If true, the NUM_THREADS property is combined with the available number
-     * of CPUS to deterimine the number of threads. Note that the number of threads is contrained to be never lower than
+     * of CPUS to determine the number of threads. Note that the number of threads is contained to be never lower than
      * zero. Also, if the number of threads is 0, the states are scored on the calling thread, no separate threads are
      * started. The default value is false.
      */
@@ -55,9 +55,9 @@ public class ThreadedAcousticScorer extends SimpleAcousticScorer {
 
 
     /**
-     * A Sphinx Property name that controls the minimum number of scoreables sent to a thread. This is used to prevent
+     * The property that controls the minimum number of scoreables sent to a thread. This is used to prevent
      * over threading of the scoring that could happen if the number of threads is high compared to the size of the
-     * activelist. The default is 50
+     * active list. The default is 50
      */
     @S4Integer(defaultValue = 10)
     public final static String PROP_MIN_SCOREABLES_PER_THREAD = "minScoreablesPerThread";

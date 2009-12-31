@@ -42,35 +42,31 @@ import java.util.*;
 /** Performs recognition on parallel feature streams. */
 public class ParallelSearchManager implements SearchManager {
 
-    /** The sphinx property name for the active list type. */
+    /** The property that defines the active list type. */
     @S4Component(type = ActiveListFactory.class)
     public static final String PROP_ACTIVE_LIST_FACTORY = "activeListFactory";
 
-    /** The sphinx property name for whether to do feature pruning. */
+    /** The property that defines whether to do feature pruning. */
     @S4Boolean(defaultValue = false)
     public static final String PROP_DO_FEATURE_PRUNING = "doFeaturePruning";
 
-    /** The sphinx property for the feature score pruner. */
+    /** The property that defines the feature score pruner. */
     @S4Component(type = FeatureScorePruner.class)
     public static final String PROP_FEATURE_SCORE_PRUNER = "featureScorePruner";
 
-    /** The sphinx property name for whether to do combine pruning. */
+    /** The property that defines whether to do combine pruning. */
     @S4Boolean(defaultValue = false)
     public static final String PROP_DO_COMBINE_PRUNING = "doCombinePruning";
 
-//    /** The sphinx property for the combined score pruner. */
-//    @S4Component(type = FeatureScoreCombiner.class)
-//    public static final String PROP_COMBINED_SCORE_PRUNER = "combinedScorePruner";
-
-    /** The sphinx property for scorer used. */
+    /** The property for scorer used. */
     @S4Component(type = AcousticScorer.class)
     public static final String PROP_SCORER = "scorer";
 
-    /** The sphinx property for linguist used. */
+    /** The property for linguist used. */
     @S4Component(type = Linguist.class)
     public static final String PROP_LINGUIST = "linguist";
 
-    /** The sphinx property for the log math used. */
+    /** The property for the log math used. */
     @S4Component(type = LogMath.class)
     public static final String PROP_LOG_MATH = "logMath";
 
