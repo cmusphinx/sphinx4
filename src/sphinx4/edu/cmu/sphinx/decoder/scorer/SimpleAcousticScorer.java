@@ -160,6 +160,7 @@ public class SimpleAcousticScorer extends ConfigurableAdapter implements Acousti
     protected <T extends Scoreable> T doScoring(List<T> scoreableList, Data data) {
         Iterator<T> i = scoreableList.iterator();
         T best = i.next();
+        best.calculateScore(data);
         while (i.hasNext()) {
             T scoreable = i.next();
             if (scoreable.calculateScore(data) > best.getScore())
