@@ -1,3 +1,14 @@
+/*
+ * Copyright 1999-2002 Carnegie Mellon University.  
+ * Portions Copyright 2002 Sun Microsystems, Inc.  
+ * Portions Copyright 2002 Mitsubishi Electric Research Laboratories.
+ * All Rights Reserved.  Use is subject to license terms.
+ * 
+ * See the file "license.terms" for information on usage and
+ * redistribution of this file, and for a DISCLAIMER OF ALL 
+ * WARRANTIES.
+ *
+ */
 package edu.cmu.sphinx.linguist.language.grammar;
 
 import edu.cmu.sphinx.linguist.dictionary.Dictionary;
@@ -11,13 +22,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Copyright 1999-2006 Carnegie Mellon University. Portions Copyright 2002 Sun Microsystems, Inc. Portions Copyright
- * 2002 Mitsubishi Electric Research Laboratories. All Rights Reserved.  Use is subject to license terms.
- * <p/>
- * See the file "license.terms" for information on usage and redistribution of this file, and for a DISCLAIMER OF ALL
- * WARRANTIES.
- * <p/>
- * User: Peter Wolf Date: Jan 10, 2006 Time: 9:42:36 AM
+ * @author Peter Wolf
  */
 public class BatchForcedAlignerGrammar extends ForcedAlignerGrammar implements GrammarInterface {
 
@@ -29,8 +34,9 @@ public class BatchForcedAlignerGrammar extends ForcedAlignerGrammar implements G
     protected final Map<String, GrammarNode> grammars = new HashMap<String, GrammarNode>();
     protected String currentUttName = "";
 
-    public BatchForcedAlignerGrammar(String refFile, boolean showGrammar,boolean optimizeGrammar,boolean addSilenceWords, boolean addFillerWords, Dictionary dictionary ) {
-        super(showGrammar,optimizeGrammar,addSilenceWords,addFillerWords,dictionary);
+    public BatchForcedAlignerGrammar(String refFile, boolean showGrammar, boolean optimizeGrammar, boolean addSilenceWords,
+            boolean addFillerWords, Dictionary dictionary) {
+        super(showGrammar, optimizeGrammar, addSilenceWords, addFillerWords, dictionary);
         this.refFile = refFile;
     }
 
@@ -54,23 +60,35 @@ public class BatchForcedAlignerGrammar extends ForcedAlignerGrammar implements G
         // but once the FlatLinguist is fixed, this should be
         // returned to its former method of creating an empty
         // initial grammar node
-        //          initialNode = createGrammarNode(initialID, false);
+        //   initialNode = createGrammarNode(initialID, false);
 
         initialNode = null;
         finalNode = createGrammarNode(true);
         try {
             LineNumberReader in = new LineNumberReader(new FileReader(refFile));
             String line;
-            while (!(line = in.readLine()).isEmpty()) {
-                int i = line.indexOf('(');
-                String uttName = line.substring(i + 1, line.indexOf(')'));
-                String transcript = line.substring(0, i).trim();
-                if (!transcript.isEmpty()) {
-                    initialNode = createGrammarNode(Dictionary.SILENCE_SPELLING);
-                    createForcedAlignerGrammar(initialNode, finalNode, transcript);
-                    grammars.put(uttName, initialNode);
-                    currentUttName = uttName;
-                }
+            while (true) {
+                line = in.readLine();
+
+                if (line == null || line.isEmpty())
+                    break;
+
+                int uttNameStart = line.indexOf('(') + 1;
+                int uttNameEnd = line.indexOf(')');
+
+                if (uttNameStart < 0 || uttNameStart > uttNameEnd)
+                    continue;
+
+                String uttName = line.substring(uttNameStart, uttNameEnd);
+                String transcript = line.substring(0, uttNameStart - 1).trim();
+
+                if (transcript.isEmpty())
+                    continue;
+
+                initialNode = createGrammarNode(Dictionary.SILENCE_SPELLING);
+                createForcedAlignerGrammar(initialNode, finalNode, transcript);
+                grammars.put(uttName, initialNode);
+                currentUttName = uttName;
             }
         } catch (FileNotFoundException e) {
             throw new Error(e);
