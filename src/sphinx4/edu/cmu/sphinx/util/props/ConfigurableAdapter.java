@@ -29,14 +29,12 @@ public abstract class ConfigurableAdapter implements Configurable{
     private void init(String name, Logger logger) {
         this.name = name;
         this.logger = logger;
-
-        // fix null names                                              
-        name =  name != null ? name : getClass().getSimpleName();
     }
 
-    /** Retunrs the configuration name this {@code Configurable}. */
+    /** Returns the configuration name this {@code Configurable}. */
     public String getName() {
-        return name;
+        // fix null names
+        return name != null ? name : getClass().getSimpleName();
     }
 
 
@@ -47,6 +45,6 @@ public abstract class ConfigurableAdapter implements Configurable{
      */
     @Override
     public String toString() {
-        return name != null ? name : getClass().getSimpleName();
+        return getName();
     }
 }

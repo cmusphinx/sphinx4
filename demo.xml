@@ -110,7 +110,6 @@
              manifest="${demo_src_dir}/edu/cmu/sphinx/demo/helloworld/helloworld.Manifest"
              basedir="${demo_classes_dir}"
              includes="edu/cmu/sphinx/demo/helloworld/**"
-             filesonly="true"
              compress="true"/>
     </target>
 
@@ -132,7 +131,6 @@
              manifest="${demo_src_dir}/edu/cmu/sphinx/demo/hellodigits/hellodigits.Manifest"
              basedir="${demo_classes_dir}"
              includes="edu/cmu/sphinx/demo/hellodigits/**"
-             filesonly="true"
              compress="true"/>
     </target>
 
@@ -161,7 +159,6 @@
              manifest="${demo_src_dir}/edu/cmu/sphinx/demo/jsapi/dialog/dialog.Manifest"
              basedir="${demo_classes_dir}"
              includes="edu/cmu/sphinx/demo/jsapi/dialog/**"
-             filesonly="true"
              compress="true"/>
     </target>
 
@@ -188,7 +185,6 @@
              manifest="${demo_src_dir}/edu/cmu/sphinx/demo/jsapi/jsgf/jsgf.Manifest"
              basedir="${demo_classes_dir}"
              includes="edu/cmu/sphinx/demo/jsapi/jsgf/**"
-             filesonly="true"
              compress="true"/>
     </target>
 
@@ -211,7 +207,6 @@
              manifest="${demo_src_dir}/edu/cmu/sphinx/demo/hellongram/hellongram.Manifest"
              basedir="${demo_classes_dir}"
              includes="edu/cmu/sphinx/demo/hellongram/**"
-             filesonly="true"
              compress="true"/>
     </target>
 
@@ -234,7 +229,6 @@
              manifest="${demo_src_dir}/edu/cmu/sphinx/demo/lattice/latticedemo.Manifest"
              basedir="${demo_classes_dir}"
              includes="edu/cmu/sphinx/demo/lattice/**"
-             filesonly="true"
              compress="true"/>
     </target>
 
@@ -259,7 +253,6 @@
              manifest="${demo_src_dir}/edu/cmu/sphinx/demo/wavfile/wavfile.Manifest"
              basedir="${demo_classes_dir}"
              includes="edu/cmu/sphinx/demo/wavfile/**"
-             filesonly="true"
              compress="true"/>
     </target>
 
@@ -269,7 +262,7 @@
                listfiles="true"
                deprecation="true"
                srcdir="${demo_src_dir}"
-               includes="edu/cmu/sphinx/demo/transcriber/**"
+               includes="edu/cmu/sphinx/demo/transcriber/,edu/cmu/sphinx/demo/transcriber/**,"
                destdir="${demo_classes_dir}">
             <classpath refid="libs"/>
         </javac>
@@ -284,7 +277,6 @@
              manifest="${demo_src_dir}/edu/cmu/sphinx/demo/transcriber/transcriber.Manifest"
              basedir="${demo_classes_dir}"
              includes="edu/cmu/sphinx/demo/transcriber/**"
-             filesonly="true"
              compress="true"/>
     </target>
 
@@ -303,7 +295,6 @@
              manifest="${demo_src_dir}/edu/cmu/sphinx/demo/raw/raw.Manifest"
              basedir="${demo_classes_dir}"
              includes="edu/cmu/sphinx/demo/raw/**"
-             filesonly="true"
              compress="true"/>
     </target>
 
@@ -339,7 +330,6 @@
              basedir="${demo_classes_dir}"
              includes="edu/cmu/sphinx/demo/jsapi/tags/**"
              excludes="demo/jsapi/tags/LiveConnectDemo**"
-             filesonly="true"
              compress="true"/>
 
         <jar destfile="${bin_dir}/LiveConnectDemo.jar"
@@ -347,7 +337,6 @@
              basedir="${demo_classes_dir}"
              includes="edu/cmu/sphinx/demo/jsapi/tags/**"
              excludes="demo/jsapi/tags/FeatureValueDemo**"
-             filesonly="true"
              compress="true"/>
     </target>
 
@@ -373,7 +362,6 @@
              manifest="${demo_src_dir}/edu/cmu/sphinx/demo/zipcity/zipcity.Manifest"
              basedir="${demo_classes_dir}"
              includes="edu/cmu/sphinx/demo/zipcity/**"
-             filesonly="true"
              compress="true"/>
     </target>
 
@@ -417,7 +405,6 @@
              manifest="${demo_src_dir}/edu/cmu/sphinx/demo/confidence/confidence.Manifest"
              basedir="${demo_classes_dir}"
              includes="edu/cmu/sphinx/demo/confidence/**"
-             filesonly="true"
              compress="true"/>
     </target>
 
@@ -444,7 +431,6 @@
 	     manifest="${demo_src_dir}/edu/cmu/sphinx/demo/classbased/classbased.Manifest"
 	     basedir="${demo_classes_dir}"
 	     includes="edu/cmu/sphinx/demo/classbased/**"
-	     filesonly="true"
 	     compress="true"/>
     </target>
 

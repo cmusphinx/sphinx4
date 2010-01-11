@@ -3,7 +3,9 @@ package edu.cmu.sphinx.demo.raw;
 import edu.cmu.sphinx.recognizer.Recognizer;
 import edu.cmu.sphinx.frontend.util.AudioFileDataSource;
 import edu.cmu.sphinx.result.Result;
+import edu.cmu.sphinx.util.props.ConfigurationManagerUtils;
 
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.MalformedURLException;
 import java.io.File;
@@ -23,25 +25,26 @@ import java.io.File;
  * WARRANTIES.
  */
 public class RawHelloNGram {
-    public static void main(String[] args) throws MalformedURLException {
+    public static void main(String[] args) throws MalformedURLException, URISyntaxException, ClassNotFoundException {
         run(args);
     }
 
-    public static void run(String[] args) throws MalformedURLException {
+    public static void run(String[] args) throws MalformedURLException, URISyntaxException, ClassNotFoundException {
         System.out.println("\nRunning RawHelloNGram...");
 
-        if( args.length < 1 ) {
-            throw new Error( "USAGE: RawHelloNGram <sphinx4 root> [<WAV file>]" );
+        URL audioURL;
+        if (args.length > 2) {
+            throw new Error("USAGE: RawTranscriber [<WAV file>]");
+        }
+        else if(args.length == 2) {
+            audioURL = new URL(args[1]);
+        }
+        else {
+            audioURL = ConfigurationManagerUtils.resourceToURL("resource:/edu/cmu/sphinx/demo/transcriber/10001-90210-01803.wav");
         }
 
-        String root = args[0];
-
-        URL audioURL = (args.length > 1) ?
-            new File(args[0]).toURI().toURL() :
-            new URL("file:"+root+"/src/apps/edu/cmu/sphinx/demo/transcriber/10001-90210-01803.wav");
-
         // get a recognizer configurred for the HelloNGram task
-        HelloNGramConfiguration config = new HelloNGramConfiguration(root);
+        HelloNGramConfiguration config = new HelloNGramConfiguration();
 
         // allocate the resource necessary for the recognizer
         System.out.println("Loading...");

@@ -53,7 +53,7 @@ public class Transcriber {
         AudioFileDataSource dataSource = (AudioFileDataSource) cm.lookup("audioFileDataSource");
         dataSource.setAudioFile(audioURL, null);
 
-        // Loop unitl last utterance in the audio file has been decoded, in which case the recognizer will return null.
+        // Loop until last utterance in the audio file has been decoded, in which case the recognizer will return null.
         Result result;
         while ((result = recognizer.recognize())!= null) {
 

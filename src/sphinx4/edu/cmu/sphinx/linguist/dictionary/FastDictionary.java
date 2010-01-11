@@ -108,6 +108,27 @@ public class FastDictionary implements Dictionary {
     protected boolean allocated;
 
     public FastDictionary(
+            String wordDictionaryFile,
+            String fillerDictionaryFile,
+            List<URL> addendaUrlList,
+            boolean addSilEndingPronunciation,
+            String wordReplacement,
+            boolean allowMissingWords,
+            boolean createMissingWords,
+            UnitManager unitManager
+    ) throws MalformedURLException, ClassNotFoundException {
+        this(
+                ConfigurationManagerUtils.resourceToURL(wordDictionaryFile),
+                ConfigurationManagerUtils.resourceToURL(fillerDictionaryFile),
+                addendaUrlList,
+                addSilEndingPronunciation,
+                wordReplacement,
+                allowMissingWords,
+                createMissingWords,
+                unitManager);
+    }
+
+    public FastDictionary(
             URL wordDictionaryFile,
             URL fillerDictionaryFile,
             List<URL> addendaUrlList,
@@ -140,6 +161,7 @@ public class FastDictionary implements Dictionary {
     *
     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
     */
+
     @Override
     public void newProperties(PropertySheet ps) throws PropertyException {
         logger = ps.getLogger();
@@ -181,12 +203,13 @@ public class FastDictionary implements Dictionary {
     *
     * @see edu.cmu.sphinx.linguist.dictionary.Dictionary#allocate()
     */
+
     @Override
     public void allocate() throws IOException {
         if (!allocated) {
             dictionary = new HashMap<String, String>();
             wordDictionary = new HashMap<String, Word>();
-            
+
             Timer loadTimer = TimerPool.getTimer(this, "DictionaryLoad");
             fillerWords = new HashSet<String>();
 
@@ -214,6 +237,7 @@ public class FastDictionary implements Dictionary {
     *
     * @see edu.cmu.sphinx.linguist.dictionary.Dictionary#deallocate()
     */
+
     @Override
     public void deallocate() {
         if (allocated) {
@@ -327,12 +351,12 @@ public class FastDictionary implements Dictionary {
     public Word getWord(String text) {
         text = text.toLowerCase();
         Word wordObject = wordDictionary.get(text);
-        
+
         if (wordObject != null) {
-            return wordObject; 
+            return wordObject;
         }
-        
-        String word = dictionary.get (text);
+
+        String word = dictionary.get(text);
         if (word == null) { // deal with 'not found' case
             logger.warning("Missing word: " + text);
             if (wordReplacement != null) {
@@ -345,7 +369,7 @@ public class FastDictionary implements Dictionary {
         } else { // first lookup for this string
             wordObject = processEntry(text);
         }
-        
+
         return wordObject;
     }
 
@@ -414,7 +438,7 @@ public class FastDictionary implements Dictionary {
         for (Pronunciation pronunciation : pronunciations) {
             pronunciation.setWord(wordObject);
         }
-        wordDictionary.put (word, wordObject);
+        wordDictionary.put(word, wordObject);
 
         return wordObject;
     }

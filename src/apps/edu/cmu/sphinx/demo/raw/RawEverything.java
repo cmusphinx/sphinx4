@@ -1,6 +1,7 @@
 package edu.cmu.sphinx.demo.raw;
 
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 
 /**
  * User: peter
@@ -17,10 +18,10 @@ import java.net.MalformedURLException;
  * WARRANTIES.
  */
 public class RawEverything {
-    public static void main(String[] args) throws MalformedURLException {
+    public static void main(String[] args) throws MalformedURLException, URISyntaxException, ClassNotFoundException {
 
-        if( args.length < 1 ) {
-            throw new Error( "USAGE: RawEverything <sphinx4 root> [<WAV file>]" );
+        if( args.length > 2 ) {
+            throw new Error( "USAGE: RawEverything [<WAV file>]" );
         }
 
         RawTranscriber.run(args);

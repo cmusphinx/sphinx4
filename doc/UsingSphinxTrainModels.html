@@ -174,7 +174,9 @@ having it in a JAR file is that the JAR file can simply be included in
 the classpath and referenced in the configuration file for it to be used
 in a Sphinx-4 application. The configuration for packing int JAR is the
 same except you need to use jar:file: URI scheme for the reference. Once you did so, don't
-forget to include the JAR into the classpath.
+forget to include the JAR into the classpath.  For convenience, Sphinx4 allows URIs to contain
+resource:&lt;acoustic or language model path&gt; which allows XML config files to easily reference
+models in JAR files.  Resource: causes Sphinx4 to search on the classpath for the path.
 </p>
 
 </span>

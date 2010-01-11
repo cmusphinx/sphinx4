@@ -75,19 +75,19 @@
     <!-- ******************************************************** -->
     <!-- The linguist  configuration                              -->
     <!-- ******************************************************** -->
-    
-    <component name="flatLinguist" 
+
+    <component name="flatLinguist"
                 type="edu.cmu.sphinx.linguist.flat.FlatLinguist">
         <property name="logMath" value="logMath"/>
         <property name="grammar" value="jsgfGrammar"/>
         <property name="acousticModel" value="tidigits"/>
-        <property name="wordInsertionProbability" 
+        <property name="wordInsertionProbability"
                 value="${wordInsertionProbability}"/>
         <property name="languageWeight" value="${languageWeight}"/>
         <property name="unitManager" value="unitManager"/>
     </component>
-        
-    
+
+
     <!-- ******************************************************** -->
     <!-- The Grammar  configuration                               -->
     <!-- ******************************************************** -->
@@ -95,7 +95,7 @@
     <component name="jsgfGrammar" type="edu.cmu.sphinx.jsgf.JSGFGrammar">
         <property name="dictionary" value="dictionary"/>
         <property name="grammarLocation" 
-             value="resource:/edu.cmu.sphinx.demo.transcriber.Transcriber!/edu/cmu/sphinx/demo/transcriber/"/>
+             value="resource:/edu/cmu/sphinx/demo/transcriber/"/>
         <property name="grammarName" value="digits"/>
 	<property name="logMath" value="logMath"/>
     </component>
@@ -108,9 +108,9 @@
     <component name="dictionary" 
         type="edu.cmu.sphinx.linguist.dictionary.FastDictionary">
         <property name="dictionaryPath" 
-	 value="resource:/edu.cmu.sphinx.model.acoustic.TIDIGITS_8gau_13dCep_16k_40mel_130Hz_6800Hz.Model!/edu/cmu/sphinx/model/acoustic/TIDIGITS_8gau_13dCep_16k_40mel_130Hz_6800Hz/dictionary"/>
-        <property name="fillerPath" 
-	 value="resource:/edu.cmu.sphinx.model.acoustic.TIDIGITS_8gau_13dCep_16k_40mel_130Hz_6800Hz.Model!/edu/cmu/sphinx/model/acoustic/TIDIGITS_8gau_13dCep_16k_40mel_130Hz_6800Hz/fillerdict"/>
+	 value="resource:/TIDIGITS_8gau_13dCep_16k_40mel_130Hz_6800Hz/dictionary"/>
+        <property name="fillerPath"
+	 value="resource:/TIDIGITS_8gau_13dCep_16k_40mel_130Hz_6800Hz/fillerdict"/>
         <property name="addSilEndingPronunciation" value="false"/>
         <property name="wordReplacement" value="&lt;sil&gt;"/>
         <property name="allowMissingWords" value="false"/>
@@ -121,16 +121,19 @@
     <!-- ******************************************************** -->
     <!-- The acoustic model configuration                         -->
     <!-- ******************************************************** -->
-    <component name="tidigits" 
-      type="edu.cmu.sphinx.model.acoustic.TIDIGITS_8gau_13dCep_16k_40mel_130Hz_6800Hz.Model">
+    <component name="tidigits"
+               type="edu.cmu.sphinx.linguist.acoustic.tiedstate.TiedStateAcousticModel">
         <property name="loader" value="sphinx3Loader"/>
         <property name="unitManager" value="unitManager"/>
     </component>
 
-    <component name="sphinx3Loader"
-               type="edu.cmu.sphinx.model.acoustic.TIDIGITS_8gau_13dCep_16k_40mel_130Hz_6800Hz.ModelLoader">
+    <component name="sphinx3Loader" type="edu.cmu.sphinx.linguist.acoustic.tiedstate.Sphinx3Loader">
         <property name="logMath" value="logMath"/>
         <property name="unitManager" value="unitManager"/>
+        <property name="location" value="resource:/TIDIGITS_8gau_13dCep_16k_40mel_130Hz_6800Hz"/>
+        <property name="propertiesFile" value="model.props"/>
+        <property name="modelDefinition" value="wd_dependent_phone.500.mdef"/>
+        <property name="dataLocation" value="wd_dependent_phone.cd_continuous_8gau/"/>
     </component>
     
         

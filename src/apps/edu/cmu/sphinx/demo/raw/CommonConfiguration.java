@@ -39,6 +39,7 @@ import edu.cmu.sphinx.recognizer.Recognizer;
 import edu.cmu.sphinx.util.LogMath;
 
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -59,8 +60,6 @@ import java.util.logging.Logger;
  * WARRANTIES.
  */
 abstract public class CommonConfiguration {
-
-    protected String root;
 
     protected int absoluteBeamWidth;
     protected double relativeBeamWidth;
@@ -123,9 +122,9 @@ abstract public class CommonConfiguration {
         return (AudioFileDataSource) audioDataSource;
     }
 
-    abstract protected void initModels() throws MalformedURLException;
+    abstract protected void initModels() throws MalformedURLException, URISyntaxException, ClassNotFoundException;
 
-    abstract protected void initLinguist() throws MalformedURLException;
+    abstract protected void initLinguist() throws MalformedURLException, ClassNotFoundException;
 
 
     protected void initFrontEnd() {
@@ -225,8 +224,7 @@ abstract public class CommonConfiguration {
     }
 
 
-    protected void init(String root) throws MalformedURLException {
-        this.root = root;
+    protected void init() throws MalformedURLException, URISyntaxException, ClassNotFoundException {
         initCommon();
         initAudioDataSource();
         initFrontEnd();
@@ -239,8 +237,8 @@ abstract public class CommonConfiguration {
         return recognizer;
     }
 
-    public CommonConfiguration(String root) throws MalformedURLException {
-        init(root);
+    public CommonConfiguration() throws MalformedURLException, URISyntaxException, ClassNotFoundException {
+        init();
     }
 
 

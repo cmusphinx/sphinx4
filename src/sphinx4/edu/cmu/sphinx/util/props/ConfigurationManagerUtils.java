@@ -4,6 +4,7 @@ import edu.cmu.sphinx.util.SphinxLogFormatter;
 
 import java.io.*;
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.*;
 import java.util.logging.Handler;
@@ -23,14 +24,19 @@ public final class ConfigurationManagerUtils {
     // this pattern matches strings of the form '${word}'
     private static final Pattern globalSymbolPattern = Pattern.compile("\\$\\{(\\w+)\\}");
 
-    /** A common property (used by all components) that sets the log level for the component. */
+    /**
+     * A common property (used by all components) that sets the log level for the component.
+     */
     public final static String GLOBAL_COMMON_LOGLEVEL = "logLevel";
 
-    /** The default file suffix of configuration files. */
+    /**
+     * The default file suffix of configuration files.
+     */
     public static final String CM_FILE_SUFFIX = ".sxl";
 
 
     // disabled constructor because the class is just a collection of utilities for handling system configurations
+
     private ConfigurationManagerUtils() {
     }
 
@@ -130,7 +136,9 @@ public final class ConfigurationManagerUtils {
     private static boolean wasLogConfigured;
 
 
-    /** Configure the logger */
+    /**
+     * Configure the logger
+     */
     public static void configureLogger(ConfigurationManager cm) {
         if (wasLogConfigured)
             return;
@@ -164,7 +172,9 @@ public final class ConfigurationManagerUtils {
     }
 
 
-    /** Configures a logger to use the sphinx4-log-formatter. */
+    /**
+     * Configures a logger to use the sphinx4-log-formatter.
+     */
     public static void configureLogger(Logger logger) {
         LogManager logManager = LogManager.getLogManager();
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
@@ -248,7 +258,7 @@ public final class ConfigurationManagerUtils {
         Pattern pattern = Pattern.compile("\\$\\{(\\w+)\\}");
 
         Map<String, String> globalProps = cm.getGlobalProperties();
-        for (Map.Entry<String,String> entry : globalProps.entrySet()) {
+        for (Map.Entry<String, String> entry : globalProps.entrySet()) {
             String propName = entry.getKey();
 
             Matcher matcher = pattern.matcher(propName);
@@ -310,7 +320,9 @@ public final class ConfigurationManagerUtils {
     }
 
 
-    /** Shows the current configuration */
+    /**
+     * Shows the current configuration
+     */
     public static void showConfig(ConfigurationManager cm) {
         System.out.println(" ============ config ============= ");
         for (String allName : cm.getInstanceNames(Configurable.class)) {
@@ -463,60 +475,41 @@ public final class ConfigurationManagerUtils {
      * @throws PropertyException if the resource cannot be found
      */
     public static URL getResource(String name, PropertySheet ps) throws PropertyException {
-        URL url;
+
         String location = ps.getString(name);
         if (location == null) {
             throw new InternalConfigurationException(name, name, "Required resource property '" + name + "' not set");
         }
 
-        Matcher jarMatcher = Pattern.compile("resource:/([.\\w]+?)!(.*)", Pattern.CASE_INSENSITIVE).matcher(location);
-        if (jarMatcher.matches()) {
-            String className = jarMatcher.group(1);
-            String resourceName = jarMatcher.group(2);
+        try {
+            URL url = resourceToURL(location);
 
-            try {
-                Class<?> cls = Class.forName(className);
-                url = cls.getResource(resourceName);
-                if (url == null) {
-                    // getResource doesn't usually find directories
-                    // If the resource is a directory and we
-                    // can't find it, we will instead try to  find the class
-                    // anchor and backup to the top level and try again
-                    String classPath = className.replaceAll("\\.", "/") + ".class";
-                    url = cls.getClassLoader().getResource(classPath);
-                    if (url != null) {
-                        // we should have something like this, so replace everything
-                        // jar:file:/foo.jar!/a/b/c/HelloWorld.class
-                        // after the ! with the resource name
-                        String urlString = url.toString();
-                        urlString = urlString.replaceAll('/' + classPath, resourceName);
-                        try {
-                            url = new URL(urlString);
-                        } catch (MalformedURLException mfe) {
-                            throw new InternalConfigurationException(mfe, name, name, "Bad URL " + urlString + mfe.getMessage());
-                        }
-                    }
-                }
-                if (url == null) {
-                    throw new InternalConfigurationException(name, name, "Can't locate resource " + resourceName);
-                } else {
-                    // System.out.println("URL FOUND " + url);
-                }
-            } catch (ClassNotFoundException cnfe) {
-                throw new InternalConfigurationException(cnfe, name, name, "Can't locate resource:/" + className);
+            if (url == null) {
+                throw new InternalConfigurationException(name, name, "Can't locate resource " + location);
             }
+            return url;
+        } catch (MalformedURLException e) {
+            throw new InternalConfigurationException(e, name, name, "Bad URL " + location + e.getMessage());
+        } catch (ClassNotFoundException cnfe) {
+            throw new InternalConfigurationException(cnfe, name, name, "Can't locate resource:/" + cnfe);
+        }
+
+
+    }
+
+    final static Pattern jarPattern = Pattern.compile("resource:(.*)", Pattern.CASE_INSENSITIVE);
+
+    public static URL resourceToURL(String location) throws MalformedURLException, ClassNotFoundException {
+        Matcher jarMatcher = jarPattern.matcher(location);
+        if (jarMatcher.matches()) {
+            String resourceName = jarMatcher.group(1);
+            return Object.class.getResource(resourceName);
         } else {
             if (location.indexOf(':') == -1) {
                 location = "file:" + location;
             }
-
-            try {
-                url = new URL(location);
-            } catch (MalformedURLException e) {
-                throw new InternalConfigurationException(e, name, name, "Bad URL " + location + e.getMessage());
-            }
+            return new URL(location);
         }
-        return url;
     }
 
 
@@ -569,7 +562,9 @@ public final class ConfigurationManagerUtils {
     }
 
 
-    /** Returns a map of all component-properties of this config-manager (including their associated property-sheets. */
+    /**
+     * Returns a map of all component-properties of this config-manager (including their associated property-sheets.
+     */
     public static Map<String, List<PropertySheet>> listAllsPropNames(ConfigurationManager cm) {
         Map<String, List<PropertySheet>> allProps = new HashMap<String, List<PropertySheet>>();
 
@@ -660,7 +655,7 @@ public final class ConfigurationManagerUtils {
         } else {
             componentName = allProps.get(propName).get(0).getInstanceName();
         }
-        
+
         setProperty(cm, componentName, propName, propValue);
     }
 
@@ -674,7 +669,7 @@ public final class ConfigurationManagerUtils {
         // set the value to null if the string content is 'null
         if (propValue.equals("null"))
             propValue = null;
-        
+
         switch (ps.getType(propName)) {
             case BOOLEAN:
                 ps.setBoolean(propName, Boolean.valueOf(propValue));
@@ -703,7 +698,7 @@ public final class ConfigurationManagerUtils {
                 throw new RuntimeException("unknown property-type");
         }
     }
-    
+
     public static URL getURL(File file) {
         try {
             return file.toURI().toURL();
@@ -715,7 +710,9 @@ public final class ConfigurationManagerUtils {
     }
 
 
-    /** Returns the not yet instantiated components registered to this configuration manager. */
+    /**
+     * Returns the not yet instantiated components registered to this configuration manager.
+     */
     public static Collection<String> getNonInstaniatedComps(ConfigurationManager cm) {
         Collection<String> nonInstComponents = new ArrayList<String>();
 
@@ -734,16 +731,16 @@ public final class ConfigurationManagerUtils {
         ps.setConfigurableClass(confClass);
     }
 
-    
-    public static List<String> toStringList (Object obj) {
+
+    public static List<String> toStringList(Object obj) {
         List<String> result = new ArrayList<String>();
         if (!(obj instanceof List<?>))
             return null;
-        for (Object o : (List<?>)obj) {
+        for (Object o : (List<?>) obj) {
             if (o instanceof String) {
-                result.add((String)o);
+                result.add((String) o);
             }
         }
-        return result;        
+        return result;
     }
 }

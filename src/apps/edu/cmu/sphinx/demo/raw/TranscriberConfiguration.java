@@ -4,11 +4,13 @@ import edu.cmu.sphinx.demo.raw.CommonConfiguration;
 import edu.cmu.sphinx.jsapi.JSGFGrammar;
 import edu.cmu.sphinx.linguist.acoustic.UnitManager;
 import edu.cmu.sphinx.linguist.acoustic.tiedstate.Sphinx3Loader;
+import edu.cmu.sphinx.linguist.acoustic.tiedstate.Sphinx3ResourceLoader;
 import edu.cmu.sphinx.linguist.acoustic.tiedstate.TiedStateAcousticModel;
 import edu.cmu.sphinx.linguist.dictionary.FastDictionary;
 import edu.cmu.sphinx.linguist.flat.FlatLinguist;
 
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 
@@ -28,8 +30,8 @@ import java.util.ArrayList;
  */
 class TranscriberConfiguration extends CommonConfiguration {
 
-    public TranscriberConfiguration(String root) throws MalformedURLException {
-        super(root);
+    public TranscriberConfiguration() throws MalformedURLException, URISyntaxException, ClassNotFoundException {
+        super();
     }
 
     protected void initCommon() {
@@ -41,19 +43,20 @@ class TranscriberConfiguration extends CommonConfiguration {
         this.languageWeight = 8.0f;
     }
 
-    protected void initModels() throws MalformedURLException {
+    protected void initModels() throws MalformedURLException, URISyntaxException, ClassNotFoundException {
 
         this.unitManager = new UnitManager();
 
         this.modelLoader = new Sphinx3Loader(
-                "file:"+root+"/models/acoustic/tidigits/model.props",
+                "resource:/TIDIGITS_8gau_13dCep_16k_40mel_130Hz_6800Hz",
+                "model.props",
+                "wd_dependent_phone.500.mdef",
+                "wd_dependent_phone.cd_continuous_8gau/",
                 logMath,
                 unitManager,
                 true,
                 true,
                 39,
-                "file:"+root+"/models/acoustic/tidigits/wd_dependent_phone.500.mdef",
-                "file:"+root+"/models/acoustic/tidigits/wd_dependent_phone.cd_continuous_8gau/",
                 0.0f,
                 1e-7f,
                 0.0001f,
@@ -62,8 +65,8 @@ class TranscriberConfiguration extends CommonConfiguration {
         this.model = new TiedStateAcousticModel(modelLoader, unitManager, true);
 
         this.dictionary = new FastDictionary(
-                new URL("file:"+root+"/models/acoustic/tidigits/dictionary"),
-                new URL("file:"+root+"/models/acoustic/tidigits/fillerdict"),
+                "resource:/TIDIGITS_8gau_13dCep_16k_40mel_130Hz_6800Hz/dictionary",
+                "resource:/TIDIGITS_8gau_13dCep_16k_40mel_130Hz_6800Hz/fillerdict",
                 new ArrayList<URL>(),
                 false,
                 "<sil>",
@@ -72,11 +75,11 @@ class TranscriberConfiguration extends CommonConfiguration {
                 unitManager);
     }
 
-    protected void initLinguist() throws MalformedURLException {
+    protected void initLinguist() throws MalformedURLException, ClassNotFoundException {
 
         this.grammar = new JSGFGrammar(
                 // URL baseURL,
-                new URL("file:"+root+"/src/apps/edu/cmu/sphinx/demo/transcriber/"),
+                "resource:/edu/cmu/sphinx/demo/transcriber",
                 logMath, // LogMath logMath,
                 "digits", // String grammarName,
                 false, // boolean showGrammar,

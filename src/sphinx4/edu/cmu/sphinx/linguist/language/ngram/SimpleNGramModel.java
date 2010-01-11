@@ -23,6 +23,7 @@ import edu.cmu.sphinx.util.props.S4Component;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
 
@@ -56,6 +57,11 @@ public class SimpleNGramModel implements LanguageModel {
     protected BufferedReader reader;
     protected String fileName;
     private boolean allocated;
+
+    public SimpleNGramModel( String format, String location, Dictionary dictionary, float unigramWeight, LogMath logMath,
+                             int desiredMaxDepth ) throws MalformedURLException, ClassNotFoundException {
+        this( format, ConfigurationManagerUtils.resourceToURL(location), dictionary, unigramWeight, logMath, desiredMaxDepth );
+    }    
 
     public SimpleNGramModel( String format, URL urlLocation, Dictionary dictionary, float unigramWeight, LogMath logMath, 
                              int desiredMaxDepth ) {
