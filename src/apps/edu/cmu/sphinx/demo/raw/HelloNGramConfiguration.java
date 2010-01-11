@@ -2,7 +2,6 @@ package edu.cmu.sphinx.demo.raw;
 
 import edu.cmu.sphinx.linguist.acoustic.UnitManager;
 import edu.cmu.sphinx.linguist.acoustic.tiedstate.Sphinx3Loader;
-import edu.cmu.sphinx.linguist.acoustic.tiedstate.Sphinx3ResourceLoader;
 import edu.cmu.sphinx.linguist.acoustic.tiedstate.TiedStateAcousticModel;
 import edu.cmu.sphinx.linguist.dictionary.FastDictionary;
 import edu.cmu.sphinx.linguist.language.ngram.SimpleNGramModel;
