@@ -21,15 +21,9 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-
 
 /** A simple example that shows how to transcribe a continuous audio file that has multiple utterances in it. */
 public class Transcriber {
-
-    // required for testing only.
-    public static List<Result> unitTestBuffer = new ArrayList<Result>();
 
 
     public static void main(String[] args) throws IOException, UnsupportedAudioFileException {
@@ -59,7 +53,6 @@ public class Transcriber {
 
                 String resultText = result.getBestResultNoFiller();
                 System.out.println(resultText);
-                unitTestBuffer.add(result);
         }
     }
 }
