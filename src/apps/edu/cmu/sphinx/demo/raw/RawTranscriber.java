@@ -18,7 +18,6 @@ import edu.cmu.sphinx.demo.raw.TranscriberConfiguration;
 import edu.cmu.sphinx.util.props.ConfigurationManagerUtils;
 
 import javax.sound.sampled.UnsupportedAudioFileException;
-import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;

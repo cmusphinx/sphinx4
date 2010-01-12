@@ -8,7 +8,6 @@ import edu.cmu.sphinx.util.props.ConfigurationManagerUtils;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.MalformedURLException;
-import java.io.File;
 
 /**
  * User: peter

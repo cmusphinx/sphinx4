@@ -166,12 +166,6 @@ public class Sphinx3Loader implements Loader {
     public final static String PROP_DATA_LOCATION = "dataLocation";
 
     /**
-     * The property for the name of the acoustic properties file.
-     */
-    @S4String(defaultValue = "model.props")
-    public final static String PROP_PROPERTIES_FILE = "propertiesFile";
-
-    /**
      * The property for the length of feature vectors.
      */
     @S4Integer(defaultValue = 39)
@@ -233,7 +227,6 @@ public class Sphinx3Loader implements Loader {
     private HMMManager hmmManager;
     protected LogMath logMath;
     private UnitManager unitManager;
-    private Properties properties;
     private boolean swap;
     protected final static String DENSITY_FILE_VERSION = "1.0";
     protected final static String MIXW_FILE_VERSION = "1.0";
@@ -249,41 +242,35 @@ public class Sphinx3Loader implements Loader {
     private URL location;
     private String model;
     private String dataDir;
-    private String propsFile;
     private float distFloor;
     private float mixtureWeightFloor;
     private float varianceFloor;
     private boolean useCDUnits;
     private boolean loaded;
     
-    public Sphinx3Loader(URL location, String propsFile, String model, String dataDir,
+    public Sphinx3Loader(URL location, String model, String dataDir,
                          LogMath logMath, UnitManager unitManager,
                          boolean isBinary, boolean sparseForm, int vectorLength, float distFloor,
                          float mixtureWeightFloor, float varianceFloor, boolean useCDUnits) {
 
-        init(location, propsFile, model, dataDir, logMath, unitManager, isBinary, sparseForm, vectorLength, distFloor, mixtureWeightFloor, varianceFloor, useCDUnits);
+        init(location, model, dataDir, logMath, unitManager, isBinary, sparseForm, vectorLength, distFloor, mixtureWeightFloor, varianceFloor, useCDUnits, Logger.getLogger(getClass().getName()));
     }
 
-    public Sphinx3Loader(String location, String propsFile, String model, String dataDir,
+    public Sphinx3Loader(String location, String model, String dataDir,
                          LogMath logMath, UnitManager unitManager,
                          boolean isBinary, boolean sparseForm, int vectorLength, float distFloor,
                          float mixtureWeightFloor, float varianceFloor, boolean useCDUnits) throws MalformedURLException, ClassNotFoundException {
 
-        init(ConfigurationManagerUtils.resourceToURL(location), propsFile, model, dataDir, logMath, unitManager, isBinary, sparseForm, vectorLength, distFloor, mixtureWeightFloor, varianceFloor, useCDUnits);
+        init(ConfigurationManagerUtils.resourceToURL(location), model, dataDir, logMath, unitManager, isBinary, sparseForm, vectorLength, distFloor, mixtureWeightFloor, varianceFloor, useCDUnits, Logger.getLogger(getClass().getName()));
     }
 
-    protected void init(URL location, String propsFile, String model, String dataDir, LogMath logMath, UnitManager unitManager, boolean isBinary, boolean sparseForm, int vectorLength, float distFloor, float mixtureWeightFloor, float varianceFloor, boolean useCDUnits) {
+    protected void init(URL location, String model, String dataDir, LogMath logMath, UnitManager unitManager,
+            boolean isBinary, boolean sparseForm, int vectorLength, float distFloor, float mixtureWeightFloor, float varianceFloor,
+            boolean useCDUnits, Logger logger) {
         this.location = location;
-
-        this.logger = Logger.getLogger(getClass().getName());
-
-        this.propsFile = propsFile;
-        loadProperties();
-
+        this.logger = logger;
         this.model = model;
         this.dataDir = dataDir;
-
-
         this.logMath = logMath;
         this.unitManager = unitManager;
         this.binary = isBinary;
@@ -303,7 +290,6 @@ public class Sphinx3Loader implements Loader {
     public void newProperties(PropertySheet ps) throws PropertyException {
 
         init(ConfigurationManagerUtils.getResource(PROP_LOCATION,ps),
-                ps.getString(PROP_PROPERTIES_FILE),
                 ps.getString(PROP_MODEL),
                 ps.getString(PROP_DATA_LOCATION),
                 (LogMath) ps.getComponent(PROP_LOG_MATH),
@@ -314,7 +300,8 @@ public class Sphinx3Loader implements Loader {
                 ps.getFloat(PROP_MC_FLOOR),
                 ps.getFloat(PROP_MW_FLOOR),
                 ps.getFloat(PROP_VARIANCE_FLOOR),
-                ps.getBoolean(PROP_USE_CD_UNITS));
+                ps.getBoolean(PROP_USE_CD_UNITS),
+                ps.getLogger());
     }
 
     // This function is a bit different from the
@@ -323,21 +310,6 @@ public class Sphinx3Loader implements Loader {
     // for the files.
     private InputStream getDataStream(String path) throws IOException, URISyntaxException {
         return new URL(location.toURI().toString()+"/"+path).openStream();
-    }
-
-    private void loadProperties() {
-        if (properties == null) {
-            properties = new Properties();
-            try {
-                InputStream stream = getDataStream(propsFile);
-                if (stream != null)
-                    properties.load(stream);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            } catch (URISyntaxException e) {
-                throw new RuntimeException(e);
-            }
-        }
     }
 
     @Override
@@ -388,18 +360,6 @@ public class Sphinx3Loader implements Loader {
      */
     protected Pool<float[]> getMixtureWeightsPool() {
         return mixtureWeightsPool;
-    }
-
-    /**
-     * Return the acoustic model properties.
-     * 
-     * @return the acoustic model properties
-     */
-    protected Properties getProperties() {
-        if (properties == null) {
-            loadProperties();
-        }
-        return properties;
     }
 
     /**

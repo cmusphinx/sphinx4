@@ -28,6 +28,7 @@ import java.io.DataInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URISyntaxException;
 import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Level;
@@ -299,7 +300,7 @@ class Sphinx4Loader extends Sphinx3Loader {
     }
 
     @Override
-    protected Pool<float[][]> loadTransitionMatricesBinary(String path) throws IOException {
+    protected Pool<float[][]> loadTransitionMatricesBinary(String path) throws IOException, URISyntaxException {
 
         logger.info("Loading transition matrices from: ");
         logger.info(path);

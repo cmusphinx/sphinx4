@@ -20,7 +20,6 @@ import edu.cmu.sphinx.util.props.S4Integer;
 
 import java.util.*;
 import java.util.concurrent.*;
-import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * An acoustic scorer that breaks the scoring up into a configurable number of separate threads.

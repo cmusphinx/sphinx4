@@ -4,7 +4,6 @@ import edu.cmu.sphinx.util.SphinxLogFormatter;
 
 import java.io.*;
 import java.net.MalformedURLException;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.*;
 import java.util.logging.Handler;
