@@ -109,6 +109,28 @@ public class ThreadedAcousticScorer extends SimpleAcousticScorer {
     }
 
     @Override
+    public void startRecognition() {
+        super.startRecognition();
+
+        if (executorService == null) {
+            logger.fine(numThreads > 1 ? "# of scoring threads: " + numThreads : "no scoring threads");
+            executorService = numThreads > 1 ? Executors.newFixedThreadPool(numThreads) : null;
+        }
+    }
+
+
+    @Override
+    public void stopRecognition() {
+        super.stopRecognition();
+        
+        if (executorService != null) {
+            executorService.shutdown();
+            executorService = null;
+        }
+    }
+
+
+    @Override
     public void allocate() {
         super.allocate();
         if (executorService == null) {
