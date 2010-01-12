@@ -199,7 +199,7 @@ abstract public class CommonConfiguration {
 
     protected void initRecognizer() {
 
-        this.scorer = new ThreadedAcousticScorer(frontend, null, 10, true, 0);
+        this.scorer = new ThreadedAcousticScorer(frontend, null, 10, true, 0, Thread.NORM_PRIORITY);
 
         this.pruner = new SimplePruner();
 

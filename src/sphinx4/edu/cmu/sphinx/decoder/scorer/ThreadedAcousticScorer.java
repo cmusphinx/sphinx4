@@ -30,6 +30,14 @@ import java.util.concurrent.*;
 public class ThreadedAcousticScorer extends SimpleAcousticScorer {
 
     /**
+     * The property that controls the thread priority of scoring threads.
+     * Must be a value between {@link Thread#MIN_PRIORITY} and {@link Thread#MAX_PRIORITY}, inclusive.
+     * The default is {@link Thread#NORM_PRIORITY}.
+     */
+    @S4Integer(defaultValue = Thread.NORM_PRIORITY)
+    public final static String PROP_THREAD_PRIORITY = "threadPriority";
+
+    /**
      * The property that controls the number of threads that are used to score hmm states. If the isCpuRelative
      * property is false, then is is the exact number of threads that are used to score hmm states. If the isCpuRelative
      * property is true, then this value is combined with the number of available proessors on the system. If you want
@@ -63,6 +71,7 @@ public class ThreadedAcousticScorer extends SimpleAcousticScorer {
     private final static String className = ThreadedAcousticScorer.class.getSimpleName();
 
     private int numThreads;         // number of threads in use
+    private int threadPriority;
     private int minScoreablesPerThread; // min scoreables sent to a thread
     private ExecutorService executorService;
 
@@ -87,9 +96,10 @@ public class ThreadedAcousticScorer extends SimpleAcousticScorer {
      * over threading of the scoring that could happen if the number of threads is high compared to the size of the
      * activelist. The default is 50
      */
-    public ThreadedAcousticScorer(BaseDataProcessor frontEnd, ScoreNormalizer scoreNormalizer, int minScoreablesPerThread,boolean cpuRelative, int numThreads) {
+    public ThreadedAcousticScorer(BaseDataProcessor frontEnd, ScoreNormalizer scoreNormalizer,
+                                  int minScoreablesPerThread, boolean cpuRelative, int numThreads, int threadPriority) {
         super(frontEnd, scoreNormalizer);
-        init(minScoreablesPerThread,cpuRelative, numThreads);
+        init(minScoreablesPerThread, cpuRelative, numThreads, threadPriority);
     }
 
     public ThreadedAcousticScorer() {
@@ -98,16 +108,17 @@ public class ThreadedAcousticScorer extends SimpleAcousticScorer {
     @Override
     public void newProperties(PropertySheet ps) throws PropertyException {
         super.newProperties(ps);
-
-        init(ps.getInt(PROP_MIN_SCOREABLES_PER_THREAD), ps.getBoolean(PROP_IS_CPU_RELATIVE), ps.getInt(PROP_NUM_THREADS));
+        init(ps.getInt(PROP_MIN_SCOREABLES_PER_THREAD), ps.getBoolean(PROP_IS_CPU_RELATIVE),
+            ps.getInt(PROP_NUM_THREADS), ps.getInt(PROP_THREAD_PRIORITY));
     }
 
-    private void init(int minScoreablesPerThread, boolean cpuRelative, int numThreads) {
+    private void init(int minScoreablesPerThread, boolean cpuRelative, int numThreads, int threadPriority) {
         this.minScoreablesPerThread = minScoreablesPerThread;
         if (cpuRelative) {
             numThreads += Runtime.getRuntime().availableProcessors();
         }
         this.numThreads = numThreads;
+        this.threadPriority = threadPriority;
     }
 
     @Override
@@ -117,7 +128,7 @@ public class ThreadedAcousticScorer extends SimpleAcousticScorer {
             if (numThreads > 1) {
                 logger.fine("# of scoring threads: " + numThreads);
                 executorService = Executors.newFixedThreadPool(numThreads,
-                    new CustomThreadFactory(className, true, Thread.NORM_PRIORITY));
+                    new CustomThreadFactory(className, true, threadPriority));
             } else {
                 logger.fine("no scoring threads");
             }

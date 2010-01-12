@@ -182,7 +182,7 @@ def linguist = new FlatLinguist(
 )
 
 // init recognizer
-def scorer = new ThreadedAcousticScorer(frontend, null, 10, true, 0)
+def scorer = new ThreadedAcousticScorer(frontend, null, 10, true, 0, Thread.NORM_PRIORITY)
 
 def pruner = new SimplePruner()
 
