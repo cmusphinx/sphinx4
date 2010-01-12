@@ -13,6 +13,7 @@ package edu.cmu.sphinx.decoder.scorer;
 
 import edu.cmu.sphinx.frontend.Data;
 import edu.cmu.sphinx.frontend.BaseDataProcessor;
+import edu.cmu.sphinx.util.CustomThreadFactory;
 import edu.cmu.sphinx.util.props.PropertyException;
 import edu.cmu.sphinx.util.props.PropertySheet;
 import edu.cmu.sphinx.util.props.S4Boolean;
@@ -58,6 +59,8 @@ public class ThreadedAcousticScorer extends SimpleAcousticScorer {
      */
     @S4Integer(defaultValue = 10)
     public final static String PROP_MIN_SCOREABLES_PER_THREAD = "minScoreablesPerThread";
+
+    private final static String className = ThreadedAcousticScorer.class.getSimpleName();
 
     private int numThreads;         // number of threads in use
     private int minScoreablesPerThread; // min scoreables sent to a thread
@@ -108,33 +111,16 @@ public class ThreadedAcousticScorer extends SimpleAcousticScorer {
     }
 
     @Override
-    public void startRecognition() {
-        super.startRecognition();
-
-        if (executorService == null) {
-            logger.fine(numThreads > 1 ? "# of scoring threads: " + numThreads : "no scoring threads");
-            executorService = numThreads > 1 ? Executors.newFixedThreadPool(numThreads) : null;
-        }
-    }
-
-
-    @Override
-    public void stopRecognition() {
-        super.stopRecognition();
-        
-        if (executorService != null) {
-            executorService.shutdown();
-            executorService = null;
-        }
-    }
-
-
-    @Override
     public void allocate() {
         super.allocate();
         if (executorService == null) {
-            logger.fine(numThreads > 1 ? "# of scoring threads: " + numThreads : "no scoring threads");
-            executorService = numThreads > 1 ? Executors.newFixedThreadPool(numThreads) : null;
+            if (numThreads > 1) {
+                logger.fine("# of scoring threads: " + numThreads);
+                executorService = Executors.newFixedThreadPool(numThreads,
+                    new CustomThreadFactory(className, true, Thread.NORM_PRIORITY));
+            } else {
+                logger.fine("no scoring threads");
+            }
         }
     }
 
