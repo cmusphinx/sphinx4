@@ -120,8 +120,10 @@ public class LiveCMN extends BaseDataProcessor {
 
         Data input = getPredecessor().getData();
 
-        if (input instanceof DataStartSignal)
+        if (input instanceof DataStartSignal) {
             sum = null;
+            numberFrame = 0;
+        }
 
         getTimer().start();
 
