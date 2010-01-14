@@ -84,11 +84,11 @@ public class PLPFilter {
             if (barkf < -2.5)
                 filterCoefficients[i] = 0.0;
             else if (barkf <= -0.5)
-                filterCoefficients[i] = Math.pow(10.0, -(barkf + 0.5));
+                filterCoefficients[i] = Math.pow(10.0, barkf + 0.5);
             else if (barkf <= 0.5)
                 filterCoefficients[i] = 1.0;
             else if (barkf <= 1.3)
-                filterCoefficients[i] = Math.pow(10.0, 2.5 * (barkf - 0.5));
+                filterCoefficients[i] = Math.pow(10.0, -2.5 * (barkf - 0.5));
             else
                 filterCoefficients[i] = 0.0;
         }

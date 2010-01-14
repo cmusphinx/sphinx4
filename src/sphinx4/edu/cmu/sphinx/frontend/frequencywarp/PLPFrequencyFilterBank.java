@@ -152,22 +152,20 @@ public class PLPFrequencyFilterBank extends BaseDataProcessor {
      * This function return the equal loudness preemphasis factor at any frequency. The preemphasis function is given
      * by
      * <p/>
+     * E(w) = f^4 / (f^2 + 1.6e5) ^ 2 * (f^2 + 1.44e6) / (f^2 + 9.61e6)
+     * <p/>
+     * This is more modern one from HTK, for some reason it's preferred over old variant, and 
+     * it doesn't require convertion to radiants
+     * <p/>
      * E(w) = (w^2+56.8e6)*w^4/((w^2+6.3e6)^2(w^2+0.38e9)(w^6+9.58e26))
      * <p/>
      * where w is frequency in radians/second
      * @param freq
      */
     private double loudnessScalingFunction(double freq) {
-        double freqsquared = freq * freq;
-        double freqfourth = freqsquared * freqsquared;
-        double freqsixth = freqfourth * freqsquared;
-
-        double numerator = (freqsquared + 56.8e6) * freqfourth;
-        double denominator = Math.pow((freqsquared + 6.3e6), 2) *
-                (freqsquared + 0.38e9) *
-                (freqsixth + 9.58e26);
-
-        return numerator / denominator;
+        double fsq = freq * freq;
+        double fsub = fsq / (fsq + 1.6e5);
+        return fsub * fsub * ((fsq + 1.44e6) / (fsq + 9.61e6));
     }
 
 
@@ -177,7 +175,7 @@ public class PLPFrequencyFilterBank extends BaseDataProcessor {
 
         equalLoudnessScaling = new double[numberFilters];
         for (int i = 0; i < numberFilters; i++) {
-            centerFreq = criticalBandFilter[i].centerFreqInHz * 2.0 * Math.PI;
+            centerFreq = criticalBandFilter[i].centerFreqInHz;
             equalLoudnessScaling[i] = loudnessScalingFunction(centerFreq);
         }
     }
