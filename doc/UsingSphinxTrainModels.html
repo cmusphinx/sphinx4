@@ -110,10 +110,8 @@ Again, let's define a model in config file:
    	     type="edu.cmu.sphinx.linguist.acoustic.tiedstate.Sphinx3Loader"&gt;
 	&lt;property name="logMath" value="logMath"/&gt;
 	&lt;property name="unitManager" value="unitManager"/&gt;
-        &lt;property name="dataLocation" value="file:<b>the path to the model folder
+    &lt;property name="location" value="<b>the path to the model folder
 	       for example &lt;your_training_folder&gt;/model_parameters/&lt;your_model_name&gt;.cd_cont_&lt;senones&gt;</b>"/&gt;
-        &lt;property name="modelDefinition" value="file:<b>the path to the model mdef file in model folder
-	       for example &lt;your_training_folder&gt;/model_parameters/&lt;your_model_name&gt;.cd_cont_&lt;senones&gt;/mdef</b>"/&gt;
   &lt;/component>
 
   &lt;component name="acousticModel" type="edu.cmu.sphinx.linguist.acoustic.tiedstate.TiedStateAcousticModel"&gt;
@@ -123,7 +121,7 @@ Again, let's define a model in config file:
 </pre>
 
 <p>
-Please note that path value should start with <code>file:</code> here.
+Please note that path value is just URI, so it could start with URI prefix like http://
 </p>
 
 <p>
@@ -146,7 +144,7 @@ frontend accordingly. Here are required changes:
       &lt;item&gt;lda&lt;/item&gt;
     &lt;/propertylist&gt;
   &lt;/component&gt;
-
+  
   &lt;component name="melFilterBank" type="edu.cmu.sphinx.frontend.frequencywarp.MelFrequencyFilterBank"&gt;
     &lt;property name="numberFilters" value="31"/&gt;
     &lt;property name="minimumFrequency" value="200"/&gt;
@@ -158,6 +156,10 @@ frontend accordingly. Here are required changes:
   &lt;/component&gt;
 
 </pre>    
+<p>
+ melFilterBank params here are changed for default 8kHz frequences and lda component is introduced
+ to transform feature space with MLLT matrix.
+</p>
 
 <h2>
 That's all. Start your application with a new configuration and it will recognize using
@@ -172,11 +174,11 @@ For more information on configuration see <a href="../javadoc">Javadoc</a> and <
 <p> Optionally you can pack models into JAR file. The advantage of
 having it in a JAR file is that the JAR file can simply be included in
 the classpath and referenced in the configuration file for it to be used
-in a Sphinx-4 application. The configuration for packing int JAR is the
-same except you need to use jar:file: URI scheme for the reference. Once you did so, don't
-forget to include the JAR into the classpath.  For convenience, Sphinx4 allows URIs to contain
+in a Sphinx-4 application. Once you did so, don't forget to include the JAR into the 
+classpath.  To configure loading form the jars, Sphinx4 allows URIs to contain
 resource:&lt;acoustic or language model path&gt; which allows XML config files to easily reference
-models in JAR files.  Resource: causes Sphinx4 to search on the classpath for the path.
+models in JAR files.  Scheme <b>resource:/path</b> causes Sphinx4 to search on the classpath for the path. See
+our demos for example on how WSJ model files are loaded from WSJ jar.
 </p>
 
 </span>
