@@ -27,9 +27,9 @@ import java.util.List;
  */
 public class MAPConfidenceScorer implements ConfidenceScorer, Configurable {
 
-    /** The property that defines the language model weight. */
+    /** The property that defines the weight multiplier that will be applied to language score already scaled by language weight. */
     @S4Double(defaultValue = 1.0)
-    public final static String PROP_LANGUAGE_WEIGHT = "languageWeight";
+    public final static String PROP_LANGUAGE_WEIGHT_ADJUSTMENT = "languageWeightAdjustment";
 
 
     /** The property that specifies whether to dump the lattice. */
@@ -42,12 +42,12 @@ public class MAPConfidenceScorer implements ConfidenceScorer, Configurable {
     public final static String PROP_DUMP_SAUSAGE = "dumpSausage";
 
 
-    private float languageWeight;
+    private float languageWeightAdjustment;
     private boolean dumpLattice;
     private boolean dumpSausage;
 
-    public MAPConfidenceScorer(float languageWeight, boolean dumpLattice, boolean dumpSausage) {
-        this.languageWeight = languageWeight;
+    public MAPConfidenceScorer(float languageWeightAdjustment, boolean dumpLattice, boolean dumpSausage) {
+        this.languageWeightAdjustment = languageWeightAdjustment;
         this.dumpLattice = dumpLattice;
         this.dumpSausage = dumpSausage;
     }
@@ -62,7 +62,7 @@ public class MAPConfidenceScorer implements ConfidenceScorer, Configurable {
      */
     @Override
     public void newProperties(PropertySheet ps) throws PropertyException {
-        languageWeight = ps.getFloat(PROP_LANGUAGE_WEIGHT);
+        languageWeightAdjustment = ps.getFloat(PROP_LANGUAGE_WEIGHT_ADJUSTMENT);
         dumpLattice = ps.getBoolean(PROP_DUMP_LATTICE);
         dumpSausage = ps.getBoolean(PROP_DUMP_SAUSAGE);
     }
@@ -80,7 +80,7 @@ public class MAPConfidenceScorer implements ConfidenceScorer, Configurable {
         Lattice lattice = new Lattice(result);
         LatticeOptimizer lop = new LatticeOptimizer(lattice);
         lop.optimize();
-        lattice.computeNodePosteriors(languageWeight);
+        lattice.computeNodePosteriors(languageWeightAdjustment);
         SausageMaker sm = new SausageMaker(lattice);
         Sausage s = sm.makeSausage();
 

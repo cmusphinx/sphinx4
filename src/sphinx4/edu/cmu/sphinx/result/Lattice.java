@@ -817,10 +817,10 @@ public class Lattice {
      * <p/>
      * Node posteriors can be retrieved by calling getPosterior() on Node objects.
      *
-     * @param languageModelWeight the language model weight that was used in generating the scores in the lattice
+     * @param languageModelWeightAdjustment the weight multiplier that will be applied to language score already scaled by language weight
      */
-    public void computeNodePosteriors(float languageModelWeight) {
-        computeNodePosteriors(languageModelWeight, false);
+    public void computeNodePosteriors(float languageModelWeightAdjustment) {
+        computeNodePosteriors(languageModelWeightAdjustment, false);
     }
 
 
@@ -831,11 +831,11 @@ public class Lattice {
      * <p/>
      * Node posteriors can be retrieved by calling getPosterior() on Node objects.
      *
-     * @param languageModelWeight   the language model weight that was used in generating the scores in the lattice
+     * @param languageModelWeightAdjustment   the weight multiplier that will be applied to language score already scaled by language weight
      * @param useAcousticScoresOnly use only the acoustic scores to compute the posteriors, ignore the language weight
      *                              and scores
      */
-    public void computeNodePosteriors(float languageModelWeight,
+    public void computeNodePosteriors(float languageModelWeightAdjustment,
                                       boolean useAcousticScoresOnly) {
         if (initialNode == null)
                 return;
@@ -848,7 +848,7 @@ public class Lattice {
             for (Edge edge : currentNode.getLeavingEdges()) {
                 double forwardProb = edge.getFromNode().getForwardScore();
                 double edgeScore = computeEdgeScore
-                        (edge, languageModelWeight, useAcousticScoresOnly);
+                        (edge, languageModelWeightAdjustment, useAcousticScoresOnly);
                 forwardProb += edgeScore;
                 edge.getToNode().setForwardScore
                         (logMath.addAsLinear
@@ -874,7 +874,7 @@ public class Lattice {
             for (Edge edge : currentEdges) {
                 double backwardProb = edge.getToNode().getBackwardScore();
                 backwardProb += computeEdgeScore
-                        (edge, languageModelWeight, useAcousticScoresOnly);
+                        (edge, languageModelWeightAdjustment, useAcousticScoresOnly);
                 edge.getFromNode().setBackwardScore
                         (logMath.addAsLinear((float) backwardProb,
                                 (float) edge.getFromNode().getBackwardScore()));
@@ -908,18 +908,19 @@ public class Lattice {
 
 
     /**
-     * Computes the score of an edge.
+     * Computes the score of an edge. It multiplies on adjustment since language model
+     * score is already scaled by language model weight in linguist.
      *
      * @param edge                the edge which score we want to compute
-     * @param languageModelWeight the language model weight to use
+     * @param languageModelWeightAdjustment the weight multiplier that will be applied to language score already scaled by language weight
      * @return the score of an edge
      */
-    private double computeEdgeScore(Edge edge, float languageModelWeight,
+    private double computeEdgeScore(Edge edge, float languageModelWeightAdjustment,
                                     boolean useAcousticScoresOnly) {
         if (useAcousticScoresOnly) {
             return edge.getAcousticScore();
         } else {
-            return (edge.getAcousticScore() + edge.getLMScore()) / languageModelWeight;
+            return edge.getAcousticScore() + edge.getLMScore() * languageModelWeightAdjustment;
         }
     }
 
