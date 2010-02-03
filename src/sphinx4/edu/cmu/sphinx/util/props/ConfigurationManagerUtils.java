@@ -1,17 +1,33 @@
 package edu.cmu.sphinx.util.props;
 
-import edu.cmu.sphinx.util.SphinxLogFormatter;
-
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import edu.cmu.sphinx.util.SphinxLogFormatter;
 
 /**
  * Some static utility methods which ease the handling of system configurations.
@@ -502,7 +518,7 @@ public final class ConfigurationManagerUtils {
         Matcher jarMatcher = jarPattern.matcher(location);
         if (jarMatcher.matches()) {
             String resourceName = jarMatcher.group(1);
-            return Object.class.getResource(resourceName);
+            return ConfigurationManagerUtils.class.getResource(resourceName);
         } else {
             if (location.indexOf(':') == -1) {
                 location = "file:" + location;
