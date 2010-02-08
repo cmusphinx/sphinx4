@@ -381,14 +381,14 @@ public class FlatLinguist implements Linguist, Configurable {
     }
 
     /**
-     * Compiles the grammar into a sentence hmm. A GrammarJob is created for
+     * Compiles the grammar into a sentence HMM. A GrammarJob is created for
      * the initial grammar node and added to the GrammarJob queue. While there
      * are jobs left on the grammar job queue, a job is removed from the queue
      * and the associated grammar node is expanded and attached to the tails.
      * GrammarJobs for the successors are added to the grammar job queue.
      */
     /**
-     * Compiles the grammar into a sentence hmm. A GrammarJob is created for the
+     * Compiles the grammar into a sentence HMM. A GrammarJob is created for the
      * initial grammar node and added to the GrammarJob queue. While there are
      * jobs left on the grammar job queue, a job is removed from the queue and
      * the associated grammar node is expanded and attached to the tails.
@@ -475,7 +475,7 @@ public class FlatLinguist implements Linguist, Configurable {
 
 
     /**
-     * Ensures that there is a starting path by adding an empty left context to the strating gstate
+     * Ensures that there is a starting path by adding an empty left context to the starting gstate
      */
     // TODO: Currently the FlatLinguist requires that the initial
     // grammar node returned by the Grammar contains a "sil" word
@@ -617,7 +617,7 @@ public class FlatLinguist implements Linguist, Configurable {
 
 
         /**
-         * Creates a GState for a grammar ndoe
+         * Creates a GState for a grammar node
          *
          * @param node the grammar node
          */
@@ -631,7 +631,7 @@ public class FlatLinguist implements Linguist, Configurable {
          * Retrieves the set of starting contexts for this node. The starting contexts are the set of Unit[] with a size
          * equal to the maximum right context size.
          *
-         * @return the set of starting contexts acrosss nodes.
+         * @return the set of starting contexts across nodes.
          */
         private Set<UnitContext> getStartingContexts() {
             if (startingContexts == null) {

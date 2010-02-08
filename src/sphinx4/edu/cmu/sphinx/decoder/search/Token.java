@@ -54,7 +54,7 @@ public class Token implements Scoreable {
     private static Set<Class<? extends SearchState>> predecessorClasses;
 
     /**
-     * A collection of arbitrary properties assigned to this token. This field becomes lazy intitialized to reduce
+     * A collection of arbitrary properties assigned to this token. This field becomes lazy initialized to reduce
      * memory footprint.
      */
     private HashMap<String, Object> tokenProps;
@@ -82,7 +82,7 @@ public class Token implements Scoreable {
      * @param state                   the SentenceHMMState associated with this token
      * @param logTotalScore           the total entry score for this token (in LogMath log base)
      * @param logLanguageScore        the language score associated with this token (in LogMath log base)
-     * @param logInsertionProbability the insertion probabilty  associated with this token (in LogMath log base)
+     * @param logInsertionProbability the insertion probability  associated with this token (in LogMath log base)
      * @param frameNumber             the frame number associated with this token
      */
     public Token child(SearchState state,
@@ -110,7 +110,7 @@ public class Token implements Scoreable {
      * @param state                   the SentenceHMMState associated with this token
      * @param logTotalScore           the total entry score for this token (in LogMath log base)
      * @param logLanguageScore        the language score associated with this token (in LogMath log base)
-     * @param logInsertionProbability the insertion probabilty  associated with this token (in LogMath log base)
+     * @param logInsertionProbability the insertion probability  associated with this token (in LogMath log base)
      * @param frameNumber             the frame number associated with this token
      */
     protected Token(Token predecessor,
@@ -211,7 +211,7 @@ public class Token implements Scoreable {
 
 
     /**
-     * Calculates a score against the given feature. The score can be retreived with get score. The token will keep a
+     * Calculates a score against the given feature. The score can be retrieved with get score. The token will keep a
      * reference to the scored feature-vector.
      *
      * @param feature the feature to be scored
@@ -240,7 +240,7 @@ public class Token implements Scoreable {
 //            MixtureComponent mc = new MixtureComponent(LogMath.getInstance(), mean, varFloor);
 //            float maxDensityValue = mc.getScore(new FloatData(mean, 16000, 0, 0));
 //
-//            // normalizae all acoustic scores with respect to the largest possible value
+//            // normalize all acoustic scores with respect to the largest possible value
 //            logAcousticScore -= maxDensityValue;
 //        }
 

@@ -19,7 +19,7 @@ import edu.cmu.sphinx.util.LogMath;
 
 /**
  * Represents a concrete implementation of a simple {@link Senone senone}. A simple senone is a set of probability
- * density functions implemented as a gaussian mixture.
+ * density functions implemented as a Gaussian mixture.
  * <p/>
  * All scores and weights are maintained in LogMath log base.
  */
@@ -69,11 +69,17 @@ public class GaussianMixture implements Senone, Cloneable {
 
 
     /**
-     * Returns a score for the given feature based upon this senone, and calculates it if not already calculated. Note
-     * that this method is not thread safe and should be externally synchronized if it could be potentially called from
-     * multiple threads.
-     *
-     * @param feature the feature to score
+     * Returns a score for the given feature based upon this senone, and
+     * calculates it if not already calculated. Note that this method is not
+     * thread safe and should be externally synchronized if it could be
+     * potentially called from multiple threads.
+     * 
+     * In ThreadedScorer it's fine to cache this way because the whole set of
+     * scoreables is equally divided on parts. Different scoreables are accessed 
+     * by a different threads.
+     * 
+     * @param feature
+     *            the feature to score
      * @return the score, in logMath log base, for the feature
      */
     @Override
@@ -203,7 +209,7 @@ public class GaussianMixture implements Senone, Cloneable {
     }
 
 
-    /** @return the dimension of the modelled feature space */
+    /** @return the dimension of the modeled feature space */
     public int dimension() {
         return mixtureComponents[0].getMean().length;
     }
