@@ -12,7 +12,9 @@
     <component name="duco" type="edu.cmu.sphinx.util.props.test.DummyComp">
         <property name="beamWidth" value="4711"/>
         <property name="frontend" value="newFrontEnd"/>
+        <property name="anotherFrontend" value="edu.cmu.sphinx.util.props.test.DummyFrontEnd"/>        
     </component>
+    
 
 
     <component name="newFrontEnd" type="edu.cmu.sphinx.util.props.test.DummyFrontEnd">

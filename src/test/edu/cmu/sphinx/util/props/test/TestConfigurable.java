@@ -92,11 +92,11 @@ public class TestConfigurable implements Configurable {
         tc.newProperties(propSheet);
 
         // test whether old props were preserved and new ones were applied
-        // todo fixme: Its by design not possible to preserve the old properties without have a CM
-        // probably we should remove the possiblitly to let the user create PropertySheet instances.
 
-//        Assert.assertTrue(tc.myString.equals(testString));
-//        Assert.assertTrue(tc.gamma == testDouble);
+        // FIXME: Its by design not possible to preserve the old properties without have a CM
+        // probably we should remove the possibility to let the user create PropertySheet instances.
+        // Assert.assertTrue(tc.myString.equals(testString));
+        // Assert.assertTrue(tc.gamma == testDouble);
         Assert.assertTrue(tc.dataProc != null && tc.dataProc instanceof AnotherDummyProcessor);
     }
 }

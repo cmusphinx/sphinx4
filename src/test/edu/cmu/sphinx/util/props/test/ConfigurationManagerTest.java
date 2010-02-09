@@ -38,15 +38,14 @@ public class ConfigurationManagerTest {
         File configFile = new File("../../sphinx4/tests/other/testconfig.sxl");
         ConfigurationManager cm = new ConfigurationManager(configFile.toURI().toURL());
 
-        File tmpFile = File.createTempFile("ConfigurationManager", ".tmp.xml");
+        File tmpFile = File.createTempFile("ConfigurationManager", ".tmp.sxl");
         tmpFile.deleteOnExit();
 
-        System.out.println(ConfigurationManagerUtils.toXML(cm));
         ConfigurationManagerUtils.save(cm, tmpFile);
 
         // now reload it
         ConfigurationManager cmReloaded = new ConfigurationManager(tmpFile.toURI().toURL());
-        Assert.assertTrue("deserialzed cm doesn't equal its original", cmReloaded.equals(cm));
+        Assert.assertTrue("deserialized cm isn't equal to its original", cmReloaded.equals(cm));
     }
 
 
@@ -84,7 +83,6 @@ public class ConfigurationManagerTest {
 
         String xmlString = ConfigurationManagerUtils.toXML(cm);
 
-        System.out.println(xmlString);
         Assert.assertTrue(xmlString.contains(frontEndName));
         Assert.assertTrue(xmlString.contains("fooBar"));
 
@@ -106,15 +104,26 @@ public class ConfigurationManagerTest {
 
         DummyComp docu = (DummyComp) cm.lookup(instanceName);
 
-        // test the parameters were sucessfully overridden
+        // test the parameters were successfully overridden
         Assert.assertTrue(docu.getFrontEnd().getDataProcs().isEmpty());
         Assert.assertTrue(docu.getBeamWidth() == 4711);
 
         // test the the non-overridden properties of the parent-configuration were preserved
         Assert.assertNotNull(cm.lookup("processor"));
+        Assert.assertNotNull(cm.lookup("processor"));
 
         // test the global properties:
         Assert.assertTrue("-5".equals(cm.getGlobalProperties().get("myalpha"))); // overridden property
         Assert.assertEquals("opencards", cm.getGlobalProperties().get("hiddenproductad")); // preserved property
+    }
+    
+    @Test
+    public void testGetComponentClass () {
+        ConfigurationManager cm = new ConfigurationManager("../tests/other/extendconfig.sxl");
+
+        String instanceName = "duco";
+        PropertySheet ps = cm.getPropertySheet(instanceName);
+        Assert.assertEquals(edu.cmu.sphinx.util.props.test.DummyFrontEnd.class, ps.getComponentClass("frontend"));
+        Assert.assertEquals(edu.cmu.sphinx.util.props.test.DummyFrontEnd.class, ps.getComponentClass("anotherFrontend"));
     }
 }

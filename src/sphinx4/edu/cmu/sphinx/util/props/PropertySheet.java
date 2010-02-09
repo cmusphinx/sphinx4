@@ -327,7 +327,8 @@ public class PropertySheet implements Cloneable {
                 Class<?> objClass = Class.forName((String) propValues.get(propName));
                 defClass = objClass.asSubclass(Configurable.class);
             } catch (ClassNotFoundException e) {
-                e.printStackTrace();
+                PropertySheet ps = cm.getPropertySheet(flattenProp(propName));
+                defClass = ps.ownerClass;
             }
         else {
             S4Component comAnno = (S4Component) registeredProperties.get(propName).getAnnotation();
