@@ -110,6 +110,10 @@ public class ThreadedAcousticScorer extends SimpleAcousticScorer {
      *            used to prevent over threading of the scoring that could
      *            happen if the number of threads is high compared to the size
      *            of the active list. The default is 50
+     * @param threadPriority
+     *            the thread priority of scoring threads. Must be a value between
+     *            {@link Thread#MIN_PRIORITY} and {@link Thread#MAX_PRIORITY}, inclusive.
+     *            The default is {@link Thread#NORM_PRIORITY}.
      */
     public ThreadedAcousticScorer(BaseDataProcessor frontEnd, ScoreNormalizer scoreNormalizer,
                                   int minScoreablesPerThread, boolean cpuRelative, int numThreads, int threadPriority) {
