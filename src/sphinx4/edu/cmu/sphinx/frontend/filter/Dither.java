@@ -10,7 +10,7 @@
  *
  */
 
-package edu.cmu.sphinx.frontend.util;
+package edu.cmu.sphinx.frontend.filter;
 
 import edu.cmu.sphinx.frontend.*;
 import edu.cmu.sphinx.util.props.PropertyException;
