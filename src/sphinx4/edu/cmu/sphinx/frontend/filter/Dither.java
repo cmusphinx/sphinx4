@@ -92,14 +92,11 @@ public class Dither extends BaseDataProcessor {
     @Override
     public Data getData() throws DataProcessingException {
         Data input = getPredecessor().getData(); // get the spectrum
-        getTimer().start();
         if (input != null && ditherMax != 0) {
             if (input instanceof DoubleData || input instanceof FloatData) {
                 input = process(input);
             }
         }
-
-        getTimer().stop();
         return input;
     }
 

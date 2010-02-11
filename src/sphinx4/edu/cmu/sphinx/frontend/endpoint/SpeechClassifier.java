@@ -72,6 +72,12 @@ public class SpeechClassifier extends BaseDataProcessor {
     protected float frameLengthSec;
     protected boolean isSpeech;
 
+    /* Statistics */
+    protected long speechFrames;
+    protected long backgroundFrames;
+    protected double totalBackgroundLevel;
+    protected double totalSpeechLevel;
+    
     protected final List<Data> outputQueue = new LinkedList<Data>();
 
     public SpeechClassifier(int frameLengthMs, double adjustment, double threshold, double minSignal ) {
@@ -117,6 +123,7 @@ public class SpeechClassifier extends BaseDataProcessor {
     protected void reset() {
         level = 0;
         background = 100;
+        resetStats();
     }
 
 
@@ -172,9 +179,35 @@ public class SpeechClassifier extends BaseDataProcessor {
                     ", current: " + current + ' ' + speech);
         }
 
+        collectStats (isSpeech);
+        
         outputQueue.add(labeledAudio);
     }
 
+    /**
+     * Reset statistics
+     */
+    private void resetStats () {
+        backgroundFrames = 1;
+        speechFrames = 1;
+        totalSpeechLevel = 0;
+        totalBackgroundLevel = 0;
+    }
+    
+    /**
+     * Collects the statistics to provide information about signal to noise ratio in channel
+     * 
+     * @param isSpeech if the current frame is classified as speech
+     */
+    private void collectStats(boolean isSpeech) {
+        if (isSpeech) {
+            totalSpeechLevel = totalSpeechLevel + level;
+            speechFrames = speechFrames + 1;
+        } else {
+            totalBackgroundLevel = totalBackgroundLevel + background;
+            backgroundFrames = backgroundFrames + 1;
+        }        
+    }
 
     /**
      * Returns the next Data object.
@@ -215,7 +248,38 @@ public class SpeechClassifier extends BaseDataProcessor {
         }
     }
     
+    /**
+     * Method that returns if current returned frame contains speech. 
+     * It could be used by noise filter for example to adjust noise 
+     * spectrum estimation.
+     * 
+     * @return if current frame is speech 
+     */
     public boolean isSpeech() {
     	return isSpeech;
+    }
+    
+    /** 
+     * Retrieves accumulated signal to noise ratio in dbScale 
+     * 
+     * @return signal to noise ratio
+     */
+    public double getSNR () {
+        double snr = (totalBackgroundLevel / backgroundFrames - totalSpeechLevel / speechFrames);
+        logger.fine ("Background " + totalBackgroundLevel / backgroundFrames);
+        logger.fine ("Speech " + totalSpeechLevel / speechFrames);
+        logger.fine ("SNR is " + snr);
+        return snr;
+    }
+ 
+    /** 
+     * Return the estimation if input data was noisy enough to break
+     * recognition. The audio is counted noisy if signal to noise ratio
+     * is less then -20dB.
+     * 
+     * @return estimation of data being noisy
+     */
+    public boolean getNoisy () {
+        return (getSNR() > -20);
     }
 }
