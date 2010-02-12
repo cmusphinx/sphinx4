@@ -122,7 +122,7 @@ public class SpeechClassifier extends BaseDataProcessor {
     /** Resets this LevelTracker to a starting state. */
     protected void reset() {
         level = 0;
-        background = 100;
+        background = 300;
         resetStats();
     }
 
@@ -226,14 +226,6 @@ public class SpeechClassifier extends BaseDataProcessor {
             if (audio != null) {
                 if (audio instanceof DoubleData) {
                     DoubleData data = (DoubleData) audio;
-                    if (data.getValues().length >
-                            ((int) (frameLengthSec * data.getSampleRate()))) {
-                        throw new Error
-                                ("Length of data frame is " +
-                                        data.getValues().length +
-                                        " samples, but the expected frame is <= " +
-                                        (frameLengthSec * data.getSampleRate()));
-                    }
                     classify(data);
                 } else {
                     outputQueue.add(audio);
