@@ -16,7 +16,6 @@ import edu.cmu.sphinx.frontend.util.Microphone;
 import edu.cmu.sphinx.recognizer.Recognizer;
 import edu.cmu.sphinx.result.Result;
 import edu.cmu.sphinx.util.props.ConfigurationManager;
-
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -48,7 +47,7 @@ public class HelloDigits {
 
         System.out.println("Say any digit(s): e.g. \"two oh oh four\" , or \"three six five\".");
 
-        // loop the recognition until the programm exits.
+        // loop the recognition until the program exits.
         while (true) {
             System.out.println("Start speaking. Press Ctrl-C to quit.\n");
 

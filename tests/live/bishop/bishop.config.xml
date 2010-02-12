@@ -143,24 +143,23 @@
         <property name="unitManager" value="unitManager"/>
     </component>
     
-        
-    
     <!-- ******************************************************** -->
     <!-- The Dictionary configuration                            -->
     <!-- ******************************************************** -->
+    
     <component name="dictionary" 
-        type="edu.cmu.sphinx.linguist.dictionary.FastDictionary">
+        type="edu.cmu.sphinx.linguist.dictionary.FullDictionary">
         <property name="dictionaryPath"
-	          value="resource:/edu.cmu.sphinx.model.acoustic.WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz.Model!/edu/cmu/sphinx/model/acoustic/WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz/dict/cmudict.0.6d"/>
-	<property name="fillerPath"
-		  value="resource:/edu.cmu.sphinx.model.acoustic.WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz.Model!/edu/cmu/sphinx/model/acoustic/WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz/dict/fillerdict"/>
-        <property name="addSilEndingPronunciation" value="false"/>
+	 value="resource:/WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz/dict/cmudict.0.6d"/>
+        <property name="fillerPath"
+	 value="resource:/WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz/dict/fillerdict"/>
+        <property name="addSilEndingPronunciation" value="true"/>
         <property name="wordReplacement" value="&lt;sil&gt;"/>
         <property name="allowMissingWords" value="true"/>
         <property name="unitManager" value="unitManager"/>
     </component>
     
-
+    
     <!-- ******************************************************** -->
     <!-- The Language Model configuration                         -->
     <!-- ******************************************************** -->
@@ -172,23 +171,25 @@
         <property name="dictionary" value="dictionary"/>
         <property name="maxDepth" value="3"/>
         <property name="unigramWeight" value=".7"/>
-    </component>
-        
+    </component>    
     
     <!-- ******************************************************** -->
     <!-- The acoustic model configuration                         -->
     <!-- ******************************************************** -->
+
     <component name="wsj"
-               type="edu.cmu.sphinx.model.acoustic.WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz.Model">
-        <property name="loader" value="sphinx3Loader"/>
+               type="edu.cmu.sphinx.linguist.acoustic.tiedstate.TiedStateAcousticModel">
+        <property name="loader" value="wsjLoader"/>
         <property name="unitManager" value="unitManager"/>
     </component>
-    
-    <component name="sphinx3Loader" 
-               type="edu.cmu.sphinx.model.acoustic.WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz.ModelLoader">
+
+    <component name="wsjLoader" type="edu.cmu.sphinx.linguist.acoustic.tiedstate.Sphinx3Loader">
         <property name="logMath" value="logMath"/>
         <property name="unitManager" value="unitManager"/>
-    </component>    
+        <property name="location" value="resource:/WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz"/>
+        <property name="modelDefinition" value="etc/WSJ_clean_13dCep_16k_40mel_130Hz_6800Hz.4000.mdef"/>
+        <property name="dataLocation" value="cd_continuous_8gau/"/>
+    </component>
     
     <!-- ******************************************************** -->
     <!-- The unit manager configuration                           -->

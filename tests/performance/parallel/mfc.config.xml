@@ -124,9 +124,9 @@
     <component name="dictionary" 
         type="edu.cmu.sphinx.linguist.dictionary.FullDictionary">
         <property name="dictionaryPath" 
-                  value="resource:/edu.cmu.sphinx.model.acoustic.AURORA2_MFC_8gau_13dCep_8k_32mel_130Hz_3600Hz.Model!/edu/cmu/sphinx/model/acoustic/AURORA2_MFC_8gau_13dCep_8k_32mel_130Hz_3600Hz/dictionary"/>
+                  value="resource:/AURORA2_MFC_8gau_13dCep_8k_32mel_130Hz_3600Hz/dictionary"/>
         <property name="fillerPath"
-	          value="resource:/edu.cmu.sphinx.model.acoustic.AURORA2_MFC_8gau_13dCep_8k_32mel_130Hz_3600Hz.Model!/edu/cmu/sphinx/model/acoustic/AURORA2_MFC_8gau_13dCep_8k_32mel_130Hz_3600Hz/fillerdict"/>
+	          value="resource:/AURORA2_MFC_8gau_13dCep_8k_32mel_130Hz_3600Hz/fillerdict"/>
         <property name="addSilEndingPronunciation" value="false"/>
         <property name="unitManager" value="unitManager"/>
     </component>
@@ -143,21 +143,19 @@
     <!-- ******************************************************** -->
     <!-- The acoustic model configuration                         -->
     <!-- ******************************************************** -->
-
-    <component name="mfcAcousticModel" 
-               type="edu.cmu.sphinx.model.acoustic.AURORA2_MFC_8gau_13dCep_8k_32mel_130Hz_3600Hz.Model">
+    
+    <component name="mfcAcousticModel" type="edu.cmu.sphinx.linguist.acoustic.tiedstate.TiedStateAcousticModel">
         <property name="loader" value="mfcSphinx3Loader"/>
         <property name="unitManager" value="unitManager"/>
     </component>
 
-    <component name="mfcSphinx3Loader" 
-               type="edu.cmu.sphinx.model.acoustic.AURORA2_MFC_8gau_13dCep_8k_32mel_130Hz_3600Hz.ModelLoader">
+    <component name="mfcSphinx3Loader" type="edu.cmu.sphinx.linguist.acoustic.tiedstate.Sphinx3Loader">
         <property name="logMath"          value="logMath"/>
         <property name="isBinary"         value="true"/>
 	<property name="sparseForm"       value="false"/>
         <property name="unitManager" value="unitManager"/>
+        <property name="location" value="resource:/AURORA2_MFC_8gau_13dCep_8k_32mel_130Hz_3600Hz"/>
     </component>
-
     
     <!-- ******************************************************** -->
     <!-- The frontend configuration                               -->

@@ -34,7 +34,7 @@ import java.util.List;
  * data.
  */
 public class BeamFinder implements ResultListener,
-        Resetable, StateListener {
+        Resetable, StateListener, Monitor {
 
     /** The property that defines which recognizer to monitor */
     @S4Component(type = Recognizer.class)

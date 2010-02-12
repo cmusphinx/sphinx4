@@ -2,6 +2,30 @@ Sphinx-4 Speech Recognition System
 -------------------------------------------------------------------
 -------------------------------------------------------------------
 
+Version:       1.0Beta4
+Release Date:  February 2010
+
+-------------------------------------------------------------------
+
+New Features and Improvements:
+
+    * Simplified and reworked model loading code
+    * Raw configuration and and demos
+    * JSAPI-independent JSGF parser
+    * Noise filtering components
+    * Lattice rescoring
+    * Server-based language model
+
+Bug fixes:
+
+    * Lots of bug fixes
+    
+Thanks:
+
+    Peter Wolf, Yaniv Kunda, Antoine Raux, Dirk Schnelle-Walka
+
+-------------------------------------------------------------------
+
 Version:       1.0Beta3
 Release Date:  August 2009
 

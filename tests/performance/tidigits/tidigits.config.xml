@@ -206,9 +206,9 @@
     <component name="dictionary"
                type="edu.cmu.sphinx.linguist.dictionary.FullDictionary">
         <property name="dictionaryPath"
-                  value="resource:/edu.cmu.sphinx.model.acoustic.TIDIGITS_8gau_13dCep_16k_40mel_130Hz_6800Hz.Model!/edu/cmu/sphinx/model/acoustic/TIDIGITS_8gau_13dCep_16k_40mel_130Hz_6800Hz/dictionary"/>
+                  value="resource:/TIDIGITS_8gau_13dCep_16k_40mel_130Hz_6800Hz/dictionary"/>
         <property name="fillerPath"
-                  value="resource:/edu.cmu.sphinx.model.acoustic.TIDIGITS_8gau_13dCep_16k_40mel_130Hz_6800Hz.Model!/edu/cmu/sphinx/model/acoustic/TIDIGITS_8gau_13dCep_16k_40mel_130Hz_6800Hz/fillerdict"/>
+                  value="resource:/TIDIGITS_8gau_13dCep_16k_40mel_130Hz_6800Hz/fillerdict"/>
         <property name="addSilEndingPronunciation" value="false"/>
         <property name="unitManager" value="unitManager"/>
     </component>
@@ -228,29 +228,32 @@
     <!-- The acoustic model configuration                         -->
     <!-- ******************************************************** -->
     <component name="acousticModel"
-               type="edu.cmu.sphinx.model.acoustic.TIDIGITS_8gau_13dCep_16k_40mel_130Hz_6800Hz.Model">
+               type="edu.cmu.sphinx.linguist.acoustic.tiedstate.TiedStateAcousticModel">
         <property name="loader" value="sphinx3Loader"/>
         <property name="unitManager" value="unitManager"/>
     </component>
 
-    <component name="sphinx3Loader"
-               type="edu.cmu.sphinx.model.acoustic.TIDIGITS_8gau_13dCep_16k_40mel_130Hz_6800Hz.ModelLoader">
+    <component name="sphinx3Loader" type="edu.cmu.sphinx.linguist.acoustic.tiedstate.Sphinx3Loader">
         <property name="logMath" value="logMath"/>
         <property name="unitManager" value="unitManager"/>
+        <property name="location" value="resource:/TIDIGITS_8gau_13dCep_16k_40mel_130Hz_6800Hz"/>
+        <property name="modelDefinition" value="wd_dependent_phone.500.mdef"/>
+        <property name="dataLocation" value="wd_dependent_phone.cd_continuous_8gau/"/>
     </component>
 
     <component name="wsj"
-               type="edu.cmu.sphinx.model.acoustic.WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz.Model">
+               type="edu.cmu.sphinx.linguist.acoustic.tiedstate.TiedStateAcousticModel">
         <property name="loader" value="wsjLoader"/>
-        <property name="unitManager" value="wsjUnitManager"/>
+        <property name="unitManager" value="unitManager"/>
     </component>
 
-    <component name="wsjLoader"
-               type="edu.cmu.sphinx.model.acoustic.WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz.ModelLoader">
+    <component name="wsjLoader" type="edu.cmu.sphinx.linguist.acoustic.tiedstate.Sphinx3Loader">
         <property name="logMath" value="logMath"/>
-        <property name="unitManager" value="wsjUnitManager"/>
+        <property name="unitManager" value="unitManager"/>
+        <property name="location" value="resource:/WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz"/>
+        <property name="modelDefinition" value="etc/WSJ_clean_13dCep_16k_40mel_130Hz_6800Hz.4000.mdef"/>
+        <property name="dataLocation" value="cd_continuous_8gau/"/>
     </component>
-
 
     <!-- ******************************************************** -->
     <!-- The unit manager configuration                           -->
