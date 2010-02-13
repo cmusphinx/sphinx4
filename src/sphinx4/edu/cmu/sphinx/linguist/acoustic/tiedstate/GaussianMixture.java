@@ -24,16 +24,13 @@ import edu.cmu.sphinx.util.LogMath;
  * All scores and weights are maintained in LogMath log base.
  */
 
-public class GaussianMixture implements Senone, Cloneable {
+public class GaussianMixture extends ScoreCachingSenone {
 
     // these data element in a senone may be shared with other senones
     // and therefore should not be written to.
     private float[] logMixtureWeights;
     private MixtureComponent[] mixtureComponents;
     private long id;
-
-    transient volatile private Data lastDataScored;
-    transient volatile private float logLastScore;
 
     private LogMath logMath;
 
@@ -64,38 +61,8 @@ public class GaussianMixture implements Senone, Cloneable {
      */
     @Override
     public void dump(String msg) {
-        System.out.println(msg + " GaussianMixture: " + logLastScore);
+        System.out.println(msg + " GaussianMixture: ID " + getID());
     }
-
-
-    /**
-     * Returns a score for the given feature based upon this senone, and
-     * calculates it if not already calculated. Note that this method is not
-     * thread safe and should be externally synchronized if it could be
-     * potentially called from multiple threads.
-     * 
-     * In ThreadedScorer it's fine to cache this way because the whole set of
-     * scoreables is equally divided on parts. Different scoreables are accessed 
-     * by a different threads.
-     * 
-     * @param feature
-     *            the feature to score
-     * @return the score, in logMath log base, for the feature
-     */
-    @Override
-    public float getScore(Data feature) {
-        float logScore;
-
-        if (feature.equals(lastDataScored)) {
-            logScore = logLastScore;
-        } else {
-            logScore = calculateScore(feature);
-            logLastScore = logScore;
-            lastDataScored = feature;
-        }
-        return logScore;
-    }
-
 
     /**
      * Determines if two objects are equal
@@ -148,13 +115,7 @@ public class GaussianMixture implements Senone, Cloneable {
         return "senone id: " + getID();
     }
 
-
-    /**
-     * Calculates the score for the senone.
-     *
-     * @param feature the feature to score
-     * @return the score, in logMath log base, for the feature
-     */
+    @Override
     public float calculateScore(Data feature) {
         if (feature instanceof DoubleData)
             System.err.println("DoubleData conversion required on mixture level!");
@@ -242,21 +203,4 @@ public class GaussianMixture implements Senone, Cloneable {
         return logMixtureWeights[index];
     }
 
-    @Override
-    public GaussianMixture clone() throws CloneNotSupportedException {
-        GaussianMixture gmm = (GaussianMixture)super.clone();
-
-        gmm.logMixtureWeights = this.logMixtureWeights != null ? this.logMixtureWeights.clone() : null;
-        gmm.mixtureComponents = mixtureComponents.clone();
-
-        for (int i = 0; i < mixtureComponents.length; i++) {
-            gmm.mixtureComponents[i] = mixtureComponents[i].clone();
-        }
-
-        gmm.id = id;
-        gmm.lastDataScored = lastDataScored;
-        gmm.logLastScore = logLastScore;
-
-        return gmm;
-    }
 }
