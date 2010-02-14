@@ -139,7 +139,7 @@
     <component name="sphinx3Loader" type="edu.cmu.sphinx.linguist.acoustic.tiedstate.Sphinx3Loader">
         <property name="logMath" value="logMath"/>
         <property name="unitManager" value="unitManager"/>
-        <property name="location" value="resource:/HUB4_8gau_13dCep_16k_40mel_133Hz_6855Hz/etc/HUB4.mdef"/>
+        <property name="location" value="resource:/HUB4_8gau_13dCep_16k_40mel_133Hz_6855Hz"/>
         <property name="dataLocation" value="cd_continuous_8gau/"/>
     </component>
 
