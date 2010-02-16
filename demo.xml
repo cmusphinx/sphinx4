@@ -96,6 +96,7 @@
         <javac debug="true"
                listfiles="true"
                deprecation="true"
+               includeAntRuntime="false"
                srcdir="${demo_src_dir}"
                destdir="${demo_classes_dir}"
                includes="edu/cmu/sphinx/demo/helloworld/**">
@@ -118,6 +119,7 @@
         <javac debug="true"
                listfiles="true"
                deprecation="true"
+               includeAntRuntime="false"
                srcdir="${demo_src_dir}"
                includes="edu/cmu/sphinx/demo/hellodigits/**"
                destdir="${demo_classes_dir}">
@@ -139,6 +141,7 @@
         <javac debug="true"
                listfiles="true"
                deprecation="true"
+               includeAntRuntime="false"
                srcdir="${demo_src_dir}"
                includes="edu/cmu/sphinx/demo/jsapi/dialog/**"
                destdir="${demo_classes_dir}">
@@ -167,6 +170,7 @@
         <javac debug="true"
                listfiles="true"
                deprecation="true"
+               includeAntRuntime="false"
                srcdir="${demo_src_dir}"
                includes="edu/cmu/sphinx/demo/jsapi/jsgf/**"
                destdir="${demo_classes_dir}">
@@ -193,6 +197,7 @@
         <javac debug="true"
                listfiles="true"
                deprecation="true"
+               includeAntRuntime="false"
                srcdir="${demo_src_dir}"
                includes="edu/cmu/sphinx/demo/hellongram/**"
                destdir="${demo_classes_dir}">
@@ -215,6 +220,7 @@
         <javac debug="true"
                listfiles="true"
                deprecation="true"
+               includeAntRuntime="false"
                srcdir="${demo_src_dir}"
                includes="edu/cmu/sphinx/demo/lattice/**"
                destdir="${demo_classes_dir}">
@@ -237,6 +243,7 @@
         <javac debug="true"
                listfiles="true"
                deprecation="true"
+               includeAntRuntime="false"
                srcdir="${demo_src_dir}"
                includes="edu/cmu/sphinx/demo/wavfile/**"
                destdir="${demo_classes_dir}">
@@ -261,6 +268,7 @@
         <javac debug="true"
                listfiles="true"
                deprecation="true"
+                includeAntRuntime="false"
                srcdir="${demo_src_dir}"
                includes="edu/cmu/sphinx/demo/transcriber/,edu/cmu/sphinx/demo/transcriber/**,"
                destdir="${demo_classes_dir}">
@@ -285,6 +293,7 @@
         <javac debug="true"
                listfiles="true"
                deprecation="true"
+               includeAntRuntime="false"
                srcdir="${demo_src_dir}"
                includes="edu/cmu/sphinx/demo/raw/**"
                destdir="${demo_classes_dir}">
@@ -313,6 +322,7 @@
         <javac debug="true"
                listfiles="true"
                deprecation="true"
+               includeAntRuntime="false"
                srcdir="${demo_src_dir}"
                includes="edu/cmu/sphinx/demo/jsapi/tags/**"
                destdir="${demo_classes_dir}">
@@ -345,6 +355,7 @@
         <javac debug="true"
                listfiles="true"
                deprecation="true"
+               includeAntRuntime="false"
                srcdir="${demo_src_dir}"
                includes="edu/cmu/sphinx/demo/zipcity/**"
                destdir="${demo_classes_dir}">
@@ -391,6 +402,7 @@
         <javac debug="true"
                listfiles="true"
                deprecation="true"
+               includeAntRuntime="false"
                srcdir="${demo_src_dir}"
                destdir="${demo_classes_dir}"
                includes="edu/cmu/sphinx/demo/confidence/**">
@@ -413,6 +425,7 @@
 	<javac debug="true"
 	       listfiles="true"
 	       deprecation="true"
+	       includeAntRuntime="false"
 	       srcdir="${demo_src_dir}"
 	       includes="edu/cmu/sphinx/demo/classbased/**"
 	       destdir="${demo_classes_dir}">

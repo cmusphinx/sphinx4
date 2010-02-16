@@ -10,7 +10,7 @@
     <property name="version" value="1.0beta4"/>
 
     <path id="libs">
-        <fileset dir="lib" includes="**/jsapi.jar,**/js.jar,**/forms_rt.jar,**/junit-4.4.jar"/>
+        <fileset dir="lib" includes="**/jsapi.jar,**/js.jar,**/junit-4.4.jar"/>
     </path>
     <property name="src_dir" value="src"/>
     <property name="build_dir" value="bld"/>
@@ -35,8 +35,7 @@
     <property name="wsj_8kHz_name" value="WSJ_8gau_13dCep_8kHz_31mel_200Hz_3500Hz"/>
     <property name="wsj_8kHz_data_dir" value="models/acoustic/wsj_8kHz"/>
 
-    <property name="tidigits_name"
-              value="TIDIGITS_8gau_13dCep_16k_40mel_130Hz_6800Hz"/>
+    <property name="tidigits_name" value="TIDIGITS_8gau_13dCep_16k_40mel_130Hz_6800Hz"/>
     <property name="tidigits_data_dir" value="models/acoustic/tidigits"/>
 
     <property name="rm1_name" value="RM1_8gau_13dCep_16k_40mel_130Hz_6800Hz"/>
@@ -238,6 +237,7 @@
         <mkdir dir="${classes_dir}"/>
         <javac debug="true"
                deprecation="true"
+               includeAntRuntime="false"
                destdir="${classes_dir}">
             <src path="${src_dir}/sphinx4"/>
             <src path="${src_dir}/research"/>
@@ -248,6 +248,7 @@
         <!--<javac debug="true"-->
         <!--srcdir="${src_dir}/apps/edu/cmu/sphinx/demo"-->
         <!--deprecation="true"-->
+        <!--includeAntRuntime="false"-->
         <!--destdir="${classes_dir}/apps">-->
         <!--<patternset refid="${patternset_to_compile}"/>-->
         <!--<classpath refid="libs"/>-->
