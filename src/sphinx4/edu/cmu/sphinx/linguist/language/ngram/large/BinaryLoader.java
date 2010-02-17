@@ -772,74 +772,64 @@ public class BinaryLoader {
     }
 
 
-    /**
-     * Reads a string of the given length from the given DataInputStream. It is assumed that the DataInputStream
-     * contains 8-bit chars.
-     *
-     * @param stream the DataInputStream to read from
-     * @param length the number of characters in the returned string
-     * @return a string of the given length from the given DataInputStream
-     * @throws java.io.IOException
-     */
-    private String readString(DataInputStream stream, int length)
-            throws IOException {
-        StringBuilder builder = new StringBuilder();
-        byte[] bytes = new byte[length];
-        bytesRead += (long)stream.read(bytes);
 
-        Charset cs = Charset.forName("ISO-8859-1");
-    	CharBuffer cb = cs.decode(ByteBuffer.wrap(bytes));
-        
-        for (int i = 0; i < length; i++) {
-            builder.append(cb.get());
-        }
-        return builder.toString();
-    }
+     /**
+      * Reads a string of the given length from the given DataInputStream. It is assumed that the DataInputStream
+      * contains 8-bit chars.
+      *
+      * @param stream the DataInputStream to read from
+      * @param length the number of characters in the returned string
+      * @return a string of the given length from the given DataInputStream
+      * @throws java.io.IOException
+      */
+     private String readString(DataInputStream stream, int length)
+             throws IOException {
+         StringBuilder builder = new StringBuilder();
+         byte[] bytes = new byte[length];
+         bytesRead += stream.read(bytes);
+ 
+         for (int i = 0; i < length; i++) {
+             builder.append((char) bytes[i]);
+         }
+         return builder.toString();
+     }
+ 
+ 
+     /**
+      * Reads a series of consecutive Strings from the given stream.
+      *
+      * @param stream         the DataInputStream to read from
+      * @param length         the total length in bytes of all the Strings
+      * @param numberUnigrams the number of String to read
+      * @return an array of the Strings read
+      * @throws java.io.IOException
+      */
+     private String[] readWords(DataInputStream stream, int length,
+                                      int numberUnigrams) throws IOException {
+         String[] words = new String[numberUnigrams];
+         byte[] bytes = new byte[length];
+         bytesRead += stream.read(bytes);
+ 
+         int s = 0;
+         int wordStart = 0;
+         for (int i = 0; i < length; i++) {
+             char c = (char) (bytes[i] & 0xFF);
+             bytesRead++;
+             if (c == '\0') {
+                 // if its the end of a string, add it to the 'words' array
+                 words[s] = new String(bytes, wordStart, i - wordStart).toLowerCase();
+                 wordStart = i + 1;
+                 if (words[s].equals(Dictionary.SENTENCE_START_SPELLING)) {
+                     startWordID = s;
+                 } else if (words[s].equals(Dictionary.SENTENCE_END_SPELLING)) {
+                     endWordID = s;
+                 }
+                 s++;
+             }
+         }
+         assert (s == numberUnigrams);
+         return words;
+     }
+ 
+ }
 
-
-    /**
-     * Reads a series of consecutive Strings from the given stream.
-     *
-     * @param stream         the DataInputStream to read from
-     * @param length         the total length in bytes of all the Strings
-     * @param numberUnigrams the number of String to read
-     * @return an array of the Strings read
-     * @throws java.io.IOException
-     */
-    private String[] readWords(DataInputStream stream, int length,
-                                     int numberUnigrams) throws IOException {
-        String[] words = new String[numberUnigrams];
-        byte[] bytes = new byte[length];
-        bytesRead += (long)stream.read(bytes);
-
-        Charset cs = Charset.forName("ISO-8859-1");
-    	CharBuffer cb = cs.decode(ByteBuffer.wrap(bytes));
-    	
-        int s = 0;
-        int wordStart = 0;
-        
-        for (int i = 0; i < length; i++) {
-            char c = cb.get();
-            //char c = (char) (bytes[i] & 0xFF);
-            bytesRead++;
-            
-            if (c == '\0') {
-                // if its the end of a string, add it to the 'words' array
-                words[s] = new String(bytes, wordStart, i - wordStart, "ISO-8859-1").toLowerCase();
-                wordStart = i + 1;
-                
-                if (words[s].equals(Dictionary.SENTENCE_START_SPELLING)) {
-                    startWordID = s;
-                } 
-                else if (words[s].equals(Dictionary.SENTENCE_END_SPELLING)) {
-                    endWordID = s;
-                }
-                
-                s++;
-            }
-        }
-        
-        assert (s == numberUnigrams);
-        return words;
-    }
-}
