@@ -548,7 +548,7 @@ public class LexTreeLinguist implements Linguist {
         /**
          * Gets a successor to this search state
          *
-         * @return the sucessor state
+         * @return the successor state
          */
         @Override
         public SearchState getState() {
@@ -877,7 +877,7 @@ public class LexTreeLinguist implements Linguist {
 
 
         /**
-         * Returns the base unit assciated with this state
+         * Returns the base unit associated with this state
          *
          * @return the base unit
          */
@@ -1038,7 +1038,7 @@ public class LexTreeLinguist implements Linguist {
 
 
         /**
-         * Returns the base unit assciated with this state
+         * Returns the base unit associated with this state
          *
          * @return the base unit
          */
@@ -1276,9 +1276,9 @@ public class LexTreeLinguist implements Linguist {
 
 
         /**
-         * Retreives the set of successors for this state
+         * Retrieves the set of successors for this state
          *
-         * @return the list of sucessor states
+         * @return the list of successor states
          */
         @Override
         public SearchStateArc[] getSuccessors() {
@@ -1395,7 +1395,7 @@ public class LexTreeLinguist implements Linguist {
          * @param wordSequence   the sequence of words triphone context
 
 
-         * @param logProbability the probability of this word occuring
+         * @param logProbability the probability of this word
          */
         LexTreeWordState(WordNode wordNode, HMMNode lastNode,
                          WordSequence wordSequence, float smearTerm, float smearProb,

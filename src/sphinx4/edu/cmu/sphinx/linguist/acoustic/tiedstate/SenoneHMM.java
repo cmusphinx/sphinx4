@@ -139,7 +139,7 @@ public class SenoneHMM implements HMM {
     /**
      * Returns the transition matrix that determines the state transition probabilities for the matrix. Each entry in
      * the transition matrix defines the probability of transitioning from one state to the next. For example, the
-     * probablility of transitioning from state 1 to state 2 can be determined byh accessesing transition matrix
+     * probability of transitioning from state 1 to state 2 can be determined by accessing transition matrix
      * element[1][2].
      *
      * @return the transition matrix (in log domain) of size NxN where N is the order of the HMM

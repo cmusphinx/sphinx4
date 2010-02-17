@@ -2,12 +2,10 @@ package edu.cmu.sphinx.linguist.acoustic.tiedstate;
 
 import edu.cmu.sphinx.frontend.Data;
 
-import java.util.concurrent.atomic.AtomicReference;
-
 /**
  * Implements a Senone that contains a cache of the last scored data.
  * <p>
- * Subclasses shoulod implement the abstract {@link #calculateScore} method,
+ * Subclasses should implement the abstract {@link #calculateScore} method,
  * which is called by the {@link #getScore} method to calculate the score
  * for each cache miss.
  * <p>

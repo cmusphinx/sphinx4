@@ -285,12 +285,14 @@ class NGramBuffer {
     }
     
     /**
-     * A commenter et optimiser (voir bouquin Paul)
-      */
+     * Finds the NGram index for the given nth word in a NGram
+     * 
+     * @param nthWordID the ID of the nth word
+     * @return the NGramIndex of the given nth word
+     */
     public int findNGramIndex(int nthWordID) {
 
-        int mid=-1, start = 0, end = getNumberNGrams() - 1;
-        NGramProbability ngram = null;
+        int mid = -1, start = 0, end = getNumberNGrams() - 1;
 
         while ((end - start) > 0) {
             mid = (start + end) / 2;

@@ -267,9 +267,11 @@
         <ant antfile="demo.xml"/>
     </target>
 
-    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
-    <!-- ~~                        Compile unit tests                 ~~ -->
-    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <!-- ********************************************************** -->
+    <!-- *                                                        * -->
+    <!-- * Compiles unit tests.                                   * -->
+    <!-- *                                                        * -->
+    <!-- ********************************************************** -->
     <target name="compile-tests" depends="compile_src" description="Compile unit tests">
         <mkdir dir="${classes_dir}/test" />
         <javac
@@ -283,12 +285,15 @@
         </javac>
     </target>
     
-    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
-    <!-- ~~                        Run unit tests                     ~~ -->
-    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <!-- ********************************************************** -->
+    <!-- *                                                        * -->
+    <!-- * Runs unit tests.                                       * -->
+    <!-- *                                                        * -->
+    <!-- ********************************************************** -->
     <target name="run-tests" depends="compile-tests" description="Run unit tests">
         <mkdir dir="logs/tests"/>
-        <junit printsummary="yes" failureproperty="test.failure">
+        <junit printsummary="yes" failureproperty="test.failure" fork="yes">
+    	    <jvmarg value="-mx256m"/> 
             <classpath refid="libs" />
             <classpath path="${classes_dir}" />
             <classpath path="${classes_dir}/test" />
