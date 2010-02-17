@@ -31,9 +31,9 @@ public class GDLLatticeTest {
 	public void testGDLLattice() throws IOException {
 
 		String latticeGDL;
-		latticeGDL = "test/edu/cmu/sphinx/result/test/testLattice.gdl";
+		latticeGDL = "src/test/edu/cmu/sphinx/result/test/testLattice.gdl";
 
-		URL configURL = new File("test/edu/cmu/sphinx/result/test/config.xml")
+		URL configURL = new File("src/test/edu/cmu/sphinx/result/test/config.xml")
 				.toURI().toURL();
 		ConfigurationManager cm = new ConfigurationManager(configURL);
 		LogMath logMath = (LogMath) cm.lookup("logMath");

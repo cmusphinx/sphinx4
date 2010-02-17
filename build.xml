@@ -267,6 +267,42 @@
         <ant antfile="demo.xml"/>
     </target>
 
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <!-- ~~                        Compile unit tests                 ~~ -->
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <target name="compile-tests" depends="compile_src" description="Compile unit tests">
+        <mkdir dir="${classes_dir}/test" />
+        <javac
+            debug="true"
+            deprecation="true"
+            includeAntRuntime="false"
+            srcdir="${src_dir}/test"
+            destdir="${classes_dir}/test">
+            <classpath refid="libs" />
+            <classpath path="${classes_dir}" />
+        </javac>
+    </target>
+    
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <!-- ~~                        Run unit tests                     ~~ -->
+    <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+    <target name="run-tests" depends="compile-tests" description="Run unit tests">
+        <mkdir dir="logs/tests"/>
+        <junit printsummary="yes" failureproperty="test.failure">
+            <classpath refid="libs" />
+            <classpath path="${classes_dir}" />
+            <classpath path="${classes_dir}/test" />
+            <classpath location="${lib_dir}/WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz.jar" />
+            <formatter type="plain" />
+            <batchtest todir="logs/tests">
+                <fileset dir="${src_dir}/test">
+                    <include name="**/*Test.java" />
+                    <include name="**/*Tests.java" />
+                </fileset>
+            </batchtest>
+        </junit>
+        <fail if="test.failure" message="test failed" />
+    </target>
 
     <!-- ********************************************************** -->
     <!-- *                                                        * -->
@@ -445,6 +481,7 @@
       </sequential>
     </target>
 
+	
     <!-- ********************************************************** -->
     <!-- *                                                        * -->
     <!-- * Generates the javadoc                                  * -->

@@ -163,7 +163,7 @@
     <!-- ******************************************************** -->
     <component name="trigramModel" 
                type="edu.cmu.sphinx.linguist.language.ngram.SimpleNGramModel">
-        <property name="location" value="test/edu/cmu/sphinx/result/test/hellongram.trigram.lm"/>
+        <property name="location" value="src/test/edu/cmu/sphinx/result/test/hellongram.trigram.lm"/>
         <property name="logMath" value="logMath"/>
         <property name="dictionary" value="dictionary"/>
         <property name="maxDepth" value="3"/>

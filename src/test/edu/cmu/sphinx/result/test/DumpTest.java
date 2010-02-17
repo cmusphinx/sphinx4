@@ -39,9 +39,9 @@ public class DumpTest {
 	public void testDump () 
 			throws UnsupportedAudioFileException, IOException {
 
-		URL audioFileURL = new File("test/edu/cmu/sphinx/result/test/green.wav")
+		URL audioFileURL = new File("src/test/edu/cmu/sphinx/result/test/green.wav")
 				.toURI().toURL();
-		URL configURL = new File("test/edu/cmu/sphinx/result/test/config.xml")
+		URL configURL = new File("src/test/edu/cmu/sphinx/result/test/config.xml")
 				.toURI().toURL();
 
 		ConfigurationManager cm = new ConfigurationManager(configURL);

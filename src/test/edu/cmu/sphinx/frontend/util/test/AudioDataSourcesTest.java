@@ -19,7 +19,7 @@ import java.io.File;
  */
 public class AudioDataSourcesTest {
 
-    public static final String baseDir = "../../sphinx4/tests/other/";
+    public static final String baseDir = "tests/other/";
 
     private int numFileStarts; // used to test the AudioFileProcessListener implementation
     private int numFileEnds;

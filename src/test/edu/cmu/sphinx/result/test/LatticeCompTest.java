@@ -47,8 +47,8 @@ public class LatticeCompTest {
 	@Test
 	public void testLatticeComp() throws UnsupportedAudioFileException, IOException {
 
-		URL audioFileURL = new File("test/edu/cmu/sphinx/result/test/green.wav").toURI().toURL();
-		URL configURL = new File("test/edu/cmu/sphinx/result/test/config.xml").toURI().toURL();
+		URL audioFileURL = new File("src/test/edu/cmu/sphinx/result/test/green.wav").toURI().toURL();
+		URL configURL = new File("src/test/edu/cmu/sphinx/result/test/config.xml").toURI().toURL();
 
 		ConfigurationManager cm = new ConfigurationManager(configURL);
 

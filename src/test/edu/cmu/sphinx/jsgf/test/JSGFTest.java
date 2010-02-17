@@ -44,14 +44,14 @@ public class JSGFTest {
     @Test
     public void testParser() throws IOException, GrammarException {
         ConfigurationManager cm = new ConfigurationManager(
-                "test/edu/cmu/sphinx/jsgf/test/jsgftest.config.xml");
+                "src/test/edu/cmu/sphinx/jsgf/test/jsgftest.config.xml");
 
         JSGFGrammar jsgfGrammar = (JSGFGrammar) cm.lookup("jsgfGrammar");
 
         jsgfGrammar.allocate();
 
         RuleGrammar grammar = jsgfGrammar.getRuleGrammar();
-        Scanner scanner = new Scanner (new File ("test/edu/cmu/sphinx/jsgf/test/input.txt"));
+        Scanner scanner = new Scanner (new File ("src/test/edu/cmu/sphinx/jsgf/test/input.txt"));
         scanner.useDelimiter("\n");
         while (scanner.hasNext()) {
             String sentence = scanner.next();
