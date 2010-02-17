@@ -451,9 +451,9 @@ public class BinaryLoader {
     private void readHeader(DataInputStream stream) throws IOException {
         int headerLength = readInt(stream, bigEndian);
 
-        if (headerLength != ((DARPA_TG_HEADER.length() + 1) & (DARPA_QG_HEADER.length() + 1) & (DARPA_NG_HEADER.length() - 1))) { // not big-endian
+        if ((headerLength != DARPA_TG_HEADER.length() + 1) && (headerLength != DARPA_QG_HEADER.length() + 1) && (headerLength != DARPA_NG_HEADER.length() - 1)) { // not big-endian
             headerLength = Utilities.swapInteger(headerLength);
-            if (headerLength == (DARPA_TG_HEADER.length() + 1) | headerLength == (DARPA_QG_HEADER.length() + 1) | headerLength == (DARPA_NG_HEADER.length() - 1)) {
+            if (headerLength == (DARPA_TG_HEADER.length() + 1) || headerLength == (DARPA_QG_HEADER.length() + 1) || headerLength == (DARPA_NG_HEADER.length() - 1)) {
                 bigEndian = false;
                 // System.out.println("Little-endian");
             } else {
