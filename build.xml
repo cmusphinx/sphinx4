@@ -10,7 +10,7 @@
     <property name="version" value="1.0beta4"/>
 
     <path id="libs">
-        <fileset dir="lib" includes="**/jsapi.jar,**/js.jar,**/junit-4.4.jar"/>
+        <fileset dir="lib" includes="**/jsapi.jar,**/js.jar,**/junit-4.8.1.jar"/>
     </path>
     <property name="src_dir" value="src"/>
     <property name="build_dir" value="bld"/>
