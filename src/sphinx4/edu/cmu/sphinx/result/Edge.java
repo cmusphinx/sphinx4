@@ -99,11 +99,23 @@ public class Edge {
                 + "\" label: \"" + acousticScore + ',' + lmScore + "\" }\n");
     }
 
+    /**
+     * Internal routine used when dumping a Lattice as an Graphviz file
+     *
+     * @param f
+     * @throws IOException
+     */
+    public void dumpDot(FileWriter f) throws IOException {
+        String label = "" + acousticScore + "," + lmScore;
+        f.write("\tnode" + fromNode.getId() + " -> node" + toNode.getId() 
+                + " [ label=\"" + label + "\" ]\n");
+    }
 
     /**
-     * Get the acoustic score associated with an Edge. This is the acoustic score of the word that this edge is
-     * transitioning to, that is, the word represented by the node returned by the getToNode() method.
-     *
+     * Get the acoustic score associated with an Edge. This is the acoustic
+     * score of the word that this edge is transitioning to, that is, the word
+     * represented by the node returned by the getToNode() method.
+     * 
      * @return the acoustic score of the word this edge is transitioning to
      */
     public double getAcousticScore() {

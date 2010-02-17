@@ -14,7 +14,6 @@ package edu.cmu.sphinx.linguist.acoustic.tiedstate;
 
 import edu.cmu.sphinx.frontend.Data;
 
-import java.io.Serializable;
 import java.util.Collection;
 
 

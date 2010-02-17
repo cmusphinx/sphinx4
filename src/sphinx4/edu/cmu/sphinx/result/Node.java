@@ -382,6 +382,20 @@ public class Node {
                 " p:" + posterior + "]\" }\n");
     }
 
+    /**
+     * Internal routine when dumping Lattices as Graphviz files
+     * 
+     * @param f
+     * @throws IOException
+     */
+    public void dumpDot(FileWriter f) throws IOException {
+        String posterior = String.valueOf(getPosterior());
+        if (getPosterior() == LogMath.getLogZero()) {
+            posterior = "log zero";
+        }
+        String label = getWord().toString() + '[' + getBeginTime() + ',' + getEndTime() + " p:" + posterior + ']';
+        f.write("\tnode" + id + " [ label=\"" + label + "\" ]\n");
+    }
 
     /**
      * Internal routine used when dumping Lattices as .LAT files
@@ -658,4 +672,5 @@ public class Node {
     public void setViterbiScore(double viterbiScore) {
         this.viterbiScore = viterbiScore;
     }
+
 }

@@ -32,7 +32,7 @@ class NMaxGramBuffer extends NGramBuffer {
      * @param bigEndian	   the buffer's endianness
      * @param is32bits     whether the buffer is 16 or 32 bits
      * @param n	           the buffer's order
-     * @firstCurrentNGramEntry the first Current NGram Entry
+     * @param firstCurrentNGramEntry the first Current NGram Entry
     */
     public NMaxGramBuffer(byte[] buffer, int numberNGrams, boolean bigEndian, boolean is32bits, int n, int firstCurrentNGramEntry) {
         super(buffer, numberNGrams, bigEndian, is32bits, n, firstCurrentNGramEntry);

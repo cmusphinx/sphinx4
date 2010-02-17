@@ -485,7 +485,7 @@ public class Lattice {
     /**
      * Get the Collection of all Nodes.
      *
-     * @return the colllection of all Nodes
+     * @return the collection of all Nodes
      */
     public Collection<Node> getNodes() {
         return nodes.values();
@@ -555,6 +555,31 @@ public class Lattice {
         }
     }
 
+    /**
+     * Dump the Lattice in the form understood by Graphviz. See http://graphviz.org
+     *
+     * @param fileName
+     * @param title
+     */
+    public void dumpDot(String fileName, String title) {
+        try {
+            System.err.println("Dumping " + title + " to " + fileName);
+            FileWriter f = new FileWriter(fileName);
+            f.write("digraph \"" + title + "\" {\n");
+            f.write("rankdir = LR\n");
+
+            for (Node node : nodes.values()) {
+                node.dumpDot(f);
+            }
+            for (Edge edge : edges) {
+                edge.dumpDot(f);
+            }
+            f.write("}\n");
+            f.close();
+        } catch (IOException e) {
+            throw new Error(e.toString());
+        }
+    }
 
     /**
      * Dump the Lattice as a .LAT file
