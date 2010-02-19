@@ -221,12 +221,8 @@ public class Utilities {
      */
     public static int readLittleEndianInt(DataInputStream dataStream)
             throws IOException {
-        int bits = 0x00000000;
-        for (int shift = 0; shift < 32; shift += 8) {
-            int byteRead = (0x000000ff & dataStream.readByte());
-            bits |= (byteRead << shift);
-        }
-        return bits;
+        return dataStream.readUnsignedByte() | dataStream.readUnsignedByte() << 8 |
+               dataStream.readUnsignedByte() << 16 | dataStream.readUnsignedByte() << 24;
     }
 
 
