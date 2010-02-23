@@ -55,7 +55,7 @@ archiveBasename=${testType}.${machine}.zip
 archiveFile=${archiveDir}/${archiveBasename}
 
 ###########################
-# then we build the archive
+# Then we build the archive
 ###########################
 cd $testDir
 
@@ -69,10 +69,14 @@ find . -name 'gc.txt' -print | zip $archiveBasename -@
 
 srsync  htdocs/sphinx4/regressionArchive/ $archiveBasename
 mv -f $archiveBasename $archiveFile
-echo "Log files archived in $archiveBasename at http://cmusphinx.org/sphinx4/regressionArchive" > $errorLog
+
+####################
+# Create error log
+####################
+echo "Log files archived in $archiveBasename at http://cmusphinx.sourceforge.net/sphinx4/regressionArchive" > $errorLog
 echo "" >> $errorLog
 echo "Errors found:" >> $errorLog
 echo "" >> $errorLog
-find . -name '*.out' -mtime -7 -print | xargs egrep '(error|Exception)' >> $errorLog
+find . -name '*.out' -mtime -7 -print | egrep -v "(REF:|HYP:)" | xargs egrep '(error|Exception)' >> $errorLog
 find . -name 'hs*.log' -print | xargs egrep '(error|Exception)' >> $errorLog
 find . -name 'gc.txt' -print | xargs egrep '(error|Exception)' >> $errorLog
