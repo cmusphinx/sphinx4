@@ -155,7 +155,7 @@ function getSpeedFromLine(line) {
     _audioTime = data[F_AUDIO_TIME];
     _procTime = data[F_PROC_TIME];
 
-    if (_audioTime == "" || _procTime == "") {
+    if (_audioTime == "" || _audioTime == 0 || _procTime == "") {
          return NOT_AVAILABLE;
     } else {
 	return _procTime / _audioTime;
