@@ -77,6 +77,6 @@ echo "Log files archived in $archiveBasename at http://cmusphinx.sourceforge.net
 echo "" >> $errorLog
 echo "Errors found:" >> $errorLog
 echo "" >> $errorLog
-find . -name '*.out' -mtime -7 -print | egrep -v "(REF:|HYP:)" | xargs egrep '(error|Exception)' >> $errorLog
+find . -name '*.out' -mtime -7 -print | xargs egrep '(error|Exception)' | egrep -v "(REF:|HYP:)" >> $errorLog
 find . -name 'hs*.log' -print | xargs egrep '(error|Exception)' >> $errorLog
 find . -name 'gc.txt' -print | xargs egrep '(error|Exception)' >> $errorLog
