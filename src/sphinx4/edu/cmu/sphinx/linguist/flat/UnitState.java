@@ -21,7 +21,6 @@ import edu.cmu.sphinx.linguist.acoustic.UnitManager;
 public class UnitState extends SentenceHMMState implements UnitSearchState {
 
     private final Unit unit;
-    private transient StatePath tail;
     private HMMPosition position = HMMPosition.INTERNAL;
 
 
@@ -141,28 +140,6 @@ public class UnitState extends SentenceHMMState implements UnitSearchState {
      */
     public HMMPosition getPosition() {
         return position;
-    }
-
-
-    /**
-     * Returns the tail for this unit state.  This is used during the SentenceHMM contruction process. A UnitState may
-     * be expanded into a unit state followed by a tree of HMMStates.  Keeping the tail of the tree here helps us to
-     * quickly find the end of this collection of states when we are reusing states.
-     *
-     * @return the tail state
-     */
-    public StatePath getTail() {
-        return tail;
-    }
-
-
-    /**
-     * Sets the tail for this state
-     *
-     * @param tail the tail for the state
-     */
-    public void setTail(StatePath tail) {
-        this.tail = tail;
     }
 
 
