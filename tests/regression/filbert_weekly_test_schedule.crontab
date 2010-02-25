@@ -15,7 +15,7 @@ MAILTO=cmusphinx-results@lists.sourceforge.net
 50 23 * * 5 (. $HOME/.profile ; cd $SF_ROOT/sphinx4/tests/regression; ./regressionTest async5 batch)
 50 23 * * 6 (. $HOME/.profile ; cd $SF_ROOT/sphinx4/tests/regression; ./regressionTest async6 batch)
 30 17 * * * (. $HOME/.profile ; cd $SF_ROOT/sphinx4/scripts; svn -q up .; ./updateS4Javadocs.sh)
-05 02 * * * $HOME/script/nightlyBuild.sh
 # 05 06 * * * (. $HOME/.profile ; svn -q up $SF_ROOT/sphinx3/src/tests/regression/checkCompileStatus.sh; $SF_ROOT/sphinx3/src/tests/regression/checkCompileStatus.sh)
-05 06 * * * (. $HOME/.profile ; cd $SF_ROOT/web/htdocs/html; svn -q up update_sf.sh; ./update_sf.sh)
-00 03 * * * (. $HOME/.profile ; cd $SF_ROOT/web/htdocs/html; svn -q up sfbackup.sh; ./sfbackup.sh)
+05 02 * * * (. $HOME/.profile ; cd $SF_ROOT/web; svn -q up .; $SF_ROOT/web/script/nightlyBuild.sh)
+05 06 * * * (. $HOME/.profile ; cd $SF_ROOT/web; svn -q up .; $SF_ROOT/web/script/update_sf.sh)
+00 03 * * * (. $HOME/.profile ; cd $SF_ROOT/web; svn -q up .; $SF_ROOT/web/script/sfbackup.sh)
