@@ -18,8 +18,7 @@ import edu.cmu.sphinx.linguist.acoustic.Unit;
 /** Provides pronunciation information for a word. */
 public class Pronunciation {
 
-    public static final Pronunciation UNKNOWN
-            = new Pronunciation(new Unit[0], null, null, 1.0f);
+    public static final Pronunciation UNKNOWN = new Pronunciation(Unit.EMPTY_ARRAY, null, null, 1.0f);
 
     private Word word;
     private final WordClassification wordClassification;

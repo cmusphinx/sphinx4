@@ -24,13 +24,11 @@ public class LeftRightContext extends Context {
     private static final boolean CACHING_CONTEXTS = true;
     private static final Map<String, LeftRightContext> cache;
 
-
     static {
         if (CACHING_CONTEXTS) {
             cache = new HashMap<String, LeftRightContext>();
         }
     }
-
 
     /**
      * Creates a LeftRightContext
@@ -43,17 +41,14 @@ public class LeftRightContext extends Context {
         this.rightContext = rightContext;
     }
 
-
     /** Provides a string representation of a context */
     @Override
     public String toString() {
         if (stringRepresentation == null) {
-            stringRepresentation = getContextName(leftContext) + ',' +
-                    getContextName(rightContext);
+            stringRepresentation = getStringRepresentation(leftContext, rightContext);
         }
         return stringRepresentation;
     }
-
 
     /**
      * Factory method for creating a left/right context
@@ -63,10 +58,9 @@ public class LeftRightContext extends Context {
      * @return a left right context
      */
     public static LeftRightContext get(Unit[] leftContext, Unit[] rightContext) {
-        LeftRightContext context = null;
+        LeftRightContext context;
         if (CACHING_CONTEXTS) {
-            String name = getContextName(leftContext) + ',' +
-                    getContextName(rightContext);
+            String name = getStringRepresentation(leftContext, rightContext);
 
             context = cache.get(name);
             if (context == null) {
@@ -79,6 +73,9 @@ public class LeftRightContext extends Context {
         return context;
     }
 
+    private static String getStringRepresentation(Unit[] leftContext, Unit[] rightContext) {
+        return getContextName(leftContext) + ',' + getContextName(rightContext);
+    }
 
     /**
      * Retrieves the left context for this unit
@@ -89,7 +86,6 @@ public class LeftRightContext extends Context {
         return leftContext;
     }
 
-
     /**
      * Retrieves the right context for this unit
      *
@@ -99,7 +95,6 @@ public class LeftRightContext extends Context {
         return rightContext;
     }
 
-
     /**
      * Gets the context name for a particular array of units
      *
@@ -107,26 +102,17 @@ public class LeftRightContext extends Context {
      * @return the context name
      */
     public static String getContextName(Unit[] context) {
+        if (context == null)
+            return "*";
+        if (context.length == 0)
+            return "(empty)";
         StringBuilder sb = new StringBuilder();
-        if (context == null) {
-            sb.append('*');
-        } else if (context.length == 0) {
-            sb.append("(empty)");
-        } else {
-            for (int i = 0; context != null && i < context.length; i++) {
-                String name = null;
-                if (context[i] != null) {
-                    name = context[i].getName();
-                }
-                sb.append(name);
-                if (i < context.length - 1) {
-                    sb.append('.');
-                }
-            }
+        for (Unit unit : context) {
+            sb.append(unit == null ? null : unit.getName()).append('.');
         }
+        sb.setLength(sb.length() - 1); // remove last period
         return sb.toString();
     }
-
 
     /**
      * Checks to see if there is a partial match with the given context. If both contexts are LeftRightContexts then  a
@@ -139,16 +125,14 @@ public class LeftRightContext extends Context {
     @Override
     public boolean isPartialMatch(Context context) {
         if (context instanceof LeftRightContext) {
-            LeftRightContext lrContext = (LeftRightContext) context;
+            LeftRightContext lrContext = (LeftRightContext)context;
             Unit[] lc = lrContext.getLeftContext();
             Unit[] rc = lrContext.getRightContext();
 
-            return !(lc != null && leftContext != null &&
-                    !Unit.isContextMatch(lc, leftContext)) && (rc == null || rightContext == null || Unit.isContextMatch(rc, rightContext));
-        } else if (context == Context.EMPTY_CONTEXT && leftContext == null && rightContext == null) {
-            return true;
+            return (lc == null || leftContext == null || Unit.isContextMatch(lc, leftContext))
+                && (rc == null || rightContext == null || Unit.isContextMatch(rc, rightContext));
         }
-        return false;
+        return context == Context.EMPTY_CONTEXT && leftContext == null && rightContext == null;
     }
 
 }

@@ -221,10 +221,8 @@ public class FlatLinguist implements Linguist, Configurable {
         this.addOutOfGrammarBranch = addOutOfGrammarBranch;
 
         if (addOutOfGrammarBranch) {
-            this.logOutOfGrammarBranchProbability = logMath.linearToLog
-                    (outOfGrammarBranchProbability);
-            this.logPhoneInsertionProbability = logMath.linearToLog
-                    (phoneInsertionProbability);
+            this.logOutOfGrammarBranchProbability = logMath.linearToLog(outOfGrammarBranchProbability);
+            this.logPhoneInsertionProbability = logMath.linearToLog(phoneInsertionProbability);
             this.phoneLoopAcousticModel = phoneLoopAcousticModel;
         }
 
@@ -261,12 +259,9 @@ public class FlatLinguist implements Linguist, Configurable {
         addOutOfGrammarBranch = ps.getBoolean(PROP_ADD_OUT_OF_GRAMMAR_BRANCH);
 
         if (addOutOfGrammarBranch) {
-            logOutOfGrammarBranchProbability = logMath.linearToLog
-                    (ps.getDouble(PROP_OUT_OF_GRAMMAR_PROBABILITY));
-            logPhoneInsertionProbability = logMath.linearToLog
-                    (ps.getDouble(PROP_PHONE_INSERTION_PROBABILITY));
-            phoneLoopAcousticModel = (AcousticModel)
-                    ps.getComponent(PROP_PHONE_LOOP_ACOUSTIC_MODEL);
+            logOutOfGrammarBranchProbability = logMath.linearToLog(ps.getDouble(PROP_OUT_OF_GRAMMAR_PROBABILITY));
+            logPhoneInsertionProbability = logMath.linearToLog(ps.getDouble(PROP_PHONE_INSERTION_PROBABILITY));
+            phoneLoopAcousticModel = (AcousticModel)ps.getComponent(PROP_PHONE_LOOP_ACOUSTIC_MODEL);
         }
 
         name = ps.getInstanceName();
@@ -279,8 +274,7 @@ public class FlatLinguist implements Linguist, Configurable {
      * @param ps the PropertySheet from which to obtain the acoustic model
      * @throws edu.cmu.sphinx.util.props.PropertyException
      */
-    protected void setupAcousticModel(PropertySheet ps)
-            throws PropertyException {
+    protected void setupAcousticModel(PropertySheet ps) throws PropertyException {
         acousticModel = (AcousticModel) ps.getComponent(PROP_ACOUSTIC_MODEL);
     }
 
@@ -304,12 +298,9 @@ public class FlatLinguist implements Linguist, Configurable {
     public void allocate() throws IOException {
         allocateAcousticModel();
         grammar.allocate();
-        totalStates = StatisticsVariable.getStatisticsVariable(getName(),
-                "totalStates");
-        totalArcs = StatisticsVariable.getStatisticsVariable(getName(),
-                "totalArcs");
-        actualArcs = StatisticsVariable.getStatisticsVariable(getName(),
-                "actualArcs");
+        totalStates = StatisticsVariable.getStatisticsVariable(getName(), "totalStates");
+        totalArcs = StatisticsVariable.getStatisticsVariable(getName(), "totalArcs");
+        actualArcs = StatisticsVariable.getStatisticsVariable(getName(), "actualArcs");
         stateSet = compileGrammar();
         totalStates.value = stateSet.size();
     }
@@ -440,12 +431,10 @@ public class FlatLinguist implements Linguist, Configurable {
 
         // add an out-of-grammar branch if configured to do so
         if (addOutOfGrammarBranch) {
-            CIPhoneLoop phoneLoop = new CIPhoneLoop(phoneLoopAcousticModel,
-                    logPhoneInsertionProbability);
+            CIPhoneLoop phoneLoop = new CIPhoneLoop(phoneLoopAcousticModel, logPhoneInsertionProbability);
             SentenceHMMState firstBranchState = (SentenceHMMState)
                     phoneLoop.getSearchGraph().getInitialState();
-            initialState.connect(getArc(firstBranchState, logOne, logOne,
-                    logOutOfGrammarBranchProbability));
+            initialState.connect(getArc(firstBranchState, logOne, logOne, logOutOfGrammarBranchProbability));
         }
 
         searchGraph = new FlatSearchGraph(initialState);
@@ -470,7 +459,7 @@ public class FlatLinguist implements Linguist, Configurable {
      * @return a new GState for the given GrammarNode
      */
     protected GState createGState(GrammarNode grammarNode) {
-        return (new GState(grammarNode));
+        return new GState(grammarNode);
     }
 
 
@@ -799,10 +788,9 @@ public class FlatLinguist implements Linguist, Configurable {
         // note that this assumes that the first node in a grammar has a
         // word and that word is a SIL. Not always a valid assumption.
         public SentenceHMMState getEntryPoint() {
-            ContextPair cp = ContextPair.get(UnitContext.SILENCE,
-                    UnitContext.SILENCE);
+            ContextPair cp = ContextPair.get(UnitContext.SILENCE, UnitContext.SILENCE);
             List<SearchState> list = getEntryPoints(cp);
-            return list == null || list.isEmpty() ? null : (SentenceHMMState) list.get(0);
+            return list == null || list.isEmpty() ? null : (SentenceHMMState)list.get(0);
         }
 
 
@@ -890,8 +878,7 @@ public class FlatLinguist implements Linguist, Configurable {
             for (Map.Entry<ContextPair, List<SearchState>> entry : entryPoints.entrySet()) {
                 ContextPair cp = entry.getKey();
                 if (needsEmptyVersion(cp)) {
-                    ContextPair emptyContextPair = ContextPair.get(cp
-                            .getLeftContext(), UnitContext.EMPTY);
+                    ContextPair emptyContextPair = ContextPair.get(cp.getLeftContext(), UnitContext.EMPTY);
                     List<SearchState> epList = emptyEntryPoints.get(emptyContextPair);
                     if (epList == null) {
                         epList = new ArrayList<SearchState>();
@@ -997,10 +984,8 @@ public class FlatLinguist implements Linguist, Configurable {
             // (based upon its left and right context)
             String pname = "P(" + pronunciation.getWord() + '[' + leftContext
                     + ',' + startingContext + "])-G" + getNode().getID();
-            PronunciationState ps = new PronunciationState(pname,
-                    pronunciation, which);
-            T("     Expanding " + ps.getPronunciation() + " for lc "
-                    + leftContext);
+            PronunciationState ps = new PronunciationState(pname, pronunciation, which);
+            T("     Expanding " + ps.getPronunciation() + " for lc " + leftContext);
             ContextPair cp = ContextPair.get(leftContext, startingContext);
             List<SearchState> epList = entryPoints.get(cp);
             if (epList == null) {
@@ -1015,8 +1000,7 @@ public class FlatLinguist implements Linguist, Configurable {
             }
             SentenceHMMState tail = ps;
             for (int i = 0; tail != null && i < fanOutPoint; i++) {
-                tail = attachUnit(ps, tail, units, i, leftContext,
-                        UnitContext.EMPTY);
+                tail = attachUnit(ps, tail, units, i, leftContext, UnitContext.EMPTY);
             }
             SentenceHMMState branchTail = tail;
             for (UnitContext finalRightContext : rightContexts) {
@@ -1047,8 +1031,7 @@ public class FlatLinguist implements Linguist, Configurable {
             Unit[] rc = getRC(units, which, rightContext);
             UnitContext actualRightContext = UnitContext.get(rc);
             LeftRightContext context = LeftRightContext.get(lc, rc);
-            Unit cdUnit = unitManager.getUnit(units[which].getName(), units[which]
-                    .isFiller(), context);
+            Unit cdUnit = unitManager.getUnit(units[which].getName(), units[which] .isFiller(), context);
             UnitState unitState = new ExtendedUnitState(parent, which, cdUnit);
             float logInsertionProbability;
             if (unitState.getUnit().isSilence()) {
@@ -1065,13 +1048,11 @@ public class FlatLinguist implements Linguist, Configurable {
             // the new state and expand it.
             SentenceHMMState existingState = getExistingState(unitState);
             if (existingState != null) {
-                attachState(tail, existingState, logOne, logOne,
-                        logInsertionProbability);
+                attachState(tail, existingState, logOne, logOne, logInsertionProbability);
                 // T(" Folding " + existingState);
                 return null;
             } else {
-                attachState(tail, unitState, logOne, logOne,
-                        logInsertionProbability);
+                attachState(tail, unitState, logOne, logOne, logInsertionProbability);
                 addStateToCache(unitState);
                 // T(" Attaching " + unitState);
                 tail = expandUnit(unitState);
@@ -1080,10 +1061,8 @@ public class FlatLinguist implements Linguist, Configurable {
                 // table is indexed by a ContextPair, consisting of
                 // the exiting left context and the right context.
                 if (unitState.isLast()) {
-                    UnitContext nextLeftContext = generateNextLeftContext(
-                            leftContext, units[which]);
-                    ContextPair cp = ContextPair.get(nextLeftContext,
-                            actualRightContext);
+                    UnitContext nextLeftContext = generateNextLeftContext(leftContext, units[which]);
+                    ContextPair cp = ContextPair.get(nextLeftContext, actualRightContext);
                     // T(" Adding to exitPoints " + cp);
                     addExitPoint(cp, tail);
                     // if we have encountered a last unit with a right
@@ -1092,19 +1071,15 @@ public class FlatLinguist implements Linguist, Configurable {
                     // loopback.
                     if (actualRightContext == UnitContext.SILENCE) {
                         SentenceHMMState silTail;
-                        UnitState silUnit = new ExtendedUnitState(parent,
-                                which + 1, UnitManager.SILENCE);
+                        UnitState silUnit = new ExtendedUnitState(parent, which + 1, UnitManager.SILENCE);
                         SentenceHMMState silExistingState = getExistingState(silUnit);
                         if (silExistingState != null) {
-                            attachState(tail, silExistingState, logOne, logOne,
-                                    logSilenceInsertionProbability);
+                            attachState(tail, silExistingState, logOne, logOne, logSilenceInsertionProbability);
                         } else {
-                            attachState(tail, silUnit, logOne, logOne,
-                                    logSilenceInsertionProbability);
+                            attachState(tail, silUnit, logOne, logOne, logSilenceInsertionProbability);
                             addStateToCache(silUnit);
                             silTail = expandUnit(silUnit);
-                            ContextPair silCP = ContextPair.get(
-                                    UnitContext.SILENCE, UnitContext.EMPTY);
+                            ContextPair silCP = ContextPair.get(UnitContext.SILENCE, UnitContext.EMPTY);
                             addExitPoint(silCP, silTail);
                         }
                     }
@@ -1128,7 +1103,6 @@ public class FlatLinguist implements Linguist, Configurable {
             }
             list.add(state);
         }
-
 
         /**
          * Get the left context for a unit based upon the left context size, the entry left context and the current
@@ -1181,11 +1155,7 @@ public class FlatLinguist implements Linguist, Configurable {
          * @return the maximum left context size for the unit
          */
         private int getLeftContextSize(Unit unit) {
-            if (unit.isFiller()) {
-                return 0;
-            } else {
-                return getLeftContextSize();
-            }
+            return unit.isFiller() ? 0 : getLeftContextSize();
         }
 
 
@@ -1196,11 +1166,7 @@ public class FlatLinguist implements Linguist, Configurable {
          * @return the maximum right context size for the unit
          */
         private int getRightContextSize(Unit unit) {
-            if (unit.isFiller()) {
-                return 0;
-            } else {
-                return getRightContextSize();
-            }
+            return unit.isFiller() ? 0 : getRightContextSize();
         }
 
 
@@ -1229,10 +1195,8 @@ public class FlatLinguist implements Linguist, Configurable {
          *
          * @param prevLeftContext the previous left context
          * @param unit            the current unit
-
          */
-        UnitContext generateNextLeftContext(UnitContext prevLeftContext,
-                                            Unit unit) {
+        UnitContext generateNextLeftContext(UnitContext prevLeftContext, Unit unit) {
             Unit[] prevUnits = prevLeftContext.getUnits();
             int actSize = Math.min(prevUnits.length, getLeftContextSize());
             if (actSize == 0)
@@ -1256,8 +1220,7 @@ public class FlatLinguist implements Linguist, Configurable {
             // tail silence unit
             if (unit.getUnit().isSilence()) {
                 // add the loopback, but don't expand it // anymore
-                attachState(tail, unit, logOne, logOne,
-                        logSilenceInsertionProbability);
+                attachState(tail, unit, logOne, logOne, logSilenceInsertionProbability);
             }
             return tail;
         }
@@ -1298,8 +1261,7 @@ public class FlatLinguist implements Linguist, Configurable {
                 if (arc.getHMMState().isEmitting()) {
                     newState = new HMMStateState(parent, arc.getHMMState());
                 } else {
-                    newState = new NonEmittingHMMState(parent, arc
-                            .getHMMState());
+                    newState = new NonEmittingHMMState(parent, arc.getHMMState());
                 }
                 SentenceHMMState existingState = getExistingState(newState);
                 float logProb = arc.getLogProbability();
@@ -1339,10 +1301,8 @@ public class FlatLinguist implements Linguist, Configurable {
                 // pronunciations. If there are 3 ways to say the
                 // word, then each pronunciation gets 1/3 of the total
                 // probability.
-                if (spreadWordProbabilitiesAcrossPronunciations
-                        && !gstate.getNode().isEmpty()) {
-                    int numPronunciations = gstate.getNode().getWord()
-                            .getPronunciations(null).length;
+                if (spreadWordProbabilitiesAcrossPronunciations && !gstate.getNode().isEmpty()) {
+                    int numPronunciations = gstate.getNode().getWord().getPronunciations(null).length;
                     probability -= logMath.linearToLog(numPronunciations);
                 }
                 float fprob = probability;
@@ -1551,7 +1511,7 @@ class UnitContext {
     private static final Cache<UnitContext> unitContextCache = new Cache<UnitContext>();
     private final Unit[] context;
     private int hashCode = 12;
-    public final static UnitContext EMPTY = new UnitContext(new Unit[0]);
+    public final static UnitContext EMPTY = new UnitContext(Unit.EMPTY_ARRAY);
     public final static UnitContext SILENCE = new UnitContext(new Unit[] { UnitManager.SILENCE });
 
     static {
@@ -1710,8 +1670,7 @@ class ContextPair {
             return true;
         } else if (o instanceof ContextPair) {
             ContextPair other = (ContextPair) o;
-            return this.left.equals(other.left)
-                    && this.right.equals(other.right);
+            return this.left.equals(other.left) && this.right.equals(other.right);
         } else {
             return false;
         }

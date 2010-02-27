@@ -9,7 +9,6 @@
  * WARRANTIES.
  *
  */
-
 package edu.cmu.sphinx.linguist.acoustic;
 
 import java.util.Arrays;
@@ -18,18 +17,19 @@ import java.util.Arrays;
 
 public class Unit {
 
+    public final static Unit[] EMPTY_ARRAY = new Unit[0];
+
     private final String name;
     private final boolean filler;
-    private boolean silence;
-    private final Context context;
+    private final boolean silence;
     private final int baseID;
     private final Unit baseUnit;
+    private final Context context;
 
     private volatile String key;
 
-
     /**
-     * Constructs a context dependent  unit.  Constructors are package private, use the UnitManager to create and access
+     * Constructs a context dependent unit. Constructors are package private, use the UnitManager to create and access
      * units.
      *
      * @param name   the name of the unit
@@ -39,17 +39,14 @@ public class Unit {
     Unit(String name, boolean filler, int id) {
         this.name = name;
         this.filler = filler;
-        this.context = Context.EMPTY_CONTEXT;
+        this.silence = name.equals(UnitManager.SILENCE_NAME);
         this.baseID = id;
         this.baseUnit = this;
-        if (name.equals(UnitManager.SILENCE_NAME)) {
-            silence = true;
-        }
+        this.context = Context.EMPTY_CONTEXT;
     }
 
-
     /**
-     * Constructs a context dependent  unit.  Constructors are package private, use the UnitManager to create and access
+     * Constructs a context dependent unit. Constructors are package private, use the UnitManager to create and access
      * units.
      *
      * @param baseUnit the base id for the unit
@@ -57,36 +54,22 @@ public class Unit {
      * @param context  the context for this unit
      */
     Unit(Unit baseUnit, boolean filler, Context context) {
-        this.baseUnit = baseUnit;
-        this.filler = filler;
-        this.context = context;
         this.name = baseUnit.getName();
+        this.filler = filler;
+        this.silence = name.equals(UnitManager.SILENCE_NAME);
         this.baseID = baseUnit.getBaseID();
-        if (name.equals(UnitManager.SILENCE_NAME)) {
-            silence = true;
-        }
+        this.baseUnit = baseUnit;
+        this.context = context;
     }
-
 
     /**
-     * Determines if this unit is context dependent
+     * Gets the name for this unit
      *
-     * @return true if the unit is context dependent
+     * @return the name for this unit
      */
-    public boolean isContextDependent() {
-        return getContext() != Context.EMPTY_CONTEXT;
+    public String getName() {
+        return name;
     }
-
-
-    /**
-     * Returns the context for this unit
-     *
-     * @return the context for this unit (or null if context independent
-     */
-    public Context getContext() {
-        return context;
-    }
-
 
     /**
      * Determines if this unit is a filler unit
@@ -97,7 +80,6 @@ public class Unit {
         return filler;
     }
 
-
     /**
      * Determines if this unit is the silence unit
      *
@@ -107,6 +89,48 @@ public class Unit {
         return silence;
     }
 
+    /**
+     * Gets the base ID for this unit
+     *
+     * @return the id
+     */
+    public int getBaseID() {
+        return baseID;
+    }
+
+    /**
+     * Gets the  base unit associated with this HMM
+     *
+     * @return the unit associated with this HMM
+     */
+    public Unit getBaseUnit() {
+        return baseUnit;
+    }
+
+    /**
+     * Returns the context for this unit
+     *
+     * @return the context for this unit (or null if context independent)
+     */
+    public Context getContext() {
+        return context;
+    }
+
+    /**
+     * Determines if this unit is context dependent
+     *
+     * @return true if the unit is context dependent
+     */
+    public boolean isContextDependent() {
+        return getContext() != Context.EMPTY_CONTEXT;
+    }
+
+    /** gets the key for this unit
+     * @return the key
+     */
+    private String getKey() {
+        return toString();
+    }
 
     /**
      * Checks to see of an object is equal to this unit
@@ -126,7 +150,6 @@ public class Unit {
         }
     }
 
-
     /**
      * calculates a hashCode for this unit. Since we defined an equals for Unit, we must define a hashCode as well
      *
@@ -136,7 +159,6 @@ public class Unit {
     public int hashCode() {
         return getKey().hashCode();
     }
-
 
     /**
      * Converts to a string
@@ -155,45 +177,6 @@ public class Unit {
         return key;
     }
 
-
-    /**
-     * Gets the name for this unit
-     *
-     * @return the name for this unit
-     */
-    public String getName() {
-        return name;
-    }
-
-
-    /**
-     * Gets the base ID for this unit
-     *
-     * @return the id
-     */
-    public int getBaseID() {
-        return baseID;
-    }
-
-
-    /** gets the key for this unit
-     * @return the key
-     */
-    private String getKey() {
-        return toString();
-    }
-
-
-    /**
-     * Gets the  base unit associated with this HMM
-     *
-     * @return the unit associated with this HMM
-     */
-    public Unit getBaseUnit() {
-        return baseUnit;
-    }
-
-
     /**
      * Checks to see if the given unit with associated contexts is a partial match for this unit.   Zero, One or both
      * contexts can be null. A null context matches any context
@@ -203,10 +186,8 @@ public class Unit {
      * @return true if this unit matches the name and non-null context
      */
     public boolean isPartialMatch(String name, Context context) {
-        return (getName().equals(name) &&
-                context.isPartialMatch(this.context));
+        return getName().equals(name) && context.isPartialMatch(this.context);
     }
-
 
     /**
      * Creates and returns an empty context with the given size. The context is padded with SIL filler
@@ -220,7 +201,6 @@ public class Unit {
         Arrays.fill(context, UnitManager.SILENCE);
         return context;
     }
-
 
     /**
      * Checks to see that there is 100% overlap in the given contexts
@@ -244,5 +224,3 @@ public class Unit {
         }
     }
 }
-
-
