@@ -795,17 +795,6 @@ public class FlatLinguist implements Linguist, Configurable {
 
 
         /**
-         * Returns the exit points for a given context pair
-         *
-         * @param contextPair the context pair of interest
-         * @return the list of exit points
-         */
-        private List<SearchState> getExitPoints(ContextPair contextPair) {
-            return exitPoints.get(contextPair);
-        }
-        
-
-        /**
          * Collects the right contexts for this node and pushes this nodes ending context into the next next set of
          * nodes.
          */
@@ -1306,10 +1295,10 @@ public class FlatLinguist implements Linguist, Configurable {
                     probability -= logMath.linearToLog(numPronunciations);
                 }
                 float fprob = probability;
-                for (ContextPair contextPair : exitPoints.keySet()) {
-                    List<SearchState> destEntryPoints = gstate.getEntryPoints(contextPair);
+                for (Map.Entry<ContextPair, List<SearchState>> entry : exitPoints.entrySet()) {
+                    List<SearchState> destEntryPoints = gstate.getEntryPoints(entry.getKey());
                     if (destEntryPoints != null) {
-                        List<SearchState> srcExitPoints = getExitPoints(contextPair);
+                        List<SearchState> srcExitPoints = entry.getValue();
                         connect(srcExitPoints, destEntryPoints, fprob);
                     }
                 }
@@ -1365,8 +1354,7 @@ public class FlatLinguist implements Linguist, Configurable {
             // since pstates are not placed in the cache we have to
             // gather those states. All other states are found in the
             // existingStates cache.
-            List<SearchState> allStates = new ArrayList<SearchState>();
-            allStates.addAll(existingStates.values());
+            List<SearchState> allStates = new ArrayList<SearchState>(existingStates.values());
             for (List<SearchState> list : entryPoints.values()) {
                 allStates.addAll(list);
             }

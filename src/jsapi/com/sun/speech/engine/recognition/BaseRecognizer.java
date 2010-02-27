@@ -303,8 +303,7 @@ public class BaseRecognizer extends BaseEngine implements Recognizer,
 	 */
 	public RuleGrammar[] listRuleGrammars() throws EngineStateError {
 		checkEngineState(DEALLOCATED | DEALLOCATING_RESOURCES);
-		Collection<BaseRuleGrammar> allGrammars = grammars.values();
-		return allGrammars.toArray(new RuleGrammar[allGrammars.size()]);
+        return grammars.values().toArray(new RuleGrammar[grammars.size()]);
 	}
 
 	/**
@@ -1010,8 +1009,7 @@ public class BaseRecognizer extends BaseEngine implements Recognizer,
 
 	/** Notify any grammars if their activation state has been changed. */
 	protected void notifyGrammarActivation() {
-		for (String grammarName : grammars.keySet()) {
-			BaseRuleGrammar grammar = grammars.get(grammarName);
+		for (BaseRuleGrammar grammar : grammars.values()) {
 			boolean active = isActive(grammar);
 			if (active != grammar.grammarActive) {
 				grammar.grammarActive = active;

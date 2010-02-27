@@ -331,9 +331,8 @@ public class SausageMaker extends AbstractSausageMaker {
      * @return the sausage producing by collapsing the lattice.
      */
     public Sausage makeSausage() {
-        List<Cluster> clusters = new ArrayList<Cluster>(lattice.getNodes().size());
-        Collection<Node> nodes = lattice.nodes.values();
-        for (Node n : nodes) {
+        List<Cluster> clusters = new ArrayList<Cluster>(lattice.nodes.size());
+        for (Node n : lattice.nodes.values()) {
             n.cacheDescendants();
             Cluster bucket = new Cluster(n);
             clusters.add(bucket);

@@ -412,7 +412,6 @@ public class FullDictionary implements Dictionary {
      */
     @Override
     public Word[] getFillerWords() {
-        return fillerDictionary.values().toArray(
-                new Word[fillerDictionary.values().size()]);
+        return fillerDictionary.values().toArray(new Word[fillerDictionary.size()]);
     }
 }

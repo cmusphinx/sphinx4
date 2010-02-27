@@ -774,7 +774,7 @@ class Node {
     void freeze() {
         if (successors instanceof Map<?,?>) {
             Map<Object, Node> map = getSuccessorMap();
-            List<Node> frozenSuccessors = new ArrayList<Node>(map.values().size());
+            List<Node> frozenSuccessors = new ArrayList<Node>(map.size());
             successors = null; // avoid recursive death spiral
             for (Node node : map.values()) {
                 frozenSuccessors.add(node);

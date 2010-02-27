@@ -68,10 +68,10 @@ public class PropertySheet implements Cloneable {
         if (property == null || propName == null)
             throw new InternalConfigurationException(getInstanceName(), propName, "property or its value is null");
 
-        if (!registeredProperties.keySet().contains(propName))
+        if (!registeredProperties.containsKey(propName))
             registeredProperties.put(propName, property);
 
-        if (!propValues.keySet().contains(propName)) {
+        if (!propValues.containsKey(propName)) {
             propValues.put(propName, null);
             rawProps.put(propName, null);
         }
@@ -543,7 +543,7 @@ public class PropertySheet implements Cloneable {
      */
     public void setString(String name, String value) throws PropertyException {
         // ensure that there is such a property
-        if (!registeredProperties.keySet().contains(name))
+        if (!registeredProperties.containsKey(name))
             throw new InternalConfigurationException(getInstanceName(), name, '\'' + name +
                     "' is not a registered string-property");
 
@@ -563,7 +563,7 @@ public class PropertySheet implements Cloneable {
      */
     public void setInt(String name, int value) throws PropertyException {
         // ensure that there is such a property
-        if (!registeredProperties.keySet().contains(name))
+        if (!registeredProperties.containsKey(name))
             throw new InternalConfigurationException(getInstanceName(), name, '\'' + name +
                     "' is not a registered int-property");
 
@@ -583,7 +583,7 @@ public class PropertySheet implements Cloneable {
      */
     public void setDouble(String name, double value) throws PropertyException {
         // ensure that there is such a property
-        if (!registeredProperties.keySet().contains(name))
+        if (!registeredProperties.containsKey(name))
             throw new InternalConfigurationException(getInstanceName(), name, '\'' + name +
                     "' is not a registered double-property");
 
@@ -602,7 +602,7 @@ public class PropertySheet implements Cloneable {
      * @param value the value for the property
      */
     public void setBoolean(String name, Boolean value) throws PropertyException {
-        if (!registeredProperties.keySet().contains(name))
+        if (!registeredProperties.containsKey(name))
             throw new InternalConfigurationException(getInstanceName(), name, '\'' + name +
                     "' is not a registered boolean-property");
 
@@ -622,7 +622,7 @@ public class PropertySheet implements Cloneable {
      * @param value  the value for the property
      */
     public void setComponent(String name, String cmName, Configurable value) throws PropertyException {
-        if (!registeredProperties.keySet().contains(name))
+        if (!registeredProperties.containsKey(name))
             throw new InternalConfigurationException(getInstanceName(), name, '\'' + name +
                     "' is not a registered compontent");
 
@@ -644,7 +644,7 @@ public class PropertySheet implements Cloneable {
      * @param value      the value for the property
      */
     public void setComponentList(String name, List<String> valueNames, List<Configurable> value) throws PropertyException {
-        if (!registeredProperties.keySet().contains(name))
+        if (!registeredProperties.containsKey(name))
             throw new InternalConfigurationException(getInstanceName(), name, '\'' + name +
                     "' is not a registered component-list");
 

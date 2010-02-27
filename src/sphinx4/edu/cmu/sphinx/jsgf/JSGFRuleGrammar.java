@@ -521,12 +521,12 @@ public class JSGFRuleGrammar {
 		sb.append(LINE_SEPARATOR);
 		sb.append("grammar ").append(name).append(';').append(LINE_SEPARATOR);
 		sb.append(LINE_SEPARATOR);
-		for (String ruleName : rules.keySet()) {
-			JSGFRuleState state = rules.get(ruleName);
+		for (Map.Entry<String, JSGFRuleState> entry : rules.entrySet()) {
+			JSGFRuleState state = entry.getValue();
 			if (state.isPublic) {
 				sb.append("public ");
 			}
-			sb.append('<').append(ruleName).append("> = ").append(state.rule)
+			sb.append('<').append(entry.getKey()).append("> = ").append(state.rule)
 					.append(';').append(LINE_SEPARATOR);
 		}
 		return sb.toString();

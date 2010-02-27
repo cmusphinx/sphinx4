@@ -392,13 +392,8 @@ public class CommandInterpreter extends Thread {
     /** Dumps the commands in the interpreter */
 
     private void dumpCommands() {
-        Set<String> unsortedKeys = commandList.keySet();
-        Set<String> sortedKeys = new TreeSet<String>(unsortedKeys);
-
-        for (String cmdName : sortedKeys) {
-            String help = (commandList.get(cmdName)).getHelp();
-            putResponse(cmdName + " - " + help);
-        }
+        for (Map.Entry<String, CommandInterface> entry : new TreeMap<String, CommandInterface>(commandList).entrySet())
+            putResponse(entry.getKey() + " - " + entry.getValue().getHelp());
     }
 
 

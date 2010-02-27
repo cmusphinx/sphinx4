@@ -250,8 +250,7 @@ public abstract class SentenceHMMState implements Serializable, SearchState {
     @Override
     public SearchStateArc[] getSuccessors() {
         if (successorArray == null) {
-            successorArray = new SentenceHMMStateArc[arcs.size()];
-            arcs.values().toArray(successorArray);
+            successorArray = arcs.values().toArray(new SentenceHMMStateArc[arcs.size()]);
         }
         return successorArray;
     }

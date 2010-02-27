@@ -159,9 +159,9 @@ public class ClassMap implements Configurable {
             }
         }
 
-        for (String className : sums.keySet()) {
-            if (Math.abs(1.0 - sums.get(className)) > 0.001) {
-                logger.warning("Word probabilities for class " + className + " sum to " + sums.get(className));
+        for (Map.Entry<String, Float> entry : sums.entrySet()) {
+            if (Math.abs(1.0 - entry.getValue()) > 0.001) {
+                logger.warning("Word probabilities for class " + entry.getKey() + " sum to " + entry.getValue());
             }
         }
     }
