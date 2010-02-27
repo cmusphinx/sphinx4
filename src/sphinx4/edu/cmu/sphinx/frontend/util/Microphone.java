@@ -16,6 +16,7 @@ import edu.cmu.sphinx.util.props.*;
 
 import javax.sound.sampled.*;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.logging.Level;
@@ -625,9 +626,7 @@ public class Microphone extends BaseDataProcessor {
                     throw new Error("Incomplete sample read.");
                 }
 
-                byte[] shrinked = new byte[numBytesRead];
-                System.arraycopy(data, 0, shrinked, 0, numBytesRead);
-                data = shrinked;
+                data = Arrays.copyOf(data, numBytesRead);
             }
 
             if (keepDataReference) {

@@ -12,6 +12,7 @@
 
 package edu.cmu.sphinx.tools.audio;
 
+import java.util.Arrays;
 
 /** Downsamples an audio clip. */
 public class Downsampler {
@@ -55,8 +56,6 @@ public class Downsampler {
             }
             temp[outSampleIndex++] = (short) (sum / srIn);
         }
-        short[] outSamples = new short[outSampleIndex];
-        System.arraycopy(temp, 0, outSamples, 0, outSampleIndex);
-        return outSamples;
+        return Arrays.copyOf(temp, outSampleIndex);
     }
 }

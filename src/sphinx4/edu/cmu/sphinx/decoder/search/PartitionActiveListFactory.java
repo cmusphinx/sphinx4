@@ -120,10 +120,7 @@ public class PartitionActiveListFactory extends ActiveListFactory {
 
         /** Doubles the capacity of the Token array. */
         private void doubleCapacity() {
-            // expand the token list
-            Token[] newList = new Token[tokenList.length * 2];
-            System.arraycopy(tokenList, 0, newList, 0, size);
-            tokenList = newList;
+            tokenList = Arrays.copyOf(tokenList, tokenList.length * 2);
         }
 
 

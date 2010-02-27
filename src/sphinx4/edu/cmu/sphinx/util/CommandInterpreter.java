@@ -282,12 +282,9 @@ public class CommandInterpreter extends Thread {
                 if (args.length >= 3) {
                     try {
                         int count = Integer.parseInt(args[1]);
-                        String[] subargs = new String[args.length - 2];
-                        System.arraycopy(args, 2, subargs, 0, subargs.length);
-
+                        String[] subargs = Arrays.copyOfRange(args, 2, args.length);
                         for (int i = 0; i < count; i++) {
-                            putResponse(
-                                    CommandInterpreter.this.execute(subargs));
+                            putResponse(CommandInterpreter.this.execute(subargs));
                         }
                     } catch (NumberFormatException nfe) {
                         putResponse("Usage: repeat count command args");
@@ -335,10 +332,7 @@ public class CommandInterpreter extends Thread {
                     for (int i = 1; i < args.length; i++) {
                         if (args[i].equals(";")) {
                             if (count > 0) {
-                                String[] trimmedArgs = new String[count];
-                                System.arraycopy(subargs, 0, trimmedArgs,
-                                        0, trimmedArgs.length);
-                                commands.add(trimmedArgs);
+                                commands.add(Arrays.copyOf(subargs, count));
                                 count = 0;
                             }
                         } else {
@@ -347,11 +341,7 @@ public class CommandInterpreter extends Thread {
                     }
 
                     if (count > 0) {
-                        String[] trimmedArgs = new String[count];
-                        System.arraycopy(subargs, 0, trimmedArgs,
-                                0, trimmedArgs.length);
-                        commands.add(trimmedArgs);
-                        count = 0;
+                        commands.add(Arrays.copyOf(subargs, count));
                     }
 
                     for (String[] command : commands) {
@@ -374,8 +364,7 @@ public class CommandInterpreter extends Thread {
             @Override
             public String execute(CommandInterpreter ci, String[] args) {
                 if (args.length > 1) {
-                    String[] subargs = new String[args.length - 1];
-                    System.arraycopy(args, 1, subargs, 0, subargs.length);
+                    String[] subargs = Arrays.copyOfRange(args, 1, args.length);
                     long startTime = System.currentTimeMillis();
                     long endTime;
 

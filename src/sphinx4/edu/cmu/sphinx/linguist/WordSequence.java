@@ -48,8 +48,7 @@ public final class WordSequence {
      * @param words the word IDs of the word sequence
      */
     public WordSequence(Word[] words) {
-        this.words = new Word[words.length];
-        System.arraycopy(words, 0, this.words, 0, words.length);
+        this.words = words.clone();
         check();
     }
 
@@ -60,22 +59,15 @@ public final class WordSequence {
      * @param list the list of words
      */
     public WordSequence(List<Word> list) {
-        this.words = new Word[list.size()];
-        for (int i = 0; i < list.size(); i++) {
-            words[i] = list.get(i);
-
-        }
-
+        this.words = list.toArray(new Word[list.size()]);
         check();
     }
 
 
     private void check() {
-        for (Word word : words) {
-            if (word == null) {
+        for (Word word : words)
+            if (word == null)
                 throw new Error("WordSequence should not have null Words.");
-            }
-        }
     }
 
 

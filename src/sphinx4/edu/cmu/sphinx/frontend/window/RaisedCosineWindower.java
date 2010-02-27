@@ -251,12 +251,10 @@ public class RaisedCosineWindower extends BaseDataProcessor {
         if (length != in.length) {
 
             allSamples = new double[length];
-            int start = 0;
 
             // copy overflow samples to allSamples buffer
-            System.arraycopy(overflowBuffer.getBuffer(), 0,
-                    allSamples, start, overflowBuffer.getOccupancy());
-            start = overflowBuffer.getOccupancy();
+            System.arraycopy(overflowBuffer.getBuffer(), 0, allSamples, 0, overflowBuffer.getOccupancy());
+            int start = overflowBuffer.getOccupancy();
 
             // copy input samples to allSamples buffer
             for (DoubleData aDataList : dataList) {
@@ -312,7 +310,6 @@ public class RaisedCosineWindower extends BaseDataProcessor {
         // pad it with zeros
         if (length < cosineWindow.length) {
             double[] padded = new double[cosineWindow.length];
-            Arrays.fill(padded, 0);
             System.arraycopy(in, 0, padded, 0, length);
             in = padded;
             windowCount = 1;

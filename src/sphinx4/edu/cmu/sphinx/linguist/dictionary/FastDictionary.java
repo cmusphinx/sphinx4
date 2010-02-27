@@ -422,10 +422,8 @@ public class FastDictionary implements Dictionary {
                 }
 
                 if (!isFiller && addSilEndingPronunciation) {
-                    Unit[] silUnits = new Unit[unitCount + 1];
-                    System.arraycopy(units, 0, silUnits, 0, unitCount);
-                    silUnits[unitCount] = UnitManager.SILENCE;
-                    units = silUnits;
+                    units = Arrays.copyOf(units, unitCount + 1);
+                    units[unitCount] = UnitManager.SILENCE;
                 }
                 pList.add(new Pronunciation(units, null, null, 1.f));
             }

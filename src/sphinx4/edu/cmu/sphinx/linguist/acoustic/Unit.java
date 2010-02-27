@@ -12,6 +12,8 @@
 
 package edu.cmu.sphinx.linguist.acoustic;
 
+import java.util.Arrays;
+
 /** Represents a unit of speech. Units may represent phones, words or any other suitable unit */
 
 public class Unit {
@@ -215,10 +217,7 @@ public class Unit {
 
     public static Unit[] getEmptyContext(int size) {
         Unit[] context = new Unit[size];
-
-        for (int i = 0; i < context.length; i++) {
-            context[i] = UnitManager.SILENCE;
-        }
+        Arrays.fill(context, UnitManager.SILENCE);
         return context;
     }
 

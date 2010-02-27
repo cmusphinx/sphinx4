@@ -29,6 +29,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Level;
@@ -128,8 +129,7 @@ class Sphinx4Loader extends Sphinx3Loader {
                     break;
                 }
             }
-            int[] stid = new int[numStates];
-            System.arraycopy(maxStid, 0, stid, 0, numStates);
+            int[] stid = Arrays.copyOf(maxStid, numStates);
 
             assert left.equals("-");
             assert right.equals("-");
@@ -192,8 +192,7 @@ class Sphinx4Loader extends Sphinx3Loader {
                     break;
                 }
             }
-            int[] stid = new int[numStates];
-            System.arraycopy(maxStid, 0, stid, 0, numStates);
+            int[] stid = Arrays.copyOf(maxStid, numStates);
 
             assert !left.equals("-");
             assert !right.equals("-");

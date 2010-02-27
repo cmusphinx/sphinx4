@@ -669,9 +669,7 @@ public class FlatLinguist implements Linguist, Configurable {
         private UnitContext getStartingContext(Pronunciation pronunciation) {
             int maxSize = getRightContextSize();
             Unit[] units = pronunciation.getUnits();
-            int actualSize = Math.min(units.length, maxSize);
-            Unit[] context = new Unit[actualSize];
-            System.arraycopy(units, 0, context, 0, context.length);
+            Unit[] context = units.length > maxSize ? Arrays.copyOf(units, maxSize) : units;
             return UnitContext.get(context);
         }
 
@@ -689,12 +687,8 @@ public class FlatLinguist implements Linguist, Configurable {
                 Pronunciation[] prons = word.getPronunciations(null);
                 for (Pronunciation pron : prons) {
                     Unit[] units = pron.getUnits();
-                    int actualSize = Math.min(units.length, maxSize);
-                    Unit[] context = new Unit[actualSize];
-                    int unitIndex = units.length - actualSize;
-                    for (int j = 0; j < context.length; j++) {
-                        context[j] = units[unitIndex++];
-                    }
+                    int size = units.length;
+                    Unit[] context = size > maxSize ? Arrays.copyOfRange(units, size - maxSize, size) : units;
                     endingContexts.add(UnitContext.get(context));
                 }
                 // add a silence to the ending context since we want to
@@ -1143,25 +1137,14 @@ public class FlatLinguist implements Linguist, Configurable {
          * @param left  the entry left context
          * @param units the set of units
          * @param index the index of the current unit
-
          */
         private Unit[] getLC(UnitContext left, Unit[] units, int index) {
             Unit[] leftUnits = left.getUnits();
-            int maxSize = getLeftContextSize(units[index]);
-            int curSize = index + leftUnits.length;
-            int actSize = Math.min(curSize, maxSize);
-            Unit[] lc = new Unit[actSize];
-            for (int i = 0; i < lc.length; i++) {
-                int lcIndex = (index - lc.length) + i;
-                if (lcIndex < 0) {
-                    lc[i] = leftUnits[leftUnits.length + lcIndex];
-                } else {
-                    lc[i] = units[lcIndex];
-                }
-            }
-            return lc;
+            int curSize = leftUnits.length + index;
+            int actSize = Math.min(curSize, getLeftContextSize(units[index]));
+            int leftIndex = curSize - actSize;
+            return combineUnits(leftUnits, units, actSize, leftIndex);
         }
-
 
         /**
          * Get the right context for a unit based upon the right context size, the exit right context and the current
@@ -1170,25 +1153,26 @@ public class FlatLinguist implements Linguist, Configurable {
          * @param units the set of units
          * @param index the index of the current unit
          * @param right the exiting right context
-
          */
         private Unit[] getRC(Unit[] units, int index, UnitContext right) {
             Unit[] rightUnits = right.getUnits();
-            int maxSize = getRightContextSize(units[index]);
-            int curSize = (units.length - (index + 1)) + rightUnits.length;
-            int actSize = Math.min(curSize, maxSize);
-            Unit[] rc = new Unit[actSize];
-            for (int i = 0; i < rc.length; i++) {
-                int rcIndex = index + i + 1;
-                if (rcIndex >= units.length) {
-                    rc[i] = rightUnits[rcIndex - units.length];
-                } else {
-                    rc[i] = units[rcIndex];
-                }
-            }
-            return rc;
+            int leftIndex = index + 1;
+            int curSize = units.length - leftIndex + rightUnits.length;
+            int actSize = Math.min(curSize, getRightContextSize(units[index]));
+            return combineUnits(units, rightUnits, actSize, leftIndex);
         }
 
+        private Unit[] combineUnits(Unit[] left, Unit[] right, int size, int leftIndex) {
+            if (size == left.length && leftIndex == 0)
+                return left;
+            if (leftIndex >= left.length)
+                return size == right.length ? right : Arrays.copyOf(right, size);
+            Unit[] units = Arrays.copyOfRange(left, leftIndex, leftIndex + size);
+            int fromLeft = left.length - leftIndex;
+            if (fromLeft < size)
+                System.arraycopy(right, 0, units, fromLeft, size - fromLeft);
+            return units;
+        }
 
         /**
          * Gets the maximum context size for the given unit
@@ -1250,14 +1234,11 @@ public class FlatLinguist implements Linguist, Configurable {
         UnitContext generateNextLeftContext(UnitContext prevLeftContext,
                                             Unit unit) {
             Unit[] prevUnits = prevLeftContext.getUnits();
-            int maxSize = getLeftContextSize();
-            int curSize = prevUnits.length;
-            int actSize = Math.min(maxSize, curSize);
-            Unit[] leftUnits = new Unit[actSize];
-            System.arraycopy(prevUnits, 1, leftUnits, 0, leftUnits.length - 1);
-            if (leftUnits.length > 0) {
-                leftUnits[leftUnits.length - 1] = unit;
-            }
+            int actSize = Math.min(prevUnits.length, getLeftContextSize());
+            if (actSize == 0)
+                return UnitContext.EMPTY;
+            Unit[] leftUnits = Arrays.copyOfRange(prevUnits, 1, actSize + 1);
+            leftUnits[actSize - 1] = unit;
             return UnitContext.get(leftUnits);
         }
 

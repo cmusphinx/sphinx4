@@ -28,6 +28,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.*;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.StringTokenizer;
 import java.util.prefs.Preferences;
 
@@ -226,13 +227,9 @@ public class AudioTool {
                             ((DoubleData) data).getSampleRate();
                     double[] values =
                             ((DoubleData) data).getValues();
-                    short[] newShorts =
-                            new short[shorts.length
-                                    + values.length];
-                    System.arraycopy(shorts, 0, newShorts, 0, shorts.length);
+                    short[] newShorts = Arrays.copyOf(shorts, shorts.length + values.length);
                     for (int i = 0; i < values.length; i++) {
-                        newShorts[shorts.length + i] =
-                                (short) values[i];
+                        newShorts[shorts.length + i] = (short)values[i];
                     }
                     shorts = newShorts;
                 }

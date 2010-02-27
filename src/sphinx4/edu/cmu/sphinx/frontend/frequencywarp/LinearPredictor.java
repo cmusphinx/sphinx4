@@ -7,6 +7,8 @@
 
 package edu.cmu.sphinx.frontend.frequencywarp;
 
+import java.util.Arrays;
+
 /**
  * Computes the linear predictive model using the Levinson-Durbin algorithm. Linear prediction assumes that a signal can
  * be model as a linear combination of previous samples, that is, the current sample x[i] can be modeled as:
@@ -103,10 +105,7 @@ public class LinearPredictor {
         double[][] tmp = new double[lpcorder + 1][lpcorder + 1];
 
         order = lpcorder;
-        int RCorder = RC.length;
-        reflectionCoeffs = new double[RCorder];
-
-        System.arraycopy(RC, 0, reflectionCoeffs, 0, RCorder);
+        reflectionCoeffs = RC.clone();
 
         for (int i = 1; i <= lpcorder; i++) {
             for (int m = 1; m < i; m++) {
@@ -182,8 +181,7 @@ public class LinearPredictor {
         double[][] g = new double[nbilincepstra][cepstrumOrder];
 
         // Make a local copy as this gets destroyed
-        double[] lincep = new double[cepstrumOrder];
-        System.arraycopy(cepstra, 0, lincep, 0, cepstrumOrder);
+        double[] lincep = Arrays.copyOf(cepstra, cepstrumOrder);
 
         bilinearCepstra[0] = lincep[0];
         lincep[0] = 0;

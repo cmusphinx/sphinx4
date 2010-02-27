@@ -19,6 +19,7 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.util.Arrays;
 
 /** Provides an interface to view and play back various forms of an audio signal. */
 public class AudioPanel extends JPanel
@@ -278,10 +279,7 @@ public class AudioPanel extends JPanel
         if (end == -1) {
             end = shorts.length;
         }
-        short[] newShorts = new short[end - start];
-        System.arraycopy(shorts, start, newShorts, 0, (end - start));
-
-        audio.setAudioData(newShorts);
+        audio.setAudioData(Arrays.copyOfRange(shorts, start, end));
 
         setSelectionStart(-1);
         setSelectionEnd(-1);
