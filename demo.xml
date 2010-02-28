@@ -77,7 +77,6 @@
     <!-- Sphinx-4 (non-JSAPI) demos -->
     <target name="compile_sphinx_demos"
             depends="compile_sphinx_helloworld,
-	             compile_sphinx_hellodigits,
 		     compile_sphinx_hellongram,
 		     compile_sphinx_lattice,
 		     compile_sphinx_classbased,
@@ -85,7 +84,6 @@
 	             compile_jsapi_dialog,
 	             compile_jsapi_jsgf,
 	             compile_zipcity,
-                     compile_sphinx_wavfile,
                      compile_sphinx_transcriber,
                      compile_sphinx_raw,
 	             compile_tags"
@@ -111,28 +109,6 @@
              manifest="${demo_src_dir}/edu/cmu/sphinx/demo/helloworld/helloworld.Manifest"
              basedir="${demo_classes_dir}"
              includes="edu/cmu/sphinx/demo/helloworld/**"
-             compress="true"/>
-    </target>
-
-    <target name="compile_sphinx_hellodigits">
-        <mkdir dir="${demo_classes_dir}/edu/cmu/sphinx/demo/hellodigits"/>
-        <javac debug="true"
-               listfiles="true"
-               deprecation="true"
-               includeAntRuntime="false"
-               srcdir="${demo_src_dir}"
-               includes="edu/cmu/sphinx/demo/hellodigits/**"
-               destdir="${demo_classes_dir}">
-            <classpath refid="libs"/>
-        </javac>
-        <copy file="${demo_src_dir}/edu/cmu/sphinx/demo/hellodigits/digits.gram"
-              todir="${demo_classes_dir}/edu/cmu/sphinx/demo/hellodigits"/>
-        <copy file="${demo_src_dir}/edu/cmu/sphinx/demo/hellodigits/hellodigits.config.xml"
-              todir="${demo_classes_dir}/edu/cmu/sphinx/demo/hellodigits"/>
-        <jar destfile="${bin_dir}/HelloDigits.jar"
-             manifest="${demo_src_dir}/edu/cmu/sphinx/demo/hellodigits/hellodigits.Manifest"
-             basedir="${demo_classes_dir}"
-             includes="edu/cmu/sphinx/demo/hellodigits/**"
              compress="true"/>
     </target>
 
@@ -235,31 +211,6 @@
              manifest="${demo_src_dir}/edu/cmu/sphinx/demo/lattice/latticedemo.Manifest"
              basedir="${demo_classes_dir}"
              includes="edu/cmu/sphinx/demo/lattice/**"
-             compress="true"/>
-    </target>
-
-    <target name="compile_sphinx_wavfile">
-        <mkdir dir="${demo_classes_dir}/edu/cmu/sphinx/demo/wavfile"/>
-        <javac debug="true"
-               listfiles="true"
-               deprecation="true"
-               includeAntRuntime="false"
-               srcdir="${demo_src_dir}"
-               includes="edu/cmu/sphinx/demo/wavfile/**"
-               destdir="${demo_classes_dir}">
-            <classpath refid="libs"/>
-        </javac>
-        <copy file="${demo_src_dir}/edu/cmu/sphinx/demo/wavfile/config.xml"
-              todir="${demo_classes_dir}/edu/cmu/sphinx/demo/wavfile"/>
-        <copy file="${demo_src_dir}/edu/cmu/sphinx/demo/wavfile/12345.wav"
-              todir="${demo_classes_dir}/edu/cmu/sphinx/demo/wavfile"/>
-        <copy file="${demo_src_dir}/edu/cmu/sphinx/demo/wavfile/digits.gram"
-              todir="${demo_classes_dir}/edu/cmu/sphinx/demo/wavfile"/>
-        <mkdir dir="${bin_dir}"/>
-        <jar destfile="${bin_dir}/WavFile.jar"
-             manifest="${demo_src_dir}/edu/cmu/sphinx/demo/wavfile/wavfile.Manifest"
-             basedir="${demo_classes_dir}"
-             includes="edu/cmu/sphinx/demo/wavfile/**"
              compress="true"/>
     </target>
 

@@ -15,6 +15,8 @@ New Features and Improvements:
     * Noise filtering components
     * Lattice rescoring
     * Server-based language model
+    * Large arbitrary-order language models
+    * A lot of code optimizations
 
 Bug fixes:
 
@@ -22,7 +24,8 @@ Bug fixes:
     
 Thanks:
 
-    Peter Wolf, Yaniv Kunda, Antoine Raux, Dirk Schnelle-Walka
+    Peter Wolf, Yaniv Kunda, Antoine Raux, Dirk Schnelle-Walka,
+    Yannick Estève and LIUM team.
 
 -------------------------------------------------------------------
 
