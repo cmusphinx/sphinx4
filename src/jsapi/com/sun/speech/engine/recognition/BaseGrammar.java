@@ -19,6 +19,7 @@ import java.util.ArrayList;
 /**
  * Implementation of javax.speech.recognition.Grammar.
  */
+@SuppressWarnings("serial")
 public class BaseGrammar
     implements Grammar, Serializable, SpeechEventDispatcher {
 

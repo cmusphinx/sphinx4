@@ -371,6 +371,7 @@ public class RuleParser {
 	}
 
 	/* extension of RuleToken with tokenPos interface */
+	@SuppressWarnings("serial")
 	class ParsedRuleToken extends RuleToken implements TokenPos {
 
 		int pos;
@@ -386,6 +387,7 @@ public class RuleParser {
 
 	}
 
+	@SuppressWarnings("serial")
 	class ParsedEmptyToken extends ParsedRuleToken {
 
 		public ParsedEmptyToken(int pos) {
@@ -394,6 +396,7 @@ public class RuleParser {
 	}
 
 	/* extension of RuleTag with tokenPos interface */
+	@SuppressWarnings("serial")
 	class ParsedRuleTag extends RuleTag implements TokenPos {
 
 		int pos;
@@ -410,6 +413,7 @@ public class RuleParser {
 	}
 
 	/* extension of RuleSequence with tokenPos interface */
+	@SuppressWarnings("serial")
 	class ParsedRuleSequence extends RuleSequence implements TokenPos {
 
 		int pos;
@@ -426,6 +430,7 @@ public class RuleParser {
 	}
 
 	/* extension of RuleParse with tokenPos interface */
+	@SuppressWarnings("serial")
 	class ParsedRuleParse extends RuleParse implements TokenPos {
 
 		int pos;

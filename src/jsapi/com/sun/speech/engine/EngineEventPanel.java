@@ -13,6 +13,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 /** Simple GUI for monitoring events of an <code>Engine</code>.  Used for debugging and testing purposes. */
+@SuppressWarnings("serial")
 public class EngineEventPanel extends JPanel {
 
     /** The area where engine events are posted. */

@@ -187,7 +187,8 @@ public class SpeechEventUtilities {
      *
      * @see #postSpeechEvent
      */
-    protected static class SpeechAWTEventTarget extends Component {
+    @SuppressWarnings("serial")
+	protected static class SpeechAWTEventTarget extends Component {
 
         SpeechAWTEventTarget() {
             super();
@@ -214,7 +215,8 @@ public class SpeechEventUtilities {
      *
      * @see #postSpeechEvent
      */
-    protected static class SpeechAWTEvent extends AWTEvent {
+    @SuppressWarnings("serial")
+	protected static class SpeechAWTEvent extends AWTEvent {
 
         static final int EVENT_ID = AWTEvent.RESERVED_ID_MAX + 14830;
         SpeechEventDispatcher dispatcher;

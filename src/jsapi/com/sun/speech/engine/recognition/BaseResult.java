@@ -25,6 +25,7 @@ import javax.speech.recognition.*;
 import java.applet.AudioClip;
 import java.util.*;
 
+@SuppressWarnings("serial")
 public class BaseResult
         implements Result, FinalResult, FinalRuleResult, FinalDictationResult,
         java.io.Serializable, Cloneable, SpeechEventDispatcher {
