@@ -9,23 +9,25 @@ Release Date:  February 2010
 
 New Features and Improvements:
 
+    * Large arbitrary-order language models
     * Simplified and reworked model loading code
     * Raw configuration and and demos
+    * HTK model loader
+    * A lot of code optimizations
     * JSAPI-independent JSGF parser
     * Noise filtering components
     * Lattice rescoring
     * Server-based language model
-    * Large arbitrary-order language models
-    * A lot of code optimizations
 
 Bug fixes:
 
-    * Lots of bug fixes
+    * Lots of bug fixes: PLP extraction, race-conditions
+    in scoring, etc.
     
 Thanks:
 
     Peter Wolf, Yaniv Kunda, Antoine Raux, Dirk Schnelle-Walka,
-    Yannick Estève and LIUM team.
+    Yannick Estève, Anthony Rousseau and LIUM team, Christophe Cerisara.
 
 -------------------------------------------------------------------
 

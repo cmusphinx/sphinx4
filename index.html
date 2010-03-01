@@ -344,8 +344,6 @@
         Instruments-developed 46-Word Speaker-Dependent Isolated
         Word Speech Database".)</i></li>
 
-        <li style="list-style: none"><br /></li>
-
         <li><a href=
         "http://cmusphinx.sourceforge.net/ConnectedDigitsResults.html">
         Connected Digits (TIDIGITS)</a>: Extends the Isolated
@@ -357,8 +355,6 @@
         Texas Instruments-developed Studio Quality
         Speaker-Independent Connected-Digit Corpus".)</i></li>
 
-        <li style="list-style: none"><br /></li>
-
         <li><a href=
         "http://cmusphinx.sourceforge.net/SmallVocabResults.html">Small
         Vocabulary (AN4)</a>: Extends the vocabulary to
@@ -366,28 +362,20 @@
         speaking words as well as spelling words out letter by
         letter.</li>
 
-        <li style="list-style: none"><br /></li>
-
         <li><a href=
         "http://cmusphinx.sourceforge.net/MediumVocabResults.html">Medium
         Vocabulary (RM1)</a>: Extends the vocabulary to
         approximately 1,000 words.</li>
-
-        <li style="list-style: none"><br /></li>
 
         <li><a href=
         "http://cmusphinx.sourceforge.net/MediumVocabResults.html">Medium
         Vocabulary (WSJ5K)</a>: Extends the vocabulary to
         approximately 5,000 words.</li>
 
-        <li style="list-style: none"><br /></li>
-
         <li><a href=
         "http://cmusphinx.sourceforge.net/LargeVocabResults.html">Medium
         Vocabulary (WSJ20K)</a>: Extends the vocabulary to
         approximately 20,000 words.</li>
-
-        <li style="list-style: none"><br /></li>
 
         <li><a href=
         "http://cmusphinx.sourceforge.net/LargeVocabResults.html">Large
@@ -589,8 +577,6 @@
         use ant. You will only need ant if you wish to build
         Sphinx-4 from the source distribution.</li>
 
-        <li style="list-style: none"><br /></li>
-
         <li><b>Subversion (svn)</b>, but only if you want to
         interact directly with the svn tree (which we recommend).
         The canonical places to get it is <a href=
@@ -601,9 +587,6 @@
         sure to choose "svn" when you install cygwin.</li>
       </ul>
     </li>
-
-    <li style="list-style: none"><br />
-     </li>
 
     <li>
       <a name="source" id="source"><b>Downloading
@@ -673,8 +656,6 @@ jar xvf sphinx4-{version}-bin.zip<br />jar xvf sphinx4-{version}-src.zip
       </ul>
     </li>
 
-    <li style="list-style: none"><br /></li>
-
     <li>
       <a name="how_build" id="how_build"><b>Building
       Sphinx-4</b></a>
@@ -715,8 +696,6 @@ ant
 ant clean
 </pre>
     </li>
-
-    <li style="list-style: none"><br /></li>
 
     <li>
       <a name="create_javadocs" id="create_javadocs"><b>Creating
@@ -875,17 +854,11 @@ ant -Daccess=private javadoc
     perspective. Please read this if you'd like to extend
     Sphinx-4.</li>
 
-    <li style="list-style: none"><br />
-     </li>
-
     <li><a name="sphinx_properties" id="sphinx_properties"><b>FAQ:
     Frequently asked questions about Sphinx-4</b></a> The document
     <a href="doc/Sphinx4-faq.html">Frequently asked questions about
     Sphinx-4</a> contains answers to a number of frequently asked
     questions about Sphinx-4</li>
-
-    <li style="list-style: none"><br />
-     </li>
 
     <li>
       <a name="sphinx_properties" id=
@@ -1346,9 +1319,6 @@ The <code>scorer</code> contains the front end, which is called
       </ol>
     </li>
 
-    <li style="list-style: none"><br />
-     </li>
-
     <li>
       <a name="acoustic_models" id="acoustic_models"><b>Acoustic
       Models</b></a>
@@ -1370,36 +1340,7 @@ The <code>scorer</code> contains the front end, which is called
       tests also uses the RM1 and HUB4 models, which are available
       for download separately on the download page. Sphinx-4 can
       handle model packages provided as a jar file.</p>
-
-      <p>Each acoustic model implements the <a href=
-      "javadoc/edu/cmu/sphinx/linguist/acoustic/AcousticModel.html">
-      AcousticModel interface</a>. For example, the WSJ models are
-      wrapped by a class called
-      <code>edu.cmu.sphinx.model.acoustic.WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz</code>,
-      which implements the AcousticModel interface. This
-      implementation class is in the JAR file of the models,
-      together with the actual data files of the model. This way,
-      two simple steps are need to use a particular acoustic
-      model:</p>
-
-      <ol>
-        <li>Include the JAR file in your classpath.</li>
-
-        <li>Specify the model implementation class in the config
-        file.</li>
-      </ol>
-
-      <p>You can find out the model implementation class of a JAR
-      file using the <code>java -jar</code> command. For example,
-      you can find out the model class of the WSJ model by:</p>
-      <pre>
-sphinx4&gt;java -jar lib/WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz.jar<br /><br />Wall Street Journal acoustic models<br />Class: edu.cmu.sphinx.model.acoustic.WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz<br /> Is Binary: true<br /> Sparse Form: false<br /> Filters: 40<br /> Vector Length: 39<br /> Gaussians: 8<br />       Model Definition: etc/WSJ_clean_13dCep_16k_40mel_130Hz_6800Hz.4000.mdef<br />    Data Location: cd_continuous_8gau<br />  Feature Type: cepstra_delta_doubledelta<br />    Sample Rate: 16000<br /> Description: Wall Street Journal acoustic models<br />   Number Fft Points: 512<br />     Max Freq: 6800<br />     Min Freq.: 130<br />
-</pre>The print out also includes details about how the model was
-trained, but this is not important for the average user.
     </li>
-
-    <li style="list-style: none"><br />
-     </li>
 
     <li>
       <a name="language_models" id="language_models"><b>Language
@@ -1424,9 +1365,6 @@ trained, but this is not important for the average user.
 set task = RM<br /><br /># Location of the CMU SLM toolkit<br />set bindir = ~/src/CMU-SLM_Toolkit_v2/bin<br /><br />cat $task.transcript | $bindir/text2wfreq | $bindir/wfreq2vocab &gt; $task.vocab<br /><br />set mode = "-absolute"<br /><br /># Create bigram<br />cat $task.transcript | $bindir/text2idngram -n 2 -vocab $task.vocab | \<br /> $bindir/idngram2lm $mode -context $task.ccs -n 2 -vocab $task.vocab \<br /> -idngram - -arpa $task.bigram.arpa<br /><br /># Create trigram<br />cat $task.transcript | $bindir/text2idngram -n 3 -vocab $task.vocab | \<br /> $bindir/idngram2lm $mode -context $task.ccs -n 3 -vocab $task.vocab \<br /> -idngram - -arpa $task.trigram.arpa<br />
 </pre>
     </li>
-
-    <li style="list-style: none"><br />
-     </li>
 
     <li>
       <a name="bnf_grammars" id="bnf_grammars"><b>BNF-Style
