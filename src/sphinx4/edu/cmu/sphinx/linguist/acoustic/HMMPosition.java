@@ -37,12 +37,18 @@ public enum HMMPosition {
 
     private final String rep;
 
+    /**
+     * Looks up an HMMPosition based upon its representation
+     *
+     * @param rep the string representation
+     * @return the HMMPosition represented by rep or null if not found
+     */
     private HMMPosition(char rep) {
         this.rep = String.valueOf(rep);
     }
 
     /**
-     * Looks up an HMMPosition baed upon its representation
+     * Looks up an HMMPosition based upon its representation
      *
      * @param rep the string representation
      * @return the HMMPosition represented by rep or null if not found
