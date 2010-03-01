@@ -30,7 +30,9 @@ import edu.cmu.sphinx.frontend.util.Microphone;
 import edu.cmu.sphinx.recognizer.Recognizer;
 import edu.cmu.sphinx.util.props.ConfigurationManager;
 
-/** A SphinxRecognizer provides access to Sphinx speech recognition capabilities. */
+/**
+ * A SphinxRecognizer provides access to Sphinx speech recognition capabilities.
+ */
 public class SphinxRecognizer extends BaseRecognizer {
     /** Msecs to sleep before the status of the recognizer is checked again. */
     private static final long SLEEP_MSEC = 50;
@@ -95,7 +97,7 @@ public class SphinxRecognizer extends BaseRecognizer {
     }
 
     /**
-     * Called from the <code>resume</code> method.
+     * Called from the {@link #resume()} method.
      */
     @Override
     protected void handleResume() {
@@ -112,7 +114,7 @@ public class SphinxRecognizer extends BaseRecognizer {
     }
 
     /**
-     * Called from the <code>pause</code> method.
+     * Called from the {@link #pause()} method.
      */
     @Override
     protected void handlePause() {
@@ -129,7 +131,7 @@ public class SphinxRecognizer extends BaseRecognizer {
 
 
     /**
-     * Called from the <code>allocate</code> method.
+     * Called from the {@link #allocate()} method.
      *
      * @throws EngineException if problems are encountered
      */
@@ -158,7 +160,6 @@ public class SphinxRecognizer extends BaseRecognizer {
      * Sphinx4 has different concepts for loading grammars. Since the JSAPI 1.0
      * way does not work properly, this workaround is needed. It simply adds
      * the rules of the loaded grammar to the existing rules.
-     * @since 0.7.2
      */
     @Override
     public RuleGrammar loadJSGF(Reader reader) throws GrammarException,
@@ -176,7 +177,7 @@ public class SphinxRecognizer extends BaseRecognizer {
     }
 
     /**
-     * Called from the <code>deallocate</code> method.
+     * Called from the {@link #deallocate()} method.
      *
      * @throws EngineException if this <code>Engine</code> cannot be
      *   deallocated.
