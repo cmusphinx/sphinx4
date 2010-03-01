@@ -24,7 +24,7 @@ public enum HMMPosition {
     INTERNAL  ('i'), // HMM is completely internal to the word
     UNDEFINED ('-'); // HMM is at an undefined position in the word
 
-	private static final HMMPosition[] posByRep;
+    private static final HMMPosition[] posByRep;
     static {
         int maxChar = 0;
         for (HMMPosition pos : values()) // determine max char to use as index

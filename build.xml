@@ -499,7 +499,7 @@
             description="Generate javadoc, optionally with '-Daccess=private'">
         <delete dir="${javadoc_dir}"/>
         <mkdir dir="${javadoc_dir}"/>
-        <javadoc sourcepath="${src_dir}/sphinx4"
+        <javadoc sourcepath="${src_dir}/sphinx4:${src_dir}/jsapi"
                  additionalparam="-breakiterator"
                  destdir="${javadoc_dir}"
                  overview="${src_dir}/sphinx4/overview.html"
@@ -529,7 +529,7 @@
             depends="handle_jsapi"
             description="checks the javadocs">
         <mkdir dir="${javadoc_check_dir}"/>
-        <javadoc sourcepath="${src_dir}/sphinx4"
+        <javadoc sourcepath="${src_dir}/sphinx4:${src_dir}/jsapi"
                  packagenames="edu.*"
                  excludepackagenames="edu.cmu.sphinx.trainer"
                  destdir="${javadoc_check_dir}"

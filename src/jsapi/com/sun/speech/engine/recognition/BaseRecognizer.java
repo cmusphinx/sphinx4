@@ -197,7 +197,7 @@ public class BaseRecognizer extends BaseEngine implements Recognizer,
 	/**
 	 * From javax.speech.recognition.Recognizer.
 	 * 
-	 * @param JSGFinput
+	 * @param reader
 	 *            the Reader containing JSGF input.
 	 */
 	public RuleGrammar loadJSGF(Reader reader) throws GrammarException,
@@ -932,11 +932,10 @@ public class BaseRecognizer extends BaseEngine implements Recognizer,
 	 * Load grammars imported by a fully qualified Rule Token if they are not
 	 * already loaded.
 	 * 
-	 * @param recognizer
 	 * @param grammar
 	 * @param context
 	 * @param recurse
-	 * @param relo
+	 * @param reload
 	 * @throws IOException
 	 * @throws GrammarException
 	 */

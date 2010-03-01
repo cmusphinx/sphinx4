@@ -14,6 +14,9 @@ import java.lang.annotation.*;
 @S4Property
 public @interface S4Double {
 
+    /**
+     * Default value to return
+     */
     public static final double NOT_DEFINED = -918273645.12345; // not bullet-proof, but should work in most cases
 
 

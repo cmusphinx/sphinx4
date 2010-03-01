@@ -14,6 +14,10 @@ import java.lang.annotation.*;
 @S4Property
 public @interface S4String {
 
+
+    /**
+     * Default value to return
+     */
     public static final String NOT_DEFINED = "nullnullnull";
 
 

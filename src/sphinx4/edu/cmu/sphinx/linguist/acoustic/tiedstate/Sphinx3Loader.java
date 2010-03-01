@@ -95,7 +95,7 @@ import java.util.logging.Logger;
  *  </pre>
  * </p>
  * <p>
- * For more details on using SphinxTrain models in sphinx4, see <a href="../../../../../../../../doc/UsingSphinxTrainModels.html">documentation</a>
+ * For more details on using SphinxTrain models in sphinx4, see <a href="../../../../../../../doc/UsingSphinxTrainModels.html">documentation</a>
  * </p>
  */
 

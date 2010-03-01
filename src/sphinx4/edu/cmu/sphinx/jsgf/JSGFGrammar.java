@@ -148,11 +148,11 @@ import edu.cmu.sphinx.util.props.S4String;
  * grammars. The nodes <code>"&lt;sil&gt;"</code> means "silence".
  * <p/>
  * <p/>
- * <img src="doc-files/helloWorld.jpg"> <br>
+ * <img src="../jsapi/doc-files/helloWorld.jpg"> <br>
  * <i>Figure 3: Grammar graph created from the Hello World grammar. </i>
  * <p/>
  * <p/>
- * <img src="doc-files/commandGrammar.jpg"> <br>
+ * <img src="../jsapi/doc-files/commandGrammar.jpg"> <br>
  * <i>Figure 4: Grammar graph created from the Command grammar. </i>
  * <p/>
  * <p/>
