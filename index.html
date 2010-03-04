@@ -131,7 +131,7 @@
 
             <li><a href="#how_build">Building Sphinx-4</a></li>
 
-            <li><a href="#create_javadocs">Creating
+            <li><a href="#create_javadocs">Create
             Javadocs</a></li>
 
             <li><a href="#setupide">How to setup my IDE (Eclipse,
@@ -311,7 +311,7 @@
 
       <p>(<b>NOTE:</b> The links in this section point to local
       files created by javadoc. If they are broken, please follow
-      the instructions on <a href="#create_javadocs">Creating
+      the instructions on <a href="#create_javadocs">Create
       Javadocs</a> to create these links.)<br />
        </p>
     </li>
@@ -617,7 +617,8 @@
           ZIP files using the <code>jar</code> command which is in
           the <code>bin</code> directory of your Java
           installation:</p>
-          <pre>
+
+<pre>
 jar xvf sphinx4-{version}-bin.zip<br />jar xvf sphinx4-{version}-src.zip
 </pre>
 
@@ -645,9 +646,11 @@ jar xvf sphinx4-{version}-bin.zip<br />jar xvf sphinx4-{version}-src.zip
 
           <ul>
             <li>Get the code from sourceforge.net:
-              <pre>
-% svn co https://cmusphinx.svn.sourceforge.net/svnroot/cmusphinx/trunk/sphinx4<br />
+
+<pre>
+% svn co https://cmusphinx.svn.sourceforge.net/svnroot/cmusphinx/trunk/sphinx4
 </pre>
+
             </li>
           </ul>
         </li>
@@ -673,15 +676,24 @@ jar xvf sphinx4-{version}-bin.zip<br />jar xvf sphinx4-{version}-src.zip
       Java Speech API (JSAPI)</a>, because a number of tests and
       demos rely on having JSAPI installed.</p>
 
+      <p><b>Run ant</b></p>
+
       <p>To build Sphinx-4, at the command prompt change to the
       directory where you installed Sphinx-4 (usually, a simple "cd
-      sphinx4" will do). Set your <code>JAVA_HOME</code>,
-      <code>ANT_HOME</code> and <code>PATH</code> environment
-      variables as described above. Then type the following:</p>
-      <pre>
+      sphinx4" will do). Set required environment variables. 
+      <code>JAVA_HOME</code> to the location of JDK, <code>ANT_HOME</code> 
+      to the location of ant and and <code>PATH</code> to include 
+      both bin subfolder of JDK and bin subfolder of ant
+      variables. For example:</p>
+<pre>
+export JAVA_HOME=/usr/local/jdk1.6.0_14
+export ANT_HOME=/usr/local/apache-ant-1.8.0
+export PATH=/usr/local/jdk1.6.0_10/bin:/usr/local/apache-ant-1.8.0/bin:$PATH
+</pre>      
+      <p>Then type the following:</p>
+<pre>
 ant
 </pre>
-
       <p>This executes the <a href="http://ant.apache.org/">Apache
       Ant</a> command to build the Sphinx-4 classes under the
       <code>bld</code> directory, the jar files under the
@@ -690,13 +702,15 @@ ant
 
       <p>To delete all the output from the build to give you a
       fresh start:</p>
-      <pre>
+
+<pre>
 ant clean
 </pre>
+
     </li>
 
     <li>
-      <a name="create_javadocs" id="create_javadocs"><b>Creating
+      <a name="create_javadocs" id="create_javadocs"><b>Create
       Javadocs</b></a>
 
       <p>The javadocs have already been built if you downloaded the
@@ -704,7 +718,8 @@ ant clean
       yourself, you must download the sphinx4-{version}-src.zip
       distribution instead. To build the javadocs, go to the top
       level directory ("sphinx4-{version}"), and type:</p>
-      <pre>
+
+<pre>
 ant javadoc
 </pre>
 
@@ -713,7 +728,8 @@ ant javadoc
       the information you will need. If you need more details, such
       as private or protected classes, you can generate the
       corresponding javadoc by doing, for example:</p>
-      <pre>
+
+<pre>
 ant -Daccess=private javadoc
 </pre>
     </li>
@@ -914,7 +930,7 @@ ant -Daccess=private javadoc
       <p>Before you run any of the tests, make sure that you have
       built Sphinx-4 already. To do so, go to the top level and
       type:</p>
-      <pre>
+<pre>
 ant
 </pre>
 
@@ -928,9 +944,10 @@ ant
       directories contains a build.xml with targets specific to the
       particular task. The build.xml allows you to run a number of
       different tests. Type:</p>
-      <pre>
+<pre>
 ant -projecthelp
-</pre>to list a help text with the possible targets.
+</pre>
+      to list a help text with the possible targets.
 
       <p><a name="isolated_digits_test" id=
       "isolated_digits_test"><br />
@@ -951,7 +968,8 @@ ant -projecthelp
       Files</a> for detail about the format of batch files.</p>
 
       <p>To run the tests:</p>
-      <pre>
+
+<pre>
  % cd sphinx4/tests/performance/ti46<br /> % ant -projecthelp # to see a list of possible targets<br /> % ant ti46_wordlist<br /> 
 </pre>
 
@@ -977,7 +995,8 @@ ant -projecthelp
       batch files.</p>
 
       <p>To run the tests:</p>
-      <pre>
+
+<pre>
  % cd sphinx4/tests/performance/tidigits<br /> % ant -projecthelp # to see a list of possible targets<br /> % ant tidigits_flat_unigram<br />
 </pre>
 
@@ -991,7 +1010,8 @@ ant -projecthelp
       <p>Download the big endian raw audio format of the <a href=
       "http://www.speech.cs.cmu.edu/databases/an4/">AN4
       Database</a>. Unpack it at a directory of your choice:</p>
-      <pre>
+
+<pre>
  % gunzip an4_raw.bigendian.tar.gz<br /> % tar -xvf an4_raw.bigendian.tar<br />
 </pre>
 
@@ -1009,7 +1029,8 @@ ant -projecthelp
 
       <p>After you have updated the batch files, you can run the
       tests by:</p>
-      <pre>
+
+<pre>
  % cd sphinx4/tests/performance/an4<br /> % ant -projecthelp # to see a list of possible targets<br /> % ant an4_words_unigram<br />
 </pre>
 
@@ -1041,7 +1062,7 @@ ant -projecthelp
       setup.</p>
 
       <p>To run the tests:</p>
-      <pre>
+<pre>
  % cd sphinx4/tests/performance/rm1<br /> % ant -projecthelp # to see a list of possible targets<br /> % ant rm1_bigram<br />
 </pre>
 
@@ -1061,19 +1082,21 @@ ant -projecthelp
       "http://sourceforge.net/project/showfiles.php?group_id=1904&amp;package_id=117949">
       downloads page</a>. For the trigram language model file,
       unpack it by:</p>
-      <pre>
+<pre>
 jar xvf HUB4_trigram_lm.zip
-</pre>The trigram model file is called
-<code>language_model.arpaformat.DMP</code>. Then, in the build file
-for the HUB4 tests,
-<code>sphinx4/tests/performance/hub4/build.xml</code>, changed the
-<code>classpath</code> property of the build file to point to the
-location of your
-<code>HUB4_8gau_13dCep_16k_40mel_133Hz_6855Hz.jar</code>. In the
-configuration file,
-<code>tests/performance/hub4/hub4.config.xml</code>, change the
-'location' of the 'trigramModel' component to where your <code>
-      language_model.arpaformat.DMP</code> file is located.
+</pre>
+      
+      <p>The trigram model file is called
+      <code>language_model.arpaformat.DMP</code>. Then, in the build file
+      for the HUB4 tests,
+      <code>sphinx4/tests/performance/hub4/build.xml</code>, changed the
+      <code>classpath</code> property of the build file to point to the
+      location of your
+      <code>HUB4_8gau_13dCep_16k_40mel_133Hz_6855Hz.jar</code>. In the
+      configuration file,
+      <code>tests/performance/hub4/hub4.config.xml</code>, change the
+      'location' of the 'trigramModel' component to where your <code>
+      language_model.arpaformat.DMP</code> file is located.</p>
 
       <p>You also need to prepare a batch file, which is currently
       called <code>f0_hub4.batch</code> in the build.xml file, by
@@ -1393,7 +1416,7 @@ set task = RM<br /><br /># Location of the CMU SLM toolkit<br />set bindir = ~/s
       "javadoc/index.html">javadoc documentation</a>.</p>
 
       <p>If the previous is broken, please build the javadocs using
-      the instructions in <a href="#create_javadocs">Creating
+      the instructions in <a href="#create_javadocs">Create
       Javadocs</a>. In fact, rebuilding javadocs is something you
       should do every time you change code in Sphinx-4.</p>
 
