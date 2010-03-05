@@ -2,7 +2,7 @@ src/apps/edu/cmu/sphinx/demo/hellongram/hellongram.test
 src/apps/edu/cmu/sphinx/demo/zipcity/screenshot.gif
 doc-files/zipcity.gif
 doc-files/architecture.gif
-doc/1-2-searchgraph.jpg
+doc-files/1-2-searchgraph.jpg
 doc/ProgrammersGuide.html
 doc/Sphinx4-faq.html
 doc/UsingSphinxTrainModels.html
