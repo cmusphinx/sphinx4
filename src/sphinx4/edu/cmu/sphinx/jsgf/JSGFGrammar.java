@@ -225,6 +225,10 @@ public class JSGFGrammar extends Grammar {
 	private GrammarNode firstNode;
 	private Logger logger;
 
+    public JSGFGrammar(String location, LogMath logMath, String grammarName, boolean showGrammar,boolean optimizeGrammar,boolean addSilenceWords, boolean addFillerWords, Dictionary dictionary ) throws MalformedURLException, ClassNotFoundException {
+        this(ConfigurationManagerUtils.resourceToURL(location), logMath, grammarName, showGrammar, optimizeGrammar, addSilenceWords, addFillerWords, dictionary );
+    }
+
 	public JSGFGrammar(URL baseURL, LogMath logMath, String grammarName,
 			boolean showGrammar, boolean optimizeGrammar,
 			boolean addSilenceWords, boolean addFillerWords,
@@ -235,6 +239,7 @@ public class JSGFGrammar extends Grammar {
 		this.logMath = logMath;
 		this.grammarName = grammarName;
 		loadGrammar = true;
+	    logger = Logger.getLogger(getClass().getName());
 	}
 
 	public JSGFGrammar() {

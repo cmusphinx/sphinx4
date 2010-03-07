@@ -1,7 +1,7 @@
 package edu.cmu.sphinx.demo.raw;
 
 import edu.cmu.sphinx.demo.raw.CommonConfiguration;
-import edu.cmu.sphinx.jsapi.JSGFGrammar;
+import edu.cmu.sphinx.jsgf.JSGFGrammar;
 import edu.cmu.sphinx.linguist.acoustic.UnitManager;
 import edu.cmu.sphinx.linguist.acoustic.tiedstate.Sphinx3Loader;
 import edu.cmu.sphinx.linguist.acoustic.tiedstate.TiedStateAcousticModel;
