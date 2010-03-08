@@ -72,6 +72,7 @@ WARRANTIES.
 <li><a href="#result">How do I use the Result object?</a></li>
 <li><a href="#speaker_identification">Does Sphinx-4 support speaker identification?</a></li>
 <li><a href="#confidence_scores">How can I obtain confidence scores for the recognition result?</a></li>
+<li><a href="#no_vocabulary">How to decode without predefined vocabulary?</a></li>
 </ul>
 
 <b>Acoustic &amp; Language Models</b>
@@ -569,6 +570,26 @@ microphone (e.g., a USB headset) on my machine?</b></a>
     </i>.
     </blockquote>
 
+<a name="no_vocabulary"><b>How to decode without predefined vocabulary?</b></a>
+
+   <blockquote> <p> To have efficient error rate, decoder still should
+   have some form of vocabulary. To decode arbitrary words,
+   subword-based decoding is used. It might be phone-based vocabulary
+   which is easy to construct or vocabulary built from
+   automatically-selected subwords of large size (typically, sequences
+   of 4-6 phones). In both cases, it's required to build a subword
+   dictionary and subword language model. With phone-based decoding
+   phone error rate will be significant like (40-60%), so it's only
+   usable for research purposes. Subword-based decoding with large
+   subword units is often used in practice. For more details on this see
+   the articles like:</p>
+   
+   <p>
+   <a href="http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.40.4377">
+   Kenney Ng, Victor W. Zue. Subword-based Approaches for Spoken Document Retrieval (1999).
+   </a>
+   </p>
+   </blockquote>
 
 <a name="train_am"> <b> How can I train my own acoustic models?</b></a>
 
