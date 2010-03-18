@@ -55,6 +55,9 @@ public class WordActiveListFactory extends ActiveListFactory {
         this.maxFiller = maxFiller;
     }
 
+    public WordActiveListFactory() {
+    }
+
 
     /*
     * (non-Javadoc)
