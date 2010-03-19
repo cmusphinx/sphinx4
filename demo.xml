@@ -85,7 +85,6 @@
 	             compile_jsapi_jsgf,
 	             compile_zipcity,
                      compile_sphinx_transcriber,
-                     compile_sphinx_raw,
 	             compile_tags"
             description="Compiles Sphinx-4 demos"/>
 
