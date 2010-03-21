@@ -81,6 +81,7 @@
 		     compile_sphinx_lattice,
 		     compile_sphinx_classbased,
 		     compile_sphinx_confidence,
+		     compile_sphinx_raw,
 	             compile_jsapi_dialog,
 	             compile_jsapi_jsgf,
 	             compile_zipcity,
