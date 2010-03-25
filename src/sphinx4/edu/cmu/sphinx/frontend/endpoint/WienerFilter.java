@@ -14,7 +14,6 @@ import edu.cmu.sphinx.frontend.BaseDataProcessor;
 import edu.cmu.sphinx.frontend.Data;
 import edu.cmu.sphinx.frontend.DataProcessingException;
 import edu.cmu.sphinx.frontend.DoubleData;
-import edu.cmu.sphinx.frontend.endpoint.SpeechClassifier;
 import edu.cmu.sphinx.util.props.PropertyException;
 import edu.cmu.sphinx.util.props.PropertySheet;
 import edu.cmu.sphinx.util.props.S4Component;
@@ -52,11 +51,11 @@ public class WienerFilter extends BaseDataProcessor {
     double lambda = 0.99;
     double gamma = 0.98;
     double etaMin = 1e-2;
-    protected SpeechClassifier classifier;
+    protected AbstractVoiceActivityDetector classifier;
 
     /** The name of the transform matrix file */
-    @S4Component(type = SpeechClassifier.class)
-    public final static String PROP_MARKER = "classifier";
+    @S4Component(type = AbstractVoiceActivityDetector.class)
+    public final static String PROP_CLASSIFIER = "classifier";
 
     /*
      * (non-Javadoc)
@@ -68,7 +67,7 @@ public class WienerFilter extends BaseDataProcessor {
     public void newProperties(PropertySheet ps) throws PropertyException {
         super.newProperties(ps);
 
-        classifier = (SpeechClassifier) ps.getComponent(PROP_MARKER);
+        classifier = (AbstractVoiceActivityDetector) ps.getComponent(PROP_CLASSIFIER);
     }
 
     @Override

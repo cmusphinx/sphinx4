@@ -40,7 +40,7 @@ import java.util.logging.Level;
  *
  * @see SpeechMarker
  */
-public class SpeechClassifier extends BaseDataProcessor {
+public class SpeechClassifier extends AbstractVoiceActivityDetector {
 
     /** The property specifying the endpointing frame length in milliseconds. */
     @S4Integer(defaultValue = 10)
