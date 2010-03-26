@@ -136,36 +136,25 @@ public final class ConfigurationManagerUtils {
     }
 
 
+    // remark: the replacement of xml/sxl suffix is not necessary and just done to improve readability
     public static String getLogPrefix(ConfigurationManager cm) {
         if (cm.getConfigURL() != null)
-            // remark: the replacement of xml/sxl suffix is not necessary and just done to improve readability
             return new File(cm.getConfigURL().getFile()).getName().replace(".sxl", "").replace(".xml", "") + '.';
         else
-//            return "S4CM"+ cm.hashCode() + ".";
             return "S4CM.";
     }
-
-
-    // ensure that the system logging configured only once to circumvent jdk logging bug
-    // cf.  http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=5035854
-    private static boolean wasLogConfigured;
-
-
-    /**
+    
+     /**
      * Configure the logger
      */
     public static void configureLogger(ConfigurationManager cm) {
-        if (wasLogConfigured)
-            return;
-
-        wasLogConfigured = true;
 
         // Allow others to override the logging settings.
         if (System.getProperty("java.util.logging.config.class") != null
                 || System.getProperty("java.util.logging.config.file") != null) {
             return;
         }
-        // apply the log level (if defined) for the root logger (because we're using package based logging now
+        // apply the log level (if defined) for the root logger (because we're using package based logging now)
 
         String cmPrefix = getLogPrefix(cm);
         Logger cmRootLogger = Logger.getLogger(cmPrefix.substring(0, cmPrefix.length() - 1));
@@ -174,7 +163,6 @@ public final class ConfigurationManagerUtils {
         Level rootLevel = Logger.getLogger("").getLevel();
 
         configureLogger(cmRootLogger);
-
 
         String level = cm.getGlobalProperty(GLOBAL_COMMON_LOGLEVEL);
         if (level == null)
@@ -199,8 +187,7 @@ public final class ConfigurationManagerUtils {
         props.setProperty("handlers", "java.util.logging.ConsoleHandler");
         props.setProperty("java.util.logging.ConsoleHandler.level", "FINEST");
         props.setProperty("java.util.logging.ConsoleHandler.formatter",
-                "edu.cmu.sphinx.util.SphinxLogFormatter");
-
+                          "edu.cmu.sphinx.util.SphinxLogFormatter");
         try {
             props.store(bos, "");
             bos.close();
@@ -211,18 +198,11 @@ public final class ConfigurationManagerUtils {
             System.err.println("Can't configure logger, using default configuration");
         }
 
-
         // Now we find the SphinxLogFormatter that the log manager created
         // and configure it.
         Handler[] handlers = logger.getHandlers();
         for (Handler handler : handlers) {
             handler.setFormatter(new SphinxLogFormatter());
-//            if (handler instanceof ConsoleHandler) {
-//                if (handler.getFormatter() instanceof SphinxLogFormatter) {
-//                    SphinxLogFormatter slf = (SphinxLogFormatter) handler.getFormatter();
-//                    slf.setTerse("true".equals(level));
-//                }
-//            }
         }
     }
 

@@ -55,25 +55,6 @@ public final class LogMath implements Configurable, Serializable {
     private transient float maxLogValue;
     private transient float minLogValue;
 
-    /** The most recently created instance of this class. */
-    private transient static LogMath lastInstance;
-
-
-    /** Returns the last created instance of <code>LogMath</code> or a default instance using all default parameters. */
-    public static LogMath getInstance() {
-        if (lastInstance == null) {
-            lastInstance = ConfigurationManager.getInstance(LogMath.class);
-        }
-
-        return lastInstance;
-    }
-
-
-    /** Resets the singelton instance kept by this class. This is mainly required for unit-testing. */
-    public static void clearInstance() {
-        lastInstance = null;
-    }
-
     public LogMath(float logBase, boolean useAddTable) {
         this.logger = Logger.getLogger(getClass().getName());
 
@@ -95,11 +76,6 @@ public final class LogMath implements Configurable, Serializable {
         useAddTable = ps.getBoolean(PROP_USE_ADD_TABLE);
 
         init();
-
-        if (lastInstance != null)
-            System.err.println("Creating new instance of LogMath while another instance is already present");
-
-        lastInstance = this;
     }
 
 
@@ -151,7 +127,7 @@ public final class LogMath implements Configurable, Serializable {
             // where log is the log in the appropriate base.
             //
             // Added -Math.rint(...) to round to nearest
-            // integer. Added the negation to match the preceeding
+            // integer. Added the negation to match the preceding
             // documentation
             entriesInTheAddTable = (int) -Math
                     .rint(linearToLog(logToLinear(0.5f) - 1));

@@ -19,10 +19,12 @@ import java.util.logging.Formatter;
 import java.util.logging.LogRecord;
 
 /**
- * Provides a log formatter for use with sphinx. This formatter generates nicer looking console messages than the
- * default formatter. To use the formatter, set the property
+ * Provides a log formatter for use with CMU Sphinx. This formatter generates
+ * nicer looking console messages than the default formatter. To use the
+ * formatter, set the property
  * <p/>
- * java.util.logging.ConsoleHandler.formatter to edu.cmu.sphinx.util.SphinxLogFormatter
+ * java.util.logging.ConsoleHandler.formatter to
+ * edu.cmu.sphinx.util.SphinxLogFormatter
  * <p/>
  * This is typically done in a custom loger.properties file
  */
@@ -77,9 +79,6 @@ public class SphinxLogFormatter extends Formatter {
 
             sb.append(Utilities.pad(record.getLevel().getName() + ' ' + source, 24));
             sb.append("  ").append(record.getMessage()).append('\n');
-//            if (record.getLevel().equals(Level.WARNING) || record.getLevel().equals(Level.SEVERE)) {
-//                sb.append("                   in ").append(record.getSourceClassName()).append(':').append(record.getSourceMethodName()).append('-').append(record.getLoggerName()).append('\n');
-//            }
             return sb.toString();
         }
     }

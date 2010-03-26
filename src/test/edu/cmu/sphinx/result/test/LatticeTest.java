@@ -22,7 +22,7 @@ public class LatticeTest {
 
 		System.err.println("Building test Lattice");
 
-		lattice = new Lattice(LogMath.getInstance());
+		lattice = new Lattice(new LogMath(1.0001f, true));
 
 		/*
 		 * 1 --> 2 - / \ 0 --> 1 --> 4 \ \ / 2 --> 3 -
