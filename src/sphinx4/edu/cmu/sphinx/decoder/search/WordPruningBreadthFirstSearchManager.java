@@ -513,6 +513,7 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
      *
      * @param activeList the active list to track
      */
+    @SuppressWarnings("unused")
     private void monitorWords(ActiveList activeList) {
         WordTracker tracker = new WordTracker(currentFrameNumber);
 
@@ -599,33 +600,51 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
 
 
     /**
-     * Find the best token to use as a predecessor token given a candidate predecessor. The predecessor is the most
-     * recent word token unless keepAllTokens is set, in which case, the predecessor is always the candidate
-     * predecessor.
-     *
-     * @param token the token of interest
+     * Find the token to use as a predecessor in resultList given a candidate
+     * predecessor. There are three cases here:
+     * 
+     * <ul>
+     * <li>We want to store everything in resultList. In that case
+     * {@link #keepAllTokens} is set to true and we just store everything that
+     * was built before.
+     * <li>We are only interested in sequence of words. In this case we just
+     * keep word tokens and ignore everything else. In this case timing and
+     * scoring information is lost since we keep scores in emitting tokens.
+     * <li>We want to keep words but we want to keep scores to build a lattice
+     * from the result list later and {@link #buildWordLattice} is set to true.
+     * In this case we want to insert intermediate token to store the score and
+     * this token will be used during lattice path collapse to get score on
+     * edge. See {@link edu.cmu.sphinx.result.Lattice} for details of resultList
+     * compression.
+     * </ul>
+     * 
+     * @param token
+     *            the token of interest
      * @return the immediate successor word token
      */
-    protected Token getWordPredecessor(Token token) {
+    protected Token getResultListPredecessor(Token token) {
+
         if (keepAllTokens) {
             return token;
-        } else {
-            float logAcousticScore = 0.0f;
-            float logLanguageScore = 0.0f;
-
-            while (token != null && !token.isWord()) {
-                logAcousticScore += token.getAcousticScore();
-                logLanguageScore += token.getLanguageScore();
-                token = token.getPredecessor();
-            }
-            if (buildWordLattice) {
-                return new Token(logAcousticScore, logLanguageScore, token);
-            } else {
-                return token;
-            }
         }
-    }
 
+        float logAcousticScore = 0.0f;
+        float logLanguageScore = 0.0f;
+
+        while (token != null && !token.isWord()) {
+            logAcousticScore += token.getAcousticScore();
+            logLanguageScore += token.getLanguageScore();
+            token = token.getPredecessor();
+        }
+        
+        if (buildWordLattice) {
+            Token newToken = new Token(logAcousticScore, logLanguageScore, token);
+            if (token != null)
+                 newToken.setScore(token.getScore());
+            return newToken;
+        }
+        return token;
+    }
 
     /**
      * Returns the state key for the given state. If we are using token stacks then the key will be related to the
@@ -684,7 +703,7 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
         // If this is a final state, add it to the final list
 
         if (token.isFinal()) {
-            resultList.add(getWordPredecessor(token));
+            resultList.add(getResultListPredecessor(token));
             return;
         }
 
@@ -703,7 +722,7 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
 
         SearchState state = token.getSearchState();
         SearchStateArc[] arcs = state.getSuccessors();
-        Token predecessor = getWordPredecessor(token);
+        Token predecessor = getResultListPredecessor(token);
 
         // For each successor
         // calculate the entry score for the token based upon the
@@ -1275,7 +1294,7 @@ class WordStats {
 
 
     /**
-     * Updates the stats based upon the scores for the given token
+     * Updates the statistics based upon the scores for the given token
      *
      * @param t the token
      */
