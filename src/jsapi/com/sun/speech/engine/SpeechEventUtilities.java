@@ -7,9 +7,13 @@
  */
 package com.sun.speech.engine;
 
-import javax.speech.SpeechEvent;
-import java.awt.*;
+import java.awt.AWTEvent;
+import java.awt.Component;
+import java.awt.EventQueue;
+import java.awt.Toolkit;
 import java.security.AccessControlException;
+
+import javax.speech.SpeechEvent;
 
 /**
  * Utilities to help with dispatch JSAPI 1.0 events on the event dispatching thread of AWT/Swing.  This is needed to
@@ -111,7 +115,7 @@ public class SpeechEventUtilities {
      * @param dispatcher the dispatcher that will dispatch the event
      * @param event      the SpeechEvent to post
      */
-    static public void postSpeechEvent(SpeechEventDispatcher dispatcher,
+    public static void postSpeechEvent(SpeechEventDispatcher dispatcher,
                                        SpeechEvent event) {
         postSpeechEvent(dispatcher, event, waitUntilDispatched);
     }
@@ -131,8 +135,8 @@ public class SpeechEventUtilities {
      * @param waitUntilDispatched if true, do not return until the event have been dispatched
      */
     static public void postSpeechEvent(
-            SpeechEventDispatcher dispatcher,
-            SpeechEvent event,
+            final SpeechEventDispatcher dispatcher,
+            final SpeechEvent event,
             boolean waitUntilDispatched) {
 
         /* Only use the AWT EventQueue if AWT is running.  If it isn't
@@ -177,7 +181,12 @@ public class SpeechEventUtilities {
                                 event));
             }
         } else {
-            dispatcher.dispatchSpeechEvent(event);
+            final Thread thread = new Thread() {
+                public void run() {
+                    dispatcher.dispatchSpeechEvent(event);
+                }
+            };
+            thread.start();
         }
     }
 
