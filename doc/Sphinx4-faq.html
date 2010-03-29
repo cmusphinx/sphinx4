@@ -549,14 +549,22 @@ microphone (e.g., a USB headset) on my machine?</b></a>
 <a name="speaker_identification"><b>Does Sphinx-4 support speaker identification?</b></a>
 
     <blockquote>
+    <p>
     Sphinx-4 currently does not support speaker identification, which is the
     process of identifying who is speaking. However, the architecture of
     Sphinx-4 is flexible enough for someone to add such capabilities.
     To learn more about speaker identification:
     <a href="http://www.speech.cs.cmu.edu/comp.speech/Section6/Q6.6.html">
     http://www.speech.cs.cmu.edu/comp.speech/Section6/Q6.6.html</a>
-    </blockquote>
+    </p>
 
+    <p> For those interested to implement it it makes sense to
+    investigate the software specifically targetted to do speaker
+    identification first like <a
+    href="http://mistral.univ-avignon.fr/en/index.html">MISTRAL</a>
+    </p>
+
+    </blockquote>
 
 <a name="confidence_scores"><b>How can I obtain confidence scores for the recognition result?</b></a>
 
@@ -696,7 +704,7 @@ microphone (e.g., a USB headset) on my machine?</b></a>
 <a name="create_binary_lm"> <b> I've created by own language model. How do I create the binary (DMP) form?</b></a>
 
     <blockquote>
-    </p>
+    <p>
     Use <code>sphinx_lm_convert</code> tool from sphinxbase package. This
     tool allows you to convert from ARPA language model format to 
     DMP format and back. Please note that some LM tools create non-standard
