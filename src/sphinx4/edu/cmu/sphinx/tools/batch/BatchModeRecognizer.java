@@ -246,6 +246,12 @@ public class BatchModeRecognizer implements Configurable {
                 logger.info
                         ("Reading " + filename + " as raw audio file.");
                 is = new FileInputStream(filename);
+		// Total hack: NIST Sphere files aren't supported by
+		// javax.sound, so skip their header
+		if (filename.toLowerCase().endsWith(".sph")) {
+			logger.info("Skipping 1024-byte Sphere header.");
+			is.skip(1024);
+		}
             }
             if (dataSource instanceof StreamDataSource) {
                 ((StreamDataSource) dataSource).setInputStream(is, filename);
