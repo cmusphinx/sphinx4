@@ -58,7 +58,6 @@ public abstract class ActiveListFactory implements Configurable {
     public ActiveListFactory( int absoluteBeamWidth,double relativeBeamWidth, LogMath logMath ){
         this.absoluteBeamWidth = absoluteBeamWidth;
         this.logRelativeBeamWidth = logMath.linearToLog(relativeBeamWidth);      
-        // to Nickolay: what to do with logMath parameter? newProperties() seems to create a never-used object.
     }
 
     public ActiveListFactory() {
