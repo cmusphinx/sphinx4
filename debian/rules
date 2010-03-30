@@ -56,7 +56,7 @@ binary-indep: install
 	dh_installchangelogs 
 	dh_installdocs
 	dh_link /usr/share/java/sphinx4-${VERSION}.jar /usr/share/java/sphinx4.jar
-	dh_link -p libsphinx4-java-doc ../libsphinx4-java/api /usr/share/doc/libsphinx4-java-doc/api
+	ln -s ../libsphinx4-java/api debian/libsphinx4-java-doc/usr/share/doc/libsphinx4-java-doc/api
 	dh_link -p sphinx4-utils /usr/share/java/sphinx4-batch-${VERSION}.jar /usr/share/java/sphinx4-batch.jar
 	dh_link
 	dh_compress
