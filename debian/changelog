@@ -1,0 +1,17 @@
+sphinx4 (1.0beta4-0svn1) unstable; urgency=low
+
+  * Generic Debian packaging for the Sphinx SVN repository
+
+ -- David Huggins-Daines <dhuggins@cs.cmu.edu>  Mon, 29 Mar 2010 19:41:00 -0400
+
+sphinx4 (1.0beta4-0dhd2) karmic; urgency=low
+
+  * Oops!  This is architecture-independent.
+
+ -- David Huggins-Daines <dhuggins@cs.cmu.edu>  Fri, 19 Mar 2010 16:07:26 -0400
+
+sphinx4 (1.0beta4-0dhd1) karmic; urgency=low
+
+  * Initial packaging for CMU Sphinx PPA.
+
+ -- David Huggins-Daines <dhuggins@cs.cmu.edu>  Fri, 19 Mar 2010 15:25:16 -0400
