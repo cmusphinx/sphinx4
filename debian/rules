@@ -24,7 +24,7 @@ configure-stamp:
 build: build-stamp
 build-stamp: configure-stamp  
 	dh_testdir
-	ant sphinx4_jar batch_jar
+	ant sphinx4_jar batch_jar javadoc
 	touch $@
 
 clean: 
@@ -43,6 +43,7 @@ install: build
 	cp lib/sphinx4.jar debian/libsphinx4-java/usr/share/java/sphinx4-${VERSION}.jar
 	cp lib/batch.jar debian/sphinx4-utils/usr/share/java/sphinx4-batch-${VERSION}.jar
 	install -m755 debian/sphinx4_batch debian/sphinx4-utils/usr/bin/sphinx4_batch
+	dh_install
 
 # Build architecture-independent files here.
 binary-arch: install
@@ -55,6 +56,7 @@ binary-indep: install
 	dh_installchangelogs 
 	dh_installdocs
 	dh_link /usr/share/java/sphinx4-${VERSION}.jar /usr/share/java/sphinx4.jar
+	dh_link -p libsphinx4-java-doc ../libsphinx4-java/api /usr/share/doc/libsphinx4-java-doc/api
 	dh_link -p sphinx4-utils /usr/share/java/sphinx4-batch-${VERSION}.jar /usr/share/java/sphinx4-batch.jar
 	dh_link
 	dh_compress

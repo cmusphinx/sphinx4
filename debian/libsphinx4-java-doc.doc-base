@@ -1,0 +1,12 @@
+Document: sphinx4-manual
+Title: Sphinx4 Manual
+Author: The Sphinx-4 Team
+Abstract: Sphinx4 is a speaker-independent large vocabulary continuous
+ speech recognizer released under a BSD style license. It is also a
+ collection of open source tools and resources that allows researchers
+ and developers to build speech recognition systems.
+Section: Programming
+
+Format: HTML
+Index: /usr/share/doc/libsphinx4-java/api/index.html
+Files: /usr/share/doc/libsphinx4-java/api/*.html

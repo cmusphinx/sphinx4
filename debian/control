@@ -8,16 +8,30 @@ Homepage: http://cmusphinx.sourceforge.net/
 
 Package: libsphinx4-java
 Architecture: all
-Depends: default-jre-headless
+Depends: ${misc:Depends}, default-jre-headless
+Suggests: libsphinx4-java-doc
 Description: Large-vocabulary Speech Recognizer
  Sphinx4 is a speaker-independent large vocabulary continuous speech
  recognizer released under a BSD style license. It is also a
  collection of open source tools and resources that allows researchers
  and developers to build speech recognition systems.
 
+Package: libsphinx4-java-doc
+Section: doc
+Architecture: all
+Depends: ${misc:Depends}, openjdk-6-doc | classpath-doc
+Suggests: libsphinx4-java
+Description: Large-vocabulary Speech Recognizer - documentation
+ Sphinx4 is a speaker-independent large vocabulary continuous speech
+ recognizer released under a BSD style license. It is also a
+ collection of open source tools and resources that allows researchers
+ and developers to build speech recognition systems.
+ .
+ This package contains the documentation for Sphinx4.
+
 Package: sphinx4-utils
 Architecture: all
-Depends: libsphinx4-java (= ${binary:Version})
+Depends: ${misc:Depends}, libsphinx4-java (= ${binary:Version})
 Description: Large-vocabulary Speech Recognizer
  Sphinx4 is a speaker-independent large vocabulary continuous speech
  recognizer released under a BSD style license. It is also a
