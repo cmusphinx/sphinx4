@@ -144,7 +144,8 @@ abstract public class CommonConfiguration {
                 500, // endSilenceTime,
                 100, // speechLeader,
                 50,  // speechLeaderFrames
-                100  // speechTrailer
+                100, // speechTrailer
+                15.0 // endSilenceDecay
         );
 
         this.nonSpeechDataFilter = new NonSpeechDataFilter();

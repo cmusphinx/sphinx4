@@ -4,9 +4,11 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 
 /**
+ * Created by IntelliJ IDEA.
  * User: peter
- * Date: Nov 6, 2009
- * Time: 8:59:23 AM
+ * Date: Jan 12, 2010
+ * Time: 4:09:25 PM
+ * To change this template use File | Settings | File Templates.
  * <p/>
  * Copyright 1999-2004 Carnegie Mellon University.
  * Portions Copyright 2004 Sun Microsystems, Inc.
@@ -17,15 +19,8 @@ import java.net.URISyntaxException;
  * redistribution of this file, and for a DISCLAIMER OF ALL
  * WARRANTIES.
  */
-public class RawEverything {
-    public static void main(String[] args) throws MalformedURLException, URISyntaxException, ClassNotFoundException {
-
-        if( args.length > 2 ) {
-            throw new Error( "USAGE: RawEverything [<WAV file>]" );
-        }
-
-        new RawTranscriber().run(args);
-        new RawHelloNGram().run(args);
-        new RawLattice().run(args);
+public class LatticeConfiguration extends HelloNGramConfiguration {
+    public LatticeConfiguration() throws MalformedURLException, URISyntaxException, ClassNotFoundException {
     }
+
 }

@@ -29,15 +29,15 @@ import java.net.MalformedURLException;
 public class RawTranscriber {
 
     public static void main(String[] args) throws IOException, UnsupportedAudioFileException, URISyntaxException, ClassNotFoundException {
-        run(args);
+        new RawTranscriber().run(args);
     }
 
-    public static void run(String[] args) throws MalformedURLException, URISyntaxException, ClassNotFoundException {
-        System.out.println("\nRunning RawTranscriber...");
+    public void run(String[] args) throws MalformedURLException, URISyntaxException, ClassNotFoundException {
+        System.out.println("\nRunning " + getClass().getSimpleName() + "...");
 
         URL audioURL;
         if (args.length > 2) {
-            throw new Error("USAGE: RawTranscriber [<WAV file>]");
+            throw new Error("USAGE: " + getClass().getSimpleName() + " [<WAV file>]");
         }
         else if(args.length == 2) {
             audioURL = new URL(args[1]);

@@ -23,42 +23,14 @@ import java.net.MalformedURLException;
  * redistribution of this file, and for a DISCLAIMER OF ALL
  * WARRANTIES.
  */
-public class RawHelloNGram {
+public class RawHelloNGram extends RawBase {
     public static void main(String[] args) throws MalformedURLException, URISyntaxException, ClassNotFoundException {
-        run(args);
+        new RawHelloNGram().run(args);
     }
 
-    public static void run(String[] args) throws MalformedURLException, URISyntaxException, ClassNotFoundException {
-        System.out.println("\nRunning RawHelloNGram...");
-
-        URL audioURL;
-        if (args.length > 2) {
-            throw new Error("USAGE: RawTranscriber [<WAV file>]");
-        }
-        else if(args.length == 2) {
-            audioURL = new URL(args[1]);
-        }
-        else {
-            audioURL = ConfigurationManagerUtils.resourceToURL("resource:/edu/cmu/sphinx/demo/transcriber/10001-90210-01803.wav");
-        }
-
-        // get a recognizer configurred for the HelloNGram task
+    protected CommonConfiguration getConfiguration() throws MalformedURLException, URISyntaxException, ClassNotFoundException {
         HelloNGramConfiguration config = new HelloNGramConfiguration();
-
-        // allocate the resource necessary for the recognizer
-        System.out.println("Loading...");
-        Recognizer recognizer = config.getRecognizer();
-        recognizer.allocate();
-
-        // configure the audio input for the recognizer
-        AudioFileDataSource audioSource = config.getAudioFileDataSource();
-        audioSource.setAudioFile(audioURL, null);
-
-        // Loop unitl last utterance in the audio file has been decoded, in which case the recognizer will return null.
-        Result result;
-        while ((result = recognizer.recognize()) != null) {
-            String resultText = result.getBestResultNoFiller();
-            System.out.println(resultText);
-        }
+        return config;
     }
+
 }

@@ -98,9 +98,9 @@ public class SimpleBreadthFirstSearchManager implements SearchManager {
     protected Linguist linguist; // Provides grammar/language info
     private Pruner pruner; // used to prune the active list
     private AcousticScorer scorer; // used to score the active list
-    private int currentFrameNumber; // the current frame number
-    private ActiveList activeList; // the list of active tokens
-    private List<Token> resultList; // the current set of results
+    protected int currentFrameNumber; // the current frame number
+    protected ActiveList activeList; // the list of active tokens
+    protected List<Token> resultList; // the current set of results
     protected LogMath logMath;
 
     private Logger logger;
@@ -124,7 +124,7 @@ public class SimpleBreadthFirstSearchManager implements SearchManager {
     // Working data
     // ------------------------------------
 
-    private boolean showTokenCount;
+    protected boolean showTokenCount;
     private boolean wantEntryPruning;
     private Map<SearchState, Token> bestTokenMap;
     private float logRelativeWordBeamWidth;
@@ -134,7 +134,7 @@ public class SimpleBreadthFirstSearchManager implements SearchManager {
     private float wordThreshold;
     private int growSkipInterval;
     private ActiveListFactory activeListFactory;
-    private boolean streamEnd;
+    protected boolean streamEnd;
 
     public SimpleBreadthFirstSearchManager() {
         
@@ -246,7 +246,7 @@ public class SimpleBreadthFirstSearchManager implements SearchManager {
      * grow-step up to final states or the last emitting state in order to fix the list.
      * @return newly created list
      */
-    private ActiveList undoLastGrowStep() {
+    protected ActiveList undoLastGrowStep() {
         ActiveList fixedList = activeList.newInstance();
 
         for (Token token : activeList) {
@@ -533,7 +533,7 @@ public class SimpleBreadthFirstSearchManager implements SearchManager {
 
 
     /** Counts all the tokens in the active list (and displays them). This is an expensive operation. */
-    private void showTokenCount() {
+    protected void showTokenCount() {
         if (logger.isLoggable(Level.INFO)) {
             Set<Token> tokenSet = new HashSet<Token>();
             for (Token token : activeList) {

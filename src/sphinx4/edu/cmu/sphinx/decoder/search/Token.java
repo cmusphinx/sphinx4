@@ -44,6 +44,7 @@ public class Token implements Scoreable {
     private float logTotalScore;
     private final float logLanguageScore;
     private float logInsertionProbability;
+    private float logRawAcousticScore;
     private float logAcousticScore;
     private float logWorkingScore;
     private SearchState searchState;
@@ -154,6 +155,7 @@ public class Token implements Scoreable {
     public Token(float logAcousticScore, float logLanguageScore,
                  Token predecessor) {
         this.logAcousticScore = logAcousticScore;
+        this.logRawAcousticScore = logAcousticScore;
         this.logLanguageScore = logLanguageScore;
         this.predecessor = predecessor;
     }
@@ -326,6 +328,11 @@ public class Token implements Scoreable {
         return logAcousticScore;
     }
 
+
+    /** Returns the un-normalized acoustic score for this token (in logMath log base) */
+    public float getRawAcousticScore() {
+        return logRawAcousticScore;
+    }
 
     /**
      * Returns the SearchState associated with this token

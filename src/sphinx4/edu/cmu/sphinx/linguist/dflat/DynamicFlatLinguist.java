@@ -123,8 +123,8 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
 
     public DynamicFlatLinguist(AcousticModel acousticModel, Grammar grammar, UnitManager unitManager, LogMath logMath,
                                double logWordInsertionProbability, double logSilenceInsertionProbability, double logUnitInsertionProbability,
-                               double logFillerInsertionProbability, float languageWeight, boolean addOutOfGrammarBranch, AcousticModel phoneLoopAcousticModel
-                               ) {
+                               double logFillerInsertionProbability, float languageWeight, boolean addOutOfGrammarBranch, 
+                               double logOutOfGrammarBranchProbability, AcousticModel phoneLoopAcousticModel ) {                              
         // hookup to all of the components
         this.logger = Logger.getLogger(getClass().getName());
         this.acousticModel = acousticModel;

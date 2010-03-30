@@ -110,13 +110,14 @@ public class SpeechMarker extends BaseDataProcessor {
     private int frameCount;
     private int initialEndSilenceTime;
 
-    public SpeechMarker(int startSpeechTime, int endSilenceTime, int speechLeader, int speechLeaderFrames, int speechTrailer) {
+    public SpeechMarker(int startSpeechTime, int endSilenceTime, int speechLeader, int speechLeaderFrames, int speechTrailer, double endSilenceDecay) {
         initLogger();
         this.startSpeechTime = startSpeechTime;
         this.endSilenceTime = endSilenceTime;
         this.speechLeader = speechLeader;
         this.speechLeaderFrames = speechLeaderFrames;
         this.speechTrailer = speechTrailer;
+        this.endSilenceDecay = endSilenceDecay;       
         this.initialEndSilenceTime = endSilenceTime;
     }
 
