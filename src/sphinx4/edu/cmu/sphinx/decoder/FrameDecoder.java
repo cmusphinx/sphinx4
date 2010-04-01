@@ -36,6 +36,9 @@ public class FrameDecoder extends AbstractDecoder implements DataProcessor {
     public FrameDecoder( SearchManager searchManager, boolean fireNonFinalResults, boolean autoAllocate, List<ResultListener> listeners) {
         super(searchManager, fireNonFinalResults, autoAllocate, listeners);
     }    
+    
+    public FrameDecoder() {
+    }
 
     /**
      * Decode a single frame.
