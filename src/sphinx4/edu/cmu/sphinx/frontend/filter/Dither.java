@@ -30,7 +30,7 @@ import java.util.Random;
  */
 public class Dither extends BaseDataProcessor {
 
-    /** The maximal value which could be added/substracted to/from the signal*/
+    /** The maximal value which could be added/subtracted to/from the signal*/
     @S4Double(defaultValue = 2.0)
     public static final String PROP_MAX_DITHER = "maxDither";
     private double ditherMax;
@@ -50,6 +50,7 @@ public class Dither extends BaseDataProcessor {
     @S4Boolean(defaultValue = false)
     public static final String PROP_USE_RANDSEED = "useRandSeed";
     private boolean useRandSeed;
+    Random r;
 
     public Dither(  double ditherMax, boolean useRandSeed, double maxValue, double minValue) {
         initLogger();
@@ -59,6 +60,7 @@ public class Dither extends BaseDataProcessor {
 
         this.maxValue = maxValue;
         this.minValue = minValue;
+        initialize();
     }
 
     public Dither( ) {
@@ -79,6 +81,10 @@ public class Dither extends BaseDataProcessor {
     @Override
     public void initialize() {
         super.initialize();
+        if (useRandSeed)
+            r = new Random();
+        else
+            r = new Random(12345);
     }
 
 
@@ -110,11 +116,6 @@ public class Dither extends BaseDataProcessor {
      */
     private DoubleData process(Data input) throws IllegalArgumentException {
         DoubleData output;
-        Random r;
-        if (useRandSeed)
-            r = new Random();
-        else
-            r = new Random(12345);
 
         assert input instanceof DoubleData;
         double[] inFeatures;
