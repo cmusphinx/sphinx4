@@ -14,7 +14,7 @@ package edu.cmu.sphinx.linguist;
 
 import edu.cmu.sphinx.linguist.acoustic.HMMState;
 
-/** Represents a single hmm state in a language search space */
+/** Represents a single HMM state in a language search space */
 public interface HMMSearchState extends SearchState {
 
     /**

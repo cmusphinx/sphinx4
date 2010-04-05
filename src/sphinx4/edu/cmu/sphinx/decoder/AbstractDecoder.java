@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
-/** An abstract decoder which implements all functionality which is indpendent of the used decoding-pardigm (pull/push). */
+/** An abstract decoder which implements all functionality which is independent of the used decoding-paradigm (pull/push). */
 public abstract class AbstractDecoder implements ResultProducer, Configurable {
 
     /** The property that defines the name of the search manager to use */

@@ -647,11 +647,14 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
     }
 
     /**
-     * Returns the state key for the given state. If we are using token stacks then the key will be related to the
-     * search state and the word history (depending on the type of token stacks), otherwise, the key will simply be the
-     * state itself. Currently we are not using token stacks so the state is the key.
-     *
-     * @param state the state to get the key for
+     * Returns the state key for the given state. If we are using token stacks
+     * then the key will be related to the search state and the word history
+     * (depending on the type of token stacks), otherwise, the key will simply
+     * be the state itself. Currently we are not using token stacks so the state
+     * is the key.
+     * 
+     * @param state
+     *            the state to get the key for
      * @return the key for the given state
      */
     private Object getStateKey(SearchState state) {
@@ -731,7 +734,7 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
         // the SearchState and frame then create a new token, add
         // it to the lattice and the SearchState.
         // If the token is an emitting token add it to the list,
-        // othewise recursively collect the new tokens successors.
+        // otherwise recursively collect the new tokens successors.
 
         for (SearchStateArc arc : arcs) {
             SearchState nextState = arc.getState();
@@ -784,7 +787,7 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
      * Determines whether or not we've visited the state associated with this token since the previous frame.
      *
      * @param t
-     * @return true if we've visted the search state since the last frame
+     * @return true if we've visited the search state since the last frame
      */
     private boolean isVisited(Token t) {
         SearchState curState = t.getSearchState();
@@ -1036,12 +1039,13 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
 // There's some experimental code here used to track tokens
 
 // and word beams.
+
 /**
- * A 'best token' key. This key will allow hmm states that have identical word histories and are in the same HMM state
- * to be treated equivalently. When used as the best token key, only the best scoring token with a given word history
+ * A 'best token' key. This key will allow HMM states that have identical word
+ * histories and are in the same HMM state to be treated equivalently. When used
+ * as the best token key, only the best scoring token with a given word history
  * survives per HMM.
  */
-
 class SinglePathThroughHMMKey {
 
     private final HMMSearchState hmmSearchState;
@@ -1131,7 +1135,7 @@ class TokenHeap {
 
 
     /**
-     * Determines if the heap is ful
+     * Determines if the heap is full
      *
      * @return <code>true</code> if the heap is full
      */
@@ -1281,7 +1285,7 @@ class WordStats {
     private final WordSequence ws;
 
     /**
-     * Creates a word stat for the given sequence
+     * Creates a word statistics for the given sequence
      *
      * @param ws the word sequence
      */
@@ -1310,7 +1314,7 @@ class WordStats {
 
 
     /**
-     * Returns a string representation of the stats
+     * Returns a string representation of the statistics
      *
      * @return a string representation
      */
@@ -1532,10 +1536,10 @@ class TokenTracker {
 
 
     /**
-     * Gets the stats for a particular token
+     * Gets the statistics for a particular token
      *
      * @param t the token of interest
-     * @return the token stats associated with the given token
+     * @return the token statistics associated with the given token
      */
     private TokenStats getStats(Token t) {
         TokenStats stats = stateMap.get(t.getSearchState()
@@ -1548,8 +1552,10 @@ class TokenTracker {
     }
 }
 
-/** A class for keeing track of statistics about tokens. Tracks the count, min and max score for a particular state. */
-
+/**
+ * A class for keeping track of statistics about tokens. Tracks the count,
+ * minimum and maximum score for a particular state.
+ */
 class TokenStats {
 
     int count;

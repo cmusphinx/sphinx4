@@ -35,7 +35,7 @@ public final class WordSequence {
     /**
      * Constructs a word sequence with the given depth.
      *
-     * @param size the maxium depth of the word history
+     * @param size the maximum depth of the word history
      */
     private WordSequence(int size) {
         words = new Word[size];
@@ -158,10 +158,10 @@ public final class WordSequence {
 
 
     /**
-     * Returns the nth word in this sequence
+     * Returns the n-th word in this sequence
      *
      * @param n which word to return
-     * @return the nth word in this sequence
+     * @return the n-th word in this sequence
      */
     public Word getWord(int n) {
         if (n >= words.length) {
@@ -198,7 +198,7 @@ public final class WordSequence {
     /**
      * Calculates the hashcode for this object
      *
-     * @return a hascode for this object
+     * @return a hashcode for this object
      */
     @Override
     public int hashCode() {

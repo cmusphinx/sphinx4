@@ -33,7 +33,7 @@ import java.util.logging.Logger;
  * role of any linguist is to represent the search space for the decoder. The initial state in the search space can be
  * retrieved by a SearchManager via a call to <code> getInitialSearchState</code>. This method returns a SearchState.
  * Successor states can be retrieved via calls to <code>SearchState.getSuccessors().</code>. There are a number of
- * search state subinterfaces that are used to indicate different types of states in the search space:
+ * search state sub-interfaces that are used to indicate different types of states in the search space:
  * <p/>
  * <ul> <li><b>WordSearchState </b>- represents a word in the search space. <li><b>UnitSearchState </b>- represents a
  * unit in the search space <li><b>HMMSearchState </b> represents an HMM state in the search space </ul>
@@ -95,7 +95,7 @@ import java.util.logging.Logger;
  * <p/>
  * <p/>
  * This linguist uses the HMMTree class to build and represent the tree. The HMMTree is given the dictionary and
- * language model and builds the lex tree. Instead of representing the nodes in the tree as phonemes and words as is
+ * language model and builds the lextree. Instead of representing the nodes in the tree as phonemes and words as is
  * typically done, the HMMTree represents the tree as HMMs and words. The HMM is essentially a unit within its context.
  * This is typically a triphone (although for some units (such as SIL) it is a simple phone. Representing the nodes as
  * HMM instead of nodes yields a much larger tree, but also has some advantages:
@@ -117,8 +117,8 @@ import java.util.logging.Logger;
  * <p/>
  * Luckily the size and speed issues can be mitigated (by adding a bit more complexity of course). The bulk of the nodes
  * in the HMM tree are the word ending nodes. There is a word ending node for each possible right context. To reduce
- * space, all of the word ending nodes are replaced by a single EndNode. During the search, the actual hmm nodes for a
- * particular EndNode are generated on request. These sets of hmm nodes can be shared among different word endings, and
+ * space, all of the word ending nodes are replaced by a single EndNode. During the search, the actual HMM nodes for a
+ * particular EndNode are generated on request. These sets of HMM nodes can be shared among different word endings, and
  * therefore are cached. The effect of using this EndNode optimization is to reduce the space required by the tree by
  * about 300mb and the time required to generate the tree from about 60 seconds to about 6 seconds.
  */
@@ -173,7 +173,7 @@ public class LexTreeLinguist implements Linguist {
     public final static String PROP_GENERATE_UNIT_STATES = "generateUnitStates";
 
 
-    /** The property that determines whether or not unigram probabilities are smeared through the lex tree */
+    /** The property that determines whether or not unigram probabilities are smeared through the lextree */
     @S4Boolean(defaultValue = false)
     public final static String PROP_WANT_UNIGRAM_SMEAR = "wantUnigramSmear";
 
@@ -455,7 +455,7 @@ public class LexTreeLinguist implements Linguist {
     }
 
     /**
-     * The LexTreeLinguist returns lanague states to the search manager. This class forms the base implementation for
+     * The LexTreeLinguist returns language states to the search manager. This class forms the base implementation for
      * all language states returned. This LexTreeState keeps track of the probability of entering this state (a
      * language+insertion probability) as well as the unit history. The unit history consists of the LexTree nodes that
      * correspond to the left, center and right contexts.
@@ -1159,14 +1159,14 @@ public class LexTreeLinguist implements Linguist {
         /**
          * Constructs a LexTreeHMMState
          *
-         * @param hmmNode              the hmm state associated with this unit
+         * @param hmmNode              the HMM state associated with this unit
          * @param wordSequence         the word history
 
 
 
          * @param languageProbability  the probability of the transition
          * @param insertionProbability the probability of the transition
-         * @param acousticProbability  the probability of the transition occuring
+         * @param acousticProbability  the probability of the transition occurring
 
          */
         LexTreeHMMState(HMMNode hmmNode, WordSequence wordSequence,
@@ -1194,9 +1194,9 @@ public class LexTreeLinguist implements Linguist {
 
 
         /**
-         * returns the hmm state associated with this state
+         * returns the HMM state associated with this state
          *
-         * @return the hmm state
+         * @return the HMM state
          */
         @Override
         public HMMState getHMMState() {
@@ -1623,10 +1623,10 @@ public class LexTreeLinguist implements Linguist {
 
 
     /**
-     * Gets the set of hmm nodes associated with the given end node
+     * Gets the set of HMM nodes associated with the given end node
      *
      * @param endNode the end node
-     * @return an array of associated hmm nodes
+     * @return an array of associated HMM nodes
      */
     private HMMNode[] getHMMNodes(EndNode endNode) {
         return hmmTree.getHMMNodes(endNode);
