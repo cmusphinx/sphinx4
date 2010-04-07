@@ -32,12 +32,12 @@
                type="edu.cmu.sphinx.frontend.window.RaisedCosineWindower"/>
 
     <component name="fft"
-               type="edu.cmu.sphinx.frontend.transform.DiscreteFourierTransform"/>
+               type="edu.cmu.sphinx.frontend.transform.DiscreteFourierTransform">
 	    <property name="numberFftPoints" value="512"/>
     </component>
 
     <component name="melFilterBank"
-               type="edu.cmu.sphinx.frontend.frequencywarp.MelFrequencyFilterBank"/>
+               type="edu.cmu.sphinx.frontend.frequencywarp.MelFrequencyFilterBank">
 	    <property name="numberFilters" value="40"/>
 	    <property name="minimumFrequency" value="130"/>
 	    <property name="maximumFrequency" value="6800"/>
