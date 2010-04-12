@@ -53,7 +53,7 @@ public class DataBlocker extends BaseDataProcessor {
 
     @Override
     public Data getData() throws DataProcessingException {
-        while (curInBufferSize < blockSizeSamples) {
+        while (curInBufferSize < blockSizeSamples || curInBufferSize == 0) {
             Data data = getPredecessor().getData();
 
             if (data instanceof DataStartSignal) {
@@ -69,10 +69,6 @@ public class DataBlocker extends BaseDataProcessor {
             if (!(data instanceof DoubleData)) {
                 return data;
             }
-
-            // collect enough data to be able to create a new data block
-            if (!(data instanceof DoubleData))
-                continue;
 
             DoubleData dd = (DoubleData) data;
 

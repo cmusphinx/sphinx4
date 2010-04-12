@@ -20,7 +20,6 @@ import java.util.Arrays;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 
 /**
@@ -129,7 +128,6 @@ public class Microphone extends BaseDataProcessor {
     // Configuration data
 
     private AudioFormat desiredFormat;
-    private Logger logger;
     private boolean closeBetweenUtterances;
     private boolean keepDataReference;
     private boolean signed;
@@ -170,6 +168,7 @@ public class Microphone extends BaseDataProcessor {
                       String stereoToMono, int selectedChannel, String selectedMixerIndex) {
         initLogger();
 
+        this.sampleRate = sampleRate;
         this.bigEndian = bigEndian;
         this.signed = signed;
 
@@ -720,7 +719,6 @@ public class Microphone extends BaseDataProcessor {
         getTimer().stop();
 
         // signalCheck(output);
-
         return output;
     }
 
