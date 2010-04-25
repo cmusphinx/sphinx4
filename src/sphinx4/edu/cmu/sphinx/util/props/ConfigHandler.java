@@ -130,7 +130,7 @@ public class ConfigHandler extends DefaultHandler {
 
     private void mergeConfigs(String configFileName, boolean replaceDuplicates) {
         try {
-            File parent = new File(baseURL.getFile()).getParentFile();
+            File parent = new File(baseURL.toURI().getPath()).getParentFile();
             URL fileURL = new File(parent.getPath() + File.separatorChar +  configFileName).toURI().toURL();
 
             Logger logger = Logger.getLogger(ConfigHandler.class.getSimpleName());
