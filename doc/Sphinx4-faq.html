@@ -67,7 +67,7 @@ WARRANTIES.
 <li><a href="#out_of_grammar">How can I detect and ignore out-of-grammar utterances?</a></li>
 <li><a href="#change_grammars">How can I change my language models or grammars at runtime?</a></li>
 <li><a href="#word_spotting">How can I perform word-spotting?</a></li>
-<li><a href="#8k_audio">Can I use Sphinx-4 to recognize 8khz audio?</a></li>
+<li><a href="#8k_audio">Can I use Sphinx-4 to recognize telephone audio?</a></li>
 <li><a href="#regression_data">Where can I get the audio data used in the regression tests?</a></li>
 <li><a href="#result">How do I use the Result object?</a></li>
 <li><a href="#speaker_identification">Does Sphinx-4 support speaker identification?</a></li>
@@ -462,23 +462,48 @@ microphone (e.g., a USB headset) on my machine?</b></a>
       There is no support for word-spotting right now. 
     </blockquote>
 
-<a name="8k_audio"> <b>Can I use Sphinx-4 to recognize 8khz audio?</b></a>
+<a name="8k_audio"> <b>Can I use Sphinx-4 to recognize telephone audio?</b></a>
 
     <blockquote>
-    Yes. In your configuration file, specify the 8kHz Wall Street Journal
-    models, and tell the front end that your models are 8kHz:
+    <p>
+    The issue with telephone audio is that it has limited range of frequences.
+    Unlike usual microphone recording that includes frequences from 1 Hz to
+    8000 kHz, telephone audio is passed through frequency filters. As a result
+    telephone audio contains frequences from 200 Hz to 3500 Hz. That makes
+    it impossible to recognize telephone audio with usual microphone acoustic model.
+    You need to use specialized models to recognize it.
+    </p>
+    
+    <p>There are few common telephone models distributed which you can use. Most notably, 
+    Communicator models, WSJ_8k model from sphinx4 and Voxforge English model.
+    </p>
+    
+    <p>To configure sphinx4 with 8kHz model change two things mel filter parameters and model itself:
+    </p>
     <pre>
-&lt;component name="wsj"
-    type="edu.cmu.sphinx.model.acoustic.WSJ_8gau_13dCep_8kHz_31mel_200Hz_3500Hz.Model"&gt;
-    &lt;property name="loader" value="8kLoader"&gt;
-    ...
-&lt;/component&gt;
+  &lt;component name="melFilterBank" type="edu.cmu.sphinx.frontend.frequencywarp.MelFrequencyFilterBank"&gt;
+    &lt;property name="numberFilters" value="31"/&gt;
+    &lt;property name="minimumFrequency" value="200"/&gt;
+    &lt;property name="maximumFrequency" value="3500"/&gt;
+  &lt;/component&gt;
 
-&lt;component name="8kLoader"&gt;
-    type="edu.cmu.sphinx.model.acoustic.WSJ_8gau_13dCep_8kHz_31mel_200Hz_3500Hz.ModelLoader"&gt;
-    ...
-&lt;/component&gt;
+  &lt;component name="sphinx3Loader"
+   	     type="edu.cmu.sphinx.linguist.acoustic.tiedstate.Sphinx3Loader"&gt;
+    &lt;property name="logMath" value="logMath"/&gt;
+    &lt;property name="unitManager" value="unitManager"/&gt;
+    &lt;property name="location" value="<b>the path to the model folder</b>"/&gt;
+  &lt;/component>
+
+  &lt;component name="wsjLoader" type="edu.cmu.sphinx.linguist.acoustic.tiedstate.Sphinx3Loader"&gt;
+    &lt;property name="logMath" value="logMath"/&gt;
+    &lt;property name="unitManager" value="unitManager"/&gt;
+    &lt;property name="location" value="resource:/WSJ_8gau_13dCep_8kHz_31mel_200Hz_3500Hz"/&gt;
+    &lt;property name="modelDefinition" value="etc/WSJ_8gau_13dCep_8kHz_31mel_200Hz_3500Hz.4000.mdef"/&gt;
+    &lt;property name="dataLocation" value="cd_continuous_8gau/"/&gt;
+  &lt;/component>
+
     </pre>
+
     </blockquote>
 
 
