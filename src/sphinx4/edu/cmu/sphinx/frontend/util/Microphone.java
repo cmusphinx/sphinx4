@@ -113,14 +113,24 @@ public class Microphone extends BaseDataProcessor {
     @S4String(defaultValue = "default")
     public final static String PROP_SELECT_MIXER = "selectMixer";
 
+    
+    /**
+     * The property that specifies the size of the buffer used to store
+     * audio samples recorded from the microphone. Default value 
+     * correspond to 200ms. Smaller value decrease microphone latency with
+     * danger of dropping out the frames if decoding thread will
+     * be slow enough to process the result.
+     */
+    @S4Integer(defaultValue = 6400)
+    public final static String PROP_BUFFER_SIZE = "bufferSize";
 
+    
     private AudioFormat finalFormat;
     private AudioInputStream audioStream;
     private TargetDataLine audioLine;
     private BlockingQueue<Data> audioList;
     private Utterance currentUtterance;
     private boolean doConversion;
-    private final int audioBufferSize = 160000;
     private volatile boolean recording;
     private volatile boolean utteranceEndReached = true;
     private RecordingThread recorder;
@@ -138,6 +148,7 @@ public class Microphone extends BaseDataProcessor {
     private String selectedMixerIndex;
     private String stereoToMono;
     private int sampleRate;
+    private int audioBufferSize;
 
     /**
      * @param sampleRate sample rate of the data
@@ -165,7 +176,7 @@ public class Microphone extends BaseDataProcessor {
      */
     public Microphone(int sampleRate, int bitsPerSample, int channels,
                       boolean bigEndian, boolean signed, boolean closeBetweenUtterances, int msecPerRead, boolean keepLastAudio,
-                      String stereoToMono, int selectedChannel, String selectedMixerIndex) {
+                      String stereoToMono, int selectedChannel, String selectedMixerIndex, int audioBufferSize) {
         initLogger();
 
         this.sampleRate = sampleRate;
@@ -181,6 +192,7 @@ public class Microphone extends BaseDataProcessor {
         this.stereoToMono = stereoToMono;
         this.selectedChannel = selectedChannel;
         this.selectedMixerIndex = selectedMixerIndex;
+        this.audioBufferSize = audioBufferSize;
     }
 
     public Microphone() {
@@ -214,6 +226,7 @@ public class Microphone extends BaseDataProcessor {
         stereoToMono = ps.getString(PROP_STEREO_TO_MONO);
         selectedChannel = ps.getInt(PROP_SELECT_CHANNEL);
         selectedMixerIndex = ps.getString(PROP_SELECT_MIXER);
+        audioBufferSize = ps.getInt(PROP_BUFFER_SIZE);
     }
 
 

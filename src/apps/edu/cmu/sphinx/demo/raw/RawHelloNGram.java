@@ -1,12 +1,6 @@
 package edu.cmu.sphinx.demo.raw;
 
-import edu.cmu.sphinx.recognizer.Recognizer;
-import edu.cmu.sphinx.frontend.util.AudioFileDataSource;
-import edu.cmu.sphinx.result.Result;
-import edu.cmu.sphinx.util.props.ConfigurationManagerUtils;
-
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.net.MalformedURLException;
 
 /**

@@ -66,7 +66,7 @@ public class VUMeterMonitor extends BaseDataProcessor {
     public static void main(String[] args) throws DataProcessingException {
         Microphone mic = new Microphone( 16000, 16, 1,
                           true, true, true, 10, false,
-                          "selectChannel", 2, "default");
+                          "selectChannel", 2, "default", 6400);
 
         mic.initialize();
         mic.startRecording();
