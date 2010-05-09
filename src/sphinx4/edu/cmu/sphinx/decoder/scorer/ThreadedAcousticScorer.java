@@ -13,6 +13,7 @@ package edu.cmu.sphinx.decoder.scorer;
 
 import edu.cmu.sphinx.frontend.Data;
 import edu.cmu.sphinx.frontend.BaseDataProcessor;
+import edu.cmu.sphinx.frontend.DataProcessingException;
 import edu.cmu.sphinx.util.CustomThreadFactory;
 import edu.cmu.sphinx.util.props.PropertyException;
 import edu.cmu.sphinx.util.props.PropertySheet;
@@ -164,7 +165,7 @@ public class ThreadedAcousticScorer extends SimpleAcousticScorer {
     }
 
     @Override
-    protected <T extends Scoreable> T doScoring(List<T> scoreableList, final Data data) {
+    protected <T extends Scoreable> T doScoring(List<T> scoreableList, final Data data) throws Exception {
         if (numThreads > 1) {
             int totalSize = scoreableList.size();
             int jobSize = Math.max(totalSize / numThreads, minScoreablesPerThread);
@@ -175,19 +176,21 @@ public class ThreadedAcousticScorer extends SimpleAcousticScorer {
                     final List<T> scoringJob = scoreableList.subList(from, Math.min(to, totalSize));
                     tasks.add(new Callable<T>() {
                         @Override
-                        public T call() {
+                        public T call() throws Exception {
                             return ThreadedAcousticScorer.super.doScoring(scoringJob, data);
                         }
                     });
                 }
 
                 List<T> finalists = new ArrayList<T>(tasks.size());
-                try {
-                    for (Future<T> result : executorService.invokeAll(tasks))
-                        finalists.add(result.get());
-                } catch (Exception e) {
-                    e.printStackTrace();
+       
+                for (Future<T> result : executorService.invokeAll(tasks))
+                    finalists.add(result.get());
+       
+                if (finalists.size() == 0) {
+                    throw new DataProcessingException("No scoring jobs ended");
                 }
+                
                 return Collections.min(finalists, Scoreable.COMPARATOR);
             }
         }

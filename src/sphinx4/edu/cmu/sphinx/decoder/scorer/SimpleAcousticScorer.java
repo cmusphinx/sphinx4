@@ -91,8 +91,8 @@ public class SimpleAcousticScorer extends ConfigurableAdapter implements Acousti
                 bestToken = scoreNormalizer.normalize(scoreableList, (Token)bestToken);
 
             return bestToken;
-        } catch (DataProcessingException dpe) {
-            dpe.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
             return null;
         }
     }
@@ -156,8 +156,9 @@ public class SimpleAcousticScorer extends ConfigurableAdapter implements Acousti
      * @param scoreableList The list of Scoreables to be scored
      * @param data          The <code>Data</code>-object to be used for scoring.
      * @return the best scoring <code>Scoreable</code> or <code>null</code> if the list of scoreables was empty.
+     * @throws Exception 
      */
-    protected <T extends Scoreable> T doScoring(List<T> scoreableList, Data data) {
+    protected <T extends Scoreable> T doScoring(List<T> scoreableList, Data data) throws Exception {
         Iterator<T> i = scoreableList.iterator();
         T best = i.next();
         best.calculateScore(data);
