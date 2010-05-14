@@ -19,8 +19,6 @@ import edu.cmu.sphinx.decoder.scorer.AcousticScorer;
 import edu.cmu.sphinx.decoder.search.stats.WordTracker;
 import edu.cmu.sphinx.frontend.Data;
 import edu.cmu.sphinx.linguist.*;
-import edu.cmu.sphinx.linguist.acoustic.HMM;
-import edu.cmu.sphinx.linguist.dictionary.Word;
 import edu.cmu.sphinx.result.Result;
 import edu.cmu.sphinx.util.LogMath;
 import edu.cmu.sphinx.util.StatisticsVariable;
@@ -155,7 +153,6 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
     private int numStateOrder;
     // private TokenTracker tokenTracker;
     // private TokenTypeTracker tokenTypeTracker;
-    private Map<SearchState, Token> skewMap;
     private boolean streamEnd;
 
     /**
@@ -346,8 +343,6 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
 
     /**
      * creates a new best token map with the best size
-     *
-     * @return the best token map
      */
     protected void createBestTokenMap() {
         // int mapSize = activeList.size() * 10;
@@ -374,8 +369,6 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
         SearchGraph searchGraph = linguist.getSearchGraph();
         currentFrameNumber = 0;
         curTokensScored.value = 0;
-
-        skewMap = new HashMap<SearchState, Token>();
         numStateOrder = searchGraph.getNumStateOrder();
         activeListManager.setNumStateOrder(numStateOrder);
         if (buildWordLattice) {
@@ -416,7 +409,7 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
                     + activeList.getBestToken());
         }
         for (Token token : activeList) {
-            if (token.getScore() >= relativeBeamThreshold && skewPrune(token)) {
+            if (token.getScore() >= relativeBeamThreshold && allowPruning(token)) {
                 collectSuccessorTokens(token);
             }
         }
@@ -566,6 +559,30 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
         bestTokenMap.put(key, token);
     }
 
+    /**
+     * Returns the state key for the given state. This key is used
+     * to store bestToken into the bestToken map. All tokens with 
+     * the same key are basically shared. This method adds flexibility in
+     * search. 
+     * 
+     * For example this key will allow HMM states that have identical word 
+     * histories and are in the same HMM state to be treated equivalently. 
+     * When used  as the best token key, only the best scoring token with a 
+     * given word history survives per HMM. 
+     * <pre>
+     *   boolean equal = hmmSearchState.getLexState().equals(
+     *          other.hmmSearchState.getLexState())
+     *          && hmmSearchState.getWordHistory().equals(
+     *          other.hmmSearchState.getWordHistory());                       
+     * </pre>
+     * 
+     * @param state
+     *            the state to get the key for
+     * @return the key for the given state
+     */
+    protected Object getStateKey(SearchState state) {
+        return state;
+    }
 
     /**
      * Find the token to use as a predecessor in resultList given a candidate
@@ -613,31 +630,6 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
         }
         return token;
     }
-
-    /**
-     * Returns the state key for the given state. If we are using token stacks
-     * then the key will be related to the search state and the word history
-     * (depending on the type of token stacks), otherwise, the key will simply
-     * be the state itself. Currently we are not using token stacks so the state
-     * is the key.
-     * 
-     * @param state
-     *            the state to get the key for
-     * @return the key for the given state
-     */
-    protected Object getStateKey(SearchState state) {
-        if (true) {
-            return state;
-        } else {
-            if (state.isEmitting()) {
-                return new SinglePathThroughHMMKey(((HMMSearchState) state));
-                // return ((HMMSearchState) state).getHMMState().getHMM();
-            } else {
-                return state;
-            }
-        }
-    }
-
 
     /** Checks that the given two states are in legitimate order.
      * @param fromState
@@ -782,98 +774,17 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
         activeListManager.replace(old, newToken);
     }
 
-    // FRAME Skew
-    // this is a set of experimental code used to test out a frame
-    // skew algorithm. This code is currently disabled.
-
-    private final static int SKEW = 0;
-
 
     /**
-     * Apply frame skew. Determine if the given token should be expanded based upon frame skew
+     * Determine if the given token should be expanded
      *
      * @param t the token to test
      * @return <code>true</code> if the token should be expanded
      */
-    private boolean skewPrune(Token t) {
+    protected boolean allowPruning(Token t) {
         return true; // currently disabled
-        // return skewPruneWord(t);
     }
 
-
-    /**
-     * Frame skew based on HMM states
-     *
-     * @param t the token to test
-     * @return <code>true</code> if the token should be expanded
-     */
-    private boolean skewPruneHMM(Token t) {
-        boolean keep = true;
-        SearchState ss = t.getSearchState();
-        if (SKEW > 0 && ss instanceof HMMSearchState) {
-            if (!t.isEmitting()) {
-                // HMMSearchState hss = (HMMSearchState) ss;
-                Token lastToken = skewMap.get(ss);
-                if (lastToken != null) {
-                    int lastFrame = lastToken.getFrameNumber();
-                    if (t.getFrameNumber() - lastFrame > SKEW
-                            || t.getScore() > lastToken.getScore()) {
-                        keep = true;
-                    } else {
-                        if (false) {
-                            System.out.println("Dropped " + t + " in favor of "
-                                    + lastToken);
-                        }
-                        keep = false;
-                    }
-
-                } else {
-                    keep = true;
-                }
-
-                if (keep) {
-                    skewMap.put(ss, t);
-                }
-            }
-        }
-        return keep;
-    }
-
-
-    /**
-     * Frame skew based on word states
-     *
-     * @param t the token to test
-     * @return <code>true</code> if the token should be expanded
-     */
-    private boolean skewPruneWord(Token t) {
-        boolean keep = true;
-        SearchState ss = t.getSearchState();
-        if (SKEW > 0 && ss instanceof WordSearchState) {
-            Token lastToken = skewMap.get(ss);
-            if (lastToken != null) {
-                int lastFrame = lastToken.getFrameNumber();
-                if (t.getFrameNumber() - lastFrame > SKEW
-                        || t.getScore() > lastToken.getScore()) {
-                    keep = true;
-                } else {
-                    if (false) {
-                        System.out.println("Dropped " + t + " in favor of "
-                                + lastToken);
-                    }
-                    keep = false;
-                }
-
-            } else {
-                keep = true;
-            }
-
-            if (keep) {
-                skewMap.put(ss, t);
-            }
-        }
-        return keep;
-    }
 
     /** Counts all the tokens in the active list (and displays them). This is an expensive operation. */
     private void showTokenCount() {
@@ -980,49 +891,3 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
     }
 
 }
-// ---------------------------------------------------------
-// Experimental code
-// ---------------------------------------------------------
-// There's some experimental code here used to track tokens
-
-// and word beams.
-
-/**
- * A 'best token' key. This key will allow HMM states that have identical word
- * histories and are in the same HMM state to be treated equivalently. When used
- * as the best token key, only the best scoring token with a given word history
- * survives per HMM.
- */
-class SinglePathThroughHMMKey {
-
-    private final HMMSearchState hmmSearchState;
-
-
-    public SinglePathThroughHMMKey(HMMSearchState hmmSearchState) {
-        this.hmmSearchState = hmmSearchState;
-    }
-
-
-    @Override
-    public int hashCode() {
-        return hmmSearchState.getLexState().hashCode() * 13
-                + hmmSearchState.getWordHistory().hashCode();
-    }
-
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        } else if (o instanceof SinglePathThroughHMMKey) {
-            SinglePathThroughHMMKey other = (SinglePathThroughHMMKey) o;
-            boolean equal = hmmSearchState.getLexState().equals(
-                    other.hmmSearchState.getLexState())
-                    && hmmSearchState.getWordHistory().equals(
-                    other.hmmSearchState.getWordHistory());
-            return equal;
-        }
-        return false;
-    }
-}
-
