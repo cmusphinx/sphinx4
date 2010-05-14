@@ -10,7 +10,9 @@
 *
 */
 
-package edu.cmu.sphinx.decoder.search;
+package edu.cmu.sphinx.research.parallel;
+
+import edu.cmu.sphinx.decoder.search.Token;
 
 
 /** An array implementation of TokenStack. */

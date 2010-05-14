@@ -38,34 +38,34 @@ import java.util.logging.Logger;
 public class LargeNGramModel implements LanguageModel {
 
     /**
-     * A property for the name of the file that logs all the queried N-grams. If this property is set to null, it
+     * The property for the name of the file that logs all the queried N-grams. If this property is set to null, it
      * means that the queried N-grams are not logged.
      */
     @S4String(mandatory = false)
     public static final String PROP_QUERY_LOG_FILE = "queryLogFile";
 
-    /** A property that defines that maximum number of ngrams to be cached */
+    /** The property that defines that maximum number of ngrams to be cached */
     @S4Integer(defaultValue = 100000)
     public static final String PROP_NGRAM_CACHE_SIZE = "ngramCacheSize";
 
-    /** A property that defines the maximum number of bigrams to be cached. */
+    /** The property that defines the maximum number of bigrams to be cached. */
     @S4Integer(defaultValue = 50000)
     public static final String PROP_BIGRAM_CACHE_SIZE = "bigramCacheSize";
 
-    /** A property that controls whether the ngram caches are cleared after every utterance */
+    /** The property that controls whether the ngram caches are cleared after every utterance */
     @S4Boolean(defaultValue = false)
     public static final String PROP_CLEAR_CACHES_AFTER_UTTERANCE = "clearCachesAfterUtterance";
 
-    /** A property that defines the language weight for the search */
+    /** The property that defines the language weight for the search */
     @S4Double(defaultValue = 1.0f)
     public final static String PROP_LANGUAGE_WEIGHT = "languageWeight";
 
-    /** A property that defines the logMath component. */
+    /** The property that defines the logMath component. */
     @S4Component(type = LogMath.class)
     public final static String PROP_LOG_MATH = "logMath";
 
     /**
-     * A property that controls whether or not the language model will apply the language weight and word insertion
+     * The property that controls whether or not the language model will apply the language weight and word insertion
      * probability
      */
     @S4Boolean(defaultValue = false)
@@ -375,30 +375,33 @@ public class LargeNGramModel implements LanguageModel {
     	return false;
     }
     
-    
     /**
-     * Gets the ngram probability of the word sequence represented by the word list
-     *
-     * @param wordSequence the word sequence
-     * @return the probability of the word sequence. Probability is in logMath log base
+     * Gets the ngram probability of the word sequence represented by the word
+     * list
+     * 
+     * @param wordSequence
+     *            the word sequence
+     * @return the probability of the word sequence. Probability is in logMath
+     *         log base
      */
     @Override
     public float getProbability(WordSequence wordSequence) {
         int numberWords = wordSequence.size();
-        
+
         if (numberWords <= maxDepth) {
-        	if (numberWords >= 2) {
-            if (logFile != null) 
-              logFile.println(wordSequence.toString().replace("][", " ") + " : " + Float.toString(getNGramProbability(wordSequence)));
-        		return getNGramProbability(wordSequence);
-          }
-        	else {
-            if (logFile != null) 
-              logFile.println(wordSequence.toString().replace("][", " ") + " : " + Float.toString(getUnigramProbability(wordSequence)));
-            return getUnigramProbability(wordSequence);
-          }
+            if (numberWords >= 2) {
+                if (logFile != null)
+                    logFile.println(wordSequence.toString().replace("][", " ") + " : "
+                            + Float.toString(getNGramProbability(wordSequence)));
+                return getNGramProbability(wordSequence);
+            } else {
+                if (logFile != null)
+                    logFile.println(wordSequence.toString().replace("][", " ") + " : "
+                            + Float.toString(getUnigramProbability(wordSequence)));
+                return getUnigramProbability(wordSequence);
+            }
         }
-        
+
         throw new Error("Unsupported NGram: " + wordSequence.size());
     }
 	
@@ -429,21 +432,19 @@ public class LargeNGramModel implements LanguageModel {
             if (nGProbability != null) {
                 NGramHit[numberWords - 1]++;
                 score = NGramProbTable[numberWords - 1][nGProbability.getProbabilityID()];
-            } 
-            else {
+            } else {
                 NGramMisses[numberWords - 1]++;
                 
                 if (wordSequence.size() == 2) {
-                  UnigramProbability unigramProb = getUnigram(wordSequence.getWord(0));
-                  score = unigramProb.getLogBackoff() + getProbability(wordSequence.getNewest());
-                }
-                else {
-                  NGramProbability nMinus1Gram = findNGram(wordSequence.getOldest());
+                    UnigramProbability unigramProb = getUnigram(wordSequence.getWord(0));
+                    score = unigramProb.getLogBackoff() + getProbability(wordSequence.getNewest());
+                } else {
+                    NGramProbability nMinus1Gram = findNGram(wordSequence.getOldest());
                 
-                  if (nMinus1Gram != null)
-                    score = NGramBackoffTable[numberWords - 1][nMinus1Gram.getBackoffID()] + getProbability(wordSequence.getNewest());
-                  else
-                      score = getProbability(wordSequence.getNewest());
+                    if (nMinus1Gram != null)
+                        score = NGramBackoffTable[numberWords - 1][nMinus1Gram.getBackoffID()] + getProbability(wordSequence.getNewest());
+                    else
+                        score = getProbability(wordSequence.getNewest());
                }
             }
             
@@ -466,12 +467,11 @@ public class LargeNGramModel implements LanguageModel {
     private NGramProbability findNGram(WordSequence wordSequence) {
     	int numberWords = wordSequence.size();
         NGramProbability nGram = null; 
+        
         WordSequence oldest = wordSequence.getOldest();
         NGramBuffer nGramBuffer = loadedNGramBuffers[numberWords - 1].get(oldest);
-
         if (nGramBuffer == null) {
         	nGramBuffer = getNGramBuffer(oldest);
-
             if (nGramBuffer != null)
                 loadedNGramBuffers[numberWords - 1].put(oldest, nGramBuffer);
         }
@@ -511,10 +511,7 @@ public class LargeNGramModel implements LanguageModel {
 		if (orderBuffer == 2)  {
 			size = numberNGrams * ((loader.getMaxDepth() == orderBuffer) ? BYTES_PER_NMAXGRAM : BYTES_PER_NGRAM) * loader.getBytesPerField();
 			position = (long) (loader.getNGramOffset(orderBuffer) + (firstCurrentNGramEntry * ((loader.getMaxDepth() == orderBuffer) ? BYTES_PER_NMAXGRAM : BYTES_PER_NGRAM) * loader.getBytesPerField()));
-		}
-    
-    
-		else { // only for ws.size() >= 2
+		} else { // only for ws.size() >= 2
 			int lastWordId = getWordID(ws.getWord(ws.size() - 1));
 			nMinus1Buffer = getNGramBuffer(ws.getOldest());
 			int index = nMinus1Buffer.findNGramIndex(lastWordId);
@@ -542,9 +539,9 @@ public class LargeNGramModel implements LanguageModel {
 			
 			if (loader.getMaxDepth() == orderBuffer) {
 				currentBuffer = new NMaxGramBuffer(buffer, numberNGrams, loader.getBigEndian(), is32bits(), orderBuffer, firstCurrentNGramEntry);
-			}
-			else
+			} else {
 				currentBuffer = new NGramBuffer(buffer, numberNGrams, loader.getBigEndian(), is32bits(), orderBuffer, firstCurrentNGramEntry);
+			}
 		} 
 		catch (IOException ioe) {
 			ioe.printStackTrace();
@@ -690,8 +687,7 @@ public class LargeNGramModel implements LanguageModel {
             if (length == 1) {
                 int wordID = getWordID(wordSequence.getWord(0));
                 smearTerm = unigramSmearTerm[wordID];
-            } 
-            else if (length >= 2) {
+            } else if (length >= 2) {
                 int size = wordSequence.size();
                 int wordID1 = getWordID(wordSequence.getWord(size - 2));
                 int wordID2 = getWordID(wordSequence.getWord(size - 1));

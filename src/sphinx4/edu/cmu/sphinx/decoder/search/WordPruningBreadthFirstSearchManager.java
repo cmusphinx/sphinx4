@@ -16,7 +16,7 @@ package edu.cmu.sphinx.decoder.search;
 
 import edu.cmu.sphinx.decoder.pruner.Pruner;
 import edu.cmu.sphinx.decoder.scorer.AcousticScorer;
-import edu.cmu.sphinx.decoder.scorer.Scoreable;
+import edu.cmu.sphinx.decoder.search.stats.WordTracker;
 import edu.cmu.sphinx.frontend.Data;
 import edu.cmu.sphinx.linguist.*;
 import edu.cmu.sphinx.linguist.acoustic.HMM;
@@ -110,10 +110,6 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
     // TODO: this should be a more meaningful default e.g. the common 1E-80
     public final static String PROP_RELATIVE_BEAM_WIDTH = "relativeBeamWidth";
 
-    // TODO: since the token stacks are permanently disabled,
-    // we may want to just remove all of the supporting code
-    private final static boolean wantTokenStacks = false;
-
     // -----------------------------------
     // Configured Subcomponents
     // -----------------------------------
@@ -134,7 +130,6 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
     private int growSkipInterval;
     private float relativeBeamWidth;
     private float acousticLookaheadFrames;
-    private final int maxTokenHeapSize = 3;
     private int maxLatticeEdges = 100;
 
     // -----------------------------------
@@ -153,9 +148,9 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
     // Working data
     // -----------------------------------
     private int currentFrameNumber; // the current frame number
-    private ActiveList activeList; // the list of active tokens
+    protected ActiveList activeList; // the list of active tokens
     private List<Token> resultList; // the current set of results
-    private Map<Object, Object> bestTokenMap;
+    protected Map<Object, Token> bestTokenMap;
     private AlternateHypothesisManager loserManager;
     private int numStateOrder;
     // private TokenTracker tokenTracker;
@@ -316,7 +311,7 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
                             && (growSkipInterval > 1 &&
                             ((currentFrameNumber % growSkipInterval) == 0)));
                     if (!done) {
-                        bestTokenMap = createBestTokenMap();
+                        createBestTokenMap();
                         // prune and grow the emitting list
                         pruneBranches();
 
@@ -354,13 +349,13 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
      *
      * @return the best token map
      */
-    private Map<Object, Object> createBestTokenMap() {
+    protected void createBestTokenMap() {
         // int mapSize = activeList.size() * 10;
         int mapSize = activeList.size() << 2;
         if (mapSize == 0) {
             mapSize = 1;
         }
-        return new HashMap<Object, Object>(mapSize, 0.3F);
+        bestTokenMap = new HashMap<Object, Token>(mapSize, 0.3F);
     }
 
 
@@ -393,7 +388,7 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
         activeList.add(new Token(state, currentFrameNumber));
         resultList = new LinkedList<Token>();
 
-        bestTokenMap = new HashMap<Object, Object>();
+        createBestTokenMap();
         growBranches();
         growNonEmittingLists();
         // tokenTracker.setEnabled(false);
@@ -556,25 +551,7 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
      */
     protected Token getBestToken(SearchState state) {
         Object key = getStateKey(state);
-
-        if (!wantTokenStacks) {
-            return (Token) bestTokenMap.get(key);
-        } else {
-            // new way... if the heap for this state isn't full return
-            // null, otherwise return the worst scoring token
-            TokenHeap th = (TokenHeap) bestTokenMap.get(key);
-            Token t;
-
-            if (th == null) {
-                return null;
-            } else if ((t = th.get(state)) != null) {
-                return t;
-            } else if (!th.isFull()) {
-                return null;
-            } else {
-                return th.getSmallest();
-            }
-        }
+        return (Token) bestTokenMap.get(key);
     }
 
 
@@ -586,16 +563,7 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
      */
     protected void setBestToken(Token token, SearchState state) {
         Object key = getStateKey(state);
-        if (!wantTokenStacks) {
-            bestTokenMap.put(key, token);
-        } else {
-            TokenHeap th = (TokenHeap) bestTokenMap.get(key);
-            if (th == null) {
-                th = new TokenHeap(maxTokenHeapSize);
-                bestTokenMap.put(key, th);
-            }
-            th.add(token);
-        }
+        bestTokenMap.put(key, token);
     }
 
 
@@ -657,8 +625,8 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
      *            the state to get the key for
      * @return the key for the given state
      */
-    private Object getStateKey(SearchState state) {
-        if (!wantTokenStacks) {
+    protected Object getStateKey(SearchState state) {
+        if (true) {
             return state;
         } else {
             if (state.isEmitting()) {
@@ -942,27 +910,6 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
         return logMath;
     }
 
-
-    /**
-     * Returns the best token map.
-     *
-     * @return the best token map
-     */
-    protected Map<Object, Object> getBestTokenMap() {
-        return bestTokenMap;
-    }
-
-
-    /**
-     * Sets the best token Map.
-     *
-     * @param bestTokenMap the new best token Map
-     */
-    protected void setBestTokenMap(Map<Object, Object> bestTokenMap) {
-        this.bestTokenMap = bestTokenMap;
-    }
-
-
     /**
      * Returns the ActiveList.
      *
@@ -1079,510 +1026,3 @@ class SinglePathThroughHMMKey {
     }
 }
 
-/**
- * A quick and dirty token heap that allows us to perform token stack experiments. It is not very efficient. We will
- * likely replace this with something better once we figure out how we want to prune things.
- */
-
-class TokenHeap {
-
-    final Token[] tokens;
-    int curSize;
-
-
-    /**
-     * Creates a token heap with the maximum size
-     *
-     * @param maxSize the maximum size of the heap
-     */
-    TokenHeap(int maxSize) {
-        tokens = new Token[maxSize];
-    }
-
-
-    /**
-     * Adds a token to the heap
-     *
-     * @param token the token to add
-     */
-    void add(Token token) {
-        // first, if an identical state exists, replace
-        // it.
-
-        if (!tryReplace(token)) {
-            if (curSize < tokens.length) {
-                tokens[curSize++] = token;
-            } else if (token.getScore() > tokens[curSize - 1].getScore()) {
-                tokens[curSize - 1] = token;
-            }
-        }
-        fixupInsert();
-    }
-
-
-    /**
-     * Returns the smallest scoring token on the heap
-     *
-     * @return the smallest scoring token
-     */
-    Token getSmallest() {
-        if (curSize == 0) {
-            return null;
-        } else {
-            return tokens[curSize - 1];
-        }
-    }
-
-
-    /**
-     * Determines if the heap is full
-     *
-     * @return <code>true</code> if the heap is full
-     */
-    boolean isFull() {
-        return curSize == tokens.length;
-    }
-
-
-    /**
-     * Checks to see if there is already a token t on the heap that has the same search state. If so, this token
-     * replaces that one
-     *
-     * @param t the token to try to add to the heap
-     * @return <code>true</code> if the token was added
-     */
-    private boolean tryReplace(Token t) {
-        for (int i = 0; i < curSize; i++) {
-            if (t.getSearchState().equals(tokens[i].getSearchState())) {
-                assert t.getScore() > tokens[i].getScore();
-                tokens[i] = t;
-                return true;
-            }
-        }
-        return false;
-    }
-
-
-    /** Orders the heap after an insert */
-    private void fixupInsert() {
-        Arrays.sort(tokens, 0, curSize - 1, Scoreable.COMPARATOR);
-    }
-
-    /**
-     * returns a token on the heap that matches the given search state
-     *
-     * @param s the search state
-     * @return the token that matches, or null
-     */
-    Token get(SearchState s) {
-        for (int i = 0; i < curSize; i++) {
-            if (tokens[i].getSearchState().equals(s)) {
-                return tokens[i];
-            }
-        }
-        return null;
-    }
-}
-
-/** A class that keeps track of word histories */
-
-class WordTracker {
-
-    final Map<WordSequence, WordStats> statMap;
-    final int frameNumber;
-    int stateCount;
-    int maxWordHistories;
-
-
-    /**
-     * Creates a word tracker for the given frame number
-     *
-     * @param frameNumber the frame number
-     */
-    WordTracker(int frameNumber) {
-        statMap = new HashMap<WordSequence, WordStats>();
-        this.frameNumber = frameNumber;
-    }
-
-
-    /**
-     * Adds a word history for the given token to the word tracker
-     *
-     * @param t the token to add
-     */
-    void add(Token t) {
-        stateCount++;
-        WordSequence ws = getWordSequence(t);
-        WordStats stats = statMap.get(ws);
-        if (stats == null) {
-            stats = new WordStats(ws);
-            statMap.put(ws, stats);
-        }
-        stats.update(t);
-    }
-
-
-    /** Dumps the word histories in the tracker */
-    void dump() {
-        dumpSummary();
-        List<WordStats> stats = new ArrayList<WordStats>(statMap.values());
-        Collections.sort(stats, WordStats.COMPARATOR);
-        for (WordStats stat : stats) {
-            System.out.println("   " + stat);
-        }
-    }
-
-
-    /** Dumps summary information in the tracker */
-    void dumpSummary() {
-        System.out.println("Frame: " + frameNumber + " states: " + stateCount
-                + " histories " + statMap.size());
-    }
-
-
-    /**
-     * Given a token, gets the word sequence represented by the token
-     *
-     * @param token the token of interest
-     * @return the word sequence for the token
-     */
-    private WordSequence getWordSequence(Token token) {
-        List<Word> wordList = new LinkedList<Word>();
-
-        while (token != null) {
-            if (token.isWord()) {
-                WordSearchState wordState = (WordSearchState) token
-                        .getSearchState();
-                Word word = wordState.getPronunciation().getWord();
-                wordList.add(0, word);
-            }
-            token = token.getPredecessor();
-        }
-        return new WordSequence(wordList);
-    }
-}
-
-/** Keeps track of statistics for a particular word sequence */
-
-class WordStats {
-
-    public final static Comparator<WordStats> COMPARATOR = new Comparator<WordStats>() {
-        @Override
-        public int compare(WordStats ws1, WordStats ws2) {
-            if (ws1.maxScore > ws2.maxScore) {
-                return -1;
-            } else if (ws1.maxScore == ws2.maxScore) {
-                return 0;
-            } else {
-                return 1;
-            }
-        }
-    };
-
-    private int size;
-    private float maxScore;
-    private float minScore;
-    private final WordSequence ws;
-
-    /**
-     * Creates a word statistics for the given sequence
-     *
-     * @param ws the word sequence
-     */
-    WordStats(WordSequence ws) {
-        size = 0;
-        maxScore = -Float.MAX_VALUE;
-        minScore = Float.MAX_VALUE;
-        this.ws = ws;
-    }
-
-
-    /**
-     * Updates the statistics based upon the scores for the given token
-     *
-     * @param t the token
-     */
-    void update(Token t) {
-        size++;
-        if (t.getScore() > maxScore) {
-            maxScore = t.getScore();
-        }
-        if (t.getScore() < minScore) {
-            minScore = t.getScore();
-        }
-    }
-
-
-    /**
-     * Returns a string representation of the statistics
-     *
-     * @return a string representation
-     */
-    @Override
-    public String toString() {
-        return "states:" + size + " max:" + maxScore + " min:" + minScore + ' '
-                + ws;
-    }
-}
-
-/**
- * A tool for tracking the types tokens created and placed in the beam
- * <p/>
- * TODO: Develop a mechanism  for adding trackers such as these in a more general fashion.
- */
-class TokenTypeTracker {
-    // keep track of the various types of states
-
-    private int numWords;
-    private int numUnits;
-    private int numHMMs;
-    private int numOthers;
-    private int numHMMBegin;
-    private int numHMMEnd;
-    private int numHMMSingle;
-    private int numHMMInternal;
-    private int numTokens;
-
-
-    /**
-     * Adds a token to this tracker. Records statistics about the type of token.
-     *
-     * @param t the token to track
-     */
-    void add(Token t) {
-        numTokens++;
-        SearchState s = t.getSearchState();
-
-        if (s instanceof WordSearchState) {
-            numWords++;
-        } else if (s instanceof UnitSearchState) {
-            numUnits++;
-        } else if (s instanceof HMMSearchState) {
-            numHMMs++;
-            HMM hmm = ((HMMSearchState) s).getHMMState().getHMM();
-            switch (hmm.getPosition()) {
-                case BEGIN: numHMMBegin++; break;
-                case END: numHMMEnd++; break;
-                case SINGLE: numHMMSingle++; break;
-                case INTERNAL: numHMMInternal++; break;
-            }
-        } else {
-            numOthers++;
-        }
-    }
-
-
-    /** Shows the accumulated statistics */
-    void show() {
-        System.out.println("TotalTokens: " + numTokens);
-        System.out.println("      Words: " + numWords + pc(numWords));
-        System.out.println("      Units: " + numUnits + pc(numUnits));
-        System.out.println("      HMM-b: " + numHMMBegin + pc(numHMMBegin));
-        System.out.println("      HMM-e: " + numHMMEnd + pc(numHMMEnd));
-        System.out.println("      HMM-s: " + numHMMSingle + pc(numHMMSingle));
-        System.out.println("      HMM-i: " + numHMMInternal +
-                pc(numHMMInternal));
-        System.out.println("     Others: " + numOthers + pc(numOthers));
-    }
-
-
-    /**
-     * Utility method for generating integer percents
-     *
-     * @param num the value to be converted into percent
-     * @return a string representation as a percent
-     */
-    private String pc(int num) {
-        int percent = ((100 * num) / numTokens);
-        return " (" + percent + "%)";
-    }
-}
-
-
-/** This debugging class is used to track the number of active tokens per state */
-
-class TokenTracker {
-
-    private Map<Object, TokenStats> stateMap;
-    private boolean enabled;
-    private int frame;
-
-    private int utteranceStateCount;
-    private int utteranceMaxStates;
-    private int utteranceSumStates;
-
-
-    /**
-     * Enables or disables the token tracker
-     *
-     * @param enabled if <code>true</code> the tracker is enabled
-     */
-    void setEnabled(boolean enabled) {
-        this.enabled = enabled;
-    }
-
-
-    /** Starts the per-utterance tracking */
-    void startUtterance() {
-        if (enabled) {
-            frame = 0;
-            utteranceStateCount = 0;
-            utteranceMaxStates = -Integer.MAX_VALUE;
-            utteranceSumStates = 0;
-        }
-    }
-
-
-    /** stops the per-utterance tracking */
-    void stopUtterance() {
-        if (enabled) {
-            dumpSummary();
-        }
-    }
-
-
-    /** Starts the per-frame tracking */
-    void startFrame() {
-        if (enabled) {
-            stateMap = new HashMap<Object, TokenStats>();
-        }
-    }
-
-
-    /**
-     * Adds a new token to the tracker
-     *
-     * @param t the token to add.
-     */
-    void add(Token t) {
-        if (enabled) {
-            TokenStats stats = getStats(t);
-            stats.update(t);
-        }
-    }
-
-
-    /** Stops the per-frame tracking */
-    void stopFrame() {
-        if (enabled) {
-            frame++;
-            dumpDetails();
-        }
-    }
-
-
-    /** Dumps summary info about the tokens */
-    void dumpSummary() {
-        if (enabled) {
-            float avgStates = 0f;
-            if (utteranceStateCount > 0) {
-                avgStates = ((float) utteranceSumStates) / utteranceStateCount;
-            }
-            System.out.print("# Utterance stats ");
-            System.out.print(" States: " + utteranceStateCount / frame);
-
-            if (utteranceStateCount > 0) {
-                System.out.print(" Paths: " + utteranceSumStates / frame);
-                System.out.print(" Max: " + utteranceMaxStates);
-                System.out.print(" Avg: " + avgStates);
-            }
-
-            System.out.println();
-        }
-    }
-
-
-    /** Dumps detailed info about the tokens */
-    void dumpDetails() {
-        if (enabled) {
-            int maxStates = -Integer.MAX_VALUE;
-            int hmmCount = 0;
-            int sumStates = 0;
-
-            for (TokenStats stats : stateMap.values()) {
-                if (stats.isHMM) {
-                    hmmCount++;
-                }
-                sumStates += stats.count;
-                utteranceSumStates += stats.count;
-                if (stats.count > maxStates) {
-                    maxStates = stats.count;
-                }
-
-                if (stats.count > utteranceMaxStates) {
-                    utteranceMaxStates = stats.count;
-                }
-            }
-
-            utteranceStateCount += stateMap.size();
-
-            float avgStates = 0f;
-            if (!stateMap.isEmpty()) {
-                avgStates = ((float) sumStates) / stateMap.size();
-            }
-            System.out.print("# Frame " + frame);
-            System.out.print(" States: " + stateMap.size());
-
-            if (!stateMap.isEmpty()) {
-                System.out.print(" Paths: " + sumStates);
-                System.out.print(" Max: " + maxStates);
-                System.out.print(" Avg: " + avgStates);
-                System.out.print(" HMM: " + hmmCount);
-            }
-
-            System.out.println();
-        }
-    }
-
-
-    /**
-     * Gets the statistics for a particular token
-     *
-     * @param t the token of interest
-     * @return the token statistics associated with the given token
-     */
-    private TokenStats getStats(Token t) {
-        TokenStats stats = stateMap.get(t.getSearchState()
-                .getLexState());
-        if (stats == null) {
-            stats = new TokenStats();
-            stateMap.put(t.getSearchState().getLexState(), stats);
-        }
-        return stats;
-    }
-}
-
-/**
- * A class for keeping track of statistics about tokens. Tracks the count,
- * minimum and maximum score for a particular state.
- */
-class TokenStats {
-
-    int count;
-    float maxScore;
-    float minScore;
-    boolean isHMM;
-
-
-    TokenStats() {
-        count = 0;
-        maxScore = -Float.MAX_VALUE;
-        minScore = Float.MIN_VALUE;
-    }
-
-
-    /** Update this state with the given token
-     * @param t*/
-    public void update(Token t) {
-        count++;
-        if (t.getScore() > maxScore) {
-            maxScore = t.getScore();
-        }
-
-        if (t.getScore() < minScore) {
-            minScore = t.getScore();
-        }
-
-        isHMM = t.getSearchState() instanceof HMMSearchState;
-    }
-}

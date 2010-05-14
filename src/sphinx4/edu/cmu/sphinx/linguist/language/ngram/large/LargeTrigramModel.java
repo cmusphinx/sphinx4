@@ -29,7 +29,7 @@ import edu.cmu.sphinx.util.props.*;
  */
 public class LargeTrigramModel extends LargeNGramModel {
 
-    /** A property that defines that maximum number of trigrams to be cached */
+    /** The property that defines that maximum number of trigrams to be cached */
     @S4Integer(defaultValue = 100000)
     public static final String PROP_TRIGRAM_CACHE_SIZE = "trigramCacheSize";
 

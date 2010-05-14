@@ -12,8 +12,6 @@
 
 package edu.cmu.sphinx.research.parallel;
 
-import edu.cmu.sphinx.decoder.search.ArrayTokenStack;
-import edu.cmu.sphinx.decoder.search.TokenStack;
 import edu.cmu.sphinx.linguist.acoustic.Unit;
 import edu.cmu.sphinx.linguist.flat.PronunciationState;
 import edu.cmu.sphinx.linguist.flat.UnitState;
