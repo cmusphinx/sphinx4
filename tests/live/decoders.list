@@ -1,4 +1,4 @@
-decoders = weather isolatedDigits connectedDigits bishop player jsgf alphaSpelling
+decoders = isolatedDigits connectedDigits jsgf alphaSpelling weather bishop player 
 
 # connectedDigits
 connectedDigits.name = Connected Digits

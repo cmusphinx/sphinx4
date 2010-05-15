@@ -102,23 +102,6 @@
 	</li>
       </ul>
 
-      <p>
-      <b><span style="color: FF0000; ">NOTE:</span></b>
-      <ol>
-      <li>
-      For this demo, you will <b>NOT</b> need to change the location of the 
-      acoustic model and dictionary in the properties files. The location 
-      specified in the properties files is already correct.
-      </li>
-      <li>
-      If you are running Linux and have problems with the audio,
-      please read the 
-      <a href="../../doc/Sphinx4-faq.html#microphone_linux">
-      Linux JavaSound</a> section.
-      </li>
-      </ol>
-      </p>
-
       <h3>Customizing the Demo</h3>
       <p>
       All the tests that the live demo program will run are listed
@@ -128,13 +111,13 @@
       </p>
       <code>
            isolatedDigits.name = Isolated Digits 
-      <br/>isolatedDigits.propertiesFile = ./ti46.props
+      <br/>isolatedDigits.configFile = ti46/ti46.config.xml
       <br/>isolatedDigits.testFile = ./isolatedDigits.test
       </code>
       <p>
       <b>name</b> - this is the name you will see in the "Decoder:" box
       in the live program
-      <br/><b>propertiesFile</b> - the SphinxProperties file for this test
+      <br/><b>configFile</b> - file with decoder configuration
       <br/><b>testFile</b> - a list of the sentences the live demo should prompt
       the user to say
       </p>

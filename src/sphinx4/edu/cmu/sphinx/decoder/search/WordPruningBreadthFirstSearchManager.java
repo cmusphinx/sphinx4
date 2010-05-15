@@ -292,40 +292,8 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
         Result result = null;
         streamEnd = false;
 
-        try {
-
-            for (int i = 0; i < nFrames && !done; i++) {
-                // System.out.println("Frame " + currentFrameNumber);
-                // score the emitting list
-
-                // tokenTracker.startFrame();
-                activeList = activeListManager.getEmittingList();
-                if (activeList != null) {
-                    do {
-                        currentFrameNumber++;
-                        done = !scoreTokens();
-                    } while (!done
-                            && (growSkipInterval > 1 &&
-                            ((currentFrameNumber % growSkipInterval) == 0)));
-                    if (!done) {
-                        createBestTokenMap();
-                        // prune and grow the emitting list
-                        pruneBranches();
-
-                        resultList = new LinkedList<Token>();
-                        growEmittingBranches();
-                        // prune and grow the non-emitting lists
-                        // activeListManager.dump();
-                        growNonEmittingLists();
-                    }
-                }
-                // tokenTracker.stopFrame();
-            }
-        } catch (OutOfMemoryError e) {
-            done = true;
-            activeList = null;
-            System.gc();
-            System.out.println("OutOfMemoryError: Aborting recognition");
+        for (int i = 0; i < nFrames && !done; i++) {
+            done = recognize();
         }
         
         if (!streamEnd) {
@@ -339,6 +307,36 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
         }
         return result;
     }
+
+	private boolean recognize() {
+		boolean done = false;
+		// System.out.println("Frame " + currentFrameNumber);
+		// score the emitting list
+
+		// tokenTracker.startFrame();
+		activeList = activeListManager.getEmittingList();
+		if (activeList != null) {
+		    do {
+		        currentFrameNumber++;
+		        done = !scoreTokens();
+		    } while (!done
+		            && (growSkipInterval > 1 &&
+		            ((currentFrameNumber % growSkipInterval) == 0)));
+		    if (!done) {
+		        createBestTokenMap();
+		        // prune and grow the emitting list
+		        pruneBranches();
+
+		        resultList = new LinkedList<Token>();
+		        growEmittingBranches();
+		        // prune and grow the non-emitting lists
+		        // activeListManager.dump();
+		        growNonEmittingLists();
+		    }
+		}
+		// tokenTracker.stopFrame();
+		return done;
+	}
 
 
     /**

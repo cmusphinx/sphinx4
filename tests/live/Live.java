@@ -10,8 +10,6 @@
  *
  */
 
-package tests.live;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -53,7 +51,6 @@ public class Live {
     //private AudioPlayer audioPlayer = null; // for play the recording
     private LiveRecognizer currentRecognizer;
     private LiveFrame liveFrame;
-    private Result lastResult;
     private File currentDirectory;
 
     private boolean showPartialResults;
@@ -72,10 +69,9 @@ public class Live {
         } else {
 
             // initialize the LiveDecoder list
-            Live live = null;
             String decoderListFile = argv[0];
             try {
-                live = new Live(decoderListFile);
+                new Live(decoderListFile);
             } catch (Exception e) {
                 e.printStackTrace();
                 System.exit(1);
@@ -182,7 +178,7 @@ public class Live {
         Microphone microphone = currentRecognizer.getMicrophone();
         if (microphone.getUtterance() != null) {
             liveFrame.setMessage("Playing back...");
-            byte[] audio = microphone.getUtterance().getAudio();
+//            byte[] audio = microphone.getUtterance().getAudio();
 //            if (audio != null) {
 //                audioPlayer.play
 //                    (audio, microphone.getUtterance().getAudioFormat());
@@ -432,7 +428,7 @@ public class Live {
                 }
                 liveFrame.setDecoderComboBoxEnabled(true);
             } else {
-                lastResult = recognizer.recognize(liveFrame.getReference());
+                recognizer.recognize(liveFrame.getReference());
 
                 if (epMode) {
                     microphone.stopRecording();

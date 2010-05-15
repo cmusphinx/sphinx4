@@ -215,17 +215,17 @@ public class SimpleBreadthFirstSearchManager implements SearchManager {
         boolean done = false;
         Result result = null;
         streamEnd = false;
+ 
         for (int i = 0; i < nFrames && !done; i++) {
             done = recognize();
         }
 
         // generate a new temporary result if the current token is based on a final search state
-        // remark: the first check for not null is necessary in cases that the search space does not contain scorable tokens.
-        if ((activeList.getBestToken() != null && (activeList.getBestToken().isFinal()) || done)) {
-
+        // remark: the first check for not null is necessary in cases that the search space does not contain scoreable tokens.
+        if (activeList.getBestToken() != null) {
             // to make the current result as correct as possible we undo the last search graph expansion here
             ActiveList fixedList = undoLastGrowStep();
-
+            	
             if (!streamEnd) {
            		// now create the result using the fixed active-list
            		result = new Result(fixedList, resultList, currentFrameNumber, done, logMath);
@@ -242,7 +242,7 @@ public class SimpleBreadthFirstSearchManager implements SearchManager {
 
     /**
      * Because the growBranches() is called although no data is left after the last speech frame, the ordering of the
-     * active-list might depend on the transition-probs and (penalty-scores) only. Therefore we need to undo the last
+     * active-list might depend on the transition probabilities and (penalty-scores) only. Therefore we need to undo the last
      * grow-step up to final states or the last emitting state in order to fix the list.
      * @return newly created list
      */

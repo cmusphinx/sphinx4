@@ -77,7 +77,7 @@
 		type="edu.cmu.sphinx.linguist.flat.FlatLinguist">
         <property name="logMath" value="logMath"/>
         <property name="grammar" value="wordListGrammar"/>
-        <property name="acousticModel" value="acousticModel"/>
+        <property name="acousticModel" value="tidigits"/>
         <property name="wordInsertionProbability" 
     		value="${wordInsertionProbability}"/>
         <property name="silenceInsertionProbability" 

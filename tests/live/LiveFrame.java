@@ -10,8 +10,6 @@
  *
  */
 
-package tests.live;
-
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
