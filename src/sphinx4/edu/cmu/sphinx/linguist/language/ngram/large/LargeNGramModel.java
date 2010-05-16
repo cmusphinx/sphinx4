@@ -48,10 +48,6 @@ public class LargeNGramModel implements LanguageModel {
     @S4Integer(defaultValue = 100000)
     public static final String PROP_NGRAM_CACHE_SIZE = "ngramCacheSize";
 
-    /** The property that defines the maximum number of bigrams to be cached. */
-    @S4Integer(defaultValue = 50000)
-    public static final String PROP_BIGRAM_CACHE_SIZE = "bigramCacheSize";
-
     /** The property that controls whether the ngram caches are cleared after every utterance */
     @S4Boolean(defaultValue = false)
     public static final String PROP_CLEAR_CACHES_AFTER_UTTERANCE = "clearCachesAfterUtterance";
@@ -93,28 +89,28 @@ public class LargeNGramModel implements LanguageModel {
     // ------------------------------
     protected Logger logger;
     protected LogMath logMath;
-    protected String name;
-    protected String ngramLogFile;
-    protected int[] maxNGramCacheSize;
-    protected int maxNGramCacheTmp;
-    protected int maxBigramCacheTmp;
-    protected boolean clearCacheAfterUtterance;
-    protected boolean fullSmear;
     protected int maxDepth;
+
+    protected int ngramCacheSize;
+    protected boolean clearCacheAfterUtterance;
+    
+    protected boolean fullSmear;
+    
     protected Dictionary dictionary;
     protected String format;
     protected File location;
     protected boolean applyLanguageWeightAndWip;
     protected float languageWeight;
-    protected double wip;
     protected float unigramWeight;
+    protected double wip;
 
     // -------------------------------
     // Statistics
     // -------------------------------
-    private int[] NGramMisses;
-    private int[] NGramHit;
+    private int ngramMisses;
+    private int ngramHits;
     private int smearTermCount;
+    protected String ngramLogFile;
 
     // -------------------------------
     // subcomponents
@@ -127,22 +123,19 @@ public class LargeNGramModel implements LanguageModel {
     // --------------------------------
     private Map<Word, UnigramProbability> unigramIDMap;
     private Map<WordSequence, NGramBuffer>[] loadedNGramBuffers;
-    private LRUCache<WordSequence, NGramProbability>[] NGramCache;
-    private LRUCache<WordSequence, Float> NMaxCache;
+    private LRUCache<WordSequence, Float> ngramCache;
     private Map<Long, Float> bigramSmearMap;
 
     private NGramBuffer[] loadedBigramBuffers;
     private UnigramProbability[] unigrams;
-    private int[][] NGramSegmentTable;
-    private float[][] NGramProbTable;
-    private float[][] NGramBackoffTable;
+    private int[][] ngramSegmentTable;
+    private float[][] ngramProbTable;
+    private float[][] ngramBackoffTable;
     private float[] unigramSmearTerm;
-
     
     public LargeNGramModel( String format, URL urlLocation, String ngramLogFile,
-                              int maxNGramCacheSize, int maxBigramCacheSize,
-                              boolean clearCacheAfterUtterance, int maxDepth,
-                              LogMath logMath, Dictionary dictionary,
+                              int maxNGramCacheSize, boolean clearCacheAfterUtterance, 
+                              int maxDepth,  LogMath logMath, Dictionary dictionary,
                               boolean applyLanguageWeightAndWip, float languageWeight,
                               double wip, float unigramWeight, boolean fullSmear          
                               ) {
@@ -150,8 +143,7 @@ public class LargeNGramModel implements LanguageModel {
         this.format = format;
         this.location = new File (urlLocation.getFile());
         this.ngramLogFile = ngramLogFile;
-        this.maxNGramCacheTmp = maxNGramCacheSize;
-        this.maxBigramCacheTmp = maxBigramCacheSize;
+        this.ngramCacheSize = maxNGramCacheSize;
         this.clearCacheAfterUtterance = clearCacheAfterUtterance;
         this.maxDepth = maxDepth;
         this.logMath = logMath;
@@ -180,10 +172,9 @@ public class LargeNGramModel implements LanguageModel {
         URL urlLocation = ConfigurationManagerUtils.getResource(PROP_LOCATION, ps);
         location = new File (urlLocation.getFile());
         ngramLogFile = ps.getString(PROP_QUERY_LOG_FILE);
+        ngramCacheSize = ps.getInt(PROP_NGRAM_CACHE_SIZE);
         clearCacheAfterUtterance = ps.getBoolean(PROP_CLEAR_CACHES_AFTER_UTTERANCE);
         maxDepth = ps.getInt(LanguageModel.PROP_MAX_DEPTH);
-        maxNGramCacheTmp = ps.getInt(PROP_NGRAM_CACHE_SIZE);
-        maxBigramCacheTmp = ps.getInt(PROP_BIGRAM_CACHE_SIZE);
         logMath = (LogMath) ps.getComponent(PROP_LOG_MATH);
         dictionary = (Dictionary) ps.getComponent(PROP_DICTIONARY);
         applyLanguageWeightAndWip = ps.getBoolean(PROP_APPLY_LANGUAGE_WEIGHT_AND_WIP);
@@ -191,18 +182,7 @@ public class LargeNGramModel implements LanguageModel {
         wip = ps.getDouble(PROP_WORD_INSERTION_PROBABILITY);
         unigramWeight = ps.getFloat(PROP_UNIGRAM_WEIGHT);
         fullSmear = ps.getBoolean(PROP_FULL_SMEAR);
-    }
-
-
-    /*
-    * (non-Javadoc)
-    *
-    * @see edu.cmu.sphinx.util.props.Configurable#getName()
-    */
-    public String getName() {
-        return name;
-    }
-    
+    }    
     
     /*
     * (non-Javadoc)
@@ -220,37 +200,27 @@ public class LargeNGramModel implements LanguageModel {
         
         loader = new BinaryLoader(format, location, applyLanguageWeightAndWip,
                 logMath, languageWeight, wip, unigramWeight);
-        
-        maxNGramCacheSize = new int[loader.getMaxDepth()];
-        maxNGramCacheSize[1] = maxBigramCacheTmp;
-        
-        for (int i = 2; i < loader.getMaxDepth(); i++)
-			maxNGramCacheSize[i] = maxNGramCacheTmp;
-        
+                
         unigramIDMap = new HashMap<Word, UnigramProbability>();
         unigrams = loader.getUnigrams();
         loadedNGramBuffers = new Map[loader.getMaxDepth()];
-        NGramCache = new LRUCache[loader.getMaxDepth()];
-        NGramProbTable = new float[loader.getMaxDepth()][];
-        NGramBackoffTable = new float[loader.getMaxDepth()][];
-        NGramSegmentTable = new int[loader.getMaxDepth()][];
-        NGramHit = new int[loader.getMaxDepth()];
-        NGramMisses = new int[loader.getMaxDepth()];
+        ngramProbTable = new float[loader.getMaxDepth()][];
+        ngramBackoffTable = new float[loader.getMaxDepth()][];
+        ngramSegmentTable = new int[loader.getMaxDepth()][];
 
-        for (int i = 1; i <= loader.getMaxDepth(); i++) {
-        	loadedNGramBuffers[i - 1] = new HashMap<WordSequence, NGramBuffer>();
-          NGramCache[i - 1] = new LRUCache<WordSequence, NGramProbability>(maxNGramCacheSize[i - 1]);
+		for (int i = 1; i <= loader.getMaxDepth(); i++) {
+			loadedNGramBuffers[i - 1] = new HashMap<WordSequence, NGramBuffer>();
 
-          if (i >= 2) 
-            NGramProbTable[i - 1] = loader.getNGramProbabilities(i);
-            
-            if (i > 2) {
-            	NGramBackoffTable[i - 1] = loader.getNGramBackoffWeights(i);
-                NGramSegmentTable[i - 1] = loader.getNGramSegments(i);
-            }
-        }
+			if (i >= 2)
+				ngramProbTable[i - 1] = loader.getNGramProbabilities(i);
+
+			if (i > 2) {
+				ngramBackoffTable[i - 1] = loader.getNGramBackoffWeights(i);
+				ngramSegmentTable[i - 1] = loader.getNGramSegments(i);
+			}
+		}
         
-        NMaxCache = new LRUCache<WordSequence, Float>(maxNGramCacheSize[loader.getMaxDepth() - 1]);
+        ngramCache = new LRUCache<WordSequence, Float>(ngramCacheSize);
         buildUnigramIDMap(dictionary);
         loadedBigramBuffers = new NGramBuffer[unigrams.length];
 
@@ -349,17 +319,15 @@ public class LargeNGramModel implements LanguageModel {
             }
         }
 
-        loadedBigramBuffers = new NGramBuffer[unigrams.length];
         
+        loadedBigramBuffers = new NGramBuffer[unigrams.length];        
         for (int i = 2; i <= loader.getMaxDepth(); i++) {
             loadedNGramBuffers[i - 1] = new HashMap<WordSequence, NGramBuffer>();
-        	logger.info("LM Cache: " + Integer.toString(i) + "g " + NGramCache[i - 1].size());
-        	
-        	if (clearCacheAfterUtterance) {
-        		NGramCache[i - 1] = new LRUCache<WordSequence, NGramProbability>(maxNGramCacheSize[i - 1]);
-        		NMaxCache = new LRUCache<WordSequence, Float>(maxNGramCacheSize[loader.getMaxDepth()]);
-        	}
         }
+        logger.info("LM Cache Size: " + ngramCache.size() + " Hits: " + ngramHits + " Misses: " + ngramMisses);
+    	if (clearCacheAfterUtterance) {
+    		ngramCache = new LRUCache<WordSequence, Float>(ngramCacheSize);
+    	}
     }
 
     
@@ -406,57 +374,61 @@ public class LargeNGramModel implements LanguageModel {
     }
 	
 	
-    /**
-     * Returns the NGram probability of the given NGram.
-     *
-     * @param wordSequence the NGram word sequence
-     * @return the NGram probability
-     */
-    private float getNGramProbability(WordSequence wordSequence) {
-    	int numberWords = wordSequence.size();
-    	Word firstWord = wordSequence.getWord(0);
-    	Float floatProbability = null;
-    	NGramProbability nGProbability = null;  
+	/**
+	 * Returns the NGram probability of the given NGram.
+	 * 
+	 * @param wordSequence
+	 *            the NGram word sequence
+	 * @return the NGram probability
+	 */
+	private float getNGramProbability(WordSequence wordSequence) {
+		int numberWords = wordSequence.size();
+		Word firstWord = wordSequence.getWord(0);
+		Float floatProbability = null;
+		NGramProbability nGProbability = null;
 
-        if (loader.getNumberNGrams(numberWords) == 0 || !hasUnigram(firstWord))
-            return getNGramProbability(wordSequence.getNewest());
+		if (loader.getNumberNGrams(numberWords) == 0 || !hasUnigram(firstWord))
+			return getNGramProbability(wordSequence.getNewest());
 
-        if (numberWords == maxDepth)
-        	floatProbability = NMaxCache.get(wordSequence);
-        
-        if (floatProbability == null) {
-            float score = 0.0f;
+		if (numberWords == maxDepth)
+			floatProbability = ngramCache.get(wordSequence);
 
-            nGProbability = findNGram(wordSequence);
+		if (floatProbability != null) {
+			ngramHits++;
+			return floatProbability.floatValue();
+		}
+		ngramMisses++;
+		float score = 0.0f;
 
-            if (nGProbability != null) {
-                NGramHit[numberWords - 1]++;
-                score = NGramProbTable[numberWords - 1][nGProbability.getProbabilityID()];
-            } else {
-                NGramMisses[numberWords - 1]++;
-                
-                if (wordSequence.size() == 2) {
-                    UnigramProbability unigramProb = getUnigram(wordSequence.getWord(0));
-                    score = unigramProb.getLogBackoff() + getProbability(wordSequence.getNewest());
-                } else {
-                    NGramProbability nMinus1Gram = findNGram(wordSequence.getOldest());
-                
-                    if (nMinus1Gram != null)
-                        score = NGramBackoffTable[numberWords - 1][nMinus1Gram.getBackoffID()] + getProbability(wordSequence.getNewest());
-                    else
-                        score = getProbability(wordSequence.getNewest());
-               }
-            }
-            
-            floatProbability = score;
-            
-            if (numberWords == maxDepth)
-            	NMaxCache.put(wordSequence, floatProbability);
-        } 
+		nGProbability = findNGram(wordSequence);
 
-        return floatProbability.floatValue();
-    }
-    
+		if (nGProbability != null) {
+			score = ngramProbTable[numberWords - 1][nGProbability
+					.getProbabilityID()];
+		} else {
+			if (wordSequence.size() == 2) {
+				UnigramProbability unigramProb = getUnigram(wordSequence
+						.getWord(0));
+				score = unigramProb.getLogBackoff()
+						+ getProbability(wordSequence.getNewest());
+			} else {
+				NGramProbability nMinus1Gram = findNGram(wordSequence
+						.getOldest());
+
+				if (nMinus1Gram != null)
+					score = ngramBackoffTable[numberWords - 1][nMinus1Gram
+							.getBackoffID()]
+							+ getProbability(wordSequence.getNewest());
+				else
+					score = getProbability(wordSequence.getNewest());
+			}
+		}
+
+		if (numberWords == maxDepth)
+			ngramCache.put(wordSequence, score);
+
+		return score;
+	}
     
     /**
      * Finds or loads the NGram probability of the given NGram.
@@ -586,7 +558,7 @@ public class LargeNGramModel implements LanguageModel {
      * @return the index of the first NGram entry of the given N-1Gram
      */
     private int getFirstNGramEntry(NGramProbability nMinus1Gram, int firstNMinus1GramEntry, int n) {
-        int firstNGramEntry = NGramSegmentTable[n - 1][(firstNMinus1GramEntry + nMinus1Gram.getWhichFollower()) 
+        int firstNGramEntry = ngramSegmentTable[n - 1][(firstNMinus1GramEntry + nMinus1Gram.getWhichFollower()) 
                                                   >> loader.getLogNGramSegmentSize()] 
                                                   + nMinus1Gram.getFirstNPlus1GramEntry();
         
@@ -765,39 +737,6 @@ public class LargeNGramModel implements LanguageModel {
         return Collections.unmodifiableSet(vocabulary);
     }
 
-
-    /**
-     * Returns the number of times when a bigram is queried, but there is no bigram in the LM (in which case it uses the
-     * backoff probabilities).
-     *
-     * @return the number of bigram misses
-     */
-    public int getBigramMisses() {
-    	return NGramMisses[1];
-    }
-
-
-    /**
-     * Returns the number of times when a trigram is queried, but there is no trigram in the LM (in which case it uses
-     * the backoff probabilities).
-     *
-     * @return the number of trigram misses
-     */
-    public int getTrigramMisses() {
-    	return NGramMisses[2];
-    }
-
-
-    /**
-     * Returns the number of trigram hits.
-     *
-     * @return the number of trigram hits
-     */
-    public int getTrigramHits() {
-    	return NGramHit[2];
-    }
-    
-    
     /**
      * Returns the number of times when a NGram is queried, 
      * but there is no such NGram in the LM 
@@ -806,8 +745,8 @@ public class LargeNGramModel implements LanguageModel {
      * @param n the order for the NGrams
      * @return the number of NGram misses
      */
-    public int getNGramMisses(int n) {
-        return NGramMisses[n - 1];
+    public int getNGramMisses() {
+        return ngramMisses;
     }
 
 
@@ -817,8 +756,8 @@ public class LargeNGramModel implements LanguageModel {
      * @param n the order for the NGrams
      * @return the number of NGram hits
      */
-    public int getNGramHits(int n) {
-        return NGramHit[n - 1];
+    public int getNGramHits() {
+        return ngramHits;
     }
 
     
@@ -901,7 +840,7 @@ public class LargeNGramModel implements LanguageModel {
                 NGramProbability bgProb = bigram.getNGramProbability(j);
 
                 float logugprob = unigrams[wordID].getLogProbability();
-                float logbgprob = NGramProbTable[1][bgProb.getProbabilityID()];
+                float logbgprob = ngramProbTable[1][bgProb.getProbabilityID()];
 
                 double ugprob = logMath.logToLinear(logugprob);
                 double bgprob = logMath.logToLinear(logbgprob);
@@ -942,7 +881,7 @@ public class LargeNGramModel implements LanguageModel {
             for (int j = 0; j < bigram.getNumberNGrams(); j++) {
                 float smearTerm;
                 NGramProbability bgProb = bigram.getNGramProbability(j);
-                float logbgbackoff = NGramBackoffTable[2][bgProb.getBackoffID()];
+                float logbgbackoff = ngramBackoffTable[2][bgProb.getBackoffID()];
                 double bgbackoff = logMath.logToLinear(logbgbackoff);
                 int k = bigram.getWordID(j);
                 NGramBuffer trigram = loadTrigramBuffer(i, k);
@@ -955,7 +894,7 @@ public class LargeNGramModel implements LanguageModel {
                     for (int l = 0; l < trigram.getNumberNGrams(); l++) {
                         int m = trigram.getWordID(l);
                         float logtgprob
-                                = NGramProbTable[2][trigram.getProbabilityID(l)];
+                                = ngramProbTable[2][trigram.getProbabilityID(l)];
                         double tgprob = logMath.logToLinear(logtgprob);
                         float logbgprob = getBigramProb(k, m);
                         double bgprob = logMath.logToLinear(logbgprob);
@@ -1014,7 +953,7 @@ public class LargeNGramModel implements LanguageModel {
      * @throws IOException if an error occurs on write
      */
     @SuppressWarnings("unused")
-	private void writeSmearInfo(String filename) throws IOException {
+    private void writeSmearInfo(String filename) throws IOException {
         DataOutputStream out = new DataOutputStream(new FileOutputStream(filename));
         out.writeInt(SMEAR_MAGIC);
         System.out.println("writing " + unigrams.length);
@@ -1124,6 +1063,6 @@ public class LargeNGramModel implements LanguageModel {
     private float getBigramProb(int word1, int word2) {
         NGramBuffer bigram = getBigramBuffer(word1);
         NGramProbability bigramProbability = bigram.findNGram(word2);
-        return NGramProbTable[1][bigramProbability.getProbabilityID()];
+        return ngramProbTable[1][bigramProbability.getProbabilityID()];
     }
 }

@@ -58,7 +58,7 @@ public class LargeTrigramModel extends LargeNGramModel {
         // Inline conditional statement to prevent maxDepth being > to 3
         // We are in a Trigram wrapper, after all
         super(format, urlLocation, ngramLogFile, maxTrigramCacheSize,
-                maxBigramCacheSize, clearCacheAfterUtterance, (maxDepth > 3 ? 3
+                clearCacheAfterUtterance, (maxDepth > 3 ? 3
                         : maxDepth), logMath, dictionary,
                 applyLanguageWeightAndWip, languageWeight, wip, unigramWeight,
                 fullSmear);
@@ -88,8 +88,7 @@ public class LargeTrigramModel extends LargeNGramModel {
         clearCacheAfterUtterance = ps
                 .getBoolean(PROP_CLEAR_CACHES_AFTER_UTTERANCE);
         maxDepth = ps.getInt(LanguageModel.PROP_MAX_DEPTH);
-        maxNGramCacheTmp = ps.getInt(PROP_TRIGRAM_CACHE_SIZE);
-        maxBigramCacheTmp = ps.getInt(PROP_BIGRAM_CACHE_SIZE);
+        ngramCacheSize = ps.getInt(PROP_TRIGRAM_CACHE_SIZE);
         logMath = (LogMath) ps.getComponent(PROP_LOG_MATH);
         dictionary = (Dictionary) ps.getComponent(PROP_DICTIONARY);
         applyLanguageWeightAndWip = ps
