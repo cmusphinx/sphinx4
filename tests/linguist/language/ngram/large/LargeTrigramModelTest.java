@@ -43,7 +43,7 @@ public class LargeTrigramModelTest {
 
         if (args.length == 0) {
             System.out.println
-                ("Usage: java LargeTrigramModelTest <props_file> " +
+                ("Usage: java LargeTrigramModelTest <config_file> " +
                  "[<testFile>] " +
                  "<output_file>");
         }

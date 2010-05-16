@@ -3,7 +3,7 @@
 <config>        
 
     <component name="dictionary" 
-        type="edu.cmu.sphinx.linguist.dictionary.FullDictionary">
+        type="edu.cmu.sphinx.linguist.dictionary.FastDictionary">
         <property name="dictionaryPath"
                   value="dict/cmudict.0.6d"/>
         <property name="fillerPath" 

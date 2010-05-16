@@ -183,17 +183,17 @@ public class UtteranceTest {
      */
     public static void main(String[] args) throws Exception {
 
-        String propsPath;
+        String configPath;
         String testFile = null;
 	String outFile = null;
 	
         if (args.length == 0) {
             System.out.println
-                ("Usage: java UtteranceTest <props_file> " +
+                ("Usage: java UtteranceTest <config_file> " +
                  "<testFile> <output_file>");
         }
         
-        propsPath = args[0];
+        configPath = args[0];
         if (args.length >= 2) {
             testFile = args[1];
         }
@@ -203,7 +203,7 @@ public class UtteranceTest {
 
 	try {
 	    UtteranceTest test = new UtteranceTest
-		("test", propsPath, testFile, outFile);
+		("test", configPath, testFile, outFile);
 	    
 	    while (test.hasMoreUtterances()) {
 		test.testUtterance();

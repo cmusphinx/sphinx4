@@ -60,7 +60,6 @@ NOTE:  Before running the tests, you must have already built
             description="Compiles all the tests.">
 	    <mkdir dir="${classes_dir}/tests/knowledge/language/large"/>
 	    <javac debug="true"
-	           source="1.4"
 		   deprecation="true"
 		   destdir="${classes_dir}"
 		   classpath="${classes_dir}"
@@ -97,7 +96,7 @@ NOTE:  Before running the tests, you must have already built
 	    </exec>
 	    <java classpath="${classes_dir}"
 	          classname="${large_trigram_test}">
-		  <arg value="file:./binary.props"/>
+		  <arg value="config.xml"/>
 		  <arg value="/lab/speech/sphinx4/data/hub4_model/random_ngrams.txt"/>
 		  <arg value="ngrams.out"/>
 	    </java>
@@ -116,7 +115,7 @@ NOTE:  Before running the tests, you must have already built
 	    </exec>
 	    <java classpath="${classes_dir}"
 	          classname="${large_trigram_test}">
-		  <arg value="file:./binary.props"/>
+		  <arg value="config.xml"/>
 		  <arg value="/lab/speech/sphinx4/data/hub4_model/random_trigrams.txt"/>
 		  <arg value="backoff.out"/>
 	    </java>
@@ -173,7 +172,7 @@ NOTE:  Before running the tests, you must have already built
 	    depends="all">
 	    <java classpath="${classes_dir}"
 	          classname="${large_trigram_test}">
-		  <arg value="file:./binary.props"/>
+		  <arg value="config.xml"/>
 		  <arg value="/lab/speech/sphinx4/data/hub4_model/random_ngrams.txt"/>
 	    </java>
     </target>	    
@@ -189,7 +188,7 @@ NOTE:  Before running the tests, you must have already built
 	    depends="all">
 	    <java classpath="${classes_dir}"
 	          classname="${large_trigram_test}">
-		  <arg value="file:./binary.props"/>
+		  <arg value="config.xml"/>
 		  <arg value="/lab/speech/sphinx4/data/hub4_model/random_trigrams.txt"/>
 	    </java>
     </target>	    
@@ -217,7 +216,7 @@ NOTE:  Before running the tests, you must have already built
 	    </exec>
 	    <java classname="${utterance_test}"
 	          classpath="${classes_dir}">
-		  <arg value="file:./binary.props"/>
+		  <arg value="config.xml"/>
 		  <arg value="/lab/speech/sphinx4/data/hub4_model/ngram.queried"/>
 		  <arg value="s4.lm-utt-test.out"/>
 	    </java>
@@ -249,7 +248,7 @@ NOTE:  Before running the tests, you must have already built
 	          classpath="${classes_dir}"
 		  maxmemory="250m">
 		  <jvmarg value="-XX:+TraceGen0Time -XX:+TraceGen1Time"/>
-		  <arg value="file:./binary.props"/>
+		  <arg value="config.xml"/>
 		  <arg value="/lab/speech/sphinx4/data/hub4_model/ngram.queried"/>
 	    </java>
     </target>	    

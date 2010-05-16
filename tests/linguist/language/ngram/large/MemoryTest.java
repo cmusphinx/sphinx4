@@ -167,17 +167,17 @@ public class MemoryTest {
      */
     public static void main(String[] args) throws Exception {
 
-        String propsPath;
+        String configPath;
         String testFile = null;
 	String outFile = null;
 	
         if (args.length == 0) {
             System.out.println
-                ("Usage: java MemoryTest <props_file> " +
+                ("Usage: java MemoryTest <config_file> " +
                  "<testFile> <output_file>");
         }
         
-        propsPath = args[0];
+        configPath = args[0];
         if (args.length >= 2) {
             testFile = args[1];
         }
@@ -187,7 +187,7 @@ public class MemoryTest {
 
 	try {
 	    MemoryTest test = new MemoryTest
-		("test", propsPath, testFile, outFile);
+		("test", configPath, testFile, outFile);
 	    
 	    while (test.hasMoreUtterances()) {
 		test.testUtterance();
