@@ -163,18 +163,27 @@ public class SimpleActiveListManager implements ActiveListManager {
 
 
     /**
-     * Returns the emitting ActiveList, and removes it from this manager.
+     * Returns the emitting ActiveList from the manager
      *
      * @return the emitting ActiveList
      */
     @Override
     public ActiveList getEmittingList() {
         ActiveList list = currentActiveLists[currentActiveLists.length - 1];
-        currentActiveLists[currentActiveLists.length - 1] = list.newInstance();
         return list;
     }
 
+    
+    /**
+     * Clears emitting list in manager
+     */
+	@Override
+	public void clearEmittingList() {
+        ActiveList list = currentActiveLists[currentActiveLists.length - 1];
+		currentActiveLists[currentActiveLists.length - 1] = list.newInstance();	
+	}
 
+	
     /**
      * Returns an Iterator of all the non-emitting ActiveLists. The iteration order is the same as the search state
      * order.

@@ -319,17 +319,23 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
         if (more) {
             pruneBranches();
             currentFrameNumber++;
-            if (growSkipInterval == 0 || (currentFrameNumber % growSkipInterval) != 0) {
-
-                resultList = new LinkedList<Token>();
-
-                createBestTokenMap();
+            if (growSkipInterval == 0 || (currentFrameNumber % growSkipInterval) != 0) {            	
+                clearCollectors();
                 growEmittingBranches();
                 growNonEmittingBranches();
             }
         }
         return !more;
     }
+
+    /**
+     * Clears lists and maps before next expansion stage
+     */
+	private void clearCollectors() {
+		resultList = new LinkedList<Token>();
+		createBestTokenMap();
+		activeListManager.clearEmittingList();
+	}
 
 
     /**
@@ -370,9 +376,9 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
 
         activeList = activeListManager.getEmittingList();
         activeList.add(new Token(state, currentFrameNumber));
-        resultList = new LinkedList<Token>();
-
-        createBestTokenMap();
+        
+        clearCollectors();
+        
         growBranches();
         growNonEmittingBranches();
         // tokenTracker.setEnabled(false);

@@ -58,13 +58,19 @@ public interface ActiveListManager extends Configurable {
 
 
     /**
-     * Returns the emitting ActiveList, and removes it from this manager.
+     * Returns the emitting ActiveList from the manager
      *
      * @return the emitting ActiveList
      */
     public ActiveList getEmittingList();
 
+    
+    /**
+     * Clears emitting list in manager
+     */
+	public void clearEmittingList();
 
+	
     /** Dumps out debug info for the active list manager */
     public void dump();
 
@@ -75,7 +81,6 @@ public interface ActiveListManager extends Configurable {
      * @param numStateOrder the total number of state types
      */
     public void setNumStateOrder(int numStateOrder);
-
 
 }
 
