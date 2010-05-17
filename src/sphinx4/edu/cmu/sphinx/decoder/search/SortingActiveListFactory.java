@@ -1,5 +1,4 @@
 /*
- * 
  * Copyright 1999-2004 Carnegie Mellon University.  
  * Portions Copyright 2004 Sun Microsystems, Inc.  
  * Portions Copyright 2004 Mitsubishi Electric Research Laboratories.
@@ -24,9 +23,6 @@ import java.util.List;
 
 /**
  * @author plamere
- *         <p/>
- *         To change the template for this generated type comment go to Window - Preferences - Java - Code Generation -
- *         Code and Comments
  */
 public class SortingActiveListFactory extends ActiveListFactory {
     /**

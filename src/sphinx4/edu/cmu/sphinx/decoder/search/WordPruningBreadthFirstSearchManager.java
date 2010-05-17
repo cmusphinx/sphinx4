@@ -65,10 +65,13 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
     public final static String PROP_SHOW_TOKEN_COUNT = "showTokenCount";
 
     /**
-     * The property that controls the number of frames processed for every time the decode growth step is skipped.
-     * Setting this property to zero disables grow skipping. Setting this number to a small integer will increase the
-     * speed of the decoder but will also decrease its accuracy. The higher the number, the less often the grow code is
-     * skipped.
+     * The property that controls the number of frames processed for every time
+     * the decode growth step is skipped. Setting this property to zero disables
+     * grow skipping. Setting this number to a small integer will increase the
+     * speed of the decoder but will also decrease its accuracy. The higher the
+     * number, the less often the grow code is skipped. Values like 6-8 is known
+     * to be the good enough for large vocabulary tasks. That means that one of
+     * 6 frames will be skipped.
      */
     @S4Integer(defaultValue = 0)
     public final static String PROP_GROW_SKIP_INTERVAL = "growSkipInterval";
@@ -308,35 +311,25 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
         return result;
     }
 
-	private boolean recognize() {
-		boolean done = false;
-		// System.out.println("Frame " + currentFrameNumber);
-		// score the emitting list
+    private boolean recognize() {
 
-		// tokenTracker.startFrame();
-		activeList = activeListManager.getEmittingList();
-		if (activeList != null) {
-		    do {
-		        currentFrameNumber++;
-		        done = !scoreTokens();
-		    } while (!done
-		            && (growSkipInterval > 1 &&
-		            ((currentFrameNumber % growSkipInterval) == 0)));
-		    if (!done) {
-		        createBestTokenMap();
-		        // prune and grow the emitting list
-		        pruneBranches();
+        activeList = activeListManager.getEmittingList();
+        boolean more = scoreTokens();
 
-		        resultList = new LinkedList<Token>();
-		        growEmittingBranches();
-		        // prune and grow the non-emitting lists
-		        // activeListManager.dump();
-		        growNonEmittingLists();
-		    }
-		}
-		// tokenTracker.stopFrame();
-		return done;
-	}
+        if (more) {
+            pruneBranches();
+            currentFrameNumber++;
+            if (growSkipInterval == 0 || (currentFrameNumber % growSkipInterval) != 0) {
+
+                resultList = new LinkedList<Token>();
+
+                createBestTokenMap();
+                growEmittingBranches();
+                growNonEmittingBranches();
+            }
+        }
+        return !more;
+    }
 
 
     /**
@@ -381,7 +374,7 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
 
         createBestTokenMap();
         growBranches();
-        growNonEmittingLists();
+        growNonEmittingBranches();
         // tokenTracker.setEnabled(false);
         // tokenTracker.startUtterance();
     }
@@ -407,13 +400,11 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
                     + activeList.getBestToken());
         }
         for (Token token : activeList) {
-            if (token.getScore() >= relativeBeamThreshold && allowPruning(token)) {
+            if (token.getScore() >= relativeBeamThreshold && allowExpansion(token)) {
                 collectSuccessorTokens(token);
             }
         }
         growTimer.stop();
-
-        // activeListManager.dump();
     }
 
 
@@ -447,8 +438,8 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
     }
 
 
-    /** Grow the non-emitting ActiveLists, until the tokens reach an emitting state. */
-    private void growNonEmittingLists() {
+    /** Grow the non-emitting branches, until the tokens reach an emitting state. */
+    private void growNonEmittingBranches() {
         for (Iterator<ActiveList> i = activeListManager.getNonEmittingListIterator(); i.hasNext();) {
             activeList = i.next();
             if (activeList != null) {
@@ -490,7 +481,6 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
         totalTokensScored.value += activeList.size();
 
         return moreTokens;
-
     }
 
 
@@ -515,8 +505,8 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
      *
      * @param activeList the active list of states
      */
-    private void monitorStates(ActiveList activeList) {
-
+    private void monitorStates(ActiveList activeList) {        
+        
         tokenSum += activeList.size();
         tokenCount++;
 
@@ -779,7 +769,7 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
      * @param t the token to test
      * @return <code>true</code> if the token should be expanded
      */
-    protected boolean allowPruning(Token t) {
+    protected boolean allowExpansion(Token t) {
         return true; // currently disabled
     }
 

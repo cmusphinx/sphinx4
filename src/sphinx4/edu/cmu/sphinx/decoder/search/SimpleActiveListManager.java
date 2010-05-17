@@ -240,6 +240,7 @@ public class SimpleActiveListManager implements ActiveListManager {
     /** Outputs debugging info for this list manager */
     @Override
     public void dump() {
+        System.out.println("--------------------");
         for (ActiveList al : currentActiveLists) {
             dumpList(al);
         }
@@ -252,7 +253,7 @@ public class SimpleActiveListManager implements ActiveListManager {
      * @param al the active list to dump
      */
     private void dumpList(ActiveList al) {
-        System.out.println("GBT " + al.getBestToken() + " size: " + al.size());
+        System.out.println("Size: " + al.size() + " Best token: " + al.getBestToken());
     }
 
 }

@@ -20,7 +20,7 @@ public class SkewPruningSearchManager extends
 	private Map<SearchState, Token> skewMap;
 
 	@Override
-	protected boolean allowPruning(Token t) {
+	protected boolean allowExpansion(Token t) {
 		if (pruneHMM)
 			return skewPruneHMM(t);
 		return skewPruneWord(t);

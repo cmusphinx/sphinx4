@@ -742,7 +742,6 @@ public class LargeNGramModel implements LanguageModel {
      * but there is no such NGram in the LM 
      * (in which case it uses the backoff probabilities).
      *
-     * @param n the order for the NGrams
      * @return the number of NGram misses
      */
     public int getNGramMisses() {
@@ -753,7 +752,6 @@ public class LargeNGramModel implements LanguageModel {
     /**
      * Returns the number of NGram hits.
      *
-     * @param n the order for the NGrams
      * @return the number of NGram hits
      */
     public int getNGramHits() {
