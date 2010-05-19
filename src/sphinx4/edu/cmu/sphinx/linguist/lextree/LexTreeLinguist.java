@@ -20,6 +20,7 @@ import edu.cmu.sphinx.linguist.dictionary.Word;
 import edu.cmu.sphinx.linguist.language.grammar.Grammar;
 import edu.cmu.sphinx.linguist.language.ngram.LanguageModel;
 import edu.cmu.sphinx.linguist.util.HMMPool;
+import edu.cmu.sphinx.linguist.util.LRUCache;
 import edu.cmu.sphinx.util.LogMath;
 import edu.cmu.sphinx.util.TimerPool;
 import edu.cmu.sphinx.util.props.*;
@@ -224,7 +225,7 @@ public class LexTreeLinguist implements Linguist {
     private Word[] sentenceStartWordArray;
     private SearchGraph searchGraph;
     private HMMPool hmmPool;
-    private ArcCache arcCache = new ArcCache();
+    private LRUCache<LexTreeState, SearchStateArc[]> arcCache;
 
     protected HMMTree hmmTree;
 
@@ -238,7 +239,7 @@ public class LexTreeLinguist implements Linguist {
         double wordInsertionProbability, double silenceInsertionProbability,
         double fillerInsertionProbability, double unitInsertionProbability,
         float languageWeight, boolean addFillerWords, boolean generateUnitStates,
-        float unigramSmearWeight, int arcCacheSize ) {
+        float unigramSmearWeight, int maxArcCacheSize ) {
 
         logger = Logger.getLogger(getClass().getName());
 
@@ -258,11 +259,11 @@ public class LexTreeLinguist implements Linguist {
         this.addFillerWords = addFillerWords;
         this.generateUnitStates = generateUnitStates;
         this.unigramSmearWeight = unigramSmearWeight;
+        this.maxArcCacheSize = maxArcCacheSize;
 
-        this.cacheEnabled = arcCacheSize > 0;
+        cacheEnabled = maxArcCacheSize > 0;
         if( cacheEnabled ) {
-            this.arcCache = new ArcCache();
-            this.maxArcCacheSize = arcCacheSize;
+            arcCache = new LRUCache<LexTreeState, SearchStateArc[]>(maxArcCacheSize);
         }
     }
 
@@ -294,16 +295,12 @@ public class LexTreeLinguist implements Linguist {
         addFillerWords = (ps.getBoolean(PROP_ADD_FILLER_WORDS));
         generateUnitStates = (ps.getBoolean(PROP_GENERATE_UNIT_STATES));
         unigramSmearWeight = ps.getFloat(PROP_UNIGRAM_SMEAR_WEIGHT);
-        int newMaxArcCacheSize = ps.getInt(PROP_CACHE_SIZE);
+        maxArcCacheSize = ps.getInt(PROP_CACHE_SIZE);
 
-        // if the new size of the arc cache is less than before
-        // just clear out the cache, since we can easily grow it
-        // but not easily shrink it.
-        if (newMaxArcCacheSize < maxArcCacheSize) {
-            arcCache = new ArcCache();
-        }
-        maxArcCacheSize = newMaxArcCacheSize;
         cacheEnabled = maxArcCacheSize > 0;
+        if(cacheEnabled) {
+            arcCache = new LRUCache<LexTreeState, SearchStateArc[]>(maxArcCacheSize);
+        }
     }
 
 
@@ -1632,13 +1629,5 @@ public class LexTreeLinguist implements Linguist {
         return hmmTree.getHMMNodes(endNode);
     }
 
-
-    class ArcCache extends LinkedHashMap<LexTreeState, SearchStateArc[]> {
-
-	@Override
-        protected boolean removeEldestEntry(Map.Entry<LexTreeState, SearchStateArc[]> eldest) {
-            return size() > maxArcCacheSize;
-        }
-    }
 }
 
