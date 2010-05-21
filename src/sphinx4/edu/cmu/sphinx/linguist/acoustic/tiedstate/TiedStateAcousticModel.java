@@ -15,8 +15,6 @@ package edu.cmu.sphinx.linguist.acoustic.tiedstate;
 // Placeholder for a package import
 
 import edu.cmu.sphinx.linguist.acoustic.*;
-import edu.cmu.sphinx.util.Timer;
-import edu.cmu.sphinx.util.TimerPool;
 import edu.cmu.sphinx.util.props.*;
 
 import java.io.IOException;
@@ -72,9 +70,6 @@ public class TiedStateAcousticModel implements AcousticModel {
     @S4Boolean(defaultValue = true)
     public final static String PROP_USE_COMPOSITES = "useComposites";
 
-    /** Model load timer */
-    protected final static String TIMER_LOAD = "AM_Load";
-
 
     // -----------------------------
     // Configured variables
@@ -89,7 +84,6 @@ public class TiedStateAcousticModel implements AcousticModel {
     // ----------------------------
     // internal variables
     // -----------------------------
-    transient protected Timer loadTimer;
     final transient private Map<String, SenoneSequence> compositeSenoneSequenceCache = new HashMap<String, SenoneSequence>();
     private boolean allocated;
 
@@ -119,10 +113,7 @@ public class TiedStateAcousticModel implements AcousticModel {
     @Override
     public void allocate() throws IOException {
         if (!allocated) {
-            this.loadTimer = TimerPool.getTimer(this, TIMER_LOAD);
-            loadTimer.start();
             loader.load();
-            loadTimer.stop();
             logInfo();
             allocated = true;
         }

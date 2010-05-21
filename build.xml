@@ -161,7 +161,7 @@
     <!-- *       not depend upon jsapi.jar.                       * -->
     <!-- *                                                        * -->
     <!-- ********************************************************** -->
-    <target name="check_jsapi_default.isPresent">
+    <target name="check_jsapi_default_present">
         <!-- Complicated way of doing a "if... else"                 -->
         <!-- Check if the environment variable is set. If it is, set -->
         <!-- the local variable to the same value.                   -->
@@ -179,20 +179,20 @@
             </not>
         </condition>
         <available file="${EXTERNAL_JSAPI_LOCATION}"
-                   property="jsapi_default.isPresent"/>
+                   property="jsapi_default_present"/>
     </target>
 
-    <target name="copy_jsapi_jar" if="jsapi_default.isPresent">
+    <target name="copy_jsapi_jar" if="jsapi_default_present">
         <copy file="${EXTERNAL_JSAPI_LOCATION}" tofile="lib/jsapi.jar"/>
     </target>
 
-    <target name="check_jsapi_jar.isPresent"
-            depends="check_jsapi_default.isPresent,copy_jsapi_jar">
-        <available file="lib/jsapi.jar" property="jsapi_jar.isPresent"/>
+    <target name="check_jsapi_jar_present"
+            depends="check_jsapi_default_present,copy_jsapi_jar">
+        <available file="lib/jsapi.jar" property="jsapi_jar_present"/>
     </target>
 
     <target name="issue_jsapi_warning"
-            unless="jsapi_jar.isPresent">
+            unless="jsapi_jar_present">
         <echo>
 
             Cannot find lib/jsapi.jar needed to build Java Speech API
@@ -204,7 +204,7 @@
     </target>
 
     <target name="handle_jsapi"
-            depends="check_jsapi_jar.isPresent,
+            depends="check_jsapi_jar_present,
                      issue_jsapi_warning,
                      set_patternset_to_compile,
                      set_patternset_to_doc"/>
@@ -578,16 +578,16 @@
     <!-- *                                                        * -->
     <!-- ********************************************************** -->
     <target name="deploy"
-            depends="check_jsapi_jar.isPresent,issue_jsapi_error"
+            depends="check_jsapi_jar_present,issue_jsapi_error"
             description="Deploys the bin.zip and src.zip files."
-            if="jsapi_jar.isPresent">
+            if="jsapi_jar_present">
         <delete dir="${deploy_dir}"/>
         <antcall target="deploy_bin_zip"/>
         <antcall target="deploy_src_zip"/>
     </target>
 
     <target name="issue_jsapi_error"
-            unless="jsapi_jar.isPresent">
+            unless="jsapi_jar_present">
         <echo>
             Cannot find lib/jsapi.jar needed to deploy Sphinx-4.
             Please go to the "lib" directory and run jsapi.sh or jsapi.exe

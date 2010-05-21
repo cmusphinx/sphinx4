@@ -210,7 +210,7 @@ public class FastDictionary implements Dictionary {
             dictionary = new HashMap<String, String>();
             wordDictionary = new HashMap<String, Word>();
 
-            Timer loadTimer = TimerPool.getTimer(this, "DictionaryLoad");
+            Timer loadTimer = TimerPool.getTimer(this, "Load Dictionary");
             fillerWords = new HashSet<String>();
 
             loadTimer.start();

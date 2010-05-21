@@ -15,6 +15,7 @@ import edu.cmu.sphinx.linguist.acoustic.*;
 import static edu.cmu.sphinx.linguist.acoustic.tiedstate.Pool.Feature.*;
 import edu.cmu.sphinx.util.ExtendedStreamTokenizer;
 import edu.cmu.sphinx.util.LogMath;
+import edu.cmu.sphinx.util.TimerPool;
 import edu.cmu.sphinx.util.Utilities;
 import edu.cmu.sphinx.util.props.*;
 
@@ -286,7 +287,9 @@ public class Sphinx3Loader implements Loader {
 
     @Override
     public void load() throws IOException {
-        if (!loaded) {
+        if (!loaded) {            
+            TimerPool.getTimer(this, "Load AM").start();
+            
             hmmManager = new HMMManager();
             contextIndependentUnits = new LinkedHashMap<String, Unit>();
          
@@ -303,7 +306,10 @@ public class Sphinx3Loader implements Loader {
             } catch (URISyntaxException e) {
                 throw new RuntimeException(e);
             }
+     
+            // done
             loaded = true;
+            TimerPool.getTimer(this, "Load AM").stop();
         }
     }
 

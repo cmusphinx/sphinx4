@@ -387,7 +387,7 @@ public class LexTreeLinguist implements Linguist {
 
     /** Compiles the n-gram into a lex tree that is used during the search */
     private void compileGrammar() {
-        TimerPool.getTimer(this, "compile").start();
+        TimerPool.getTimer(this, "Compile").start();
 
         sentenceEndWord = dictionary.getSentenceEndWord();
         sentenceStartWordArray = new Word[1];
@@ -395,7 +395,7 @@ public class LexTreeLinguist implements Linguist {
 
         generateHmmTree();
 
-        TimerPool.getTimer(this,"compile").stop();
+        TimerPool.getTimer(this,"Compile").stop();
         // Now that we are all done, dump out some interesting
         // information about the process
 

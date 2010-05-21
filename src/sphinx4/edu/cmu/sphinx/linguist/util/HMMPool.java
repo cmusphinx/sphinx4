@@ -53,7 +53,7 @@ public class HMMPool {
         int maxCIUnits = 0;
         this.model = model;
         this.unitManager = unitManager;
-        TimerPool.getTimer(this,"buildHmmPool").start();
+        TimerPool.getTimer(this,"Build HMM Pool").start();
 
         if (model.getLeftContextSize() != 1) {
             throw new Error("LexTreeLinguist: Unsupported left context size");
@@ -103,7 +103,7 @@ public class HMMPool {
                 }
             }
         }
-        TimerPool.getTimer(this,"buildHmmPool").stop();
+        TimerPool.getTimer(this,"Build HMM Pool").stop();
     }
 
 

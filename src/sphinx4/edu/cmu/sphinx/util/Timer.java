@@ -241,10 +241,10 @@ public class Timer {
         }
 
         if (notReliable) {
-            System.out.print(Utilities.pad(name, 15) + ' ');
+            System.out.print(Utilities.pad(name, 20) + ' ');
             System.out.println("Not reliable.");
         } else {
-            System.out.print(Utilities.pad(name, 15) + ' ');
+            System.out.print(Utilities.pad(name, 20) + ' ');
             System.out.print(Utilities.pad(String.valueOf(count), 8));
             System.out.print(fmtTime(curTime));
             System.out.print(fmtTime(minTime));

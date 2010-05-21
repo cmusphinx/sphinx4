@@ -643,9 +643,9 @@ public class SimpleBreadthFirstSearchManager implements SearchManager {
             throw new RuntimeException(toString()+ ": allocation of search manager resources failed", e);
         }
 
-        scoreTimer = TimerPool.getTimer(this, "scoring");
-        pruneTimer = TimerPool.getTimer(this, "pruning");
-        growTimer = TimerPool.getTimer(this, "growing");
+        scoreTimer = TimerPool.getTimer(this, "Score");
+        pruneTimer = TimerPool.getTimer(this, "Prune");
+        growTimer = TimerPool.getTimer(this, "Grow");
     }
 
 

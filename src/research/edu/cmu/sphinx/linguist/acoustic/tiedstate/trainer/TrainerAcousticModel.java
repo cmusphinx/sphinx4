@@ -16,7 +16,6 @@ import edu.cmu.sphinx.linguist.acoustic.tiedstate.Loader;
 import edu.cmu.sphinx.linguist.acoustic.tiedstate.Saver;
 import edu.cmu.sphinx.linguist.acoustic.tiedstate.TiedStateAcousticModel;
 import edu.cmu.sphinx.linguist.acoustic.UnitManager;
-import edu.cmu.sphinx.util.TimerPool;
 import edu.cmu.sphinx.util.props.*;
 
 import java.io.FileNotFoundException;
@@ -66,7 +65,6 @@ public class TrainerAcousticModel extends TiedStateAcousticModel {
 
         this.saver = saver;
         this.hmmPoolManager = new HMMPoolManager(loader);
-        this.loadTimer = TimerPool.getTimer(this, TIMER_LOAD);
         this.saveFormat = saveFormat;
 
         logInfo();
@@ -80,7 +78,6 @@ public class TrainerAcousticModel extends TiedStateAcousticModel {
         saver = (Saver) ps.getComponent(SAVER);
 
         hmmPoolManager = new HMMPoolManager(loader);
-        loadTimer = TimerPool.getTimer(this, TIMER_LOAD);
         saveFormat = ps.getString(PROP_FORMAT_SAVE);
 
         logInfo();
@@ -107,9 +104,7 @@ public class TrainerAcousticModel extends TiedStateAcousticModel {
      * @throws FileNotFoundException if the model does not exist
      */
     public void load() throws IOException, FileNotFoundException {
-        loadTimer.start();
-//        super.load();
-        loadTimer.stop();
+        // super.load();
         logInfo();
         hmmPoolManager = new HMMPoolManager(loader);
     }

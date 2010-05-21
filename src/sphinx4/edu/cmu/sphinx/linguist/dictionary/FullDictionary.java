@@ -127,7 +127,7 @@ public class FullDictionary implements Dictionary {
     public void allocate() throws IOException {
 
         if (!allocated) {
-            loadTimer = TimerPool.getTimer(this, "DictionaryLoad");
+            loadTimer = TimerPool.getTimer(this, "Load Dictionary");
             loadTimer.start();
             // NOTE: "location" can be null here, in which case the
             // "wordDictionaryFile" and "fillerDictionaryFile" should

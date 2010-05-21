@@ -41,12 +41,12 @@
     <!-- * Checks for the presence of jsapi.jar.                  * -->
     <!-- *                                                        * -->
     <!-- ********************************************************** -->
-    <target name="check_jsapi_jar.isPresent">
-        <available file="lib/jsapi.jar" property="jsapi_jar.isPresent"/>
+    <target name="check_jsapi_jar_present">
+        <available file="lib/jsapi.jar" property="jsapi_jar_present"/>
     </target>
 
     <target name="issue_jsapi_warning"
-            unless="jsapi_jar.isPresent">
+            unless="jsapi_jar_present">
         <echo>
 
             Cannot find lib/jsapi.jar. Will not build JSAPI demos.
@@ -64,7 +64,7 @@
     <!-- ********************************************************** -->
     <target name="all"
             depends="make_lib_dir,
-	             check_jsapi_jar.isPresent,
+	             check_jsapi_jar_present,
                      issue_jsapi_warning,
 	             compile_sphinx_demos"
             description="Compiles and jars the demos"/>
@@ -112,7 +112,7 @@
              compress="true"/>
     </target>
 
-    <target name="compile_jsapi_dialog" if="jsapi_jar.isPresent">
+    <target name="compile_jsapi_dialog" if="jsapi_jar_present">
         <mkdir dir="${demo_classes_dir}/edu/cmu/sphinx/demo/jsapi/dialog"/>
         <javac debug="true"
                listfiles="true"
@@ -141,7 +141,7 @@
              compress="true"/>
     </target>
 
-    <target name="compile_jsapi_jsgf" if="jsapi_jar.isPresent">
+    <target name="compile_jsapi_jsgf" if="jsapi_jar_present">
         <mkdir dir="${demo_classes_dir}/edu/cmu/sphinx/demo/jsapi/jsgf"/>
         <javac debug="true"
                listfiles="true"
@@ -268,7 +268,7 @@
                 dname="CN=Sphinx-4, OU=Sphinx, o=Carnegie Mellon University, c=us"/>
     </target>
 
-    <target name="compile_tags" if="jsapi_jar.isPresent">
+    <target name="compile_tags" if="jsapi_jar_present">
         <mkdir dir="${demo_classes_dir}/edu/cmu/sphinx/demo/jsapi/tags"/>
         <javac debug="true"
                listfiles="true"

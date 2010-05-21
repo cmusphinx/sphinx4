@@ -88,6 +88,27 @@ public class Utilities {
         return pad(String.valueOf(val), minLength);
     }
 
+    /**
+     * Converts class name into readable string
+     * @param name  input name
+     * @return readable class name
+     */
+    public static String getReadable(String name) {
+        StringBuilder builder = new StringBuilder();
+        
+        for (int i = 0; i < name.length(); i++) {
+            char c = name.charAt(i);
+            if (i == 0) {
+                builder.append(Character.toUpperCase(c));
+            } else if (Character.isUpperCase(c) && !Character.isUpperCase(name.charAt(i - 1))) {
+                builder.append(' ');
+                builder.append(c);
+            } else {
+                builder.append(c);
+            }
+        }
+        return builder.toString();
+    }
 
     /**
      * Dumps padded text. This is a simple tool for helping dump text with padding to a Writer.

@@ -16,6 +16,7 @@ package edu.cmu.sphinx.frontend;
 import edu.cmu.sphinx.util.props.ConfigurableAdapter;
 import edu.cmu.sphinx.util.Timer;
 import edu.cmu.sphinx.util.TimerPool;
+import edu.cmu.sphinx.util.Utilities;
 
 /**
  * An abstract DataProcessor implementing elements common to all concrete DataProcessors, such as name, predecessor, and
@@ -63,7 +64,7 @@ public abstract class BaseDataProcessor extends ConfigurableAdapter implements D
      */
     public synchronized Timer getTimer() {
         if(timer == null)
-            this.timer = TimerPool.getTimer(this, getName());
+            this.timer = TimerPool.getTimer(this, Utilities.getReadable(getName()));
             
         return timer;
     }

@@ -192,7 +192,7 @@ public class LargeNGramModel implements LanguageModel {
     @Override
     @SuppressWarnings("unchecked")
     public void allocate() throws IOException {
-        TimerPool.getTimer(this, "LM Load").start();
+        TimerPool.getTimer(this, "Load LM").start();
         
         // create the log file if specified
         if (ngramLogFile != null)
@@ -246,7 +246,7 @@ public class LargeNGramModel implements LanguageModel {
             }
         }
         
-        TimerPool.getTimer(this,"LM Load").stop();
+        TimerPool.getTimer(this,"Load LM").stop();
     }
 
 

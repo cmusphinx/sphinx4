@@ -392,40 +392,40 @@ public class FlatLinguist implements Linguist, Configurable {
         arcPool = new Cache<SentenceHMMStateArc>();
 
         List<GState> gstateList = new ArrayList<GState>();
-        TimerPool.getTimer(this, "compile").start();
+        TimerPool.getTimer(this, "Compile").start();
 
         // get the nodes from the grammar and create states
         // for them. Add the non-empty gstates to the gstate list.
-        TimerPool.getTimer(this, "createGStates").start();
+        TimerPool.getTimer(this, "Create States").start();
         for (GrammarNode grammarNode : grammar.getGrammarNodes()) {
             GState gstate = createGState(grammarNode);
             gstateList.add(gstate);
         }
-        TimerPool.getTimer(this, "createGStates").stop();
+        TimerPool.getTimer(this, "Create States").stop();
         addStartingPath();
 
         // ensures an initial path to the start state
         // Prep all the gstates, by gathering all of the contexts up
         // this allows each gstate to know about its surrounding
         // contexts
-        TimerPool.getTimer(this, "collectContexts").start();
+        TimerPool.getTimer(this, "Collect Contexts").start();
         for (GState gstate : gstateList)
             gstate.collectContexts();
-        TimerPool.getTimer(this, "collectContexts").stop();
+        TimerPool.getTimer(this, "Collect Contexts").stop();
 
         // now all gstates know all about their contexts, we can
         // expand them fully
-        TimerPool.getTimer(this, "expandStates").start();
+        TimerPool.getTimer(this, "Expand States").start();
         for (GState gstate : gstateList)
             gstate.expand();
-        TimerPool.getTimer(this, "expandStates").stop();
+        TimerPool.getTimer(this, "Expand States").stop();
 
         // now that all states are expanded fully, we can connect all
         // the states up
-        TimerPool.getTimer(this, "connectNodes").start();
+        TimerPool.getTimer(this, "Connect Nodes").start();
         for (GState gstate : gstateList)
             gstate.connect();
-        TimerPool.getTimer(this, "connectNodes").stop();
+        TimerPool.getTimer(this, "Connect Nodes").stop();
 
         SentenceHMMState initialState = findStartingState();
 
@@ -438,7 +438,7 @@ public class FlatLinguist implements Linguist, Configurable {
         }
 
         searchGraph = new FlatSearchGraph(initialState);
-        TimerPool.getTimer(this, "compile").stop();
+        TimerPool.getTimer(this, "Compile").stop();
         // Now that we are all done, dump out some interesting
         // information about the process
         if (dumpGStates) {

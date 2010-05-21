@@ -73,9 +73,9 @@ class HMMTree {
         
         logger = Logger.getLogger(HMMTree.class.getSimpleName());
 
-        TimerPool.getTimer(this,"Create HMMTree").start();
+        TimerPool.getTimer(this,"Create HMM Tree").start();
         compile();
-        TimerPool.getTimer(this,"Create HMMTree").stop();
+        TimerPool.getTimer(this,"Create HMM Tree").stop();
     }
 
 
