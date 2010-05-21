@@ -154,7 +154,7 @@ public class ClassBasedLanguageModel implements LanguageModel {
      */
     @Override
     public float getSmear(WordSequence wordSequence) {
-        return 1.0f; // TODO not implemented
+        return 0.0f; // TODO not implemented
     }
 
     /* (non-Javadoc)
