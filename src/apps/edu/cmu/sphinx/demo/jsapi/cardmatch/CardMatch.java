@@ -13,7 +13,7 @@
 package edu.cmu.sphinx.demo.jsapi.cardmatch;
 
 import edu.cmu.sphinx.frontend.util.Microphone;
-import edu.cmu.sphinx.jsapi.JSGFGrammar;
+import edu.cmu.sphinx.jsgf.JSGFGrammar;
 import edu.cmu.sphinx.recognizer.Recognizer;
 import edu.cmu.sphinx.result.Result;
 import edu.cmu.sphinx.util.props.*;
@@ -21,6 +21,10 @@ import edu.cmu.sphinx.util.props.*;
 import javax.speech.recognition.GrammarException;
 import javax.speech.recognition.RuleGrammar;
 import javax.speech.recognition.RuleParse;
+
+import com.sun.speech.engine.recognition.BaseRecognizer;
+import com.sun.speech.engine.recognition.BaseRuleGrammar;
+
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
@@ -205,7 +209,8 @@ public class CardMatch implements Recorder, Configurable {
      */
     private String getResultTag(String resultText) {
         try {
-            RuleGrammar ruleGrammar = grammar.getRuleGrammar();
+            BaseRecognizer recognizer = new BaseRecognizer(grammar.getGrammarManager());        
+            RuleGrammar ruleGrammar = new BaseRuleGrammar(recognizer, grammar.getRuleGrammar());
             RuleParse ruleParse = ruleGrammar.parse(resultText, null);
             if (ruleParse != null) {
                 String[] tags = ruleParse.getTags();

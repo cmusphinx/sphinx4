@@ -1398,7 +1398,14 @@ set task = RM<br /><br /># Location of the CMU SLM toolkit<br />set bindir = ~/s
       FlatLinguist. To specify JSGF grammars, set the following in
       the configuration file:</p>
       <pre>
-&lt;component name="flatLinguist" type="edu.cmu.sphinx.linguist.flat.FlatLinguist"&gt;<br /> &lt;property name="grammar" value="jsgfGrammar"&gt;<br /> // ... other properties ...<br />&lt;/component&gt;<br /><br />&lt;component name="jsgfGrammar" type="edu.cmu.sphinx.jsapi.JSGFGrammar"&gt;<br /> &lt;property name="grammarLocation" value="...URL of grammar directory"/&gt;<br />&lt;/component&gt;<br />
+&lt;component name="flatLinguist" type="edu.cmu.sphinx.linguist.flat.FlatLinguist"&gt;<br /> 
+&lt;property name="grammar" value="jsgfGrammar"&gt;<br /> 
+// ... other properties ...<br />
+    &lt;/component&gt;<br />
+    <br />
+    &lt;component name="jsgfGrammar" type="edu.cmu.sphinx.jsgf.JSGFGrammar"&gt;
+    <br /> &lt;property name="grammarLocation" value="...URL of grammar directory"/&gt;
+    <br />&lt;/component&gt;<br />
 </pre>
 
       <p>For information on how to write JSGF grammars, and how to

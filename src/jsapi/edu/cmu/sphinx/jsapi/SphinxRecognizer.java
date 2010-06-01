@@ -24,9 +24,13 @@ import javax.speech.recognition.Rule;
 import javax.speech.recognition.RuleGrammar;
 
 import com.sun.speech.engine.recognition.BaseRecognizer;
+import com.sun.speech.engine.recognition.BaseRuleGrammar;
 
 import edu.cmu.sphinx.frontend.DataProcessor;
 import edu.cmu.sphinx.frontend.util.Microphone;
+import edu.cmu.sphinx.jsgf.JSGFGrammar;
+import edu.cmu.sphinx.jsgf.JSGFGrammarException;
+import edu.cmu.sphinx.jsgf.JSGFGrammarParseException;
 import edu.cmu.sphinx.recognizer.Recognizer;
 import edu.cmu.sphinx.util.props.ConfigurationManager;
 
@@ -165,7 +169,8 @@ public class SphinxRecognizer extends BaseRecognizer {
     public RuleGrammar loadJSGF(Reader reader) throws GrammarException,
             IOException, EngineStateError {
         final RuleGrammar loadedGrammar = super.loadJSGF(reader);
-        final RuleGrammar ruleGrammar = grammar.getRuleGrammar();
+        try {
+        final RuleGrammar ruleGrammar = new BaseRuleGrammar (this, grammar.getRuleGrammar());
         final String[] loadedRuleNames = loadedGrammar.listRuleNames();
         for (String name : loadedRuleNames) {
             final Rule rule = loadedGrammar.getRule(name);
@@ -173,6 +178,9 @@ public class SphinxRecognizer extends BaseRecognizer {
             ruleGrammar.setEnabled(name, true);
         }
         grammar.commitChanges();
+        } catch (Exception e) {
+            throw new IOException(e);
+        }
         return loadedGrammar;
     }
 
@@ -221,7 +229,13 @@ public class SphinxRecognizer extends BaseRecognizer {
     @Override
     public RuleGrammar loadJSGF(final URL url, final String name)
             throws GrammarException, IOException {
-        grammar.loadJSGF(name);
+        try {
+            grammar.loadJSGF(name);
+        } catch (JSGFGrammarException e) {
+            throw new GrammarException(e.toString());
+        } catch (JSGFGrammarParseException e) {
+            throw new GrammarException(e.toString());
+        }
         return super.loadJSGF(url, name);
     }
 
@@ -270,8 +284,8 @@ public class SphinxRecognizer extends BaseRecognizer {
      * Get the current rule grammar.
      * @return Active grammar.
      */
-    RuleGrammar getRuleGrammar() {
-        return grammar.getRuleGrammar();
+    RuleGrammar getRuleGrammar() {        
+        return new BaseRuleGrammar (this, grammar.getRuleGrammar());
     }
 }
 

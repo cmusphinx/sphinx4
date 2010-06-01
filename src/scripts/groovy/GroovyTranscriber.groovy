@@ -20,7 +20,7 @@ import edu.cmu.sphinx.frontend.window.RaisedCosineWindower
 import edu.cmu.sphinx.instrumentation.BestPathAccuracyTracker
 import edu.cmu.sphinx.instrumentation.MemoryTracker
 import edu.cmu.sphinx.instrumentation.SpeedTracker
-import edu.cmu.sphinx.jsapi.JSGFGrammar
+import edu.cmu.sphinx.jsgf.JSGFGrammar
 import edu.cmu.sphinx.linguist.acoustic.UnitManager
 import edu.cmu.sphinx.linguist.acoustic.tiedstate.Sphinx3Loader
 import edu.cmu.sphinx.linguist.acoustic.tiedstate.TiedStateAcousticModel

@@ -371,7 +371,7 @@ public class RecognizerUtilities {
                         nochange = false;
                         somethingchanged = true;
                         if (NRG[i] == RG[i]) {
-                            NRG[i] = new BaseRuleGrammar(null, RG[i].getName(), null);
+                            NRG[i] = new BaseRuleGrammar(null, RG[i].getName());
                             RecognizerUtilities.copyGrammar(RG[i], NRG[i]);
                         }
                         boolean isPublic;

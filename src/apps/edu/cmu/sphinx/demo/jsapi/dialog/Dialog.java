@@ -12,11 +12,16 @@
 
 package edu.cmu.sphinx.demo.jsapi.dialog;
 
+import edu.cmu.sphinx.jsgf.JSGFGrammarException;
+import edu.cmu.sphinx.jsgf.JSGFGrammarParseException;
 import edu.cmu.sphinx.recognizer.Recognizer;
 import edu.cmu.sphinx.result.Result;
 import edu.cmu.sphinx.util.TimerPool;
 import edu.cmu.sphinx.util.props.ConfigurationManager;
 import edu.cmu.sphinx.util.props.PropertyException;
+
+import com.sun.speech.engine.recognition.BaseRecognizer;
+import com.sun.speech.engine.recognition.BaseRuleGrammar;
 
 import javax.speech.recognition.GrammarException;
 import javax.speech.recognition.Rule;
@@ -33,8 +38,11 @@ import java.util.*;
  */
 public class Dialog {
 
-    /** Main method for running the Dialog demo. */
-    public static void main(String[] args) {
+    /** Main method for running the Dialog demo. 
+     * @throws JSGFGrammarException 
+     * @throws JSGFGrammarParseException 
+     **/
+    public static void main(String[] args) throws JSGFGrammarParseException, JSGFGrammarException {
         try {
             URL url;
             if (args.length > 0) {
@@ -237,14 +245,16 @@ class MyMusicBehavior extends MyBehavior {
     }
 
 
-    /** Executed when we enter this node. Displays the active grammar */
-    public void onEntry() throws IOException {
+    /** Executed when we enter this node. Displays the active grammar 
+     * @throws JSGFGrammarException 
+     * @throws JSGFGrammarParseException */
+    public void onEntry() throws IOException, JSGFGrammarParseException, JSGFGrammarException {
         super.onEntry();
 
         // now lets add our custom songs from the play list
         // First, get the JSAPI RuleGrammar
-
-        RuleGrammar ruleGrammar = getGrammar().getRuleGrammar();
+        BaseRecognizer recognizer = new BaseRecognizer(getGrammar().getGrammarManager());
+        RuleGrammar ruleGrammar = new BaseRuleGrammar (recognizer, getGrammar().getRuleGrammar());
 
         // now lets add a rule for each song in the play list
 
@@ -343,7 +353,7 @@ class WeatherNode extends DialogNodeBehavior {
     }
 
 
-    /** Called when this node is no lnoger the active node */
+    /** Called when this node is no longer the active node */
     public void onExit() {
         System.out.println();
         dialogManager.setRecognizer(savedRecognizer);

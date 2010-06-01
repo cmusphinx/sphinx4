@@ -2,7 +2,7 @@
 
 <config>        
     
-    <component name="jsgfGrammar" type="edu.cmu.sphinx.jsapi.JSGFGrammar">
+    <component name="jsgfGrammar" type="edu.cmu.sphinx.jsgf.JSGFGrammar">
         <property name="dictionary" value="dictionary"/>
         <property name="grammarLocation" value="src/test/edu/cmu/sphinx/jsgf/test"/>
         <property name="grammarName" value="test"/>

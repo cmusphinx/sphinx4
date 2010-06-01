@@ -189,7 +189,7 @@
     </component>
 
     <component name="jsgfGrammar"
-               type="edu.cmu.sphinx.jsapi.JSGFGrammar">
+               type="edu.cmu.sphinx.jsgf.JSGFGrammar">
         <property name="grammarLocation" value="file:./"/>
         <property name="dictionary" value="dictionary"/>
         <property name="grammarName" value="tidigits"/>

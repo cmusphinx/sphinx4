@@ -12,7 +12,9 @@
 
 package edu.cmu.sphinx.demo.jsapi.jsgf;
 
-import edu.cmu.sphinx.jsapi.JSGFGrammar;
+import edu.cmu.sphinx.jsgf.JSGFGrammar;
+import edu.cmu.sphinx.jsgf.JSGFGrammarException;
+import edu.cmu.sphinx.jsgf.JSGFGrammarParseException;
 import edu.cmu.sphinx.recognizer.Recognizer;
 import edu.cmu.sphinx.frontend.util.Microphone;
 import edu.cmu.sphinx.result.Result;
@@ -25,6 +27,9 @@ import javax.speech.recognition.Rule;
 import javax.speech.recognition.RuleGrammar;
 import javax.speech.recognition.RuleParse;
 
+import com.sun.speech.engine.recognition.BaseRecognizer;
+import com.sun.speech.engine.recognition.BaseRuleGrammar;
+
 /**
  * A demonstration of how to use JSGF grammars in sphinx-4. This
  * program demonstrates how an application can cycle through a number of JSGF
@@ -34,9 +39,9 @@ import javax.speech.recognition.RuleParse;
  */
 public class JSGFDemo {
     private Recognizer recognizer;
-    private JSGFGrammar jsgfGrammarManager;
+    private JSGFGrammar jsgfGrammar;
     private Microphone microphone;
-
+    private BaseRecognizer jsapiRecognizer;
 
     /**
      * Creates a new JSGFDemo. The demo will retrieve the
@@ -61,8 +66,10 @@ public class JSGFDemo {
         // the configuration file.
 
         recognizer = (Recognizer) cm.lookup("recognizer");
-        jsgfGrammarManager = (JSGFGrammar) cm.lookup("jsgfGrammar");
+        jsgfGrammar = (JSGFGrammar) cm.lookup("jsgfGrammar");
         microphone = (Microphone) cm.lookup("microphone");
+        
+        jsapiRecognizer = new BaseRecognizer(jsgfGrammar.getGrammarManager());
     }
 
 
@@ -109,7 +116,13 @@ public class JSGFDemo {
      */
     private void loadAndRecognize(String grammarName) throws
             IOException, GrammarException  {
-        jsgfGrammarManager.loadJSGF(grammarName);
+        try {
+            jsgfGrammar.loadJSGF(grammarName);
+        } catch (JSGFGrammarException e) {
+            throw new GrammarException (e.getMessage());
+        } catch (JSGFGrammarParseException e) {
+            throw new GrammarException (e.getMessage());
+        }
         dumpSampleSentences(grammarName);
         recognizeAndReport();
     }
@@ -129,7 +142,7 @@ public class JSGFDemo {
         while (!done)  {
             Result result = recognizer.recognize();
             String bestResult = result.getBestFinalResultNoFiller();
-            RuleGrammar ruleGrammar = jsgfGrammarManager.getRuleGrammar();
+            RuleGrammar ruleGrammar = new BaseRuleGrammar (jsapiRecognizer, jsgfGrammar.getRuleGrammar());
             RuleParse ruleParse = ruleGrammar.parse(bestResult, null);
             if (ruleParse != null) {
                 System.out.println("\n  " + bestResult + '\n');
@@ -161,26 +174,28 @@ public class JSGFDemo {
      * @throws IOException if an I/O error occurs
      * @throws GrammarException if a grammar format error is detected
      */
-    private void loadAndRecognizeMusic() throws
-            IOException, GrammarException  {
-        jsgfGrammarManager.loadJSGF("music");
-        RuleGrammar ruleGrammar = jsgfGrammarManager.getRuleGrammar();
-        addRule(ruleGrammar, "song1", "listen to over the rainbow");
-        addRule(ruleGrammar, "song2", "listen to as time goes by");
-        addRule(ruleGrammar, "song3", "listen to singing in the rain");
-        addRule(ruleGrammar, "song4", "listen to moon river");
-        addRule(ruleGrammar, "song5", "listen to white christmas");
-        addRule(ruleGrammar, "song6", "listen to mrs robinson");
-        addRule(ruleGrammar, "song7", "listen to when you wish upon a star");
-        addRule(ruleGrammar, "song8", "listen to the way we were");
-        addRule(ruleGrammar, "song9", "listen to staying alive");
-        addRule(ruleGrammar, "song10", "listen to the sound of music");
-        addRule(ruleGrammar, "song11", "listen to the man that got away");
-        addRule(ruleGrammar, "song12", 
-                    "listen to diamonds are a girl's best friend");
-        jsgfGrammarManager.commitChanges();
-        dumpSampleSentences("music");
-        recognizeAndReport();
+    private void loadAndRecognizeMusic() throws IOException, GrammarException {
+        try {
+            jsgfGrammar.loadJSGF("music");
+            RuleGrammar ruleGrammar = new BaseRuleGrammar(jsapiRecognizer, jsgfGrammar.getRuleGrammar());
+            addRule(ruleGrammar, "song1", "listen to over the rainbow");
+            addRule(ruleGrammar, "song2", "listen to as time goes by");
+            addRule(ruleGrammar, "song3", "listen to singing in the rain");
+            addRule(ruleGrammar, "song4", "listen to moon river");
+            addRule(ruleGrammar, "song5", "listen to white christmas");
+            addRule(ruleGrammar, "song6", "listen to mrs robinson");
+            addRule(ruleGrammar, "song7", "listen to when you wish upon a star");
+            addRule(ruleGrammar, "song8", "listen to the way we were");
+            addRule(ruleGrammar, "song9", "listen to staying alive");
+            addRule(ruleGrammar, "song10", "listen to the sound of music");
+            addRule(ruleGrammar, "song11", "listen to the man that got away");
+            addRule(ruleGrammar, "song12", "listen to diamonds are a girl's best friend");
+            jsgfGrammar.commitChanges();
+            dumpSampleSentences("music");
+            recognizeAndReport();
+        } catch (Exception e) {
+            throw new IOException(e);
+        }
     }
 
     /**
@@ -210,7 +225,7 @@ public class JSGFDemo {
     private void dumpSampleSentences(String title) {
         System.out.println(" ====== " + title + " ======");
         System.out.println("Speak one of: \n");
-        jsgfGrammarManager.dumpRandomSentences(200);
+        jsgfGrammar.dumpRandomSentences(200);
         System.out.println(" ============================");
     }
     

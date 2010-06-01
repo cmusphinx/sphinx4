@@ -12,19 +12,25 @@
 
 package edu.cmu.sphinx.jsgf.test;
 
-import edu.cmu.sphinx.jsapi.JSGFGrammar;
+import edu.cmu.sphinx.jsgf.JSGFGrammar;
+import edu.cmu.sphinx.jsgf.JSGFRuleGrammar;
 import edu.cmu.sphinx.util.props.ConfigurationManager;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Scanner;
 
+import javax.speech.EngineException;
+import javax.speech.recognition.GrammarException;
 import javax.speech.recognition.RuleGrammar;
 import javax.speech.recognition.RuleParse;
-import javax.speech.recognition.GrammarException;
 
-import junit.framework.Assert;
+import org.junit.Before;
 import org.junit.Test;
+import org.junit.Assert;
+
+import com.sun.speech.engine.recognition.BaseRecognizer;
+import com.sun.speech.engine.recognition.BaseRuleGrammar;
 
 /**
  * A test program for JSGF grammars. This program will generate a number of
@@ -41,16 +47,23 @@ import org.junit.Test;
  */
 public class JSGFTest {
 
-    @Test
-    public void testParser() throws IOException, GrammarException {
+    JSGFGrammar jsgfGrammar;
+    
+    @Before
+    public void init() throws IOException {
         ConfigurationManager cm = new ConfigurationManager(
-                "src/test/edu/cmu/sphinx/jsgf/test/jsgftest.config.xml");
+        "src/test/edu/cmu/sphinx/jsgf/test/jsgftest.config.xml");
 
-        JSGFGrammar jsgfGrammar = (JSGFGrammar) cm.lookup("jsgfGrammar");
-
-        jsgfGrammar.allocate();
-
-        RuleGrammar grammar = jsgfGrammar.getRuleGrammar();
+        jsgfGrammar = (JSGFGrammar) cm.lookup("jsgfGrammar");
+        jsgfGrammar.allocate();       
+    }
+    
+    @Test
+    public void testParser() throws IOException, GrammarException, EngineException {
+        JSGFRuleGrammar jsgfRuleGrammar = jsgfGrammar.getRuleGrammar();
+        BaseRecognizer recognizer = new BaseRecognizer(jsgfGrammar.getGrammarManager());  
+        recognizer.allocate();
+        RuleGrammar grammar = new BaseRuleGrammar(recognizer, jsgfRuleGrammar);
         Scanner scanner = new Scanner (new File ("src/test/edu/cmu/sphinx/jsgf/test/input.txt"));
         scanner.useDelimiter("\n");
         while (scanner.hasNext()) {
@@ -58,5 +71,11 @@ public class JSGFTest {
             RuleParse rp = grammar.parse(sentence, null);
             Assert.assertNotNull(rp);
         }
+    }
+    
+    @Test
+    public void testSave () {
+        JSGFRuleGrammar grammar = jsgfGrammar.getRuleGrammar();
+        System.out.println (grammar.toString());
     }
 }

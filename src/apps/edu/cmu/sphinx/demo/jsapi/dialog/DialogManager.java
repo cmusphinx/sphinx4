@@ -13,7 +13,9 @@
 package edu.cmu.sphinx.demo.jsapi.dialog;
 
 import edu.cmu.sphinx.frontend.util.Microphone;
-import edu.cmu.sphinx.jsapi.JSGFGrammar;
+import edu.cmu.sphinx.jsgf.JSGFGrammar;
+import edu.cmu.sphinx.jsgf.JSGFGrammarException;
+import edu.cmu.sphinx.jsgf.JSGFGrammarParseException;
 import edu.cmu.sphinx.recognizer.Recognizer;
 import edu.cmu.sphinx.result.Result;
 import edu.cmu.sphinx.util.props.Configurable;
@@ -24,6 +26,10 @@ import edu.cmu.sphinx.util.props.S4Component;
 import javax.speech.recognition.GrammarException;
 import javax.speech.recognition.RuleGrammar;
 import javax.speech.recognition.RuleParse;
+
+import com.sun.speech.engine.recognition.BaseRecognizer;
+import com.sun.speech.engine.recognition.BaseRuleGrammar;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -69,7 +75,7 @@ public class DialogManager implements Configurable {
     private JSGFGrammar grammar;
     private Logger logger;
     private Recognizer recognizer;
-    private Microphone microphone;
+        private Microphone microphone;
 
     // ------------------------------------
     // local data
@@ -77,7 +83,6 @@ public class DialogManager implements Configurable {
     private DialogNode initialNode;
     private Map<String, DialogNode> nodeMap = new HashMap<String, DialogNode>();
     private String name;
-
 
     /*
     * (non-Javadoc)
@@ -147,8 +152,10 @@ public class DialogManager implements Configurable {
      * the dialog states starting at the initial node. This method
      * will not return until the dialog manager is finished processing
      * states
+     * @throws JSGFGrammarException 
+     * @throws JSGFGrammarParseException 
      */
-    public void go() {
+    public void go() throws JSGFGrammarParseException, JSGFGrammarException {
         DialogNode lastNode = null;
         DialogNode curNode = initialNode;
 
@@ -291,8 +298,10 @@ public class DialogManager implements Configurable {
 
         /**
          * Enters the node, prepares it for recognition
+         * @throws JSGFGrammarException 
+         * @throws JSGFGrammarParseException 
          */
-        void enter() throws IOException {
+        void enter() throws IOException, JSGFGrammarParseException, JSGFGrammarException {
             trace("Entering " + name);
             behavior.onEntry();
             behavior.onReady();
@@ -369,8 +378,10 @@ class DialogNodeBehavior {
 
     /**
      * Called when this node becomes the active node
+     * @throws JSGFGrammarException 
+     * @throws JSGFGrammarParseException 
      */
-    public void onEntry() throws IOException {
+    public void onEntry() throws IOException, JSGFGrammarParseException, JSGFGrammarException {
         trace("Entering " + getName());
     }
 
@@ -436,7 +447,8 @@ class DialogNodeBehavior {
      */
     RuleParse getRuleParse(Result result) throws GrammarException {
         String resultText = result.getBestFinalResultNoFiller();
-        RuleGrammar ruleGrammar = getGrammar().getRuleGrammar();
+        BaseRecognizer jsapiRecognizer = new BaseRecognizer(getGrammar().getGrammarManager());
+        RuleGrammar ruleGrammar = new BaseRuleGrammar (jsapiRecognizer, getGrammar().getRuleGrammar());
         RuleParse ruleParse = ruleGrammar.parse(resultText, null);
         return ruleParse;
     }
@@ -489,8 +501,10 @@ class NewGrammarDialogNodeBehavior extends DialogNodeBehavior {
 
     /**
      * Called with the dialog manager enters this entry
+     * @throws JSGFGrammarException 
+     * @throws JSGFGrammarParseException 
      */
-    public void onEntry() throws IOException {
+    public void onEntry() throws IOException, JSGFGrammarParseException, JSGFGrammarException {
         super.onEntry();
         getGrammar().loadJSGF(getGrammarName());
     }

@@ -35,12 +35,18 @@ public class BaseRuleGrammar extends BaseGrammar implements RuleGrammar, Seriali
      * @param rec    the BaseRecognizer for this Grammar.
      * @param name the name of this Grammar.
      */
-    public BaseRuleGrammar(BaseRecognizer rec, String name, JSGFRuleGrammar grammar) {
-        super(rec, name);
+    public BaseRuleGrammar(BaseRecognizer rec, JSGFRuleGrammar grammar) {
+        super(rec, grammar.getName());
 
         assert grammar != null;
         this.jsgfGrammar = grammar;
     }
+    
+
+    public BaseRuleGrammar(BaseRecognizer recognizer, String name) {
+        super(recognizer, name);
+    }
+
 
     /**
      * Set the enabled property of the Grammar. From javax.speech.recognition.Grammar.

@@ -235,7 +235,7 @@ Run ant with -Dcount=5 to only do the first five utterances of a test.
             <jvmarg value="-ms${initial_heap_size}"/>
             <jvmarg value="-mx${maximum_heap_size}"/> 
             <sysproperty key="edu.cmu.sphinx.decoder.Recognizer.grammar" 
-			 value="edu.cmu.sphinx.jsapi.JSGFGrammar"/> 
+			 value="edu.cmu.sphinx.jsgf.JSGFGrammar"/> 
 			<sysproperty key="flatLinguist[grammar]" value="jsgfGrammar"/>
             <sysproperty key="batch[skip]" value="${skip}"/> 
             <sysproperty key="batch[count]" value="${count}"/> 

@@ -34,21 +34,17 @@ import java.util.*;
  * This class is useful by itself for debugging, e.g. you can load grammars and
  * simulate a recognizer recognizing some text, etc.
  * <p/>
- * <p/>
  * Actual JSAPI recognizer implementations might want to extend or modify this
  * implementation.
  * <p/>
- * <p/>
  * Also contains utility routines for:
- * <UL>
- * <LI>Loading imported grammars and resolving inter-grammar references.
- * <p/>
- * <LI>Printing/dumping grammars in an extensible way (used to dump grammar to
+ * <ul>
+ * <li>Loading imported grammars and resolving inter-grammar references.
+ * <li>Printing/dumping grammars in an extensible way (used to dump grammar to
  * under-lying recognizer implementation via ASCII strings)
- * <p/>
- * <LI>Routines for copying grammars from one recognizer implementation to
+ * <li>Routines for copying grammars from one recognizer implementation to
  * another.
- * </UL>
+ * </ul>
  * 
  * @author Stuart Adams
  */
@@ -81,6 +77,12 @@ public class BaseRecognizer extends BaseEngine implements Recognizer,
 	/** Create a new Recognizer in the DEALLOCATED state. */
 	public BaseRecognizer(RecognizerModeDesc mode) {
 		this(false, mode);
+	}
+	
+	public BaseRecognizer(JSGFRuleGrammarManager manager) {
+		this.reloadAll = false;
+		this.audioManager = new BaseRecognizerAudioManager();
+		this.manager = manager;
 	}
 
 	/**
@@ -189,7 +191,7 @@ public class BaseRecognizer extends BaseEngine implements Recognizer,
 			throws IllegalArgumentException, EngineStateError {
 		checkEngineState(DEALLOCATED | DEALLOCATING_RESOURCES);
 		JSGFRuleGrammar jsgfGrammar = new JSGFRuleGrammar(name, manager);
-		BaseRuleGrammar grammar = new BaseRuleGrammar (this, name, jsgfGrammar);
+		BaseRuleGrammar grammar = new BaseRuleGrammar (this, jsgfGrammar);
 		grammars.put(name, grammar);
 		return grammar;
 	}
@@ -210,7 +212,7 @@ public class BaseRecognizer extends BaseEngine implements Recognizer,
 		} catch (JSGFGrammarParseException e) {
 			throw new GrammarException(e.getMessage());
 		}
-		BaseRuleGrammar grammar = new BaseRuleGrammar (this, jsgfGrammar.getName(), jsgfGrammar);
+		BaseRuleGrammar grammar = new BaseRuleGrammar (this, jsgfGrammar);
 		grammars.put(jsgfGrammar.getName(), grammar);
 		return grammar;
 	}
@@ -276,7 +278,7 @@ public class BaseRecognizer extends BaseEngine implements Recognizer,
 		} catch (JSGFGrammarParseException e) {
 			throw new GrammarException(e.getMessage());
 		}
-		BaseRuleGrammar grammar = new BaseRuleGrammar (this, jsgfGrammar.getName(), jsgfGrammar);
+		BaseRuleGrammar grammar = new BaseRuleGrammar (this, jsgfGrammar);
 		grammars.put(jsgfGrammar.getName(), grammar);
 		
 		if (loadImports) {
@@ -294,7 +296,15 @@ public class BaseRecognizer extends BaseEngine implements Recognizer,
 	 */
 	public RuleGrammar getRuleGrammar(String name) throws EngineStateError {
 		checkEngineState(DEALLOCATED | DEALLOCATING_RESOURCES);
-		return grammars.get(name);
+		BaseRuleGrammar grammar = grammars.get(name);
+		if (grammar == null) {
+			JSGFRuleGrammar jsgfGrammar = manager.retrieveGrammar(name);
+			if (jsgfGrammar != null) {
+				grammar = new BaseRuleGrammar (this, jsgfGrammar);
+				grammars.put(jsgfGrammar.getName(), grammar);
+			}
+ 		}
+		return grammar;
 	}
 
 	/**

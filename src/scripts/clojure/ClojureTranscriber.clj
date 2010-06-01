@@ -21,7 +21,7 @@
   '(edu.cmu.sphinx.instrumentation BestPathAccuracyTracker)
   '(edu.cmu.sphinx.instrumentation MemoryTracker)
   '(edu.cmu.sphinx.instrumentation SpeedTracker)
-  '(edu.cmu.sphinx.jsapi JSGFGrammar)
+  '(edu.cmu.sphinx.jsgf JSGFGrammar)
   '(edu.cmu.sphinx.linguist.acoustic UnitManager)
   '(edu.cmu.sphinx.linguist.acoustic.tiedstate Sphinx3Loader)
   '(edu.cmu.sphinx.linguist.acoustic.tiedstate TiedStateAcousticModel)

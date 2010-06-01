@@ -125,7 +125,7 @@
     <!-- The Grammar  configuration                               -->
     <!-- ******************************************************** -->
     
-    <component name="dynamicJsgfGrammar" type="edu.cmu.sphinx.jsapi.JSGFGrammar">
+    <component name="dynamicJsgfGrammar" type="edu.cmu.sphinx.jsgf.JSGFGrammar">
         <property name="grammarLocation" value="file:./"/>
         <property name="dictionary" value="dictionary"/>
         <property name="grammarName" value="integers"/>
@@ -137,7 +137,7 @@
     <!-- The Grammar  configuration                               -->
     <!-- ******************************************************** -->
     
-    <component name="staticJsgfGrammar" type="edu.cmu.sphinx.jsapi.JSGFGrammar">
+    <component name="staticJsgfGrammar" type="edu.cmu.sphinx.jsgf.JSGFGrammar">
         <property name="grammarLocation" value="file:./"/>
         <property name="dictionary" value="dictionary"/>
         <property name="grammarName" value="integers"/>

@@ -34,100 +34,71 @@ import edu.cmu.sphinx.util.props.S4Component;
 import edu.cmu.sphinx.util.props.S4String;
 
 /**
- * Defines a BNF-style grammar based on JSGF grammar rules in a file.
- * <p/>
- * <p/>
+ * <h3>Defines a BNF-style grammar based on JSGF grammar rules in a file.</h3>
+ * 
+ * 
  * The Java Speech Grammar Format (JSGF) is a BNF-style, platform-independent,
  * and vendor-independent textual representation of grammars for use in speech
  * recognition. It is used by the <a
  * href="http://java.sun.com/products/java-media/speech/">Java Speech API
  * (JSAPI) </a>.
- * <p/>
- * <p/>
+ * 
  * Here we only intend to give a couple of examples of grammars written in JSGF,
  * so that you can quickly learn to write your own grammars. For more examples
  * and a complete specification of JSGF, go to
- * <p>
+ *
  * <a href="http://java.sun.com/products/java-media/speech/forDevelopers/JSGF/">
  * http://java.sun.com/products/java-media/speech/forDevelopers/JSGF/ </a>.
- * <p/>
- * <p/>
- * <b>Example 1: "Hello World" in JSGF </b>
- * <p/>
- * <p/>
+ * 
+ * 
+ * <h3>Example 1: "Hello World" in JSGF </h3>
+ * 
  * The example below shows how a JSGF grammar that generates the sentences
  * "Hello World":
- * <p/>
- * <p/>
- * <table width="100%" cellpadding="10">
- * <tr>
- * <td bgcolor="#DDDDDD">
- * <p/>
  * 
  * <pre>
  *  #JSGF V1.0
- * &lt;p/&gt;
  *  public &lt;helloWorld&gt; = Hello World;
  * </pre>
  * 
- * <p/></td>
- * </tr>
- * </table>
- * <p/>
  * <i>Figure 1: Hello grammar that generates the sentences "Hello World". </i>
  * <p/>
- * <p/>
+ * 
  * The above grammar is saved in a file called "hello.gram". It defines a public
  * grammar rule called "helloWorld". In order for this grammar rule to be
  * publicly accessible, we must be declared it "public". Non-public grammar
  * rules are not visible outside of the grammar file.
- * <p/>
- * <p/>
+ * 
  * The location of the grammar file(s) is(are) defined by the
  * {@link #PROP_BASE_GRAMMAR_URL baseGrammarURL}property. Since all JSGF grammar
  * files end with ".gram", it will automatically search all such files at the
  * given URL for the grammar. The name of the grammar to search for is specified
  * by {@link #PROP_GRAMMAR_NAME grammarName}. In this example, the grammar name
  * is "helloWorld".
- * <p/>
- * <p/>
- * <b>Example 2: Command Grammar in JSGF </b>
- * <p/>
- * <p/>
+ * 
+ * <h3>Example 2: Command Grammar in JSGF </h3>
+ * 
  * This examples shows a grammar that generates basic control commands like
  * "move a menu thanks please", "close file",
  * "oh mighty computer please kindly delete menu thanks". It is the same as one
- * of the command & control examples in the <a
- * href="http://java.sun.com/products/java-media/speech/forDevelopers/JSGF/"
- * >JSGF specification </a>. It is considerably more complex than the previous
+ * of the command & control examples in the 
+ * <a href="http://java.sun.com/products/java-media/speech/forDevelopers/JSGF/">JSGF specification </a>. 
+ * It is considerably more complex than the previous
  * example. It defines the public grammar called "basicCmd".
- * <p/>
- * <p/>
- * <table width="100%" cellpadding="10">
- * <tr>
- * <td bgcolor="#DDDDDD">
- * <p/>
  * 
  * <pre>
  *  #JSGF V1.0
- * &lt;p/&gt;
  *  public &lt;basicCmd&gt; = &lt;startPolite&gt; &lt;command&gt; &lt;endPolite&gt;;
- * &lt;p/&gt;
  *  &lt;command&gt; = &lt;action&gt; &lt;object&gt;;
  *  &lt;action&gt; = /10/ open |/2/ close |/1/ delete |/1/ move;
  *  &lt;object&gt; = [the | a] (window | file | menu);
- * &lt;p/&gt;
  *  &lt;startPolite&gt; = (please | kindly | could you | oh mighty computer) *;
  *  &lt;endPolite&gt; = [ please | thanks | thank you ];
  * </pre>
  * 
- * <p/></td>
- * </tr>
- * </table>
- * <p/>
  * <i>Figure 2: Command grammar that generates simple control commands. </i>
  * <p/>
- * <p/>
+ * 
  * The features of JSGF that are shown in this example includes:
  * <ul>
  * <li>using other grammar rules within a grammar rule.
@@ -137,45 +108,43 @@ import edu.cmu.sphinx.util.props.S4String;
  * <li>the zero-or-many "*" (called Kleene star) operator.
  * <li>a probability (e.g., "open" is more likely than the others).
  * </ul>
- * <p/>
- * <p/>
+ *
  * <h3>From JSGF to Grammar Graph</h3>
- * <p/>
+ * 
  * After the JSGF grammar is read in, it is converted to a graph of words
  * representing the grammar. Lets call this the grammar graph. It is from this
  * grammar graph that the eventual search structure used for speech recognition
  * is built. Below, we show the grammar graphs created from the above JSGF
  * grammars. The nodes <code>"&lt;sil&gt;"</code> means "silence".
+ * 
  * <p/>
- * <p/>
- * <img src="../jsapi/doc-files/helloWorld.jpg"> <br>
+ * <img src="doc-files/helloWorld.jpg"> <br>
+ * 
  * <i>Figure 3: Grammar graph created from the Hello World grammar. </i>
  * <p/>
- * <p/>
- * <img src="../jsapi/doc-files/commandGrammar.jpg"> <br>
+ * <img src="doc-files/commandGrammar.jpg"> <br>
+ * 
  * <i>Figure 4: Grammar graph created from the Command grammar. </i>
- * <p/>
- * <p/>
+ * 
  * <h3>Limitations</h3>
- * <p/>
+ * 
  * There is a known limitation with the current JSGF support. Grammars that
  * contain non-speech loops currently cause the recognizer to hang.
  * <p/>
  * For example, in the following grammar
- * <p/>
  * 
  * <pre>
  *  #JSGF V1.0
  *  grammar jsgf.nastygram;
  *  public &lt;nasty&gt; = I saw a ((cat* | dog* | mouse*)+)+;
  * </pre>
- * <p/>
+ *
  * the production: ((cat* | dog* | mouse*)+)+ can result in a continuous loop,
  * since (cat* | dog* | mouse*) can represent no speech (i.e. zero cats, dogs
  * and mice), this is equivalent to ()+. To avoid this problem, the grammar
  * writer should ensure that there are no rules that could possibly match no
  * speech within a plus operator or kleene star operator.
- * <p/>
+
  * <h3>Dynamic grammar behavior</h3> It is possible to modify the grammar of a
  * running application. Some rules and notes:
  * <ul>
@@ -190,13 +159,12 @@ import edu.cmu.sphinx.util.props.S4String;
  * JSGFGrammar.commitChanges must be called after all grammar changes have been
  * made.
  * </ul>
- * <p/>
+ * 
  * <h3>Implementation Notes</h3>
  * <ol>
  * <li>All internal probabilities are maintained in LogMath log base.
  * </ol>
  */
-
 public class JSGFGrammar extends Grammar {
 
 	/** The property that defines the location of the JSGF grammar file. */
@@ -272,6 +240,16 @@ public class JSGFGrammar extends Grammar {
 		return ruleGrammar;
 	}
 
+
+	/**
+	 * Returns manager used to load grammars
+	 * 
+	 * @return manager with loaded grammars
+	 */
+	public JSGFRuleGrammarManager getGrammarManager() {
+		return manager;
+	}
+	
 	/**
 	 * Sets the URL context of the JSGF grammars.
 	 * 
@@ -295,8 +273,10 @@ public class JSGFGrammar extends Grammar {
 	 *            the name of the grammar
 	 * @throws IOException
 	 *             if an error occurs while loading or compiling the grammar
+	 * @throws JSGFGrammarException 
+	 * @throws JSGFGrammarParseException 
 	 */
-	public void loadJSGF(String grammarName) throws IOException {
+	public void loadJSGF(String grammarName) throws IOException, JSGFGrammarParseException, JSGFGrammarException {
 		this.grammarName = grammarName;
 		loadGrammar = true;
 		commitChanges();
@@ -308,7 +288,13 @@ public class JSGFGrammar extends Grammar {
 	 * @return the initial node of the Grammar
 	 */
 	protected GrammarNode createGrammar() throws IOException {
-		commitChanges();
+	    try {
+	        commitChanges();
+	    } catch (JSGFGrammarException e) {
+	        throw new IOException(e);
+	    } catch (JSGFGrammarParseException e) {
+            throw new IOException(e);
+        }
 		return firstNode;
 	}
 
@@ -328,7 +314,7 @@ public class JSGFGrammar extends Grammar {
 	 *            the Rule to parse
 	 * @return a grammar graph
 	 */
-	private GrammarGraph parseRule(JSGFRule rule) throws JSGFGrammarException {
+	private GrammarGraph processRule(JSGFRule rule) throws JSGFGrammarException {
 		GrammarGraph result;
 
 		if (rule != null) {
@@ -336,17 +322,17 @@ public class JSGFGrammar extends Grammar {
 		}
 
 		if (rule instanceof JSGFRuleAlternatives) {
-			result = parseRuleAlternatives((JSGFRuleAlternatives) rule);
+			result = processRuleAlternatives((JSGFRuleAlternatives) rule);
 		} else if (rule instanceof JSGFRuleCount) {
-			result = parseRuleCount((JSGFRuleCount) rule);
+			result = processRuleCount((JSGFRuleCount) rule);
 		} else if (rule instanceof JSGFRuleName) {
-			result = parseRuleName((JSGFRuleName) rule);
+			result = processRuleName((JSGFRuleName) rule);
 		} else if (rule instanceof JSGFRuleSequence) {
-			result = parseRuleSequence((JSGFRuleSequence) rule);
+			result = processRuleSequence((JSGFRuleSequence) rule);
 		} else if (rule instanceof JSGFRuleTag) {
-			result = parseRuleTag((JSGFRuleTag) rule);
+			result = processRuleTag((JSGFRuleTag) rule);
 		} else if (rule instanceof JSGFRuleToken) {
-			result = parseRuleToken((JSGFRuleToken) rule);
+			result = processRuleToken((JSGFRuleToken) rule);
 		} else {
 			throw new IllegalArgumentException("Unsupported Rule type: " + rule);
 		}
@@ -360,7 +346,7 @@ public class JSGFGrammar extends Grammar {
 	 *            the RuleName rule to parse
 	 * @return a grammar graph
 	 */
-	private GrammarGraph parseRuleName(JSGFRuleName initialRuleName)
+	private GrammarGraph processRuleName(JSGFRuleName initialRuleName)
 			throws JSGFGrammarException {
 		logger.fine("parseRuleName: " + initialRuleName);
 		GrammarGraph result = ruleStack.contains(initialRuleName.getRuleName());
@@ -394,7 +380,7 @@ public class JSGFGrammar extends Grammar {
 				throw new JSGFGrammarException("Can't resolve rule: "
 						+ ruleName.getRuleName());
 			}
-			GrammarGraph ruleResult = parseRule(rule);
+			GrammarGraph ruleResult = processRule(rule);
 			if (result != ruleResult) {
 				result.getStartNode().add(ruleResult.getStartNode(), 0.0f);
 				ruleResult.getEndNode().add(result.getEndNode(), 0.0f);
@@ -411,12 +397,12 @@ public class JSGFGrammar extends Grammar {
 	 *            the RuleCount object to parse
 	 * @return a grammar graph
 	 */
-	private GrammarGraph parseRuleCount(JSGFRuleCount ruleCount)
+	private GrammarGraph processRuleCount(JSGFRuleCount ruleCount)
 			throws JSGFGrammarException {
 		logger.fine("parseRuleCount: " + ruleCount);
 		GrammarGraph result = new GrammarGraph();
 		int count = ruleCount.getCount();
-		GrammarGraph newNodes = parseRule(ruleCount.getRule());
+		GrammarGraph newNodes = processRule(ruleCount.getRule());
 
 		result.getStartNode().add(newNodes.getStartNode(), 0.0f);
 		newNodes.getEndNode().add(result.getEndNode(), 0.0f);
@@ -442,7 +428,7 @@ public class JSGFGrammar extends Grammar {
 	 *            the RuleAlternatives to parse
 	 * @return a grammar graph
 	 */
-	private GrammarGraph parseRuleAlternatives(JSGFRuleAlternatives ruleAlternatives)
+	private GrammarGraph processRuleAlternatives(JSGFRuleAlternatives ruleAlternatives)
 			throws JSGFGrammarException {
 		logger.fine("parseRuleAlternatives: " + ruleAlternatives);
 		GrammarGraph result = new GrammarGraph();
@@ -459,7 +445,7 @@ public class JSGFGrammar extends Grammar {
 				weight = weights.get(i);
 			}
 			logger.fine("Alternative: " + rule);
-			GrammarGraph newNodes = parseRule(rule);
+			GrammarGraph newNodes = processRule(rule);
 			result.getStartNode().add(newNodes.getStartNode(), weight);
 			newNodes.getEndNode().add(result.getEndNode(), 0.0f);
 		}
@@ -500,7 +486,7 @@ public class JSGFGrammar extends Grammar {
 	 *            the RuleSequence to parse
 	 * @return the first and last GrammarNodes of the network
 	 */
-	private GrammarGraph parseRuleSequence(JSGFRuleSequence ruleSequence)
+	private GrammarGraph processRuleSequence(JSGFRuleSequence ruleSequence)
 			throws JSGFGrammarException {
 
 		GrammarNode startNode = null;
@@ -514,7 +500,7 @@ public class JSGFGrammar extends Grammar {
 		// expand and connect each rule in the sequence serially
 		for (int i = 0; i < rules.size(); i++) {
 			JSGFRule rule = rules.get(i);
-			GrammarGraph newNodes = parseRule(rule);
+			GrammarGraph newNodes = processRule(rule);
 
 			// first node
 			if (i == 0) {
@@ -542,10 +528,10 @@ public class JSGFGrammar extends Grammar {
 	 *            the RuleTag to parse
 	 * @return the first and last GrammarNodes of the network
 	 */
-	private GrammarGraph parseRuleTag(JSGFRuleTag ruleTag) throws JSGFGrammarException {
+	private GrammarGraph processRuleTag(JSGFRuleTag ruleTag) throws JSGFGrammarException {
 		logger.fine("parseRuleTag: " + ruleTag);
 		JSGFRule rule = ruleTag.getRule();
-		return parseRule(rule);
+		return processRule(rule);
 	}
 
 	/**
@@ -555,12 +541,16 @@ public class JSGFGrammar extends Grammar {
 	 *            the RuleToken that contains the word
 	 * @return a GrammarNode with the word in the given RuleToken
 	 */
-	private GrammarGraph parseRuleToken(JSGFRuleToken ruleToken) {
+	private GrammarGraph processRuleToken(JSGFRuleToken ruleToken) {
 
 		GrammarNode node = createGrammarNode(ruleToken.getText());
 		return new GrammarGraph(node, node);
 	}
 
+	/////////////////////////////////////////////////////////////////////
+	// Loading part
+	////////////////////////////////////////////////////////////////////
+	
 	private static URL grammarNameToURL(URL baseURL, String grammarName)
 			throws MalformedURLException {
 
@@ -592,8 +582,10 @@ public class JSGFGrammar extends Grammar {
 	/**
 	 * Commit changes to all loaded grammars and all changes of grammar since
 	 * the last commitChange
+	 * @throws JSGFGrammarParseException 
+	 * @throws JSGFGrammarException 
 	 */
-	public void commitChanges() throws IOException {
+	public void commitChanges() throws IOException, JSGFGrammarParseException, JSGFGrammarException {
 		try {
 			if (loadGrammar) {
 				manager = new JSGFRuleGrammarManager();
@@ -601,6 +593,7 @@ public class JSGFGrammar extends Grammar {
 				ruleGrammar = JSGFParser.newGrammarFromJSGF(url,
 						new JSGFRuleGrammarFactory(manager));
 				ruleGrammar.setEnabled(true);
+				loadImports(ruleGrammar);
 				loadGrammar = false;
 			}
 
@@ -621,7 +614,7 @@ public class JSGFGrammar extends Grammar {
 					GrammarGraph publicRuleGraph = new GrammarGraph();
 					ruleStack.push(fullName, publicRuleGraph);
 					JSGFRule rule = ruleGrammar.getRule(ruleName);
-					GrammarGraph graph = parseRule(rule);
+					GrammarGraph graph = processRule(rule);
 					ruleStack.pop();
 
 					firstNode.add(publicRuleGraph.getStartNode(), 0.0f);
@@ -635,12 +628,99 @@ public class JSGFGrammar extends Grammar {
 			if (logger.isLoggable(Level.FINEST)) {
 				dumpGrammar();
 			}
-		} catch (JSGFGrammarException g) {
-			g.printStackTrace();
 		} catch (MalformedURLException mue) {
-			throw new IOException("bad base grammar url " + baseURL + ' ' + mue);
-		} catch (JSGFGrammarParseException e) {
-			e.printStackTrace();
+			throw new IOException("bad base grammar URL " + baseURL + ' ' + mue);
+		}
+	}
+
+	/**
+	 * Load grammars imported by the specified RuleGrammar if they are not
+	 * already loaded.
+	 * @throws JSGFGrammarParseException 
+	 */
+	private void loadImports(JSGFRuleGrammar grammar) throws IOException, JSGFGrammarParseException {
+
+		for (JSGFRuleName ruleName : grammar.imports) {
+			// System.out.println ("Checking import " + ruleName);
+			String grammarName = ruleName.getFullGrammarName();
+			JSGFRuleGrammar importedGrammar = getNamedRuleGrammar(grammarName);
+
+			if (importedGrammar == null) {
+				// System.out.println ("Grammar " + grammarName + " not found. Loading.");
+				importedGrammar = loadNamedGrammar(ruleName.getFullGrammarName());
+			}
+			if (importedGrammar != null) {
+				loadImports(importedGrammar);
+			}
+		}
+		loadFullQualifiedRules(grammar);
+	}
+
+	private JSGFRuleGrammar getNamedRuleGrammar(String grammarName) {
+		return manager.retrieveGrammar(grammarName);
+	}
+
+	/**
+	 * Load named grammar from import rule
+	 * 
+	 * @param grammarName
+	 * @return
+	 * @throws JSGFGrammarParseException
+	 * @throws IOException
+	 */
+    private JSGFRuleGrammar loadNamedGrammar(String grammarName) throws JSGFGrammarParseException, IOException {
+		
+    	URL url = grammarNameToURL(baseURL, grammarName);
+		JSGFRuleGrammar ruleGrammar = JSGFParser.newGrammarFromJSGF(url,
+											new JSGFRuleGrammarFactory(manager));
+		ruleGrammar.setEnabled(true);
+		
+		return ruleGrammar;
+	}
+	
+	/**
+	 * Load grammars imported by a fully qualified Rule Token if they are not
+	 * already loaded.
+	 * 
+	 * @param grammar
+	 * @param context
+	 * @param recurse
+	 * @param reload
+	 * @throws IOException
+	 * @throws GrammarException
+	 * @throws JSGFGrammarParseException 
+	 */
+	private void loadFullQualifiedRules (
+			JSGFRuleGrammar grammar)
+			throws IOException, JSGFGrammarParseException {
+
+		// Go through every rule
+		for (String ruleName : grammar.getRuleNames()) {
+			String rule = grammar.getRule(ruleName).toString();
+			// check for rule-Tokens
+			int index = 0;
+			while (index < rule.length()) {
+				index = rule.indexOf('<', index);
+				if (index < 0) {
+					break;
+				} 
+				// Extract rule name
+				JSGFRuleName extractedRuleName = new JSGFRuleName(rule.substring(index + 1,
+						rule.indexOf('>', index + 1)).trim());
+				index = rule.indexOf('>', index) + 1;
+
+				// Check for full qualified rule name
+				if (extractedRuleName.getFullGrammarName() != null) {
+					String grammarName = extractedRuleName.getFullGrammarName();
+					JSGFRuleGrammar importedGrammar = getNamedRuleGrammar(grammarName);
+					if (importedGrammar == null) {
+						importedGrammar = loadNamedGrammar(grammarName);
+					}
+					if (importedGrammar != null) {
+						loadImports(importedGrammar);
+					}
+				}
+			}
 		}
 	}
 
