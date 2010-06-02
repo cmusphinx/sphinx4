@@ -42,11 +42,11 @@ public class GDLLatticeTest {
 
 		Lattice lattice = GDLLatticeFactory.getLattice(latticeGDL, dictionary);
 		lattice.setLogMath(logMath);
-		lattice.dumpAISee("newLattice.gdl", "New Lattice");
+		lattice.dumpAISee("logs/newLattice.gdl", "New Lattice");
 
 		SausageMaker sm = new SausageMaker(lattice);
 		Sausage s = sm.makeSausage();
 
-		s.dumpAISee("newSausage.gdl", "New Sausage");
+		s.dumpAISee("logs/newSausage.gdl", "New Sausage");
 	}
 }

@@ -307,8 +307,6 @@
     <component name="confidenceScorer"
                type="edu.cmu.sphinx.result.MAPConfidenceScorer">
         <property name="languageWeight" value="${languageWeight}"/>
-	<property name="dumpLattice" value="true"/>
-	<property name="dumpSausage" value="true"/>
     </component>
 
 </config>

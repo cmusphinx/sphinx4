@@ -52,7 +52,7 @@ public class LatticeTest {
 				+ " nodes and " + lattice.getEdges().size() + " edges");
 
 		System.err.println("Testing Save/Load .LAT file");
-		lattice.dump("test.lat");
+		lattice.dump("logs/test.lat");
 
 		lattice.dumpAllPaths();
 

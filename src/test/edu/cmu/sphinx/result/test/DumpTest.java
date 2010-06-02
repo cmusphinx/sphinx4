@@ -60,13 +60,13 @@ public class DumpTest {
 
 		/* Dump token graph */
 		TokenGraphDumper dumper = new TokenGraphDumper(result);
-		dumper.dumpGDL("Full Token Graph", "tokengraph.gdl");
+		dumper.dumpGDL("Full Token Graph", "logs/tokengraph.gdl");
 		
 		/* Dump Lattice */
 		Lattice lattice = new Lattice(result);
 		LatticeOptimizer lo = new LatticeOptimizer(lattice);
 		lo.optimize();
-		lattice.dumpAISee("lattice.gdl", "lattice");
+		lattice.dumpAISee("logs/lattice.gdl", "lattice");
 
 		/* Dump sausage */
 		float lmw = (float) 7.0;

@@ -70,7 +70,7 @@ public class LatticeCompTest {
 
 		/* print out the results */
 		Lattice lattice = new Lattice(result);
-		lattice.dumpAISee("lattice.gdl", "lattice");
+		lattice.dumpAISee("logs/lattice.gdl", "lattice");
 
 		recognizer.deallocate();
 		
@@ -88,7 +88,7 @@ public class LatticeCompTest {
 		Result allResult = recognizer.recognize();
 
 		Lattice allLattice = new Lattice(allResult);
-		allLattice.dumpAISee("allLattice.gdl", "All Lattice");
+		allLattice.dumpAISee("logs/allLattice.gdl", "All Lattice");
 
 		assertTrue(lattice.isEquivalent(allLattice));
 	}
