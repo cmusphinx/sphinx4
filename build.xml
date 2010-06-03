@@ -351,6 +351,7 @@
         <mkdir dir="${lib_dir}"/>
         <jar destfile="${jsapi10base_jar}"
              compress="true"
+             manifest="${src_dir}/jsapi/jsapi-base.manifest"
              basedir="${classes_dir}">
             <include name="com/sun/speech/**"/>
             <include name="edu/cmu/sphinx/jsapi/**"/>
