@@ -39,7 +39,7 @@ import java.util.logging.Logger;
  * All scores and probabilities are maintained in the log math log domain.
  */
 
-public class WordPruningBreadthFirstSearchManager implements SearchManager {
+public class WordPruningBreadthFirstSearchManager extends TokenSearchManager {
 
     /** The property that defines the name of the linguist to be used by this search manager. */
     @S4Component(type = Linguist.class)
@@ -84,10 +84,6 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
     @S4Boolean(defaultValue = false)
     public final static String PROP_CHECK_STATE_ORDER = "checkStateOrder";
 
-    /** The property that specifies whether to build a word lattice. */
-    @S4Boolean(defaultValue = true)
-    public final static String PROP_BUILD_WORD_LATTICE = "buildWordLattice";
-
     /** The property that specifies the maximum lattice edges */
     @S4Integer(defaultValue = 100)
     public final static String PROP_MAX_LATTICE_EDGES = "maxLatticeEdges";
@@ -98,13 +94,6 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
      */
     @S4Double(defaultValue = 0)
     public final static String PROP_ACOUSTIC_LOOKAHEAD_FRAMES = "acousticLookaheadFrames";
-
-    /**
-     * The property that controls whether or not we keep all tokens. If this is set to false, only word tokens are
-     * retained, otherwise all tokens are retained.
-     */
-    @S4Boolean(defaultValue = false)
-    public final static String PROP_KEEP_ALL_TOKENS = "keepAllTokens";
 
     /** The property that specifies the relative beam width */
     @S4Double(defaultValue = 0.0)
@@ -126,8 +115,6 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
     private Logger logger;
     private boolean showTokenCount;
     private boolean checkStateOrder;
-    private boolean buildWordLattice;
-    private boolean keepAllTokens = true;
     private int growSkipInterval;
     private float relativeBeamWidth;
     private float acousticLookaheadFrames;
@@ -196,8 +183,7 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
         this.acousticLookaheadFrames = acousticLookaheadFrames;
         this.keepAllTokens = keepAllTokens;
 
-        double linearRelativeBeamWidth = relativeWordBeamWidth;
-        this.relativeBeamWidth = logMath.linearToLog(linearRelativeBeamWidth);
+        this.relativeBeamWidth = logMath.linearToLog(relativeWordBeamWidth);
     }
 
     public WordPruningBreadthFirstSearchManager() {
@@ -211,6 +197,8 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
     */
     @Override
     public void newProperties(PropertySheet ps) throws PropertyException {
+        super.newProperties(ps);
+        
         logMath = (LogMath) ps.getComponent(PROP_LOG_MATH);
         logger = ps.getLogger();
 
@@ -222,13 +210,10 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
         growSkipInterval = ps.getInt(PROP_GROW_SKIP_INTERVAL);
 
         checkStateOrder = ps.getBoolean(PROP_CHECK_STATE_ORDER);
-        buildWordLattice = ps.getBoolean(PROP_BUILD_WORD_LATTICE);
         maxLatticeEdges = ps.getInt(PROP_MAX_LATTICE_EDGES);
         acousticLookaheadFrames = ps.getFloat(PROP_ACOUSTIC_LOOKAHEAD_FRAMES);
-        keepAllTokens = ps.getBoolean(PROP_KEEP_ALL_TOKENS);
 
-        double linearRelativeBeamWidth = ps.getDouble(PROP_RELATIVE_BEAM_WIDTH);
-        this.relativeBeamWidth = logMath.linearToLog(linearRelativeBeamWidth);
+        relativeBeamWidth = logMath.linearToLog(ps.getDouble(PROP_RELATIVE_BEAM_WIDTH));
     }
 
 
@@ -577,53 +562,7 @@ public class WordPruningBreadthFirstSearchManager implements SearchManager {
     protected Object getStateKey(SearchState state) {
         return state;
     }
-
-    /**
-     * Find the token to use as a predecessor in resultList given a candidate
-     * predecessor. There are three cases here:
-     * 
-     * <ul>
-     * <li>We want to store everything in resultList. In that case
-     * {@link #keepAllTokens} is set to true and we just store everything that
-     * was built before.
-     * <li>We are only interested in sequence of words. In this case we just
-     * keep word tokens and ignore everything else. In this case timing and
-     * scoring information is lost since we keep scores in emitting tokens.
-     * <li>We want to keep words but we want to keep scores to build a lattice
-     * from the result list later and {@link #buildWordLattice} is set to true.
-     * In this case we want to insert intermediate token to store the score and
-     * this token will be used during lattice path collapse to get score on
-     * edge. See {@link edu.cmu.sphinx.result.Lattice} for details of resultList
-     * compression.
-     * </ul>
-     * 
-     * @param token
-     *            the token of interest
-     * @return the immediate successor word token
-     */
-    protected Token getResultListPredecessor(Token token) {
-
-        if (keepAllTokens) {
-            return token;
-        }
-
-        float logAcousticScore = 0.0f;
-        float logLanguageScore = 0.0f;
-
-        while (token != null && !token.isWord()) {
-            logAcousticScore += token.getAcousticScore();
-            logLanguageScore += token.getLanguageScore();
-            token = token.getPredecessor();
-        }
-        
-        if (buildWordLattice) {
-            Token newToken = new Token(logAcousticScore, logLanguageScore, token);
-            if (token != null)
-                 newToken.setScore(token.getScore());
-            return newToken;
-        }
-        return token;
-    }
+    
 
     /** Checks that the given two states are in legitimate order.
      * @param fromState

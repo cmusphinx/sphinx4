@@ -42,7 +42,7 @@ import java.io.IOException;
  */
 
 // TODO - need to add in timing code.
-public class SimpleBreadthFirstSearchManager implements SearchManager {
+public class SimpleBreadthFirstSearchManager extends TokenSearchManager {
 
     /** The property that defines the name of the linguist to be used by this search manager. */
     @S4Component(type = Linguist.class)
@@ -167,10 +167,13 @@ public class SimpleBreadthFirstSearchManager implements SearchManager {
         this.growSkipInterval = growSkipInterval;
         this.wantEntryPruning = wantEntryPruning;
         this.logRelativeWordBeamWidth = logMath.linearToLog(relativeWordBeamWidth);
+        this.keepAllTokens = true;
     }
 
     @Override
     public void newProperties(PropertySheet ps) throws PropertyException {
+        super.newProperties(ps);
+        
         logger = ps.getLogger();
         name = ps.getInstanceName();
 
@@ -186,6 +189,8 @@ public class SimpleBreadthFirstSearchManager implements SearchManager {
         growSkipInterval = ps.getInt(PROP_GROW_SKIP_INTERVAL);
         wantEntryPruning = ps.getBoolean(PROP_WANT_ENTRY_PRUNING);
         logRelativeWordBeamWidth = logMath.linearToLog(relativeWordBeamWidth);
+        
+        this.keepAllTokens = true;      
     }
 
 
@@ -463,7 +468,7 @@ public class SimpleBreadthFirstSearchManager implements SearchManager {
         // the SearchState and frame then create a new token, add
         // it to the lattice and the SearchState.
         // If the token is an emitting token add it to the list,
-        // othewise recursively collect the new tokens successors.
+        // otherwise recursively collect the new tokens successors.
         for (SearchStateArc arc : arcs) {
             SearchState nextState = arc.getState();
             // We're actually multiplying the variables, but since
@@ -478,12 +483,14 @@ public class SimpleBreadthFirstSearchManager implements SearchManager {
                     continue;
                 }
             }
+            Token predecessor = getResultListPredecessor(token);
             Token bestToken = getBestToken(nextState);
             boolean firstToken = bestToken == null;
             if (firstToken || bestToken.getScore() <= logEntryScore) {
-                Token newToken = token.child(nextState, logEntryScore, arc
-                        .getLanguageProbability(), arc
-                        .getInsertionProbability(), currentFrameNumber);
+                Token newToken = new Token(predecessor, nextState, logEntryScore, 
+                        arc.getLanguageProbability(), 
+                        arc.getInsertionProbability(), 
+                        currentFrameNumber);
                 tokensCreated.value++;
                 setBestToken(newToken, nextState);
                 if (!newToken.isEmitting()) {
@@ -515,7 +522,7 @@ public class SimpleBreadthFirstSearchManager implements SearchManager {
      * Determines whether or not we've visited the state associated with this token since the previous frame.
      *
      * @param t the token to check
-     * @return true if we've visted the search state since the last frame
+     * @return true if we've visited the search state since the last frame
      */
     private boolean isVisited(Token t) {
         SearchState curState = t.getSearchState();

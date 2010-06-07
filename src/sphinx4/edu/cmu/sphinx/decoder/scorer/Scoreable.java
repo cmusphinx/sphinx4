@@ -42,7 +42,7 @@ public interface Scoreable extends Data {
     };
 
     /**
-     * Calculates a score against the given data. The score can be retreived with get score
+     * Calculates a score against the given data. The score can be retrieved with get score
      *
      * @param data     the data to be scored
      * @return the score for the data

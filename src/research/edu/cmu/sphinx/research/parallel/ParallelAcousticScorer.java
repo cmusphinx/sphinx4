@@ -32,7 +32,7 @@ public class ParallelAcousticScorer extends SimpleAcousticScorer {
      * Scores the given set of Tokens. All Tokens in the given list are assumed to belong to the same acoustic model.
      *
      * @param scoreableList a list containing StateToken objects to be scored
-     * @return the best scoring scorable, or null if there are no more frames to score
+     * @return the best scoring scoreable, or null if there are no more frames to score
      */
     @Override
     public Data calculateScores(List<? extends Scoreable> scoreableList) {

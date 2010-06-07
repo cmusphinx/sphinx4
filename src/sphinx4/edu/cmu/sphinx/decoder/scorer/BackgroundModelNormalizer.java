@@ -18,7 +18,7 @@ public class BackgroundModelNormalizer implements ScoreNormalizer {
 
     /**
      * The active list provider used to determined the best token for normalization. If this reference is not defined no
-     * nomralization will be applied.
+     * normalization will be applied.
      */
     @S4Component(type = SimpleBreadthFirstSearchManager.class, mandatory = false)
     public static final String ACTIVE_LIST_PROVIDER = "activeListProvider";
@@ -39,7 +39,7 @@ public class BackgroundModelNormalizer implements ScoreNormalizer {
 
     /**
      * @param activeListProvider The active list provider used to determined the best token for normalization. If this reference is not defined no
-     * nomralization will be applied.
+     * normalization will be applied.
      */
     public BackgroundModelNormalizer(SimpleBreadthFirstSearchManager activeListProvider) {
         this.activeListProvider = activeListProvider;

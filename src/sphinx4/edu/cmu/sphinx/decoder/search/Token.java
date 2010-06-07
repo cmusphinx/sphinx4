@@ -52,57 +52,11 @@ public class Token implements Scoreable {
     private int location;
     private Data myData;
 
-    private static Set<Class<? extends SearchState>> predecessorClasses;
-
     /**
      * A collection of arbitrary properties assigned to this token. This field becomes lazy initialized to reduce
      * memory footprint.
      */
     private HashMap<String, Object> tokenProps;
-
-
-    /**
-     * Set the predecessor class. Used to modify the behavior of child() so that the predecessor backpointer will skip
-     * internal states. For example, when retaining tokens to form a word lattice, it would be inefficient to keep any
-     * states but WordStates-- other types of states are not used and the memory should be saved.  On the other hand, a
-     * phoneme recognizer would require PronunciationStates to create a suitable result.
-     *
-     * @param bpClasses
-     */
-    public static void setPredecessorClass(Set<Class <? extends SearchState>> bpClasses) {
-        predecessorClasses = bpClasses;
-    }
-
-
-    /**
-     * Constructs a new token that continues the search from the current token. If predessorClasses is null or if the
-     * class of the state is a member of predecessorClasses, the predecessor of the new token is set to the current
-     * token.  Otherwise it is set to the predecessor of the current token.  This behavior is used to save memory when
-     * building lattices.
-     *
-     * @param state                   the SentenceHMMState associated with this token
-     * @param logTotalScore           the total entry score for this token (in LogMath log base)
-     * @param logLanguageScore        the language score associated with this token (in LogMath log base)
-     * @param logInsertionProbability the insertion probability  associated with this token (in LogMath log base)
-     * @param frameNumber             the frame number associated with this token
-     */
-    public Token child(SearchState state,
-                       float logTotalScore,
-                       float logLanguageScore,
-                       float logInsertionProbability,
-                       int frameNumber) {
-        if ((predecessorClasses == null) ||
-                predecessorClasses.contains(state.getClass())) {
-            return new Token(this, state,
-                    logTotalScore, logLanguageScore,
-                    logInsertionProbability, frameNumber);
-        } else {
-            return new Token(predecessor, state,
-                    logTotalScore, logLanguageScore,
-                    logInsertionProbability, frameNumber);
-        }
-    }
-
 
     /**
      * Internal constructor for a token. Used by classes Token, CombineToken, ParallelToken
@@ -114,7 +68,7 @@ public class Token implements Scoreable {
      * @param logInsertionProbability the insertion probability  associated with this token (in LogMath log base)
      * @param frameNumber             the frame number associated with this token
      */
-    protected Token(Token predecessor,
+    public Token(Token predecessor,
                     SearchState state,
                     float logTotalScore,
                     float logLanguageScore,
@@ -128,9 +82,6 @@ public class Token implements Scoreable {
         this.frameNumber = frameNumber;
         this.location = -1;
         curCount++;
-
-//        if (predecessor != null && predecessor.isEmitting() && isEmitting())
-//            assert predecessor.getScore() < getScore();
     }
 
 

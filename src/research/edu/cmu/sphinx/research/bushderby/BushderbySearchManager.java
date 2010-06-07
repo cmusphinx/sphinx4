@@ -182,7 +182,7 @@ public class BushderbySearchManager extends SimpleBreadthFirstSearchManager {
         // the SentenceHMMState and frame then create a new token, add
         // it to the lattice and the SentenceHMMState.
         // If the token is an emitting token add it to the list,
-        // othewise recursively collect the new tokens successors.
+        // otherwise recursively collect the new tokens successors.
 
         for (SearchStateArc arc : arcs) {
             SearchState nextState = arc.getState();
@@ -206,17 +206,19 @@ public class BushderbySearchManager extends SimpleBreadthFirstSearchManager {
             float logWorkingScore = firstToken ? LogMath.getLogZero() :
                 getBestToken(nextState).getWorkingScore();
 
+            Token predecessor = getResultListPredecessor(token);
             if (firstToken || getBestToken(nextState).getScore() <= logCurrentScore) {
 
                 // we may want to create  green tokens all the time
                 if (greenToken) {
 
-                    Token newToken = token.child(
-                        nextState,         // the SentenceHMMState
-                        logCurrentScore,         // the score on entry
-                        logLanguageProbability,     // entry lang score
-                        arc.getInsertionProbability(), // insertion prob
-                        getCurrentFrameNumber()     // the frame number
+                    Token newToken = new Token(
+                        predecessor,
+                        nextState,
+                        logCurrentScore,
+                        logLanguageProbability,
+                        arc.getInsertionProbability(),
+                        getCurrentFrameNumber()
                     );
                     getTokensCreated().value++;
 
@@ -272,7 +274,7 @@ public class BushderbySearchManager extends SimpleBreadthFirstSearchManager {
 
 
     /**
-     * Deterimines if the transition from the given token (given its perfect knowledge of context history) to the
+     * Determines if the transition from the given token (given its perfect knowledge of context history) to the
      * nextState is valid
      *
      * @param token     the current token
@@ -472,7 +474,7 @@ public class BushderbySearchManager extends SimpleBreadthFirstSearchManager {
      * May collapse a set of tokens in a token branch to a single high-level token. May also remove references to the
      * SentenceHMMState tree
      *
-     * @param token the token to try to collaplse
+     * @param token the token to try to collapse
      */
     private final Token collapseToken(Token token) {
         // TBD: Does nothing now.
