@@ -645,8 +645,7 @@ public class WordPruningBreadthFirstSearchManager extends TokenSearchManager {
 
             if (firstToken || bestToken.getScore() < logEntryScore) {
                 Token newBestToken = new Token(predecessor, nextState,
-                        logEntryScore, arc.getLanguageProbability(), arc
-                                .getInsertionProbability(), currentFrameNumber);
+                        logEntryScore, arc.getLanguageProbability(), currentFrameNumber);
                 tokensCreated.value++;
 
                 setBestToken(newBestToken, nextState);

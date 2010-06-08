@@ -40,16 +40,16 @@ public class Token implements Scoreable {
     private static final DecimalFormat numFmt = new DecimalFormat("0000");
 
     private final Token predecessor;
-    private int frameNumber;
+
     private float logTotalScore;
     private final float logLanguageScore;
-    private float logInsertionProbability;
-    private float logRawAcousticScore;
     private float logAcousticScore;
     private float logWorkingScore;
+    
     private SearchState searchState;
 
     private int location;
+    private int frameNumber;
     private Data myData;
 
     /**
@@ -72,13 +72,11 @@ public class Token implements Scoreable {
                     SearchState state,
                     float logTotalScore,
                     float logLanguageScore,
-                    float logInsertionProbability,
                     int frameNumber) {
         this.predecessor = predecessor;
         this.searchState = state;
         this.logTotalScore = logTotalScore;
         this.logLanguageScore = logLanguageScore;
-        this.logInsertionProbability = logInsertionProbability;
         this.frameNumber = frameNumber;
         this.location = -1;
         curCount++;
@@ -92,7 +90,7 @@ public class Token implements Scoreable {
      * @param frameNumber the frame number for this token
      */
     public Token(SearchState state, int frameNumber) {
-        this(null, state, 0.0f, 0.0f, 0.0f, frameNumber);
+        this(null, state, 0.0f, 0.0f, frameNumber);
     }
 
 
@@ -106,7 +104,6 @@ public class Token implements Scoreable {
     public Token(float logAcousticScore, float logLanguageScore,
                  Token predecessor) {
         this.logAcousticScore = logAcousticScore;
-        this.logRawAcousticScore = logAcousticScore;
         this.logLanguageScore = logLanguageScore;
         this.predecessor = predecessor;
     }
@@ -261,16 +258,6 @@ public class Token implements Scoreable {
     }
 
 
-    /**
-     * Returns the insertionPenalty associated with this token
-     *
-     * @return the insertion probability  (in logMath log base)
-     */
-    public float getInsertionProbability() {
-        return logInsertionProbability;
-    }
-
-
     /** Returns the acoustic score for this token (in logMath log base)
      *
      * @return score
@@ -279,11 +266,6 @@ public class Token implements Scoreable {
         return logAcousticScore;
     }
 
-
-    /** Returns the un-normalized acoustic score for this token (in logMath log base) */
-    public float getRawAcousticScore() {
-        return logRawAcousticScore;
-    }
 
     /**
      * Returns the SearchState associated with this token
@@ -338,7 +320,6 @@ public class Token implements Scoreable {
             scoreFmt.format(getScore()) + ' ' +
             scoreFmt.format(getAcousticScore()) + ' ' +
             scoreFmt.format(getLanguageScore()) + ' ' +
-            scoreFmt.format(getInsertionProbability()) + ' ' +
             getSearchState() + (tokenProps == null ? "" : " " + tokenProps);
     }
 

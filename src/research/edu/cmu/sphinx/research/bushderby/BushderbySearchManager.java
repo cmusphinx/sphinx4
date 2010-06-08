@@ -217,7 +217,6 @@ public class BushderbySearchManager extends SimpleBreadthFirstSearchManager {
                         nextState,
                         logCurrentScore,
                         logLanguageProbability,
-                        arc.getInsertionProbability(),
                         getCurrentFrameNumber()
                     );
                     getTokensCreated().value++;

@@ -38,7 +38,7 @@ public class CombineToken extends Token implements Iterable<ParallelToken> {
     public CombineToken(Token predecessor,
                         SentenceHMMState state,
                         int frameNumber) {
-        super(predecessor, state, 0.0f, 0.0f, 0.0f, frameNumber);
+        super(predecessor, state, 0.0f, 0.0f, frameNumber);
         this.tokens = new HashMap<Object, ParallelToken>();
     }
 
