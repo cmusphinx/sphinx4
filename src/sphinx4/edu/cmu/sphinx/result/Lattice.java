@@ -406,17 +406,6 @@ public class Lattice {
 
 
     /**
-     * Test to see if the Lattice contains a Node
-     *
-     * @param node
-     * @return true if yes
-     */
-    boolean hasNode(Node node) {
-        return nodes.containsValue(node);
-    }
-
-
-    /**
      * Test to see if the Lattice contains an Edge
      *
      * @param edge
@@ -427,6 +416,17 @@ public class Lattice {
     }
 
 
+    /**
+     * Test to see if the Lattice contains a Node
+     *
+     * @param node
+     * @return true if yes
+     */
+    boolean hasNode(Node node) {
+        return hasNode(node.getId());
+    }
+
+    
     /**
      * Test to see if the Lattice already contains a Node corresponding to a given Token.
      *
