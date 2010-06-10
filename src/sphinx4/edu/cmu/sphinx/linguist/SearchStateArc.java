@@ -19,7 +19,7 @@ public interface SearchStateArc {
     /**
      * Gets a successor to this search state
      *
-     * @return the sucessor state
+     * @return the successor state
      */
     SearchState getState();
 

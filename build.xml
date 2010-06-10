@@ -478,8 +478,8 @@
     <target name="javacc">
       <sequential>
         <javacc
-          target="${src_dir}/jsapi/com/sun/speech/engine/recognition/jsgf.jj"
-          outputDirectory="${src_dir}/jsapi/com/sun/speech/engine/recognition"
+          target="${src_dir}/sphinx4/edu/cmu/sphinx/jsgf/parser/jsgf.jj"
+          outputDirectory="${src_dir}/sphinx4/edu/cmu/sphinx/jsgf/parser"
         />
         <fixcrlf srcdir="@{outputDir}" includes="*.java">
           <containsregexp expression="Generated.*By.*JavaCC"/>

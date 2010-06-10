@@ -65,7 +65,6 @@ public class Token implements Scoreable {
      * @param state                   the SentenceHMMState associated with this token
      * @param logTotalScore           the total entry score for this token (in LogMath log base)
      * @param logLanguageScore        the language score associated with this token (in LogMath log base)
-     * @param logInsertionProbability the insertion probability  associated with this token (in LogMath log base)
      * @param frameNumber             the frame number associated with this token
      */
     public Token(Token predecessor,

@@ -1358,7 +1358,7 @@ public class LexTreeLinguist implements Linguist {
          * @param hmmState     the hmm state associated with this unit
 
          * @param wordSequence the word history
-         * @param probability  the probability of the transition occuring
+         * @param probability  the probability of the transition occurring
 
          */
         LexTreeNonEmittingHMMState(HMMNode hmmNode, WordSequence wordSequence,

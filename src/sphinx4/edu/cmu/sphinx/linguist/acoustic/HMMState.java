@@ -43,7 +43,7 @@ public interface HMMState {
 
 
     /**
-     * Determines if this HMMState is an emittting state
+     * Determines if this HMMState is an emitting state
      *
      * @return true if the state is an emitting state
      */

@@ -37,7 +37,7 @@ public class SenoneHMMState implements HMMState {
     /**
      * Constructs a SenoneHMMState
      *
-     * @param hmm   the hmm for this state
+     * @param hmm   the HMM for this state
      * @param which the index for this particular state
      */
     SenoneHMMState(SenoneHMM hmm, int which) {
@@ -140,7 +140,7 @@ public class SenoneHMMState implements HMMState {
 
 
     /**
-     * Determines if this HMMState is an emittting state
+     * Determines if this HMMState is an emitting state
      *
      * @return true if the state is an emitting state
      */

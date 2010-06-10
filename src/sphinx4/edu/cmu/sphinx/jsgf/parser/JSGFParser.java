@@ -475,6 +475,7 @@ public class JSGFParser implements JSGFParserConstants {
     case IMPORT:
     case PUBLIC:
     case INTEGER_LITERAL:
+    case FLOATING_POINT_LITERAL:
     case STRING_LITERAL:
     case IDENTIFIER:
     case 28:
@@ -571,6 +572,7 @@ public class JSGFParser implements JSGFParserConstants {
       case IMPORT:
       case PUBLIC:
       case INTEGER_LITERAL:
+      case FLOATING_POINT_LITERAL:
       case STRING_LITERAL:
       case IDENTIFIER:
       case 28:
@@ -616,6 +618,7 @@ public class JSGFParser implements JSGFParserConstants {
     case IMPORT:
     case PUBLIC:
     case INTEGER_LITERAL:
+    case FLOATING_POINT_LITERAL:
     case STRING_LITERAL:
     case IDENTIFIER:
     case 28:
@@ -624,6 +627,7 @@ public class JSGFParser implements JSGFParserConstants {
       case IMPORT:
       case PUBLIC:
       case INTEGER_LITERAL:
+      case FLOATING_POINT_LITERAL:
       case STRING_LITERAL:
       case IDENTIFIER:
         r = terminal();
@@ -767,6 +771,9 @@ public class JSGFParser implements JSGFParserConstants {
     case INTEGER_LITERAL:
       t = jj_consume_token(INTEGER_LITERAL);
       break;
+    case FLOATING_POINT_LITERAL:
+      t = jj_consume_token(FLOATING_POINT_LITERAL);
+      break;
     case PUBLIC:
       t = jj_consume_token(PUBLIC);
       break;
@@ -852,7 +859,7 @@ public class JSGFParser implements JSGFParserConstants {
       jj_la1_init_1();
    }
    private static void jj_la1_init_0() {
-      jj_la1_0 = new int[] {0x800000,0x4000,0x10008000,0x800000,0x800000,0x20000000,0x80e000,0x8000,0x0,0x0,0x10a1e000,0x81e000,0x10a1e000,0x50000,0x10a1e000,0x40000000,0x40000000,0x400000,0x40000000,0x40000000,0x400000,0x400000,0x10a1e000,0x400000,0xa1e000,0x20000000,};
+      jj_la1_0 = new int[] {0x800000,0x4000,0x10008000,0x800000,0x800000,0x20000000,0x80e000,0x8000,0x0,0x0,0x10a5e000,0x81e000,0x10a5e000,0x50000,0x10a5e000,0x40000000,0x40000000,0x400000,0x40000000,0x40000000,0x400000,0x400000,0x10a5e000,0x400000,0xa5e000,0x20000000,};
    }
    private static void jj_la1_init_1() {
       jj_la1_1 = new int[] {0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x2,0x2,0x54,0x0,0x50,0x0,0x0,0x8,0x8,0x0,0x8,0x8,0x0,0x0,0x50,0x0,0x0,0x0,};
