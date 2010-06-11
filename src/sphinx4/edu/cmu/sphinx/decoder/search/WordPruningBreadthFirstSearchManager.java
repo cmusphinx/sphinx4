@@ -327,8 +327,7 @@ public class WordPruningBreadthFirstSearchManager extends TokenSearchManager {
      * creates a new best token map with the best size
      */
     protected void createBestTokenMap() {
-        // int mapSize = activeList.size() * 10;
-        int mapSize = activeList.size() << 2;
+        int mapSize = activeList.size() * 10;
         if (mapSize == 0) {
             mapSize = 1;
         }

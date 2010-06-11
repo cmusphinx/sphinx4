@@ -61,7 +61,7 @@ public class Pronunciation {
 
 
     /**
-     * Retrives the word that this Pronunciation object represents.
+     * Retrieves the word that this Pronunciation object represents.
      *
      * @return the word
      */

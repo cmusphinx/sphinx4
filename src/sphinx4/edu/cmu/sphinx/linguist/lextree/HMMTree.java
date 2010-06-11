@@ -283,7 +283,7 @@ class HMMTree {
             EndNode endNode = new EndNode(baseUnit, lc, probability);
             curNode = curNode.addSuccessor(endNode, probability);
             wordNode = curNode.addSuccessor(pronunciation, probability);
-            if (wordNode.getWord() == dictionary.getSentenceEndWord()) {
+            if (wordNode.getWord().isSentenceEndWord()) {
                 sentenceEndWordNode = wordNode;
             }
         } else {
@@ -930,11 +930,11 @@ class Node {
 }
 
 
-/** A node representing a word in the hmm tree */
+/** A node representing a word in the HMM tree */
 class WordNode extends Node {
 
     private final Pronunciation pronunciation;
-
+    private final boolean isFinal;
 
     /**
      * Creates a word node
@@ -945,6 +945,7 @@ class WordNode extends Node {
     WordNode(Pronunciation pronunciation, float probability) {
         super(probability);
         this.pronunciation = pronunciation;
+        this.isFinal = pronunciation.getWord().isSentenceEndWord();
     }
 
 
@@ -999,6 +1000,11 @@ class WordNode extends Node {
     public String toString() {
         return "WordNode " + pronunciation + " p " +
                 getUnigramProbability();
+    }
+
+
+    public boolean isFinal() {
+        return isFinal;
     }
 }
 

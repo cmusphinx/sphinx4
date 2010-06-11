@@ -205,7 +205,7 @@ public final class WordSequence {
         if (hashCode == -1) {
             int code = 123;
             for (int i = 0; i < words.length; i++) {
-                code += words[i].hashCode() * (i + 1);
+                code += words[i].hashCode() * (2 * i + 1);
             }
             hashCode = code;
         }
