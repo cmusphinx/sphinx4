@@ -919,7 +919,7 @@ class Node {
 
 
     /**
-     * Returns the string representation fo this object
+     * Returns the string representation for this object
      *
      * @return the string representation of the object
      */
