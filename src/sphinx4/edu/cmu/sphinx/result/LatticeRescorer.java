@@ -41,23 +41,11 @@ public class LatticeRescorer {
         depth = model.getMaxDepth();
     }
 
-    private boolean isFillerNode(Node node) {
-        return node.getWord().getSpelling().equals("<sil>");
-    }
-
-    public void removeFillers() {
-        for (Node node : lattice.sortNodes()) {
-            if (isFillerNode(node)) {
-                lattice.removeNodeAndCrossConnectEdges(node);
-                assert lattice.checkConsistency();
-            }
-        }
-    }
 
     private void rescoreEdges() {
         for (Edge edge : lattice.edges) {
 
-            if (isFillerNode(edge.getToNode()))
+            if (lattice.isFillerNode(edge.getToNode()))
                 continue;
 
             List<String> paths = allPathsTo("", edge, depth);
@@ -96,7 +84,7 @@ public class LatticeRescorer {
 
     public void rescore() {
 
-        removeFillers();
+        lattice.removeFillers();
 
         rescoreEdges();
     }

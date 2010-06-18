@@ -316,7 +316,7 @@ public class LexTreeLinguist implements Linguist {
         acousticModel.allocate();
         languageModel.allocate();
         compileGrammar();
-        acousticModel = null;
+        //acousticModel = null;
     }
 
 

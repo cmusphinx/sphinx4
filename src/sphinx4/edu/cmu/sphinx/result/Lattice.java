@@ -1015,4 +1015,19 @@ public class Lattice {
         }
         return equivalent;
     }
+    
+
+    boolean isFillerNode(Node node) {
+        return node.getWord().getSpelling().equals("<sil>");
+    }
+
+    
+    public void removeFillers() {
+        for (Node node : sortNodes()) {
+            if (isFillerNode(node)) {
+                removeNodeAndCrossConnectEdges(node);
+                assert checkConsistency();
+            }
+        }
+    }
 }

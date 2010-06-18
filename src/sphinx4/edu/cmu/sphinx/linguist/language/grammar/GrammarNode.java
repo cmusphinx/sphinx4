@@ -14,7 +14,6 @@ package edu.cmu.sphinx.linguist.language.grammar;
 
 
 import edu.cmu.sphinx.linguist.dictionary.Word;
-
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -351,11 +350,11 @@ public class GrammarNode {
      * @return the gdl label for the color
      */
     String getGDLColor(GrammarNode node) {
-        String color = "lightgrey";
+        String color = "grey";
         if (node.isFinalNode()) {
             color = "red";
         } else if (!node.isEmpty()) {
-            color = "lightgreen";
+            color = "green";
         }
         return color;
     }
@@ -403,4 +402,38 @@ public class GrammarNode {
         add(branchNode, 0.0f);
         return branchNode;
     }
+
+
+	public void dumpDot(String path) {		
+        try {
+            PrintWriter out = new PrintWriter(new FileOutputStream(path));
+            out.println("digraph \"" + path + "\" {");
+            out.println("rankdir = LR\n");
+            traverseDot(out, new HashSet<GrammarNode>());
+            out.println("}");
+            out.close();
+        } catch (FileNotFoundException fnfe) {
+            System.out.println("Can't write to " + path + ' ' + fnfe);
+        } 
+	}
+
+
+	private void traverseDot(PrintWriter out, Set<GrammarNode> visitedNodes) {
+        if (!(visitedNodes.contains(this))) {
+            visitedNodes.add(this);
+            out.println("\tnode" + this.getID() 
+                    + " [ label=" + getGDLLabel(this) 
+                    + ", color=" + getGDLColor(this) 
+                    + ", shape=" + getGDLShape(this) 
+                    + " ]\n");            		
+            GrammarArc[] arcs = getSuccessors();
+            for (GrammarArc arc : arcs) {
+                GrammarNode child = arc.getGrammarNode();
+                float prob = arc.getProbability();                
+                out.write("\tnode" + this.getID() + " -> node" + child.getID() 
+                        + " [ label=" + prob + " ]\n");               
+                child.traverseDot(out, visitedNodes);
+            }
+        }
+	}
 }

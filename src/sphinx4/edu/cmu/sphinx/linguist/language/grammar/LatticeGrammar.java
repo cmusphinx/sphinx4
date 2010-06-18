@@ -58,8 +58,11 @@ public class LatticeGrammar extends Grammar {
         if (lattice == null) {
             return createGrammarNode("<s>");
         }
+        
+        lattice.removeFillers();
+        
         GrammarNode firstNode = null;
-        HashMap<String, GrammarNode> nodeMap = new HashMap<String, GrammarNode>();
+        HashMap<Node, GrammarNode> nodeMap = new HashMap<Node, GrammarNode>();
         for (Node n : lattice.getNodes()) { 
             String word = n.getWord().toString();
             GrammarNode node = createGrammarNode(word);
@@ -67,7 +70,7 @@ public class LatticeGrammar extends Grammar {
                 firstNode = node;
             if (n.equals(lattice.getTerminalNode()))
                 node.setFinalNode(true);
-            nodeMap.put(word, node);
+            nodeMap.put(n, node);
         }
         if (firstNode == null) {
             throw new Error("No lattice start found");
@@ -75,15 +78,19 @@ public class LatticeGrammar extends Grammar {
 
         for (Edge e : lattice.getEdges()) {
             float logProbability = (float)e.getLMScore();           
-            GrammarNode prevNode = nodeMap.get(e.getFromNode().getWord().toString());
-            GrammarNode toNode = nodeMap.get(e.getToNode().getWord().toString());            
+            GrammarNode prevNode = nodeMap.get(e.getFromNode());
+            GrammarNode toNode = nodeMap.get(e.getToNode());            
             prevNode.add(toNode, logProbability);
         }
+
         return firstNode;
+        
     }
     
     public void setLattice (Lattice lattice) throws IOException {
         this.lattice = lattice;
         allocate();
+        //dumpGrammar("Grammar");
+        //dumpRandomSentences("test.sentences", 10);
     }
 }

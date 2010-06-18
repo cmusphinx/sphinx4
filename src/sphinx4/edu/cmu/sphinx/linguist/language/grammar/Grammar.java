@@ -292,9 +292,8 @@ public abstract class Grammar implements Configurable, GrammarInterface {
     /** Dumps the grammar
      * @param name*/
     public void dumpGrammar(String name) {
-        getInitialNode().dumpGDL(name);
+        getInitialNode().dumpDot(name);
     }
-
 
     /**
      * returns the number of nodes in this grammar
