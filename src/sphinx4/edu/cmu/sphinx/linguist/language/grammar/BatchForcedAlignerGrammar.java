@@ -39,6 +39,9 @@ public class BatchForcedAlignerGrammar extends ForcedAlignerGrammar implements G
         super(showGrammar, optimizeGrammar, addSilenceWords, addFillerWords, dictionary);
         this.refFile = refFile;
     }
+    
+    public BatchForcedAlignerGrammar () {
+    }
 
     /*
     * (non-Javadoc)
