@@ -326,10 +326,7 @@ MORE :
 < IN_SINGLE_LINE_COMMENT >
 SPECIAL_TOKEN :
 {
-    < SINGLE_LINE_COMMENT :
-        "\n"
-    |   "\r"
-    |   "\r\n" > : DEFAULT
+    < SINGLE_LINE_COMMENT : (~["\n","\r"])* ("\n"|"\r"|"\r\n")? > : DEFAULT
 }
 
 < IN_FORMAL_COMMENT >
