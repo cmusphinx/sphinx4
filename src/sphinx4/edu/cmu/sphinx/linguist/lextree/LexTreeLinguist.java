@@ -173,13 +173,24 @@ public class LexTreeLinguist implements Linguist {
     @S4Boolean(defaultValue = false)
     public final static String PROP_GENERATE_UNIT_STATES = "generateUnitStates";
 
-
-    /** The property that determines whether or not unigram probabilities are smeared through the lextree */
-    @S4Boolean(defaultValue = false)
+    /**
+     * The property that determines whether or not unigram probabilities are
+     * smeared through the lextree. During the expansion of the tree the
+     * language probability could be only calculated when we reach word end node.
+     * Until that point we need to keep path alive and give it some language
+     * probability. See
+     * 
+     * Alleva, F., Huang, X. & Hwang, M.-Y., "Improvements on the pronunciation
+     * prefix tree search organization", Proceedings of ICASSP, pp. 133-136,
+     * Atlanta, GA, 1996.
+     * 
+     * for the description of this technique.
+     */
+    @S4Boolean(defaultValue = true)
     public final static String PROP_WANT_UNIGRAM_SMEAR = "wantUnigramSmear";
 
 
-    /** The property that determines the weight of the smear */
+    /** The property that determines the weight of the smear. See {@link LexTreeLinguist#PROP_WANT_UNIGRAM_SMEAR} */
     @S4Double(defaultValue = 1.0)
     public final static String PROP_UNIGRAM_SMEAR_WEIGHT = "unigramSmearWeight";
 
@@ -1003,12 +1014,7 @@ public class LexTreeLinguist implements Linguist {
         /**
          * Constructs a LexTreeUnitState
          *
-
          * @param wordSequence the history of words
-
-
-
-
          */
         LexTreeUnitState(HMMNode hmmNode, WordSequence wordSequence,
                          float smearTerm, float smearProb, float languageProbability,
@@ -1021,13 +1027,7 @@ public class LexTreeLinguist implements Linguist {
         /**
          * Constructs a LexTreeUnitState
          *
-
          * @param wordSequence the history of words
-
-
-
-
-
          */
         LexTreeUnitState(HMMNode hmmNode, WordSequence wordSequence,
                          float smearTerm, float smearProb, float languageProbability,

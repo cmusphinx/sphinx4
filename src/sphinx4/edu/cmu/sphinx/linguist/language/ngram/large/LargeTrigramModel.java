@@ -80,7 +80,6 @@ public class LargeTrigramModel extends LargeNGramModel {
     @Override
     public void newProperties(PropertySheet ps) throws PropertyException {
         logger = ps.getLogger();
-        format = ps.getString(LanguageModel.PROP_FORMAT);
         URL urlLocation = ConfigurationManagerUtils.getResource(PROP_LOCATION,
                 ps);
         location = new File(urlLocation.getFile());

@@ -45,7 +45,6 @@ public class SimpleNGramModel implements LanguageModel {
     // ----------------------------
     private String name;
     private LogMath logMath;
-    private String format;
     private URL urlLocation;
     private float unigramWeight;
     private Dictionary dictionary;
@@ -58,14 +57,13 @@ public class SimpleNGramModel implements LanguageModel {
     protected String fileName;
     private boolean allocated;
 
-    public SimpleNGramModel( String format, String location, Dictionary dictionary, float unigramWeight, LogMath logMath,
+    public SimpleNGramModel(String location, Dictionary dictionary, float unigramWeight, LogMath logMath,
                              int desiredMaxDepth ) throws MalformedURLException, ClassNotFoundException {
-        this( format, ConfigurationManagerUtils.resourceToURL(location), dictionary, unigramWeight, logMath, desiredMaxDepth );
+        this(ConfigurationManagerUtils.resourceToURL(location), dictionary, unigramWeight, logMath, desiredMaxDepth );
     }    
 
-    public SimpleNGramModel( String format, URL urlLocation, Dictionary dictionary, float unigramWeight, LogMath logMath, 
+    public SimpleNGramModel(URL urlLocation, Dictionary dictionary, float unigramWeight, LogMath logMath, 
                              int desiredMaxDepth ) {
-        this.format = format;
         this.urlLocation = urlLocation;
         this.unigramWeight = unigramWeight;
         this.logMath = logMath;
@@ -92,7 +90,6 @@ public class SimpleNGramModel implements LanguageModel {
             throw new RuntimeException("Can't change properties after allocation");
         }
 
-        format = ps.getString(PROP_FORMAT);
         urlLocation = ConfigurationManagerUtils.getResource(PROP_LOCATION, ps);
         unigramWeight = ps.getFloat(PROP_UNIGRAM_WEIGHT);
         logMath = (LogMath) ps.getComponent(PROP_LOG_MATH);
@@ -110,7 +107,7 @@ public class SimpleNGramModel implements LanguageModel {
     @Override
     public void allocate() throws IOException {
         allocated = true;
-        load(format, urlLocation, unigramWeight, dictionary);
+        load(urlLocation, unigramWeight, dictionary);
         if (desiredMaxDepth > 0) {
             if (desiredMaxDepth < maxNGram) {
                 maxNGram = desiredMaxDepth;
@@ -284,21 +281,17 @@ public class SimpleNGramModel implements LanguageModel {
     /**
      * Loads the language model from the given location.
      *
-     * @param format        the format of the model
      * @param location      the URL location of the model
      * @param unigramWeight the unigram weight
      * @throws IOException if an error occurs while loading
      */
-    private void load(String format, URL location, float unigramWeight,
+    private void load(URL location, float unigramWeight,
                       Dictionary dictionary) throws IOException {
         String line;
         float logUnigramWeight = logMath.linearToLog(unigramWeight);
         float inverseLogUnigramWeight = logMath
                 .linearToLog(1.0 - unigramWeight);
-        if (!format.equals("arpa")) {
-            throw new IOException("Loading of " + format
-                    + " language models not supported");
-        }
+
         open(location);
         // look for beginning of data
         readUntil("\\data\\");

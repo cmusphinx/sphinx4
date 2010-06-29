@@ -78,7 +78,6 @@ public class HelloNGramConfiguration extends CommonConfiguration {
     protected void initLinguist() throws MalformedURLException, ClassNotFoundException {
 
         this.languageModel = new SimpleNGramModel(
-                "arpa", // format,
                 // urlLocation,
                 "resource:/edu/cmu/sphinx/demo/hellongram/hellongram.trigram.lm",
                 dictionary, // dictionary

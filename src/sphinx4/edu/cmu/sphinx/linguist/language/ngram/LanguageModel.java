@@ -13,6 +13,7 @@ package edu.cmu.sphinx.linguist.language.ngram;
 
 import edu.cmu.sphinx.linguist.WordSequence;
 import edu.cmu.sphinx.linguist.dictionary.Dictionary;
+import edu.cmu.sphinx.linguist.lextree.LexTreeLinguist;
 import edu.cmu.sphinx.util.props.*;
 
 import java.io.IOException;
@@ -25,10 +26,6 @@ import java.util.Set;
  */
 
 public interface LanguageModel extends Configurable {
-
-    /** The property specifying the format of the language model. */
-    @S4String(defaultValue = "arpa")
-    public final static String PROP_FORMAT = "format";
 
     /** The property specifying the location of the language model. */
     @S4String(defaultValue = ".")
@@ -73,7 +70,8 @@ public interface LanguageModel extends Configurable {
 
 
     /**
-     * Gets the n-gram probability of the word sequence represented by the word list
+     * Gets the n-gram probability of the word sequence represented 
+     * by the word list
      *
      * @param wordSequence the wordSequence
      * @return the probability of the word sequence in LogMath log base
@@ -82,8 +80,9 @@ public interface LanguageModel extends Configurable {
 
 
     /**
-     * Gets the smear term for the given wordSequence
-     *
+     * Gets the smear term for the given wordSequence. Used in {@link LexTreeLinguist}.
+     * See {@link LexTreeLinguist#PROP_WANT_UNIGRAM_SMEAR} for details.
+     * 
      * @param wordSequence the word sequence
      * @return the smear term associated with this word sequence
      */
