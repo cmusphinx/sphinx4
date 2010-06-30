@@ -36,7 +36,7 @@ public class BinaryLoader {
     private static final String DARPA_TG_HEADER = "Darpa Trigram LM";
     private static final String DARPA_QG_HEADER = "Darpa Quadrigram LM";
     
-    // For convenience, NG Header is regex, so there is 2 extra characters in it.
+    // For convenience, NG Header is regular expression, so there is 2 extra characters in it.
     // Therefore, header.length() must be adjusted by -1 (and not +1), 
     // and we use Pattern.matches() for equality in header names.
     private static final String DARPA_NG_HEADER = "Darpa \\d-gram LM";
@@ -84,7 +84,7 @@ public class BinaryLoader {
      *
      * @param format                    the file format
      * @param location                  the location of the model
-     * @param applyLanguageWeightAndWip if true apply lw and wip
+     * @param applyLanguageWeightAndWip if true apply language weight and word insertion penalty
      * @param logMath                   the logmath to sue
      * @param languageWeight            the language weight
      * @param wip                       the word insertion probability
@@ -109,7 +109,7 @@ public class BinaryLoader {
     /**
      * Returns the number of unigrams
      *
-     * @return the nubmer of unigrams
+     * @return the number of unigrams
      */
     public int getNumberUnigrams() {
         return getNumberNGrams(1);
@@ -119,7 +119,7 @@ public class BinaryLoader {
     /**
      * Returns the number of bigrams
      *
-     * @return the nubmer of bigrams
+     * @return the number of bigrams
      */
     public int getNumberBigrams() {
     	return getNumberNGrams(2);
@@ -129,7 +129,7 @@ public class BinaryLoader {
     /**
      * Returns the number of trigrams
      *
-     * @return the nubmer of trigrams
+     * @return the number of trigrams
      */
     public int getNumberTrigrams() {
     	return getNumberNGrams(3);
@@ -309,7 +309,7 @@ public class BinaryLoader {
     /**
      * Returns the maximum depth of the language model
      *
-     * @return the maximum depth of the language mdoel
+     * @return the maximum depth of the language model
      */
     public int getMaxDepth() {
         return maxNGram;
@@ -373,7 +373,7 @@ public class BinaryLoader {
 
         // +1 is the sentinel unigram at the end
         unigrams = readUnigrams(stream, numberNGrams[0] + 1, bigEndian);
-
+        
         skipNGrams(stream);
 
         // Read the NGram prob & bow tables
@@ -474,7 +474,7 @@ public class BinaryLoader {
         
         // read LM filename string size and string
         int fileNameLength = readInt(stream, bigEndian);
-        bytesRead += (long)stream.skipBytes(fileNameLength);
+        skipStreamBytes(stream, fileNameLength);
 
         numberNGrams = new int[maxNGram];
         NGramOffset = new long[maxNGram];
@@ -537,32 +537,45 @@ public class BinaryLoader {
 
     /**
      * Skips the NGrams of the LM.
-     *
-     * @param stream the source of data
+     * 
+     * @param stream
+     *            the source of data
      * @throws java.io.IOException
      */
     private void skipNGrams(DataInputStream stream) throws IOException {
-		NGramOffset[1] = bytesRead;
-		int bytesToSkip = (numberNGrams[1] + 1) * LargeNGramModel.BYTES_PER_NGRAM * getBytesPerField();
-		stream.skipBytes(bytesToSkip);
-		bytesRead += bytesToSkip;
-		
-    	for (int i = 2; i < maxNGram; i++) {
-    		if (numberNGrams[i] > 0 && i < maxNGram - 1) {
-    			NGramOffset[i] = bytesRead;
-    			long bToSkip = (long)(numberNGrams[i] + 1) * (long)LargeNGramModel.BYTES_PER_NGRAM * (long)getBytesPerField();
-    			stream.skip(bToSkip);
-    			bytesRead += bToSkip;
-    		}
-    		else if (numberNGrams[i] > 0 && i == maxNGram - 1) {
-    			NGramOffset[i] = bytesRead;
-    			long bToSkip = (long)(numberNGrams[i]) * (long)LargeNGramModel.BYTES_PER_NMAXGRAM * (long)getBytesPerField();
-    			stream.skip(bToSkip);
-    			bytesRead += bToSkip;
-    		}
-    	}
-    }
+        long bytesToSkip;
 
+        NGramOffset[1] = bytesRead;
+        bytesToSkip = (numberNGrams[1] + 1) * LargeNGramModel.BYTES_PER_NGRAM * getBytesPerField();
+        skipStreamBytes(stream, bytesToSkip);
+
+        for (int i = 2; i < maxNGram; i++) {
+            if (numberNGrams[i] > 0 && i < maxNGram - 1) {
+                NGramOffset[i] = bytesRead;
+                bytesToSkip = (long) (numberNGrams[i] + 1) * (long) LargeNGramModel.BYTES_PER_NGRAM * (long) getBytesPerField();
+                skipStreamBytes(stream, bytesToSkip);
+            } else if (numberNGrams[i] > 0 && i == maxNGram - 1) {
+                NGramOffset[i] = bytesRead;
+                bytesToSkip = (long) (numberNGrams[i]) * (long) LargeNGramModel.BYTES_PER_NMAXGRAM * (long) getBytesPerField();
+                skipStreamBytes(stream, bytesToSkip);
+            }
+        }
+    }
+    
+    /**
+     * Reliable skip
+     * 
+     * @param stream stream
+     * @param bytes number of bytes
+     */
+    private void skipStreamBytes (DataInputStream stream, long bytes) throws IOException {
+        while (bytes > 0) {
+            long skipped = stream.skip(bytes);
+            bytesRead += skipped;
+            bytes -= skipped;
+        }
+    }
+    
 
     /** Apply the unigram weight to the set of unigrams */
     private void applyUnigramWeight() {
@@ -816,6 +829,5 @@ public class BinaryLoader {
          assert (s == numberUnigrams);
          return words;
      }
- 
- }
 
+}
