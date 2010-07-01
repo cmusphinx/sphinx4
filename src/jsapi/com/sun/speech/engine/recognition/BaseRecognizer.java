@@ -263,7 +263,7 @@ public class BaseRecognizer extends BaseEngine implements Recognizer,
 	}
 
 	/** From javax.speech.recognition.Recognizer. */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
     public RuleGrammar loadJSGF(URL context, String grammarName,
 			boolean loadImports, boolean reloadGrammars, Vector grammarsList)
 			throws GrammarException, MalformedURLException, IOException,

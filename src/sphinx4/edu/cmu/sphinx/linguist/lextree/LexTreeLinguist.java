@@ -18,7 +18,9 @@ import edu.cmu.sphinx.linguist.dictionary.Dictionary;
 import edu.cmu.sphinx.linguist.dictionary.Pronunciation;
 import edu.cmu.sphinx.linguist.dictionary.Word;
 import edu.cmu.sphinx.linguist.language.grammar.Grammar;
+import edu.cmu.sphinx.linguist.language.ngram.BackoffLanguageModel;
 import edu.cmu.sphinx.linguist.language.ngram.LanguageModel;
+import edu.cmu.sphinx.linguist.language.ngram.ProbDepth;
 import edu.cmu.sphinx.linguist.util.HMMPool;
 import edu.cmu.sphinx.linguist.util.LRUCache;
 import edu.cmu.sphinx.util.LogMath;
@@ -110,7 +112,7 @@ import java.util.logging.Logger;
  * <p/>
  * There are some disadvantages in representing the tree with HMMs:
  * <p/>
- * <ul> <li><b>size </b> since HMMs represent units in their context, we have many more copies of each node. For
+ * <ul> <li><b>size</b> since HMMs represent units in their context, we have many more copies of each node. For
  * instance, instead of having a single unit representing the initial 'd' in the word 'dog' we would have about 40 HMMs,
  * one for each possible left context. <li><b>speed </b> building the much larger HMM tree can take much more time,
  * since many more nodes are needed to represent the tree. <li><b>complexity </b> representing the tree with HMMs is
@@ -122,8 +124,19 @@ import java.util.logging.Logger;
  * particular EndNode are generated on request. These sets of HMM nodes can be shared among different word endings, and
  * therefore are cached. The effect of using this EndNode optimization is to reduce the space required by the tree by
  * about 300mb and the time required to generate the tree from about 60 seconds to about 6 seconds.
+ *
+ * <p/>
+ * <b>Word Histories </b>
+ * <p/>
+ * We use explicit backoff for word histories. That technique is proven to be useful and save number of
+ * states. The reasoning is the following. With a vocabulary of size N, you have N^2 unique bigram 
+ * histories. So the token stack will have N^2*K unique tokens, where K is the number of states per token.
+ * For a 100k vocab, 3 states per HMM, that will be 3*10^10 tokens (max). Of course, a large majority 
+ * of them will be pruned, but really, its still way too much. If you stick with the <b>actual</b>  K-gram 
+ * used (i.e. accounting explicitly for backoff), then this reduces <b>tremendously</b>.
+ * Most bigrams dont have corresponding trigrams.  Not all 10^10 bigrams have trigrams. We only 
+ * need to store as many explicit tokens as the number of bigrams that have trigrams.
  */
-
 public class LexTreeLinguist implements Linguist {
 
     /** The property that defines the grammar to use when building the search graph */
@@ -150,7 +163,7 @@ public class LexTreeLinguist implements Linguist {
     public final static String PROP_FULL_WORD_HISTORIES = "fullWordHistories";
 
     /** The property for the language model to be used by this grammar */
-    @S4Component(type = LanguageModel.class)
+    @S4Component(type = BackoffLanguageModel.class)
     public final static String PROP_LANGUAGE_MODEL = "languageModel";
 
     /** The property that defines the dictionary to use for this grammar */
@@ -202,7 +215,7 @@ public class LexTreeLinguist implements Linguist {
     // Subcomponents that are configured
     // by the property sheet
     // -----------------------------------
-    private LanguageModel languageModel;
+    private BackoffLanguageModel languageModel;
     private AcousticModel acousticModel;
     private LogMath logMath;
     private Dictionary dictionary;
@@ -246,7 +259,7 @@ public class LexTreeLinguist implements Linguist {
 
     public LexTreeLinguist(
         AcousticModel acousticModel, LogMath logMath, UnitManager unitManager,
-        LanguageModel languageModel, Dictionary dictionary,
+        BackoffLanguageModel languageModel, Dictionary dictionary,
         boolean fullWordHistories, boolean wantUnigramSmear,
         double wordInsertionProbability, double silenceInsertionProbability,
         double fillerInsertionProbability, double unitInsertionProbability,
@@ -294,7 +307,7 @@ public class LexTreeLinguist implements Linguist {
         acousticModel = (AcousticModel) ps.getComponent(PROP_ACOUSTIC_MODEL);
         logMath = (LogMath) ps.getComponent(PROP_LOG_MATH);
         unitManager = (UnitManager) ps.getComponent(PROP_UNIT_MANAGER);
-        languageModel = (LanguageModel) ps.getComponent(PROP_LANGUAGE_MODEL);
+        languageModel = (BackoffLanguageModel) ps.getComponent(PROP_LANGUAGE_MODEL);
         dictionary = (Dictionary) ps.getComponent(PROP_DICTIONARY);
 
         fullWordHistories = ps.getBoolean(PROP_FULL_WORD_HISTORIES);
@@ -720,26 +733,33 @@ public class LexTreeLinguist implements Linguist {
             Word nextWord = wordNode.getWord();
             WordSequence nextWordSequence = null;
             float smearTerm = previous.getSmearTerm();
-
+            
+            int depth = maxDepth;
             if (!nextWord.isFiller() || nextWord == sentenceEndWord) {
                 nextWordSequence = wordSequence.addWord(nextWord, maxDepth);
-                float probability = languageModel.getProbability(nextWordSequence);
+                ProbDepth probDepth = languageModel.getProbDepth(nextWordSequence);
                 smearTerm = getSmearTermFromLanguageModel(nextWordSequence);
                 // System.out.println("LP " + nextWordSequence + " " +
                 // logProbability);
-                probability *= languageWeight;
+                float probability = probDepth.probability * languageWeight;
+                depth = probDepth.depth;
                 // subtract off the previously applied smear probability
                 arcProbability = probability - previous.getSmearProb();
             }
+
+            // Find out the size of the history to keep according to backoff used
+            if (depth >= maxDepth - 1)
+                depth = maxDepth - 1;
+            else 
+                depth = depth - 1;
+            
             if (nextWord == sentenceEndWord) {
-                // System.out.println("LP " + nextWordSequence + " " +
-                // logProbability);
                 return new LexTreeEndWordState(wordNode, lastUnit,
-                        nextWordSequence.trim(maxDepth - 1),
+                        nextWordSequence.trim(depth),
                         smearTerm, logOne, arcProbability);
             } else if (!nextWord.isFiller()){
                 return new LexTreeWordState(wordNode, lastUnit,
-                        nextWordSequence.trim(maxDepth - 1),
+                        nextWordSequence.trim(depth),
                         smearTerm, logOne, arcProbability);
             }
             return new LexTreeWordState(wordNode, lastUnit,

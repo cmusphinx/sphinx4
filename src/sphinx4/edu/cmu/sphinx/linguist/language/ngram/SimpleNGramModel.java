@@ -35,7 +35,7 @@ import java.util.*;
  * language model file are stored in log 10 base.
  */
 
-public class SimpleNGramModel implements LanguageModel {
+public class SimpleNGramModel implements LanguageModel, BackoffLanguageModel {
 
     /** The property that defines the logMath component. */
     @S4Component(type = LogMath.class)
@@ -176,7 +176,14 @@ public class SimpleNGramModel implements LanguageModel {
          return logProbability;
     }
 
-
+    
+    /** 
+     * Dummy implementation for backoff
+     */
+    public ProbDepth getProbDepth (WordSequence sequence) {
+        return new ProbDepth (getProbability(sequence), desiredMaxDepth);
+    }
+    
     /**
      * Gets the smear term for the given wordSequence
      *

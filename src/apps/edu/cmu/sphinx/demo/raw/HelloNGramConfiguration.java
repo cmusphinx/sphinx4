@@ -4,6 +4,7 @@ import edu.cmu.sphinx.linguist.acoustic.UnitManager;
 import edu.cmu.sphinx.linguist.acoustic.tiedstate.Sphinx3Loader;
 import edu.cmu.sphinx.linguist.acoustic.tiedstate.TiedStateAcousticModel;
 import edu.cmu.sphinx.linguist.dictionary.FastDictionary;
+import edu.cmu.sphinx.linguist.language.ngram.BackoffLanguageModel;
 import edu.cmu.sphinx.linguist.language.ngram.SimpleNGramModel;
 import edu.cmu.sphinx.linguist.lextree.LexTreeLinguist;
 
@@ -90,7 +91,7 @@ public class HelloNGramConfiguration extends CommonConfiguration {
                 model, // acousticModel
                 logMath, // logMath
                 unitManager, //  unitManager,
-                languageModel, // languageModel,
+                (BackoffLanguageModel)languageModel, // languageModel,
                 dictionary, // dictionary,
                 true, //boolean fullWordHistories,
                 true, // wantUnigramSmear,
