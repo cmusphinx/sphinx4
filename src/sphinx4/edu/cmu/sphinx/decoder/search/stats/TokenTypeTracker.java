@@ -12,7 +12,7 @@ import edu.cmu.sphinx.linguist.acoustic.HMM;
  * <p/>
  * TODO: Develop a mechanism  for adding trackers such as these in a more general fashion.
  */
-class TokenTypeTracker {
+public class TokenTypeTracker {
     // keep track of the various types of states
 
     private int numWords;
@@ -31,7 +31,7 @@ class TokenTypeTracker {
      *
      * @param t the token to track
      */
-    void add(Token t) {
+    public void add(Token t) {
         numTokens++;
         SearchState s = t.getSearchState();
 
@@ -55,7 +55,7 @@ class TokenTypeTracker {
 
 
     /** Shows the accumulated statistics */
-    void show() {
+    public void dump() {
         System.out.println("TotalTokens: " + numTokens);
         System.out.println("      Words: " + numWords + pc(numWords));
         System.out.println("      Units: " + numUnits + pc(numUnits));

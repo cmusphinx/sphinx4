@@ -16,6 +16,9 @@ package edu.cmu.sphinx.decoder.search;
 
 import edu.cmu.sphinx.decoder.pruner.Pruner;
 import edu.cmu.sphinx.decoder.scorer.AcousticScorer;
+import edu.cmu.sphinx.decoder.search.stats.StateHistoryTracker;
+import edu.cmu.sphinx.decoder.search.stats.TokenTracker;
+import edu.cmu.sphinx.decoder.search.stats.TokenTypeTracker;
 import edu.cmu.sphinx.decoder.search.stats.WordTracker;
 import edu.cmu.sphinx.frontend.Data;
 import edu.cmu.sphinx.linguist.*;
@@ -462,7 +465,7 @@ public class WordPruningBreadthFirstSearchManager extends TokenSearchManager {
         moreTokens = (bestToken != null);
         activeList.setBestToken(bestToken);
 
-        // monitorWords(activeList);
+        //monitorWords(activeList);
         monitorStates(activeList);
 
         // System.out.println("BEST " + bestToken);
@@ -481,12 +484,35 @@ public class WordPruningBreadthFirstSearchManager extends TokenSearchManager {
      */
     @SuppressWarnings("unused")
     private void monitorWords(ActiveList activeList) {
-        WordTracker tracker = new WordTracker(currentFrameNumber);
+
+//        WordTracker tracker1 = new WordTracker(currentFrameNumber);
+//
+//        for (Token t : activeList) {
+//            tracker1.add(t);
+//        }
+//        tracker1.dump();
+//        
+//        TokenTracker tracker2 = new TokenTracker();
+//
+//        for (Token t : activeList) {
+//            tracker2.add(t);
+//        }
+//        tracker2.dumpSummary();
+//        tracker2.dumpDetails();
+//        
+//        TokenTypeTracker tracker3 = new TokenTypeTracker();
+//
+//        for (Token t : activeList) {
+//            tracker3.add(t);
+//        }
+//        tracker3.dump();
+
+        StateHistoryTracker tracker4 = new StateHistoryTracker(currentFrameNumber);
 
         for (Token t : activeList) {
-            tracker.add(t);
+            tracker4.add(t);
         }
-        tracker.dump();
+        tracker4.dump();
     }
 
 

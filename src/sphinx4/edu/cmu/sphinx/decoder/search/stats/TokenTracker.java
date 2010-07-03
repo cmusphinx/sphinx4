@@ -8,7 +8,7 @@ import edu.cmu.sphinx.linguist.HMMSearchState;
 
 /** This debugging class is used to track the number of active tokens per state */
 
-class TokenTracker {
+public class TokenTracker {
 
     private Map<Object, TokenStats> stateMap;
     private boolean enabled;
@@ -61,7 +61,7 @@ class TokenTracker {
      *
      * @param t the token to add.
      */
-    void add(Token t) {
+    public void add(Token t) {
         if (enabled) {
             TokenStats stats = getStats(t);
             stats.update(t);
@@ -79,7 +79,7 @@ class TokenTracker {
 
 
     /** Dumps summary info about the tokens */
-    void dumpSummary() {
+    public void dumpSummary() {
         if (enabled) {
             float avgStates = 0f;
             if (utteranceStateCount > 0) {
@@ -100,7 +100,7 @@ class TokenTracker {
 
 
     /** Dumps detailed info about the tokens */
-    void dumpDetails() {
+    public void dumpDetails() {
         if (enabled) {
             int maxStates = -Integer.MAX_VALUE;
             int hmmCount = 0;
