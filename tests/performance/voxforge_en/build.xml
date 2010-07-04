@@ -16,34 +16,34 @@ Run ant with -Dskip=5 to do the standard 'quick' version of a test.
     <!-- * Properties common to all tests                         * -->
     <!-- *                                                        * -->
     <!-- ********************************************************** -->
-    <property name="top_dir"		value="../../.."/>
+    <property name="top_dir" value="../../.."/>
     <path id="libs">
         <fileset dir="lib" includes="${top_dir}/**/jsapi.jar"/>
     </path>
-    <property name="build_dir"		value="${top_dir}/bld"/>
-    <property name="classes_dir"	value="${build_dir}"/>
-    <property name="classpath"          value="${classes_dir}:${top_dir}/lib/batch.jar"/>
+    <property name="build_dir" value="${top_dir}/bld"/>
+    <property name="classes_dir" value="${build_dir}"/>
+    <property name="classpath" value="${classes_dir}:${top_dir}/lib/batch.jar"/>
 
-    <property name="skip"               value="0"/>
-    <property name="logger_props"       value=""/>  
+    <property name="skip"               value="40"/>
+    <property name="logger_props"       value=""/>
 
     <property name="initial_heap_size"  value="512m"/>
     <property name="maximum_heap_size"  value="2048m"/>
     <property name="jit"                value="server"/>
     <property name="gc_log_file"        value="gc.txt"/>
-    <property name="batch_main"               
-	      value="edu.cmu.sphinx.tools.batch.BatchModeRecognizer"/>
+    <property name="batch_main" value="edu.cmu.sphinx.tools.batch.BatchModeRecognizer"/>
 
     <target name="test"
             description="trigram decoding of Voxforge test data">
        <java classpath="${classes_dir}"
-	      classname="${batch_main}"
-	      fork="true">
+              classname="${batch_main}"
+              fork="true">
             <jvmarg value="-${jit}"/>   
             <jvmarg value="-ms${initial_heap_size}"/>
             <jvmarg value="-mx${maximum_heap_size}"/> 
             <arg value="voxforge.config.xml"/> 
             <arg value="voxforge_en_test.batch"/> 
+            <sysproperty key="batch[skip]" value="${skip}"/>
         </java>
     </target>
 
