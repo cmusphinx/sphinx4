@@ -541,10 +541,7 @@ public class LexTreeLinguist implements Linguist {
          */
         @Override
         public int hashCode() {
-            int hashCode = fullWordHistories
-                    ? wordSequence.hashCode() * 37
-                    : 37;
-            hashCode += collapsed ? 29 : 0;
+            int hashCode = collapsed ? 37 : wordSequence.hashCode() * 37;
             hashCode += node.hashCode();
             return hashCode;
         }
@@ -567,7 +564,7 @@ public class LexTreeLinguist implements Linguist {
                 if (collapsed != other.collapsed) {
                     return false;
                 }
-                boolean wordSequenceMatch = !fullWordHistories || collapsed || wordSequence
+                boolean wordSequenceMatch = collapsed || wordSequence
                         .equals(other.wordSequence);
                 return wordSequenceMatch;
             } else {
@@ -754,7 +751,7 @@ public class LexTreeLinguist implements Linguist {
             // subtract off the previously applied smear probability
             arcProbability = probability - previous.getSmearProb();
   
-            boolean collapse = (probDepth.depth < maxDepth - 1);
+            boolean collapse = (probDepth.depth < maxDepth - 1) || !fullWordHistories;
             
             if (nextWord == sentenceEndWord) {
                 return new LexTreeEndWordState(wordNode, lastUnit,
