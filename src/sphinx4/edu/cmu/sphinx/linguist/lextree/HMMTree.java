@@ -554,6 +554,8 @@ class HMMTree {
          */
         void createEntryPointMap() {
             HashMap<HMM, Node> map = new HashMap<HMM, Node>();
+            HashMap<HMM, HMMNode> singleUnitMap = new HashMap<HMM, HMMNode>();
+
             for (Unit lc : exitPoints) {
                 Node epNode = new Node(LogMath.getLogZero());
                 for (Unit rc : getEntryPointRC()) {
@@ -570,7 +572,7 @@ class HMMTree {
                     nodeCount++;
                     connectEntryPointNode(addedNode, rc);
                 }
-                connectSingleUnitWords(lc, epNode);
+                connectSingleUnitWords(lc, epNode, singleUnitMap);
                 unitToEntryPointMap.put(lc, epNode);
             }
         }
@@ -584,9 +586,9 @@ class HMMTree {
          * @param lc     the left context
          * @param epNode the entry point node
          */
-        private void connectSingleUnitWords(Unit lc, Node epNode) {
+        private void connectSingleUnitWords(Unit lc, Node epNode, HashMap<HMM, HMMNode> map) {
             if (!singleUnitWords.isEmpty()) {
-                HashMap<HMM, HMMNode> map = new HashMap<HMM, HMMNode>();
+                
                 for (Unit rc : entryPoints) {
                     HMM hmm = getHMM(baseUnit, lc, rc, HMMPosition.SINGLE);
                     
@@ -594,6 +596,7 @@ class HMMTree {
                     if (( tailNode = map.get(hmm)) == null) {
                         tailNode = (HMMNode)
                                 epNode.addSuccessor(hmm, getProbability());
+                        map.put(hmm, tailNode);
                     } else {
                         epNode.putSuccessor(hmm, tailNode);
                     }
