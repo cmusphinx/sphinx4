@@ -550,31 +550,9 @@ class HMMTree {
 
 
         /**
-         * Creates the entry point map for this entry point.  The entry point map is represented by the
-         * unitToEntryPointMap. It contains a node for each possible left context. The node successors point to the
-         * following hmm nodes (usually associated with the next units that can follow from this entry point.
+         * A version of createEntryPointMap that compresses common hmms across all entry points.
          */
         void createEntryPointMap() {
-            for (Unit lc : exitPoints) {
-                Node epNode = new Node(LogMath.getLogZero());
-                for (Unit rc : getEntryPointRC()) {
-                    HMM hmm = getHMM(baseUnit, lc, rc, HMMPosition.BEGIN);
-                    Node addedNode = epNode.addSuccessor(hmm, getProbability());
-                    nodeCount++;
-                    connectEntryPointNode(addedNode, rc);
-                }
-                connectSingleUnitWords(lc, epNode);
-                unitToEntryPointMap.put(lc, epNode);
-            }
-        }
-
-
-        /**
-         * An alternate version of createEntryPointMap that compresses common hmms across all entry points, not just
-         * those shaing the same left context.  This really doesn't speed things up in the least bit, so it is not worth
-         * the effort.
-         */
-        void createEntryPointMap_alternateVersion() {
             HashMap<HMM, Node> map = new HashMap<HMM, Node>();
             for (Unit lc : exitPoints) {
                 Node epNode = new Node(LogMath.getLogZero());
@@ -608,10 +586,17 @@ class HMMTree {
          */
         private void connectSingleUnitWords(Unit lc, Node epNode) {
             if (!singleUnitWords.isEmpty()) {
+                HashMap<HMM, HMMNode> map = new HashMap<HMM, HMMNode>();
                 for (Unit rc : entryPoints) {
                     HMM hmm = getHMM(baseUnit, lc, rc, HMMPosition.SINGLE);
-                    HMMNode tailNode = (HMMNode)
-                        epNode.addSuccessor(hmm, getProbability());
+                    
+                    HMMNode tailNode;
+                    if (( tailNode = map.get(hmm)) == null) {
+                        tailNode = (HMMNode)
+                                epNode.addSuccessor(hmm, getProbability());
+                    } else {
+                        epNode.putSuccessor(hmm, tailNode);
+                    }
                     WordNode wordNode;
                     tailNode.addRC(rc);
                     nodeCount++;
