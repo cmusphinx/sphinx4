@@ -86,7 +86,7 @@ class HMMTree {
      * @param base the center unit
      * @return the set of entry points
      */
-    public Collection<Node> getEntryPoint(Unit lc, Unit base) {
+    public Node[] getEntryPoint(Unit lc, Unit base) {
         EntryPoint ep = entryPointTable.getEntryPoint(base);
         return ep.getEntryPointsFromLeftContext(lc).getSuccessors();
     }
@@ -456,7 +456,7 @@ class HMMTree {
 
 
         /**
-         * Creates an entry point for the given usnit
+         * Creates an entry point for the given unit
          *
          * @param baseUnit the EntryPoint is created for this unit
          */
@@ -540,7 +540,7 @@ class HMMTree {
         private Collection<Unit> getEntryPointRC() {
             if (rcSet == null) {
                 rcSet = new HashSet<Unit>();
-                for (Node node : baseNode.getSuccessors()) {
+                for (Node node : baseNode.getSuccessorMap().values()) {
                     UnitNode unitNode = (UnitNode) node;
                     rcSet.add(unitNode.getBaseUnit());
                 }
@@ -680,6 +680,11 @@ class Node {
     private static int nodeCount;
     private static int successorCount;
     private static final Map<Pronunciation, WordNode> wordNodeMap = new HashMap<Pronunciation, WordNode>();
+    
+    /** 
+     * This can be either Map during tree construction or Array after
+     * tree freeze. Conversion to array helps to save memory.
+     */
     private Object successors;
     private float logUnigramProbability;
 
@@ -748,7 +753,7 @@ class Node {
      * @return the successor map
      */
     @SuppressWarnings({"unchecked"})
-    private Map<Object, Node> getSuccessorMap() {
+    public Map<Object, Node> getSuccessorMap() {
         if (successors == null) {
             successors = new HashMap<Object, Node>(4);
         }
@@ -762,14 +767,11 @@ class Node {
     void freeze() {
         if (successors instanceof Map<?,?>) {
             Map<Object, Node> map = getSuccessorMap();
-            List<Node> frozenSuccessors = new ArrayList<Node>(map.size());
-            successors = null; // avoid recursive death spiral
+            successors = map.values().toArray(new Node[map.size()]);
             for (Node node : map.values()) {
-                frozenSuccessors.add(node);
                 node.freeze();
             }
-            successors = frozenSuccessors;
-            successorCount += frozenSuccessors.size();
+            successorCount += map.size();
         }
     }
 
@@ -896,13 +898,11 @@ class Node {
      *
      * @return the set of successor nodes
      */
-    @SuppressWarnings({"unchecked"})
-    Collection<Node> getSuccessors() {
-        if (successors instanceof List) {
-            return (List<Node>) successors;
-        } else {
-            return getSuccessorMap().values();
+    Node[] getSuccessors() {
+        if (successors instanceof Map<?, ?>) {
+            freeze();
         }
+        return (Node[])successors;
     }
 
 
@@ -974,7 +974,7 @@ class WordNode extends Node {
      * @return the set of successor nodes
      */
     @Override
-    Collection<Node> getSuccessors() {
+    Node[] getSuccessors() {
         throw new Error("Not supported");
     }
 

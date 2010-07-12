@@ -701,8 +701,8 @@ public class LexTreeLinguist implements Linguist {
          * @return a list of SearchState objects
          */
         protected SearchStateArc[] getSuccessors(Node theNode) {
-            Collection<Node> nodes = theNode.getSuccessors();
-            SearchStateArc[] arcs = new SearchStateArc[nodes.size()];
+            Node[] nodes = theNode.getSuccessors();
+            SearchStateArc[] arcs = new SearchStateArc[nodes.length];
             // System.out.println("Arc: "+ this);
             int i = 0;
             for (Node nextNode : nodes) {
@@ -1521,8 +1521,10 @@ public class LexTreeLinguist implements Linguist {
                     Unit left = wordNode.getLastUnit();
 
                     for (Unit unit : rc) {
-                        Collection<Node> epList = hmmTree.getEntryPoint(left, unit);
-                        list.addAll(epList);
+                        Node[] epList = hmmTree.getEntryPoint(left, unit);
+                        for (Node n : epList) {
+                            list.add(n);
+                        }
                     }
 
                     // add a link to every possible entry point as well
