@@ -41,15 +41,16 @@ public class Token implements Scoreable {
 
     private final Token predecessor;
 
-    private float logTotalScore;
     private final float logLanguageScore;
+
+    private float logTotalScore;
     private float logAcousticScore;
     private float logWorkingScore;
     
-    private SearchState searchState;
+    private final SearchState searchState;
 
     private int location;
-    private int frameNumber;
+    private final int frameNumber;
     private Data myData;
 
     /**
@@ -102,6 +103,8 @@ public class Token implements Scoreable {
      */
     public Token(float logAcousticScore, float logLanguageScore,
                  Token predecessor) {
+        this.searchState = null;
+        this.frameNumber = predecessor.frameNumber;
         this.logAcousticScore = logAcousticScore;
         this.logLanguageScore = logLanguageScore;
         this.predecessor = predecessor;

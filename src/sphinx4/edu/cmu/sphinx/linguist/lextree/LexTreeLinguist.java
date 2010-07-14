@@ -487,11 +487,11 @@ public class LexTreeLinguist implements Linguist {
      */
     abstract class LexTreeState implements SearchState, SearchStateArc {
 
-        private Node node;
-        private WordSequence wordSequence;
-        protected boolean collapsed;
-        float currentSmearTerm;
-        float currentSmearProb;
+        private final Node node;
+        private final WordSequence wordSequence;
+        protected final boolean collapsed;
+        final float currentSmearTerm;
+        final float currentSmearProb;
 
 
         /**
@@ -1167,11 +1167,11 @@ public class LexTreeLinguist implements Linguist {
     /** Represents a HMM state in the search space */
     public class LexTreeHMMState extends LexTreeState implements HMMSearchState {
 
-        private HMMState hmmState;
+        private final HMMState hmmState;
         private float logLanguageProbability;
         private float logInsertionProbability;
         private float logAcousticProbability;
-        private Node parentNode;
+        private final Node parentNode;
         int hashCode = -1;
 
 

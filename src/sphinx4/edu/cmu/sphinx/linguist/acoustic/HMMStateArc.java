@@ -56,7 +56,7 @@ public class HMMStateArc {
     }
 
 
-    /** returns a string represntation of the arc */
+    /** returns a string representation of the arc */
     @Override
     public String toString() {
         return "HSA " + hmmState + " prob " + probability;

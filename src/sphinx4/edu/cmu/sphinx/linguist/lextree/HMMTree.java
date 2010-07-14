@@ -1043,7 +1043,7 @@ abstract class UnitNode extends Node {
     /**
      * Creates the UnitNode
      *
-     * @param probablilty the probablilty for the node
+     * @param probablilty the probability for the node
      */
     UnitNode(float probablilty) {
         super(probablilty);
