@@ -104,7 +104,7 @@ public class Token implements Scoreable {
     public Token(float logAcousticScore, float logLanguageScore,
                  Token predecessor) {
         this.searchState = null;
-        this.frameNumber = predecessor.frameNumber;
+        this.frameNumber = 0;
         this.logAcousticScore = logAcousticScore;
         this.logLanguageScore = logLanguageScore;
         this.predecessor = predecessor;
