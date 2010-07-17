@@ -335,7 +335,7 @@ public class LargeNGramModel implements LanguageModel, BackoffLanguageModel {
      * Returns predicted probability and depth. Uses caching for 
      * high order ngrams.
      * 
-     * @wordSequence sequence to get the probability
+     * @param wordSequence sequence to get the probability
      */
     public ProbDepth getProbDepth(WordSequence wordSequence) {
         int numberWords = wordSequence.size();
