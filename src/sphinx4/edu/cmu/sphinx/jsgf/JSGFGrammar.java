@@ -443,8 +443,7 @@ public class JSGFGrammar extends Grammar {
         GrammarGraph result = new GrammarGraph();
 
         List<JSGFRule> rules = ruleAlternatives.getRules();
-        List<Float> weights = ruleAlternatives.getWeights();
-        normalizeWeights(weights);
+        List<Float> weights = getNormalizedWeights(ruleAlternatives.getWeights());
 
         // expand each alternative, and connect them in parallel
         for (int i = 0; i < rules.size(); i++) {
@@ -469,23 +468,30 @@ public class JSGFGrammar extends Grammar {
      * @param weights
      *            the weights to normalize
      */
-    private void normalizeWeights(List<Float> weights) {
-        if (weights != null) {
-            double sum = 0.0;
-            for (float weight : weights) {
-                if (weight < 0) {
-                    throw new IllegalArgumentException("negative weight");
-                }
-                sum += weight;
+    private List<Float> getNormalizedWeights(List<Float> weights) {
+        
+        if (weights == null) {
+            return null;
+        }
+
+        double sum = 0.0;
+        for (float weight : weights) {
+            if (weight < 0) {
+                throw new IllegalArgumentException("Negative weight " + weight);
             }
-            for (int i = 0; i < weights.size(); i++) {
-                if (sum == 0.0f) {
-                    weights.set(i, LogMath.getLogZero());
-                } else {
-                    weights.set(i, logMath.linearToLog(weights.get(i) / sum));
-                }
+            sum += weight;
+        }
+
+        List<Float> normalized = new LinkedList<Float>(weights);
+
+        for (int i = 0; i < weights.size(); i++) {
+            if (sum == 0.0f) {
+                normalized.set(i, LogMath.getLogZero());
+            } else {
+                normalized.set(i, logMath.linearToLog(weights.get(i) / sum));
             }
         }
+        return normalized;
     }
 
     /**
