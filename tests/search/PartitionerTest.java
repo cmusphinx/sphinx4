@@ -1,4 +1,3 @@
-
 /*
  * Copyright 1999-2002 Carnegie Mellon University.  
  * Portions Copyright 2002 Sun Microsystems, Inc.  
@@ -10,15 +9,13 @@
  * WARRANTIES.
  *
  */
-
-package tests.search;
+package search;
 
 import edu.cmu.sphinx.decoder.scorer.Scoreable;
 import edu.cmu.sphinx.decoder.search.Partitioner;
 import edu.cmu.sphinx.decoder.search.Token;
 
 import java.util.*;
-
 
 public class PartitionerTest {
 
@@ -35,7 +32,7 @@ public class PartitionerTest {
     /**
      * A single test run.
      */
-    private void test(int absoluteBeamWidth, int tokenListSize, 
+    private void test(int absoluteBeamWidth, int tokenListSize,
                       boolean tokenListLarger) {
 
         Random random = new Random(System.currentTimeMillis());
@@ -47,13 +44,13 @@ public class PartitionerTest {
         // create the tokens first
         for (int i = 0; i < tokens.length; i++) {
             float logTotalScore = random.nextFloat();
-            tokens[i] = parent.child(null, logTotalScore, 0.0f, 0.0f, i);
+            tokens[i] = new Token(parent, null, logTotalScore, 0.0f, i);
         }
 
         final int r = partitioner.partition
             (tokens, tokens.length, absoluteBeamWidth);
-        
-        if (tokenListLarger) {                
+
+        if (tokenListLarger) {
             assert (r == (absoluteBeamWidth - 1));
         } else {
             assert (r == (tokenListSize - 1));
@@ -62,7 +59,7 @@ public class PartitionerTest {
         List<Token> firstList = new LinkedList<Token>();
         if (r >= 0) {
             float lowestScore = tokens[r].getScore();
-            
+
             for (int i = 0; i <= r; i++) {
                 assert (tokens[i].getScore() >= lowestScore);
                 firstList.add(tokens[i]);
@@ -70,12 +67,12 @@ public class PartitionerTest {
             for (int i = r + 1; i < tokens.length; i++) {
                 assert (lowestScore > tokens[i].getScore());
             }
-        
+
             Collections.sort(firstList, Scoreable.COMPARATOR);
-            
+
             List<Token> secondList = Arrays.asList(tokens);
             Collections.sort(secondList, Scoreable.COMPARATOR);
-            
+
             for (Iterator<Token> i1 = firstList.iterator(), i2 = secondList.iterator();
                  i1.hasNext() && i2.hasNext(); ) {
                 Token t1 = i1.next();

@@ -32,22 +32,21 @@ NOTE:  Before running the tests, you must have already built
     <property name="jit"                value="server"/>
 
     <property name="large_trigram_test"
-              value="tests.linguist.language.ngram.large.LargeTrigramModelTest"/>
+              value="linguist.language.ngram.large.LargeTrigramModelTest"/>
     <property name="output_diff_class"
-              value="tests.linguist.language.ngram.large.OutputDiff"/>    
+              value="linguist.language.ngram.large.OutputDiff"/>
     <property name="utterance_test"
-              value="tests.linguist.language.ngram.large.UtteranceTest"/>    
+              value="linguist.language.ngram.large.UtteranceTest"/>
     <property name="memory_test"
-              value="tests.linguist.language.ngram.large.MemoryTest"/>
-
+              value="linguist.language.ngram.large.MemoryTest"/>
 
     <!-- ********************************************************** -->
     <!-- *                                                        * -->
-    <!-- * The 'none' target.                                     * -->
+    <!-- * Displays minimal help.                                 * -->
     <!-- *                                                        * -->
     <!-- ********************************************************** -->
     <target name="none">
-            <echo>Type 'ant -projecthelp' for possible targets.</echo>
+            <echo>Type 'ant -p' for possible targets.</echo>
     </target>
 
 
@@ -56,10 +55,10 @@ NOTE:  Before running the tests, you must have already built
     <!-- * Compile all the test code.                             * -->
     <!-- *                                                        * -->
     <!-- ********************************************************** -->
-    <target name="all"
+    <target name="compile"
             description="Compiles all the tests.">
 	    <mkdir dir="${classes_dir}/tests/knowledge/language/large"/>
-	    <javac debug="true"
+	    <javac  includeantruntime="false" debug="true"
 		   deprecation="true"
 		   destdir="${classes_dir}"
 		   classpath="${classes_dir}"
@@ -74,7 +73,7 @@ NOTE:  Before running the tests, you must have already built
     <!-- ********************************************************** -->
     <target name="alltests"
 	    description="Runs all the large LM tests"
-	    depends="all,random_ngram,random_trigram">
+	    depends="compile,random_ngram,random_trigram">
 	    <exec executable="chmod">
 	    <arg line="a+x ./compareOutput.sh"/>
 	    </exec>
@@ -129,7 +128,7 @@ NOTE:  Before running the tests, you must have already built
     <!-- ********************************************************** -->
     <target name="s3tests"
             description="Runs the random trigram test."
-	    depends="all,random_ngram,random_trigram">
+	    depends="compile,random_ngram,random_trigram">
 	    <exec executable="rm">
 	          <arg line="ngrams.diff"/>
 	    </exec>
@@ -169,7 +168,7 @@ NOTE:  Before running the tests, you must have already built
     <!-- ********************************************************** -->
     <target name="ngram-test"
             description="Test the scoring of ngrams"
-	    depends="all">
+	    depends="compile">
 	    <java classpath="${classes_dir}"
 	          classname="${large_trigram_test}">
 		  <arg value="config.xml"/>
@@ -185,7 +184,7 @@ NOTE:  Before running the tests, you must have already built
     <!-- ********************************************************** -->
     <target name="backoff-test"
             description="Test the calculation of backoff probabilities"
-	    depends="all">
+	    depends="compile">
 	    <java classpath="${classes_dir}"
 	          classname="${large_trigram_test}">
 		  <arg value="config.xml"/>
@@ -207,7 +206,7 @@ NOTE:  Before running the tests, you must have already built
     <!-- ********************************************************** -->
     <target name="lm-utt-test"
             description="A test of a long list of ngrams."
-	    depends="all">
+	    depends="compile">
 	    <exec executable="rm">
 	    <arg line="-f s4.lm-utt-test.out"/>
 	    </exec>
@@ -243,7 +242,7 @@ NOTE:  Before running the tests, you must have already built
     <!-- ********************************************************** -->
     <target name="memory-test"
             description="Test how much memory the binary LM uses."
-	    depends="all">
+	    depends="compile">
 	    <java classname="${memory_test}"
 	          classpath="${classes_dir}"
 		  maxmemory="250m">

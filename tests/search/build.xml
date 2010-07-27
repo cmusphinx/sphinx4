@@ -23,7 +23,7 @@ NOTE:  Before running the tests, you must have already built
     <property name="build_dir"		value="${top_dir}/bld"/>
     <property name="classes_dir"	value="${build_dir}"/>
     <property name="lib_dir"            value="${build_dir}/lib"/>
-    <property name="fst_test"           value="tests.search.FSTGrammarTest"/>
+    <property name="fst_test"           value="search.FSTGrammarTest"/>
 
 
     <!-- ********************************************************** -->
@@ -32,7 +32,7 @@ NOTE:  Before running the tests, you must have already built
     <!-- *                                                        * -->
     <!-- ********************************************************** -->
     <target name="none">
-            <echo>Type 'ant -projecthelp' for possible targets.</echo>
+            <echo>Type 'ant -p' for possible targets.</echo>
     </target>
 
 
@@ -41,11 +41,11 @@ NOTE:  Before running the tests, you must have already built
     <!-- * Compile all the test code.                             * -->
     <!-- *                                                        * -->
     <!-- ********************************************************** -->
-    <target name="all"
+    <target name="compile"
             description="Compiles all the tests.">
 	    <mkdir dir="${classes_dir}/tests/search/"/>
-	    <javac debug="true"
-	           source="1.4"
+	    <javac includeantruntime="false" debug="true"
+	           source="1.6"
 		   deprecation="true"
 		   destdir="${classes_dir}"
 		   classpath="${classes_dir}"
@@ -60,10 +60,10 @@ NOTE:  Before running the tests, you must have already built
     <!-- ********************************************************** -->
     <target name="tiny_fst"
 	    description="Runs the tiny FST test."
-	    depends="all">
+	    depends="compile">
 	    <java classname="${fst_test}"
 	          classpath="${classes_dir}">
-		  <arg value="FSTGrammarTest.props"/>
+		  <arg value="FSTGrammarTest.xml"/>
 	    </java>
     </target>
 
@@ -75,11 +75,11 @@ NOTE:  Before running the tests, you must have already built
     <!-- ********************************************************** -->
     <target name="small_fst"
 	    description="Runs the small FST test."
-	    depends="all">
+	    depends="compile">
 	    <java classname="${fst_test}"
 	          classpath="${classes_dir}">
 		  <sysproperty key="edu.cmu.sphinx.linguist.language.grammar.FSTGrammar.path" value="/lab/speech/sphinx4/data/fst/digits.fst"/>
-		  <arg value="FSTGrammarTest.props"/>
+		  <arg value="FSTGrammarTest.xml"/>
 	    </java>
     </target>
 
@@ -91,13 +91,13 @@ NOTE:  Before running the tests, you must have already built
     <!-- ********************************************************** -->
     <target name="large_fst"
 	    description="Runs the large FST test."
-	    depends="all">
+	    depends="compile">
 	    <java classname="${fst_test}"
 	          classpath="${classes_dir}"
 		  fork="true">
 		  <sysproperty key="edu.cmu.sphinx.linguist.language.grammar.FSTGrammar.path" value="/lab/speech/sphinx4/data/fst/5721_word_vocab.FST"/>
 		  <sysproperty key="edu.cmu.sphinx.linguist.dictionary.Dictionary.dictionaryPath" value="/lab/speech/sphinx4/data/wsj/dict/cmudict.0.6d"/>
-		  <arg value="FSTGrammarTest.props"/>
+		  <arg value="FSTGrammarTest.xml"/>
 	    </java>
     </target>
 
@@ -109,12 +109,12 @@ NOTE:  Before running the tests, you must have already built
     <!-- ********************************************************** -->
     <target name="mega_fst"
 	    description="Runs the mega FST test."
-	    depends="all">
+	    depends="compile">
 	    <java classname="${fst_test}"
 	          classpath="${classes_dir}">
 		  <sysproperty key="edu.cmu.sphinx.linguist.language.grammar.FSTGrammar.path" value="/lab/speech/sphinx4/data/fst/language_model.arpaformat.FST.ascii"/>
 		  <sysproperty key="edu.cmu.sphinx.linguist.dictionary.Dictionary.dictionaryPath" value="/lab/speech/sphinx4/data/wsj/dict/cmudict.0.6d"/>
-		  <arg value="FSTGrammarTest.props"/>
+		  <arg value="FSTGrammarTest.xml"/>
 	    </java>
     </target>
 
@@ -126,8 +126,8 @@ NOTE:  Before running the tests, you must have already built
     <!-- ********************************************************** -->
     <target name="partitioner_test"
 	    description="Runs the token list partitioner test."
-	    depends="all">
-	    <java classname="tests.search.PartitionerTest"
+	    depends="compile">
+	    <java classname="search.PartitionerTest"
 	          classpath="${classes_dir}">
 	    </java>
     </target>

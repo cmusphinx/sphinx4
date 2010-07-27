@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<project basedir="." default="all" name="Run the live demo app.">
+<project basedir="." default="none" name="Run the live demo app.">
 
 <description>
 This file is used to run the live demo app.
@@ -19,33 +19,31 @@ NOTE:  Before running the tests, you must have already built
     <property name="top_dir"		value="../.."/>
     <property name="build_dir"          value="${top_dir}/bld"/>
     <property name="classes_dir"	value="${build_dir}"/>
-    <property name="live_demo"          value="tests.live.Live"/>
+    <property name="live_demo"          value="live.Live"/>
 
     <path id="classpath">
         <pathelement path="${classes_dir}"/>
         <fileset dir="${top_dir}/lib" includes="**/*.jar"/>
     </path>
 
-
     <!-- ********************************************************** -->
     <!-- *                                                        * -->
-    <!-- * The 'none' target.                                     * -->
+    <!-- * Displays minimal help.                                 * -->
     <!-- *                                                        * -->
     <!-- ********************************************************** -->
     <target name="none">
-            <echo>Type 'ant -projecthelp' for possible targets.</echo>
+            <echo>Type 'ant -p' for possible targets.</echo>
     </target>
-
 
     <!-- ********************************************************** -->
     <!-- *                                                        * -->
     <!-- * Compile all the test code.                             * -->
     <!-- *                                                        * -->
     <!-- ********************************************************** -->
-    <target name="all"
+    <target name="compile"
             description="Compiles all the tests.">
 	    <mkdir dir="${classes_dir}/tests/live"/>
-	    <javac debug="true"
+	    <javac  includeantruntime="false" debug="true"
 		   deprecation="true"
                    fork="true"
 		   destdir="${classes_dir}"
@@ -73,7 +71,7 @@ NOTE:  Before running the tests, you must have already built
     <!-- ********************************************************** -->
     <target name="live"
 	    description="Runs the live demo without endpointing."
-	    depends="all">
+	    depends="compile">
 	    <java classname="${live_demo}"
 		  fork="true"
 		  maxmemory="312m">
@@ -96,7 +94,7 @@ NOTE:  Before running the tests, you must have already built
     <!-- ********************************************************** -->
     <target name="live-ep"
 	    description="Runs the live demo with endpointing."
-	    depends="all">
+	    depends="compile">
 	    <java classname="${live_demo}"
 		  fork="true"
 		  maxmemory="312m">
@@ -124,7 +122,7 @@ NOTE:  Before running the tests, you must have already built
     <!-- ********************************************************** -->
     <target name="live-free"
 	    description="Runs the live demo in hands-free mode."
-	    depends="all">
+	    depends="compile">
 	    <java classname="${live_demo}"
 		  fork="true"
 		  maxmemory="312m">

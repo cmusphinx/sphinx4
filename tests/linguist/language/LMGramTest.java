@@ -9,9 +9,9 @@
  * WARRANTIES.
  *
  */
+package linguist.language;
 
-package tests.linguist.language;
-
+import edu.cmu.sphinx.linguist.dictionary.FullDictionary;
 import edu.cmu.sphinx.linguist.language.grammar.Grammar;
 import edu.cmu.sphinx.linguist.language.grammar.LMGrammar;
 import edu.cmu.sphinx.linguist.language.ngram.LanguageModel;
@@ -20,7 +20,6 @@ import edu.cmu.sphinx.util.Timer;
 import edu.cmu.sphinx.util.Utilities;
 import edu.cmu.sphinx.util.TimerPool;
 import edu.cmu.sphinx.util.props.ConfigurationManager;
-
 
 /**
  * A test for LMGrammar
@@ -34,7 +33,7 @@ public class LMGramTest {
      */
     public LMGramTest(String configFile) throws Exception {
         
-        LanguageModel languageModel;
+        FullDictionary dictionary;
         Grammar grammar;
 
         ConfigurationManager cm = new ConfigurationManager(configFile);
@@ -43,8 +42,8 @@ public class LMGramTest {
         Timer gramTimer = TimerPool.getTimer(this, "Grammar");
 
         lmTimer.start();
-        languageModel = (SimpleNGramModel)cm.lookup("languageModel");
-        languageModel.allocate();
+        dictionary = (FullDictionary)cm.lookup("dictionary");
+        dictionary.allocate();
         lmTimer.stop();
 
         Utilities.dumpMemoryInfo("before grammar load");

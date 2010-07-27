@@ -30,27 +30,25 @@ NOTE:  Before running the tests, you must have already built
     <property name="maximum_heap_size"  value="128m"/>
     <property name="jit"                value="server"/>
 
-
     <!-- ********************************************************** -->
     <!-- *                                                        * -->
-    <!-- * The 'none' target.                                     * -->
+    <!-- * Displays minimal help.                                 * -->
     <!-- *                                                        * -->
     <!-- ********************************************************** -->
     <target name="none">
-            <echo>Type 'ant -projecthelp' for possible targets.</echo>
+            <echo>Type 'ant -p' for possible targets.</echo>
     </target>
-
 
     <!-- ********************************************************** -->
     <!-- *                                                        * -->
     <!-- * Compile all the test code.                             * -->
     <!-- *                                                        * -->
     <!-- ********************************************************** -->
-    <target name="all"
+    <target name="compile"
             description="Compiles all the tests.">
             <mkdir dir="${classes_dir}/tests/frontend/"/>
-            <javac debug="true"
-                   source="1.4"
+            <javac  includeantruntime="false" debug="true"
+                   source="1.6"
                    deprecation="true"
                    destdir="${classes_dir}"
                    classpath="${classes_dir}"
@@ -75,7 +73,7 @@ NOTE:  Before running the tests, you must have already built
     <!-- ********************************************************** -->
     <target name="alltests"
 	    description="Runs all front-end module tests"
-	    depends="all">
+	    depends="compile">
 	    <antcall target="preemphasizer"/>
 	    <antcall target="hammingWindow"/>
 	    <antcall target="spectrumAnalyzer"/>

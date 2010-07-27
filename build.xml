@@ -55,6 +55,13 @@
     <!-- Load the environment -->
     <property environment="env"/>
 
+    <taskdef resource="net/sf/antcontrib/antcontrib.properties">
+        <classpath>
+            <pathelement location="${lib_dir}/ant-contrib-0.6.jar"/>
+        </classpath>
+    </taskdef>
+
+    
     <condition property="javadoc_level"
                value="${access}">
         <isset property="access"/>
@@ -309,6 +316,24 @@
         <fail if="test.failure" message="test failed" />
     </target>
 
+    <!-- ********************************************************** -->
+    <!-- *                                                        * -->
+    <!-- * Compiles other tests.                                  * -->
+    <!-- *                                                        * -->
+    <!-- ********************************************************** -->
+    <target name="compile-other-tests" depends="compile_src" description="Compile other tests">
+        <foreach target="compile-other" param="other.build.file">
+            <path>
+                <fileset dir="tests" includes="**/build.xml"/>
+            </path>
+        </foreach>
+    </target>
+    
+    <target name="compile-other">
+        <echo message="Building ${other.build.file}" />
+        <ant antfile="${other.build.file}" target="compile" inheritAll="false" useNativeBasedir="true" />
+    </target>
+    
     <!-- ********************************************************** -->
     <!-- *                                                        * -->
     <!-- * Generates the jar files                                * -->

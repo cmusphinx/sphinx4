@@ -20,31 +20,31 @@ NOTE:  Before running the tests, you must have already built
     <property name="build_dir"          value="${top_dir}/bld"/>
     <property name="classes_dir"	value="${build_dir}"/>
 
-
     <!-- ********************************************************** -->
     <!-- *                                                        * -->
-    <!-- * The 'none' target.                                     * -->
+    <!-- * Displays minimal help.                                 * -->
     <!-- *                                                        * -->
     <!-- ********************************************************** -->
     <target name="none">
-            <echo>Type 'ant -projecthelp' for possible targets.</echo>
+            <echo>Type 'ant -p' for possible targets.</echo>
     </target>
-
 
     <!-- ********************************************************** -->
     <!-- *                                                        * -->
     <!-- * Compile all the test code.                             * -->
     <!-- *                                                        * -->
     <!-- ********************************************************** -->
-    <target name="all"
+    <target name="compile"
             description="Compiles all the tests.">
 	    <mkdir dir="${classes_dir}/tests/other"/>
-	    <javac debug="true"
+	    <javac  includeantruntime="false" debug="true"
 		   deprecation="true"
 		   destdir="${classes_dir}"
 		   classpath="${classes_dir}"
 		   srcdir="."/>
+<!-- runnning MathTests is not portable!
             <antcall target="MathTests"/>
+-->            
     </target>
 
 
@@ -55,7 +55,7 @@ NOTE:  Before running the tests, you must have already built
     <!-- ********************************************************** -->
     <target name="runMathTest"
 	    description="Runs the int/float/double performance test."
-	    depends="all">
+	    depends="compile">
 	    <antcall target="server"/>
             <exec executable="MathTest"/>
     </target>
@@ -68,8 +68,8 @@ NOTE:  Before running the tests, you must have already built
     <!-- ********************************************************** -->
     <target name="runInstanceOf"
 	    description="Runs the instanceof performance test."
-	    depends="all">
-	    <java classname="tests.other.InstanceOfTest"
+	    depends="compile">
+	    <java classname="other.InstanceOfTest"
 	          classpath="${classes_dir}"
 		  fork="true">
                   <jvmarg value="-server"/>
@@ -85,8 +85,8 @@ NOTE:  Before running the tests, you must have already built
     <!-- ********************************************************** -->
     <target name="client"
 	    description="Runs the math test with client VM."
-	    depends="all">
-	    <java classname="tests.other.MathTest"
+	    depends="compile">
+	    <java classname="other.MathTest"
 	          classpath="${classes_dir}"
 		  fork="true">
 	    </java>
@@ -101,8 +101,8 @@ NOTE:  Before running the tests, you must have already built
     <!-- ********************************************************** -->
     <target name="server"
 	    description="Runs the int/float/double performance test."
-	    depends="all">
-	    <java classname="tests.other.MathTest"
+	    depends="compile">
+	    <java classname="other.MathTest"
 	          classpath="${classes_dir}"
 		  fork="true">
                   <jvmarg value="-server"/>
@@ -118,8 +118,8 @@ NOTE:  Before running the tests, you must have already built
     <!-- ********************************************************** -->
     <target name="equalsInstanceOf"
 	    description="Runs the time comparison tests betwee instanceof and equals()."
-	    depends="all">
-	    <java classname="tests.other.EqualsInstanceOfTest"
+	    depends="compile">
+	    <java classname="other.EqualsInstanceOfTest"
 	          classpath="${classes_dir}"
 		  fork="true">
                   <jvmarg value="-server"/>

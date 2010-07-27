@@ -1,4 +1,3 @@
-
 /*
  * Copyright 1999-2002 Carnegie Mellon University.  
  * Portions Copyright 2002 Sun Microsystems, Inc.  
@@ -10,8 +9,7 @@
  * WARRANTIES.
  *
  */
-
-package tests.other;
+package other;
 
 import edu.cmu.sphinx.util.Timer;
 import edu.cmu.sphinx.util.TimerPool;

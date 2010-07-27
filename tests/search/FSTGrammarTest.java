@@ -10,7 +10,7 @@
  *
  */
 
-package tests.search;
+package search;
 
 import edu.cmu.sphinx.linguist.language.grammar.FSTGrammar;
 import edu.cmu.sphinx.linguist.language.grammar.Grammar;
@@ -29,6 +29,7 @@ public class FSTGrammarTest {
 	    ConfigurationManager cm = new ConfigurationManager(argv[0]); 
 
         Grammar grammar = (FSTGrammar)cm.lookup("grammar");
+        grammar.allocate();
 	    grammar.dumpGrammar("fst.grammar");
 	    
 	    System.out.println("Num nodes loaded is " + grammar.getNumNodes());

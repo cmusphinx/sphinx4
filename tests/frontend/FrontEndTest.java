@@ -9,10 +9,7 @@
  * WARRANTIES.
  *
  */
-
-
-package tests.frontend;
-
+package frontend;
 
 import edu.cmu.sphinx.frontend.Data;
 import edu.cmu.sphinx.frontend.util.StreamDataSource;

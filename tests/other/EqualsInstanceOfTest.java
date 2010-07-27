@@ -9,8 +9,7 @@
  * WARRANTIES.
  *
  */
-
-package tests.other;
+package other;
 
 /**
  * A comparison of speed between using the instanceof operation and

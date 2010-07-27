@@ -9,9 +9,7 @@
  * WARRANTIES.
  *
  */
-
-
-package tests.linguist.language.ngram.large;
+package linguist.language.ngram.large;
 
 import java.io.*;
 import java.util.*;

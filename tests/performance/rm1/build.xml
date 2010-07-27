@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<project basedir="." default="rm1_bigram" name="rm1 Tests">
+<project basedir="." default="none" name="rm1 Tests">
 <description>
 This file is used to run the rm1 performance tests.
 
@@ -40,6 +40,18 @@ Run ant with -Dskip=5 to do the standard 'quick' version of a test.
     <property name="config" value="rm1.config.xml"/>
     <property name="batch" value="rm1.batch"/>
 
+    <!-- ********************************************************** -->
+    <!-- *                                                        * -->
+    <!-- * Displays minimal help.                                 * -->
+    <!-- *                                                        * -->
+    <!-- ********************************************************** -->
+    <target name="none">
+        <echo>Type 'ant -p' for possible targets.</echo>
+    </target>
+
+    <!-- dummy target for automated test compilation -->
+    <target name="compile" />
+    
     <!-- ********************************************************** --> 
     <!-- *                                                        * --> 
     <!-- * rm1_bigram                                             * --> 

@@ -9,8 +9,7 @@
  * WARRANTIES.
  *
  */
-
-package tests.other;
+package other;
 
 /**
  * Bogus class that implements a fruit, used in the EqualsInstanceOfTest.

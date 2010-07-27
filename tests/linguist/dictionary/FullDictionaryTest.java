@@ -9,8 +9,7 @@
  * WARRANTIES.
  *
  */
-
-package tests.linguist.dictionary;
+package linguist.dictionary;
 
 import edu.cmu.sphinx.linguist.dictionary.Dictionary;
 import edu.cmu.sphinx.linguist.dictionary.FullDictionary;

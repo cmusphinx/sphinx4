@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<project basedir="." default="tidigits_wordlist" name="TIDIGITS Tests">
+<project basedir="." default="none" name="TIDIGITS Tests">
 <description>
 This file is used to run the TIDIGITS performance tests.
 
@@ -39,6 +39,18 @@ Run ant with -Dcount=5 to only do the first five utterances of a test.
     <property name="batch" value="tidigits.batch"/>
     <property name="live_main"               
 	      value="edu.cmu.sphinx.tools.live.LiveModeRecognizer"/>
+
+    <!-- ********************************************************** -->
+    <!-- *                                                        * -->
+    <!-- * Displays minimal help.                                 * -->
+    <!-- *                                                        * -->
+    <!-- ********************************************************** -->
+    <target name="none">
+        <echo>Type 'ant -p' for possible targets.</echo>
+    </target>
+
+    <!-- dummy target for automated test compilation -->
+    <target name="compile" />
 
     <!-- ********************************************************** -->
     <!-- *                                                        * -->

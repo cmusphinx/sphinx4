@@ -34,6 +34,18 @@ Run ant with -Dskip=5 to do the standard 'quick' version of a test.
     <property name="batch_main"               
 	      value="edu.cmu.sphinx.tools.batch.BatchModeRecognizer"/>
 
+    <!-- ********************************************************** -->
+    <!-- *                                                        * -->
+    <!-- * Displays minimal help.                                 * -->
+    <!-- *                                                        * -->
+    <!-- ********************************************************** -->
+    <target name="none">
+        <echo>Type 'ant -p' for possible targets.</echo>
+    </target>
+
+    <!-- dummy target for automated test compilation -->
+    <target name="compile" />
+    
     <!-- ********************************************************** --> 
     <!-- *                                                        * --> 
     <!-- * wsj5k_bigram_vp                                        * --> 

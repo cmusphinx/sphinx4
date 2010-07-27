@@ -9,6 +9,7 @@
  * WARRANTIES.
  *
  */
+package live;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -39,7 +40,6 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
-
 
 /**
  * The GUI class for the LiveDecoder

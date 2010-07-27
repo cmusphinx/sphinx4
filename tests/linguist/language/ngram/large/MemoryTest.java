@@ -9,8 +9,7 @@
  * WARRANTIES.
  *
  */
-
-package tests.linguist.language.ngram.large;
+package linguist.language.ngram.large;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -31,7 +30,6 @@ import edu.cmu.sphinx.linguist.language.ngram.large.LargeTrigramModel;
 import edu.cmu.sphinx.util.Timer;
 import edu.cmu.sphinx.util.TimerPool;
 import edu.cmu.sphinx.util.props.ConfigurationManager;
-
 
 /**
  * Reads in a file of n-grams, with each utterance bounded by <START_UTT>
@@ -155,9 +153,8 @@ public class MemoryTest {
 	    Runtime.getRuntime().freeMemory();
 	System.out.println("Total queries: " + totalQueries + " ngrams");
 	System.out.println("Used memory: " + usedMemory + " bytes");
-	System.out.println("Bigram misses: " + lm.getBigramMisses());
-	System.out.println("Trigram misses: " + lm.getTrigramMisses());
-	System.out.println("Trigram hits: " + lm.getTrigramHits());
+	System.out.println("NGram misses: " + lm.getNGramMisses());
+	System.out.println("NGram hits: " + lm.getNGramHits());
 	TimerPool.dumpAll();
     }
 
