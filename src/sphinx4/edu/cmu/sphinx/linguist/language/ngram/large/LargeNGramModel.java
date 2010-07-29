@@ -652,7 +652,7 @@ public class LargeNGramModel implements LanguageModel, BackoffLanguageModel {
 
     @Override
     public float getSmear(WordSequence wordSequence) {
-        float smearTerm = 1.0f;
+        float smearTerm = 0.0f;
         
         if (fullSmear) {
             smearCount++;
