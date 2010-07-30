@@ -12,6 +12,7 @@
 
 package edu.cmu.sphinx.linguist.flat;
 
+import edu.cmu.sphinx.decoder.scorer.ScoreProvider;
 import edu.cmu.sphinx.frontend.Data;
 import edu.cmu.sphinx.linguist.HMMSearchState;
 import edu.cmu.sphinx.linguist.acoustic.HMMState;
@@ -21,7 +22,7 @@ import java.io.Serializable;
 /** Represents a hmmState in an SentenceHMMS */
 
 public class HMMStateState extends SentenceHMMState
-        implements Serializable, HMMSearchState {
+        implements Serializable, HMMSearchState, ScoreProvider {
 
     private HMMState hmmState;
     private boolean isEmitting;
@@ -73,7 +74,8 @@ public class HMMStateState extends SentenceHMMState
         return "HMM";
     }
 
-
+    
+    @Override
     /**
      * Calculate the acoustic score for this state
      *

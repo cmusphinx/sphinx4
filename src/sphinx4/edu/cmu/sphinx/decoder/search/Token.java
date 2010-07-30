@@ -13,12 +13,12 @@
 package edu.cmu.sphinx.decoder.search;
 
 import edu.cmu.sphinx.decoder.scorer.Scoreable;
+import edu.cmu.sphinx.decoder.scorer.ScoreProvider;
 import edu.cmu.sphinx.frontend.Data;
 import edu.cmu.sphinx.linguist.HMMSearchState;
 import edu.cmu.sphinx.linguist.SearchState;
 import edu.cmu.sphinx.linguist.UnitSearchState;
 import edu.cmu.sphinx.linguist.WordSearchState;
-import edu.cmu.sphinx.linguist.acoustic.HMMState;
 import edu.cmu.sphinx.linguist.acoustic.Unit;
 import edu.cmu.sphinx.linguist.dictionary.Pronunciation;
 import edu.cmu.sphinx.linguist.dictionary.Word;
@@ -171,31 +171,8 @@ public class Token implements Scoreable {
      */
     @Override
     public float calculateScore(Data feature) {
-
-        //assert searchState.isEmitting() 
-        //   : "Attempting to score non-scoreable token: " + searchState;
-        HMMSearchState hmmSearchState = (HMMSearchState) searchState;
-        HMMState hmmState = hmmSearchState.getHMMState();
-        logAcousticScore = hmmState.getScore(feature);
-
-        // apply normalization to make all density values to be between 0 and 1
-        // under the assumption that a non-zero variance flooring is being used.
-        // This is needed for debugging only
-//        if (feature instanceof FloatData) {
-//            int featDim = (int) ((FloatData) feature).getValues().length;
-//
-//            float[] varFloor = new float[featDim];
-//            Arrays.fill(varFloor,  MixtureComponent.DEFAULT_VAR_FLOOR);
-//
-//            // setup a dummy OPDF with a single component density
-//            float[] mean = new float[featDim];
-//            MixtureComponent mc = new MixtureComponent(LogMath.getInstance(), mean, varFloor);
-//            float maxDensityValue = mc.getScore(new FloatData(mean, 16000, 0, 0));
-//
-//            // normalize all acoustic scores with respect to the largest possible value
-//            logAcousticScore -= maxDensityValue;
-//        }
-
+        
+        logAcousticScore = ((ScoreProvider) searchState).getScore(feature);
 
         logTotalScore += logAcousticScore;
 

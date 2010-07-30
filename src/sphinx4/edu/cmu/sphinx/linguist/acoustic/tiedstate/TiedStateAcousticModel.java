@@ -415,6 +415,10 @@ public class TiedStateAcousticModel implements AcousticModel {
         return (SenoneHMM) loader.getHMMManager().get(position, unit);
     }
     
+    
+    public Senone getSenone(long id) {
+        return loader.getSenonePool().get((int)id);
+    }
 
     /** Dumps information about this model to the logger */
     protected void logInfo() {

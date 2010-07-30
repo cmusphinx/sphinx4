@@ -12,6 +12,8 @@
 
 package edu.cmu.sphinx.linguist.lextree;
 
+import edu.cmu.sphinx.decoder.scorer.ScoreProvider;
+import edu.cmu.sphinx.frontend.Data;
 import edu.cmu.sphinx.linguist.*;
 import edu.cmu.sphinx.linguist.acoustic.*;
 import edu.cmu.sphinx.linguist.dictionary.Dictionary;
@@ -1165,7 +1167,7 @@ public class LexTreeLinguist implements Linguist {
     }
 
     /** Represents a HMM state in the search space */
-    public class LexTreeHMMState extends LexTreeState implements HMMSearchState {
+    public class LexTreeHMMState extends LexTreeState implements HMMSearchState, ScoreProvider {
 
         private final HMMState hmmState;
         private float logLanguageProbability;
@@ -1366,6 +1368,12 @@ public class LexTreeLinguist implements Linguist {
         @Override
         public int getOrder() {
             return 5;
+        }
+
+
+        @Override
+        public float getScore(Data data) {
+            return hmmState.getScore(data);
         }
     }
 

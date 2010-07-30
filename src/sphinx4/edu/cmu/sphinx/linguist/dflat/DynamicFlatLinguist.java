@@ -11,6 +11,8 @@
  */
 package edu.cmu.sphinx.linguist.dflat;
 
+import edu.cmu.sphinx.decoder.scorer.ScoreProvider;
+import edu.cmu.sphinx.frontend.Data;
 import edu.cmu.sphinx.linguist.*;
 import edu.cmu.sphinx.linguist.acoustic.*;
 import edu.cmu.sphinx.linguist.dictionary.Pronunciation;
@@ -1343,7 +1345,7 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
 
     /** Represents a single hmm state in the search graph */
     class HMMStateSearchState extends FlatSearchState implements
-            HMMSearchState {
+            HMMSearchState, ScoreProvider {
 
         private final FullHMMSearchState fullHMMSearchState;
         private final HMMState hmmState;
@@ -1488,6 +1490,12 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
         @Override
         public HMMState getHMMState() {
             return hmmState;
+        }
+
+
+        @Override
+        public float getScore(Data data) {
+            return hmmState.getScore(data);
         }
     }
 
