@@ -10,10 +10,8 @@
  *
  */
 
-package edu.cmu.sphinx.linguist.util;
+package edu.cmu.sphinx.linguist.acoustic;
 
-
-import edu.cmu.sphinx.linguist.acoustic.*;
 import edu.cmu.sphinx.util.TimerPool;
 
 import java.util.Iterator;

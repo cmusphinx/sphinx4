@@ -23,7 +23,6 @@ import edu.cmu.sphinx.linguist.language.grammar.Grammar;
 import edu.cmu.sphinx.linguist.language.ngram.BackoffLanguageModel;
 import edu.cmu.sphinx.linguist.language.ngram.LanguageModel;
 import edu.cmu.sphinx.linguist.language.ngram.ProbDepth;
-import edu.cmu.sphinx.linguist.util.HMMPool;
 import edu.cmu.sphinx.linguist.util.LRUCache;
 import edu.cmu.sphinx.util.LogMath;
 import edu.cmu.sphinx.util.TimerPool;
