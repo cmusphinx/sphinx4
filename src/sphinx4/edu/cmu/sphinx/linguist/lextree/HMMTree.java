@@ -107,7 +107,7 @@ class HMMTree {
             Unit baseUnit = endNode.getBaseUnit();
             Unit lc = endNode.getLeftContext();
             for (Unit rc : entryPoints) {
-                HMM hmm = getHMM(baseUnit, lc, rc, HMMPosition.END);
+                HMM hmm = hmmPool.getHMM(baseUnit, lc, rc, HMMPosition.END);
                 HMMNode hmmNode = resultMap.get(hmm);
                 if (hmmNode == null) {
                     hmmNode = new HMMNode(hmm, LogMath.getLogOne());
@@ -269,7 +269,7 @@ class HMMTree {
             for (int i = 1; i < units.length - 1; i++) {
                 baseUnit = units[i];
                 rc = units[i + 1];
-                HMM hmm = getHMM(baseUnit, lc, rc, HMMPosition.INTERNAL);
+                HMM hmm = hmmPool.getHMM(baseUnit, lc, rc, HMMPosition.INTERNAL);
                 if (hmm == null) {
                     logger.severe("Missing HMM for unit " + baseUnit.getName() + " with lc=" + lc.getName() + " rc=" + rc.getName());
                 } else {
@@ -291,49 +291,7 @@ class HMMTree {
         }
     }
 
-
-    /**
-     * Retrieves an HMM for a unit in context. If there is no direct match, the nearest match will be used.  Note that
-     * we are currently only dealing with, at most, single unit left and right contexts.
-     *
-     * @param base the base CI unit
-     * @param lc   the left context
-     * @param rc   the right context
-     * @param pos  the position of the base unit within the word
-     * @return the HMM. (This should never return null)
-     */
-    private HMM getHMM(Unit base, Unit lc, Unit rc, HMMPosition pos) {
-        int id = -1;
-        int bid = hmmPool.getID(base);
-        int lid = hmmPool.getID(lc);
-        int rid = hmmPool.getID(rc);
-
-        if (!hmmPool.isValidID(bid)) {
-            logger.severe("Bad HMM Unit: " + base.getName());
-            return null;
-        }
-        if (!hmmPool.isValidID(lid)) {
-            logger.severe("Bad HMM Unit: " + lc.getName());
-            return null;
-        }
-        if (!hmmPool.isValidID(rid)) {
-            logger.severe("Bad HMM Unit: " + rc.getName());
-            return null;
-        }
-        id = hmmPool.buildID(bid, lid, rid);
-        if (id < 0) {
-            logger.severe("Unable to build HMM Unit ID for " + base.getName() + " lc=" + lc.getName() + " rc=" + rc.getName());
-            return null;
-        }
-        HMM hmm = hmmPool.getHMM(id, pos);
-        if (hmm == null) {
-            logger.severe("Missing HMM Unit for " + base.getName() + " lc=" + lc.getName() + " rc=" + rc.getName());
-        }
-
-        return hmm;
-    }
-
-
+    
     /**
      * Gets the unigram probability for the given word
      *
@@ -559,7 +517,7 @@ class HMMTree {
             for (Unit lc : exitPoints) {
                 Node epNode = new Node(LogMath.getLogZero());
                 for (Unit rc : getEntryPointRC()) {
-                    HMM hmm = getHMM(baseUnit, lc, rc, HMMPosition.BEGIN);
+                    HMM hmm = hmmPool.getHMM(baseUnit, lc, rc, HMMPosition.BEGIN);
                     Node addedNode;
 
                     if ((addedNode = map.get(hmm)) == null) {
@@ -590,7 +548,7 @@ class HMMTree {
             if (!singleUnitWords.isEmpty()) {
                 
                 for (Unit rc : entryPoints) {
-                    HMM hmm = getHMM(baseUnit, lc, rc, HMMPosition.SINGLE);
+                    HMM hmm = hmmPool.getHMM(baseUnit, lc, rc, HMMPosition.SINGLE);
                     
                     HMMNode tailNode;
                     if (( tailNode = map.get(hmm)) == null) {

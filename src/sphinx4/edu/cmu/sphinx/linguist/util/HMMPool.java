@@ -308,6 +308,55 @@ public class HMMPool {
         return cs + '[' + ls + ',' + rs + ']';
     }
 
+    /**
+     * Retrieves an HMM for a unit in context. If there is no direct match, the
+     * nearest match will be used. Note that we are currently only dealing with,
+     * at most, single unit left and right contexts.
+     * 
+     * @param base
+     *            the base CI unit
+     * @param lc
+     *            the left context
+     * @param rc
+     *            the right context
+     * @param pos
+     *            the position of the base unit within the word
+     * @return the HMM. (This should never return null)
+     */
+    public HMM getHMM(Unit base, Unit lc, Unit rc, HMMPosition pos) {
+        int id = -1;
+        int bid = getID(base);
+        int lid = getID(lc);
+        int rid = getID(rc);
+
+        if (!isValidID(bid)) {
+            logger.severe("Bad HMM Unit: " + base.getName());
+            return null;
+        }
+        if (!isValidID(lid)) {
+            logger.severe("Bad HMM Unit: " + lc.getName());
+            return null;
+        }
+        if (!isValidID(rid)) {
+            logger.severe("Bad HMM Unit: " + rc.getName());
+            return null;
+        }
+        id = buildID(bid, lid, rid);
+        if (id < 0) {
+            logger.severe("Unable to build HMM Unit ID for " + base.getName()
+                    + " lc=" + lc.getName() + " rc=" + rc.getName());
+            return null;
+        }
+        HMM hmm = getHMM(id, pos);
+        if (hmm == null) {
+            logger.severe("Missing HMM Unit for " + base.getName() + " lc="
+                    + lc.getName() + " rc=" + rc.getName());
+        }
+
+        return hmm;
+    }
+
+    
 
     /** Dumps out info about this pool */
     public void dumpInfo() {
@@ -329,10 +378,9 @@ public class HMMPool {
 
     static final HMMPosition[] pos = {
             HMMPosition.BEGIN, HMMPosition.END, HMMPosition.SINGLE,
-            HMMPosition.INTERNAL};
-
+            HMMPosition.INTERNAL};    
+    
     static final int[] ids = {9206, 9320, 9620, 9865, 14831, 15836};
-
 
     void benchmark() {
         int nullCount = 0;
