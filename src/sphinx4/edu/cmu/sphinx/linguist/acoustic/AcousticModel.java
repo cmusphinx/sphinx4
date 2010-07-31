@@ -34,7 +34,7 @@ public interface AcousticModel extends Configurable {
     public void allocate() throws IOException;
 
 
-    /** Deallocates previously allcoated resources */
+    /** Deallocates previously allocated resources */
     public void deallocate();
 
 

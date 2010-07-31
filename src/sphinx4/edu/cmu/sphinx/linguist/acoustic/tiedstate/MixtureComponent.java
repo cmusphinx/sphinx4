@@ -26,12 +26,9 @@ import java.util.Arrays;
  * <p/>
  * Note that all scores and weights are in LogMath log base
  */
-// [[[ QFSE: Since many of the subcomponents of a
-// MixtureComponent are shared, are there some potential
-// opportunities to reduce the number of computations in scoring
+// TODO: Since many of the subcomponents of a MixtureComponent are shared, are 
+// there some potential opportunities to reduce the number of computations in scoring
 // senones by sharing intermediate results for these subcomponents?
-//  ]]]
-
 public class MixtureComponent implements Cloneable, Serializable {
 
     private float[] mean;
@@ -128,6 +125,8 @@ public class MixtureComponent implements Cloneable, Serializable {
         assert distFloor >= 0.0 : "distFloot seems to be already in log-domain";
         this.distFloor = logMath.linearToLog(distFloor);
         this.varianceFloor = varianceFloor;
+
+        transformStats();
 
         logPreComputedGaussianFactor = precomputeDistance();
     }
@@ -226,7 +225,7 @@ public class MixtureComponent implements Cloneable, Serializable {
 
     /**
      * Pre-compute factors for the Mahalanobis distance. Some of the Mahalanobis distance
-     * computation can be carried out in advance. Especifically, the factor containing only variance
+     * computation can be carried out in advance. Specifically, the factor containing only variance
      * in the Gaussian can be computed in advance, keeping in mind that the the determinant of the
      * covariance matrix, for the degenerate case of a mixture with independent components - only
      * the diagonal elements are non-zero - is simply the product of the diagonal elements. <p/>
@@ -235,8 +234,6 @@ public class MixtureComponent implements Cloneable, Serializable {
      * @return the precomputed distance
      */
     public float precomputeDistance() {
-        // First, apply transformations
-        transformStats();
         float logPreComputedGaussianFactor = 0.0f; // = log(1.0)
         // Compute the product of the elements in the Covariance
         // matrix's main diagonal. Covariance matrix is assumed
@@ -279,13 +276,14 @@ public class MixtureComponent implements Cloneable, Serializable {
         *
         * if A or B are <code>null</code> the according substeps are skipped
         */
-        meanTransformed = new float[featDim];
-        if (meanTransformationMatrix != null)
+        if (meanTransformationMatrix != null) {
+            meanTransformed = new float[featDim];
             for (int i = 0; i < featDim; i++)
                 for (int j = 0; j < featDim; j++)
                     meanTransformed[i] += mean[j] * meanTransformationMatrix[i][j];
-        else
-            meanTransformed = mean.clone();
+        } else {
+            meanTransformed = mean;
+        }
 
         if (meanTransformationVector != null)
             for (int k = 0; k < featDim; k++)
@@ -296,12 +294,12 @@ public class MixtureComponent implements Cloneable, Serializable {
          * invert the variance, and work with precision instead of
          * variance.
          */
-        precisionTransformed = new float[variance.length];
-        if (varianceTransformationMatrix != null)
+        if (varianceTransformationMatrix != null) {
+            precisionTransformed = new float[variance.length];
             for (int i = 0; i < featDim; i++)
                 for (int j = 0; j < featDim; j++)
                     precisionTransformed[i] += variance[j] * varianceTransformationMatrix[i][j];
-        else
+        } else
             precisionTransformed = variance.clone();
 
         if (varianceTransformationVector != null)

@@ -148,7 +148,6 @@ public class HTKLoader implements Loader {
     // --------------------------------------
     private String name;
     private Logger logger;
-    private int vectorLength;
     private String location;
     private String model;
     private String dataDir;
@@ -172,7 +171,6 @@ public class HTKLoader implements Loader {
 
         this.logMath = logMath;
         this.unitManager = unitManager;
-        this.vectorLength = vectorLength;
         this.model = model;
         this.tie1ph = tie1ph;
         this.distFloor = distFloor;
@@ -193,10 +191,6 @@ public class HTKLoader implements Loader {
 
         logMath = (LogMath) ps.getComponent(PROP_LOG_MATH);
         unitManager = (UnitManager) ps.getComponent(PROP_UNIT_MANAGER);
-
-        String length = (String) properties.get(PROP_VECTOR_LENGTH);
-        vectorLength = length != null ? Integer.parseInt(length) : ps
-                .getInt(PROP_VECTOR_LENGTH);
 
         String mdef = (String) properties.get(PROP_MODEL);
         model = mdef != null ? mdef : ps.getString(PROP_MODEL);
@@ -228,10 +222,10 @@ public class HTKLoader implements Loader {
             hmmManager = new HMMManager();
             contextIndependentUnits = new LinkedHashMap<String, Unit>();
             // dummy pools for these elements
-            meanTransformationMatrixPool = createDummyMatrixPool("meanTransformationMatrix");
-            meanTransformationVectorPool = createDummyVectorPool("meanTransformationMatrix");
-            varianceTransformationMatrixPool = createDummyMatrixPool("varianceTransformationMatrix");
-            varianceTransformationVectorPool = createDummyVectorPool("varianceTransformationMatrix");
+            meanTransformationMatrixPool = null;
+            meanTransformationVectorPool = null;
+            varianceTransformationMatrixPool = null;
+            varianceTransformationVectorPool = null;
             // do the actual acoustic model loading
             loadModelFiles(model);
             System.err.println("HTK -> S4 conversion finished");
@@ -329,16 +323,27 @@ public class HTKLoader implements Loader {
         assert numMixtureWeights == numSenones;
         assert numVariances == numSenones * numGaussiansPerSenone;
         assert numMeans == numSenones * numGaussiansPerSenone;
+        
+        float [][] meansTransformationMatrix = meanTransformationMatrixPool == null ?
+                null : meanTransformationMatrixPool.get(0);
+        float [] meansTransformationVector = meanTransformationVectorPool == null ?
+                null : meanTransformationVectorPool.get(0);
+        float [][] varianceTransformationMatrix = varianceTransformationMatrixPool == null ?
+                null : varianceTransformationMatrixPool.get(0);
+        float [] varianceTransformationVector = varianceTransformationVectorPool == null ?
+                null : varianceTransformationVectorPool.get(0);
 
         for (int i = 0; i < numSenones; i++) {
             MixtureComponent[] mixtureComponents = new MixtureComponent[numGaussiansPerSenone];
             for (int j = 0; j < numGaussiansPerSenone; j++) {
-                mixtureComponents[j] = new MixtureComponent(logMath, meansPool
-                        .get(whichGaussian), meanTransformationMatrixPool
-                        .get(0), meanTransformationVectorPool.get(0),
+                mixtureComponents[j] = new MixtureComponent(logMath,
+                        meansPool.get(whichGaussian), 
+                        meansTransformationMatrix, 
+                        meansTransformationVector,
                         variancePool.get(whichGaussian),
-                        varianceTransformationMatrixPool.get(0),
-                        varianceTransformationVectorPool.get(0), distFloor,
+                        varianceTransformationMatrix,
+                        varianceTransformationVector, 
+                        distFloor,
                         varianceFloor);
 
                 whichGaussian++;
@@ -715,46 +720,7 @@ public class HTKLoader implements Loader {
         }
         return new SenoneSequence(senones);
     }
-
-    /**
-     * Creates a pool with a single identity matrix in it.
-     * 
-     * @param name the name of the pool
-     * @return the pool with the matrix
-     */
-    private Pool<float[][]> createDummyMatrixPool(String name) {
-        Pool<float[][]> pool = new Pool<float[][]>(name);
-        float[][] matrix = new float[vectorLength][vectorLength];
-        logger.fine("creating dummy matrix pool " + name);
-        for (int i = 0; i < vectorLength; i++) {
-            for (int j = 0; j < vectorLength; j++) {
-                if (i == j) {
-                    matrix[i][j] = 1.0F;
-                } else {
-                    matrix[i][j] = 0.0F;
-                }
-            }
-        }
-        pool.put(0, matrix);
-        return pool;
-    }
-
-    /**
-     * Creates a pool with a single zero vector in it.
-     *
-     * @param name the name of the pool
-     * @return the pool with the vector
-     */
-    private Pool<float[]> createDummyVectorPool(String name) {
-        logger.fine("creating dummy vector pool " + name);
-        Pool<float[]> pool = new Pool<float[]>(name);
-        float[] vector = new float[vectorLength];
-        for (int i = 0; i < vectorLength; i++) {
-            vector[i] = 0.0f;
-        }
-        pool.put(0, vector);
-        return pool;
-    }
+    
 
     @Override
     public Pool<float[]> getMeansPool() {
@@ -828,11 +794,16 @@ public class HTKLoader implements Loader {
         variancePool.logInfo(logger);
         matrixPool.logInfo(logger);
         senonePool.logInfo(logger);
-        meanTransformationMatrixPool.logInfo(logger);
-        meanTransformationVectorPool.logInfo(logger);
-        varianceTransformationMatrixPool.logInfo(logger);
-        varianceTransformationVectorPool.logInfo(logger);
-        mixtureWeightsPool.logInfo(logger);
+        
+        if (meanTransformationMatrixPool != null)
+            meanTransformationMatrixPool.logInfo(logger);
+        if (meanTransformationVectorPool != null)
+            meanTransformationVectorPool.logInfo(logger);
+        if (varianceTransformationMatrixPool != null)
+            varianceTransformationMatrixPool.logInfo(logger);
+        if (varianceTransformationVectorPool != null)
+            varianceTransformationVectorPool.logInfo(logger);
+
         senonePool.logInfo(logger);
         logger.info("Context Independent Unit Entries: "
                 + contextIndependentUnits.size());
