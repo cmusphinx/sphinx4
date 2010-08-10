@@ -128,7 +128,7 @@ import java.util.*;
 public class FrontEnd extends BaseDataProcessor {
 
     /** the name of the property list of all the components of the frontend pipe line */
-    @S4ComponentList(type = DataProcessor.class, beTolerant = true)
+    @S4ComponentList(type = DataProcessor.class)
     public final static String PROP_PIPELINE = "pipeline";
 
 
