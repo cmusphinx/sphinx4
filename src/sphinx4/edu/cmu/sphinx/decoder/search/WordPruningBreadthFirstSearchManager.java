@@ -16,10 +16,6 @@ package edu.cmu.sphinx.decoder.search;
 
 import edu.cmu.sphinx.decoder.pruner.Pruner;
 import edu.cmu.sphinx.decoder.scorer.AcousticScorer;
-import edu.cmu.sphinx.decoder.search.stats.StateHistoryTracker;
-import edu.cmu.sphinx.decoder.search.stats.TokenTracker;
-import edu.cmu.sphinx.decoder.search.stats.TokenTypeTracker;
-import edu.cmu.sphinx.decoder.search.stats.WordTracker;
 import edu.cmu.sphinx.frontend.Data;
 import edu.cmu.sphinx.linguist.*;
 import edu.cmu.sphinx.result.Result;
@@ -243,7 +239,7 @@ public class WordPruningBreadthFirstSearchManager extends TokenSearchManager {
             pruner.allocate();
             scorer.allocate();
         } catch (IOException e) {
-            throw new RuntimeException(toString() + ": allocation of search manager resources failed", e);
+            throw new RuntimeException("Allocation of search manager resources failed", e);
         }
     }
 
@@ -507,12 +503,12 @@ public class WordPruningBreadthFirstSearchManager extends TokenSearchManager {
 //        }
 //        tracker3.dump();
 
-        StateHistoryTracker tracker4 = new StateHistoryTracker(currentFrameNumber);
+//        StateHistoryTracker tracker4 = new StateHistoryTracker(currentFrameNumber);
 
-        for (Token t : activeList) {
-            tracker4.add(t);
-        }
-        tracker4.dump();
+//        for (Token t : activeList) {
+//            tracker4.add(t);
+//        }
+//        tracker4.dump();
     }
 
 

@@ -473,28 +473,25 @@ public final class ConfigurationManagerUtils {
 
         String location = ps.getString(name);
         if (location == null) {
-            throw new InternalConfigurationException(name, name, "Required resource property '" + name + "' not set");
+            throw new InternalConfigurationException(ps.getInstanceName(), name, "Required resource property '" + name + "' not set");
         }
 
         try {
             URL url = resourceToURL(location);
 
             if (url == null) {
-                throw new InternalConfigurationException(name, name, "Can't locate resource " + location);
+                throw new InternalConfigurationException(ps.getInstanceName(), name, "Can't locate " + location);
             }
             return url;
         } catch (MalformedURLException e) {
-            throw new InternalConfigurationException(e, name, name, "Bad URL " + location + e.getMessage());
-        } catch (ClassNotFoundException cnfe) {
-            throw new InternalConfigurationException(cnfe, name, name, "Can't locate resource:/" + cnfe);
+            throw new InternalConfigurationException(e, ps.getInstanceName(), name, "Bad URL " + location + e.getMessage());
         }
-
-
+        
     }
 
     final static Pattern jarPattern = Pattern.compile("resource:(.*)", Pattern.CASE_INSENSITIVE);
 
-    public static URL resourceToURL(String location) throws MalformedURLException, ClassNotFoundException {
+    public static URL resourceToURL(String location) throws MalformedURLException {
         Matcher jarMatcher = jarPattern.matcher(location);
         if (jarMatcher.matches()) {
             String resourceName = jarMatcher.group(1);

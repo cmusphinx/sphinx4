@@ -646,7 +646,7 @@ public class SimpleBreadthFirstSearchManager extends TokenSearchManager {
             pruner.allocate();
             scorer.allocate();
         } catch (IOException e) {
-            throw new RuntimeException(toString()+ ": allocation of search manager resources failed", e);
+            throw new RuntimeException("Allocation of search manager resources failed", e);
         }
 
         scoreTimer = TimerPool.getTimer(this, "Score");

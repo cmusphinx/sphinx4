@@ -79,7 +79,7 @@ public class PropertyException extends RuntimeException {
      */
     @Override
     public String toString() {
-        return "Property Exception component:'" + instanceName + "' property:'" + propertyName + "' - " + msg + '\n'
+        return "Property exception component:'" + instanceName + "' property:'" + propertyName + "' - " + msg + '\n'
                 + super.toString();
     }
 }
