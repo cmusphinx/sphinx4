@@ -42,8 +42,8 @@ public class Token implements Scoreable {
     private final Token predecessor;
 
     private final float logLanguageScore;
-
     private float logTotalScore;
+    private float logInsertionScore;
     private float logAcousticScore;
     private float logWorkingScore;
     
@@ -71,11 +71,13 @@ public class Token implements Scoreable {
     public Token(Token predecessor,
                  SearchState state,
                  float logTotalScore,
-                 float logLanguageScore,
+                 float logInsertionScore,
+                 float logLanguageScore,                 
                  int frameNumber) {
         this.predecessor = predecessor;
         this.searchState = state;
         this.logTotalScore = logTotalScore;
+        this.logInsertionScore = logInsertionScore;
         this.logLanguageScore = logLanguageScore;
         this.frameNumber = frameNumber;
         this.location = -1;
@@ -90,7 +92,7 @@ public class Token implements Scoreable {
      * @param frameNumber the frame number for this token
      */
     public Token(SearchState state, int frameNumber) {
-        this(null, state, 0.0f, 0.0f, frameNumber);
+        this(null, state, 0.0f, 0.0f, 0.0f, frameNumber);
     }
 
 
@@ -101,13 +103,13 @@ public class Token implements Scoreable {
      * @param logLanguageScore the log language score
      * @param predecessor      the predecessor Token
      */
-    public Token(float logAcousticScore, float logLanguageScore,
-                 Token predecessor) {
-        this.searchState = null;
-        this.frameNumber = 0;
+    public Token(Token predecessor,
+                 float logTotalScore, 
+                 float logAcousticScore,
+                 float logInsertionScore,
+                 float logLanguageScore) {
+        this(predecessor, null, logTotalScore, logInsertionScore, logLanguageScore, 0);
         this.logAcousticScore = logAcousticScore;
-        this.logLanguageScore = logLanguageScore;
-        this.predecessor = predecessor;
     }
 
 
@@ -163,8 +165,8 @@ public class Token implements Scoreable {
 
 
     /**
-     * Calculates a score against the given feature. The score can be retrieved with get score. The token will keep a
-     * reference to the scored feature-vector.
+     * Calculates a score against the given feature. The score can be retrieved 
+     * with get score. The token will keep a reference to the scored feature-vector.
      *
      * @param feature the feature to be scored
      * @return the score for the feature
@@ -197,15 +199,15 @@ public class Token implements Scoreable {
 
 
     /**
-     * Gets the working score. The working score is used to maintain non-final scores during the search. Some search
-     * algorithms such as bushderby use the working score
-     *
+     * Gets the working score. The working score is used to maintain non-final
+     * scores during the search. Some search algorithms such as bushderby use
+     * the working score
+     * 
      * @return the working score (in logMath log base)
      */
     public float getWorkingScore() {
         return logWorkingScore;
     }
-
 
     /**
      * Sets the working score for this token
@@ -236,8 +238,23 @@ public class Token implements Scoreable {
         return logLanguageScore;
     }
 
+    /**
+     * Returns the insertion score associated with this token.
+     * Insertion score is the score of the transition between
+     * states. It might be transition score from the acoustic model,
+     * phone insertion score or word insertion probability from
+     * the linguist.
+     *
+     * @return the language score (in logMath log base)
+     */
+    public float getInsertionScore() {
+        return logInsertionScore;
+    }
 
-    /** Returns the acoustic score for this token (in logMath log base)
+
+    /** 
+     * Returns the acoustic score for this token (in logMath log base).
+     * Acoustic score is a sum of frame GMM.
      *
      * @return score
      */

@@ -43,7 +43,7 @@ public class ParallelToken extends Token {
                          float featureScore,
                          float combinedScore,
                          int frameNumber) {
-        super(predecessor, state, featureScore, 0.0f, frameNumber);
+        super(predecessor, state, featureScore, 0.f, 0.0f, frameNumber);
         if (predecessor != null) {
             this.featureStream = predecessor.getFeatureStream();
         }

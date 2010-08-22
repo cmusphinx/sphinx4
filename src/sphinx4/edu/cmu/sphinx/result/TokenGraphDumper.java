@@ -98,7 +98,7 @@ public class TokenGraphDumper {
         if (dumpedTokens.contains(token)) {
             return "";
         } else {
-            String label = ("[" + token.getAcousticScore() + ',' +
+            String label = ("[" + token.getAcousticScore() + token.getInsertionScore() + ',' +
                     token.getLanguageScore() + ']');
             if (token.isWord()) {
                 label = token.getWord().getSpelling() + label;

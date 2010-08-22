@@ -487,7 +487,8 @@ public class SimpleBreadthFirstSearchManager extends TokenSearchManager {
             Token bestToken = getBestToken(nextState);
             boolean firstToken = bestToken == null;
             if (firstToken || bestToken.getScore() <= logEntryScore) {
-                Token newToken = new Token(predecessor, nextState, logEntryScore, 
+                Token newToken = new Token(predecessor, nextState, logEntryScore,
+                        arc.getInsertionProbability(),
                         arc.getLanguageProbability(), 
                         currentFrameNumber);
                 tokensCreated.value++;

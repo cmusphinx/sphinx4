@@ -72,16 +72,16 @@ abstract public class TokenSearchManager implements SearchManager {
 
         float logAcousticScore = 0.0f;
         float logLanguageScore = 0.0f;
+        float logInsertionScore = 0.0f;
 
         while (token != null && !token.isWord()) {
             logAcousticScore += token.getAcousticScore();
             logLanguageScore += token.getLanguageScore();
+            logInsertionScore += token.getInsertionScore();
             token = token.getPredecessor();
         }
 
-        Token newToken = new Token(logAcousticScore, logLanguageScore, token);
-        newToken.setScore(token.getScore());
-        return newToken;        
+        return new Token(token, token.getScore(), logInsertionScore, logAcousticScore, logLanguageScore);
     }
 
 }

@@ -30,7 +30,7 @@ import java.util.logging.Logger;
  */
 public class ScorerTests {
 
-    Scoreable testToken = new Token(1.f, 1.f, null) {
+    Scoreable testToken = new Token(null, 0.f, 0.f, 0.f, 0.f) {
 
         @Override
         public float calculateScore(Data feature) {

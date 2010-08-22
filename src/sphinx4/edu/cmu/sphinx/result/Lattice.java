@@ -192,14 +192,15 @@ public class Lattice {
         }
         visitedWordTokens.add(token);
 
-        collapseWordPath(getNode(token), token.getPredecessor(), token
-                .getAcousticScore(), token.getLanguageScore());
+        collapseWordPath(getNode(token), token.getPredecessor(),
+                token.getAcousticScore() + token.getInsertionScore(),
+                token.getLanguageScore());
 
         if (loserManager != null
                 && loserManager.hasAlternatePredecessors(token)) {
             for (Token loser : loserManager.getAlternatePredecessors(token)) {
-                collapseWordPath(getNode(token), loser, token
-                        .getAcousticScore(), token.getLanguageScore());
+                collapseWordPath(getNode(token), loser,
+                        token.getAcousticScore(), token.getLanguageScore());
             }
         }
     }
@@ -246,7 +247,8 @@ public class Lattice {
          * forward through the not so interesting states to save stack space.
          */
         while (true) {
-            acousticScore += token.getAcousticScore();
+            acousticScore += token.getAcousticScore()
+                    + token.getInsertionScore();
             languageScore += token.getLanguageScore();
             Token preToken = token.getPredecessor();
 
@@ -272,7 +274,6 @@ public class Lattice {
             }
         }
     }
-
 
     /**
      * Returns an ID for the Node associated with the given token.

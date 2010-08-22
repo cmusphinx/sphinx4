@@ -191,7 +191,7 @@ public class BushderbySearchManager extends SimpleBreadthFirstSearchManager {
                 continue;
             }
 
-            float logLanguageProbability = getLanguageProbability(token, arc);
+            float logLanguageProbability = getLanguageProbability(token, arc);            
 
             // We're actually multiplying the variables, but since
             // these come in log(), multiply gets converted to add
@@ -215,6 +215,7 @@ public class BushderbySearchManager extends SimpleBreadthFirstSearchManager {
                         predecessor,
                         nextState,
                         logCurrentScore,
+                        arc.getInsertionProbability(),
                         logLanguageProbability,
                         getCurrentFrameNumber()
                     );
