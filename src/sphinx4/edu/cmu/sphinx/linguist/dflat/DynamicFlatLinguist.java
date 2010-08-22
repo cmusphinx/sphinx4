@@ -484,8 +484,7 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
          */
         @Override
         public float getProbability() {
-            return getLanguageProbability() + getAcousticProbability()
-                    + getInsertionProbability();
+            return getLanguageProbability() + getInsertionProbability();
         }
 
 
@@ -498,18 +497,7 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
         public float getLanguageProbability() {
             return logOne;
         }
-
-
-        /**
-         * Gets the acoustic probability of entering this state
-         *
-         * @return the log probability
-         */
-        @Override
-        public float getAcousticProbability() {
-            return logOne;
-        }
-
+        
 
         /**
          * Gets the insertion probability of entering this state
@@ -1217,7 +1205,7 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
 
 
         /**
-         * Returns the unit assoicated with this state
+         * Returns the unit associated with this state
          *
          * @return the unit
          */
@@ -1376,17 +1364,16 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
             this.hmmState = hmmState;
         }
 
-
+        
         /**
          * Returns the acoustic probability for this state
-         *
+         * 
          * @return the probability
          */
         @Override
-        public float getAcousticProbability() {
+        public float getInsertionProbability() {
             return probability;
-        }
-
+        } 
 
         /**
          * Generate a hashcode for an object

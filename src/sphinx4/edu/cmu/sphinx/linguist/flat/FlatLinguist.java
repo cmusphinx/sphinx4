@@ -434,7 +434,7 @@ public class FlatLinguist implements Linguist, Configurable {
             CIPhoneLoop phoneLoop = new CIPhoneLoop(phoneLoopAcousticModel, logPhoneInsertionProbability);
             SentenceHMMState firstBranchState = (SentenceHMMState)
                     phoneLoop.getSearchGraph().getInitialState();
-            initialState.connect(getArc(firstBranchState, logOne, logOne, logOutOfGrammarBranchProbability));
+            initialState.connect(getArc(firstBranchState, logOne, logOutOfGrammarBranchProbability));
         }
 
         searchGraph = new FlatSearchGraph(initialState);
@@ -512,15 +512,13 @@ public class FlatLinguist implements Linguist, Configurable {
      * Gets a SentenceHMMStateArc. The arc is drawn from a pool of arcs.
      *
      * @param nextState               the next state
-     * @param logAcousticProbability  the log acoustic probability
      * @param logLanguageProbability  the log language probability
      * @param logInsertionProbability the log insertion probability
      */
     protected SentenceHMMStateArc getArc(SentenceHMMState nextState,
-                                         float logAcousticProbability, float logLanguageProbability,
+                                         float logLanguageProbability,
                                          float logInsertionProbability) {
         SentenceHMMStateArc arc = new SentenceHMMStateArc(nextState,
-                logAcousticProbability,
                 logLanguageProbability * languageWeight,
                 logInsertionProbability);
         SentenceHMMStateArc pooledArc = arcPool.cache(arc);
@@ -1037,11 +1035,11 @@ public class FlatLinguist implements Linguist, Configurable {
             // the new state and expand it.
             SentenceHMMState existingState = getExistingState(unitState);
             if (existingState != null) {
-                attachState(tail, existingState, logOne, logOne, logInsertionProbability);
+                attachState(tail, existingState, logOne, logInsertionProbability);
                 // T(" Folding " + existingState);
                 return null;
             } else {
-                attachState(tail, unitState, logOne, logOne, logInsertionProbability);
+                attachState(tail, unitState, logOne, logInsertionProbability);
                 addStateToCache(unitState);
                 // T(" Attaching " + unitState);
                 tail = expandUnit(unitState);
@@ -1063,9 +1061,9 @@ public class FlatLinguist implements Linguist, Configurable {
                         UnitState silUnit = new ExtendedUnitState(parent, which + 1, UnitManager.SILENCE);
                         SentenceHMMState silExistingState = getExistingState(silUnit);
                         if (silExistingState != null) {
-                            attachState(tail, silExistingState, logOne, logOne, logSilenceInsertionProbability);
+                            attachState(tail, silExistingState, logOne, logSilenceInsertionProbability);
                         } else {
-                            attachState(tail, silUnit, logOne, logOne, logSilenceInsertionProbability);
+                            attachState(tail, silUnit, logOne, logSilenceInsertionProbability);
                             addStateToCache(silUnit);
                             silTail = expandUnit(silUnit);
                             ContextPair silCP = ContextPair.get(UnitContext.SILENCE, UnitContext.EMPTY);
@@ -1209,7 +1207,7 @@ public class FlatLinguist implements Linguist, Configurable {
             // tail silence unit
             if (unit.getUnit().isSilence()) {
                 // add the loopback, but don't expand it // anymore
-                attachState(tail, unit, logOne, logOne, logSilenceInsertionProbability);
+                attachState(tail, unit, logOne, logSilenceInsertionProbability);
             }
             return tail;
         }
@@ -1229,7 +1227,7 @@ public class FlatLinguist implements Linguist, Configurable {
             HMM hmm = acousticModel.lookupNearestHMM(unit, position, false);
             HMMState initialState = hmm.getInitialState();
             hmmTree = new HMMStateState(unitState, initialState);
-            attachState(unitState, hmmTree, logOne, logOne, logOne);
+            attachState(unitState, hmmTree, logOne, logOne);
             addStateToCache(hmmTree);
             finalState = expandHMMTree(unitState, hmmTree);
             return finalState;
@@ -1255,9 +1253,9 @@ public class FlatLinguist implements Linguist, Configurable {
                 SentenceHMMState existingState = getExistingState(newState);
                 float logProb = arc.getLogProbability();
                 if (existingState != null) {
-                    attachState(tree, existingState, logProb, logOne, logOne);
+                    attachState(tree, existingState, logOne, logProb);
                 } else {
-                    attachState(tree, newState, logProb, logOne, logOne);
+                    attachState(tree, newState, logOne, logProb);
                     addStateToCache(newState);
                     retState = expandHMMTree(parent, newState);
                 }
@@ -1318,7 +1316,7 @@ public class FlatLinguist implements Linguist, Configurable {
                 SentenceHMMState sourceState = (SentenceHMMState) source;
                 for (SearchState dest : destList) {
                     SentenceHMMState destState = (SentenceHMMState) dest;
-                    sourceState.connect(getArc(destState, logOne, logLangProb, logOne));
+                    sourceState.connect(getArc(destState, logLangProb, logOne));
                     exitConnections++;
                 }
             }
@@ -1330,14 +1328,14 @@ public class FlatLinguist implements Linguist, Configurable {
          *
          * @param prevState              the parent state
          * @param nextState              the child state
-         * @param logAcousticProbability the acoustic probability of transition in the LogMath log domain
          * @param logLanguageProbablity  the language probability of transition in the LogMath log domain
          * @param logInsertionProbablity insertion probability of transition in the LogMath log domain
          */
         protected void attachState(SentenceHMMState prevState,
-                                   SentenceHMMState nextState, float logAcousticProbability,
-                                   float logLanguageProbablity, float logInsertionProbablity) {
-            prevState.connect(getArc(nextState, logAcousticProbability,
+                                   SentenceHMMState nextState,
+                                   float logLanguageProbablity, 
+                                   float logInsertionProbablity) {
+            prevState.connect(getArc(nextState,
                     logLanguageProbablity, logInsertionProbablity));
             if (showCompilationProgress && totalStateCounter++ % 1000 == 0) {
                 System.out.print(".");

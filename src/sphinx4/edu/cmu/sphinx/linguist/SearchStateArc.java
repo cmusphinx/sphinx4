@@ -39,15 +39,6 @@ public interface SearchStateArc {
      */
     float getLanguageProbability();
 
-
-    /**
-     * Gets the language probability of entering this state
-     *
-     * @return the log probability
-     */
-    float getAcousticProbability();
-
-
     /**
      * Gets the insertion probability of entering this state
      *

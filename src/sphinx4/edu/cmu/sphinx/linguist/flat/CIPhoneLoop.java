@@ -74,17 +74,17 @@ public class CIPhoneLoop {
             existingStates = new HashMap<String, SearchState>();
             firstState = new UnknownWordState();
             SentenceHMMState branchState = new BranchOutState(firstState);
-            attachState(firstState, branchState, logOne, logOne, logOne);
+            attachState(firstState, branchState, logOne, logOne);
 
             SentenceHMMState lastState = new LoopBackState(firstState);
             lastState.setFinalState(true);
-            attachState(lastState, branchState, logOne, logOne, logOne);
+            attachState(lastState, branchState, logOne, logOne);
 
             for (Iterator<Unit> i = model.getContextIndependentUnitIterator(); i.hasNext();) {
                 UnitState unitState = new UnitState(i.next(), HMMPosition.UNDEFINED);
 
                 // attach unit state to the branch out state
-                attachState(branchState, unitState, logOne, logOne,
+                attachState(branchState, unitState, logOne,
                         logPhoneInsertionProbability);
 
                 HMM hmm = model.lookupNearestHMM
@@ -94,13 +94,13 @@ public class CIPhoneLoop {
                 addStateToCache(hmmTree);
 
                 // attach first HMM state to the unit state
-                attachState(unitState, hmmTree, logOne, logOne, logOne);
+                attachState(unitState, hmmTree, logOne, logOne);
 
                 // expand the HMM tree
                 HMMStateState finalState = expandHMMTree(unitState, hmmTree);
 
                 // attach final state of HMM tree to the loopback state
-                attachState(finalState, lastState, logOne, logOne, logOne);
+                attachState(finalState, lastState, logOne, logOne);
             }
         }
 
@@ -170,9 +170,9 @@ public class CIPhoneLoop {
                 SentenceHMMState existingState = getExistingState(newState);
                 float logProb = arc.getLogProbability();
                 if (existingState != null) {
-                    attachState(tree, existingState, logProb, logOne, logOne);
+                    attachState(tree, existingState, logOne, logProb);
                 } else {
-                    attachState(tree, newState, logProb, logOne, logOne);
+                    attachState(tree, newState, logOne, logProb);
                     addStateToCache(newState);
                     retState = expandHMMTree(parent, newState);
                 }
@@ -183,14 +183,12 @@ public class CIPhoneLoop {
 
         protected void attachState(SentenceHMMState prevState,
                                    SentenceHMMState nextState,
-                                   float logAcousticProbability,
                                    float logLanguageProbability,
                                    float logInsertionProbability) {
             SentenceHMMStateArc arc = new SentenceHMMStateArc
                     (nextState,
-                            logAcousticProbability,
-                            logLanguageProbability,
-                            logInsertionProbability);
+                     logLanguageProbability,
+                     logInsertionProbability);
             prevState.connect(arc);
         }
     }

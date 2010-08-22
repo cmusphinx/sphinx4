@@ -69,10 +69,10 @@ public class Token implements Scoreable {
      * @param frameNumber             the frame number associated with this token
      */
     public Token(Token predecessor,
-                    SearchState state,
-                    float logTotalScore,
-                    float logLanguageScore,
-                    int frameNumber) {
+                 SearchState state,
+                 float logTotalScore,
+                 float logLanguageScore,
+                 int frameNumber) {
         this.predecessor = predecessor;
         this.searchState = state;
         this.logTotalScore = logTotalScore;

@@ -24,7 +24,6 @@ import edu.cmu.sphinx.linguist.SearchStateArc;
 public class SentenceHMMStateArc implements SearchStateArc {
 
     private final SentenceHMMState nextState;
-    private final float logAcousticProbability;
     private final float logLanguageProbability;
     private final float logInsertionProbability;
     private final int hashCode;
@@ -34,21 +33,17 @@ public class SentenceHMMStateArc implements SearchStateArc {
      * Creates a SentenceHMMStateArc
      *
      * @param nextState               the next state
-     * @param logAcousticProbability  the log acoustic probability
      * @param logLanguageProbability  the log language probability
      * @param logInsertionProbability the log insertion probability
      */
     public SentenceHMMStateArc(SentenceHMMState nextState,
-                               float logAcousticProbability,
                                float logLanguageProbability,
                                float logInsertionProbability) {
         this.nextState = nextState;
-        this.logAcousticProbability = logAcousticProbability;
         this.logLanguageProbability = logLanguageProbability;
         this.logInsertionProbability = logInsertionProbability;
 
         hashCode = 111 + nextState.hashCode() +
-                3 * Float.floatToIntBits(logAcousticProbability) +
                 17 * Float.floatToIntBits(logLanguageProbability) +
                 23 * Float.floatToIntBits(logInsertionProbability);
 
@@ -68,7 +63,6 @@ public class SentenceHMMStateArc implements SearchStateArc {
         } else if (o instanceof SentenceHMMStateArc) {
             SentenceHMMStateArc other = (SentenceHMMStateArc) o;
             return nextState == other.nextState &&
-                    logAcousticProbability == other.logAcousticProbability &&
                     logLanguageProbability == other.logLanguageProbability &&
                     logInsertionProbability == other.logInsertionProbability;
 
@@ -113,17 +107,6 @@ public class SentenceHMMStateArc implements SearchStateArc {
 
 
     /**
-     * Retrieves the acoustic transition probablility for this transition.
-     *
-     * @return the acoustic transition probability in the logmath log domain
-     */
-    @Override
-    public float getAcousticProbability() {
-        return logAcousticProbability;
-    }
-
-
-    /**
      * Retrieves the language transition probability for this transition
      *
      * @return the language  transition probability in the logmath log domain
@@ -135,7 +118,7 @@ public class SentenceHMMStateArc implements SearchStateArc {
 
 
     /**
-     * Retrieves the insertaion probability for this transition
+     * Retrieves the insertion probability for this transition
      *
      * @return the insertion probability  in the logmath log domain
      */
@@ -152,7 +135,7 @@ public class SentenceHMMStateArc implements SearchStateArc {
      */
     @Override
     public float getProbability() {
-        return logLanguageProbability + logAcousticProbability +
+        return logLanguageProbability +
                 logInsertionProbability;
     }
 }

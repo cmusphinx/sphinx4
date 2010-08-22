@@ -197,7 +197,6 @@ public class BushderbySearchManager extends SimpleBreadthFirstSearchManager {
             // these come in log(), multiply gets converted to add
             float logCurrentScore = token.getScore() +
                 logLanguageProbability +
-                arc.getAcousticProbability() +
                 arc.getInsertionProbability();
 
             boolean firstToken = (getBestToken(nextState) == null);

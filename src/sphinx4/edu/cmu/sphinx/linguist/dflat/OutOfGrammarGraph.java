@@ -336,18 +336,7 @@ public class OutOfGrammarGraph {
             return 191 + hmmState.hashCode();
         }
 
-
-        /**
-         * Returns the acoustic probability for this state
-         *
-         * @return the probability
-         */
-        @Override
-        public float getAcousticProbability() {
-            return logProbability;
-        }
-
-
+        
         /**
          * Determines if the given object is equal to this object
          *
@@ -611,8 +600,7 @@ public class OutOfGrammarGraph {
          */
         @Override
         public float getProbability() {
-            return getLanguageProbability() + getAcousticProbability()
-                    + getInsertionProbability();
+            return getLanguageProbability() + getInsertionProbability();
         }
 
 
@@ -623,17 +611,6 @@ public class OutOfGrammarGraph {
          */
         @Override
         public float getLanguageProbability() {
-            return LogMath.getLogOne();
-        }
-
-
-        /**
-         * Gets the acoustic probability of entering this state
-         *
-         * @return the log probability
-         */
-        @Override
-        public float getAcousticProbability() {
             return LogMath.getLogOne();
         }
 

@@ -178,7 +178,6 @@ public class ParallelSimpleLinguist extends FlatLinguist {
                 // add the loopback, but don't expand it // anymore
                 attachState(tail, unit,
                         LogMath.getLogOne(),
-                        LogMath.getLogOne(),
                         getLogSilenceInsertionProbability());
             }
             return tail;
@@ -214,7 +213,6 @@ public class ParallelSimpleLinguist extends FlatLinguist {
                 // attach first HMMStateState to the splitState
                 attachState(unitState, firstHMMState,
                         logOne,
-                        logOne,
                         logOne);
 
                 // expand the HMM and connect the lastState w/ the combineState
@@ -225,7 +223,6 @@ public class ParallelSimpleLinguist extends FlatLinguist {
                         expandParallelHMMTree(firstHMMState, stream, hmmStates);
 
                 attachState(lastState, combineState,
-                        logOne,
                         logOne,
                         logOne);
             }
@@ -257,7 +254,7 @@ public class ParallelSimpleLinguist extends FlatLinguist {
                 if (nextHmmState == hmmState) {
 
                     // this is a self-transition
-                    attachState(hmmStateState, hmmStateState, arc.getLogProbability(), logOne, logOne);
+                    attachState(hmmStateState, hmmStateState, logOne, arc.getLogProbability());
 
                     lastState = hmmStateState;
                 } else {
@@ -278,9 +275,8 @@ public class ParallelSimpleLinguist extends FlatLinguist {
                     nextState.setColor(Color.GREEN);
 
                     attachState(hmmStateState, nextState,
-                            arc.getLogProbability(),
                             logOne,
-                            logOne);
+                            arc.getLogProbability());
 
                     lastState = expandParallelHMMTree
                             (nextState, stream, expandedStates);
@@ -351,12 +347,10 @@ public class ParallelSimpleLinguist extends FlatLinguist {
                 // connect previous last state to this HMMState
                 attachState(unitState, firstHMMState,
                         logOne,
-                        logOne,
                         logOne);
 
                 // connect this HMMState to the next combining state
                 attachState(firstHMMState, lastState,
-                        logOne,
                         logOne,
                         logOne);
 
@@ -365,9 +359,7 @@ public class ParallelSimpleLinguist extends FlatLinguist {
                 if (selfTransition != null) {
                     // connect the next combining state to this HMMState
                     attachState(lastState, firstHMMState,
-                            selfTransition.getLogProbability(),
-                            logOne,
-                            logOne);
+                            logOne, selfTransition.getLogProbability());
                 }
 
                 arcs[i] = getTransitionToNextState(hmmState);
@@ -399,13 +391,11 @@ public class ParallelSimpleLinguist extends FlatLinguist {
 
                     // connect lastState and this HMMStateState
                     attachState(lastState, hmmStateState,
-                            arc.getLogProbability(),
                             logOne,
-                            logOne);
+                            arc.getLogProbability());
 
                     // connect this HMMStateState and the combineState
                     attachState(hmmStateState, combineState,
-                            logOne,
                             logOne,
                             logOne);
 
@@ -415,9 +405,7 @@ public class ParallelSimpleLinguist extends FlatLinguist {
                     if (selfTransition != null) {
                         // connect the next combining state to this HMMState
                         attachState(combineState, hmmStateState,
-                                selfTransition.getLogProbability(),
-                                logOne,
-                                logOne);
+                                logOne, selfTransition.getLogProbability());
                     }
                     arcs[a] = getTransitionToNextState(hmmState);
                 }
@@ -441,7 +429,7 @@ public class ParallelSimpleLinguist extends FlatLinguist {
         }
 
 
-        /** Returns the HMMStateArc that transitioin to the next HMMState. */
+        /** Returns the HMMStateArc that transition to the next HMMState. */
         private HMMStateArc getTransitionToNextState(HMMState hmmState) {
             for (HMMStateArc arc : hmmState.getSuccessors()) {
                 HMMState nextHmmState = arc.getHMMState();
