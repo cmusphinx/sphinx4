@@ -2,6 +2,40 @@ Sphinx-4 Speech Recognition System
 -------------------------------------------------------------------
 -------------------------------------------------------------------
 
+Version:       1.0Beta5
+Release Date:  August 2010
+
+-------------------------------------------------------------------
+
+New Features and Improvements:
+
+    * Alignment demo and grammar to align lattices to transcription
+    * Lattice grammar for multipass decoding
+    * Explicit-backoff in lextree linguist
+    * Significant LVCSR speedup with proper lextree compression
+    * Simple filter to drop zer energy frames
+    * Voxforge decoding accuracy test
+    * Graphviz grammar dump instead of AISee
+    * Lattice scoring speedup
+    * JSAPI-free JSGF parser
+
+Bug fixes:
+
+    * Insertion probabilities are counted in lattice scores
+    * Don't waste resources and memory on dummy transformations
+    * Small DMP files load properly
+    * JSGF Parser fixes
+    * Documentation improvements
+    * Debian package stuff
+    
+Thanks:
+
+    Antoine Raux, Marek Lesiak, Yaniv Kunda, Brian Romanowski, Tony
+    Robinson, Bhiksha Raj, Timo Baumann, Michele Alessandrini, Francisco
+    Aguilera, Peter Wolf, David Huggins-Daines, Dirk Schnelle-Walka.
+
+-------------------------------------------------------------------
+
 Version:       1.0Beta4
 Release Date:  February 2010
 
