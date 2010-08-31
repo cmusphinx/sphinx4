@@ -9,22 +9,24 @@ Release Date:  August 2010
 
 New Features and Improvements:
 
-    * Alignment demo and grammar to align lattices to transcription
+    * Alignment demo and grammar to align long speech recordings to 
+      transcription and get word times
     * Lattice grammar for multipass decoding
-    * Explicit-backoff in lextree linguist
-    * Significant LVCSR speedup with proper lextree compression
-    * Simple filter to drop zer energy frames
+    * Explicit-backoff in LexTree linguist
+    * Significant LVCSR speedup with proper LexTree compression
+    * Simple filter to drop zero energy frames
+    * Graphviz for grammar dump vizualization instead of AISee
     * Voxforge decoding accuracy test
-    * Graphviz grammar dump instead of AISee
     * Lattice scoring speedup
     * JSAPI-free JSGF parser
 
-Bug fixes:
+Bug Fixes:
 
     * Insertion probabilities are counted in lattice scores
-    * Don't waste resources and memory on dummy transformations
-    * Small DMP files load properly
-    * JSGF Parser fixes
+    * Don't waste resources and memory on dummy acoustic model
+      transformations
+    * Small DMP files are loaded properly
+    * JSGF parser fixes
     * Documentation improvements
     * Debian package stuff
     
