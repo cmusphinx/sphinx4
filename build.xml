@@ -252,14 +252,11 @@
             <patternset refid="${patternset_to_compile}"/>
             <classpath refid="libs"/>
         </javac>
-        <!--<javac debug="true"-->
-        <!--srcdir="${src_dir}/apps/edu/cmu/sphinx/demo"-->
-        <!--deprecation="true"-->
-        <!--includeAntRuntime="false"-->
-        <!--destdir="${classes_dir}/apps">-->
-        <!--<patternset refid="${patternset_to_compile}"/>-->
-        <!--<classpath refid="libs"/>-->
-        <!--</javac>-->
+	<copy todir="${classes_dir}/edu/cmu/sphinx/config">
+            <fileset dir="${src_dir}/sphinx4/edu/cmu/sphinx/config">
+                <include name="**/*.xml"/>
+            </fileset>
+        </copy>
     </target>
 
 

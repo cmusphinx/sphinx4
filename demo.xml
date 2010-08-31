@@ -86,6 +86,7 @@
 	             compile_jsapi_jsgf,
 	             compile_zipcity,
                      compile_sphinx_transcriber,
+		     compile_aligner,
 	             compile_tags"
             description="Compiles Sphinx-4 demos"/>
 
@@ -236,6 +237,25 @@
              manifest="${demo_src_dir}/edu/cmu/sphinx/demo/transcriber/transcriber.Manifest"
              basedir="${demo_classes_dir}"
              includes="edu/cmu/sphinx/demo/transcriber/**"
+             compress="true"/>
+    </target>
+
+    <target name="compile_aligner">
+        <mkdir dir="${demo_classes_dir}/edu/cmu/sphinx/demo/aligner"/>
+        <javac debug="true"
+               listfiles="true"
+               deprecation="true"
+                includeAntRuntime="false"
+               srcdir="${demo_src_dir}"
+               includes="edu/cmu/sphinx/demo/aligner/**"
+               destdir="${demo_classes_dir}">
+            <classpath refid="libs"/>
+        </javac>
+        <mkdir dir="${bin_dir}"/>
+        <jar destfile="${bin_dir}/Aligner.jar"
+             manifest="${demo_src_dir}/edu/cmu/sphinx/demo/aligner/aligner.Manifest"
+             basedir="${demo_classes_dir}"
+             includes="edu/cmu/sphinx/demo/aligner/**"
              compress="true"/>
     </target>
 
