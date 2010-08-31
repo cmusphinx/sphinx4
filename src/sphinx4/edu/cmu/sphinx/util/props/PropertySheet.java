@@ -256,68 +256,82 @@ public class PropertySheet implements Cloneable {
     }
 
     /**
-     * Gets a component associated with the given parameter name
-     *
-     * @param name the parameter name
+     * Gets a component associated with the given parameter name. First search
+     * the component in property table, then try to get component by name from
+     * the manager, then creates component with default properties.
+     * 
+     * @param name
+     *            the parameter name
      * @return the component associated with the name
      * @throws edu.cmu.sphinx.util.props.PropertyException
-     *          if the component does not exist or is of the wrong type.
+     *             if the component does not exist or is of the wrong type.
      */
     public Configurable getComponent(String name) throws PropertyException {
         S4PropWrapper s4PropWrapper = getProperty(name, S4Component.class);
+        Configurable configurable = null;
 
         S4Component s4Component = (S4Component) s4PropWrapper.getAnnotation();
         Class<? extends Configurable> expectedType = s4Component.type();
 
         Object propVal = propValues.get(name);
-        if (propVal == null || propVal instanceof String) {
-            Configurable configurable = null;
 
-            if (propVal != null) {
-                PropertySheet ps = cm.getPropertySheet(flattenProp(name));
-                if (ps != null)
-                    configurable = ps.getOwner();
-		else
-		    throw new InternalConfigurationException(getInstanceName(), name, "component '" + flattenProp(name) + "' is missing");
-            }
-
-            if (configurable != null && !expectedType.isInstance(configurable))
-                throw new InternalConfigurationException(getInstanceName(), name, "mismatch between annotation and component type");
-
-            if (configurable == null) {
-                Class<? extends Configurable> defClass;
-
-                defClass = s4Component.defaultClass();
-
-                if (defClass.equals(Configurable.class) && s4Component.mandatory()) {
-                    throw new InternalConfigurationException(getInstanceName(), name, "mandatory property is not set!");
-                } else {
-                    if (Modifier.isAbstract(defClass.getModifiers()) && s4Component.mandatory())
-                        throw new InternalConfigurationException(getInstanceName(), name, defClass.getName() + " is abstract!");
-
-                    // because we're forced to use the default type, make sure that it is set
-                    if (defClass.equals(Configurable.class)) {
-                        if (s4Component.mandatory()) {
-                            throw new InternalConfigurationException(getInstanceName(), name, instanceName + ": no default class defined for " + name);
-                        } else {
-                            return null;
-                        }
-                    }
-
-                    configurable = ConfigurationManager.getInstance(defClass);
-                    if (configurable == null) {
-                        throw new InternalConfigurationException(getInstanceName(), name,
-                                "instantiation of referenenced Configurable failed");
-                    }
-                }
-            }
-
-            propValues.put(name, configurable);
+        if (propVal != null && propVal instanceof Configurable) {
+            return (Configurable) propVal;
         }
 
-        return (Configurable) propValues.get(name);
+        if (propVal != null && propVal instanceof String) {
+            PropertySheet ps = cm.getPropertySheet(flattenProp(name));
+            if (ps != null)
+                configurable = ps.getOwner();
+            else
+                throw new InternalConfigurationException(getInstanceName(), name, "component '" + flattenProp(name)
+                        + "' is missing");
+        }
+
+        if (configurable != null && !expectedType.isInstance(configurable))
+            throw new InternalConfigurationException(getInstanceName(), name, "mismatch between annotation and component type");
+
+        if (configurable != null) {
+            propValues.put(name, configurable);
+            return configurable;
+        }
+
+        configurable = getComponentFromAnnotation(name, s4Component);
+
+        propValues.put(name, configurable);
+        return configurable;
     }
 
+
+    private Configurable getComponentFromAnnotation(String name, S4Component s4Component) {
+        Configurable configurable;
+        Class<? extends Configurable> defClass = s4Component.defaultClass();
+
+        if (defClass.equals(Configurable.class) && s4Component.mandatory()) {
+            throw new InternalConfigurationException(getInstanceName(), name, "mandatory property is not set!");
+        }
+
+        if (Modifier.isAbstract(defClass.getModifiers()) && s4Component.mandatory())
+            throw new InternalConfigurationException(getInstanceName(), name, defClass.getName() + " is abstract!");
+
+        // because we're forced to use the default type, make sure that it
+        // is set
+        if (defClass.equals(Configurable.class)) {
+            if (s4Component.mandatory()) {
+                throw new InternalConfigurationException(getInstanceName(), name, instanceName
+                        + ": no default class defined for " + name);
+            } else {
+                return null;
+            }
+        }
+
+        configurable = ConfigurationManager.getInstance(defClass);
+        if (configurable == null) {
+            throw new InternalConfigurationException(getInstanceName(), name, "instantiation of referenenced configurable failed");
+        }
+        
+        return configurable;
+    }
 
     /** Returns the class of of a registered component property without instantiating it. */
     public Class<? extends Configurable> getComponentClass(String propName) {
