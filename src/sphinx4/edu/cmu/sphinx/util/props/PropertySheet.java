@@ -273,10 +273,12 @@ public class PropertySheet implements Cloneable {
         if (propVal == null || propVal instanceof String) {
             Configurable configurable = null;
 
-            if (propValues.get(name) != null) {
+            if (propVal != null) {
                 PropertySheet ps = cm.getPropertySheet(flattenProp(name));
                 if (ps != null)
                     configurable = ps.getOwner();
+		else
+		    throw new InternalConfigurationException(getInstanceName(), name, "component '" + flattenProp(name) + "' is missing");
             }
 
             if (configurable != null && !expectedType.isInstance(configurable))
@@ -289,7 +291,6 @@ public class PropertySheet implements Cloneable {
 
                 if (defClass.equals(Configurable.class) && s4Component.mandatory()) {
                     throw new InternalConfigurationException(getInstanceName(), name, "mandatory property is not set!");
-
                 } else {
                     if (Modifier.isAbstract(defClass.getModifiers()) && s4Component.mandatory())
                         throw new InternalConfigurationException(getInstanceName(), name, defClass.getName() + " is abstract!");
