@@ -341,7 +341,6 @@ public class LexTreeLinguist implements Linguist {
         acousticModel.allocate();
         languageModel.allocate();
         compileGrammar();
-        //acousticModel = null;
     }
 
 
@@ -352,9 +351,13 @@ public class LexTreeLinguist implements Linguist {
     */
     @Override
     public void deallocate() {
-        acousticModel = null;
-        logMath = null;
-        dictionary = null;
+        if (acousticModel != null)
+    	    acousticModel.deallocate();
+    	if (dictionary != null)
+    	    dictionary.deallocate();
+    	if (languageModel != null)
+    	    languageModel.deallocate();
+    	hmmTree = null;
     }
 
 
