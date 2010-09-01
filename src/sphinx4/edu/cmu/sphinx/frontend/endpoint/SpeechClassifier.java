@@ -20,8 +20,6 @@ import edu.cmu.sphinx.util.props.PropertySheet;
 import edu.cmu.sphinx.util.props.S4Double;
 import edu.cmu.sphinx.util.props.S4Integer;
 
-import java.util.LinkedList;
-import java.util.List;
 import java.util.logging.Level;
 
 /**
@@ -78,8 +76,6 @@ public class SpeechClassifier extends AbstractVoiceActivityDetector {
     protected double totalBackgroundLevel;
     protected double totalSpeechLevel;
     
-    protected final List<Data> outputQueue = new LinkedList<Data>();
-
     public SpeechClassifier(int frameLengthMs, double adjustment, double threshold, double minSignal ) {
         initLogger();
         this.frameLengthSec = ((float) frameLengthMs) / 1000.f;
@@ -151,7 +147,7 @@ public class SpeechClassifier extends AbstractVoiceActivityDetector {
      *
      * @param audio the audio frame
      */
-    protected void classify(DoubleData audio) {
+    protected SpeechClassifiedData classify(DoubleData audio) {
         double current = logRootMeanSquare(audio.getValues());
         // System.out.println("current: " + current);
         isSpeech = false;
@@ -181,7 +177,7 @@ public class SpeechClassifier extends AbstractVoiceActivityDetector {
 
         collectStats (isSpeech);
         
-        outputQueue.add(labeledAudio);
+        return labeledAudio;
     }
 
     /**
@@ -217,27 +213,16 @@ public class SpeechClassifier extends AbstractVoiceActivityDetector {
      */
     @Override
     public Data getData() throws DataProcessingException {
-        if (outputQueue.isEmpty()) {
-            Data audio = getPredecessor().getData();
+        Data audio = getPredecessor().getData();
 
-            if (audio instanceof DataStartSignal)
-                reset();
+        if (audio instanceof DataStartSignal)
+            reset();
 
-            if (audio != null) {
-                if (audio instanceof DoubleData) {
-                    DoubleData data = (DoubleData) audio;
-                    classify(data);
-                } else {
-                    outputQueue.add(audio);
-                }
-            }
+        if (audio instanceof DoubleData) {
+            DoubleData data = (DoubleData) audio;
+            audio = classify(data);
         }
-        if (!outputQueue.isEmpty()) {
-            Data audio = outputQueue.remove(0);
-            return audio;
-        } else {
-            return null;
-        }
+        return audio;
     }
     
     /**
