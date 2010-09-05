@@ -273,6 +273,15 @@
 
     <!-- ********************************************************** -->
     <!-- *                                                        * -->
+    <!-- * Run transcriber demo for IDE                           * -->
+    <!-- *                                                        * -->
+    <!-- ********************************************************** -->
+    <target name="run-transcriber-demo">
+        <java jar="bin/Transcriber.jar" fork="true"/>	        
+    </target>
+
+    <!-- ********************************************************** -->
+    <!-- *                                                        * -->
     <!-- * Compiles unit tests.                                   * -->
     <!-- *                                                        * -->
     <!-- ********************************************************** -->
@@ -423,24 +432,6 @@
                      includes="edu/cmu/sphinx/tools/audio/spectrogram.config.xml"/>
         </jar>
     </target>
-
-
-    <!-- ********************************************************** -->
-    <!-- *                                                        * -->
-    <!-- * Generates an acoustic model JAR from a Sphinx-3 model  * -->
-    <!-- * directory.                                             * -->
-    <!-- *                                                        * -->
-    <!-- ********************************************************** -->
-
-    <target name="s3_model_to_s4"
-            description="Generates an acoustic model JAR from a Sphinx-3 model directory.">
-        <mkdir dir="${build_model_dir}/${model_name}"/>
-        <antcall target="create_my_model">
-            <param name="my_model_data_dir" value="${model_data_dir}"/>
-            <param name="my_model_name" value="${model_name}"/>
-        </antcall>
-    </target>
-
 
     <!-- ********************************************************** -->
     <!-- *                                                        * -->
