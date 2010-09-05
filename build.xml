@@ -312,6 +312,8 @@
             <classpath path="${classes_dir}/test" />
             <classpath location="${lib_dir}/WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz.jar" />
             <formatter type="plain" />
+            <formatter type="xml"/>
+            <formatter type="brief" usefile="false"/>
             <batchtest todir="logs/tests">
                 <fileset dir="${src_dir}/test">
                     <include name="**/*Test.java" />

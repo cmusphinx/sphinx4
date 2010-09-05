@@ -70,6 +70,58 @@
                     <script>nbproject/ide-targets.xml</script>
                     <target>debug-nb</target>
                 </action>
+                <action name="compile.single">
+                    <script>nbproject/ide-file-targets.xml</script>
+                    <target>compile-selected-files-in-apps</target>
+                    <context>
+                        <property>files</property>
+                        <folder>src/apps</folder>
+                        <pattern>\.java$</pattern>
+                        <format>relative-path</format>
+                        <arity>
+                            <separated-files>,</separated-files>
+                        </arity>
+                    </context>
+                </action>
+                <action name="run.single">
+                    <script>nbproject/ide-file-targets.xml</script>
+                    <target>run-selected-file-in-apps</target>
+                    <context>
+                        <property>run.class</property>
+                        <folder>src/apps</folder>
+                        <pattern>\.java$</pattern>
+                        <format>java-name</format>
+                        <arity>
+                            <one-file-only/>
+                        </arity>
+                    </context>
+                </action>
+                <action name="debug.single">
+                    <script>nbproject/ide-file-targets.xml</script>
+                    <target>debug-selected-file-in-apps</target>
+                    <context>
+                        <property>debug.class</property>
+                        <folder>src/apps</folder>
+                        <pattern>\.java$</pattern>
+                        <format>java-name</format>
+                        <arity>
+                            <one-file-only/>
+                        </arity>
+                    </context>
+                </action>
+                <action name="compile.single">
+                    <script>nbproject/ide-file-targets.xml</script>
+                    <target>compile-selected-files-in-sphinx4</target>
+                    <context>
+                        <property>files</property>
+                        <folder>src/sphinx4</folder>
+                        <pattern>\.java$</pattern>
+                        <format>relative-path</format>
+                        <arity>
+                            <separated-files>,</separated-files>
+                        </arity>
+                    </context>
+                </action>
             </ide-actions>
             <export>
                 <type>folder</type>
@@ -262,6 +314,7 @@
         <java-data xmlns="http://www.netbeans.org/ns/freeform-project-java/3">
             <compilation-unit>
                 <package-root>src/research</package-root>
+                <classpath mode="compile">bld</classpath>
                 <built-to>bld</built-to>
                 <built-to>javadoc</built-to>
                 <built-to>lib/sphinx4.jar</built-to>
@@ -269,6 +322,7 @@
             </compilation-unit>
             <compilation-unit>
                 <package-root>src/apps</package-root>
+                <classpath mode="compile">lib/js.jar:lib/jsapi-1.0-base.jar:lib/jsapi.jar:lib/RM1_8gau_13dCep_16k_40mel_130Hz_6800Hz.jar:lib/sphinx4.jar:lib/tags.jar:lib/TIDIGITS_8gau_13dCep_16k_40mel_130Hz_6800Hz.jar:lib/WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz.jar:lib/WSJ_8gau_13dCep_8kHz_31mel_200Hz_3500Hz.jar:bld</classpath>
                 <built-to>bld</built-to>
                 <built-to>bin/Aligner.jar</built-to>
                 <built-to>bin/AudioTool.jar</built-to>
@@ -288,6 +342,7 @@
             </compilation-unit>
             <compilation-unit>
                 <package-root>src/jsapi</package-root>
+                <classpath mode="compile">lib/js.jar:lib/jsapi.jar:bld</classpath>
                 <built-to>bld</built-to>
                 <built-to>javadoc</built-to>
                 <built-to>lib/jsapi-1.0-base.jar</built-to>
@@ -308,6 +363,7 @@
             <compilation-unit>
                 <package-root>src/test</package-root>
                 <unit-tests/>
+                <classpath mode="compile">bld:lib/junit-4.8.1.jar:lib/jsapi.jar</classpath>
                 <built-to>bld</built-to>
                 <source-level>1.6</source-level>
             </compilation-unit>
