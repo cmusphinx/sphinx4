@@ -105,4 +105,13 @@ public class SpeechClassifiedData implements Data {
     public DoubleData getDoubleData() {
         return data;
     }
+    
+
+    /**
+     * @return a string that describes the data.
+     */
+    @Override
+    public String toString() {
+        return "SpeechClassifiedData containing " + data.toString() + " classified as " + (isSpeech ? "speech" : "non-speech");
+    }
 }
