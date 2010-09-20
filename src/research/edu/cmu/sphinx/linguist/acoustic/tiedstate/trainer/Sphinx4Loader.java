@@ -18,20 +18,16 @@ import static edu.cmu.sphinx.linguist.acoustic.tiedstate.Pool.Feature.*;
 import edu.cmu.sphinx.util.ExtendedStreamTokenizer;
 import edu.cmu.sphinx.util.LogMath;
 import edu.cmu.sphinx.util.StreamFactory;
-import edu.cmu.sphinx.util.Utilities;
 import edu.cmu.sphinx.util.props.ConfigurationManager;
 import edu.cmu.sphinx.util.props.PropertyException;
 import edu.cmu.sphinx.util.props.PropertySheet;
 import edu.cmu.sphinx.util.props.S4Integer;
 
-import java.io.DataInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.Map;
-import java.util.Properties;
 import java.util.logging.Level;
 
 /**
@@ -76,7 +72,7 @@ class Sphinx4Loader extends Sphinx3Loader {
         int numTri = est.getInt("numTri");
         est.expectString("n_tri");
 
-        int numStateMap = est.getInt("numStateMap");
+        est.getInt("numStateMap");
         est.expectString("n_state_map");
 
         int numTiedState = est.getInt("numTiedState");
@@ -100,11 +96,9 @@ class Sphinx4Loader extends Sphinx3Loader {
 
         // Load the base phones
         for (int i = 0; i < numBase; i++) {
-            String name = est.getString();
             String left = est.getString();
             String right = est.getString();
             String position = est.getString();
-            String attribute = est.getString();
             int tmat = est.getInt("tmat");
             int numStates = 0;
 
@@ -215,7 +209,6 @@ class Sphinx4Loader extends Sphinx3Loader {
 
                     Context context = LeftRightContext.get(leftContext, rightContext);
 //                    unit = Unit.getUnit(name, false, context);
-                    unit = null;
                 }
                 lastUnitName = unitName;
                 lastUnit = unit;
@@ -242,7 +235,7 @@ class Sphinx4Loader extends Sphinx3Loader {
     }
 
     @Override
-    protected Pool<float[][]> loadTransitionMatricesAscii(String path)
+    protected Pool<float[][]> loadTransitionMatrices(String path)
             throws FileNotFoundException, IOException {
 
         String location = "";
@@ -275,13 +268,9 @@ class Sphinx4Loader extends Sphinx3Loader {
                     // the first (numStates - 1) rows
 
                     if (j < numStates - 1) {
-                        if (sparseForm) {
-                            if (k == j || k == j + 1) {
-                                tmat[j][k] = est.getFloat("tmat value");
-                            }
-                        } else {
-                            tmat[j][k] = est.getFloat("tmat value");
-                        }
+                         if (k == j || k == j + 1) {
+                             tmat[j][k] = est.getFloat("tmat value");
+                         }
                     }
 
                     tmat[j][k] = logMath.linearToLog(tmat[j][k]);
@@ -295,55 +284,6 @@ class Sphinx4Loader extends Sphinx3Loader {
             pool.put(i, tmat);
         }
         est.close();
-        return pool;
-    }
-
-    @Override
-    protected Pool<float[][]> loadTransitionMatricesBinary(String path) throws IOException, URISyntaxException {
-
-        logger.info("Loading transition matrices from: ");
-        logger.info(path);
-
-        Properties props = new Properties();
-        DataInputStream dis = readS3BinaryHeader(path, props);
-
-        String version = props.getProperty("version");
-
-        if (version == null || !version.equals(TMAT_FILE_VERSION)) {
-            throw new IOException("Unsupported version in " + path);
-        }
-
-        String checksum = props.getProperty("chksum0");
-        boolean doCheckSum = (checksum != null && checksum.equals("yes"));
-
-        Pool<float[][]> pool = new Pool<float[][]>(path);
-
-        int numMatrices = readInt(dis);
-        // numRows = readInt(dis);
-        // numStates = readInt(dis);
-        int numValues = readInt(dis);
-
-        // assert numValues == numStates * numRows * numMatrices;
-
-        int count = 0;
-        for (int i = 0; i < numMatrices; i++) {
-            int numStates = readInt(dis);
-            float[][] tmat = new float[numStates][];
-            // last row should be zeros
-            tmat[numStates - 1] = new float[numStates];
-            logMath.linearToLog(tmat[numStates - 1]);
-
-            for (int j = 0; j < numStates - 1; j++) {
-                tmat[j] = readFloatArray(dis, numStates);
-                count += numStates;
-                Utilities.nonZeroFloor(tmat[j], 0f);
-                Utilities.normalize(tmat[j]);
-                logMath.linearToLog(tmat[j]);
-            }
-            pool.put(i, tmat);
-        }
-        dis.close();
-        assert numValues == count;
         return pool;
     }
 }
