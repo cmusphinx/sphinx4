@@ -176,7 +176,7 @@ public class Sphinx3Loader implements Loader {
     private Pool<float[][]> varianceTransformationMatrixPool;
     private Pool<float[]> varianceTransformationVectorPool;
     
-    private float[][] transformMatrix;
+    protected float[][] transformMatrix;
     protected Pool<Senone> senonePool;
 
     private Map<String, Unit> contextIndependentUnits;
@@ -329,17 +329,18 @@ public class Sphinx3Loader implements Loader {
         logger.config("    modelName: " + this.model);
         logger.config("    dataLocation   : " + dataLocation);
 
-        meansPool = loadDensityFile(dataLocation + "means",
-                    -Float.MAX_VALUE);
-            variancePool = loadDensityFile(dataLocation + "variances",
-                    varianceFloor);
-            mixtureWeightsPool = loadMixtureWeights(dataLocation
-                    + "mixture_weights", mixtureWeightFloor);
-            transitionsPool = loadTransitionMatrices(dataLocation
-                    + "transition_matrices");
-            transformMatrix = loadTransformMatrix(dataLocation + "feature_transform");
+        meansPool = loadDensityFile(dataLocation + "means", -Float.MAX_VALUE);
+        variancePool = loadDensityFile(dataLocation + "variances",
+                varianceFloor);
+        mixtureWeightsPool = loadMixtureWeights(dataLocation
+                + "mixture_weights", mixtureWeightFloor);
+        transitionsPool = loadTransitionMatrices(dataLocation
+                + "transition_matrices");
+        transformMatrix = loadTransformMatrix(dataLocation
+                + "feature_transform");
 
-            senonePool = createSenonePool(distFloor, varianceFloor);
+        senonePool = createSenonePool(distFloor, varianceFloor);
+
         // load the HMM modelDef file
         InputStream modelStream = getDataStream(this.model);
         if (modelStream == null) {
@@ -348,11 +349,13 @@ public class Sphinx3Loader implements Loader {
         loadHMMPool(useCDUnits, modelStream, this.model);
     }
 
+    
     @Override
     public Map<String, Unit> getContextIndependentUnits() {
         return contextIndependentUnits;
     }
 
+    
     /**
      * Creates the senone pool from the rest of the pools.
      * 
@@ -371,13 +374,14 @@ public class Sphinx3Loader implements Loader {
         int numGaussiansPerSenone = mixtureWeightsPool.getFeature(
                 NUM_GAUSSIANS_PER_STATE, 0);
         int numSenones = mixtureWeightsPool.getFeature(NUM_SENONES, 0);
+        int numStreams = mixtureWeightsPool.getFeature(NUM_STREAMS, 0);
         int whichGaussian = 0;
 
-        logger.fine("NG " + numGaussiansPerSenone);
-        logger.fine("NS " + numSenones);
-        logger.fine("NMIX " + numMixtureWeights);
-        logger.fine("NMNS " + numMeans);
-        logger.fine("NMNS " + numVariances);
+        logger.fine("Senones " + numSenones);
+        logger.fine("Gaussians Per Senone " + numGaussiansPerSenone);
+        logger.fine("MixtureWeights " + numMixtureWeights);
+        logger.fine("Means " + numMeans);
+        logger.fine("Variances " + numVariances);
 
         assert numGaussiansPerSenone > 0;
         assert numMixtureWeights == numSenones;
@@ -394,10 +398,10 @@ public class Sphinx3Loader implements Loader {
                 null : varianceTransformationVectorPool.get(0);
         
         for (int i = 0; i < numSenones; i++) {
-            MixtureComponent[] mixtureComponents = new MixtureComponent[numGaussiansPerSenone];
+            MixtureComponent[] mixtureComponents = new MixtureComponent[numGaussiansPerSenone * numStreams];
             for (int j = 0; j < numGaussiansPerSenone; j++) {
-                mixtureComponents[j] = new MixtureComponent(logMath, meansPool
-                        .get(whichGaussian), 
+                mixtureComponents[j] = new MixtureComponent(logMath, 
+                        meansPool.get(whichGaussian), 
                         meansTransformationMatrix, 
                         meansTransformationVector,
                         variancePool.get(whichGaussian),
@@ -431,7 +435,7 @@ public class Sphinx3Loader implements Loader {
      * @throws IOException
      *             if an error occurs while loading the data
      */
-    private Pool<float[]> loadDensityFile(String path, float floor)
+    protected Pool<float[]> loadDensityFile(String path, float floor)
             throws IOException, URISyntaxException {
         Properties props = new Properties();
         int blockSize = 0;
@@ -470,7 +474,6 @@ public class Sphinx3Loader implements Loader {
         }
 
         assert rawLength == numGaussiansPerState * blockSize * numStates;
-        assert numStreams == 1;
 
         Pool<float[]> pool = new Pool<float[]>(path);
         pool.setFeature(NUM_SENONES, numStates);
@@ -482,7 +485,7 @@ public class Sphinx3Loader implements Loader {
                 for (int k = 0; k < numGaussiansPerState; k++) {
                     float[] density = readFloatArray(dis, vectorLength[j]);
                     Utilities.floorData(density, floor);
-                    pool.put(i * numGaussiansPerState + k, density);
+                    pool.put(i * numStreams * numGaussiansPerState + j * numGaussiansPerState + k, density);
                 }
             }
         }
@@ -812,7 +815,7 @@ public class Sphinx3Loader implements Loader {
                 lastUnit = unit;
 
                 if (logger.isLoggable(Level.FINE)) {
-                    logger.fine("Loaded " + unit);
+                	logger.fine("Loaded " + unit);
                 }
 
                 float[][] transitionMatrix = transitionsPool.get(tmat);
@@ -880,7 +883,7 @@ public class Sphinx3Loader implements Loader {
      * @throws IOException
      *             if an error occurs while loading the data
      */
-    private Pool<float[]> loadMixtureWeights(String path, float floor)
+    protected Pool<float[]> loadMixtureWeights(String path, float floor)
             throws IOException, URISyntaxException {
         logger.fine("Loading mixture weights from: " + path);
 
@@ -905,23 +908,47 @@ public class Sphinx3Loader implements Loader {
         int numGaussiansPerState = readInt(dis);
         int numValues = readInt(dis);
 
+        logger.fine("Number of states " + numStates);
+        logger.fine("Number of streams " + numStreams);
+        logger.fine("Number of gaussians per state " + numGaussiansPerState);
+
         assert numValues == numStates * numStreams * numGaussiansPerState;
-        assert numStreams == 1;
 
         pool.setFeature(NUM_SENONES, numStates);
         pool.setFeature(NUM_STREAMS, numStreams);
         pool.setFeature(NUM_GAUSSIANS_PER_STATE, numGaussiansPerState);
 
-        for (int i = 0; i < numStates; i++) {
-            float[] logMixtureWeight = readFloatArray(dis, numGaussiansPerState);
-            Utilities.normalize(logMixtureWeight);
-            Utilities.floorData(logMixtureWeight, floor);
-            logMath.linearToLog(logMixtureWeight);
-            pool.put(i, logMixtureWeight);
+        if (numStreams != 1) {
+            for (int i = 0; i < numStates; i++) {
+                float[] logMixtureWeight = new float[numGaussiansPerState
+                        * numStreams];
+                for (int j = 0; j < numStreams; j++) {
+                    float[] logStreamMixtureWeight = readFloatArray(dis,
+                            numGaussiansPerState);
+                    Utilities.normalize(logStreamMixtureWeight);
+                    Utilities.floorData(logStreamMixtureWeight, floor);
+                    logMath.linearToLog(logStreamMixtureWeight);
+                    System.arraycopy(logStreamMixtureWeight, 0,
+                            logMixtureWeight, numGaussiansPerState * j,
+                            numGaussiansPerState);
+                }
+                pool.put(i, logMixtureWeight);
+            }
+        } else {
+            for (int i = 0; i < numStates; i++) {
+                float[] logMixtureWeight = readFloatArray(dis,
+                        numGaussiansPerState);
+                Utilities.normalize(logMixtureWeight);
+                Utilities.floorData(logMixtureWeight, floor);
+                logMath.linearToLog(logMixtureWeight);
+                pool.put(i, logMixtureWeight);
+
+            }
+
         }
-        
+
         validateChecksum(dis, doCheckSum);
-        
+
         dis.close();
         return pool;
     }

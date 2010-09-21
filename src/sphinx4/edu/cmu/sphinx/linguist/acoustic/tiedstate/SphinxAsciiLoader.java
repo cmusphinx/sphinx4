@@ -84,7 +84,7 @@ public class SphinxAsciiLoader extends Sphinx3Loader {
      * @throws IOException
      *             if an error occurs while loading the data
      */
-    private Pool<float[]> loadDensityFile(String path, float floor) throws IOException, URISyntaxException {
+    protected Pool<float[]> loadDensityFile(String path, float floor) throws IOException, URISyntaxException {
         logger.fine("Loading density file from: " + path);
         InputStream inputStream = getDataStream(path);
         if (inputStream == null) {
@@ -139,7 +139,7 @@ public class SphinxAsciiLoader extends Sphinx3Loader {
      * @throws IOException
      *             if an error occurs while loading the data
      */
-    private Pool<float[]> loadMixtureWeights(String path, float floor) throws IOException, URISyntaxException {
+    protected Pool<float[]> loadMixtureWeights(String path, float floor) throws IOException, URISyntaxException {
         logger.fine("Loading mixture weights from: " + path);
         InputStream inputStream = getDataStream(path);
         if (inputStream == null) {

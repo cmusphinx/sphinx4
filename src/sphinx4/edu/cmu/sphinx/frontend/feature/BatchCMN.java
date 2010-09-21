@@ -17,6 +17,8 @@ import edu.cmu.sphinx.frontend.endpoint.*;
 import edu.cmu.sphinx.util.props.PropertyException;
 import edu.cmu.sphinx.util.props.PropertySheet;
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.*;
 
 
@@ -48,6 +50,7 @@ public class BatchCMN extends BaseDataProcessor {
     private double[] sums;           // array of current sums
     private List<Data> cepstraList;
     private int numberDataCepstra;
+    private DecimalFormat formatter = new DecimalFormat("0.00;-0.00", new DecimalFormatSymbols(Locale.US));;
 
     public BatchCMN() {
         initLogger();
@@ -58,7 +61,7 @@ public class BatchCMN extends BaseDataProcessor {
      */
     @Override
     public void newProperties(PropertySheet ps) throws PropertyException {
-        super.newProperties(ps);
+        super.newProperties(ps);       
     }
 
 
@@ -153,11 +156,14 @@ public class BatchCMN extends BaseDataProcessor {
 
     /** Normalizes the list of Data. */
     private void normalizeList() {
-
+    	StringBuilder cmn = new StringBuilder();
         // calculate the mean first
         for (int i = 0; i < sums.length; i++) {
             sums[i] /= numberDataCepstra;
+            cmn.append (formatter.format(sums[i]));
+            cmn.append(' ');
         }
+        logger.info(cmn.toString());
 
         for (Data data : cepstraList) {
             if (data instanceof DoubleData) {
