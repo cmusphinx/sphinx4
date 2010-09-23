@@ -408,7 +408,10 @@ public class LexTreeLinguist implements Linguist {
      */
     private SearchState getInitialSearchState() {
         InitialWordNode node = hmmTree.getInitialNode();
-        assert node != null : "Initial state <s> is missing in the language model";
+
+        if (node == null)
+    	    throw new RuntimeException("Language model has no entry for initial word <s>");
+
         return new LexTreeWordState(node, node.getParent(), (new WordSequence(sentenceStartWordArray)).trim(
                 maxDepth - 1), 0f, logOne, logOne, false);
     }
