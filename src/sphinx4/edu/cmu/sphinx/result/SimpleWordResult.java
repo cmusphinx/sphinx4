@@ -150,6 +150,6 @@ public class SimpleWordResult implements WordResult {
     /** @see edu.cmu.sphinx.result.WordResult#isFiller() */
     @Override
     public boolean isFiller() {
-        return word.isFiller() || word.toString().equals("<noop>");
+        return word.isFiller() || word.toString().equals("<skip>");
     }
 }

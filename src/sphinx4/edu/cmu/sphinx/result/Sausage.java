@@ -70,7 +70,7 @@ public class Sausage implements ConfidenceResult {
             if (sum < LogMath.getLogOne() - 10) {
                 float remainder = logMath.subtractAsLinear
                     (LogMath.getLogOne(), sum);
-                addWordHypothesis(index, "<noop>", remainder, logMath);
+                addWordHypothesis(index, "<skip>", remainder, logMath);
             } else {
                 ConfusionSet newSet = new ConfusionSet();
                 for (Map.Entry<Double, Set<WordResult>> entry : set.entrySet()) {
