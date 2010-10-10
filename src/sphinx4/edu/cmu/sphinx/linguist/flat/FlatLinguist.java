@@ -1098,13 +1098,24 @@ public class FlatLinguist implements Linguist, Configurable {
          * @param left  the entry left context
          * @param units the set of units
          * @param index the index of the current unit
+
          */
         private Unit[] getLC(UnitContext left, Unit[] units, int index) {
             Unit[] leftUnits = left.getUnits();
             int curSize = leftUnits.length + index;
             int actSize = Math.min(curSize, getLeftContextSize(units[index]));
-            int leftIndex = curSize - actSize;
-            return combineUnits(leftUnits, units, actSize, leftIndex);
+            int leftIndex = index - actSize;
+            
+            Unit[] lc = new Unit[actSize];
+            for (int i = 0; i < lc.length; i++) {
+                int lcIndex = leftIndex + i;
+                if (lcIndex < 0) {
+                    lc[i] = leftUnits[leftUnits.length + lcIndex];
+                } else {
+                    lc[i] = units[lcIndex];
+                }
+            }
+            return lc;
         }
 
         /**
@@ -1114,25 +1125,24 @@ public class FlatLinguist implements Linguist, Configurable {
          * @param units the set of units
          * @param index the index of the current unit
          * @param right the exiting right context
+
          */
         private Unit[] getRC(Unit[] units, int index, UnitContext right) {
             Unit[] rightUnits = right.getUnits();
             int leftIndex = index + 1;
             int curSize = units.length - leftIndex + rightUnits.length;
             int actSize = Math.min(curSize, getRightContextSize(units[index]));
-            return combineUnits(units, rightUnits, actSize, leftIndex);
-        }
 
-        private Unit[] combineUnits(Unit[] left, Unit[] right, int size, int leftIndex) {
-            if (size == left.length && leftIndex == 0)
-                return left;
-            if (leftIndex >= left.length)
-                return size == right.length ? right : Arrays.copyOf(right, size);
-            Unit[] units = Arrays.copyOfRange(left, leftIndex, leftIndex + size);
-            int fromLeft = left.length - leftIndex;
-            if (fromLeft < size)
-                System.arraycopy(right, 0, units, fromLeft, size - fromLeft);
-            return units;
+            Unit[] rc = new Unit[actSize];
+            for (int i = 0; i < rc.length; i++) {
+                int rcIndex = leftIndex + i;
+                if (rcIndex < units.length) {
+                    rc[i] = units[rcIndex];                    
+                } else {
+                    rc[i] = rightUnits[rcIndex - units.length];
+                }
+            }
+            return rc;
         }
 
         /**
