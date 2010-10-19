@@ -14,7 +14,6 @@
  */
 package edu.cmu.sphinx.linguist.language.ngram.large;
 
-import java.io.File;
 import java.net.URL;
 
 import edu.cmu.sphinx.linguist.dictionary.Dictionary;
@@ -80,9 +79,7 @@ public class LargeTrigramModel extends LargeNGramModel {
     @Override
     public void newProperties(PropertySheet ps) throws PropertyException {
         logger = ps.getLogger();
-        URL urlLocation = ConfigurationManagerUtils.getResource(PROP_LOCATION,
-                ps);
-        location = new File(urlLocation.getFile());
+        location = ConfigurationManagerUtils.getResource(PROP_LOCATION, ps);
         ngramLogFile = ps.getString(PROP_QUERY_LOG_FILE);
         clearCacheAfterUtterance = ps
                 .getBoolean(PROP_CLEAR_CACHES_AFTER_UTTERANCE);

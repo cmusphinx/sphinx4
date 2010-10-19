@@ -89,6 +89,7 @@ public class LargeNGramModel implements LanguageModel, BackoffLanguageModel {
     // ------------------------------
     // Configuration data
     // ------------------------------
+    URL location;
     protected Logger logger;
     protected LogMath logMath;
     protected int maxDepth;
@@ -100,7 +101,6 @@ public class LargeNGramModel implements LanguageModel, BackoffLanguageModel {
     
     protected Dictionary dictionary;
     protected String format;
-    protected File location;
     protected boolean applyLanguageWeightAndWip;
     protected float languageWeight;
     protected float unigramWeight;
@@ -135,7 +135,7 @@ public class LargeNGramModel implements LanguageModel, BackoffLanguageModel {
     private float[][] ngramBackoffTable;
     private float[] unigramSmearTerm;
     
-    public LargeNGramModel( String format, URL urlLocation, String ngramLogFile,
+    public LargeNGramModel( String format, URL location, String ngramLogFile,
                               int maxNGramCacheSize, boolean clearCacheAfterUtterance, 
                               int maxDepth,  LogMath logMath, Dictionary dictionary,
                               boolean applyLanguageWeightAndWip, float languageWeight,
@@ -143,7 +143,7 @@ public class LargeNGramModel implements LanguageModel, BackoffLanguageModel {
                               ) {
         logger = Logger.getLogger(getClass().getName());
         this.format = format;
-        this.location = new File (urlLocation.getFile());
+        this.location = location;
         this.ngramLogFile = ngramLogFile;
         this.ngramCacheSize = maxNGramCacheSize;
         this.clearCacheAfterUtterance = clearCacheAfterUtterance;
@@ -170,8 +170,7 @@ public class LargeNGramModel implements LanguageModel, BackoffLanguageModel {
     @Override
     public void newProperties(PropertySheet ps) throws PropertyException {
         logger = ps.getLogger();
-        URL urlLocation = ConfigurationManagerUtils.getResource(PROP_LOCATION, ps);
-        location = new File (urlLocation.getFile());
+        location = ConfigurationManagerUtils.getResource(PROP_LOCATION, ps);
         ngramLogFile = ps.getString(PROP_QUERY_LOG_FILE);
         ngramCacheSize = ps.getInt(PROP_NGRAM_CACHE_SIZE);
         clearCacheAfterUtterance = ps.getBoolean(PROP_CLEAR_CACHES_AFTER_UTTERANCE);
@@ -199,8 +198,13 @@ public class LargeNGramModel implements LanguageModel, BackoffLanguageModel {
         if (ngramLogFile != null)
             logFile = new PrintWriter(new FileOutputStream(ngramLogFile));
         
-        loader = new BinaryLoader(format, location, applyLanguageWeightAndWip,
-                logMath, languageWeight, wip, unigramWeight);
+        if (location.getProtocol() == null || location.getProtocol().equals("file")) {
+            loader = new BinaryLoader(new File(location.getFile()), format, applyLanguageWeightAndWip,
+                                      logMath, languageWeight, wip, unigramWeight);
+        } else {
+            loader = new BinaryStreamLoader(location, format, applyLanguageWeightAndWip,
+                    logMath, languageWeight, wip, unigramWeight);            
+        }
                 
         unigramIDMap = new HashMap<Word, UnigramProbability>();
         unigrams = loader.getUnigrams();
@@ -249,7 +253,6 @@ public class LargeNGramModel implements LanguageModel, BackoffLanguageModel {
         
         TimerPool.getTimer(this,"Load LM").stop();
     }
-
 
     /*
     * (non-Javadoc)
