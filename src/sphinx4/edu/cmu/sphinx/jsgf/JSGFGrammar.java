@@ -252,6 +252,8 @@ public class JSGFGrammar extends Grammar {
      * @return manager with loaded grammars
      */
     public JSGFRuleGrammarManager getGrammarManager() {
+        if (manager == null)
+            manager = new JSGFRuleGrammarManager();
         return manager;
     }
 
@@ -606,7 +608,8 @@ public class JSGFGrammar extends Grammar {
             JSGFGrammarException {
         try {
             if (loadGrammar) {
-                manager = new JSGFRuleGrammarManager();
+                if (manager == null)
+                    getGrammarManager();
                 ruleGrammar = loadNamedGrammar(grammarName);
                 loadImports(ruleGrammar);
                 loadGrammar = false;

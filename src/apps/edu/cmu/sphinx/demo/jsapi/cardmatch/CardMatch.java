@@ -18,6 +18,8 @@ import edu.cmu.sphinx.recognizer.Recognizer;
 import edu.cmu.sphinx.result.Result;
 import edu.cmu.sphinx.util.props.*;
 
+import javax.speech.EngineException;
+import javax.speech.EngineStateError;
 import javax.speech.recognition.GrammarException;
 import javax.speech.recognition.RuleGrammar;
 import javax.speech.recognition.RuleParse;
@@ -209,7 +211,8 @@ public class CardMatch implements Recorder, Configurable {
      */
     private String getResultTag(String resultText) {
         try {
-            BaseRecognizer recognizer = new BaseRecognizer(grammar.getGrammarManager());        
+            BaseRecognizer recognizer = new BaseRecognizer(grammar.getGrammarManager());
+            recognizer.allocate();
             RuleGrammar ruleGrammar = new BaseRuleGrammar(recognizer, grammar.getRuleGrammar());
             RuleParse ruleParse = ruleGrammar.parse(resultText, null);
             if (ruleParse != null) {
@@ -219,10 +222,14 @@ public class CardMatch implements Recorder, Configurable {
             } else {
                 return null;
             }
-        } catch (GrammarException ge) {
-            ge.printStackTrace();
-            return null;
+        } catch (GrammarException e) {
+            e.printStackTrace();
+        } catch (EngineException e) {
+            e.printStackTrace();
+        } catch (EngineStateError e) {
+            e.printStackTrace();
         }
+        return null;
     }
 
 

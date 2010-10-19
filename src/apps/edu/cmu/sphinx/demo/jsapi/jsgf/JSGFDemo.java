@@ -22,6 +22,9 @@ import edu.cmu.sphinx.util.props.ConfigurationManager;
 import edu.cmu.sphinx.util.props.PropertyException;
 import java.io.IOException;
 import java.net.URL;
+
+import javax.speech.EngineException;
+import javax.speech.EngineStateError;
 import javax.speech.recognition.GrammarException;
 import javax.speech.recognition.Rule;
 import javax.speech.recognition.RuleGrammar;
@@ -55,9 +58,11 @@ public class JSGFDemo {
      * @throws PropertyException if a property configuration occurs
      * @throws InstantiationException if a problem occurs while
      * creating any of the recognizer components.
+     * @throws EngineStateError  If engine is initialized in a wrong state
+     * @throws EngineException If engine fails to initialize
      */
     public JSGFDemo() throws 
-            IOException, PropertyException, InstantiationException {
+            IOException, PropertyException, InstantiationException, EngineException, EngineStateError {
 
         URL url = JSGFDemo.class.getResource("jsgf.config.xml");
         ConfigurationManager cm = new ConfigurationManager(url);
@@ -70,6 +75,7 @@ public class JSGFDemo {
         microphone = (Microphone) cm.lookup("microphone");
         
         jsapiRecognizer = new BaseRecognizer(jsgfGrammar.getGrammarManager());
+        jsapiRecognizer.allocate();
     }
 
 
@@ -245,6 +251,10 @@ public class JSGFDemo {
             System.out.println("Problem creating components " + e);
         } catch (GrammarException  e) {
             System.out.println("Problem with Grammar " + e);
+        } catch (EngineException e) {
+            System.out.println("Problem with parsing engine " + e);
+        } catch (EngineStateError e) {
+            System.out.println("Problem with engine state " + e);            
         }
     }
 }

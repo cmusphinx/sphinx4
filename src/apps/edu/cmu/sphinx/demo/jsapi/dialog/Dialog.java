@@ -254,6 +254,12 @@ class MyMusicBehavior extends MyBehavior {
         // now lets add our custom songs from the play list
         // First, get the JSAPI RuleGrammar
         BaseRecognizer recognizer = new BaseRecognizer(getGrammar().getGrammarManager());
+        try {
+            recognizer.allocate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        
         RuleGrammar ruleGrammar = new BaseRuleGrammar (recognizer, getGrammar().getRuleGrammar());
 
         // now lets add a rule for each song in the play list

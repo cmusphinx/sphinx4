@@ -448,6 +448,11 @@ class DialogNodeBehavior {
     RuleParse getRuleParse(Result result) throws GrammarException {
         String resultText = result.getBestFinalResultNoFiller();
         BaseRecognizer jsapiRecognizer = new BaseRecognizer(getGrammar().getGrammarManager());
+        try {
+            jsapiRecognizer.allocate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         RuleGrammar ruleGrammar = new BaseRuleGrammar (jsapiRecognizer, getGrammar().getRuleGrammar());
         RuleParse ruleParse = ruleGrammar.parse(resultText, null);
         return ruleParse;
