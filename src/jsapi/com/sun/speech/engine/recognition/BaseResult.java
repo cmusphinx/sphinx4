@@ -456,6 +456,8 @@ public class BaseResult
 
     /** Concatenate the best tokens in the Result. */
     public String toString() {
+        if (numTokens() == 0)
+            return "<nothing>";
         StringBuilder sb = new StringBuilder(getBestToken(0).getWrittenText());
         for (int i = 1; i < numTokens(); i++)
             sb.append(' ').append(getBestToken(i).getWrittenText());
