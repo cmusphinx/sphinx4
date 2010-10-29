@@ -61,9 +61,11 @@ public class PartitionActiveListFactory extends ActiveListFactory {
 
 
     /**
-     * An active list that does absolute beam with pruning by partitioning the token list based on absolute beam width,
-     * instead of sorting the token list, and then chopping the list up with the absolute beam width. The expected run
-     * time of this randomized partitioning algorithm is O(n), instead of O(n log n) for merge sort.
+     * An active list that does absolute beam with pruning by partitioning the
+     * token list based on absolute beam width, instead of sorting the token
+     * list, and then chopping the list up with the absolute beam width. The
+     * expected run time of this partitioning algorithm is O(n), instead of O(n log n) 
+     * for merge sort.
      * <p/>
      * This class is not thread safe and should only be used by a single thread.
      * <p/>
