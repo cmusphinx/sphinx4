@@ -47,6 +47,10 @@ public class StreamCepstrumSource extends BaseDataProcessor {
     @S4Integer(defaultValue = 13)
     public static final String PROP_CEPSTRUM_LENGTH = "cepstrumLength";
 
+    /** The property specifying whether the input data is big-endian. */
+    @S4Boolean(defaultValue = true)
+    public static final String PROP_BIG_ENDIAN_DATA = "bigEndianData";
+
     /** The property that defines the sample rate */
     @S4Integer(defaultValue = 16000)
     public static final String PROP_SAMPLE_RATE = "sampleRate";
@@ -61,7 +65,7 @@ public class StreamCepstrumSource extends BaseDataProcessor {
     private int frameSize;
     private int sampleRate;
     private long firstSampleNumber;
-    private boolean bigEndian = true;
+    private boolean bigEndian;
 
     public StreamCepstrumSource( int cepstrumLength, boolean binary, float frameShiftMs, float frameSizeMs, int sampleRate ) {
 	initLogger();
@@ -85,11 +89,12 @@ public class StreamCepstrumSource extends BaseDataProcessor {
         super.newProperties(ps);
         cepstrumLength = ps.getInt(PROP_CEPSTRUM_LENGTH);
         binary = ps.getBoolean(PROP_BINARY);
+        bigEndian = ps.getBoolean(PROP_BIG_ENDIAN_DATA);
         float frameShiftMs = ps.getFloat(PROP_FRAME_SHIFT_MS);
         float frameSizeMs = ps.getFloat(PROP_FRAME_SIZE_MS);
         sampleRate = ps.getInt(PROP_SAMPLE_RATE);
         frameShift = DataUtil.getSamplesPerWindow(sampleRate, frameShiftMs);
-        frameSize = DataUtil.getSamplesPerShift(sampleRate, frameSizeMs);
+        frameSize = DataUtil.getSamplesPerShift(sampleRate, frameSizeMs);        
     }
 
 
