@@ -25,31 +25,6 @@ public class Partitioner {
     /** Max recursion depth **/
     final private int MAX_DEPTH = 50;
 
-    /**
-     * Partitions sub-array of tokens around the rth token.
-     *
-     * @param tokens the token array to partition
-     * @param p      the starting index of the subarray
-     * @param r      the pivot and the ending index of the subarray, inclusive
-     * @return the index (after partitioning) of the element around which the array is partitioned
-     */
-    private int endPointPartition1(Token[] tokens, int p, int r) {
-
-        Token pivot = tokens[r];
-        int i = p - 1;
-        for (int j = p; j < r; j++) {
-            Token current = tokens[j];
-            if (current.getScore() >= pivot.getScore()) {
-                i++;
-                setToken(tokens, j, tokens[i]);
-                setToken(tokens, i, current);
-            }
-        }
-        i++;
-        setToken(tokens, r, tokens[i]);
-        setToken(tokens, i, pivot);
-        return i;
-    }
 
     /**
      * Partitions sub-array of tokens around the end token. 
