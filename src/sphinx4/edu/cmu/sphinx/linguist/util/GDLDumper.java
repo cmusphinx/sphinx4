@@ -296,7 +296,7 @@ public class GDLDumper extends LinguistDumper {
 
     /**
      * Returns a quoted string version of its argument. This method mainly is used to hide the ugliness caused by trying
-     * to esape a quote character in certain syntax higlighting editors such as vim.
+     * to escape a quote character in certain syntax highlighting editors such as vim.
      *
      * @param s the string to quote.
      * @return the quoted string

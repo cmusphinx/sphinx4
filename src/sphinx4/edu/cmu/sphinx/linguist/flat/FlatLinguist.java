@@ -678,10 +678,6 @@ public class FlatLinguist implements Linguist, Configurable {
                     Unit[] context = size > maxSize ? Arrays.copyOfRange(units, size - maxSize, size) : units;
                     endingContexts.add(UnitContext.get(context));
                 }
-                // add a silence to the ending context since we want to
-                // include an optional transition to a silence unit at
-                // the end of all words
-                endingContexts.add(UnitContext.SILENCE);
             }
             return endingContexts;
         }
@@ -934,7 +930,7 @@ public class FlatLinguist implements Linguist, Configurable {
         // of the previous states (corresponding to the starting
         // contexts for this state).
         //
-        // When expanding a proununciation, the following steps are
+        // When expanding a pronunciation, the following steps are
         // taken:
         //      1) Get the starting context for the pronunciation.
         //      This is the set of units that correspond to the start
@@ -1052,24 +1048,6 @@ public class FlatLinguist implements Linguist, Configurable {
                     ContextPair cp = ContextPair.get(nextLeftContext, actualRightContext);
                     // T(" Adding to exitPoints " + cp);
                     addExitPoint(cp, tail);
-                    // if we have encountered a last unit with a right
-                    // context of silence, then we add a silence unit
-                    // to this unit. the silence unit has a self
-                    // loopback.
-                    if (actualRightContext == UnitContext.SILENCE) {
-                        SentenceHMMState silTail;
-                        UnitState silUnit = new ExtendedUnitState(parent, which + 1, UnitManager.SILENCE);
-                        SentenceHMMState silExistingState = getExistingState(silUnit);
-                        if (silExistingState != null) {
-                            attachState(tail, silExistingState, logOne, logSilenceInsertionProbability);
-                        } else {
-                            attachState(tail, silUnit, logOne, logSilenceInsertionProbability);
-                            addStateToCache(silUnit);
-                            silTail = expandUnit(silUnit);
-                            ContextPair silCP = ContextPair.get(UnitContext.SILENCE, UnitContext.EMPTY);
-                            addExitPoint(silCP, silTail);
-                        }
-                    }
                 }
                 return tail;
             }
