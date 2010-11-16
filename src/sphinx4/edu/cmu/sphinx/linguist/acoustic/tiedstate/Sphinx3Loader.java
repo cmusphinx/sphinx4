@@ -128,7 +128,7 @@ public class Sphinx3Loader implements Loader {
     /**
      * Subfolder where the acoustic model can be found
      */
-    @S4String(mandatory = false, defaultValue = "/")
+    @S4String(mandatory = false, defaultValue = "")
     public final static String PROP_DATA_LOCATION = "dataLocation";
 
     /**

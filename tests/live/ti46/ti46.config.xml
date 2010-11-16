@@ -105,8 +105,6 @@
         <property name="logMath" value="logMath"/>
         <property name="unitManager" value="unitManager"/>
         <property name="location" value="resource:/TIDIGITS_8gau_13dCep_16k_40mel_130Hz_6800Hz"/>
-        <property name="modelDefinition" value="wd_dependent_phone.500.mdef"/>
-        <property name="dataLocation" value="wd_dependent_phone.cd_continuous_8gau/"/>
     </component>
 
 
@@ -115,7 +113,7 @@
         <property name="dictionaryPath" 
 	 value="resource:/TIDIGITS_8gau_13dCep_16k_40mel_130Hz_6800Hz/dictionary"/>
         <property name="fillerPath"
-	 value="resource:/TIDIGITS_8gau_13dCep_16k_40mel_130Hz_6800Hz/fillerdict"/>
+	 value="resource:/TIDIGITS_8gau_13dCep_16k_40mel_130Hz_6800Hz/noisedict"/>
         <property name="addSilEndingPronunciation" value="false"/>
         <property name="unitManager" value="unitManager"/>
     </component>    

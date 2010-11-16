@@ -7,7 +7,7 @@
         <property name="dictionaryPath"
                   value="dict/cmudict.0.6d"/>
         <property name="fillerPath" 
-	          value="dict/fillerdict"/>
+	          value="noisedict"/>
         <property name="allowMissingWord" 
 	          value="true"/>
         <property name="unitManager" value="unitManager"/>

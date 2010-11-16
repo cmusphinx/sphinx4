@@ -147,7 +147,7 @@
         <property name="dictionaryPath"
                   value="resource:/WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz/dict/cmudict.0.6d"/>
         <property name="fillerPath"
-                  value="resource:/WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz/dict/fillerdict"/>
+                  value="resource:/WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz/noisedict"/>
         <property name="addSilEndingPronunciation" value="false"/>
         <property name="wordReplacement" value="&lt;sil&gt;"/>
         <property name="unitManager" value="unitManager"/>
@@ -158,7 +158,7 @@
         <property name="dictionaryPath"
                   value="resource:/WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz/dict/cmudict.0.6d"/>
         <property name="fillerPath"
-                  value="resource:/WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz/dict/fillerdict"/>
+                  value="resource:/WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz/noisedict"/>
         <property name="wordDictionary" value="dictionary"/>
         <property name="classMap" value="classMap"/>
     </component>
@@ -225,8 +225,6 @@
         <property name="logMath" value="logMath"/>
         <property name="unitManager" value="unitManager"/>
         <property name="location" value="resource:/WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz"/>
-        <property name="modelDefinition" value="etc/WSJ_clean_13dCep_16k_40mel_130Hz_6800Hz.4000.mdef"/>
-        <property name="dataLocation" value="cd_continuous_8gau/"/>        
     </component>
 
     <!-- ******************************************************** -->

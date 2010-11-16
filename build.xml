@@ -38,10 +38,6 @@
     <property name="tidigits_name" value="TIDIGITS_8gau_13dCep_16k_40mel_130Hz_6800Hz"/>
     <property name="tidigits_data_dir" value="models/acoustic/tidigits"/>
 
-    <property name="rm1_name" value="RM1_8gau_13dCep_16k_40mel_130Hz_6800Hz"/>
-    <property name="rm1_data_dir" value="models/acoustic/rm1"/>
-
-
     <!-- ********************************************************** -->
     <!-- *                                                        * -->
     <!-- * For generating any model JARS from Sphinx-3 models.    * -->
@@ -454,10 +450,6 @@
             <param name="my_model_data_dir" value="${tidigits_data_dir}"/>
             <param name="my_model_name" value="${tidigits_name}"/>
         </antcall>
-        <antcall target="create_my_model">
-            <param name="my_model_data_dir" value="${rm1_data_dir}"/>
-            <param name="my_model_name" value="${rm1_name}"/>
-        </antcall>
     </target>
 
 
@@ -582,7 +574,6 @@
         <delete file="${jsapi10base_jar}" failonerror="false"/>
         <delete file="${lib_dir}/${wsj_name}.jar" failonerror="false"/>
         <delete file="${lib_dir}/${wsj_8kHz_name}.jar" failonerror="false"/>
-        <delete file="${lib_dir}/${rm1_name}.jar" failonerror="false"/>
         <delete file="${lib_dir}/${tidigits_name}.jar" failonerror="false"/>
         <delete file="tempKeystore" failonerror="false"/>
         <!-- antcall target="delete_all_model_classes"/ -->

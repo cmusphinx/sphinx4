@@ -240,11 +240,6 @@
             </export>
             <export>
                 <type>jar</type>
-                <location>lib/RM1_8gau_13dCep_16k_40mel_130Hz_6800Hz.jar</location>
-                <build-target>all</build-target>
-            </export>
-            <export>
-                <type>jar</type>
                 <location>lib/sphinx4.jar</location>
                 <build-target>all</build-target>
             </export>
@@ -322,7 +317,7 @@
             </compilation-unit>
             <compilation-unit>
                 <package-root>src/apps</package-root>
-                <classpath mode="compile">lib/js.jar:lib/jsapi-1.0-base.jar:lib/jsapi.jar:lib/RM1_8gau_13dCep_16k_40mel_130Hz_6800Hz.jar:lib/sphinx4.jar:lib/tags.jar:lib/TIDIGITS_8gau_13dCep_16k_40mel_130Hz_6800Hz.jar:lib/WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz.jar:lib/WSJ_8gau_13dCep_8kHz_31mel_200Hz_3500Hz.jar:bld</classpath>
+                <classpath mode="compile">lib/js.jar:lib/jsapi-1.0-base.jar:lib/jsapi.jar:lib/sphinx4.jar:lib/tags.jar:lib/TIDIGITS_8gau_13dCep_16k_40mel_130Hz_6800Hz.jar:lib/WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz.jar:lib/WSJ_8gau_13dCep_8kHz_31mel_200Hz_3500Hz.jar:bld</classpath>
                 <built-to>bld</built-to>
                 <built-to>bin/Aligner.jar</built-to>
                 <built-to>bin/AudioTool.jar</built-to>
@@ -352,7 +347,6 @@
                 <package-root>src/sphinx4</package-root>
                 <built-to>bld</built-to>
                 <built-to>lib/batch.jar</built-to>
-                <built-to>lib/RM1_8gau_13dCep_16k_40mel_130Hz_6800Hz.jar</built-to>
                 <built-to>lib/sphinx4.jar</built-to>
                 <built-to>lib/TIDIGITS_8gau_13dCep_16k_40mel_130Hz_6800Hz.jar</built-to>
                 <built-to>lib/WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz.jar</built-to>
