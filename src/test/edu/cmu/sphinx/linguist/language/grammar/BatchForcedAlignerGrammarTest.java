@@ -17,7 +17,7 @@ public class BatchForcedAlignerGrammarTest {
     @Test
     public void testForcedAlignerGrammar() throws IOException {
         Dictionary dictionary = new FastDictionary(new URL("file:models/acoustic/wsj/dict/digits.dict"), new URL(
-                "file:models/acoustic/wsj/dict/fillerdict"), null, false, null, false, false, new UnitManager());
+                "file:models/acoustic/wsj/noisedict"), null, false, null, false, false, new UnitManager());
         BatchForcedAlignerGrammar grammar = new BatchForcedAlignerGrammar(
                 "src/test/edu/cmu/sphinx/linguist/language/grammar/utts.transcription", true, true, true, true, dictionary);
         grammar.allocate();

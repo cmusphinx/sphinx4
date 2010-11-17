@@ -61,7 +61,7 @@ class TranscriberConfiguration extends CommonConfiguration {
 
         this.dictionary = new FastDictionary(
                 "resource:/TIDIGITS_8gau_13dCep_16k_40mel_130Hz_6800Hz/dictionary",
-                "resource:/TIDIGITS_8gau_13dCep_16k_40mel_130Hz_6800Hz/fillerdict",
+                "resource:/TIDIGITS_8gau_13dCep_16k_40mel_130Hz_6800Hz/noisedict",
                 new ArrayList<URL>(),
                 false,
                 "<sil>",

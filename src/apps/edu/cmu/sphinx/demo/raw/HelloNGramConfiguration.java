@@ -64,7 +64,7 @@ public class HelloNGramConfiguration extends CommonConfiguration {
 
         this.dictionary = new FastDictionary(
                 "resource:/WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz/dict/cmudict.0.6d",
-                "resource:/WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz/dict/fillerdict",
+                "resource:/WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz/noisedict",
                 new ArrayList<URL>(),
                 false,
                 "<sil>",
