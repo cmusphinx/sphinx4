@@ -168,7 +168,7 @@ public class ThreadedAcousticScorer extends SimpleAcousticScorer {
     protected <T extends Scoreable> T doScoring(List<T> scoreableList, final Data data) throws Exception {
         if (numThreads > 1) {
             int totalSize = scoreableList.size();
-            int jobSize = Math.max(totalSize + numThreads - 1 / numThreads, minScoreablesPerThread);
+            int jobSize = Math.max((totalSize + numThreads - 1) / numThreads, minScoreablesPerThread);
 
             if (jobSize < totalSize) {
                 List<Callable<T>> tasks = new ArrayList<Callable<T>>();
