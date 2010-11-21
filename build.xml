@@ -253,6 +253,16 @@
                 <include name="**/*.xml"/>
             </fileset>
         </copy>
+	<copy todir="${classes_dir}/edu/cmu/sphinx/tools/endpoint">
+            <fileset dir="${src_dir}/sphinx4/edu/cmu/sphinx/tools/endpoint">
+                <include name="**/*.xml"/>
+            </fileset>
+        </copy>
+	<copy todir="${classes_dir}/edu/cmu/sphinx/tools/feature">
+            <fileset dir="${src_dir}/sphinx4/edu/cmu/sphinx/tools/feature">
+                <include name="**/*.xml"/>
+            </fileset>
+        </copy>
     </target>
 
 

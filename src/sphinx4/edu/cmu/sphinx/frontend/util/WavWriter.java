@@ -14,8 +14,6 @@ import java.io.*;
 
 /**
  * Stores audio data into numbered (MS-)wav files.
- * TODO: currently the WavWriter is only able to write data in bigEndian, 
- * support for littleEndian would be nice
  * TODO: currently the WavWriter buffers all audio data until a DataEndSignal occurs.
  *
  * @author Holger Brandl
@@ -23,8 +21,9 @@ import java.io.*;
 public class WavWriter extends BaseDataProcessor {
 
     /**
-     * The pathname which must obey the pattern: pattern + i + .wav. Only the pattern is required here (e.g.
-     * wavdump/file). After each DataEndSignal the smalles unused 'i' is determined.
+     * The pathname which must obey the pattern: pattern + i + .wav. After each DataEndSignal the 
+     * smallest unused 'i' is determined. Pattern is padded to create result file with fixed name 
+     * lenght.
      */
     @S4String
     public static final String PROP_OUT_FILE_NAME_PATTERN = "outFilePattern";
@@ -35,7 +34,7 @@ public class WavWriter extends BaseDataProcessor {
     private boolean isCompletePath;
 
     /** The default value for PROP_RAND_STREAM_START */
-    private String dumpFilePath;
+    private String outFileNamePattern;
 
     /** The property for the number of bits per value. */
     @S4Integer(defaultValue = 16)
@@ -65,7 +64,7 @@ public class WavWriter extends BaseDataProcessor {
     public WavWriter(String dumpFilePath, boolean isCompletePath, int bitsPerSample, boolean isSigned, boolean captureUtts) {
 	    initLogger();
 
-        this.dumpFilePath = dumpFilePath;
+        this.outFileNamePattern = dumpFilePath;
         this.isCompletePath = isCompletePath;
 
         this.bitsPerSample = bitsPerSample;
@@ -89,7 +88,7 @@ public class WavWriter extends BaseDataProcessor {
     public void newProperties(PropertySheet ps) throws PropertyException {
         super.newProperties(ps);
 
-        dumpFilePath = ps.getString(WavWriter.PROP_OUT_FILE_NAME_PATTERN);
+        outFileNamePattern = ps.getString(WavWriter.PROP_OUT_FILE_NAME_PATTERN);
         isCompletePath = ps.getBoolean(PROP_IS_COMPLETE_PATH);
 
         bitsPerSample = ps.getInt(PROP_BITS_PER_SAMPLE);
@@ -120,9 +119,9 @@ public class WavWriter extends BaseDataProcessor {
         	
             String wavName;
             if (isCompletePath)
-                wavName = dumpFilePath;
+                wavName = outFileNamePattern;
             else
-                wavName = dumpFilePath + getNextFreeIndex(dumpFilePath) + ".wav";
+                wavName = getNextFreeIndex(outFileNamePattern);
 
             writeFile(wavName);
 
@@ -149,21 +148,33 @@ public class WavWriter extends BaseDataProcessor {
     }
 
 
-    private static int getNextFreeIndex(String outPattern) {
+    private static String getNextFreeIndex(String outPattern) {
+
         int fileIndex = 0;
-        while (new File(outPattern + fileIndex + ".wav").isFile())
+        String fileName;
+
+        while (true) {
+            String indexString = Integer.toString(fileIndex);
+
+            fileName = outPattern.substring(0,
+                    Math.max(0, outPattern.length() - indexString.length()))
+                    + indexString + ".wav";
+
+            if (!new File(fileName).isFile())
+                break;
+
             fileIndex++;
+        }
 
-        return fileIndex;
+        return fileName;
     }
-
 
     /** Initializes this DataProcessor. This is typically called after the DataProcessor has been configured. */
     @Override
     public void initialize() {
         super.initialize();
 
-        assert dumpFilePath != null;
+        assert outFileNamePattern != null;
         baos = new ByteArrayOutputStream();
     }
 

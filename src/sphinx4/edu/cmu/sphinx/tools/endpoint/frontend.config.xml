@@ -26,7 +26,7 @@
     <component name="speechMarker" type="edu.cmu.sphinx.frontend.endpoint.SpeechMarker" />
  
     <component name="wavWriter" type="edu.cmu.sphinx.frontend.util.WavWriter">
-		<property name="outFilePattern" value="test-seg"/>
+		<property name="outFilePattern" value="test-seg000000"/>
 		<property name="captureUtterances" value="true"/>
     </component>
 </config>
