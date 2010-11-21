@@ -25,41 +25,36 @@ public class WavWriter extends BaseDataProcessor {
      * smallest unused 'i' is determined. Pattern is padded to create result file with fixed name 
      * lenght.
      */
-    @S4String
+    @S4String(defaultValue = "seg000000")
     public static final String PROP_OUT_FILE_NAME_PATTERN = "outFilePattern";
 
     @S4Boolean(defaultValue = false)
-
     public static final String PROP_IS_COMPLETE_PATH = "isCompletePath";
-    private boolean isCompletePath;
-
-    /** The default value for PROP_RAND_STREAM_START */
-    private String outFileNamePattern;
 
     /** The property for the number of bits per value. */
     @S4Integer(defaultValue = 16)
     public static final String PROP_BITS_PER_SAMPLE = "bitsPerSample";
-    /** Default value for PROP_BITS_PER_SAMPLE. */
-    private int bitsPerSample = 16;
-
 
     /** The property specifying whether the input data is signed. */
     @S4Boolean(defaultValue = true)
     public static final String PROP_SIGNED_DATA = "signedData";
-    /** The default value of PROP_SIGNED_DATA. */
-    private boolean isSigned = true;
 
     /** The property specifying whether the input data is signed. */
     @S4Boolean(defaultValue = false)
     public static final String PROP_CAPTURE_UTTERANCES = "captureUtterances";
-    /** The default value of PROP_SIGNED_DATA. */
-    protected boolean captureUtts;
 
     private ByteArrayOutputStream baos;
     private DataOutputStream dos;
 
     private int sampleRate;
     private boolean isInSpeech;
+
+    private boolean isSigned = true;
+    private int bitsPerSample;
+
+    private String outFileNamePattern;
+    protected boolean captureUtts;
+    private boolean isCompletePath;
 
     public WavWriter(String dumpFilePath, boolean isCompletePath, int bitsPerSample, boolean isSigned, boolean captureUtts) {
 	    initLogger();
