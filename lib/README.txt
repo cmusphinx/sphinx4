@@ -17,6 +17,11 @@ supports sh) follow these instructions:
        	3. If the binary license agreement is acceptable, accept
 	   it by typing "y". The jsapi.jar file will be unpacked
 	   and deposited into the lib directory.
+	   
+The script uses the uudecode utility, which may not be automatically 
+installed in your Linux distribution. You may have to install the 
+sharutils package first. In the Cygwin distribution, it is found under
+Archive.
 
 Win32 - This distribution includes an installer program containing the
 jsapi.jar file. If you are running on a Win32 Operating system follow
