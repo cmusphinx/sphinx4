@@ -183,15 +183,15 @@ public class JSGFGrammar extends Grammar {
     // Configurable data
     // ---------------------
     private JSGFRuleGrammar ruleGrammar;
-    private JSGFRuleGrammarManager manager;
-    private RuleStack ruleStack;
+    protected JSGFRuleGrammarManager manager;
+    protected RuleStack ruleStack;
     private String grammarName;
-    private URL baseURL;
+    protected URL baseURL;
     private LogMath logMath;
 
-    private boolean loadGrammar = true;
-    private GrammarNode firstNode;
-    private Logger logger;
+    protected boolean loadGrammar = true;
+    protected GrammarNode firstNode;
+    protected Logger logger;
 
     public JSGFGrammar(String location, LogMath logMath, String grammarName,
             boolean showGrammar, boolean optimizeGrammar,
@@ -322,7 +322,7 @@ public class JSGFGrammar extends Grammar {
      *            the Rule to parse
      * @return a grammar graph
      */
-    private GrammarGraph processRule(JSGFRule rule) throws JSGFGrammarException {
+    protected GrammarGraph processRule(JSGFRule rule) throws JSGFGrammarException {
         GrammarGraph result;
 
         if (rule != null) {
@@ -758,7 +758,7 @@ public class JSGFGrammar extends Grammar {
     }
 
     /** Dumps interesting things about this grammar */
-    private void dumpGrammar() {
+    protected void dumpGrammar() {
         System.out.println("Imported rules { ");
 
         for (JSGFRuleName imp : ruleGrammar.getImports()) {

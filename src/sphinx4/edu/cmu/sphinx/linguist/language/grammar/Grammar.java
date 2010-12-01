@@ -154,7 +154,7 @@ public abstract class Grammar implements Configurable, GrammarInterface {
                 optimizeGrammar();
             }
             dumpStatistics();
-            if (showGrammar) {
+            if (true) {
                 dumpGrammar("grammar.gdl");
                 dumpRandomSentences("sentences.txt", 100);
                 logger.info("Total number of nodes " + grammarNodes.size());

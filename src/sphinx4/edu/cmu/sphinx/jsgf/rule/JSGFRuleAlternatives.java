@@ -31,7 +31,8 @@ public class JSGFRuleAlternatives extends JSGFRule {
 	public void append(JSGFRule rule) {
 		assert rule != null;
 		rules.add(rule);
-		weights.add(1.0f);
+		if (weights != null)
+		    weights.add(1.0f);
 	}
 
 	public List<JSGFRule> getRules() {
