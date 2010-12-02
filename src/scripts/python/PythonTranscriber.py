@@ -1,9 +1,10 @@
 import sys
 
-libDir = "/Users/peter/dev/sphinx4/lib/"
+libDir = "../../../lib/"
 classPaths = [
     "sphinx4.jar",
-    "jsapi.jar"
+    "jsapi.jar",
+    "WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz.jar"
 ]
 for classPath in classPaths:
     sys.path.append(libDir + classPath)
@@ -33,7 +34,7 @@ from edu.cmu.sphinx.frontend.window import RaisedCosineWindower
 from edu.cmu.sphinx.instrumentation import BestPathAccuracyTracker
 from edu.cmu.sphinx.instrumentation import MemoryTracker
 from edu.cmu.sphinx.instrumentation import SpeedTracker
-from edu.cmu.sphinx.jsapi import JSGFGrammar
+from edu.cmu.sphinx.jsgf import JSGFGrammar
 from edu.cmu.sphinx.linguist.acoustic import UnitManager
 from edu.cmu.sphinx.linguist.acoustic.tiedstate import Sphinx3Loader
 from edu.cmu.sphinx.linguist.acoustic.tiedstate import TiedStateAcousticModel
@@ -84,7 +85,8 @@ speechMarker = SpeechMarker(
         500, # endSilenceTime,
         100, # speechLeader,
         50,  # speechLeaderFrames
-        100  # speechTrailer
+        100, # speechTrailer
+        15   # endSilenceDecay
 )
 
 nonSpeechDataFilter = NonSpeechDataFilter()
@@ -140,14 +142,11 @@ frontend = FrontEnd(pipeline)
 unitManager = UnitManager()
 
 modelLoader = Sphinx3Loader(
-        "file:" + root + "/models/acoustic/tidigits/model.props",
+        "file:" + root + "/bld/WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz",
+        "mdef",
+        "",
         logMath,
         unitManager,
-        true,
-        true,
-        39,
-        "file:" + root + "/models/acoustic/tidigits/wd_dependent_phone.500.mdef",
-        "file:" + root + "/models/acoustic/tidigits/wd_dependent_phone.cd_continuous_8gau/",
         0.0,
         1e-7,
         0.0001,
@@ -156,8 +155,8 @@ modelLoader = Sphinx3Loader(
 model = TiedStateAcousticModel(modelLoader, unitManager, true)
 
 dictionary = FastDictionary(
-        URL("file:" + root + "/models/acoustic/tidigits/dictionary"),
-        URL("file:" + root + "/models/acoustic/tidigits/fillerdict"),
+        URL("file:" + root + "/bld/WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz/dict/cmudict.0.6d"),
+        URL("file:" + root + "/bld/WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz/noisedict"),
         ArrayList(),
         false,
         "<sil>",
@@ -198,7 +197,7 @@ linguist = FlatLinguist(
 )
 
 # init recognizer
-scorer = ThreadedAcousticScorer(frontend, None, 10, true, 0)
+scorer = ThreadedAcousticScorer(frontend, None, 10, true, 0, 5)
 
 pruner = SimplePruner()
 
@@ -225,6 +224,3 @@ while (result != None):
     resultText = result.getBestResultNoFiller()
     print resultText
     result = recognizer.recognize()
-
-
-
