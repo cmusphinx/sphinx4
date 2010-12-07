@@ -141,7 +141,7 @@ frontend accordingly. Here are required changes:
        ....
       &lt;ite&gt;melFilterBank&lt;/item&gt;
        ....
-      &lt;item&gt;lda&lt;/item&gt;
+      &lt;item&gt;featureTransform&lt;/item&gt;
     &lt;/propertylist&gt;
   &lt;/component&gt;
   
@@ -151,13 +151,13 @@ frontend accordingly. Here are required changes:
     &lt;property name="maximumFrequency" value="3500"/&gt;
   &lt;/component&gt;
 
-  &lt;component name="lda" type="edu.cmu.sphinx.frontend.feature.LDA"&gt;
+  &lt;component name="featureTransform" type="edu.cmu.sphinx.frontend.feature.FeatureTransform"&gt;
       &lt;property name="loader" value="sphinx3Loader"/&gt;
   &lt;/component&gt;
 
 </pre>    
 <p>
- melFilterBank params here are changed for default 8kHz frequences and lda component is introduced
+ melFilterBank params here are changed for default 8kHz frequences and featureTransform component is introduced
  to transform feature space with MLLT matrix.
 </p>
 
