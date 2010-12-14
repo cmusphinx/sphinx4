@@ -20,7 +20,7 @@ import edu.cmu.sphinx.util.props.S4String;
 import java.io.IOException;
 
 /**
- * Provides a generic interface to a dictionary. The dictionary is responsibile for determining how a word is
+ * Provides a generic interface to a dictionary. The dictionary is responsible for determining how a word is
  * pronounced.
  */
 public interface Dictionary extends Configurable {
