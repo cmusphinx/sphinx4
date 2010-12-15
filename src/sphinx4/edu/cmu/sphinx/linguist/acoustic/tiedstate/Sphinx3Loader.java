@@ -762,6 +762,10 @@ public class Sphinx3Loader implements Loader {
             hmmManager.put(hmm);
         }
 
+        if (hmmManager.get(HMMPosition.UNDEFINED, UnitManager.SILENCE) == null) {
+    	    throw new IOException("Could not find SIL unit in acoustic model");
+        }
+
         // Load the context dependent phones. If the useCDUnits
         // property is false, the CD phones will not be created, but
         // the values still need to be read in from the file.
