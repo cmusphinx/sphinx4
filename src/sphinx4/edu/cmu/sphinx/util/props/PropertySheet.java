@@ -450,7 +450,7 @@ public class PropertySheet implements Cloneable {
     }
 
 
-    /** Returns true if the owner of this property sheet is already instanciated. */
+    /** Returns true if the owner of this property sheet is already instantiated. */
     public boolean isInstanciated() {
         return !(owner == null);
     }

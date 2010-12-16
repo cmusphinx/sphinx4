@@ -28,7 +28,7 @@ package edu.cmu.sphinx.util.props;
  * <li> <b> Configuration</b> - Shortly after instantiation, the component's <code>newProperties</code> method is
  * called. This method is called with a <code>PropertySheet</code> containing the properties (usually taken from an
  * external configuration file). The component should extract the properties from the property sheet. If some properties
- * defined for a component does not fullfill the property definition given by the annotation (type, range, etc.) a
+ * defined for a component does not fulfill the property definition given by the annotation (type, range, etc.) a
  * <code>PropertyException</code> is thrown. Typically, once a component gets its configuration data via the
  * <code>newData</code> method, the component will initialize itself.
  * <p/>
