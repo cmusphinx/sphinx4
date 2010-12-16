@@ -46,7 +46,7 @@ public class InterpolatedLanguageModel implements LanguageModel {
 
     private static final double EPSILON = 0.001;
 
-    InterpolatedLanguageModel(LogMath logMath, List<LanguageModel> languageModels, float [] floats ) {
+    public InterpolatedLanguageModel(LogMath logMath, List<LanguageModel> languageModels, float [] floats ) {
         this.languageModels = languageModels;
         this.numberOfLanguageModels = languageModels.size();
 
@@ -64,7 +64,7 @@ public class InterpolatedLanguageModel implements LanguageModel {
         }
     }
 
-    InterpolatedLanguageModel() {
+    public InterpolatedLanguageModel() {
 
     }
 
