@@ -40,7 +40,7 @@ public interface Dictionary extends Configurable {
     @S4String
     public static final String PROP_FILLER_DICTIONARY = "fillerPath";
 
-    /** The property that specifies whether to add a duplicate SIL-ending pronunication. */
+    /** The property that specifies whether to add a duplicate SIL-ending pronunciation. */
     @S4Boolean(defaultValue = false)
     public static final String PROP_ADD_SIL_ENDING_PRONUNCIATION = "addSilEndingPronunciation";
 

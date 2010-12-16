@@ -167,7 +167,7 @@ public class InterpolatedLanguageModel implements LanguageModel {
      */
     @Override
     public float getSmear(WordSequence wordSequence) {
-        return 1.0f; // TODO not implememted
+        return 1.0f; // TODO not implemented
     }
 
     /* (non-Javadoc)

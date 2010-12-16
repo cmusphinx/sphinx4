@@ -302,7 +302,7 @@ public class FullDictionary implements Dictionary {
     /**
      * Lookups up a word
      *
-     * @param spelling the spellling of the word
+     * @param spelling the spelling of the word
      * @return the word or null
      */
     private Word lookupWord(String spelling) {
