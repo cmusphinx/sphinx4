@@ -7,11 +7,11 @@ import java.awt.*;
 
 /**
  * A VU meter to be plugged into a front-end. Preferably this component should be plugged directly behind the
- * <code>DataBlocker</code> in order to ensure that only equally sized blockes of meaningful length are used for RMS
+ * <code>DataBlocker</code> in order to ensure that only equally sized blocks of meaningful length are used for RMS
  * computation.
  * <p/>
  * Because vu-monitoring makes sense only for online speech processing the vu-meter will be visible only if data source
- * which preceeds it is a <code>Microphone</code>.
+ * which precedes it is a <code>Microphone</code>.
  *
  * @author Holger Brandl
  */

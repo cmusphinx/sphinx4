@@ -18,9 +18,9 @@ import edu.cmu.sphinx.linguist.acoustic.tiedstate.*;
 import edu.cmu.sphinx.util.props.*;
 
 /**
- * Implements an linear feature transformation transformation. It might be a
+ * Implements a linear feature transformation transformation. It might be a
  * dimension reduction or just a decorrelation transform. This component
- * requires special model trained with LDA/MLLT transform.
+ * requires a special model trained with LDA/MLLT transform.
  */
 public class FeatureTransform extends BaseDataProcessor {
 

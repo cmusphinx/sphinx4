@@ -183,7 +183,7 @@ public class ConcatAudioFileDataSource extends AudioFileDataSource implements Re
                 try {
                     AudioInputStream ais = AudioSystem.getAudioInputStream(nextFile);
 
-                    // test wether all files in the stream have the same format
+                    // test whether all files in the stream have the same format
                     AudioFormat format = ais.getFormat();
                     if (!isInitialized) {
                         isInitialized = true;

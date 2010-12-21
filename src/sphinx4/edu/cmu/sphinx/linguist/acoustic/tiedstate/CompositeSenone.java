@@ -47,9 +47,9 @@ public class CompositeSenone extends ScoreCachingSenone {
 
 
     /**
-     * Constructs a CompositeSenone given the set of constiuent senones
+     * Constructs a CompositeSenone given the set of constituent senones
      *
-     * @param senones the set of constiuent senones
+     * @param senones the set of constituent senones
      */
     public CompositeSenone(Senone[] senones, float weight) {
         this.senones = senones;
@@ -61,7 +61,7 @@ public class CompositeSenone extends ScoreCachingSenone {
     /**
      * Dumps this senone
      *
-     * @param msg annotatin for the dump
+     * @param msg annotation for the dump
      */
     @Override
     public void dump(String msg) {

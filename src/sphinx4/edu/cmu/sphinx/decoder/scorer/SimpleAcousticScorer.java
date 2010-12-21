@@ -31,7 +31,7 @@ public class SimpleAcousticScorer extends ConfigurableAdapter implements Acousti
     protected BaseDataProcessor frontEnd;
 
     /**
-     * An opotional post-processor for computed scores that will normalize scores. If not set, no normalization will
+     * An optional post-processor for computed scores that will normalize scores. If not set, no normalization will
      * applied and the token scores will be returned unchanged.
      */
     @S4Component(type = ScoreNormalizer.class, mandatory = false)

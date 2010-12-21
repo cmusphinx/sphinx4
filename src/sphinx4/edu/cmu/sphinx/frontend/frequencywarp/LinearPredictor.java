@@ -1,5 +1,5 @@
 /**
- * Contains Linear Prediction Coefficent functions.
+ * Contains Linear Prediction Coefficient functions.
  *
  * @author <a href="mailto:rsingh@cs.cmu.edu">rsingh</a>
  * @version 1.0

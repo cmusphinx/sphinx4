@@ -199,7 +199,7 @@ public final class LogMath implements Configurable, Serializable {
      * log(1 + exp(log(b) - log(a))) </b> </p>
      * <p/>
      * the current function returns the second term of the right hand side of the equality above, generalized for the
-     * case of any log base. This function can be contructed as a table, if table lookup is faster than actual
+     * case of any log base. This function can be constructed as a table, if table lookup is faster than actual
      * computation.
      *
      * @param index the index into the addTable
@@ -222,7 +222,7 @@ public final class LogMath implements Configurable, Serializable {
      * log(1 + exp(log(b) - log(a))) </b> </p>
      * <p/>
      * the current function returns the second term of the right hand side of the equality above, generalized for the
-     * case of any log base. This function is contructed as a table lookup.
+     * case of any log base. This function is constructed as a table lookup.
      *
      * @param index the index into the addTable
      * @return the value pointed to by index

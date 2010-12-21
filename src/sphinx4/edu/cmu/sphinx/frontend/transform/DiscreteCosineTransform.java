@@ -32,7 +32,7 @@ public class DiscreteCosineTransform extends BaseDataProcessor {
     @S4Integer(defaultValue = 40)
     public static final String PROP_NUMBER_FILTERS = "numberFilters";
 
-    /** The property for the size of the ceptrum */
+    /** The property for the size of the cepstrum */
     @S4Integer(defaultValue = 13)
     public static final String PROP_CEPSTRUM_LENGTH = "cepstrumLength";
 

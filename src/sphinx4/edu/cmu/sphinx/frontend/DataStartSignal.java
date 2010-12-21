@@ -25,7 +25,7 @@ public class DataStartSignal extends Signal {
     private final int sampleRate;
     /**
      * A constant that is attached to all DataStartSignal passing this component. This allows subsequent
-     * <code>DataProcessor</code>s (like the <code>Scorer</code>) to adapt their processsing behavior.
+     * <code>DataProcessor</code>s (like the <code>Scorer</code>) to adapt their processing behavior.
      */
     public static final String SPEECH_TAGGED_FEATURE_STREAM = "vadTaggedFeatureStream";
 

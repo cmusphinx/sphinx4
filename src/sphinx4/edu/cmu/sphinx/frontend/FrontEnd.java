@@ -133,7 +133,7 @@ public class FrontEnd extends BaseDataProcessor {
 
 
     // ----------------------------
-    // Confiugration data
+    // Configuration data
     // -----------------------------
     private List<DataProcessor> frontEndList;
 
@@ -269,7 +269,7 @@ public class FrontEnd extends BaseDataProcessor {
     }
 
 
-    /** Returns the last data procssor within the <code>DataProcessor</code> chain of this <code>FrontEnd</code>.
+    /** Returns the last data processor within the <code>DataProcessor</code> chain of this <code>FrontEnd</code>.
      */
     public DataProcessor getLastDataProcessor() {
         return last;

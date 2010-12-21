@@ -579,7 +579,7 @@ public class Microphone extends BaseDataProcessor {
          * Waits for the recorder to start
          */
         private synchronized void waitForStart() {
-            // note that in theory we coulde use a LineEvent START
+            // note that in theory we could use a LineEvent START
             // to tell us when the microphone is ready, but we have
             // found that some javasound implementations do not always
             // issue this event when a line  is opened, so this is a

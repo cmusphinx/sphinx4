@@ -11,7 +11,7 @@ import edu.cmu.sphinx.frontend.FrontEnd;
 public class FrontEndUtils {
 
 
-    /** Returns a the next <code>DataProcessor</code> of type <code>predecClass</code> which preceeds <code>dp</code>
+    /** Returns a the next <code>DataProcessor</code> of type <code>predecClass</code> which precedes <code>dp</code>
      * @param dp
      * @param predecClass
      */

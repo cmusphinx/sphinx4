@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Slices up a Data object into a number of overlapping windows (usually refered to as "frames" in the speech world). In
+ * Slices up a Data object into a number of overlapping windows (usually referred to as "frames" in the speech world). In
  * order to minimize the signal discontinuities at the boundaries of each frame, we multiply each frame with a raised
  * cosine windowing function. Moreover, the system uses overlapping windows to capture information that may occur at the
  * window boundaries. These events would not be well represented if the windows were juxtaposed. <p> The number of
@@ -163,7 +163,7 @@ public class RaisedCosineWindower extends BaseDataProcessor {
                         currentFirstSampleNumber = data.getFirstSampleNumber();
                     }
 
-                    // should not be necesssary if all DataProcessor would forward Signals. Unfortunately this
+                    // should not be necessary if all DataProcessor would forward Signals. Unfortunately this
                     // is currently not the case.
                     createWindow(data.getSampleRate());
 

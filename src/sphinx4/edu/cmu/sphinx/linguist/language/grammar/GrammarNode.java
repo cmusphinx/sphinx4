@@ -26,7 +26,7 @@ import java.util.*;
  * {@link GrammarArc arcs}. A grammar node usually represents a word or words, but it can also be a transition point or
  * simply silence.
  * <p/>
- * Note that all probabilties are maintained in the LogMath log base
+ * Note that all probabilities are maintained in the LogMath log base
  */
 
 public class GrammarNode {

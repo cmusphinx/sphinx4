@@ -6,7 +6,7 @@ import java.io.File;
 
 /**
  * An interface which is describes the functionality which is required to handle new file signals fired by the
- * aduio-data sources.
+ * audio-data sources.
  *
  * @author Holger Brandl
  */

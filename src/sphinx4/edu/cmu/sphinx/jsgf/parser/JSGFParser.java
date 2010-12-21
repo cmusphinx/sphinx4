@@ -883,11 +883,11 @@ public class JSGFParser implements JSGFParserConstants {
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
-  /** Reinitialise. */
+  /** Reinitialize. */
   public void ReInit(java.io.InputStream stream) {
      ReInit(stream, null);
   }
-  /** Reinitialise. */
+  /** Reinitialize. */
   public void ReInit(java.io.InputStream stream, String encoding) {
     try { jj_input_stream.ReInit(stream, encoding, 1, 1); } catch(java.io.UnsupportedEncodingException e) { throw new RuntimeException(e); }
     token_source.ReInit(jj_input_stream);
@@ -909,7 +909,7 @@ public class JSGFParser implements JSGFParserConstants {
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
-  /** Reinitialise. */
+  /** Reinitialize. */
   public void ReInit(java.io.Reader stream) {
     jj_input_stream.ReInit(stream, 1, 1);
     token_source.ReInit(jj_input_stream);
@@ -930,7 +930,7 @@ public class JSGFParser implements JSGFParserConstants {
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
-  /** Reinitialise. */
+  /** Reinitialize. */
   public void ReInit(JSGFParserTokenManager tm) {
     token_source = tm;
     token = new Token();

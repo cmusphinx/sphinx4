@@ -88,7 +88,7 @@ public class SimpleActiveListManager implements ActiveListManager {
     @Override
     public void setNumStateOrder(int numStateOrder) {
         // check to make sure that we have the correct
-        // number of active list factories for the given searc states
+        // number of active list factories for the given search states
         currentActiveLists = new ActiveList[numStateOrder];
 
         if (activeListFactories.isEmpty()) {

@@ -23,12 +23,12 @@ import edu.cmu.sphinx.util.props.*;
 /**
  * Computes the Discrete Fourier Transform (FT) of an input sequence, using Fast Fourier Transform (FFT). Fourier
  * Transform is the process of analyzing a signal into its frequency components. In speech, rather than analyzing the
- * signal over its entrie duration, we analyze one <b>window</b> of audio data. This window is the product of applying a
+ * signal over its entire duration, we analyze one <b>window</b> of audio data. This window is the product of applying a
  * sliding Hamming window to the signal. Moreover, since the amplitude is a lot more important than the phase for speech
  * recognition, this class returns the power spectrum of that window of data instead of the complex spectrum. Each value
  * in the returned spectrum represents the strength of that particular frequency for that window of data.
  * <p/>
- * By default, the number of FFT points is the closest power pf 2 that is equal to or larger than the number of samples
+ * By default, the number of FFT points is the closest power of 2 that is equal to or larger than the number of samples
  * in the incoming window of data. The FFT points can also be set by the user with the property defined by {@link
  * #PROP_NUMBER_FFT_POINTS}. The length of the returned power spectrum is the number of FFT points, divided by 2, plus
  * 1. Since the input signal is real, the FFT is symmetric, and the information contained in the whole vector is already

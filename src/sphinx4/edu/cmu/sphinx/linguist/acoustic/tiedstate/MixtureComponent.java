@@ -173,7 +173,7 @@ public class MixtureComponent implements Cloneable, Serializable {
      * the computation of a multi-dimensional Gaussian. <p/> <p><b>Normal(x) = exp{-0.5 * (x-m)' *
      * inv(Var) * (x-m)} / {sqrt((2 * PI) ^ N) * det(Var))}</b></p>
      * <p/>
-     * where <b>x</b> and <b>m</b> are the incoming cepstra and mean vector respectivally,
+     * where <b>x</b> and <b>m</b> are the incoming cepstra and mean vector respectively,
      * <b>Var</b> is the Covariance matrix, <b>det()</b> is the determinant of a matrix,
      * <b>inv()</b> is its inverse, <b>exp</b> is the exponential operator, <b>x'</b> is the
      * transposed vector of <b>x</b> and <b>N</b> is the dimension of the vectors <b>x</b> and

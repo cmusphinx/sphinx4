@@ -46,7 +46,7 @@ public class MelFilter {
      * <p/>
      * In the current implementation, the filter is a bandpass filter with a triangular shape.  We're given the left and
      * right edges and the center frequency, so we can determine the right and left slopes, which could be not only
-     * assymmetric but completely different. We're also given the initial frequency, which may or may not coincide with
+     * asymmetric but completely different. We're also given the initial frequency, which may or may not coincide with
      * the left edge, and the frequency step.
      *
      * @param leftEdge    the filter's lowest passing frequency

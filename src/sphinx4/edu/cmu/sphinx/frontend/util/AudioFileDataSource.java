@@ -186,7 +186,7 @@ public class AudioFileDataSource extends BaseDataProcessor {
             throw new Error("StreamDataSource: bits per sample must be a multiple of 8.");
         bytesPerValue = format.getSampleSizeInBits() / 8;
 
-        // test wether all files in the stream have the same format
+        // test whether all files in the stream have the same format
 
         AudioFormat.Encoding encoding = format.getEncoding();
         if (encoding.equals(AudioFormat.Encoding.PCM_SIGNED))
