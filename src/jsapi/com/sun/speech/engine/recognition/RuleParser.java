@@ -23,18 +23,19 @@ public class RuleParser {
 	 * parse a text string against a particular rule from a particular grammar
 	 * returning a RuleParse data structure is successful and null otherwise
 	 */
-	public static RuleParse parse(String text, Recognizer R, RuleGrammar G,
-			String ruleName) {
+	public static RuleParse parse(String text, Recognizer recognizer,
+			RuleGrammar grammar, String ruleName) {
 		String inputTokens[] = tokenize(text);
-		return parse(inputTokens, R, G, ruleName);
+		return parse(inputTokens, recognizer, grammar, ruleName);
 	}
 
-	public static RuleParse parse(String inputTokens[], Recognizer R,
-			RuleGrammar G, String ruleName) {
-		List<RuleParse> list = mparse(inputTokens, R, G, ruleName);
+	public static RuleParse parse(String inputTokens[], Recognizer recognognizer,
+			RuleGrammar grammar, String ruleName) {
+		List<RuleParse> list = mparse(inputTokens, recognognizer, grammar,
+				ruleName);
 		if (list != null)
 			for (RuleParse rp : list)
-				if (G.isRulePublic(rp.getRuleName().getRuleName()))
+				if (grammar.isRulePublic(rp.getRuleName().getRuleName()))
 					return rp;
 		return null;
 	}
@@ -45,23 +46,23 @@ public class RuleParser {
 		return mparse(inputTokens, R, G, ruleName);
 	}
 
-	public static List<RuleParse> mparse(String inputTokens[], Recognizer R,
-			RuleGrammar G, String ruleName) {
+	public static List<RuleParse> mparse(String inputTokens[],
+			Recognizer recognizer, RuleGrammar grammar, String ruleName) {
 		RuleParser rp = new RuleParser();
-		rp.recognizer = R;
+		rp.recognizer = recognizer;
 		List<RuleParse> res = new ArrayList<RuleParse>();
-		String[] rNames = ruleName == null ? G.listRuleNames()
+		String[] rNames = ruleName == null ? grammar.listRuleNames()
 				: new String[] { ruleName };
 		for (String rName : rNames) {
-			if (ruleName == null && !G.isEnabled(rName)) {
+			if (ruleName == null && !grammar.isEnabled(rName)) {
 				continue;
 			}
-			Rule startRule = G.getRule(rName);
+			Rule startRule = grammar.getRule(rName);
 			if (startRule == null) {
 				System.out.println("BAD RULENAME " + rName);
 				continue;
 			}
-			List<TokenPos> p = rp.parse(G, startRule, inputTokens, 0);
+			List<TokenPos> p = rp.parse(grammar, startRule, inputTokens, 0);
 			if (p != null && !p.isEmpty()) {
 				for (TokenPos tp : p) {
 					if (tp.getPos() == inputTokens.length) {
