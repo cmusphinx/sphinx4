@@ -58,8 +58,8 @@ public class JSGFRuleGrammarManager {
 	}
 
 	public void linkGrammars() throws JSGFGrammarException {
-        for (JSGFRuleGrammar grammar : grammars.values()) {
-                grammar.resolveAllRules();
-        }
+            for (JSGFRuleGrammar grammar : grammars.values()) {
+                    grammar.resolveAllRules();
+            }
 	}
 }
