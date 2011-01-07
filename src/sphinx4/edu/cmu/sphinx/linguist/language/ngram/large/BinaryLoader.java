@@ -123,6 +123,9 @@ public class BinaryLoader {
         this.unigramWeight = unigramWeight;
     }
 
+    public void deallocate() throws IOException {
+        file.close();
+    }
 
     /**
      * Returns the number of unigrams

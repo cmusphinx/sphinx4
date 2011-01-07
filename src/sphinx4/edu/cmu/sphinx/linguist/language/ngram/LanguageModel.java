@@ -57,8 +57,9 @@ public interface LanguageModel extends Configurable {
     public void allocate() throws IOException;
 
 
-    /** Deallocate resources allocated to this language model */
-    public void deallocate();
+    /** Deallocate resources allocated to this language model 
+     * @throws IOException */
+    public void deallocate() throws IOException;
 
 
     /** Called before a recognition */

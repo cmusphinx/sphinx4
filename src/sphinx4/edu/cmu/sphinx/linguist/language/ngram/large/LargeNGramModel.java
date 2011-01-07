@@ -260,8 +260,8 @@ public class LargeNGramModel implements LanguageModel, BackoffLanguageModel {
     * @see edu.cmu.sphinx.linguist.language.ngram.LanguageModel#deallocate()
     */
     @Override
-    public void deallocate() {
-        // TODO write me
+    public void deallocate() throws IOException {
+        loader.deallocate();
     }
 
 
