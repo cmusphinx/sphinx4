@@ -37,11 +37,11 @@ public class BaseGrammar
     /**
      * Create a new BaseGrammar
      *
-     * @param R    the BaseRecognizer for this Grammar.
+     * @param rec    the BaseRecognizer for this Grammar.
      * @param name the name of this Grammar.
      */
-    public BaseGrammar(BaseRecognizer R, String name) {
-        recognizer = R;
+    public BaseGrammar(BaseRecognizer rec, String name) {
+        recognizer = rec;
         myName = name;
         grammarActive = false;
         grammarEnabled = true;
@@ -182,8 +182,9 @@ public class BaseGrammar
 
     /** Utility function to send a GRAMMAR_ACTIVATED event to all result listeners. */
     protected void fireGrammarActivated(GrammarEvent event) {
-        for (GrammarListener gl : grammarListeners)
+        for (GrammarListener gl : grammarListeners) {
             gl.grammarActivated(event);
+        }
     }
 
 
@@ -200,8 +201,9 @@ public class BaseGrammar
 
     /** Utility function to send a GRAMMAR_CHANGES_COMMITTED event to all result listeners. */
     protected void fireGrammarChangesCommitted(GrammarEvent event) {
-        for (GrammarListener gl : grammarListeners)
+        for (GrammarListener gl : grammarListeners) {
             gl.grammarChangesCommitted(event);
+        }
     }
 
 
@@ -218,8 +220,9 @@ public class BaseGrammar
 
     /** Utility function to send a GRAMMAR_DEACTIVATED event to all result listeners. */
     protected void fireGrammarDeactivated(GrammarEvent event) {
-        for (GrammarListener gl : grammarListeners)
+        for (GrammarListener gl : grammarListeners) {
             gl.grammarDeactivated(event);
+        }
     }
 
     //////////////////////
@@ -244,8 +247,9 @@ public class BaseGrammar
 
     /** Utility function to send a AUDIO_RELEASED event to all result listeners. */
     public void fireAudioReleased(ResultEvent event) {
-        for (ResultListener rl : resultListeners)
+        for (ResultListener rl : resultListeners) {
             rl.audioReleased(event);
+        }
     }
 
 
@@ -262,9 +266,8 @@ public class BaseGrammar
 
     /** Utility function to send a GRAMMAR_FINALIZED event to all result listeners. */
     public void fireGrammarFinalized(ResultEvent event) {
-        if (resultListeners != null) {
-            for (ResultListener rl : resultListeners)
-                rl.grammarFinalized(event);
+        for (ResultListener rl : resultListeners) {
+            rl.grammarFinalized(event);
         }
     }
 
@@ -282,8 +285,9 @@ public class BaseGrammar
 
     /** Utility function to send a RESULT_ACCEPTED event to all result listeners. */
     public void fireResultAccepted(ResultEvent event) {
-        for (ResultListener rl : resultListeners)
+        for (ResultListener rl : resultListeners) {
             rl.resultAccepted(event);
+        }
     }
 
 
@@ -300,8 +304,9 @@ public class BaseGrammar
 
     /** Utility function to send a RESULT_CREATED event to all result listeners. */
     public void fireResultCreated(ResultEvent event) {
-        for (ResultListener rl : resultListeners)
+        for (ResultListener rl : resultListeners) {
             rl.resultCreated(event);
+        }
     }
 
 
@@ -318,8 +323,9 @@ public class BaseGrammar
 
     /** Utility function to send a RESULT_REJECTED event to all result listeners. */
     public void fireResultRejected(ResultEvent event) {
-        for (ResultListener rl : resultListeners)
+        for (ResultListener rl : resultListeners) {
             rl.resultRejected(event);
+        }
     }
 
 
@@ -336,8 +342,9 @@ public class BaseGrammar
 
     /** Utility function to send a RESULT_UPDATED event to all result listeners. */
     public void fireResultUpdated(ResultEvent event) {
-        for (ResultListener rl : resultListeners)
+        for (ResultListener rl : resultListeners) {
             rl.resultUpdated(event);
+        }
     }
 
 
@@ -354,8 +361,9 @@ public class BaseGrammar
 
     /** Utility function to send a TRAINING_INFO_RELEASED event to all result listeners. */
     public void fireTrainingInfoReleased(ResultEvent event) {
-        for (ResultListener rl : resultListeners)
+        for (ResultListener rl : resultListeners) {
             rl.trainingInfoReleased(event);
+        }
     }
     //////////////////////
     // End utility methods for sending ResultEvents
@@ -371,8 +379,9 @@ public class BaseGrammar
     }
 
     /**
-     * Dispatch a SpeechEvent.  This is a method from SpeechEventDispatcher. The dispatcher should notify all listeners
-     * of the speech event from this method.
+     * Dispatch a SpeechEvent.  This is a method from SpeechEventDispatcher.
+     * The dispatcher should notify all listeners of the speech event from
+     * this method.
      */
     public void dispatchSpeechEvent(SpeechEvent event) {
         switch (event.getId()) {
@@ -385,7 +394,6 @@ public class BaseGrammar
             case GrammarEvent.GRAMMAR_DEACTIVATED:
                 fireGrammarDeactivated((GrammarEvent) event);
                 break;
-
             case ResultEvent.AUDIO_RELEASED:
                 fireAudioReleased((ResultEvent) event);
                 break;
