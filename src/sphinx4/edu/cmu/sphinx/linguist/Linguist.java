@@ -173,6 +173,6 @@ public interface Linguist extends Configurable {
      * <p/>
      * (2) Do nothing in dellocate - just the the GC take care of things
      */
-    public void deallocate();
+    public void deallocate() throws IOException;
 }
 

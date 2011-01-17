@@ -663,9 +663,13 @@ public class SimpleBreadthFirstSearchManager extends TokenSearchManager {
     */
     @Override
     public void deallocate() {
-        scorer.deallocate();
-        pruner.deallocate();
-        linguist.deallocate();
+	try {
+            scorer.deallocate();
+            pruner.deallocate();
+            linguist.deallocate();
+        } catch (IOException e) {
+            throw new RuntimeException("Deallocation of search manager resources failed", e);
+        }
     }
 
 

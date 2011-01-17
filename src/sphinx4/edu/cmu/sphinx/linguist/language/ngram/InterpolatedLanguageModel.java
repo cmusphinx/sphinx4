@@ -120,7 +120,7 @@ public class InterpolatedLanguageModel implements LanguageModel {
     }
 
     @Override
-    public void deallocate() {
+    public void deallocate() throws IOException {
         allocated = false;
         for (LanguageModel model : languageModels) {
             model.deallocate();

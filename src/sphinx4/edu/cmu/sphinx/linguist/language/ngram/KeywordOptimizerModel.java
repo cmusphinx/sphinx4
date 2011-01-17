@@ -69,7 +69,7 @@ public class KeywordOptimizerModel implements LanguageModel {
      * @see edu.cmu.sphinx.linguist.language.ngram.LanguageModel#deallocate()
      */
      @Override
-     public void deallocate() {
+     public void deallocate() throws IOException {
     	 parent.deallocate();
      }
 

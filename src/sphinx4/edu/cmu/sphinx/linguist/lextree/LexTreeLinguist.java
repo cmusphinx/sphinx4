@@ -350,7 +350,7 @@ public class LexTreeLinguist implements Linguist {
     * @see edu.cmu.sphinx.linguist.Linguist#deallocate()
     */
     @Override
-    public void deallocate() {
+    public void deallocate() throws IOException {
         if (acousticModel != null)
     	    acousticModel.deallocate();
     	if (dictionary != null)

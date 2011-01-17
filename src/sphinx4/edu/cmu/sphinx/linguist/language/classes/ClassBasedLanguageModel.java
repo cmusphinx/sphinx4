@@ -99,7 +99,7 @@ public class ClassBasedLanguageModel implements LanguageModel {
     * @see edu.cmu.sphinx.linguist.language.ngram.LanguageModel#deallocate()
     */
     @Override
-    public void deallocate() {
+    public void deallocate() throws IOException {
         allocated = false;
         classLM.deallocate();
         classMap.deallocate();
