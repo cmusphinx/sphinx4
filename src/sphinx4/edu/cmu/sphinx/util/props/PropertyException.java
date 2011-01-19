@@ -17,7 +17,6 @@ public class PropertyException extends RuntimeException {
 
     private String instanceName;
     private String propertyName;
-    private String msg;
 
 
     /**
@@ -43,22 +42,15 @@ public class PropertyException extends RuntimeException {
      * @param msg          a description of the problem.
      */
     public PropertyException(Throwable cause, String instanceName, String propertyName, String msg) {
-        super(cause);
+        super(msg, cause);
 
         this.instanceName = instanceName;
         this.propertyName = propertyName;
-        this.msg = msg;
     }
 
 
     public PropertyException(Exception e) {
         super(e);
-    }
-
-
-    /** @return Returns the msg. */
-    public String getMsg() {
-        return msg;
     }
 
 
@@ -79,7 +71,7 @@ public class PropertyException extends RuntimeException {
      */
     @Override
     public String toString() {
-        return "Property exception component:'" + instanceName + "' property:'" + propertyName + "' - " + msg + '\n'
+        return "Property exception component:'" + instanceName + "' property:'" + propertyName + "' - " + getMessage() + '\n'
                 + super.toString();
     }
 }
