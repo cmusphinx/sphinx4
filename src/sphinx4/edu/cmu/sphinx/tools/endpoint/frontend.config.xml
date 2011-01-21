@@ -23,8 +23,11 @@
     <component name="nonSpeechDataFilter" 
                type="edu.cmu.sphinx.frontend.endpoint.NonSpeechDataFilter"/>
 
-    <component name="speechMarker" type="edu.cmu.sphinx.frontend.endpoint.SpeechMarker" />
- 
+    <component name="speechMarker" type="edu.cmu.sphinx.frontend.endpoint.SpeechMarker">
+    	<property name="speechLeader" value="200"/>
+    	<property name="speechTrailer" value="200"/>
+ 	</component>
+ 	
     <component name="wavWriter" type="edu.cmu.sphinx.frontend.util.WavWriter">
 		<property name="outFilePattern" value="test-seg000000"/>
 		<property name="captureUtterances" value="true"/>
