@@ -173,6 +173,15 @@ public class WavWriter extends BaseDataProcessor {
         baos = new ByteArrayOutputStream();
     }
 
+    /**
+     * Sets the pattern for the output file name. Useful to change the output
+     * beside the properties
+     *   
+     * @param outFileNamePattern file name
+     */
+    public void setOutFilePattern (String outFileNamePattern) {
+        this.outFileNamePattern = outFileNamePattern; 
+    }
 
     private static AudioFileFormat.Type getTargetType(String extension) {
         AudioFileFormat.Type[] typesSupported = AudioSystem.getAudioFileTypes();
@@ -280,5 +289,4 @@ public class WavWriter extends BaseDataProcessor {
             }
         }   	
     }
-
 }
