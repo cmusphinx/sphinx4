@@ -141,7 +141,7 @@ public class BatchVarNorm extends BaseDataProcessor {
 
         // calculate the variance first
         for (int i = 0; i < variances.length; i++) {
-            variances[i] = Math.sqrt(numberDataCepstra) / variances[i];
+            variances[i] = Math.sqrt(numberDataCepstra / variances[i]);
         }
 
         for (Data data : cepstraList) {
