@@ -159,9 +159,50 @@ BatchModeRecognizer reports.<br>
 By setting the logLevel to INFO we are enabling logs at the INFO,
 WARNING and SEVERE levels.<br>
 <br>
+
 With this new setting lets run the recognizer again to see what output
 we get:<br>
-<pre>% java edu.cmu.sphinx.tools.batch.BatchModeRecognizer silent.config.xml tidigits.batch<br>08:23.006 INFO logMath              Log base is 1.0001<br>08:23.020 INFO logMath              Using AddTable when adding logs<br>08:23.021 INFO logMath              LogAdd table has 99022 entries.<br>08:23.683 INFO sphinx3Loader        Sphinx3Loader<br>08:23.684 INFO sphinx3Loader        Pool wd_dependent_phone.cd_continuous_8gau/means Entries: 4816<br>08:23.686 INFO sphinx3Loader        Pool wd_dependent_phone.cd_continuous_8gau/variances Entries: 4816<br>08:23.687 INFO sphinx3Loader        Pool wd_dependent_phone.cd_continuous_8gau/transition_matrices Entries: 34<br>08:23.688 INFO sphinx3Loader        Pool senones Entries: 602<br>08:23.689 INFO sphinx3Loader        Pool meanTransformationMatrix Entries: 1<br>08:23.690 INFO sphinx3Loader        Pool meanTransformationMatrix Entries: 1<br>08:23.691 INFO sphinx3Loader        Pool varianceTransformationMatrix Entries: 1<br>08:23.692 INFO sphinx3Loader        Pool varianceTransformationMatrix Entries: 1<br>08:23.693 INFO sphinx3Loader        Pool wd_dependent_phone.cd_continuous_8gau/mixture_weights Entries: 602<br>08:23.694 INFO sphinx3Loader        Pool senones Entries: 602<br>08:23.696 INFO sphinx3Loader        Context Independent Unit Entries: 34<br>08:23.697 INFO sphinx3Loader        HMM Manager: 430 hmms<br>08:23.698 INFO acousticModel        CompositeSenoneSequences: 0<br>08:23.700 INFO dictionary           Loading dictionary from: <br>08:23.701 INFO dictionary           file:/lab/speech/sphinx4/data/tidigits_8gau_13dCep_16k_40mel_130Hz_6800Hz.bin.zip/dictionary<br>08:23.712 INFO dictionary           Loading filler dictionary from: <br>08:23.714 INFO dictionary           file:/lab/speech/sphinx4/data/tidigits_8gau_13dCep_16k_40mel_130Hz_6800Hz.bin.zip/fillerdict<br>08:23.728 INFO wordListGrammar      Num nodes : 14<br>08:23.729 INFO wordListGrammar      Num arcs  : 34<br>08:23.731 INFO wordListGrammar      Avg arcs  : 2.4285715<br>08:23.306 INFO threadedScorer       # of scoring threads: 1<br>08:23.393 INFO batch                BatchDecoder: decoding files in tidigits.batch<br>08:23.173 INFO batch                File  : /lab/speech/sphinx4/data/tidigits/test/raw16k/man/man.ah.111a.wav.raw<br>08:23.175 INFO batch                Result: &lt;sil&gt; one one one<br>08:23.645 INFO batch                File  : /lab/speech/sphinx4/data/tidigits/test/raw16k/man/man.ah.139oa.wav.raw<br>08:23.647 INFO batch                Result: &lt;sil&gt; one three nine oh<br>08:24.957 INFO batch                File  : /lab/speech/sphinx4/data/tidigits/test/raw16k/man/man.ah.155a.wav.raw<br>08:24.958 INFO batch                Result: &lt;sil&gt; one five five<br>08:24.278 INFO batch                File  : /lab/speech/sphinx4/data/tidigits/test/raw16k/man/man.ah.1688a.wav.raw<br>08:24.279 INFO batch                Result: &lt;sil&gt; one six eight eight<br>08:24.987 INFO batch                File  : /lab/speech/sphinx4/data/tidigits/test/raw16k/man/man.ah.1a.wav.raw<br>08:24.988 INFO batch                Result: &lt;sil&gt; one<br><br></pre>
+
+<pre>% java edu.cmu.sphinx.tools.batch.BatchModeRecognizer silent.config.xml tidigits.batch<br>
+08:23.006 INFO logMath              Log base is 1.0001<br>
+08:23.020 INFO logMath              Using AddTable when adding logs<br>
+08:23.021 INFO logMath              LogAdd table has 99022 entries.<br>
+08:23.683 INFO sphinx3Loader        Sphinx3Loader<br>
+08:23.684 INFO sphinx3Loader        Pool /means Entries: 4816<br>
+08:23.686 INFO sphinx3Loader        Pool /variances Entries: 4816<br>
+08:23.687 INFO sphinx3Loader        Pool /transition_matrices Entries: 34<br>
+08:23.688 INFO sphinx3Loader        Pool senones Entries: 602<br>
+08:23.689 INFO sphinx3Loader        Pool meanTransformationMatrix Entries: 1<br>
+08:23.690 INFO sphinx3Loader        Pool meanTransformationMatrix Entries: 1<br>
+08:23.691 INFO sphinx3Loader        Pool varianceTransformationMatrix Entries: 1<br>
+08:23.692 INFO sphinx3Loader        Pool varianceTransformationMatrix Entries: 1<br>
+08:23.693 INFO sphinx3Loader        Pool /mixture_weights Entries: 602<br>
+08:23.694 INFO sphinx3Loader        Pool senones Entries: 602<br>
+08:23.696 INFO sphinx3Loader        Context Independent Unit Entries: 34<br>
+08:23.697 INFO sphinx3Loader        HMM Manager: 430 hmms<br>
+08:23.698 INFO acousticModel        CompositeSenoneSequences: 0<br>
+08:23.700 INFO dictionary           Loading dictionary from: <br>
+08:23.701 INFO dictionary           file:/lab/speech/sphinx4/data/tidigits_8gau_13dCep_16k_40mel_130Hz_6800Hz.bin.zip/dictionary<br>
+08:23.712 INFO dictionary           Loading filler dictionary from: <br>
+08:23.714 INFO dictionary           file:/lab/speech/sphinx4/data/tidigits_8gau_13dCep_16k_40mel_130Hz_6800Hz.bin.zip/fillerdict<br>
+08:23.728 INFO wordListGrammar      Num nodes : 14<br>
+08:23.729 INFO wordListGrammar      Num arcs  : 34<br>
+08:23.731 INFO wordListGrammar      Avg arcs  : 2.4285715<br>
+08:23.306 INFO threadedScorer       # of scoring threads: 1<br>
+08:23.393 INFO batch                BatchDecoder: decoding files in tidigits.batch<br>
+08:23.173 INFO batch                File  : /lab/speech/sphinx4/data/tidigits/test/raw16k/man/man.ah.111a.wav.raw<br>
+08:23.175 INFO batch                Result: &lt;sil&gt; one one one<br>
+08:23.645 INFO batch                File  : /lab/speech/sphinx4/data/tidigits/test/raw16k/man/man.ah.139oa.wav.raw<br>
+08:23.647 INFO batch                Result: &lt;sil&gt; one three nine oh<br>
+08:24.957 INFO batch                File  : /lab/speech/sphinx4/data/tidigits/test/raw16k/man/man.ah.155a.wav.raw<br>
+08:24.958 INFO batch                Result: &lt;sil&gt; one five five<br>
+08:24.278 INFO batch                File  : /lab/speech/sphinx4/data/tidigits/test/raw16k/man/man.ah.1688a.wav.raw<br>
+08:24.279 INFO batch                Result: &lt;sil&gt; one six eight eight<br>
+08:24.987 INFO batch                File  : /lab/speech/sphinx4/data/tidigits/test/raw16k/man/man.ah.1a.wav.raw<br>
+08:24.988 INFO batch                Result: &lt;sil&gt; one<br>
+<br>
+</pre>
+
 It looks like there are a number of other components that are issuing
 INFO messages that are cluttering up our output.&nbsp; We'd like to be
 able to turn the other INFO messages off, and just get the

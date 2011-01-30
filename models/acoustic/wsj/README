@@ -10,55 +10,14 @@
 The directories here contain various models trained from
 the WSJ data
 
-Features used to train the models were computed from
-broadband 16 bit sampled data sampled at 16Khz.
-The features were 13 dimensional cepstra computed
-from 40 mel filters covering the frequency range
-130Hz to 6800Hz.
-The feature type used was 1s_c_d_dd
+Features used to train the models were computed from broadband 16 bit
+sampled data sampled at 16Khz. The features were 13 dimensional cepstra
+computed from 40 mel filters covering the frequency range 130Hz to
+6800Hz. The feature type used was 1s_c_d_dd
 
 
 Contents of this directory:
 
-am.props
---------
-
-Properties file containing the parameters used to train the acoustic model.
-
-alpha.dict
-----------
-
-Dictionary containing only the alphabet and their phoneme mapping(s).
-
-cd_continuous_1gau/
--------------------
-
-Contains 1 gau/state acoustic models.
-
-cd_continuous_2gau/
--------------------
-
-Contains 2 gaus/state acoustic models.
-
-cd_continuous_4gau/
--------------------
-
-Contains 4 gaus/state acoustic models.
-
-cd_continuous_8gau/
--------------------
-
-Contains 8 gaus/state acoustic models.
-
-ci_continuous/
---------------
-
-Contains context-independent acoustic models.
-
-etc/
-----
-
-Contains the various associated files, such as the mdef files,
-dictionary, fillerdict and a stripped down version
-of the variable settings used to train the models.
-
+Contents of this directory are context-dependent acoustic model (mdef,
+means, variances, transition_matrices, mixture_weights, noisedict, feat.params)
+and a dictionaries (alpha.dict, cmudict.0.6d, digits.dict)

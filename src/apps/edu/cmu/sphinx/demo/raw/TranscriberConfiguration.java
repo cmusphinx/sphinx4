@@ -48,8 +48,8 @@ class TranscriberConfiguration extends CommonConfiguration {
 
         this.modelLoader = new Sphinx3Loader(
                 "resource:/TIDIGITS_8gau_13dCep_16k_40mel_130Hz_6800Hz",
-                "wd_dependent_phone.500.mdef",
-                "wd_dependent_phone.cd_continuous_8gau/",
+                "mdef",
+                "",
                 logMath,
                 unitManager,
                 0.0f,

@@ -51,8 +51,8 @@ public class HelloNGramConfiguration extends CommonConfiguration {
 
         this.modelLoader = new Sphinx3Loader(
                 "resource:/WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz",
-                "etc/WSJ_clean_13dCep_16k_40mel_130Hz_6800Hz.4000.mdef",
-                "cd_continuous_8gau/",
+                "mdef",
+                "",
                 logMath,
                 unitManager,
                 0.0f,

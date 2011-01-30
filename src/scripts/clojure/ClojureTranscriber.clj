@@ -65,7 +65,8 @@
   500 ;; endSilenceTime
   100 ;; speechLeader
   50 ;; speechLeaderFrames
-  100)) ;; speechTrailer
+  100 ;; speechTrailer
+  15.0)) ;; decay
 
 (def nonSpeechDataFilter (new NonSpeechDataFilter))
 
@@ -118,31 +119,30 @@
 ;; init models
 (def unitManager (new UnitManager))
 
-(def modelLoader (new Sphinx3Loader
-  (str "file:" root "/models/acoustic/tidigits/model.props")
-  logMath
-  unitManager
-  true
-  true
-  39
-  (str "file:" root "/models/acoustic/tidigits/wd_dependent_phone.500.mdef")
-  (str "file:" root "/models/acoustic/tidigits/wd_dependent_phone.cd_continuous_8gau/")
-  0.0
-  1e-7
-  0.0001
-  true))
-
-(def model (new TiedStateAcousticModel modelLoader unitManager true))
-
 (def dictionary (new FastDictionary
-  (new URL (str "file:" root "/models/acoustic/tidigits/dictionary"))
-  (new URL (str "file:" root "/models/acoustic/tidigits/fillerdict"))
+  (new URL (str "file:" root "/models/acoustic/tidigits/dict/dictionary"))
+  (new URL (str "file:" root "/models/acoustic/tidigits/noisedict"))
   []
   false
   "<sil>"
   false
   false
   unitManager))
+
+(def modelLoader (new Sphinx3Loader
+  (new URL (str "file:" root "/models/acoustic/tidigits"))
+  "mdef"
+  ""
+  logMath
+  unitManager
+  (float 0.0)
+  (float 1e-7)
+  (float 0.0001)
+  true
+  ))
+
+(def model (new TiedStateAcousticModel modelLoader unitManager true))
+
 
 ;; init linguist
 (def grammar (new JSGFGrammar
@@ -175,7 +175,7 @@
   nil)) ;; AcousticModel phoneLoopAcousticModel
 
 ;; init recognizer
-(def scorer (new ThreadedAcousticScorer frontend nil 10 true 0))
+(def scorer (new ThreadedAcousticScorer frontend nil 10 true 0 Thread/NORM_PRIORITY))
 
 (def pruner (new SimplePruner))
 

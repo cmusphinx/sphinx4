@@ -68,7 +68,8 @@ def speechMarker = new SpeechMarker(
         500, // endSilenceTime,
         100, // speechLeader,
         50,  // speechLeaderFrames
-        100  // speechTrailer
+        100, // speechTrailer
+        15.0 // endSilenceDecay
 )
 
 def nonSpeechDataFilter = new NonSpeechDataFilter()
@@ -124,14 +125,11 @@ def frontend = new FrontEnd(pipeline)
 def unitManager = new UnitManager()
 
 def modelLoader = new Sphinx3Loader(
-        "file:" + root + "/models/acoustic/tidigits/model.props",
+        "file:" + root + "/models/acoustic/tidigits",
+        "mdef",
+        "",
         logMath,
         unitManager,
-        true,
-        true,
-        39,
-        "file:" + root + "/models/acoustic/tidigits/wd_dependent_phone.500.mdef",
-        "file:" + root + "/models/acoustic/tidigits/wd_dependent_phone.cd_continuous_8gau/",
         0.0f,
         1e-7f,
         0.0001f,
@@ -140,8 +138,8 @@ def modelLoader = new Sphinx3Loader(
 def model = new TiedStateAcousticModel(modelLoader, unitManager, true)
 
 def dictionary = new FastDictionary(
-        new URL("file:" + root + "/models/acoustic/tidigits/dictionary"),
-        new URL("file:" + root + "/models/acoustic/tidigits/fillerdict"),
+        new URL("file:" + root + "/models/acoustic/tidigits/dict/dictionary"),
+        new URL("file:" + root + "/models/acoustic/tidigits/noisedict"),
         new ArrayList<URL>(),
         false,
         "<sil>",
@@ -200,8 +198,13 @@ def decoder = new Decoder(searchManager,
 
 def recognizer = new Recognizer(decoder, null)
 
-// allocate the resourcs necessary for the recognizer
-recognizer.allocate()
+try{
+    // allocate the resourcs necessary for the recognizer
+    recognizer.allocate()
+} catch (Exception e) {
+    println(e)
+    e.printStackTrace();
+}
 
 // Loop unitl last utterance in the audio file has been decoded, in which case the recognizer will return null.
 def result
@@ -209,5 +212,3 @@ while ((result = recognizer.recognize()) != null) {
   def resultText = result.getBestResultNoFiller()
   println(resultText)
 }
-
-
