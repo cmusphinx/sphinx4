@@ -60,7 +60,7 @@ class TranscriberConfiguration extends CommonConfiguration {
         this.model = new TiedStateAcousticModel(modelLoader, unitManager, true);
 
         this.dictionary = new FastDictionary(
-                "resource:/TIDIGITS_8gau_13dCep_16k_40mel_130Hz_6800Hz/dictionary",
+                "resource:/TIDIGITS_8gau_13dCep_16k_40mel_130Hz_6800Hz/dict/dictionary",
                 "resource:/TIDIGITS_8gau_13dCep_16k_40mel_130Hz_6800Hz/noisedict",
                 new ArrayList<URL>(),
                 false,

@@ -138,9 +138,9 @@
     <component name="dictionary"
                type="edu.cmu.sphinx.linguist.dictionary.FullDictionary">
         <property name="dictionaryPath"
-                  value="resource:/TIDIGITS_8gau_13dCep_16k_40mel_130Hz_6800Hz/dictionary"/>
+                  value="resource:/TIDIGITS_8gau_13dCep_16k_40mel_130Hz_6800Hz/dict/dictionary"/>
         <property name="fillerPath"
-                  value="resource:/TIDIGITS_8gau_13dCep_16k_40mel_130Hz_6800Hz/fillerdict"/>
+                  value="resource:/TIDIGITS_8gau_13dCep_16k_40mel_130Hz_6800Hz/noisedict"/>
         <property name="addSilEndingPronunciation" value="false"/>
         <property name="unitManager" value="unitManager"/>
     </component>
