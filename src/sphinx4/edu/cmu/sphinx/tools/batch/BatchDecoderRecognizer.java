@@ -72,7 +72,7 @@ public class BatchDecoderRecognizer {
     void recognize() throws IOException {
         
         init();
-        writer = new PrintWriter (new FileWriter(new File(hyp)));
+        writer = new PrintWriter (new File(hyp), "UTF-8");
         Scanner scanner = new Scanner(new File(ctl));
         
         for (int i = 0; i < ctlOffset; i++) {
