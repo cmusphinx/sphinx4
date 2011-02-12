@@ -4,6 +4,8 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Proxy;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -441,6 +443,34 @@ public class PropertySheet implements Cloneable {
         return result;
     }
 
+    
+    /**
+     * Parses the string with multiple URL's separated by ;. Return the list of
+     * resources to load
+     * 
+     * @param name
+     *            list with URL's
+     * @return list of resources
+     */
+    public List<URL> getResourceList(String name) {
+        List<URL> resourceList = new ArrayList<URL>();
+        String pathListString = getString(name);
+
+        if (pathListString != null) {
+            for (String url : pathListString.split(";")) {
+                try {
+                    URL resourceUrl = new URL(url);
+                    resourceList.add(resourceUrl);
+                } catch (MalformedURLException mue) {
+                    throw new IllegalArgumentException(url
+                            + " is not a valid URL.");
+                }
+            }
+        }
+        return resourceList;
+    }
+    
+    
     public String getInstanceName() {
         return instanceName;
     }

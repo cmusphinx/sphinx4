@@ -68,6 +68,7 @@ public class FullDictionary implements Dictionary {
     private URL fillerDictionaryFile;
     private boolean allocated;
     private UnitManager unitManager;
+    protected List<URL> addendaUrlList;
 
 
     private Map<String, Word> wordDictionary;
@@ -88,7 +89,7 @@ public class FullDictionary implements Dictionary {
 
         this.wordDictionaryFile = wordDictionaryFile;
         this.fillerDictionaryFile = fillerDictionaryFile;
-
+        this.addendaUrlList = addendaUrlList;
         this.addSilEndingPronunciation = addSilEndingPronunciation;
         this.wordReplacement = wordReplacement;
         this.allowMissingWords = allowMissingWords;
@@ -112,6 +113,7 @@ public class FullDictionary implements Dictionary {
 
         wordDictionaryFile = ConfigurationManagerUtils.getResource(PROP_DICTIONARY, ps);
         fillerDictionaryFile = ConfigurationManagerUtils.getResource(PROP_FILLER_DICTIONARY, ps);
+        addendaUrlList = ps.getResourceList(PROP_ADDENDA);
         addSilEndingPronunciation = ps.getBoolean(PROP_ADD_SIL_ENDING_PRONUNCIATION);
         wordReplacement = ps.getString(Dictionary.PROP_WORD_REPLACEMENT);
         allowMissingWords = ps.getBoolean(Dictionary.PROP_ALLOW_MISSING_WORDS);
@@ -135,6 +137,9 @@ public class FullDictionary implements Dictionary {
             logger.info("Loading dictionary from: " + wordDictionaryFile);
             wordDictionary =
                     loadDictionary(wordDictionaryFile.openStream(), false);
+                        
+            loadCustomDictionaries(addendaUrlList);
+
             logger.info("Loading filler dictionary from: " +
                     fillerDictionaryFile);
             fillerDictionary =
@@ -410,5 +415,19 @@ public class FullDictionary implements Dictionary {
     @Override
     public Word[] getFillerWords() {
         return fillerDictionary.values().toArray(new Word[fillerDictionary.size()]);
+    }
+    
+    /**
+     * Loads the dictionary with a list of URLs to custom dictionary resources
+     *
+     * @param addenda the list of custom dictionary URLs to be loaded
+     * @throws IOException if there is an error reading the resource URL
+     */
+    private void loadCustomDictionaries(List<URL> addenda) throws IOException {
+        if (addenda != null) {
+            for (URL addendumUrl : addenda) {
+                loadDictionary(addendumUrl.openStream(), false);
+            }
+        }
     }
 }

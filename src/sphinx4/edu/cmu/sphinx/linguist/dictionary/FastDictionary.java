@@ -20,7 +20,6 @@ import edu.cmu.sphinx.util.TimerPool;
 import edu.cmu.sphinx.util.props.ConfigurationManagerUtils;
 import edu.cmu.sphinx.util.props.PropertyException;
 import edu.cmu.sphinx.util.props.PropertySheet;
-import edu.cmu.sphinx.util.props.S4String;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -63,25 +62,6 @@ import java.util.logging.Logger;
 
 public class FastDictionary implements Dictionary {
 
-
-    /**
-     * The property for the custom dictionary file paths. This addenda property points to a possibly
-     * empty list of URLs to dictionary addenda.  Each addendum should contain word pronunciations in the same Sphinx-3
-     * dictionary format as the main dictionary.  Words in the addendum are added after the words in the main dictionary
-     * and will override previously specified pronunciations.  If you wish to extend the set of pronunciations for a
-     * particular word, add a new pronunciation by number.  For example, in the following addendum, given that the
-     * aforementioned main dictionary is specified, the pronunciation for 'EIGHT' will be overridden by the addenda,
-     * while the pronunciation for 'SIX' and 'ZERO' will be augmented and a new pronunciation for 'ELEVEN' will be
-     * added.
-     * <pre>
-     *          EIGHT   OW T
-     *          SIX(2)  Z IH K S
-     *          ZERO(3)  Z IY Rl AH
-     *          ELEVEN   EH L EH V AH N
-     * </pre>
-     */
-    @S4String(mandatory = false)
-    public static final String PROP_ADDENDA = "addenda";
 
     // -------------------------------
     // Configuration data
@@ -143,7 +123,6 @@ public class FastDictionary implements Dictionary {
         this.wordDictionaryFile = wordDictionaryFile;
         this.fillerDictionaryFile = fillerDictionaryFile;
         this.addendaUrlList = addendaUrlList;
-
         this.addSilEndingPronunciation = addSilEndingPronunciation;
         this.wordReplacement = wordReplacement;
         this.allowMissingWords = allowMissingWords;
@@ -168,8 +147,7 @@ public class FastDictionary implements Dictionary {
 
         wordDictionaryFile = ConfigurationManagerUtils.getResource(PROP_DICTIONARY, ps);
         fillerDictionaryFile = ConfigurationManagerUtils.getResource(PROP_FILLER_DICTIONARY, ps);
-        addendaUrlList = this.getResourceList(PROP_ADDENDA, ps);
-
+        addendaUrlList = ps.getResourceList(PROP_ADDENDA);
         addSilEndingPronunciation = ps.getBoolean(PROP_ADD_SIL_ENDING_PRONUNCIATION);
         wordReplacement = ps.getString(Dictionary.PROP_WORD_REPLACEMENT);
         allowMissingWords = ps.getBoolean(Dictionary.PROP_ALLOW_MISSING_WORDS);
@@ -492,35 +470,6 @@ public class FastDictionary implements Dictionary {
      */
     public void dump() {
         System.out.print(toString());
-    }
-
-
-    /**
-     * Creates a list of resource URLs given the name of the property. This method should eventually be replaced by a
-     * corresponding version in PropertySheet
-     *
-     * @param propertyListName the name of the propertyList
-     * @param ps               the FastDictionary property sheet
-     * @return the list of resource URLs - empty if no propertyList exists
-     * @throws PropertyException if a URL (from the list) isn't a valid file path
-     */
-    private List<URL> getResourceList(String propertyListName, PropertySheet ps)
-            throws PropertyException {
-        List<URL> resourceList = new ArrayList<URL>();
-        String pathListString = ps.getString(propertyListName);
-
-        if (pathListString != null) {
-            for (String addendumPath : pathListString.split(";")) {
-                try {
-                    URL addendaUrl = new URL(addendumPath);
-                    resourceList.add(addendaUrl);
-                } catch (MalformedURLException mue) {
-                    throw new IllegalArgumentException(
-                            "Addendum path: " + addendumPath + " is not a valid URL.");
-                }
-            }
-        }
-        return resourceList;
     }
 
 

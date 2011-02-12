@@ -72,6 +72,24 @@ public interface Dictionary extends Configurable {
     @S4Component(type = UnitManager.class, defaultClass = UnitManager.class)
     public static final String PROP_UNIT_MANAGER = "unitManager";
 
+    /**
+     * The property for the custom dictionary file paths. This addenda property points to a possibly
+     * empty list of URLs to dictionary addenda.  Each addendum should contain word pronunciations in the same Sphinx-3
+     * dictionary format as the main dictionary.  Words in the addendum are added after the words in the main dictionary
+     * and will override previously specified pronunciations.  If you wish to extend the set of pronunciations for a
+     * particular word, add a new pronunciation by number.  For example, in the following addendum, given that the
+     * aforementioned main dictionary is specified, the pronunciation for 'EIGHT' will be overridden by the addenda,
+     * while the pronunciation for 'SIX' and 'ZERO' will be augmented and a new pronunciation for 'ELEVEN' will be
+     * added.
+     * <pre>
+     *          EIGHT   OW T
+     *          SIX(2)  Z IH K S
+     *          ZERO(3)  Z IY Rl AH
+     *          ELEVEN   EH L EH V AH N
+     * </pre>
+     */
+    @S4String(mandatory = false)
+    public static final String PROP_ADDENDA = "addenda";
 
     /**
      * Returns a Word object based on the spelling and its classification. The behavior of this method is also affected
