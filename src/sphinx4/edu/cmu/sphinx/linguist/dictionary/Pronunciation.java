@@ -12,6 +12,8 @@
 
 package edu.cmu.sphinx.linguist.dictionary;
 
+import java.util.List;
+
 import edu.cmu.sphinx.linguist.acoustic.Unit;
 
 
@@ -43,6 +45,34 @@ public class Pronunciation {
         this.units = units;
         this.tag = tag;
         this.probability = probability;
+    }
+
+    /**
+     * Creates a pronunciation
+     *
+     * @param units              represents the pronunciation
+     * @param tag                a grammar specific tag
+     * @param wordClassification the classification for this word
+     * @param probability        the probability of this pronunciation occurring
+     */
+    protected Pronunciation(List<Unit> units,
+                  String tag,
+                  WordClassification wordClassification,
+                  float probability) {
+        Unit[] unitsArray = units.toArray(new Unit[units.size()]);
+        this.wordClassification = wordClassification;
+        this.units = unitsArray;
+        this.tag = tag;
+        this.probability = probability;
+    }
+
+    /**
+     * Creates a pronunciation with defaults
+     *
+     * @param units              represents the pronunciation
+     */
+    protected Pronunciation(List<Unit> units) {
+        this(units, null, null, 1.0f);
     }
 
 

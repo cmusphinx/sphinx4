@@ -396,7 +396,7 @@ public class FastDictionary implements Dictionary {
      * massaged into an array of pronunciations.
      */
     private Word processEntry(String word) {
-        List<Pronunciation> pList = new LinkedList<Pronunciation>();
+        List<Pronunciation> pronunciations = new LinkedList<Pronunciation>();
         String line;
         int count = 0;
         boolean isFiller = false;
@@ -415,25 +415,23 @@ public class FastDictionary implements Dictionary {
                 isFiller = tag.startsWith(FILLER_TAG);
                 int unitCount = st.countTokens();
 
-                Unit[] units = new Unit[unitCount];
-                for (int i = 0; i < units.length; i++) {
+                ArrayList<Unit> units = new ArrayList<Unit>(unitCount);
+                for (int i = 0; i < unitCount; i++) {
                     String unitName = st.nextToken();
-                    units[i] = getCIUnit(unitName, isFiller);
+                    units.add(getCIUnit(unitName, isFiller));
                 }
-
+                pronunciations.add(new Pronunciation(units));
                 if (!isFiller && addSilEndingPronunciation) {
-                    units = Arrays.copyOf(units, unitCount + 1);
-                    units[unitCount] = UnitManager.SILENCE;
+                    units.add(UnitManager.SILENCE);
+                    pronunciations.add(new Pronunciation(units));
                 }
-                pList.add(new Pronunciation(units, null, null, 1.f));
             }
         } while (line != null);
 
-        Pronunciation[] pronunciations = new Pronunciation[pList.size()];
-        pList.toArray(pronunciations);
-        Word wordObject = createWord(word, pronunciations, isFiller);
+        Pronunciation[] pronunciationsArray = pronunciations.toArray(new Pronunciation[pronunciations.size()]);
+        Word wordObject = createWord(word, pronunciationsArray, isFiller);
 
-        for (Pronunciation pronunciation : pronunciations) {
+        for (Pronunciation pronunciation : pronunciationsArray) {
             pronunciation.setWord(wordObject);
         }
         wordDictionary.put(word, wordObject);

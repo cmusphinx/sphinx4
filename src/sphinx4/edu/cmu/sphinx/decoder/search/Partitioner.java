@@ -103,7 +103,7 @@ public class Partitioner {
      * Simply find the best token and put it in the last slot
      * 
      * @param tokens array of tokens
-     * @param required size
+     * @param size the number of tokens to partition
      * @return index of the best token
      */
     private int findBest(Token[] tokens, int size) {

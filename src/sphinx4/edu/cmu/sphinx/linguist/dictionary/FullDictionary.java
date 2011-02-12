@@ -170,7 +170,7 @@ public class FullDictionary implements Dictionary {
      */
     protected Map<String, Word> loadDictionary(InputStream inputStream, boolean isFillerDict)
             throws IOException {
-        Map<String, List<Pronunciation>> pronunciationList = new HashMap<String, List<Pronunciation>>();
+        Map<String, List<Pronunciation>> dictPronunciations = new HashMap<String, List<Pronunciation>>();
         ExtendedStreamTokenizer est = new ExtendedStreamTokenizer(inputStream,
                 true);
         String word;
@@ -178,32 +178,29 @@ public class FullDictionary implements Dictionary {
             word = removeParensFromWord(word);
             word = word.toLowerCase();
             List<Unit> units = new ArrayList<Unit>(20);
+
+            List<Pronunciation> pronunciations = dictPronunciations.get(word);
+            if (pronunciations == null) {
+                pronunciations = new LinkedList<Pronunciation>();
+            }
+            
+            // Count units and add them 
             String unitText;
             while ((unitText = est.getString()) != null) {
                 units.add(getCIUnit(unitText, isFillerDict));
             }
-            Unit[] unitsArray = units.toArray(new Unit[units.size()]);
-            List<Pronunciation> pronunciations = pronunciationList.get(word);
-            if (pronunciations == null) {
-                pronunciations = new LinkedList<Pronunciation>();
-            }
-            Pronunciation pronunciation = new Pronunciation(unitsArray, null,
-                    null, 1.0f);
-            pronunciations.add(pronunciation);
+            pronunciations.add(new Pronunciation(units));
             // if we are adding a SIL ending duplicate
             if (!isFillerDict && addSilEndingPronunciation) {
                 units.add(UnitManager.SILENCE);
-                Unit[] unitsArray2 = units.toArray(new Unit[units
-                        .size()]);
-                Pronunciation pronunciation2 = new Pronunciation(unitsArray2,
-                        null, null, 1.0f);
-                pronunciations.add(pronunciation2);
+                pronunciations.add(new Pronunciation(units));
             }
-            pronunciationList.put(word, pronunciations);
+            
+            dictPronunciations.put(word, pronunciations);
         }
         inputStream.close();
         est.close();
-        return createWords(pronunciationList, isFillerDict);
+        return createWords(dictPronunciations, isFillerDict);
     }
 
 

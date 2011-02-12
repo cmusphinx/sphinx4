@@ -25,7 +25,7 @@ import java.util.*;
  * @author daktari3
  * @version 2010-12-16
  * @see LargeNGramModel
- * @see KeywordOptimizerModel
+ * @see edu.cmu.sphinx.linguist.language.ngram.KeywordOptimizerModel
  *
  */
 
