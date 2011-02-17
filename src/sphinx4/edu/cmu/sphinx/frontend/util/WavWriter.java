@@ -229,42 +229,6 @@ public class WavWriter extends BaseDataProcessor {
         return byteArray;
     }
 
-
-    public static AudioInputStream convertDoublesToAudioStream(double[] values, int sampleRate) {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        DataOutputStream dos = new DataOutputStream(baos);
-
-        for (double value : values) {
-            try {
-                dos.writeShort(new Short((short) value));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-        AudioFormat wavFormat = new AudioFormat(sampleRate, 16, 1, true, true);
-        byte[] abAudioData = baos.toByteArray();
-        ByteArrayInputStream bais = new ByteArrayInputStream(abAudioData);
-
-        return new AudioInputStream(bais, wavFormat, abAudioData.length / wavFormat.getFrameSize());
-    }
-
-
-    /** Writes a given double array into a wav file (given the sample rate of the signal).
-     * @param signal
-     * @param sampleRate
-     * @param targetFile*/
-    public static void writeWavFile(double[] signal, int sampleRate, File targetFile) {
-        AudioInputStream ais = WavWriter.convertDoublesToAudioStream(signal, sampleRate);
-        AudioFileFormat.Type outputType = getTargetType("wav");
-
-        try {
-            AudioSystem.write(ais, outputType, targetFile);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
     /**
     * Writes the current stream to disc; override this method if you want to take 
     * additional action on file writes
