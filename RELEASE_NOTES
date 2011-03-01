@@ -1,5 +1,34 @@
 Sphinx-4 Speech Recognition System
 -------------------------------------------------------------------
+
+-------------------------------------------------------------------
+
+Version:       1.0Beta6
+Release Date:  March 2011
+
+-------------------------------------------------------------------
+
+New Features and Improvements:
+
+ * SRGS/GrXML support, more to come soon with support for JSAPI2
+ * Model layout is unified with Pocketsphinx/Sphinxtrain
+ * Netbeans project files are included
+ * Language models can be loaded from URI
+ * Batch testing application allows testing inside Sphinxtrain
+
+Bug Fixes:
+
+ * Flat linguist accuracy issue fixed
+ * Intelligent sorting in paritioner fixes stack overflow when tokens
+ have identical scores
+ * Various bug fixes
+    
+Thanks:
+
+  Timo Bauman, Nasir Hussain, Michele Alessandrini, Evandro Goueva,
+  Stephen Marquard, Larry A. Taylor, Yuri Orlov, Dirk Schnelle-Walka,
+  James Chivers, Firas Al Khalil
+
 -------------------------------------------------------------------
 
 Version:       1.0Beta5

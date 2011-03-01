@@ -7,7 +7,7 @@
     <!-- * Where to find things...                                * -->
     <!-- *                                                        * -->
     <!-- ********************************************************** -->
-    <property name="version" value="1.0beta5"/>
+    <property name="version" value="1.0beta6"/>
 
     <path id="libs">
         <fileset dir="lib" includes="**/jsapi.jar,**/js.jar,**/junit-4.8.1.jar"/>
