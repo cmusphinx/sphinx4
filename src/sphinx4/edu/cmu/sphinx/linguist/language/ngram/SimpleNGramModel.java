@@ -403,7 +403,7 @@ public class SimpleNGramModel implements LanguageModel, BackoffLanguageModel {
         if (line == null) {
             corrupt("Premature EOF");
         }
-        return line;
+        return line.trim();
     }
 
 
