@@ -30,6 +30,7 @@ public class SenoneHMMState implements HMMState {
     HMMStateArc[] arcs;
     private final boolean isEmitting;
     private Senone senone;
+    private final int hashCode;
 
     private static int objectCount;
 
@@ -49,6 +50,7 @@ public class SenoneHMMState implements HMMState {
             senone = ss.getSenones()[state];
         }
         Utilities.objectTracker("HMMState", objectCount++);
+        hashCode = hmm.hashCode() + 37 * state;
     }
 
 
@@ -135,7 +137,7 @@ public class SenoneHMMState implements HMMState {
      */
     @Override
     public int hashCode() {
-        return hmm.hashCode() + state;
+        return hashCode;
     }
 
 
