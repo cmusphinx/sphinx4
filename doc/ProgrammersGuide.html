@@ -451,7 +451,7 @@ grammar:
         &lt;property name="dictionaryPath" value=
                   value="resource:/WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz/dict/cmudict.0.6d"/&gt;
         &lt;property name="fillerPath"
-                  value="resource:/WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz/dict/fillerdict"/&gt;
+                  value="resource:/WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz/noisedict"/&gt;
         &lt;property name="addSilEndingPronunciation" value="false"/&gt;
         &lt;property name="wordReplacement" value="&lt;sil&gt;"/&gt;
     &lt;/component&gt;
@@ -460,7 +460,7 @@ grammar:
   <p>The locations of these dictionary files are specified using
   the Sphinx-4 resource mechanism. The dictionary for filler words
   like "BREATH" and "LIP_SMACK" is the file
-  <code>fillerdict</code>.</p>
+  <code>noisedict</code>.</p>
 
   <p>For details about the other possible properties, please refer
   to the <a href=
@@ -478,7 +478,7 @@ grammar:
         &lt;property name="dictionaryPath" value=
                   value="resource:/WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz/dict/cmudict.0.6d"/&gt;
         &lt;property name="fillerPath"
-                  value="resource:/WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz/dict/fillerdict"/&gt;
+                  value="resource:/WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz/noisedict"/&gt;
         &lt;property name="addSilEndingPronunciation" value="false"/&gt;
         &lt;property name="wordReplacement" value="&lt;sil&gt;"/&gt;
     &lt;/component&gt;
@@ -1072,7 +1072,7 @@ trigram language model. It is defined as follows:</p>
         &lt;property name="dictionaryPath" value=
                   value="resource:/WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz/dict/cmudict.0.6d"/&gt;
         &lt;property name="fillerPath"
-                  value="resource:/WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz/dict/fillerdict"/&gt;
+                  value="resource:/WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz/noisedict"/&gt;
         &lt;property name="addSilEndingPronunciation" value="false"/&gt;
         &lt;property name="wordReplacement" value="&lt;sil&gt;"/&gt;
     &lt;/component&gt;
@@ -1084,7 +1084,7 @@ trigram language model. It is defined as follows:</p>
   <code>WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz/dict/cmudict.0.6d</code>
   file inside the JAR file, and the dictionary for filler words
   like "BREATH" and "LIP_SMACK" is
-  <code>WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz/dict/fillerdict</code>.
+  <code>WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz/noisedict</code>.
   You can inspect the contents of a JAR file by (assuming your JAR
   file is called myJar.jar)</p>
   <pre>
@@ -1092,25 +1092,25 @@ jar tvf myJar.jar
 </pre>You can see the contents of the WSJ JAR file by:
   <pre>
 sphinx4&gt; jar tvf lib/WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz.jar
-     0 Fri Feb 12 15:01:22 MSK 2010 META-INF/
-   106 Fri Feb 12 15:01:20 MSK 2010 META-INF/MANIFEST.MF
-     0 Fri Feb 12 15:01:22 MSK 2010 WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz/
-     0 Fri Feb 12 15:01:22 MSK 2010 WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz/cd_continuous_8gau/
-     0 Fri Feb 12 15:01:22 MSK 2010 WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz/dict/
-     0 Fri Feb 12 15:01:22 MSK 2010 WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz/etc/
-  1492 Fri Feb 12 15:01:22 MSK 2010 WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz/README
-5175518 Fri Feb 12 15:01:18 MSK 2010 WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz/cd_continuous_8gau/means
-132762 Fri Feb 12 15:01:22 MSK 2010 WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz/cd_continuous_8gau/mixture_weights
-  2410 Fri Feb 12 15:01:22 MSK 2010 WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz/cd_continuous_8gau/transition_matrices
-5175518 Fri Feb 12 15:01:18 MSK 2010 WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz/cd_continuous_8gau/variances
-   354 Fri Feb 12 15:01:22 MSK 2010 WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz/dict/alpha.dict
-4718935 Fri Feb 12 15:01:16 MSK 2010 WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz/dict/cmudict.0.6d
-   373 Fri Feb 12 15:01:22 MSK 2010 WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz/dict/digits.dict
-   204 Fri Feb 12 15:01:22 MSK 2010 WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz/dict/fillerdict
-5654967 Fri Feb 12 15:01:22 MSK 2010 WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz/etc/WSJ_clean_13dCep_16k_40mel_130Hz_6800Hz.4000.mdef
-  2641 Fri Feb 12 15:01:22 MSK 2010 WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz/etc/WSJ_clean_13dCep_16k_40mel_130Hz_6800Hz.ci.mdef
-   375 Fri Feb 12 15:01:22 MSK 2010 WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz/etc/variables.def
-  1797 Fri Feb 12 15:01:16 MSK 2010 WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz/license.terms
+
+       0 Mon Mar 07 01:20:36 MSK 2011 META-INF/
+     106 Mon Mar 07 01:20:34 MSK 2011 META-INF/MANIFEST.MF
+       0 Mon Mar 07 01:20:34 MSK 2011 WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz/
+       0 Mon Mar 07 01:20:34 MSK 2011 WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz/dict/
+     934 Mon Mar 07 01:20:34 MSK 2011 WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz/README
+     354 Mon Mar 07 01:20:34 MSK 2011 WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz/dict/alpha.dict
+ 4718935 Mon Mar 07 01:20:34 MSK 2011 WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz/dict/cmudict.0.6d
+     373 Mon Mar 07 01:20:34 MSK 2011 WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz/dict/digits.dict
+     101 Mon Mar 07 01:20:34 MSK 2011 WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz/feat.params
+    1797 Mon Mar 07 01:20:34 MSK 2011 WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz/license.terms
+ 5654967 Mon Mar 07 01:20:34 MSK 2011 WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz/mdef
+ 5175518 Mon Mar 07 01:20:34 MSK 2011 WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz/means
+  132762 Mon Mar 07 01:20:34 MSK 2011 WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz/mixture_weights
+     204 Mon Mar 07 01:20:34 MSK 2011 WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz/noisedict
+    2410 Mon Mar 07 01:20:34 MSK 2011 WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz/transition_matrices
+ 5175518 Mon Mar 07 01:20:34 MSK 2011 WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz/variances
+                                     
+
 </pre>The locations of the dictionary files with the JAR file are
 specified using the Sphinx-4 resource mechanism. In short, this
 mechanism looks for all JAR files for specified path to the
