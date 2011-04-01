@@ -1,6 +1,6 @@
 package edu.cmu.sphinx.util.props;
 
-import java.lang.reflect.Proxy;
+import java.lang.annotation.Annotation;
 
 /**
  * Wraps annotations
@@ -9,15 +9,15 @@ import java.lang.reflect.Proxy;
  */
 public class S4PropWrapper {
 
-    private final Proxy annotation;
+    private final Annotation annotation;
 
 
-    public S4PropWrapper(Proxy annotation) {
+    public S4PropWrapper(Annotation annotation) {
         this.annotation = annotation;
     }
 
 
-    public Proxy getAnnotation() {
+    public Annotation getAnnotation() {
         return annotation;
     }
 }

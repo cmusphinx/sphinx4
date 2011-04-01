@@ -3,7 +3,6 @@ package edu.cmu.sphinx.util.props;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.lang.reflect.Proxy;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
@@ -521,7 +520,7 @@ public class PropertySheet implements Cloneable {
     public Collection<String> getUndefinedMandatoryProps() {
         Collection<String> undefProps = new ArrayList<String>();
         for (String propName : getRegisteredProperties()) {
-            Proxy anno = registeredProperties.get(propName).getAnnotation();
+            Annotation anno = registeredProperties.get(propName).getAnnotation();
 
             boolean isMandatory = false;
             if (anno instanceof S4Component) {
@@ -572,7 +571,7 @@ public class PropertySheet implements Cloneable {
                 assert !classProperties.contains(propertyName) :
                         "duplicate property-name for different properties: " + propertyName;
 
-                registerProperty(propertyName, new S4PropWrapper((Proxy)entry.getValue()));
+                registerProperty(propertyName, new S4PropWrapper(entry.getValue()));
                 classProperties.add(propertyName);
             } catch (IllegalAccessException e) {
                 e.printStackTrace();
@@ -592,7 +591,7 @@ public class PropertySheet implements Cloneable {
             throw new InternalConfigurationException(getInstanceName(), name, '\'' + name +
                     "' is not a registered string-property");
 
-        Proxy annotation = registeredProperties.get(name).getAnnotation();
+        Annotation annotation = registeredProperties.get(name).getAnnotation();
         if (!(annotation instanceof S4String))
             throw new InternalConfigurationException(getInstanceName(), name, '\'' + name + "' is of type string");
 
@@ -612,7 +611,7 @@ public class PropertySheet implements Cloneable {
             throw new InternalConfigurationException(getInstanceName(), name, '\'' + name +
                     "' is not a registered int-property");
 
-        Proxy annotation = registeredProperties.get(name).getAnnotation();
+        Annotation annotation = registeredProperties.get(name).getAnnotation();
         if (!(annotation instanceof S4Integer))
             throw new InternalConfigurationException(getInstanceName(), name, '\'' + name + "' is of type int");
 
@@ -632,7 +631,7 @@ public class PropertySheet implements Cloneable {
             throw new InternalConfigurationException(getInstanceName(), name, '\'' + name +
                     "' is not a registered double-property");
 
-        Proxy annotation = registeredProperties.get(name).getAnnotation();
+        Annotation annotation = registeredProperties.get(name).getAnnotation();
         if (!(annotation instanceof S4Double))
             throw new InternalConfigurationException(getInstanceName(), name, '\'' + name + "' is of type double");
 
@@ -651,7 +650,7 @@ public class PropertySheet implements Cloneable {
             throw new InternalConfigurationException(getInstanceName(), name, '\'' + name +
                     "' is not a registered boolean-property");
 
-        Proxy annotation = registeredProperties.get(name).getAnnotation();
+        Annotation annotation = registeredProperties.get(name).getAnnotation();
         if (!(annotation instanceof S4Boolean))
             throw new InternalConfigurationException(getInstanceName(), name, '\'' + name + "' is of type boolean");
 
@@ -671,7 +670,7 @@ public class PropertySheet implements Cloneable {
             throw new InternalConfigurationException(getInstanceName(), name, '\'' + name +
                     "' is not a registered compontent");
 
-        Proxy annotation = registeredProperties.get(name).getAnnotation();
+        Annotation annotation = registeredProperties.get(name).getAnnotation();
         if (!(annotation instanceof S4Component))
             throw new InternalConfigurationException(getInstanceName(), name, '\'' + name + "' is of type component");
 
@@ -693,7 +692,7 @@ public class PropertySheet implements Cloneable {
             throw new InternalConfigurationException(getInstanceName(), name, '\'' + name +
                     "' is not a registered component-list");
 
-        Proxy annotation = registeredProperties.get(name).getAnnotation();
+        Annotation annotation = registeredProperties.get(name).getAnnotation();
         if (!(annotation instanceof S4ComponentList))
             throw new InternalConfigurationException(getInstanceName(), name, '\'' + name + "' is of type component-list");
 
@@ -757,7 +756,7 @@ public class PropertySheet implements Cloneable {
             throw new InternalConfigurationException(getInstanceName(), propName, " is not a valid property of" + getConfigurableClass());
         }
 
-        Proxy annotation = wrapper.getAnnotation();
+        Annotation annotation = wrapper.getAnnotation();
         if (annotation instanceof S4Component)
             return PropertyType.COMPONENT;
         else if (annotation instanceof S4ComponentList)
