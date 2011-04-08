@@ -95,6 +95,7 @@ public class JSGFDemo {
         System.out.println(" Ready");
 
         if (microphone.startRecording()) {
+            loadAndRecognize("speechapi");
             loadAndRecognize("movies");
             loadAndRecognize("news");
             loadAndRecognize("books");

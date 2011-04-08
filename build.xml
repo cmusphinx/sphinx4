@@ -263,6 +263,12 @@
                 <include name="**/*.xml"/>
             </fileset>
         </copy>
+        <!-- Compile JSAPI 2.0 -->
+        <ant dir="${src_dir}/jsapi2/org.jvoicexml.jsapi2" 
+          inheritall="false" inheritrefs="false">
+          <property name="jsapi2.sphinx4" value="true" />
+          <property name="sphinx4.lib.dir" value="${lib_dir}" />
+        </ant>
     </target>
 
 
@@ -354,7 +360,7 @@
     <!-- *                                                        * -->
     <!-- ********************************************************** -->
     <target name="jars"
-            depends="jsapi10base_jar,sphinx4_jar,batch_jar,tags_jar,audiotool_jar"
+            depends="jsapi10base_jar,sphinx4_jar,jsapi20_jar,batch_jar,tags_jar,audiotool_jar"
             description="Builds all the jar files"/>
 
 
@@ -395,6 +401,20 @@
             <include name="com/sun/speech/**"/>
             <include name="edu/cmu/sphinx/jsapi/**"/>
         </jar>
+    </target>
+
+    <!-- JSAPI 2.0 jar -->
+    <target name="jsapi20_jar" depends="compile_src"
+      description="Create JSAPI 2.0 jars">
+      <mkdir dir="${lib_dir}"/>
+      <copy todir="${lib_dir}">
+        <fileset dir="${src_dir}/jsapi2/org.jvoicexml.jsapi2/dist">
+          <include name="jsr113.jar"/>
+          <include name="org.jvoicexml.jsapi2.jar"/>
+          <include name="org.jvoicexml.jsapi2.jse.jar"/>
+          <include name="org.jvoicexml.jsapi2.jse.sphinx4.jar"/>
+        </fileset>
+      </copy>
     </target>
 
     <property name="batch_jar" value="${lib_dir}/batch.jar"/>
@@ -587,6 +607,15 @@
         <delete file="${lib_dir}/${tidigits_name}.jar" failonerror="false"/>
         <delete file="tempKeystore" failonerror="false"/>
         <!-- antcall target="delete_all_model_classes"/ -->
+      <!-- Delete JSAPI 2.0 artifacts -->
+      <ant dir="${src_dir}/jsapi2/org.jvoicexml.jsapi2" 
+        inheritall="false" inheritrefs="false" target="clean">
+        <property name="jsapi2.sphinx4" value="true" />
+      </ant>
+      <delete file="${lib_dir}/jsr113.jar" failonerror="false"/>
+      <delete file="${lib_dir}/org.jvoicexml.jsapi2.jar" failonerror="false"/>
+      <delete file="${lib_dir}/org.jvoicexml.jsapi2.jse.jar" failonerror="false"/>
+      <delete file="${lib_dir}/org.jvoicexml.jsapi2.jse.sphinx4.jar" failonerror="false"/>
     </target>
 
     <!-- ********************************************************** -->

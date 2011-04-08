@@ -1,0 +1,23 @@
+#JSGF V1.0;
+grammar speechapi;
+public <command> = (<link>);
+
+<link> = ( say demo {http://speechapi.com/live-demos/say.html}|
+what demo {http://speechapi.com/live-demos/what.html}|
+parrot demo {http://speechapi.com/live-demos/parrot.html}|
+form [demo] {http://speechapi.com/live-demos/form.html}|
+haiti earthquake relief
+{http://www.craigslist.org/about/help/haiti_earthquake_resources}|
+[avoid] scams [and fraud] {http://www.craigslist.org/about/scams}|
+[personal] safety [tips] {http://www.craigslist.org/about/safety}|
+craigs list b log {http://blog.craigslist.org/}| craigs list fact sheet {http://www.craigslist.org/about/factsheet.html}|
+best of craigs list {http://www.craigslist.org/about/best/all/}|
+[craigs list] t v|television {http://youtube.com/craigslist}| weather {http://www.crh.noaa.gov/forecasts/CAZ006.php}|
+quake {http://quake.wr.usgs.gov/recenteqs/}|
+tide {http://tidesonline.nos.noaa.gov/plotcomp.shtml?station_info=9414290+San+Francisco,+CA}|
+progressive directory {http://www.bapd.org/}| craigs list is hiring {http://www.craigslist.org/about/craigslist_is_hiring}|
+craigs list movie and d v d
+{http://24hoursoncraigslist.com/subs/nowplaying.html}|
+craigs list foundation {http://craigslistfoundation.org/}|
+boot camp [2010] {http://www.craigslistfoundation.org/bootcamp/}|
+ speech web site  {http://www.speechapi.com});
