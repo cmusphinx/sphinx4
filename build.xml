@@ -224,6 +224,7 @@
         <mkdir dir="${build_model_dir}"/>
         <antcall target="create_all_models"/>
         <antcall target="jars"/>
+        <antcall target="compile_jsapi2"/>
         <antcall target="demos"/>
         <echo message="Build complete."/>
     </target>
@@ -263,11 +264,15 @@
                 <include name="**/*.xml"/>
             </fileset>
         </copy>
-        <!-- Compile JSAPI 2.0 -->
+    </target>
+
+    <target name="compile_jsapi2"
+            depends="handle_jsapi"
+            description="Build jsapi2">
         <ant dir="${src_dir}/jsapi2/org.jvoicexml.jsapi2" 
           inheritall="false" inheritrefs="false">
           <property name="jsapi2.sphinx4" value="true" />
-          <property name="sphinx4.lib.dir" value="${lib_dir}" />
+          <property name="sphinx4.lib.dir" value="../../../${lib_dir}" />
         </ant>
     </target>
 
