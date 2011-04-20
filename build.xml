@@ -225,6 +225,7 @@
         <antcall target="create_all_models"/>
         <antcall target="jars"/>
         <antcall target="compile_jsapi2"/>
+        <antcall target="jsapi20_jar"/>
         <antcall target="demos"/>
         <echo message="Build complete."/>
     </target>
@@ -365,7 +366,7 @@
     <!-- *                                                        * -->
     <!-- ********************************************************** -->
     <target name="jars"
-            depends="jsapi10base_jar,sphinx4_jar,jsapi20_jar,batch_jar,tags_jar,audiotool_jar"
+            depends="jsapi10base_jar,sphinx4_jar,batch_jar,tags_jar,audiotool_jar"
             description="Builds all the jar files"/>
 
 
@@ -409,7 +410,7 @@
     </target>
 
     <!-- JSAPI 2.0 jar -->
-    <target name="jsapi20_jar" depends="compile_src"
+    <target name="jsapi20_jar" depends="compile_jsapi2"
       description="Create JSAPI 2.0 jars">
       <mkdir dir="${lib_dir}"/>
       <copy todir="${lib_dir}">
