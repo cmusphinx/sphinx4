@@ -184,36 +184,23 @@ public class FlatLinguist implements Linguist, Configurable {
         return searchGraph;
     }
 
-    public FlatLinguist(
-            AcousticModel acousticModel,
-            LogMath logMath,
-            Grammar grammar,
-            UnitManager unitManager,
-            double wordInsertionProbability,
-            double silenceInsertionProbability,
-            double fillerInsertionProbability,
-            double unitInsertionProbability,
-            float languageWeight,
-            boolean dumpGStates,
-            boolean showCompilationProgress,
-            boolean spreadWordProbabilitiesAcrossPronunciations,
-            boolean addOutOfGrammarBranch,
-            double outOfGrammarBranchProbability,
-            double phoneInsertionProbability,
-            AcousticModel phoneLoopAcousticModel
-    ) {
+    public FlatLinguist(AcousticModel acousticModel, LogMath logMath, Grammar grammar, UnitManager unitManager,
+            double wordInsertionProbability, double silenceInsertionProbability, double fillerInsertionProbability,
+            double unitInsertionProbability, float languageWeight, boolean dumpGStates, boolean showCompilationProgress,
+            boolean spreadWordProbabilitiesAcrossPronunciations, boolean addOutOfGrammarBranch,
+            double outOfGrammarBranchProbability, double phoneInsertionProbability, AcousticModel phoneLoopAcousticModel    ) {
 
         this.acousticModel = acousticModel;
         this.logMath = logMath;
         this.grammar = grammar;
         this.unitManager = unitManager;
 
-        // get the rest of the configuration data
         this.logWordInsertionProbability = logMath.linearToLog(wordInsertionProbability);
         this.logSilenceInsertionProbability = logMath.linearToLog(silenceInsertionProbability);
         this.logFillerInsertionProbability = logMath.linearToLog(fillerInsertionProbability);
         this.logUnitInsertionProbability = logMath.linearToLog(unitInsertionProbability);
         this.languageWeight = languageWeight;
+        
         this.dumpGStates = dumpGStates;
         this.showCompilationProgress = showCompilationProgress;
         this.spreadWordProbabilitiesAcrossPronunciations = spreadWordProbabilitiesAcrossPronunciations;

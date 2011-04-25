@@ -33,12 +33,12 @@ import java.util.logging.Logger;
  * A simple form of the linguist. It makes the following simplifying assumptions: 1) Zero or one word per grammar node
  * 2) No fan-in allowed ever 3) No composites (yet) 4) Only Unit, HMMState, and pronunciation states (and the
  * initial/final grammar state are in the graph (no word, alternative or grammar states attached). 5) Only valid
- * tranisitions (matching contexts) are allowed 6) No tree organization of units 7) Branching grammar states are
+ * transitions (matching contexts) are allowed 6) No tree organization of units 7) Branching grammar states are
  * allowed
  * <p/>
  * This is a dynamic version of the flat linguist that is more efficient in terms of startup time and overall footprint
  * <p/>
- * Note that all probabilties are maintained in the log math domain
+ * Note that all probabilities are maintained in the log math domain
  */
 
 public class DynamicFlatLinguist implements Linguist, Configurable {
@@ -123,24 +123,23 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
     private final SearchStateArc[] EMPTY_ARCS = new SearchStateArc[0];
 
     public DynamicFlatLinguist(AcousticModel acousticModel, Grammar grammar, UnitManager unitManager, LogMath logMath,
-                               double logWordInsertionProbability, double logSilenceInsertionProbability, double logUnitInsertionProbability,
-                               double logFillerInsertionProbability, float languageWeight, boolean addOutOfGrammarBranch, 
-                               double logOutOfGrammarBranchProbability, AcousticModel phoneLoopAcousticModel ) {                              
-        // hookup to all of the components
+            double wordInsertionProbability, double silenceInsertionProbability, double unitInsertionProbability,
+            double fillerInsertionProbability, float languageWeight, boolean addOutOfGrammarBranch,
+            double outOfGrammarBranchProbability, double phoneInsertionProbability, AcousticModel phoneLoopAcousticModel) {
+
         this.logger = Logger.getLogger(getClass().getName());
         this.acousticModel = acousticModel;
         this.logMath = logMath;
         this.grammar = grammar;
         this.unitManager = unitManager;
 
-        // get the rest of the configuration data
-        this.logWordInsertionProbability = logMath.linearToLog(logWordInsertionProbability);
-        this.logSilenceInsertionProbability = logMath.linearToLog(logSilenceInsertionProbability);
-        this.logUnitInsertionProbability = logMath.linearToLog(logUnitInsertionProbability);
-        this.logFillerInsertionProbability = logMath.linearToLog(logFillerInsertionProbability);
+        this.logWordInsertionProbability = logMath.linearToLog(wordInsertionProbability);
+        this.logSilenceInsertionProbability = logMath.linearToLog(silenceInsertionProbability);
+        this.logUnitInsertionProbability = logMath.linearToLog(unitInsertionProbability);
+        this.logFillerInsertionProbability = logMath.linearToLog(fillerInsertionProbability);
         this.languageWeight = languageWeight;
         this.addOutOfGrammarBranch = addOutOfGrammarBranch;
-        this.logOutOfGrammarBranchProbability = logMath.linearToLog(logOutOfGrammarBranchProbability);
+        this.logOutOfGrammarBranchProbability = logMath.linearToLog(outOfGrammarBranchProbability);
 
         this.logPhoneInsertionProbability = logMath.linearToLog(logPhoneInsertionProbability);
         if (addOutOfGrammarBranch) {

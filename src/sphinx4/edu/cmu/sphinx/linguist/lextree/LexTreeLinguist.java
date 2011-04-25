@@ -258,14 +258,11 @@ public class LexTreeLinguist implements Linguist {
     private int cacheTrys;
     private int cacheHits;
 
-    public LexTreeLinguist(
-        AcousticModel acousticModel, LogMath logMath, UnitManager unitManager,
-        BackoffLanguageModel languageModel, Dictionary dictionary,
-        boolean fullWordHistories, boolean wantUnigramSmear,
-        double wordInsertionProbability, double silenceInsertionProbability,
-        double fillerInsertionProbability, double unitInsertionProbability,
-        float languageWeight, boolean addFillerWords, boolean generateUnitStates,
-        float unigramSmearWeight, int maxArcCacheSize ) {
+    public LexTreeLinguist(AcousticModel acousticModel, LogMath logMath, UnitManager unitManager,
+            BackoffLanguageModel languageModel, Dictionary dictionary, boolean fullWordHistories, boolean wantUnigramSmear,
+            double wordInsertionProbability, double silenceInsertionProbability, double fillerInsertionProbability,
+            double unitInsertionProbability, float languageWeight, boolean addFillerWords, boolean generateUnitStates,
+            float unigramSmearWeight, int maxArcCacheSize) {
 
         logger = Logger.getLogger(getClass().getName());
 
