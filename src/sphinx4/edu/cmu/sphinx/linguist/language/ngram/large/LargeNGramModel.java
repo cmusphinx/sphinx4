@@ -193,7 +193,9 @@ public class LargeNGramModel implements LanguageModel, BackoffLanguageModel {
     @SuppressWarnings("unchecked")
     public void allocate() throws IOException {
         TimerPool.getTimer(this, "Load LM").start();
-        
+       
+        logger.info("Loading n-gram language model from: " + location);
+       
         // create the log file if specified
         if (ngramLogFile != null)
             logFile = new PrintWriter(new FileOutputStream(ngramLogFile));

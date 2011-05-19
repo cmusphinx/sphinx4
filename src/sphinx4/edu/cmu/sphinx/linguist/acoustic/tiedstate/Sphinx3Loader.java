@@ -1136,7 +1136,7 @@ public class Sphinx3Loader implements Loader {
 
     @Override
     public void logInfo() {
-        logger.info("Sphinx3Loader");
+        logger.info("Loading tied-state acoustic model from: " + location);
         meansPool.logInfo(logger);
         variancePool.logInfo(logger);
         transitionsPool.logInfo(logger);

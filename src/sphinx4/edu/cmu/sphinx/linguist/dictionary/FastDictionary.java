@@ -482,6 +482,7 @@ public class FastDictionary implements Dictionary {
     private void loadCustomDictionaries(List<URL> addenda) throws IOException {
         if (addenda != null) {
             for (URL addendumUrl : addenda) {
+                logger.info("Loading addendum dictionary from: " + addendumUrl);
                 loadDictionary(addendumUrl.openStream(), false);
             }
         }
