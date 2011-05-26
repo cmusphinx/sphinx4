@@ -212,7 +212,8 @@ public class FeatureFileDumper {
             System.out
                     .println("Usage: FeatureFileDumper "
                             + "[ -config configFile ] -name frontendName "
-                            + "< -i input File -o outputFile | -ctl inputFile -i inputFolder -o outputFolder >");
+                            + "< -i input File -o outputFile | -ctl inputFile -i inputFolder -o outputFolder >\n"
+                            + "Possible frontends are: cepstraFrontEnd, spectraFrontEnd, plpFrontEnd");
             System.exit(1);
         }
 
@@ -229,6 +230,11 @@ public class FeatureFileDumper {
                         .getResource("frontend.config.xml");
             }
             ConfigurationManager cm = new ConfigurationManager(url);
+            
+            if(cm.lookup(frontEndName) == null) {
+            	throw new RuntimeException("No such frontend: " + frontEndName);
+            }
+            
             FeatureFileDumper dumper = new FeatureFileDumper(cm, frontEndName);
 
             if (inputCtl == null)
