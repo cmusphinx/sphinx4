@@ -550,7 +550,7 @@ public class NISTAlign {
         }
         System.out.println();
 
-        System.out.print("HYP: " + toString(alignedReferenceWords));
+        System.out.print("HYP: " + toString(alignedHypothesisWords));
         if (referenceAnnotation != null) {
             System.out.print(' ' + referenceAnnotation);
         }

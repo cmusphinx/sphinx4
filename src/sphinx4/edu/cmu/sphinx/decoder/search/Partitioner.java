@@ -174,7 +174,6 @@ public class Partitioner {
      * @return the index of the token with the ith largest score
      */
     private int simplePointSelect(Token[] tokens, int start, int end, int targetSize) {
-        System.out.println ("Falling back to non-recursive partition");
         Arrays.sort(tokens, start, end + 1, Scoreable.COMPARATOR);
         return start + targetSize - 1;
     }
