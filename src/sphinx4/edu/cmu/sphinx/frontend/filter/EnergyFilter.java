@@ -18,8 +18,8 @@ import edu.cmu.sphinx.util.props.PropertySheet;
 import edu.cmu.sphinx.util.props.S4Double;
 
 /**
- * Another way to deal with zero energy frames. They are just silently dropped from the
- * stream. This is an alternative to {@link Dither} which is more predictable
+ * EnergyFilter silently drops zero energy frames from the stream.
+ * This is a deterministic alternative to {@link Dither}.
  */
 public class EnergyFilter extends BaseDataProcessor {
 
