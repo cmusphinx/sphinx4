@@ -636,33 +636,39 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
 
         /**
          * Gets the set of successors for this state
-         *
+         * 
          * @return the set of successors
          */
         @Override
         public SearchStateArc[] getSuccessors() {
 
             SearchStateArc[] arcs = getCachedSuccessors();
-            if (arcs == null) {
-                if (isFinal()) {
-                    arcs = EMPTY_ARCS;
-                } else if (node.isEmpty()) {
-                    arcs = getNextGrammarStates(lc, nextBaseID);
-                } else {
-                    Word word = node.getWord();
-                    Pronunciation[] pronunciations = word.getPronunciations();
-                    pronunciations = filter(pronunciations, nextBaseID);
-                    SearchStateArc[] nextArcs =
-                            new SearchStateArc[pronunciations.length];
 
-                    for (int i = 0; i < pronunciations.length; i++) {
-                        nextArcs[i] =
-                                new PronunciationState(this, pronunciations[i]);
-                    }
-                    arcs = nextArcs;
-                }
-                cacheSuccessors(arcs);
+            if (arcs != null) {
+                return arcs;
             }
+
+            if (isFinal()) {
+                arcs = EMPTY_ARCS;
+            } else if (node.isEmpty()) {
+                arcs = getNextGrammarStates(lc, nextBaseID);
+            } else {
+                Word word = node.getWord();
+                Pronunciation[] pronunciations = word.getPronunciations();
+
+                // This can potentially speedup computation
+                // pronunciations = filter(pronunciations, nextBaseID);
+
+                SearchStateArc[] nextArcs = new SearchStateArc[pronunciations.length];
+
+                for (int i = 0; i < pronunciations.length; i++) {
+                    nextArcs[i] = new PronunciationState(this,
+                            pronunciations[i]);
+                }
+                arcs = nextArcs;
+            }
+
+            cacheSuccessors(arcs);
             return arcs;
         }
 
@@ -747,43 +753,33 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
             return unitSet.contains(hmmPool.getUnit(unitID));
         }
 
-
         /**
-         * Retain only the pronunciations that start with the unit indicated by nextBase
-         *
-         * @param p        the set of pronunciations to filter
-         * @param nextBase the ID of the desired initial unit
-
+         * Retain only the pronunciations that start with the unit indicated by
+         * nextBase. This method can be used instead of filter to reduce search
+         * space. It's not used by default but could potentially lead to a
+         * decoding speedup.
+         * 
+         * @param p
+         *            the set of pronunciations to filter
+         * @param nextBase
+         *            the ID of the desired initial unit
          */
-        Pronunciation[] filter(Pronunciation[] p, int nextBase) {
-            return p;
-//            if (nextBase == ANY) {
-//                return p;
-//            } else {
-//                int count = 0;
-//                for (int i = 0; i < p.length; i++) {
-//                    Unit[] units = p[i].getUnits();
-//                    if (units[0].getBaseID() == nextBase) {
-//                        count++;
-//                    }
-//                }
-//
-//                if (count == p.length) {
-//                    return p;
-//                } else {
-//                    Pronunciation[] filteredP = new Pronunciation[count];
-//                    int index = 0;
-//                    for (int i = 0; i < p.length; i++) {
-//                        Unit[] units = p[i].getUnits();
-//                        if (units[0].getBaseID() == nextBase) {
-//                            filteredP[index++] = p[i];
-//                        }
-//                    }
-//                    return filteredP;
-//                }
-//            }
-        }
+        Pronunciation[] filter(Pronunciation[] pronunciations, int nextBase) {
 
+            if (nextBase == ANY) {
+                return pronunciations;
+            }
+
+            ArrayList<Pronunciation> filteredPronunciation = new ArrayList<Pronunciation>(
+                    pronunciations.length);
+            for (Pronunciation pronunciation : pronunciations) {
+                if (pronunciation.getUnits()[0].getBaseID() == nextBase) {
+                    filteredPronunciation.add(pronunciation);
+                }
+            }
+            return filteredPronunciation
+                    .toArray(new Pronunciation[filteredPronunciation.size()]);
+        }
 
         /**
          * Gets the ID of the left context unit for this path
