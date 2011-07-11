@@ -44,7 +44,7 @@ public class PartitionerTest {
         // create the tokens first
         for (int i = 0; i < tokens.length; i++) {
             float logTotalScore = random.nextFloat();
-            tokens[i] = new Token(parent, null, logTotalScore, 0.0f, i);
+            tokens[i] = new Token(parent, null, logTotalScore, 0.0f, 0.0f, i);
         }
 
         final int r = partitioner.partition
