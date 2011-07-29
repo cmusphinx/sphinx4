@@ -21,9 +21,21 @@ import java.io.IOException;
 import java.io.InputStream;
 
 /**
- * A StreamDataSource converts data from an InputStream into Data objects. One would call {@link
- * #setInputStream(InputStream,String) setInputStream}to set the input stream, and call {@link #getData}to obtain the
- * Data object.
+ * A StreamDataSource converts data from an InputStream into Data objects. One 
+ * would call {@link #setInputStream(InputStream,String) setInputStream} to set 
+ * the input stream, and call {@link #getData} to obtain the Data object. The 
+ * InputStream can be an arbitrary stream, for example a data from the network
+ * or from a pipe.
+ *
+ * StreamDataSource is not aware about incoming data format and assumes
+ * that incoming data matches StreamDataSource configuration. By default it's configured
+ * to read 16 kHz little-endian 16-bit signed raw data. If data has wrong format 
+ * the result of the recognition is undefined. Also note that the sample rate of the 
+ * data must match the sample required by the the acoustic model. If your
+ * model decodes 16 kHz files you can't recognize 8kHz data using it.
+ *
+ * You can use AudioFileDataSource instead to read the file headers and
+ * to convert incoming data to the required format automatically.
  */
 public class StreamDataSource extends BaseDataProcessor {
 
