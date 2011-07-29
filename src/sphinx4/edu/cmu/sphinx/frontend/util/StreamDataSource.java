@@ -40,7 +40,7 @@ public class StreamDataSource extends BaseDataProcessor {
     public static final String PROP_BITS_PER_SAMPLE = "bitsPerSample";
 
     /** The property specifying whether the input data is big-endian. */
-    @S4Boolean(defaultValue = true)
+    @S4Boolean(defaultValue = false)
     public static final String PROP_BIG_ENDIAN_DATA = "bigEndianData";
 
     /** The property specifying whether the input data is signed. */
