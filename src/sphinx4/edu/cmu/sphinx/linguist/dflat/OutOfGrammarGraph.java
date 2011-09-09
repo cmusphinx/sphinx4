@@ -11,6 +11,8 @@
  */
 package edu.cmu.sphinx.linguist.dflat;
 
+import edu.cmu.sphinx.decoder.scorer.ScoreProvider;
+import edu.cmu.sphinx.frontend.Data;
 import edu.cmu.sphinx.linguist.*;
 import edu.cmu.sphinx.linguist.acoustic.*;
 import edu.cmu.sphinx.linguist.dictionary.Pronunciation;
@@ -275,7 +277,8 @@ public class OutOfGrammarGraph {
     }
 
     /** Represents a single hmm state in the search graph */
-    class OogHMMState extends OogSearchState implements HMMSearchState {
+    class OogHMMState extends OogSearchState implements
+            HMMSearchState, ScoreProvider {
 
         final HMMState hmmState;
         final float logProbability;
@@ -385,6 +388,12 @@ public class OutOfGrammarGraph {
                 }
                 return successors;
             }
+        }
+
+
+        @Override
+        public float getScore(Data data) {
+            return hmmState.getScore(data);
         }
     }
 
