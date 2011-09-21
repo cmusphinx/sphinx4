@@ -35,7 +35,7 @@ public class RawReader {
                                         AudioFormat audioFormat)
             throws IOException {
 
-        /* Initialize ourselves based on the intput data format.
+        /* Initialize ourselves based on the input data format.
          */
         int bytesPerSample;
         boolean signedData = true;

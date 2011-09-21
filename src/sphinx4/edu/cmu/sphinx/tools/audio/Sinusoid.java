@@ -28,8 +28,8 @@ public class Sinusoid extends AudioData {
                     double phase,
                     double amplitude,
                     double duration) {
-        this.shorts = new short[(int) (16000 * duration)];
-        double radiansPerSample = (frequency * 2.0 * Math.PI) / 16000.0;
+        this.shorts = new short[(int) (8000 * duration)];
+        double radiansPerSample = (frequency * 2.0 * Math.PI) / 8000.0;
         for (int i = 0; i < shorts.length; i++) {
             shorts[i] = (short) (
                     amplitude * Math.cos((radiansPerSample * (double) i) + phase));

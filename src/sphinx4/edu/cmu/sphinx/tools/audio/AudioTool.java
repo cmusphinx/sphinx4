@@ -47,18 +47,21 @@ public class AudioTool {
     // -------------------------------
     // Component names
     // -----------------------------------
-    // These names should match the correspondong names in the
+    // These names should match the corresponding names in the
     // spectrogram.config.xml
 
     static final String MICROPHONE = "microphone";
     static final String FRONT_END = "frontEnd";
+    static final String CESPTRUM_FRONT_END = "cepstrumFrontEnd";
     static final String DATA_SOURCE = "streamDataSource";
+    static final String CEPSTRUM_DATA_SOURCE = "cstreamDataSource";
     static final String WINDOWER = "windower";
 
     static AudioData audio;
     static JFrame jframe;
     static AudioPanel audioPanel;
     static SpectrogramPanel spectrogramPanel;
+    static CepstrumPanel cepstrumPanel;
     static JFileChooser fileChooser;
     static String filename;
     static File file;
@@ -214,7 +217,7 @@ public class AudioTool {
     /** Gets the audio that's in the recorder.  This should only be called after recorder.stopRecording is called. */
     static private short[] getRecordedAudio(Microphone recorder) {
         short[] shorts = new short[0];
-        int sampleRate = 16000;
+        int sampleRate = 8000;
 
         /* [[[WDW - TODO: this is not the most efficient way
          * to do this, but it at least works for now.]]]
@@ -238,9 +241,9 @@ public class AudioTool {
             }
         }
 
-        if (sampleRate > 16000) {
+        if (sampleRate > 8000) {
             System.out.println("Downsampling from " +
-                    sampleRate + " to 16000.");
+                    sampleRate + " to 8000.");
             shorts = Downsampler.downsample(
                     shorts,
                     sampleRate / 1000,
@@ -258,6 +261,9 @@ public class AudioTool {
         }
         if (spectrogramPanel != null) {
             spectrogramPanel.zoomSet(zoom);
+        }
+        if (cepstrumPanel != null) {
+            cepstrumPanel.zoomSet(zoom);
         }
     }
 
@@ -534,7 +540,9 @@ public class AudioTool {
      */
     static public void main(String[] args) {
         FrontEnd frontEnd;
+        FrontEnd cepstrumFrontEnd;
         StreamDataSource dataSource;
+        StreamDataSource cepstrumDataSource;
 
         prefs = Preferences.userRoot().node(PREFS_CONTEXT);
         filename = prefs.get(FILENAME_PREFERENCE, "untitled.raw");
@@ -563,6 +571,9 @@ public class AudioTool {
 
             frontEnd = (FrontEnd) cm.lookup(FRONT_END);
             dataSource = (StreamDataSource) cm.lookup(DATA_SOURCE);
+            cepstrumFrontEnd = (FrontEnd) cm.lookup(CESPTRUM_FRONT_END);
+            cepstrumDataSource = (StreamDataSource) cm.lookup(CEPSTRUM_DATA_SOURCE);
+
 
             PropertySheet ps = cm.getPropertySheet(WINDOWER);
             float windowShiftInMs = ps.getFloat(RaisedCosineWindower.PROP_WINDOW_SHIFT_MS);
@@ -580,10 +591,16 @@ public class AudioTool {
                     1.0f / windowShiftInSamples,
                     0.004f);
             spectrogramPanel = new SpectrogramPanel(frontEnd, dataSource, audio);
+            cepstrumPanel = new CepstrumPanel(cepstrumFrontEnd, cepstrumDataSource, audio);
 
-            JPanel panel = new JPanel(new BorderLayout());
-            panel.add(audioPanel, BorderLayout.CENTER);
-            panel.add(spectrogramPanel, BorderLayout.SOUTH);
+            JPanel panel = new JPanel();
+            panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
+            panel.add(audioPanel);
+            audioPanel.setAlignmentX(0.0f);
+            panel.add(spectrogramPanel);
+            spectrogramPanel.setAlignmentX(0.0f);
+            panel.add(cepstrumPanel);
+            cepstrumPanel.setAlignmentX(0.0f);
 
             JScrollPane scroller = new JScrollPane(panel);
 
@@ -599,7 +616,7 @@ public class AudioTool {
             jframe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             jframe.setContentPane(outerPanel);
             jframe.pack();
-            jframe.setSize(640, 540);
+            jframe.setSize(640, 400);
             jframe.setVisible(true);
         } catch (Exception e) {
             e.printStackTrace();

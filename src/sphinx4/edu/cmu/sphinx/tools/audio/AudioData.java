@@ -29,14 +29,13 @@ public class AudioData {
     protected int selectionStart = -1;
     protected int selectionEnd = -1;
 
-
     /** No-arg constructor.  Creates an empty clip at 16kHz sample rate. */
     public AudioData() {
-        this.format = new AudioFormat(16000f,
+        this.format = new AudioFormat(8000f,
                 16,    // sample size in bits
                 1,     // mono
                 true,  // signed
-                true); // big endian
+                false); // big endian
         shorts = new short[0];
     }
 
@@ -54,7 +53,7 @@ public class AudioData {
                 16,    // sample size in bits
                 1,     // mono
                 true,  // signed
-                true); // big endian
+                false); // big endian
     }
 
 
@@ -71,7 +70,7 @@ public class AudioData {
                 16,    // sample size in bits
                 1,     // mono
                 true,  // signed
-                true); // big endian
+                false); // big endian
     }
 
 

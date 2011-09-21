@@ -38,8 +38,8 @@ public class AudioDataInputStream extends InputStream {
         byte[] sample = new byte[2];
         for (int i = 0; i < shorts.length; i++) {
             Utils.toBytes(shorts[i], sample, true);
-            bytes[i * 2] = sample[0];
-            bytes[(i * 2) + 1] = sample[1];
+            bytes[i * 2 + 1] = sample[0];
+            bytes[i * 2] = sample[1];
         }
     }
 

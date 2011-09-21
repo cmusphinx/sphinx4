@@ -182,14 +182,14 @@ public class Utils {
     static public AudioData readRawFile(String filename)
             throws IOException {
         FileInputStream stream = new FileInputStream(filename);
-        AudioFormat format = new AudioFormat(16000.0f, // sample rate
+        AudioFormat format = new AudioFormat(8000.0f, // sample rate
                 16,       // sample size
                 1,        // channels (1 == mono)
                 true,     // signed
-                true);    // big endian
+                false);    // big endian
         short[] audioData = RawReader.readAudioData(stream, format);
         stream.close();
-        return new AudioData(audioData, 16000.0f);
+        return new AudioData(audioData, 8000.0f);
     }
 
 
@@ -199,11 +199,11 @@ public class Utils {
 
         FileOutputStream outputStream = new FileOutputStream(filename);
         AudioFormat format = new AudioFormat(
-                16000.0f, // sample rate
+                8000.0f, // sample rate
                 16,       // sample size
                 1,        // channels (1 == mono)
                 true,     // signed
-                true);    // big endian
+                false);    // big endian
         RawWriter writer = new RawWriter(outputStream, format);
         short[] samples = audio.getAudioData();
         for (short sample : samples) {

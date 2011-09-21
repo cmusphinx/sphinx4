@@ -1,31 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!--
-   Sphinx-4 Configuration file
--->
-
-<!-- ******************************************************** -->
-<!--  spectrogram config file                                 -->
-<!-- ******************************************************** -->
-
 <config>
-    <!-- ******************************************************** -->
-    <!-- The micrphone configuration                              -->
-    <!-- ******************************************************** -->
-    <component name="microphone"
-               type="edu.cmu.sphinx.frontend.util.Microphone">
-        <property name="closeBetweenUtterances" value="true"/>
-        <!-- Uncomment this on the Mac to get the last Mixer,
-             which is typically the USB audio device.
-        <property name="selectMixer" value="last"/>
-        -->
-    </component>
 
-    <!-- ******************************************************** -->
-    <!-- The frontend configuration                               -->
-    <!-- ******************************************************** -->
-    <!-- note - don't change the names of these components, unless -->
-    <!-- you also change the corresponding names in the AudioTool  -->
+    <component name="microphone"
+               type="edu.cmu.sphinx.frontend.util.Microphone"/>
 
     <component name="frontEnd" type="edu.cmu.sphinx.frontend.FrontEnd">
         <propertylist name="pipeline">
@@ -48,6 +26,63 @@
 
     <component name="streamDataSource"
                type="edu.cmu.sphinx.frontend.util.StreamDataSource">
-        <property name="sampleRate" value="16000"/>
+        <property name="sampleRate" value="8000"/>
     </component>
+
+    <component name="cepstrumFrontEnd" type="edu.cmu.sphinx.frontend.FrontEnd">
+        <propertylist name="pipeline">
+            <item>cstreamDataSource</item>
+            <item>dither </item>
+            <item>cpreemphasizer</item>
+            <item>cwindower</item>
+            <item>cfft</item>
+            <item>melFilterBank</item>
+            
+            <!--item>dct</item-->            
+            <!--item>dataDumper</item-->
+            <!--item>liveCMN</item>
+            <item>featureExtraction</item-->
+        </propertylist>
+    </component>
+
+    <component name="cstreamDataSource" type="edu.cmu.sphinx.frontend.util.StreamDataSource">
+        <property name="sampleRate" value="8000"/>
+    </component>
+   
+
+    <component name="cpreemphasizer"
+		type="edu.cmu.sphinx.frontend.filter.Preemphasizer"/>
+    <component name="dither"
+		type="edu.cmu.sphinx.frontend.filter.Dither"/>
+
+    
+    <component name="cwindower" 
+	type="edu.cmu.sphinx.frontend.window.RaisedCosineWindower"/>
+    
+    <component name="cfft" 
+        type="edu.cmu.sphinx.frontend.transform.DiscreteFourierTransform"/>
+    
+    <component name="melFilterBank" 
+        type="edu.cmu.sphinx.frontend.frequencywarp.MelFrequencyFilterBank">
+          <property name="numberFilters" value="31"/>
+          <property name="minimumFrequency" value="200"/>
+          <property name="maximumFrequency" value="3500"/>
+    </component>
+    
+    <component name="dct" 
+            type="edu.cmu.sphinx.frontend.transform.DiscreteCosineTransform"/>
+
+
+    <component name="wavWriter" 
+                type="edu.cmu.sphinx.frontend.util.WavWriter"/>
+
+    <component name="dataDumper" 
+                type="edu.cmu.sphinx.frontend.util.DataDumper"/>
+    
+    <component name="liveCMN" 
+                type="edu.cmu.sphinx.frontend.feature.LiveCMN"/>
+    
+    <component name="featureExtraction" 
+		type="edu.cmu.sphinx.frontend.feature.DeltasFeatureExtractor"/>
+
 </config>

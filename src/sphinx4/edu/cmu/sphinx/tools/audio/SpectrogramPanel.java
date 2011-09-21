@@ -193,6 +193,10 @@ public class SpectrogramPanel extends JPanel {
             scaledSpectrogram =
                     createImage(new FilteredImageSource(spectrogram.getSource(),
                             scaleFilter));
+            Dimension d = new Dimension((int) (width * zoom), height);
+            setMinimumSize(d);
+            setMaximumSize(d);
+            setPreferredSize(d);
             repaint();
         }
     }
