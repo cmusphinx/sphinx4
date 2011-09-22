@@ -24,12 +24,11 @@ import java.util.ArrayList;
 public class RawReader {
 
     /**
-     * Reads raw bytes from the given audioStream and returns big endian signed samples based on the audioFormat.  Only
-     * PCM_SIGNED or PCM_UNSIGNED encodings are allowed.
+     * Reads raw bytes from the given audioStream and returns samples based on the audioFormat.  
      *
      * @param audioStream the stream containing the raw bytes
      * @param audioFormat a hint of what to expect from the stream
-     * @return big endian signed samples, one sample per array element
+     * @return samples, one sample per array element
      */
     public static short[] readAudioData(InputStream audioStream,
                                         AudioFormat audioFormat)
@@ -53,7 +52,7 @@ public class RawReader {
         bigEndian = audioFormat.isBigEndian();
 
         /* Now read in the data, saving the samples in an array list.
-         * Along the way, convert each sample to big endian signed
+         * Along the way, convert each sample to little endian signed
          * data.
          */
         byte[] buffer = new byte[bytesPerSample];

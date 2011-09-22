@@ -49,7 +49,7 @@ public class RawWriter {
      * @throws java.io.IOException
      */
     public void writeSample(int sample) throws IOException {
-        /* First byte contains the big endian byte that carries the sign.
+        /* First byte contains the byte that carries the sign.
          */
         if (signedData) {
             outputStream.write(sample >> ((bytesPerSample - 1) * 8));
@@ -57,7 +57,7 @@ public class RawWriter {
             outputStream.write((sample >> ((bytesPerSample - 1) * 8)) & 0xff);
         }
 
-        /* Now just output the rest of the data in big endian form.
+        /* Now just output the rest of the data in little endian form.
          */
         for (int i = bytesPerSample - 2; i >= 0; i--) {
             outputStream.write((sample >> (i * 8)) & 0xff);

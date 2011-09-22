@@ -13,11 +13,11 @@
 package edu.cmu.sphinx.tools.audio;
 
 
-/** A 16bit, linear SIGNED_PCM, big endian, sinusoid with a sample rate of 16kHz. */
+/** A 16bit, linear SIGNED_PCM, little endian, sinusoid with a sample rate of 8kHz. */
 public class Sinusoid extends AudioData {
 
     /**
-     * Creates a 16bit, linear SIGNED_PCM, big endian, sinusoid with a sample rate of 16kHz.
+     * Creates a 16bit, linear SIGNED_PCM, little endian, sinusoid with a sample rate of 8kHz.
      *
      * @param frequency cycles per second
      * @param phase     phase offset in radians

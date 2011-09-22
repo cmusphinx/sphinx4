@@ -132,7 +132,7 @@ public class Utils {
 
 
     /**
-     * Turns the AudioInputStream into a 16bit, SIGNED_PCM, big endian audio stream that preserves the original sample
+     * Turns the AudioInputStream into a 16bit, SIGNED_PCM, little endian audio stream that preserves the original sample
      * rate of the AudioInputStream.  NOTE:  this assumes the frame size can be only 1 or 2 bytes.  The AudioInputStream
      * is left in a state of having all of its data being read.
      */
@@ -154,7 +154,7 @@ public class Utils {
 
     /**
      * Attempts to read an audio file using the Java Sound APIs.  If this file isn't a typical audio file, then this
-     * returns a null.  Otherwise, it converts the data into a 16kHz 16-bit signed PCM big endian clip.
+     * returns a null.  Otherwise, it converts the data into a 8kHz 16-bit signed PCM little endian clip.
      *
      * @param filename the file containing audio data
      * @return the audio data or null if the audio cannot be parsed
@@ -174,7 +174,7 @@ public class Utils {
 
 
     /**
-     * Reads the given stream in as 16kHz 16-bit signed PCM big endian audio data and returns an audio clip.
+     * Reads the given stream in as 8kHz 16-bit signed PCM little endian audio data and returns an audio clip.
      *
      * @param filename the file containing audio data
      * @return the audio data or null if the audio cannot be parsed
@@ -186,14 +186,14 @@ public class Utils {
                 16,       // sample size
                 1,        // channels (1 == mono)
                 true,     // signed
-                false);    // big endian
+                false);    // little endian
         short[] audioData = RawReader.readAudioData(stream, format);
         stream.close();
         return new AudioData(audioData, 8000.0f);
     }
 
 
-    /** Writes the given 16kHz 16-bit signed PCM audio clip to the given file as raw big endian data. */
+    /** Writes the given 8kHz 16-bit signed PCM audio clip to the given file as raw little endian data. */
     static public void writeRawFile(AudioData audio, String filename)
             throws IOException {
 
@@ -203,7 +203,7 @@ public class Utils {
                 16,       // sample size
                 1,        // channels (1 == mono)
                 true,     // signed
-                false);    // big endian
+                false);    // little endian
         RawWriter writer = new RawWriter(outputStream, format);
         short[] samples = audio.getAudioData();
         for (short sample : samples) {

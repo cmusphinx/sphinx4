@@ -20,7 +20,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-/** Represents a 16bit, SIGNED_PCM, big endian audio clip with a sample rate specified by AudioFormat. */
+/** Represents a 16bit, SIGNED_PCM, little endian audio clip with a sample rate specified by AudioFormat. */
 public class AudioData {
 
     protected AudioFormat format;
@@ -29,19 +29,19 @@ public class AudioData {
     protected int selectionStart = -1;
     protected int selectionEnd = -1;
 
-    /** No-arg constructor.  Creates an empty clip at 16kHz sample rate. */
+    /** No-arg constructor.  Creates an empty clip at 8kHz sample rate. */
     public AudioData() {
         this.format = new AudioFormat(8000f,
                 16,    // sample size in bits
                 1,     // mono
                 true,  // signed
-                false); // big endian
+                false); // little endian
         shorts = new short[0];
     }
 
 
     /**
-     * Creates a new AudioData with the given data and sample rate. Expects the data to be 16bit, big endian,
+     * Creates a new AudioData with the given data and sample rate. Expects the data to be 16bit, little endian,
      * SIGNED_PCM.
      *
      * @param data       the audio samples; one sample per element in the array
@@ -53,12 +53,12 @@ public class AudioData {
                 16,    // sample size in bits
                 1,     // mono
                 true,  // signed
-                false); // big endian
+                false); // little endian
     }
 
 
     /**
-     * Creates a new AudioData from the given AudioInputStream, converting the data to 16bit, big endian, SIGNED_PCM if
+     * Creates a new AudioData from the given AudioInputStream, converting the data to 16bit, little endian, SIGNED_PCM if
      * needed.
      *
      * @param ais the AudioInputStream
@@ -70,15 +70,15 @@ public class AudioData {
                 16,    // sample size in bits
                 1,     // mono
                 true,  // signed
-                false); // big endian
+                false); // little endian
     }
 
 
     /**
-     * Gets the SIGNED_PCM 16 bit big endian audio data.  NOTE:  this the actual array held by this object, so only use
+     * Gets the SIGNED_PCM 16 bit little endian audio data.  NOTE:  this the actual array held by this object, so only use
      * it as a reference (i.e., don't modify the contents).
      *
-     * @return the SIGNED_PCM 16 bit big endian samples
+     * @return the SIGNED_PCM 16 bit little endian samples
      */
     public short[] getAudioData() {
         return shorts;
@@ -88,7 +88,7 @@ public class AudioData {
     /**
      * Sets the audio data and notifies all ChangeListeners.
      *
-     * @param data the new SIGNED_PCM 16 bit big endian samples
+     * @param data the new SIGNED_PCM 16 bit little endian samples
      */
     public void setAudioData(short[] data) {
         this.shorts = data;

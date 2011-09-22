@@ -44,7 +44,7 @@ public class RawRecorder {
          * a wide range of input formats.  So...we may need to read
          * data in using a different format and then resample to the
          * desired format.  Here, I'm just going to go for 44.1kHz
-         * 16-bit signed big endian data if the given audio format
+         * 16-bit signed little endian data if the given audio format
          * is not supported.
          */
         DataLine.Info info = new DataLine.Info(TargetDataLine.class,
@@ -56,7 +56,7 @@ public class RawRecorder {
                     16,       // sample size
                     1,        // channels (1 == mono)
                     true,     // signed
-                    true);    // big endian
+                    false);    // little endian
             info = new DataLine.Info(TargetDataLine.class,
                     inFormat);
             if (!AudioSystem.isLineSupported(info)) {
