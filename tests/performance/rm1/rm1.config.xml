@@ -182,7 +182,7 @@
         <property name="dictionaryPath"
                   value="resource:/RM1_8gau_13dCep_16k_40mel_130Hz_6800Hz/dict/RM.dictionary"/>
         <property name="fillerPath"
-                  value="resource:/RM1_8gau_13dCep_16k_40mel_130Hz_6800Hz/dict/fillerdict"/>
+                  value="resource:/RM1_8gau_13dCep_16k_40mel_130Hz_6800Hz/noisedict"/>
         <property name="addSilEndingPronunciation" value="false"/>
         <property name="allowMissingWords" value="true"/>
         <property name="unitManager" value="unitManager"/>

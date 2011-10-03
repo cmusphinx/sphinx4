@@ -150,7 +150,7 @@
         <property name="dictionaryPath"
 	 value="resource:/WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz/dict/cmudict.0.6d"/>
         <property name="fillerPath"
-	 value="resource:/WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz/dict/fillerdict"/>
+	 value="resource:/WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz/noisedict"/>
         <property name="addSilEndingPronunciation" value="true"/>
         <property name="wordReplacement" value="&lt;sil&gt;"/>
         <property name="allowMissingWords" value="true"/>

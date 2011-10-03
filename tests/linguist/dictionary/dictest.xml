@@ -7,7 +7,7 @@
         <property name="dictionaryPath"
                   value="/lab/speech/sphinx4/data/wsj/dict/cmudict.0.6d"/>
         <property name="fillerPath" 
-	          value="/lab/speech/sphinx4/data/wsj/dict/fillerdict"/>
+	          value="/lab/speech/sphinx4/data/wsj/noisedict"/>
         <property name="unitManager" value="unitManager"/>
         <property name="isMultiDigitGrammar" value="true"/>
     </component>
