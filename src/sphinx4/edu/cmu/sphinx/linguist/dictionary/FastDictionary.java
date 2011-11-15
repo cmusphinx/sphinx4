@@ -336,7 +336,7 @@ public class FastDictionary implements Dictionary {
 
         String word = dictionary.get(text);
         if (word == null) { // deal with 'not found' case
-            logger.warning("Missing word: " + text);
+            logger.warning("The dictionary is missing a phonetic transcription for the word '" + text + "'");
             if (wordReplacement != null) {
                 wordObject = getWord(wordReplacement);
             } else if (allowMissingWords) {

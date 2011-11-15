@@ -280,7 +280,7 @@ public class FullDictionary implements Dictionary {
         text = text.toLowerCase();
         Word word = lookupWord(text);
         if (word == null) {
-            logger.warning("Missing word: " + text);
+            logger.warning("The dictionary is missing a phonetic transcription for the word '" + text + "'");
             if (wordReplacement != null) {
                 word = lookupWord(wordReplacement);
                 logger.warning("Replacing " + text + " with " +

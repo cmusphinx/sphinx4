@@ -277,7 +277,7 @@ public class LargeNGramModel implements LanguageModel, BackoffLanguageModel {
             Word word = dictionary.getWord(words[i]);
 
             if (word == null) {
-                logger.info("Missing word: " + words[i]);
+                logger.warning("The dictionary is missing a phonetic transcription for the word '" + words[i] + "'");
                 missingWords++;
             }
             
