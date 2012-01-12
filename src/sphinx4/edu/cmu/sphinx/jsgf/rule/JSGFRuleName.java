@@ -24,7 +24,7 @@ public class JSGFRuleName extends JSGFRule {
 	public static JSGFRuleName VOID = new JSGFRuleName("VOID");
 
 	public JSGFRuleName() {
-		setRuleName("NULL");
+		this("NULL");
 	}
 
 	public JSGFRuleName(String name) {
@@ -145,6 +145,7 @@ public class JSGFRuleName extends JSGFRule {
 		return name;
 	}
 
+        @Override
 	public String toString() {
 		return "<" + fullRuleName + ">";
 	}
