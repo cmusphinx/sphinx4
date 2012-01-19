@@ -171,7 +171,7 @@ public class SpeechClassifier extends AbstractVoiceActivityDetector {
             if (labeledAudio.isSpeech())
                 speech = "*";
 
-            System.out.println("Bkg: " + background + ", level: " + level +
+            logger.finest("Bkg: " + background + ", level: " + level +
                     ", current: " + current + ' ' + speech);
         }
 
