@@ -64,7 +64,7 @@ public class AudioFileDataSource extends BaseDataProcessor {
     private File curAudioFile;
 
     public AudioFileDataSource(int bytesPerRead, List<AudioFileProcessListener> listeners) {
-        this.logger = Logger.getLogger(getClass().getName()); 
+	initLogger();
         create(bytesPerRead,listeners);
     }
 
@@ -74,6 +74,7 @@ public class AudioFileDataSource extends BaseDataProcessor {
     @Override
     public void newProperties(PropertySheet ps) throws PropertyException {
         super.newProperties(ps);
+        logger = ps.getLogger();
         create(ps.getInt(PROP_BYTES_PER_READ), ps.getComponentList(AUDIO_FILE_LISTENERS, AudioFileProcessListener.class));
     }
 
