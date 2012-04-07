@@ -106,6 +106,7 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
     private Logger logger;
     private HMMPool hmmPool;
     SearchStateArc outOfGrammarGraph;
+    private GrammarNode initialGrammarState;
 
     // this map is used to manage the set of follow on units for a
     // particular grammar node. It is used to select the set of
@@ -247,6 +248,9 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
     /** Called before a recognition */
     @Override
     public void startRecognition() {
+        if (grammarHasChanged()) {
+            compileGrammar();
+        }
     }
 
 
@@ -275,16 +279,23 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
         return logSilenceInsertionProbability;
     }
 
+    /**
+     * Determines if the underlying grammar has changed since we last compiled the search graph
+     *
+     * @return true if the grammar has changed
+     */
+    private boolean grammarHasChanged() {
+        return initialGrammarState == null ||
+                initialGrammarState != grammar.getInitialNode();
+    }
 
-    /** Compiles the grammar */
     private void compileGrammar() {
-        // iterate through the grammar nodes
+        initialGrammarState = grammar.getInitialNode();
 
-        Set<GrammarNode> nodeSet = grammar.getGrammarNodes();
-
-        for (GrammarNode node : nodeSet) {
+        for (GrammarNode node : grammar.getGrammarNodes()) {
             initUnitMaps(node);
         }
+
         searchGraph = new DynamicFlatSearchGraph();
     }
 
