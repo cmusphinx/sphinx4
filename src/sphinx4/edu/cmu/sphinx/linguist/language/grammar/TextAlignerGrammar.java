@@ -13,6 +13,7 @@
 package edu.cmu.sphinx.linguist.language.grammar;
 
 import java.io.StringReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,7 +47,7 @@ public class TextAlignerGrammar extends Grammar implements ResultListener {
     private final int step = 40;
 
     public TextAlignerGrammar(final String text, final LogMath logMath, final boolean showGrammar, final boolean optimizeGrammar,
-            final boolean addSilenceWords, final boolean addFillerWords, final Dictionary dictionary) {
+            final boolean addSilenceWords, final boolean addFillerWords, final Dictionary dictionary) throws IOException {
         super(showGrammar, optimizeGrammar, addSilenceWords, addFillerWords, dictionary);
         this.logMath = logMath;
         setText(text);
@@ -66,21 +67,17 @@ public class TextAlignerGrammar extends Grammar implements ResultListener {
          logMath = (LogMath) ps.getComponent(PROP_LOG_MATH);
      }
     
-    public void setText(String text) {
-        String word;
-        try {
-            final ExtendedStreamTokenizer tok = new ExtendedStreamTokenizer(new StringReader(text), true);
-
-            tokens.clear();
-            while (!tok.isEOF()) {
-                while ((word = tok.getString()) != null) {
-                    word = word.toLowerCase();
-                    tokens.add(word);
-                }
+    public void setText(String text) throws IOException {
+	String word;
+        final ExtendedStreamTokenizer tok = new ExtendedStreamTokenizer(new StringReader(text), true);
+        tokens.clear();
+        while (!tok.isEOF()) {
+            while ((word = tok.getString()) != null) {
+                word = word.toLowerCase();
+                tokens.add(word);
             }
-        } catch (Exception e) {
-            e.printStackTrace();
         }
+        start = 0;
     }
 
     /**
