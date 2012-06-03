@@ -14,6 +14,7 @@ package edu.cmu.sphinx.research.bushderby;
 
 import edu.cmu.sphinx.decoder.search.SimpleBreadthFirstSearchManager;
 import edu.cmu.sphinx.decoder.search.Token;
+import edu.cmu.sphinx.decoder.search.ActiveList;
 import edu.cmu.sphinx.linguist.*;
 import edu.cmu.sphinx.linguist.acoustic.LeftRightContext;
 import edu.cmu.sphinx.linguist.acoustic.Unit;
@@ -89,18 +90,21 @@ public class BushderbySearchManager extends SimpleBreadthFirstSearchManager {
      * and then grown. This process repeats until the delayedExpansionList is empty.
      */
     protected void growBranches() {
-        getGrowTimer().start();
 
-        setBestTokenMap(new HashMap<SearchState, Token>(getActiveList().size() * 10));
+        int mapSize = activeList.size() * 10;
+        if (mapSize == 0) {
+            mapSize = 1;
+        }
+        bestTokenMap = new HashMap<SearchState, Token>(mapSize);
+        ActiveList oldActiveList = activeList;
+        resultList = new LinkedList<Token>();
+        activeList = activeListFactory.newInstance();
 
         int pass = 0;
         boolean moreTokensToExpand = true;
+        Iterator<Token> iterator = oldActiveList.iterator();
 
-        Iterator<Token> iterator = getActiveList().iterator();
-
-        // TODO: fixme!!
-        // setResultList(new LinkedList());
-        // setActiveList(getActiveList().createNew());
+        getGrowTimer().start();
 
         while (moreTokensToExpand) {
             pass++;
@@ -121,7 +125,7 @@ public class BushderbySearchManager extends SimpleBreadthFirstSearchManager {
             }
         }
 
-        finalizeBushderby(getActiveList().iterator());
+        finalizeBushderby(activeList.iterator());
 
         getGrowTimer().stop();
     }

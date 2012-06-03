@@ -91,7 +91,6 @@
     <patternset id="all_files"
                 includes="edu/**,com/**"
                 excludes="edu/cmu/sphinx/research/distributed/**,
-		edu/cmu/sphinx/research/bushderby/**,
                 edu/cmu/sphinx/trainer/**,
                 edu/cmu/sphinx/linguist/acoustic/tiedstate/trainer/**"
             />

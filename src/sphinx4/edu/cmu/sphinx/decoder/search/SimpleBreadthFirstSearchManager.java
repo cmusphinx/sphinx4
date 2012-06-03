@@ -112,7 +112,7 @@ public class SimpleBreadthFirstSearchManager extends TokenSearchManager {
 
     private Timer scoreTimer; // TODO move these timers out
     private Timer pruneTimer;
-    private Timer growTimer;
+    protected Timer growTimer;
     private StatisticsVariable totalTokensScored;
     private StatisticsVariable tokensPerSecond;
     private StatisticsVariable curTokensScored;
@@ -126,14 +126,14 @@ public class SimpleBreadthFirstSearchManager extends TokenSearchManager {
 
     protected boolean showTokenCount;
     private boolean wantEntryPruning;
-    private Map<SearchState, Token> bestTokenMap;
+    protected Map<SearchState, Token> bestTokenMap;
     private float logRelativeWordBeamWidth;
     private int totalHmms;
     private double startTime;
     private float threshold;
     private float wordThreshold;
     private int growSkipInterval;
-    private ActiveListFactory activeListFactory;
+    protected ActiveListFactory activeListFactory;
     protected boolean streamEnd;
 
     public SimpleBreadthFirstSearchManager() {
