@@ -582,6 +582,56 @@ public class Lattice {
         }
     }
 
+
+    public void dumpSlf(Writer w) throws IOException {
+         w.write("VERSION=1.1\n"); 
+         w.write("UTTERANCE=test\n");
+         w.write("base=1.0001\n");
+         w.write("lmscale=9.5\n");
+         w.write("start=0\n");
+         w.write("end=1\n");
+         w.write("#\n# Size line.\n#\n");
+         w.write("NODES="+nodes.size()+"    LINKS="+this.edges.size()+"\n");
+
+         // we cannot use the id from sphinx as node id. The id from sphinx may be arbitrarily big.
+         // Certain tools, such as lattice-tool from srilm, may elect to use an array to hold the nodes, 
+         // which might cause out of memory problem due to huge array.
+         HashMap<String, Integer> nodeIdMap=new HashMap<String, Integer>();
+
+         nodeIdMap.put(initialNode.getId(), 0);
+         nodeIdMap.put(terminalNode.getId(), 1);
+
+         int count=2;
+         w.write("#\n# Nodes definitions.\n#\n");
+         for(Node node:nodes.values()){
+              if (nodeIdMap.containsKey(node.getId())) {
+                  w.write("I=" + nodeIdMap.get(node.getId()));
+              } else {
+                  nodeIdMap.put(node.getId(), count);
+                   w.write("I=" + count);
+                  count++;
+              }
+              w.write("    t="+(node.getBeginTime()*1.0/1000));
+              String spelling = node.getWord().getSpelling();
+              if (spelling.startsWith("<"))
+            	    spelling = "!NULL";
+              w.write("    W=" + spelling);
+              w.write("\n");
+         }
+         w.write("#\n# Link definitions.\n#\n");
+         count=0;
+         for(Edge edge:edges){
+              w.write("J="+count);
+              w.write("    S="+nodeIdMap.get(edge.getFromNode().getId()));
+              w.write("    E="+nodeIdMap.get(edge.getToNode().getId()));
+              w.write("    a="+edge.getAcousticScore());
+              w.write("    l="+edge.getLMScore() / 9.5);
+              w.write("\n");
+              count++;
+         }
+         w.flush();
+    }
+
     /**
      * Dump the Lattice as a .LAT file
      *
