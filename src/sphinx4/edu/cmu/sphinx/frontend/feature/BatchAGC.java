@@ -109,7 +109,6 @@ public class BatchAGC extends BaseDataProcessor {
         for (Data data : cepstraList) {
             if (data instanceof DoubleData) {
                 ((DoubleData)data).getValues()[0] -= agc;
-                System.out.println(((DoubleData)data).getValues()[0]);
             }
         }
     }
