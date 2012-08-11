@@ -15,6 +15,7 @@ import edu.cmu.sphinx.linguist.acoustic.UnitManager;
 import edu.cmu.sphinx.util.props.Configurable;
 import edu.cmu.sphinx.util.props.S4Boolean;
 import edu.cmu.sphinx.util.props.S4Component;
+import edu.cmu.sphinx.util.props.S4Integer;
 import edu.cmu.sphinx.util.props.S4String;
 
 import java.io.IOException;
@@ -35,6 +36,14 @@ public interface Dictionary extends Configurable {
     /** The property for the dictionary file path. */
     @S4String
     public static final String PROP_DICTIONARY = "dictionaryPath";
+
+    /** The property for the g2p model file path. */
+    @S4String(defaultValue = "")
+    public static final String PROP_G2P_DECODER_PATH = "g2pDecoderPath";
+
+    /** The property for the g2p model file path. */
+    @S4Integer(defaultValue = 1)
+    public static final String PROP_G2P_MAX_PRONUNCIATIONS = "g2pMaxPron";
 
     /** The property for the filler dictionary file path. */
     @S4String

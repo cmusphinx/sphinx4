@@ -15,6 +15,8 @@ package edu.cmu.sphinx.linguist.dictionary;
 import edu.cmu.sphinx.linguist.acoustic.Context;
 import edu.cmu.sphinx.linguist.acoustic.Unit;
 import edu.cmu.sphinx.linguist.acoustic.UnitManager;
+import edu.cmu.sphinx.linguist.g2p.Decoder;
+import edu.cmu.sphinx.linguist.g2p.Path;
 import edu.cmu.sphinx.util.Timer;
 import edu.cmu.sphinx.util.TimerPool;
 import edu.cmu.sphinx.util.props.ConfigurationManagerUtils;
@@ -73,6 +75,8 @@ public class FastDictionary implements Dictionary {
     private String wordReplacement;
     protected URL wordDictionaryFile;
     protected URL fillerDictionaryFile;
+    protected URL g2pDecoderFile;
+    protected int g2pMaxPron = 0;
     protected List<URL> addendaUrlList;
 
     protected UnitManager unitManager;
@@ -82,6 +86,7 @@ public class FastDictionary implements Dictionary {
     // -------------------------------
     protected Map<String, String> dictionary;
     protected Map<String, Word> wordDictionary;
+    protected Decoder g2pDecoder;
 
     protected final static String FILLER_TAG = "-F-";
     protected Set<String> fillerWords;
@@ -153,6 +158,8 @@ public class FastDictionary implements Dictionary {
         allowMissingWords = ps.getBoolean(Dictionary.PROP_ALLOW_MISSING_WORDS);
         createMissingWords = ps.getBoolean(PROP_CREATE_MISSING_WORDS);
         unitManager = (UnitManager) ps.getComponent(PROP_UNIT_MANAGER);
+        g2pDecoderFile = ConfigurationManagerUtils.getResource(PROP_G2P_DECODER_PATH, ps);
+        g2pMaxPron = ps.getInt(PROP_G2P_MAX_PRONUNCIATIONS);
     }
 
 
@@ -204,6 +211,9 @@ public class FastDictionary implements Dictionary {
 
             loadDictionary(fillerDictionaryFile.openStream(), true);
 
+            if(!g2pDecoderFile.getPath().equals("")) {
+                g2pDecoder = new Decoder(g2pDecoderFile);
+            }
             loadTimer.stop();
         }
 
@@ -220,6 +230,7 @@ public class FastDictionary implements Dictionary {
     public void deallocate() {
         if (allocated) {
             dictionary = null;
+            g2pDecoder = null;
             allocated = false;
         }
     }
@@ -341,7 +352,31 @@ public class FastDictionary implements Dictionary {
                 wordObject = getWord(wordReplacement);
             } else if (allowMissingWords) {
                 if (createMissingWords) {
-                    wordObject = createWord(text, null, false);
+                    if (!g2pDecoderFile.getPath().equals("")) {
+                        logger.warning("Generating phonetic transcription(s) for the word '" + text + "' using g2p model");
+                        ArrayList<Path> paths = g2pDecoder.phoneticize(text, g2pMaxPron);
+                        List<Pronunciation> pronunciations = new LinkedList<Pronunciation>();
+                        for(Path p : paths) {
+                            int unitCount = p.getPath().size();
+                            ArrayList<Unit> units = new ArrayList<Unit>(unitCount);
+                            for(String token : p.getPath()) {
+                                    units.add(getCIUnit(token, false));
+                                }
+                                pronunciations.add(new Pronunciation(units));
+                                if (addSilEndingPronunciation) {
+                                    units.add(UnitManager.SILENCE);
+                                    pronunciations.add(new Pronunciation(units));
+                                }
+                            }
+                        Pronunciation[] pronunciationsArray = pronunciations.toArray(new Pronunciation[pronunciations.size()]);
+                        wordObject = createWord(text, pronunciationsArray, false);
+                        for (Pronunciation pronunciation : pronunciationsArray) {
+                            pronunciation.setWord(wordObject);
+                        }
+                        wordDictionary.put(text, wordObject);
+                    } else {
+                        wordObject = createWord(text, null, false);
+                    }
                 }
             }
         } else { // first lookup for this string

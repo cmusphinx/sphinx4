@@ -14,6 +14,8 @@ package edu.cmu.sphinx.linguist.dictionary;
 import edu.cmu.sphinx.linguist.acoustic.Context;
 import edu.cmu.sphinx.linguist.acoustic.Unit;
 import edu.cmu.sphinx.linguist.acoustic.UnitManager;
+import edu.cmu.sphinx.linguist.g2p.Decoder;
+import edu.cmu.sphinx.linguist.g2p.Path;
 import edu.cmu.sphinx.util.ExtendedStreamTokenizer;
 import edu.cmu.sphinx.util.Timer;
 import edu.cmu.sphinx.util.TimerPool;
@@ -68,12 +70,15 @@ public class FullDictionary implements Dictionary {
     private URL fillerDictionaryFile;
     private boolean allocated;
     private UnitManager unitManager;
+    protected URL g2pDecoderFile;
+    protected int g2pMaxPron = 0;
     protected List<URL> addendaUrlList;
 
 
     private Map<String, Word> wordDictionary;
     private Map<String, Word> fillerDictionary;
     private Timer loadTimer;
+    protected Decoder g2pDecoder;
 
         public FullDictionary(
             URL wordDictionaryFile,
@@ -119,6 +124,8 @@ public class FullDictionary implements Dictionary {
         allowMissingWords = ps.getBoolean(Dictionary.PROP_ALLOW_MISSING_WORDS);
         createMissingWords = ps.getBoolean(PROP_CREATE_MISSING_WORDS);
         unitManager = (UnitManager) ps.getComponent(PROP_UNIT_MANAGER);
+        g2pDecoderFile = ConfigurationManagerUtils.getResource(PROP_G2P_DECODER_PATH, ps);
+        g2pMaxPron = ps.getInt(PROP_G2P_MAX_PRONUNCIATIONS);
     }
 
 
@@ -144,6 +151,10 @@ public class FullDictionary implements Dictionary {
                     fillerDictionaryFile);
             fillerDictionary =
                     loadDictionary(fillerDictionaryFile.openStream(), true);
+
+            if(!g2pDecoderFile.getPath().equals("")) {
+                g2pDecoder = new Decoder(g2pDecoderFile);
+            }
             loadTimer.stop();
             logger.finest(dumpToString());
             allocated = true;
@@ -159,6 +170,7 @@ public class FullDictionary implements Dictionary {
         if (allocated) {
             fillerDictionary = null;
             wordDictionary = null;
+            g2pDecoder = null;
             loadTimer = null;
             allocated = false;
         }
@@ -291,9 +303,37 @@ public class FullDictionary implements Dictionary {
                 }
             } else if (allowMissingWords) {
                 if (createMissingWords) {
-                    word = new Word(text, null, false);
-                    wordDictionary.put(text, word);
+                    if (!g2pDecoderFile.getPath().equals("")) {
+                        logger.warning("Generating phonetic transcription(s) for the word '" + text + "' using g2p model");
+                        ArrayList<Path> paths = g2pDecoder.phoneticize(text, g2pMaxPron);
+                        List<Pronunciation> pronunciations = new LinkedList<Pronunciation>();
+                        for(Path p : paths) {
+                            int unitCount = p.getPath().size();
+                            ArrayList<Unit> units = new ArrayList<Unit>(unitCount);
+                            for(String token : p.getPath()) {
+                                    units.add(getCIUnit(token, false));
+                                }
+                                pronunciations.add(new Pronunciation(units));
+                                if (addSilEndingPronunciation) {
+                                    units.add(UnitManager.SILENCE);
+                                    pronunciations.add(new Pronunciation(units));
+                                }
+                            }
+                        Pronunciation[] pronunciationsArray = pronunciations.toArray(new Pronunciation[pronunciations.size()]);
+                        word = new Word(text, pronunciationsArray, false);
+                        for (Pronunciation pronunciation : pronunciationsArray) {
+                            pronunciation.setWord(word);
+                        }
+                        wordDictionary.put(text, word);
+                    } else {
+                        word = new Word(text, null, false);
+                        wordDictionary.put(text, word);
+                        return null;
+                    }
+                } else {
+                    return null;
                 }
+            } else {
                 return null;
             }
         }
