@@ -135,6 +135,31 @@ public class FastDictionary implements Dictionary {
         this.unitManager = unitManager;
     }
 
+    public FastDictionary(
+            URL wordDictionaryFile,
+            URL fillerDictionaryFile,
+            List<URL> addendaUrlList,
+            boolean addSilEndingPronunciation,
+            String wordReplacement,
+            boolean allowMissingWords,
+            boolean createMissingWords,
+            UnitManager unitManager, 
+            URL g2pModelFile,
+            int g2pMaxPron
+    ) {
+        this(
+                wordDictionaryFile, 
+                fillerDictionaryFile, 
+                addendaUrlList,
+                addSilEndingPronunciation,
+                wordReplacement,
+                allowMissingWords,
+                createMissingWords,
+                unitManager);
+        this.g2pModelFile = g2pModelFile;
+        this.g2pMaxPron = g2pMaxPron;
+    }
+
     public FastDictionary() {
 
     }
@@ -352,7 +377,7 @@ public class FastDictionary implements Dictionary {
                 wordObject = getWord(wordReplacement);
             } else if (allowMissingWords) {
                 if (createMissingWords) {
-                    if (!g2pModelFile.getPath().equals("")) {
+                    if (g2pModelFile != null && !g2pModelFile.getPath().equals("")) {
                         logger.warning("Generating phonetic transcription(s) for the word '" + text + "' using g2p model");
                         ArrayList<Path> paths = g2pDecoder.phoneticize(text, g2pMaxPron);
                         List<Pronunciation> pronunciations = new LinkedList<Pronunciation>();
