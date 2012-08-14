@@ -39,7 +39,7 @@ public interface Dictionary extends Configurable {
 
     /** The property for the g2p model file path. */
     @S4String(defaultValue = "")
-    public static final String PROP_G2P_DECODER_PATH = "g2pDecoderPath";
+    public static final String PROP_G2P_MODEL_PATH = "g2pModelPath";
 
     /** The property for the g2p model file path. */
     @S4Integer(defaultValue = 1)

@@ -158,7 +158,7 @@ public class FastDictionary implements Dictionary {
         allowMissingWords = ps.getBoolean(Dictionary.PROP_ALLOW_MISSING_WORDS);
         createMissingWords = ps.getBoolean(PROP_CREATE_MISSING_WORDS);
         unitManager = (UnitManager) ps.getComponent(PROP_UNIT_MANAGER);
-        g2pDecoderFile = ConfigurationManagerUtils.getResource(PROP_G2P_DECODER_PATH, ps);
+        g2pDecoderFile = ConfigurationManagerUtils.getResource(PROP_G2P_MODEL_PATH, ps);
         g2pMaxPron = ps.getInt(PROP_G2P_MAX_PRONUNCIATIONS);
     }
 
