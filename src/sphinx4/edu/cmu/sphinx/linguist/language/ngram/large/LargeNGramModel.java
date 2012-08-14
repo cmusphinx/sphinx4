@@ -626,6 +626,17 @@ public class LargeNGramModel implements LanguageModel, BackoffLanguageModel {
         else
             return probability.getWordID();
     }
+    
+    /**
+     * Returns true if the language model contains the given word
+     * 
+     * @param w
+     * @return
+     */
+    public boolean hasWord(Word w) {
+       return (unigramIDMap.get(new Word(w.toString(), null, false)) != null);
+    }
+
 
 
     /**
