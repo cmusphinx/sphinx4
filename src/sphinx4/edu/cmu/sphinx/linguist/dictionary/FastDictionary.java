@@ -75,7 +75,7 @@ public class FastDictionary implements Dictionary {
     private String wordReplacement;
     protected URL wordDictionaryFile;
     protected URL fillerDictionaryFile;
-    protected URL g2pDecoderFile;
+    protected URL g2pModelFile;
     protected int g2pMaxPron = 0;
     protected List<URL> addendaUrlList;
 
@@ -158,7 +158,7 @@ public class FastDictionary implements Dictionary {
         allowMissingWords = ps.getBoolean(Dictionary.PROP_ALLOW_MISSING_WORDS);
         createMissingWords = ps.getBoolean(PROP_CREATE_MISSING_WORDS);
         unitManager = (UnitManager) ps.getComponent(PROP_UNIT_MANAGER);
-        g2pDecoderFile = ConfigurationManagerUtils.getResource(PROP_G2P_MODEL_PATH, ps);
+        g2pModelFile = ConfigurationManagerUtils.getResource(PROP_G2P_MODEL_PATH, ps);
         g2pMaxPron = ps.getInt(PROP_G2P_MAX_PRONUNCIATIONS);
     }
 
@@ -211,8 +211,8 @@ public class FastDictionary implements Dictionary {
 
             loadDictionary(fillerDictionaryFile.openStream(), true);
 
-            if(!g2pDecoderFile.getPath().equals("")) {
-                g2pDecoder = new Decoder(g2pDecoderFile);
+            if(g2pModelFile != null && !g2pModelFile.getPath().equals("")) {
+                g2pDecoder = new Decoder(g2pModelFile);
             }
             loadTimer.stop();
         }
@@ -352,7 +352,7 @@ public class FastDictionary implements Dictionary {
                 wordObject = getWord(wordReplacement);
             } else if (allowMissingWords) {
                 if (createMissingWords) {
-                    if (!g2pDecoderFile.getPath().equals("")) {
+                    if (!g2pModelFile.getPath().equals("")) {
                         logger.warning("Generating phonetic transcription(s) for the word '" + text + "' using g2p model");
                         ArrayList<Path> paths = g2pDecoder.phoneticize(text, g2pMaxPron);
                         List<Pronunciation> pronunciations = new LinkedList<Pronunciation>();
