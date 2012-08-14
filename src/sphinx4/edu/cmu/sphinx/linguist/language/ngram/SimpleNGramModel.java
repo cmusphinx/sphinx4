@@ -56,6 +56,7 @@ public class SimpleNGramModel implements LanguageModel, BackoffLanguageModel {
     protected BufferedReader reader;
     protected String fileName;
     private boolean allocated;
+    private LinkedList<WordSequence> tokens;
 
     public SimpleNGramModel(String location, Dictionary dictionary, float unigramWeight, LogMath logMath,
                              int desiredMaxDepth ) throws MalformedURLException, ClassNotFoundException {
@@ -71,6 +72,7 @@ public class SimpleNGramModel implements LanguageModel, BackoffLanguageModel {
         this.dictionary = dictionary;
         this.map = new HashMap<WordSequence, Probability>();
         this.vocabulary = new HashSet<String>();
+        this.tokens = new LinkedList<WordSequence>();
     }
 
     public SimpleNGramModel() {
@@ -339,7 +341,7 @@ public class SimpleNGramModel implements LanguageModel, BackoffLanguageModel {
                 // construct the WordSequence for this N-Gram
                 List<Word> wordList = new ArrayList<Word>(maxNGram);
                 for (int j = 0; j < ngram; j++) {
-                    String word = tok.nextToken().toLowerCase();
+                    String word = tok.nextToken();
                     vocabulary.add(word);
                     Word wordObject = dictionary.getWord(word);
                     if (wordObject == null) {
@@ -388,9 +390,21 @@ public class SimpleNGramModel implements LanguageModel, BackoffLanguageModel {
 //        System.out.println("Putting " + wordSequence + " p " + logProb
 //                            + " b " + logBackoff);
         map.put(wordSequence, new Probability(logProb, logBackoff));
+        tokens.add(wordSequence);
     }
 
-
+    /**
+     * Returns a list of all the word sequences in the language model
+     * This method is used to create Finite State Transducers of the 
+     * language model.
+     * 
+     * @return LinkedList<WordSequence> containing all the word sequences
+     */
+    public LinkedList<WordSequence> getNGrams() {
+       return this.tokens;
+    }
+    
+    
     /**
      * Reads the next line from the LM file. Keeps track of line number.
      *
