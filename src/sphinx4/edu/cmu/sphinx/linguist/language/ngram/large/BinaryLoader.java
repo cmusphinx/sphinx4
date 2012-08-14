@@ -824,7 +824,7 @@ public class BinaryLoader {
              bytesRead++;
              if (c == '\0') {
                  // if its the end of a string, add it to the 'words' array
-                 words[s] = new String(bytes, wordStart, i - wordStart).toLowerCase();
+                 words[s] = new String(bytes, wordStart, i - wordStart);
                  wordStart = i + 1;
                  if (words[s].equals(Dictionary.SENTENCE_START_SPELLING)) {
                      startWordID = s;
