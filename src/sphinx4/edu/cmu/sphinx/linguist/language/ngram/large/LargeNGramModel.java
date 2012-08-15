@@ -228,7 +228,10 @@ public class LargeNGramModel implements LanguageModel, BackoffLanguageModel {
 		}
         
         ngramDepthCache = new LRUCache<WordSequence, ProbDepth>(ngramCacheSize);
-        buildUnigramIDMap(dictionary);
+        if (dictionary != null)
+        	buildUnigramIDMap(dictionary);
+        else 
+        	buildUnigramIDMap();
         loadedBigramBuffers = new NGramBuffer[unigrams.length];
 
         if (maxDepth <= 0 || maxDepth > loader.getMaxDepth())
@@ -289,6 +292,15 @@ public class LargeNGramModel implements LanguageModel, BackoffLanguageModel {
 
         if (missingWords > 0)
             logger.warning("Dictionary is missing " + missingWords + " words that are contained in the language model.");
+    }
+    
+    private void buildUnigramIDMap() {
+    	String[] words = loader.getWords();
+    	for (int i = 0; i < words.length; i++) {
+    		Word word = new Word(words[i], null, false);
+    		
+    		unigramIDMap.put(word, unigrams[i]);
+    	}
     }
 
 
