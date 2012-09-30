@@ -48,7 +48,7 @@ public class GDLLatticeFactory {
                 createEdge(line, lattice);
             }
         }
-
+        reader.close();
         return lattice;
     }
 

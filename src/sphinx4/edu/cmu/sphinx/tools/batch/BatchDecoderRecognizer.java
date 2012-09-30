@@ -87,6 +87,7 @@ public class BatchDecoderRecognizer {
             }
         }
         writer.close();
+        scanner.close();
         recognizer.deallocate();
     }
     

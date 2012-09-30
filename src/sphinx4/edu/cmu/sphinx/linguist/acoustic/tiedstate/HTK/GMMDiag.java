@@ -289,6 +289,7 @@ public class GMMDiag {
 					}
 					s = fin.readLine();
 					if (!s.contains("<VARIANCE>")) {
+						fin.close();
 						throw new IOException();
 					}
 					s = fin.readLine();

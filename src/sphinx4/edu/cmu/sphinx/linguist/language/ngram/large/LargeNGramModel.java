@@ -1006,11 +1006,15 @@ public class LargeNGramModel implements LanguageModel, BackoffLanguageModel {
         DataInputStream in = new DataInputStream(new FileInputStream(filename));
 
 
-        if (in.readInt() != SMEAR_MAGIC)
+        if (in.readInt() != SMEAR_MAGIC) {
+        	in.close();
             throw new IOException("Bad smear format for " + filename);
+        }
 
-        if (in.readInt() != unigrams.length)
+        if (in.readInt() != unigrams.length) {
+        	in.close();
             throw new IOException("Bad unigram length in " + filename);
+        }
 
         bigramSmearMap = new HashMap<Long, Float>();
         unigramSmearTerm = new float[unigrams.length];
@@ -1025,8 +1029,10 @@ public class LargeNGramModel implements LanguageModel, BackoffLanguageModel {
             int numBigrams = in.readInt();
             NGramBuffer bigram = getBigramBuffer(i);
             
-            if (bigram.getNumberNGrams() != numBigrams)
+            if (bigram.getNumberNGrams() != numBigrams) {
+            	in.close();
                 throw new IOException("Bad ngrams for unigram " + i + " Found " + numBigrams + " expected " + bigram.getNumberNGrams());
+            }
 
             for (int j = 0; j < numBigrams; j++) {
                 int k = bigram.getWordID(j);

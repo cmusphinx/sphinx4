@@ -446,6 +446,8 @@ public final class ConfigurationManagerUtils {
                         if (propSheet.getRawNoReplacement(propName).equals(oldName)) {
                             propSheet.setRaw(propName, newName);
                         }
+                    default:
+                    	break;
                 }
             }
         }

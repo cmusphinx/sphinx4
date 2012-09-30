@@ -104,5 +104,6 @@ public class Segmenter {
             String outputFile = outputFolder + "/" + fileName + ".wav";
             processFile(inputFile, outputFile, cm);
         }
+        scanner.close();
     }
 }

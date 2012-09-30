@@ -53,6 +53,7 @@ public class FileReferenceSource implements ReferenceSource {
                 }
             }
         }
+        reader.close();
     }
 
 

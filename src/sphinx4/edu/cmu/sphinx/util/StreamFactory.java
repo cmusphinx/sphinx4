@@ -124,6 +124,7 @@ public class StreamFactory {
                 if (entry != null) {
                     stream = zipFile.getInputStream(entry);
                 }
+                zipFile.close();
             } catch (URISyntaxException use) {
                 use.printStackTrace();
                 throw new ZipException("URISyntaxException: " +

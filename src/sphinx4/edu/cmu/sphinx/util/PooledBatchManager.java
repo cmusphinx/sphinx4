@@ -198,6 +198,7 @@ public class PooledBatchManager implements BatchManager {
     private void lock() throws IOException {
         RandomAccessFile raf = new RandomAccessFile(lockFile, "rw");
         lock = raf.getChannel().lock();
+        raf.close();
     }
 
 
@@ -205,7 +206,6 @@ public class PooledBatchManager implements BatchManager {
     private void unlock() throws IOException {
         lock.release();
         lock = null;
-
     }
 
 

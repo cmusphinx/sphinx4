@@ -93,6 +93,7 @@ public class BatchForcedAlignerGrammar extends ForcedAlignerGrammar implements G
                 grammars.put(uttName, initialNode);
                 currentUttName = uttName;
             }
+            in.close();
         } catch (FileNotFoundException e) {
             throw new Error(e);
         } catch (IOException e) {

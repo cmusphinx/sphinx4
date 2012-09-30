@@ -314,6 +314,7 @@ public class Lattice {
                     } else if (type.equals("logBase:")) {
                         logBase = Double.parseDouble(tokens.nextToken());
                     } else {
+                    	in.close();
                         throw new Error("SYNTAX ERROR: " + fileName +
                             '[' + in.getLineNumber() + "] " + line);
                     }

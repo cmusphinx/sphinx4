@@ -71,6 +71,7 @@ public class JSGFTest {
             RuleParse rp = grammar.parse(sentence, null);
             Assert.assertNotNull(rp);
         }
+        scanner.close();
     }
     
     @Test

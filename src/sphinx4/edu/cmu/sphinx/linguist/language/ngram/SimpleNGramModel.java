@@ -99,6 +99,7 @@ public class SimpleNGramModel implements LanguageModel, BackoffLanguageModel {
         dictionary = (Dictionary) ps.getComponent(PROP_DICTIONARY);
         map = new HashMap<WordSequence, Probability>();
         vocabulary = new HashSet<String>();
+        tokens = new LinkedList<WordSequence>();
     }
     
     /*
@@ -401,7 +402,7 @@ public class SimpleNGramModel implements LanguageModel, BackoffLanguageModel {
      * @return LinkedList<WordSequence> containing all the word sequences
      */
     public LinkedList<WordSequence> getNGrams() {
-       return this.tokens;
+       return tokens;
     }
     
     

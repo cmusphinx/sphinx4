@@ -279,5 +279,6 @@ public class FeatureFileDumper {
                 System.out.println("ERROR: unknown output format: " + format);
             }
         }
+        scanner.close();
     }
 }

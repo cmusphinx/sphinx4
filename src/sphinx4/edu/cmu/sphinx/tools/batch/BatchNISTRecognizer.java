@@ -220,8 +220,10 @@ public class BatchNISTRecognizer extends BatchModeRecognizer {
                 InputStream dataStream = new FileInputStream(file);
                 dataStream.skip(startOffset * bytesPerFrame);
                 if (dataStream.read(data) != data.length) {
+                    dataStream.close();
                     throw new CTLException("Unable to read " + data.length + " bytes of utterance " + name);
                 }
+                dataStream.close();
             }
             catch (IOException e) {
                 throw new CTLException("Unable to read utterance " + name + ": " + e.getMessage());
