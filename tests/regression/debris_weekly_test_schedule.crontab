@@ -1,9 +1,0 @@
-0  19 * * * (. $HOME/.profile ; ./regressionTest nightly )
-45 23 * * 0 (. $HOME/.profile ; ./regressionTest sunday )
-45 23 * * 1 (. $HOME/.profile ; ./regressionTest monday )
-45 23 * * 2 (. $HOME/.profile ; ./regressionTest tuesday )
-45 23 * * 3 (. $HOME/.profile ; ./regressionTest wednesday )
-45 23 * * 4 (. $HOME/.profile ; ./regressionTest thursday )
-45 23 * * 5 (. $HOME/.profile ; ./regressionTest friday )
-45 23 * * 6 (. $HOME/.profile ; ./regressionTest saturday )
-
