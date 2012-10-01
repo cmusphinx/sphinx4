@@ -85,6 +85,7 @@
 	             compile_jsapi_dialog,
 	             compile_jsapi_jsgf,
 	             compile_zipcity,
+	             compile_live,
                      compile_sphinx_transcriber,
 		     compile_aligner,
 	             compile_tags"
@@ -419,5 +420,33 @@
 	     includes="edu/cmu/sphinx/demo/classbased/**"
 	     compress="true"/>
     </target>
+
+    <target name="compile_live">
+	<mkdir dir="${demo_classes_dir}/edu/cmu/sphinx/demo/live"/>
+	<javac debug="true"
+	       listfiles="true"
+	       deprecation="true"
+	       includeAntRuntime="false"
+	       srcdir="${demo_src_dir}"
+	       includes="edu/cmu/sphinx/demo/live/**"
+	       destdir="${demo_classes_dir}">
+	    <classpath refid="libs"/>
+	</javac>
+	<copy file="${demo_src_dir}/edu/cmu/sphinx/demo/classbased/sample.trigram.lm"
+	      todir="${demo_classes_dir}/edu/cmu/sphinx/demo/classbased"/>
+	<copy file="${demo_src_dir}/edu/cmu/sphinx/demo/classbased/sample-with-classes.trigram.lm"
+	      todir="${demo_classes_dir}/edu/cmu/sphinx/demo/classbased"/>
+	<copy file="${demo_src_dir}/edu/cmu/sphinx/demo/classbased/uniform-classdefs"
+	      todir="${demo_classes_dir}/edu/cmu/sphinx/demo/classbased"/>
+	<copy file="${demo_src_dir}/edu/cmu/sphinx/demo/classbased/classbased.config.xml"
+	      todir="${demo_classes_dir}/edu/cmu/sphinx/demo/classbased"/>
+	<mkdir dir="${bin_dir}"/>
+        <jar destfile="${bin_dir}/Live.jar" 
+	     manifest="${demo_src_dir}/edu/cmu/sphinx/demo/classbased/classbased.Manifest"
+	     basedir="${demo_classes_dir}"
+	     includes="edu/cmu/sphinx/demo/live/**"
+	     compress="true"/>
+    </target>
+
 
 </project>

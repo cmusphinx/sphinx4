@@ -9,6 +9,9 @@
  * WARRANTIES.
  *
  */
+
+package edu.cmu.sphinx.demo.live;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;

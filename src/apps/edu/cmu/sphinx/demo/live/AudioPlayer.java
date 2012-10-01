@@ -1,3 +1,4 @@
+
 /*
  * Copyright 1999-2002 Carnegie Mellon University.  
  * Portions Copyright 2002 Sun Microsystems, Inc.  
@@ -9,6 +10,8 @@
  * WARRANTIES.
  *
  */
+
+package edu.cmu.sphinx.demo.live;
 
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioSystem;

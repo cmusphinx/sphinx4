@@ -9,6 +9,9 @@
  * WARRANTIES.
  *
  */
+
+package edu.cmu.sphinx.demo.live;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
