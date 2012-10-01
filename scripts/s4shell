@@ -1,3 +1,0 @@
-S4_ROOT=../../..
-java -Xmx200m -cp $S4_ROOT/bld/classes \
-   edu.cmu.sphinx.tools.batch.BatchModeRecognizer $1 $2 -shell

@@ -1,9 +1,0 @@
-#!/bin/bash
-
-if test x$SF_USER == x; then SF_USER=`whoami`,cmusphinx; fi
-
-dest=$1
-
-shift
-
-rsync -auvzR $* $SF_USER@web.sourceforge.net:$dest
