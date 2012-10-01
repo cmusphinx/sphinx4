@@ -35,8 +35,7 @@ public class ConfigurationManagerTest {
 
     @Test
     public void testSerialization() throws IOException, PropertyException {
-        File configFile = new File("tests/other/testconfig.sxl");
-        ConfigurationManager cm = new ConfigurationManager(configFile.toURI().toURL());
+        ConfigurationManager cm = new ConfigurationManager("src/test/edu/cmu/sphinx/util/props/test/ConfigurationManagerTest.testconfig.sxl");
 
         File tmpFile = File.createTempFile("ConfigurationManager", ".tmp.sxl");
         tmpFile.deleteOnExit();
@@ -51,7 +50,7 @@ public class ConfigurationManagerTest {
 
     @Test
     public void testDynamicConfiguruationChange() throws IOException, PropertyException, InstantiationException {
-        File configFile = new File("tests/other/testconfig.sxl");
+        File configFile = new File("src/test/edu/cmu/sphinx/util/props/test/ConfigurationManagerTest.testconfig.sxl");
         ConfigurationManager cm = new ConfigurationManager(configFile.toURI().toURL());
 
         Assert.assertTrue(cm.getInstanceNames(DummyFrontEndProcessor.class).isEmpty());
@@ -95,7 +94,7 @@ public class ConfigurationManagerTest {
 
     @Test
     public void testXmlExtendedConfiguration() {
-        ConfigurationManager cm = new ConfigurationManager("tests/other/extendconfig.sxl");
+        ConfigurationManager cm = new ConfigurationManager("src/test/edu/cmu/sphinx/util/props/test/ConfigurationManagerTest.sxl");
 
         String instanceName = "duco";
         Assert.assertTrue(cm.getPropertySheet(instanceName) != null);
@@ -119,7 +118,7 @@ public class ConfigurationManagerTest {
     
     @Test
     public void testGetComponentClass () {
-        ConfigurationManager cm = new ConfigurationManager("tests/other/extendconfig.sxl");
+        ConfigurationManager cm = new ConfigurationManager("src/test/edu/cmu/sphinx/util/props/test/ConfigurationManagerTest.sxl");
 
         String instanceName = "duco";
         PropertySheet ps = cm.getPropertySheet(instanceName);

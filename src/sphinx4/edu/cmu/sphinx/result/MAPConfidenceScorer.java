@@ -88,7 +88,7 @@ public class MAPConfidenceScorer implements ConfidenceScorer, Configurable {
             lattice.dumpAISee("mapLattice.gdl", "MAP Lattice");
         }
         if (dumpSausage) {
-            s.dumpAISee("mapSausage.gdl", "MAP Sausage");
+            //s.dumpAISee("mapSausage.gdl", "MAP Sausage");
         }
 
         WordResultPath mapPath = new WordResultPath();

@@ -127,8 +127,8 @@ public class DummyComp implements Configurable {
 
     @Test
     public void testUseXmlConfig() throws IOException, PropertyException, InstantiationException {
-        // probably you need to adpat this path. testconfig is located in {trunkroot}/sphinx4/tests/other
-        File configFile = new File("tests/other/testconfig.sxl");
+        // probably you need to adpat this path. testconfig is located in the same folder as test
+        File configFile = new File("src/test/edu/cmu/sphinx/util/props/test/ConfigurationManagerTest.testconfig.sxl");
         if (!configFile.exists())
             Assert.fail("can not find configuration file to be used for test");
 

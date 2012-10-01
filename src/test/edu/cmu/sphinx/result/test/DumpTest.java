@@ -78,6 +78,6 @@ public class DumpTest {
 		System.out.println("best sausage hypothesis: \""
 				+ sausage.getBestHypothesisString() + '\"');
 		
-		sausage.dumpAISee("sausage.gdl", "sausage decode");
+		sausage.dumpAISee("logs/sausage.gdl", "sausage decode");
 	}
 }
