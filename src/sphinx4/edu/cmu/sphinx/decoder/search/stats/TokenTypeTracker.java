@@ -17,7 +17,6 @@ public class TokenTypeTracker {
 
     private int numWords;
     private int numUnits;
-    private int numHMMs;
     private int numOthers;
     private int numHMMBegin;
     private int numHMMEnd;
@@ -40,13 +39,13 @@ public class TokenTypeTracker {
         } else if (s instanceof UnitSearchState) {
             numUnits++;
         } else if (s instanceof HMMSearchState) {
-            numHMMs++;
             HMM hmm = ((HMMSearchState) s).getHMMState().getHMM();
             switch (hmm.getPosition()) {
                 case BEGIN: numHMMBegin++; break;
                 case END: numHMMEnd++; break;
                 case SINGLE: numHMMSingle++; break;
                 case INTERNAL: numHMMInternal++; break;
+                default: break;
             }
         } else {
             numOthers++;

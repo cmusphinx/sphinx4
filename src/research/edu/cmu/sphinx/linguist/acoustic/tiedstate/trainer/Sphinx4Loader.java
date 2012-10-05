@@ -100,7 +100,6 @@ class Sphinx4Loader extends Sphinx3Loader {
             String right = est.getString();
             String position = est.getString();
             int tmat = est.getInt("tmat");
-            int numStates = 0;
 
             // Read all state ID in the line...
             for (int j = 0; ; j++) {
@@ -119,36 +118,30 @@ class Sphinx4Loader extends Sphinx3Loader {
                     assert maxStid[j] >= 0 &&
                             maxStid[j] < numContextIndependentTiedState;
                 } else {
-                    numStates = j;
                     break;
                 }
             }
-            int[] stid = Arrays.copyOf(maxStid, numStates);
 
             assert left.equals("-");
             assert right.equals("-");
             assert position.equals("-");
             assert tmat < numTiedTransitionMatrices;
 
-//            Unit unit = Unit.getUnit(name, attribute.equals(FILLER));
-            Unit unit = null;
-            contextIndependentUnits.put(unit.getName(), unit);
-
-            if (logger.isLoggable(Level.FINE)) {
-                logger.fine("Loaded " + unit);
-            }
-
-            // The first filler
-            if (unit.isFiller() && unit.getName().equals(SILENCE_CIPHONE)) {
+//          int[] stid = Arrays.copyOf(maxStid, numStates);
+//          Unit unit = Unit.getUnit(name, attribute.equals(FILLER));
+//          contextIndependentUnits.put(unit.getName(), unit);
+//
+//          if (logger.isLoggable(Level.FINE)) {
+//              logger.fine("Loaded " + unit);
+//          }
+//           The first filler
+//          if (unit.isFiller() && unit.getName().equals(SILENCE_CIPHONE)) {
 //                unit = Unit.SILENCE;
-                unit = null;
-            }
-
-            float[][] transitionMatrix = matrixPool.get(tmat);
-            SenoneSequence ss = getSenoneSequence(stid);
-
-            HMM hmm = new SenoneHMM(unit, ss, transitionMatrix, HMMPosition.lookup(position));
-            hmmManager.put(hmm);
+//          }
+//          float[][] transitionMatrix = matrixPool.get(tmat);
+//          SenoneSequence ss = getSenoneSequence(stid);
+//          HMM hmm = new SenoneHMM(unit, ss, transitionMatrix, HMMPosition.lookup(position));
+//          hmmManager.put(hmm);
         }
 
         // Load the context dependent phones.  If the useCDUnits
@@ -207,8 +200,8 @@ class Sphinx4Loader extends Sphinx3Loader {
                     Unit[] rightContext = new Unit[1];
                     rightContext[0] = contextIndependentUnits.get(right);
 
-                    Context context = LeftRightContext.get(leftContext, rightContext);
-//                    unit = Unit.getUnit(name, false, context);
+                    //Context context = LeftRightContext.get(leftContext, rightContext);
+                    //unit = Unit.getUnit(name, false, context);
                 }
                 lastUnitName = unitName;
                 lastUnit = unit;

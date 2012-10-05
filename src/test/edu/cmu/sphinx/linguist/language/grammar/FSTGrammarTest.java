@@ -1,7 +1,5 @@
 package edu.cmu.sphinx.linguist.language.grammar;
 
-import static org.junit.Assert.assertTrue;
-
 import java.io.IOException;
 import java.net.URL;
 

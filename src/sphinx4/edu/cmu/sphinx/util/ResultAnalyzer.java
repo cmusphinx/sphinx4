@@ -26,7 +26,6 @@ public class ResultAnalyzer {
     private final static DecimalFormat percent = new DecimalFormat("%.0");
     private int numSentences;
     private int numRefWords;
-    private int numHypWords;
     private int numMatchingWords;
     private int numMatchingSentences;
     private int recognitionErrors;
@@ -71,7 +70,6 @@ public class ResultAnalyzer {
         refOutput = new StringBuffer();
 
         numRefWords += refList.size();
-        numHypWords += hypList.size();
         numSentences++;
 
         while (!refList.isEmpty() || !hypList.isEmpty()) {
@@ -150,7 +148,6 @@ public class ResultAnalyzer {
     public void reset() {
         numSentences = 0;
         numRefWords = 0;
-        numHypWords = 0;
         numMatchingWords = 0;
         numMatchingSentences = 0;
         recognitionErrors = 0;
