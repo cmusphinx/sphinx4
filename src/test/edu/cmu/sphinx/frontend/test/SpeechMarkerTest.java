@@ -1,7 +1,10 @@
-package edu.cmu.sphinx.frontend.endpoint;
+package edu.cmu.sphinx.frontend.test;
 
 import edu.cmu.sphinx.frontend.*;
-import edu.cmu.sphinx.frontend.test.AbstractTestProcessor;
+import edu.cmu.sphinx.frontend.endpoint.SpeechClassifiedData;
+import edu.cmu.sphinx.frontend.endpoint.SpeechEndSignal;
+import edu.cmu.sphinx.frontend.endpoint.SpeechMarker;
+import edu.cmu.sphinx.frontend.endpoint.SpeechStartSignal;
 import edu.cmu.sphinx.util.props.ConfigurationManager;
 import edu.cmu.sphinx.util.props.PropertyException;
 import static org.junit.Assert.assertTrue;

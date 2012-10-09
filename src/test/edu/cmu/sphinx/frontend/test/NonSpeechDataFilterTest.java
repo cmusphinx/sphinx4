@@ -1,4 +1,4 @@
-package edu.cmu.sphinx.frontend.endpoint.test;
+package edu.cmu.sphinx.frontend.test;
 
 import edu.cmu.sphinx.frontend.Data;
 import edu.cmu.sphinx.frontend.DataEndSignal;
@@ -7,7 +7,6 @@ import edu.cmu.sphinx.frontend.DataStartSignal;
 import edu.cmu.sphinx.frontend.endpoint.NonSpeechDataFilter;
 import edu.cmu.sphinx.frontend.endpoint.SpeechEndSignal;
 import edu.cmu.sphinx.frontend.endpoint.SpeechStartSignal;
-import edu.cmu.sphinx.frontend.test.AbstractTestProcessor;
 import edu.cmu.sphinx.util.props.ConfigurationManager;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;

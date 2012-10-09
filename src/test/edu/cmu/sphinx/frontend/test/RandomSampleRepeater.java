@@ -1,7 +1,6 @@
-package edu.cmu.sphinx.frontend.util;
+package edu.cmu.sphinx.frontend.test;
 
 import edu.cmu.sphinx.frontend.*;
-import edu.cmu.sphinx.frontend.test.AbstractTestProcessor;
 import edu.cmu.sphinx.util.props.*;
 import static org.junit.Assert.assertEquals;
 import org.junit.Test;

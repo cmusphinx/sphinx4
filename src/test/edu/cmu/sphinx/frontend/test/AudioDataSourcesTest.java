@@ -1,4 +1,4 @@
-package edu.cmu.sphinx.frontend.util.test;
+package edu.cmu.sphinx.frontend.test;
 
 import edu.cmu.sphinx.frontend.*;
 import edu.cmu.sphinx.frontend.util.AudioFileDataSource;
@@ -19,7 +19,7 @@ import java.io.File;
  */
 public class AudioDataSourcesTest {
 
-    public static final String baseDir = "src/test/edu/cmu/sphinx/frontend/util/test/data/";
+    public static final String baseDir = "src/test/edu/cmu/sphinx/frontend/test/data/";
 
     private int numFileStarts; // used to test the AudioFileProcessListener implementation
     private int numFileEnds;
