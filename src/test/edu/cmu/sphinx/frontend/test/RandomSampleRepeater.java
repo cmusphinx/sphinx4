@@ -85,8 +85,8 @@ public class RandomSampleRepeater extends BaseDataProcessor {
         else
             r = new Random(12345);
 
-        uDistWidthSamples = AbstractTestProcessor.ms2samples((int) (uDistWidthSec * 1000), sampleRate);
-        maxRepeatedSamples = AbstractTestProcessor.ms2samples((int) (maxRepeatedMs), sampleRate);
+        uDistWidthSamples = RandomDataProcessor.ms2samples((int) (uDistWidthSec * 1000), sampleRate);
+        maxRepeatedSamples = RandomDataProcessor.ms2samples((int) (maxRepeatedMs), sampleRate);
     }
 
 

@@ -13,7 +13,7 @@ import java.util.Random;
  *
  * @author Holger Brandl
  */
-public abstract class AbstractTestProcessor extends BaseDataProcessor {
+public abstract class RandomDataProcessor extends BaseDataProcessor {
 
     public static Random r = new Random(123);
 

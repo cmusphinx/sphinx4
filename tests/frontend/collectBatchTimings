@@ -1,9 +1,0 @@
-#!/bin/sh
-
-${JAVA_HOME}/bin/java -server -cp ../../classes \
- -Dtests.frontend.FrontEndTest.dumpTimes=true \
- -Dtests.frontend.FrontEndTest.batchMode=true \
- tests.frontend.FrontEndTest \
- FrontEndTest \
- frontend.props.16k \
- batch.ctl

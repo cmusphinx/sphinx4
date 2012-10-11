@@ -38,7 +38,6 @@ public class DataDumper extends BaseDataProcessor {
     // --------------------------
     // Configuration data
     // --------------------------
-    private int frameCount;
     private boolean enable;
     private boolean outputSignals;
     private DecimalFormat formatter;
@@ -106,9 +105,6 @@ public class DataDumper extends BaseDataProcessor {
         if (input instanceof Signal) {
             if (outputSignals) {
                 System.out.println("Signal: " + input);
-                if (input instanceof DataStartSignal) {
-                    frameCount = 0;
-                }
             }
         } else if (input instanceof DoubleData) {
             DoubleData dd = (DoubleData) input;
@@ -140,6 +136,5 @@ public class DataDumper extends BaseDataProcessor {
             }
             System.out.println();
         }
-        frameCount++;
     }
 }

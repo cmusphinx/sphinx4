@@ -43,7 +43,7 @@ public class LatticeDemo {
             url = LatticeDemo.class.getResource("config.xml");
         }
 
-        System.out.println("Loading...");
+//        System.out.println("Loading...");
         ConfigurationManager cm = new ConfigurationManager(url);
 
         Recognizer recognizer = (Recognizer) cm.lookup("recognizer");
@@ -65,9 +65,9 @@ public class LatticeDemo {
                 Lattice lattice = new Lattice(result);
                 LatticeOptimizer optimizer = new LatticeOptimizer(lattice);
                 optimizer.optimize();
-                lattice.dumpAllPaths();
+//                lattice.dumpAllPaths();
                 String resultText = result.getBestResultNoFiller();
-                System.out.println("I heard: " + resultText + '\n');
+//                System.out.println("I heard: " + resultText + '\n');
             } else {
                 done = true;
             }

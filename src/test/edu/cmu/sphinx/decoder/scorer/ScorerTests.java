@@ -8,7 +8,7 @@ import edu.cmu.sphinx.frontend.DoubleData;
 import edu.cmu.sphinx.frontend.databranch.DataBufferProcessor;
 import edu.cmu.sphinx.frontend.endpoint.SpeechEndSignal;
 import edu.cmu.sphinx.frontend.endpoint.SpeechStartSignal;
-import edu.cmu.sphinx.frontend.test.AbstractTestProcessor;
+import edu.cmu.sphinx.frontend.test.RandomDataProcessor;
 import edu.cmu.sphinx.util.props.ConfigurationManager;
 import edu.cmu.sphinx.util.props.ConfigurationManagerUtils;
 import org.junit.Assert;
@@ -81,15 +81,15 @@ public class ScorerTests {
         DataBufferProcessor bufferProc = ConfigurationManager.getInstance(DataBufferProcessor.class);
         bufferProc.processDataFrame(new DataStartSignal(16000, true));
 
-        for (DoubleData doubleData : AbstractTestProcessor.createFeatVectors(5, 16000, 0, 39, 10))
+        for (DoubleData doubleData : RandomDataProcessor.createFeatVectors(5, 16000, 0, 39, 10))
             bufferProc.processDataFrame(doubleData);
 
         bufferProc.processDataFrame(new SpeechStartSignal());
-        for (DoubleData doubleData : AbstractTestProcessor.createFeatVectors(3, 16000, 1000, 39, 10))
+        for (DoubleData doubleData : RandomDataProcessor.createFeatVectors(3, 16000, 1000, 39, 10))
             bufferProc.processDataFrame(doubleData);
 
         bufferProc.processDataFrame(new SpeechEndSignal());
-        for (DoubleData doubleData : AbstractTestProcessor.createFeatVectors(5, 16000, 2000, 39, 10))
+        for (DoubleData doubleData : RandomDataProcessor.createFeatVectors(5, 16000, 2000, 39, 10))
             bufferProc.processDataFrame(doubleData);
 
         bufferProc.processDataFrame(new DataEndSignal(123));

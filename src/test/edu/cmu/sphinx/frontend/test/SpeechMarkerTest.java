@@ -18,7 +18,7 @@ import java.util.List;
  *
  * @author Holger Brandl
  */
-public class SpeechMarkerTest extends AbstractTestProcessor {
+public class SpeechMarkerTest extends RandomDataProcessor {
 
 
     public BaseDataProcessor createDataFilter(boolean mergeSpeechSegments) {

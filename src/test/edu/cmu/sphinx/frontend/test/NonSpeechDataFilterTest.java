@@ -18,7 +18,7 @@ import java.util.List;
  *
  * @author Holger Brandl
  */
-public class NonSpeechDataFilterTest extends AbstractTestProcessor {
+public class NonSpeechDataFilterTest extends RandomDataProcessor {
 
 
     @Test
