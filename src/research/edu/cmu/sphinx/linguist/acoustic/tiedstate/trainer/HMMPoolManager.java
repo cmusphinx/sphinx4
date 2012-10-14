@@ -18,6 +18,7 @@ import edu.cmu.sphinx.linguist.acoustic.HMM;
 import edu.cmu.sphinx.linguist.acoustic.tiedstate.*;
 import edu.cmu.sphinx.util.LogMath;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.logging.Logger;
 
@@ -52,8 +53,10 @@ class HMMPoolManager {
      * Constructor for this pool manager. It gets the pointers to the pools from a loader.
      *
      * @param loader the loader
+     * @throws IOException 
      */
-    protected HMMPoolManager(Loader loader) {
+    protected HMMPoolManager(Loader loader) throws IOException {
+    	loader.load();
         hmmManager = loader.getHMMManager();
         indexMap = new HashMap<Object, Integer>();
         meansPool = loader.getMeansPool();
@@ -75,6 +78,7 @@ class HMMPoolManager {
 
         createBuffers();
         logLikelihood = 0.0f;
+        logMath = new LogMath();
     }
 
     /** Recreates the buffers. */

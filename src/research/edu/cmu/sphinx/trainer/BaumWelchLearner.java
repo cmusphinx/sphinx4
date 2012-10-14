@@ -13,7 +13,7 @@
 package edu.cmu.sphinx.trainer;
 
 import edu.cmu.sphinx.frontend.*;
-import edu.cmu.sphinx.frontend.util.StreamDataSource;
+import edu.cmu.sphinx.frontend.util.StreamCepstrumSource;
 import edu.cmu.sphinx.linguist.acoustic.HMMState;
 import edu.cmu.sphinx.linguist.acoustic.tiedstate.SenoneHMM;
 import edu.cmu.sphinx.linguist.acoustic.tiedstate.SenoneHMMState;
@@ -36,16 +36,16 @@ public class BaumWelchLearner implements Learner {
 
 
     @S4Component(type = FrontEnd.class)
-    public static final String FRONT_END = "frontEnd";
+    public static final String FRONT_END = "frontend";
     private FrontEnd frontEnd;
 
     @S4Component(type = LogMath.class)
     public static final String LOG_MATH = "logMath";
     private LogMath logMath;
 
-    @S4Component(type = StreamDataSource.class)
-    public static final String DATA_SOURCE = "dataSource";
-    private StreamDataSource dataSource;
+    @S4Component(type = StreamCepstrumSource.class)
+    public static final String DATA_SOURCE = "source";
+    private StreamCepstrumSource dataSource;
 
     /*
      * The logger for this class
@@ -66,7 +66,7 @@ public class BaumWelchLearner implements Learner {
 
 
     public void newProperties(PropertySheet ps) throws PropertyException {
-        dataSource = (StreamDataSource) ps.getComponent(DATA_SOURCE);
+        dataSource = (StreamCepstrumSource) ps.getComponent(DATA_SOURCE);
 
         frontEnd = (FrontEnd) ps.getComponent(FRONT_END);
         frontEnd.setDataSource(dataSource);
@@ -91,7 +91,7 @@ public class BaumWelchLearner implements Learner {
     public void setUtterance(Utterance utterance) throws IOException {
         String file = utterance.toString();
         InputStream is = new FileInputStream(file);
-        dataSource.setInputStream(is, file);
+        dataSource.setInputStream(is, false);
     }
 
 

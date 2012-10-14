@@ -12,10 +12,16 @@
 
 package edu.cmu.sphinx.trainer;
 
-import edu.cmu.sphinx.util.props.*;
 
 import java.io.IOException;
 import java.util.*;
+
+import edu.cmu.sphinx.util.props.Configurable;
+import edu.cmu.sphinx.util.props.ConfigurationManager;
+import edu.cmu.sphinx.util.props.PropertyException;
+import edu.cmu.sphinx.util.props.PropertySheet;
+import edu.cmu.sphinx.util.props.S4Component;
+import edu.cmu.sphinx.util.props.S4String;
 
 
 /**
@@ -43,8 +49,7 @@ public class Trainer implements Configurable {
     private Set<String> StageNames = new HashSet<String>();
 
     private TrainManager trainManager;
-
-
+    
     public void newProperties(PropertySheet ps) throws PropertyException {
         trainManager = (TrainManager) ps.getComponent(TRAIN_MANAGER);
 
@@ -146,11 +151,7 @@ public class Trainer implements Configurable {
         }
     	String context = "trainer";
 
-        if (argv.length == 0) {
-        	Trainer trainer = ConfigurationManager.getInstance(Trainer.class);
-        	trainer.processStages(context);
-        } else {
-       
+        if (argv.length == 1) {
         	String configFile = argv[0];
         
         	ConfigurationManager cm = new ConfigurationManager(configFile);

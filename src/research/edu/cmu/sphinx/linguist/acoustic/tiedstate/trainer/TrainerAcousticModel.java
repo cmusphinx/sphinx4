@@ -24,140 +24,144 @@ import java.io.IOException;
 /** Represents the generic interface to the Acoustic Model for sphinx4 */
 public class TrainerAcousticModel extends TiedStateAcousticModel {
 
-    /** Prefix for acoustic model SphinxProperties. */
-    public final static String PROP_PREFIX = "edu.cmu.sphinx.linguist.acoustic.";
+	@S4Component(type = Saver.class)
+	public static final String SAVER = "saver";
+	private Saver saver;
 
-    @S4Component(type = Saver.class)
-    public static final String SAVER = "saver";
-    private Saver saver;
+	@S4Double(defaultValue = 0.0001f)
+	public final static String PROP_VARIANCE_FLOOR = "varianceFloor";
 
+	/** Mixture component score floor. */
+	@S4Double(defaultValue = 0.0)
+	public final static String PROP_MC_FLOOR = "MixtureComponentScoreFloor";
 
-    @S4Double(defaultValue = 0.0001f)
-    public final static String PROP_VARIANCE_FLOOR = "varianceFloor";
+	/** Mixture weight floor. */
+	@S4Double(defaultValue = 1e-7f)
+	public final static String PROP_MW_FLOOR = "mixtureWeightFloor";
 
-    /** Mixture component score floor. */
-    @S4Double(defaultValue = 0.0)
-    public final static String PROP_MC_FLOOR = "MixtureComponentScoreFloor";
+	/**
+	 * The save format for the acoustic model data. Current supported formats
+	 * are:
+	 */
+	@S4String(defaultValue = "sphinx3.binary")
+	public final static String PROP_FORMAT_SAVE = "saveFormat";
+	public String saveFormat;
 
-    /** Mixture weight floor. */
-    @S4Double(defaultValue = 1e-7f)
-    public final static String PROP_MW_FLOOR = "mixtureWeightFloor";
+	/** Flag indicating all models should be operated on. */
+	public final static int ALL_MODELS = -1;
 
-    /**
-     * The save format for the acoustic model data. Current supported formats are:
-     * <p/>
-     * sphinx3.ascii sphinx3.binary sphinx4.ascii sphinx4.binary
-     */
-    @S4String(defaultValue = "sphinx3.binary")
-    public final static String PROP_FORMAT_SAVE = PROP_PREFIX + "format.save";
+	/** The pool manager */
+	private HMMPoolManager hmmPoolManager;
 
+	public TrainerAcousticModel(Loader loader, UnitManager unitManager,
+			boolean useComposites, Saver saver, String saveFormat) throws IOException {
+		super(loader, unitManager, useComposites);
 
-    /** Flag indicating all models should be operated on. */
-    public final static int ALL_MODELS = -1;
+		this.saver = saver;
+		this.hmmPoolManager = new HMMPoolManager(loader);
+		this.saveFormat = saveFormat;
 
-    /** The pool manager */
-    private HMMPoolManager hmmPoolManager;
-    public String saveFormat;
+		logInfo();
+	}
 
-    public TrainerAcousticModel( Loader loader, UnitManager unitManager, boolean useComposites,
-                                 Saver saver, String saveFormat ) {
-        super( loader, unitManager, useComposites );
+	public TrainerAcousticModel() {
+	}
 
-        this.saver = saver;
-        this.hmmPoolManager = new HMMPoolManager(loader);
-        this.saveFormat = saveFormat;
+	@Override
+	public void newProperties(PropertySheet ps) throws PropertyException {
+		super.newProperties(ps);
 
-        logInfo();
-    }
+		saver = (Saver) ps.getComponent(SAVER);
+		try {
+			hmmPoolManager = new HMMPoolManager(loader);
+		} catch (IOException e) {
+			throw new PropertyException(e);
+		}
+		saveFormat = ps.getString(PROP_FORMAT_SAVE);
 
+		logInfo();
+	}
 
-    @Override
-    public void newProperties(PropertySheet ps) throws PropertyException {
-        super.newProperties(ps);
+	/**
+	 * Saves the acoustic model with a given name and format
+	 * 
+	 * @param name
+	 *            the name of the acoustic model
+	 * @throws IOException
+	 *             if the model could not be loaded
+	 * @throws FileNotFoundException
+	 *             if the model does not exist
+	 */
+	public void save(String name) throws IOException {
+		saver.save(name, true);
+		logger.info("saved models with " + saver);
+	}
 
-        saver = (Saver) ps.getComponent(SAVER);
+	/**
+	 * Loads the acoustic models. This has to be explicitly requested in this
+	 * class.
+	 * 
+	 * @throws IOException
+	 *             if the model could not be loaded
+	 * @throws FileNotFoundException
+	 *             if the model does not exist
+	 */
+	public void load() throws IOException, FileNotFoundException {
+		// super.load();
+		logInfo();
+		hmmPoolManager = new HMMPoolManager(loader);
+	}
 
-        hmmPoolManager = new HMMPoolManager(loader);
-        saveFormat = ps.getString(PROP_FORMAT_SAVE);
+	/** Resets the buffers. */
+	public void resetBuffers() {
+		// Resets the buffers and associated variables.
+		hmmPoolManager.resetBuffers();
+	}
 
-        logInfo();
-    }
+	/**
+	 * Accumulate the current TrainerScore into the buffers.
+	 * 
+	 * @param index
+	 *            the current index into the TrainerScore vector
+	 * @param trainerScore
+	 *            the TrainerScore in the current frame
+	 * @param nextTrainerScore
+	 *            the TrainerScore in the next frame
+	 */
+	public void accumulate(int index, TrainerScore[] trainerScore,
+			TrainerScore[] nextTrainerScore) {
+		hmmPoolManager.accumulate(index, trainerScore, nextTrainerScore);
+	}
 
+	/**
+	 * Accumulate the current TrainerScore into the buffers.
+	 * 
+	 * @param index
+	 *            the current index into the TrainerScore vector
+	 * @param trainerScore
+	 *            the TrainerScore
+	 */
+	public void accumulate(int index, TrainerScore[] trainerScore) {
+		hmmPoolManager.accumulate(index, trainerScore);
+	}
 
-    /**
-     * Saves the acoustic model with a given name and format
-     *
-     * @param name the name of the acoustic model
-     * @throws IOException           if the model could not be loaded
-     * @throws FileNotFoundException if the model does not exist
-     */
-    public void save(String name) throws IOException {
-        saver.save(name, true);
-        logger.info("saved models with " + saver);
-    }
+	/**
+	 * Update the log likelihood. This should be called at the end of each
+	 * utterance.
+	 */
+	public void updateLogLikelihood() {
+		hmmPoolManager.updateLogLikelihood();
+	}
 
-
-    /**
-     * Loads the acoustic models. This has to be explicitly requested in this class.
-     *
-     * @throws IOException           if the model could not be loaded
-     * @throws FileNotFoundException if the model does not exist
-     */
-    public void load() throws IOException, FileNotFoundException {
-        // super.load();
-        logInfo();
-        hmmPoolManager = new HMMPoolManager(loader);
-    }
-
-
-    /** Resets the buffers. */
-    public void resetBuffers() {
-        // Resets the buffers and associated variables.
-        hmmPoolManager.resetBuffers();
-    }
-
-
-    /**
-     * Accumulate the current TrainerScore into the buffers.
-     *
-     * @param index            the current index into the TrainerScore vector
-     * @param trainerScore     the TrainerScore in the current frame
-     * @param nextTrainerScore the TrainerScore in the next frame
-     */
-    public void accumulate(int index, TrainerScore[] trainerScore,
-                           TrainerScore[] nextTrainerScore) {
-        hmmPoolManager.accumulate(index, trainerScore, nextTrainerScore);
-    }
-
-
-    /**
-     * Accumulate the current TrainerScore into the buffers.
-     *
-     * @param index        the current index into the TrainerScore vector
-     * @param trainerScore the TrainerScore
-     */
-    public void accumulate(int index, TrainerScore[] trainerScore) {
-        hmmPoolManager.accumulate(index, trainerScore);
-    }
-
-
-    /** Update the log likelihood. This should be called at the end of each utterance. */
-    public void updateLogLikelihood() {
-        hmmPoolManager.updateLogLikelihood();
-    }
-
-
-    /**
-     * Normalize the buffers and update the models.
-     *
-     * @return the log likelihood for the whole training set
-     */
-    public float normalize() {
-        float logLikelihood = hmmPoolManager.normalize();
-        hmmPoolManager.update();
-        return logLikelihood;
-    }
-
+	/**
+	 * Normalize the buffers and update the models.
+	 * 
+	 * @return the log likelihood for the whole training set
+	 */
+	public float normalize() {
+		float logLikelihood = hmmPoolManager.normalize();
+		hmmPoolManager.update();
+		return logLikelihood;
+	}
 
 }
-

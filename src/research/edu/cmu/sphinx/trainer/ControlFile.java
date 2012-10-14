@@ -21,11 +21,11 @@ import edu.cmu.sphinx.util.props.S4String;
 public interface ControlFile extends Configurable {
 
     /** Simple control file containing audio file names only. */
-    @S4String(defaultValue = "train.ctl")
+    @S4String(defaultValue = "an4_train.fileids")
     String PROP_AUDIO_FILE = "audioFile";
 
     /** Transcription file containing transcriptions, simple or full. */
-    @S4String(defaultValue = "train.trans")
+    @S4String(defaultValue = "an4_train.transcription")
     String PROP_TRANSCRIPT_FILE = "transcriptFile";
 
     /** The property for which batch partition to process. */

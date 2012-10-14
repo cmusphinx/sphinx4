@@ -52,7 +52,7 @@ NOTE:  Before running the tests, you must have already built
                   <jvmarg value="-mx${maximum_heap_size}"/> 
                   <sysproperty key="edu.cmu.sphinx.linguist.acoustic.location"
                                value="."/>
-                  <arg value="trainer.props"/>
+                  <arg value="trainer.xml"/>
 	    </java>
     </target>
 
@@ -76,7 +76,7 @@ NOTE:  Before running the tests, you must have already built
                                value="_00_INITIALIZATION"/>
                   <sysproperty key="edu.cmu.sphinx.linguist.acoustic.location"
                                value="."/>
-                  <arg value="trainer.props"/>
+                  <arg value="trainer.xml"/>
 	    </java>
     </target>
 
@@ -99,7 +99,7 @@ NOTE:  Before running the tests, you must have already built
                                value="_10_CI_TRAIN"/>
                   <sysproperty key="edu.cmu.sphinx.linguist.acoustic.location"
                                value="/lab/speech/sphinx4/data/save"/>
-                  <arg value="trainer.props"/>
+                  <arg value="trainer.xml"/>
 	    </java>
     </target>
 
@@ -120,7 +120,7 @@ NOTE:  Before running the tests, you must have already built
                                value="_90_CP_MODEL"/>
                   <sysproperty key="edu.cmu.sphinx.trainer.Trainer.finalStage"
                                value="_90_CP_MODEL"/>
-                  <arg value="trainer.props"/>
+                  <arg value="trainer.xml"/>
 	    </java>
     </target>
 

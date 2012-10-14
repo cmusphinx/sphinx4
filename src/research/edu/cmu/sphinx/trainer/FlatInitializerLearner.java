@@ -13,7 +13,7 @@
 package edu.cmu.sphinx.trainer;
 
 import edu.cmu.sphinx.frontend.*;
-import edu.cmu.sphinx.frontend.util.StreamDataSource;
+import edu.cmu.sphinx.frontend.util.StreamCepstrumSource;
 import edu.cmu.sphinx.linguist.acoustic.tiedstate.trainer.TrainerAcousticModel;
 import edu.cmu.sphinx.linguist.acoustic.tiedstate.trainer.TrainerScore;
 import edu.cmu.sphinx.util.props.PropertyException;
@@ -28,18 +28,18 @@ import java.io.InputStream;
 public class FlatInitializerLearner implements Learner {
 
     @S4Component(type = FrontEnd.class)
-    public static final String FRONT_END = "frontEnd";
+    public static final String FRONT_END = "frontend";
     private FrontEnd frontEnd;
 
-    @S4Component(type = StreamDataSource.class)
-    public static final String DATA_SOURCE = "dataSource";
-    private StreamDataSource dataSource;
+    @S4Component(type = StreamCepstrumSource.class)
+    public static final String DATA_SOURCE = "source";
+    private StreamCepstrumSource dataSource;
 
     private Data curFeature;
 
 
     public void newProperties(PropertySheet ps) throws PropertyException {
-        dataSource = (StreamDataSource) ps.getComponent(DATA_SOURCE);
+        dataSource = (StreamCepstrumSource) ps.getComponent(DATA_SOURCE);
 
         frontEnd = (FrontEnd) ps.getComponent(FRONT_END);
         frontEnd.setDataSource(dataSource);
@@ -56,7 +56,7 @@ public class FlatInitializerLearner implements Learner {
         String file = utterance.toString();
         InputStream is = new FileInputStream(file);
         
-        dataSource.setInputStream(is, file);
+        dataSource.setInputStream(is, false);
     }
 
 

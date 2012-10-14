@@ -19,7 +19,7 @@ import edu.cmu.sphinx.util.props.S4Integer;
 import java.io.IOException;
 
 /** Manages inputs and outputs to the other trainer classes. */
-interface TrainManager extends Configurable {
+public interface TrainManager extends Configurable {
 
     /** Prefix for SphinxProperties in this file. */
     public final static String PROP_PREFIX =

@@ -100,7 +100,7 @@ public class SimpleControlFile implements ControlFile {
     public Utterance nextUtterance() {
         logger.fine("processing ext utterance");
         
-        String utteranceLine = audioFileIterator.next();
+        String utteranceLine = audioFileIterator.next()  + ".mfc";
         Utterance utterance = new SimpleUtterance(utteranceLine);
         String utteranceFilename =
                 utteranceLine.replaceFirst("^.*/", "").replaceFirst("\\..*$", "");

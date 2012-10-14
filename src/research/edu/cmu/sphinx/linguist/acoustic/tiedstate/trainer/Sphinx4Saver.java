@@ -19,8 +19,6 @@ import edu.cmu.sphinx.util.StreamFactory;
 import java.io.*;
 import java.util.Properties;
 import java.util.logging.Level;
-import java.util.logging.Logger;
-
 
 /**
  * An acoustic model saver that saves sphinx3 ascii data.
@@ -28,10 +26,7 @@ import java.util.logging.Logger;
  * Mixture weights and transition probabilities are saved in linear scale.
  */
 class Sphinx4Saver extends Sphinx3Saver {
-
-    /** The logger for this class */
-    private static Logger logger = Logger.getLogger(TrainerAcousticModel.PROP_PREFIX + "AcousticModel");
-
+	
     protected final static String TMAT_FILE_VERSION = "4.0";
 
     @Override

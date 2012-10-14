@@ -23,10 +23,9 @@ import java.util.List;
 
 
 /** This is a dummy implementation of a TrainManager. */
-class SimpleTrainManager implements TrainManager {
+public class SimpleTrainManager implements TrainManager {
 
     private ControlFile controlFile;
-    private TrainerAcousticModel[] models;
 
     private boolean dumpMemoryInfo;
 
@@ -38,9 +37,9 @@ class SimpleTrainManager implements TrainManager {
     public static final String INIT_LEARNER = "initLearner";
     private Learner initLearner;
 
-    @S4ComponentList(type = AcousticModel.class)
-    public static final String AM_COLLECTION = "learner";
-    private List<? extends AcousticModel> acousticModels;
+    @S4ComponentList(type = TrainerAcousticModel.class)
+    public static final String AM_COLLECTION = "models";
+    private List<? extends TrainerAcousticModel> acousticModels;
 
     /**
      * The property for the boolean property that controls whether or not the recognizer will display detailed
@@ -61,7 +60,7 @@ class SimpleTrainManager implements TrainManager {
         minimumImprovement = ps.getFloat(PROP_MINIMUM_IMPROVEMENT);
         maxIteration = ps.getInt(PROP_MAXIMUM_ITERATION);
 
-        acousticModels = ps.getComponentList(AM_COLLECTION, AcousticModel.class);
+        acousticModels = ps.getComponentList(AM_COLLECTION, TrainerAcousticModel.class);
     }
 
 
@@ -117,8 +116,8 @@ class SimpleTrainManager implements TrainManager {
      * @throws IOException if an error occurs while loading the data
      */
     public void saveModels(String context) throws IOException {
-        if (1 == models.length) {
-            models[0].save(null);
+        if (1 == acousticModels.size()) {
+            acousticModels.get(0).save(null);
         } else {
             for (AcousticModel model : acousticModels) {
                 if (model instanceof TrainerAcousticModel) {
@@ -139,8 +138,7 @@ class SimpleTrainManager implements TrainManager {
     private void loadModels(String context) throws IOException {
         dumpMemoryInfo("TrainManager start");
 
-        models = getTrainerAcousticModels();
-        for (TrainerAcousticModel model : models) {
+        for (TrainerAcousticModel model : acousticModels) {
             model.load();
         }
         dumpMemoryInfo("acoustic model");
@@ -158,8 +156,7 @@ class SimpleTrainManager implements TrainManager {
 
         dumpMemoryInfo("TrainManager start");
 
-        models = getTrainerAcousticModels();
-        for (TrainerAcousticModel model : models) {
+        for (TrainerAcousticModel model : acousticModels) {
 
             if (controlFile == null) {
                 controlFile = ConfigurationManager.getInstance(SimpleControlFile.class);
@@ -168,7 +165,7 @@ class SimpleTrainManager implements TrainManager {
                  controlFile.hasMoreUtterances();) {
                 Utterance utterance = controlFile.nextUtterance();
                 initLearner.setUtterance(utterance);
-                while ((score = learner.getScore()) != null) {
+                while ((score = initLearner.getScore()) != null) {
                     assert score.length == 1;
                     model.accumulate(0, score);
                 }
@@ -178,17 +175,6 @@ class SimpleTrainManager implements TrainManager {
             model.normalize();
         }
         dumpMemoryInfo("acoustic model");
-    }
-
-
-    /**
-     * Gets an array of models.
-     *
-     * @return the AcousticModel(s) used by this Recognizer, not initialized
-     */
-    protected TrainerAcousticModel[] getTrainerAcousticModels()
-            throws IOException {
-        return models;
     }
 
 
@@ -214,9 +200,7 @@ class SimpleTrainManager implements TrainManager {
 
         dumpMemoryInfo("TrainManager start");
 
-        assert models != null;
-        models = getTrainerAcousticModels();
-        for (TrainerAcousticModel model : models) {
+        for (TrainerAcousticModel model : acousticModels) {
             float logLikelihood;
             float lastLogLikelihood = Float.MAX_VALUE;
             float relativeImprovement = 100.0f;

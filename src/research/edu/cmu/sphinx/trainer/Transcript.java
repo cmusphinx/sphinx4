@@ -17,10 +17,6 @@ import edu.cmu.sphinx.linguist.dictionary.Dictionary;
 /** Provides mechanisms for accessing an utterance's transcription. */
 public interface Transcript {
 
-    /** Prefix for trainer.Transcript SphinxProperties */
-    String PROP_PREFIX = "edu.cmu.sphinx.trainer.Transcript.";
-
-
     /** Gets the transcript's text */
     public String getTranscriptText();
 

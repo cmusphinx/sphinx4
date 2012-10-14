@@ -32,7 +32,7 @@ import java.util.logging.Logger;
  * <p/>
  * Mixture weights and transition probabilities are saved in linear scale.
  */
-class Sphinx3Saver implements Saver {
+public class Sphinx3Saver implements Saver {
 
     /**
      * The property specifying whether the transition matrices of the acoustic model is in sparse form, i.e.,
@@ -93,19 +93,16 @@ class Sphinx3Saver implements Saver {
     protected final static String TMAT_FILE_VERSION = "1.0";
 
     @S4String(defaultValue = ".")
-    public static final String SAVE_LOCATION = "location.save";
+    public static final String SAVE_LOCATION = "saveLocation";
 
-    @S4String(defaultValue = "data")
-    public String DATA_LOCATION = "data_location";
-    public String dataDir;
+    @S4String(mandatory = false, defaultValue = "")
+    public final static String DATA_LOCATION = "dataLocation";
+    private String dataDir;
 
-    @S4String(defaultValue = "mdef")
-    public String DEF_FILE = "definition_file";
-    public String modelDef;
+    @S4String(mandatory = false, defaultValue = "")
+    public final static  String DEF_FILE = "definitionFile";
+    private String modelDef;
 
-    @S4String(defaultValue = "model.props")
-    public String PROPERTY_FILE = "properties_file";
-    public String propsFile;
     public boolean useCDUnits;
 
     @Override
@@ -115,7 +112,6 @@ class Sphinx3Saver implements Saver {
         location = ps.getString(SAVE_LOCATION);
         modelDef = ps.getString(DEF_FILE);
         dataDir = ps.getString(DATA_LOCATION);
-        propsFile = ps.getString(PROPERTY_FILE);
 
         sparseForm = ps.getBoolean(PROP_SPARSE_FORM);
         useCDUnits = ps.getBoolean(PROP_USE_CD_UNITS);
@@ -190,8 +186,6 @@ class Sphinx3Saver implements Saver {
 
         // save the acoustic properties file (am.props), 
         // create a different URL depending on the data format
-
-        saveAcousticPropertiesFile(propsFile, false);
         
         if (binary) {
             // First, overwrite the previous file
@@ -218,31 +212,9 @@ class Sphinx3Saver implements Saver {
         return contextIndependentUnits;
     }
 
-    
-    /**
-     * Loads the Sphinx 3 acoustic model properties file, which is basically a normal system properties file.
-     *
-     * @param path   the path to the acoustic properties file
-     * @param append if true, append to the current file, if ZIP file
-     * @throws FileNotFoundException if the file cannot be found
-     * @throws IOException           if an error occurs while saving the data
-     */
-    private void saveAcousticPropertiesFile(String path, boolean append)
-            throws FileNotFoundException, IOException {
-        logger.info("Saving acoustic properties file to:");
-        logger.info(path);
-
-        OutputStream outputStream = StreamFactory.getOutputStream(location, path, append);
-
-        if (outputStream == null) {
-            throw new IOException("Error trying to write file " + path);
-        }
-        outputStream.close();
-    }
-
 
     /**
-     * Saves the sphinx3 densityfile, a set of density arrays are created and placed in the given pool.
+     * Saves the sphinx3 density file, a set of density arrays are created and placed in the given pool.
      *
      * @param pool   the pool to be saved
      * @param path   the name of the data
