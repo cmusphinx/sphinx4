@@ -41,17 +41,13 @@ import java.util.logging.Logger;
 
 public class BushderbySearchManager extends SimpleBreadthFirstSearchManager {
 
-    private final static String PROP_PREFIX =
-            "edu.cmu.sphinx.research.bushderby.BushderbySearchManager.";
-
     /** The property for the Bushderby eta value. */
     @S4Double(defaultValue = 1E99)
-    public final static String PROP_BUSHDERBY_ETA = PROP_PREFIX + "bushderbyEta";
+    public final static String PROP_BUSHDERBY_ETA = "bushderbyEta";
 
     /** The property that defines whether to filter successor states during the search. */
     @S4Boolean(defaultValue = false)
-    public final static String PROP_FILTER_SUCCESSORS =
-            PROP_PREFIX + "filterSuccessors";
+    public final static String PROP_FILTER_SUCCESSORS = "filterSuccessors";
 
     private LanguageModel languageModel;
     private Logger logger;

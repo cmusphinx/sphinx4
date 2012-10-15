@@ -21,34 +21,17 @@ import java.io.IOException;
 /** Manages inputs and outputs to the other trainer classes. */
 public interface TrainManager extends Configurable {
 
-    /** Prefix for SphinxProperties in this file. */
-    public final static String PROP_PREFIX =
-            "edu.cmu.sphinx.trainer.Trainer.";
-
     /** The minimum relative improvement of the log likelihood associated with the training data. */
     @S4Double(defaultValue = 0.2f)
-    public final static String
-            PROP_MINIMUM_IMPROVEMENT = PROP_PREFIX + "minimumImprovement";
+    public final static String PROP_MINIMUM_IMPROVEMENT = "minimumImprovement";
 
     /** The maximum number of iterations. */
     @S4Integer(defaultValue = 15)
-    public final static String PROP_MAXIMUM_ITERATION = PROP_PREFIX + "maximumIteration";
-
-    /** Starts the TrainManager. */
-    public void start();
-
-
-    /** Stops the TrainManager. */
-    public void stop();
+    public final static String PROP_MAXIMUM_ITERATION = "maximumIteration";
 
 
     /** Do the train. */
     public void train();
-
-
-    /** Initialize the TrainManager. */
-    public void initialize();
-
 
     /**
      * Saves the acoustic models.

@@ -9,7 +9,9 @@
     </propertylist>
     <property name="initLearner" value="initLearner"/>
     <property name="learner" value="learner"/>
+    <property name="control" value="control"/>
   </component>
+  <component name="control" type="edu.cmu.sphinx.trainer.SimpleControlFile"/>
   <component name="initLearner" type="edu.cmu.sphinx.trainer.FlatInitializerLearner">
     <property name="frontend" value="frontend"/>
     <property name="source" value="streamCepstrumSource"/>

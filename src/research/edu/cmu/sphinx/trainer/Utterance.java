@@ -17,10 +17,6 @@ import edu.cmu.sphinx.linguist.dictionary.Dictionary;
 /** Provides mechanisms for accessing an utterance. */
 public interface Utterance {
 
-    /** Prefix for trainer.Utterance SphinxProperties */
-    String PROP_PREFIX = "edu.cmu.sphinx.trainer.Utterance.";
-
-
     /**
      * Add transcript with dictionary and exact flag.
      *

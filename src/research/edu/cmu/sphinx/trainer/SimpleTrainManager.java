@@ -16,7 +16,11 @@ import edu.cmu.sphinx.linguist.acoustic.AcousticModel;
 import edu.cmu.sphinx.linguist.acoustic.tiedstate.trainer.TrainerAcousticModel;
 import edu.cmu.sphinx.linguist.acoustic.tiedstate.trainer.TrainerScore;
 import edu.cmu.sphinx.util.Utilities;
-import edu.cmu.sphinx.util.props.*;
+import edu.cmu.sphinx.util.props.PropertyException;
+import edu.cmu.sphinx.util.props.PropertySheet;
+import edu.cmu.sphinx.util.props.S4Component;
+import edu.cmu.sphinx.util.props.S4Boolean;
+import edu.cmu.sphinx.util.props.S4ComponentList;
 
 import java.io.IOException;
 import java.util.List;
@@ -25,6 +29,8 @@ import java.util.List;
 /** This is a dummy implementation of a TrainManager. */
 public class SimpleTrainManager implements TrainManager {
 
+	@S4Component(type = ControlFile.class)
+	public static final String CONTROL_FILE = "control";
     private ControlFile controlFile;
 
     private boolean dumpMemoryInfo;
@@ -46,7 +52,7 @@ public class SimpleTrainManager implements TrainManager {
      * memory information while it is running. The default value is <code>true</code>.
      */
     @S4Boolean(defaultValue = false)
-    public final static String DUMP_MEMORY_INFO = PROP_PREFIX + "dumpMemoryInfo";
+    public final static String DUMP_MEMORY_INFO = "dumpMemoryInfo";
 
     private int maxIteration;
     private float minimumImprovement;
@@ -55,26 +61,11 @@ public class SimpleTrainManager implements TrainManager {
     public void newProperties(PropertySheet ps) throws PropertyException {
         dumpMemoryInfo = ps.getBoolean(DUMP_MEMORY_INFO);
         learner = (Learner) ps.getComponent(LEARNER);
+        controlFile = (ControlFile) ps.getComponent(CONTROL_FILE);
         initLearner = (Learner) ps.getComponent(INIT_LEARNER);
-
         minimumImprovement = ps.getFloat(PROP_MINIMUM_IMPROVEMENT);
-        maxIteration = ps.getInt(PROP_MAXIMUM_ITERATION);
-
+        maxIteration = ps.getInt(PROP_MAXIMUM_ITERATION);        
         acousticModels = ps.getComponentList(AM_COLLECTION, TrainerAcousticModel.class);
-    }
-
-
-    public void initialize() {
-    }
-
-
-    /** Starts the TrainManager. */
-    public void start() {
-    }
-
-
-    /** Stops the TrainManager. */
-    public void stop() {
     }
 
 
@@ -158,9 +149,6 @@ public class SimpleTrainManager implements TrainManager {
 
         for (TrainerAcousticModel model : acousticModels) {
 
-            if (controlFile == null) {
-                controlFile = ConfigurationManager.getInstance(SimpleControlFile.class);
-            }
             for (controlFile.startUtteranceIterator();
                  controlFile.hasMoreUtterances();) {
                 Utterance utterance = controlFile.nextUtterance();
