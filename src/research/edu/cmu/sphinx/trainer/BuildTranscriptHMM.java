@@ -16,6 +16,7 @@ import edu.cmu.sphinx.linguist.acoustic.AcousticModel;
 import edu.cmu.sphinx.linguist.acoustic.HMM;
 import edu.cmu.sphinx.linguist.acoustic.HMMPosition;
 import edu.cmu.sphinx.linguist.acoustic.Unit;
+import edu.cmu.sphinx.linguist.acoustic.UnitManager;
 import edu.cmu.sphinx.linguist.acoustic.tiedstate.SenoneHMM;
 import edu.cmu.sphinx.linguist.dictionary.Dictionary;
 import edu.cmu.sphinx.linguist.dictionary.Pronunciation;
@@ -30,6 +31,7 @@ public class BuildTranscriptHMM {
     private Graph hmmGraph;
     private TrainerDictionary dictionary;
     private AcousticModel acousticModel;
+    private UnitManager unitManager;
 
 
     /**
@@ -41,9 +43,10 @@ public class BuildTranscriptHMM {
      * @param acousticModel the acoustic model to be used
      */
     public BuildTranscriptHMM(String context, Transcript transcript,
-                              AcousticModel acousticModel) {
+                              AcousticModel acousticModel, UnitManager unitManager) {
 
         this.acousticModel = acousticModel;
+        this.unitManager = unitManager;
         wordGraph = buildWordGraph(transcript);
         assert wordGraph.validate() : "Word graph not validated";
         phonemeGraph = buildPhonemeGraph(wordGraph);
@@ -203,12 +206,11 @@ public class BuildTranscriptHMM {
         hmmGraph.copyGraph(cdGraph);
 
         for (Node node : hmmGraph.nodeToArray()) {
-            Unit unit = null;
+        	Unit unit = null;
             if (node.getType().equals(NodeType.PHONE)) {
-                // unit = acousticModel.lookupUnit(node.getID());
-//		unit = Unit.getUnit(node.getID());
+                unit = unitManager.getUnit(node.getID());
             } else if (node.getType().equals(NodeType.SILENCE_WITH_LOOPBACK)) {
-//		unit = Unit.SILENCE;
+            	unit = unitManager.getUnit("SIL");
             } else {
                 // if it's not a phone, and it's not silence, it's a
                 // dummy node, and we don't care.

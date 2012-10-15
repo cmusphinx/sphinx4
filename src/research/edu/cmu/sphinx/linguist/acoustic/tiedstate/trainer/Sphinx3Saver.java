@@ -101,7 +101,6 @@ public class Sphinx3Saver implements Saver {
 
     @S4String(mandatory = false, defaultValue = "")
     public final static  String DEF_FILE = "definitionFile";
-    private String modelDef;
 
     public boolean useCDUnits;
 
@@ -110,7 +109,6 @@ public class Sphinx3Saver implements Saver {
         logger = ps.getLogger();
 
         location = ps.getString(SAVE_LOCATION);
-        modelDef = ps.getString(DEF_FILE);
         dataDir = ps.getString(DATA_LOCATION);
 
         sparseForm = ps.getBoolean(PROP_SPARSE_FORM);
@@ -204,7 +202,7 @@ public class Sphinx3Saver implements Saver {
 
         // save the HMM model file
 
-        saveHMMPool(useCDUnits, StreamFactory.getOutputStream(location, modelName, true), location + File.separator + modelName);
+        saveHMMPool(useCDUnits, StreamFactory.getOutputStream(location, "mdef", true), location + File.separator + "mdef");
     }
 
     @Override

@@ -11,11 +11,6 @@ NOTE:  Before running the tests, you must have already built
 
 </description>
 
-    <!-- ********************************************************** -->
-    <!-- *                                                        * -->
-    <!-- * Properties common to all tests                         * -->
-    <!-- *                                                        * -->
-    <!-- ********************************************************** -->
     <property name="top_dir"		value="../.."/>
     <property name="build_dir"          value="${top_dir}/bld"/>
     <property name="classes_dir"	value="${build_dir}"/>
@@ -26,23 +21,12 @@ NOTE:  Before running the tests, you must have already built
     <property name="trainer_class"
               value="edu.cmu.sphinx.trainer.Trainer"/>
 
-    <!-- ********************************************************** -->
-    <!-- *                                                        * -->
-    <!-- * Displays minimal help.                                 * -->
-    <!-- *                                                        * -->
-    <!-- ********************************************************** -->
     <target name="none">
         <echo>Type 'ant -p' for possible targets.</echo>
     </target>
 
-    <!-- dummy target for automated test compilation -->
     <target name="compile" />
     
-    <!-- ********************************************************** -->
-    <!-- *                                                        * -->
-    <!-- * Runs the Trainer test.                                 * -->
-    <!-- *                                                        * -->
-    <!-- ********************************************************** -->
     <target name="trainer"
 	    description="Runs the Trainer test.">
 	    <java classname="${trainer_class}"
@@ -50,80 +34,7 @@ NOTE:  Before running the tests, you must have already built
 		  fork="true">
                   <jvmarg value="-ms${initial_heap_size}"/>
                   <jvmarg value="-mx${maximum_heap_size}"/> 
-                  <sysproperty key="edu.cmu.sphinx.linguist.acoustic.location"
-                               value="."/>
                   <arg value="trainer.xml"/>
 	    </java>
     </target>
-
-
-
-    <!-- ********************************************************** -->
-    <!-- *                                                        * -->
-    <!-- * Runs the initial stage test.                           * -->
-    <!-- *                                                        * -->
-    <!-- ********************************************************** -->
-    <target name="init"
-	    description="Runs the initial stage test.">
-	    <java classname="${trainer_class}"
-	          classpath="${classes_dir}"
-		  fork="true">
-                  <jvmarg value="-ms${initial_heap_size}"/>
-                  <jvmarg value="-mx${maximum_heap_size}"/> 
-                  <sysproperty key="edu.cmu.sphinx.trainer.Trainer.initialStage"
-                               value="_00_INITIALIZATION"/>
-                  <sysproperty key="edu.cmu.sphinx.trainer.Trainer.finalStage"
-                               value="_00_INITIALIZATION"/>
-                  <sysproperty key="edu.cmu.sphinx.linguist.acoustic.location"
-                               value="."/>
-                  <arg value="trainer.xml"/>
-	    </java>
-    </target>
-
-
-    <!-- ********************************************************** -->
-    <!-- *                                                        * -->
-    <!-- * Runs the CI Trainer.                                   * -->
-    <!-- *                                                        * -->
-    <!-- ********************************************************** -->
-    <target name="ci"
-	    description="Runs the CI trainer.">
-	    <java classname="${trainer_class}"
-	          classpath="${classes_dir}"
-		  fork="true">
-                  <jvmarg value="-ms${initial_heap_size}"/>
-                  <jvmarg value="-mx${maximum_heap_size}"/> 
-                  <sysproperty key="edu.cmu.sphinx.trainer.Trainer.initialStage"
-                               value="_10_CI_TRAIN"/>
-                  <sysproperty key="edu.cmu.sphinx.trainer.Trainer.finalStage"
-                               value="_10_CI_TRAIN"/>
-                  <sysproperty key="edu.cmu.sphinx.linguist.acoustic.location"
-                               value="/lab/speech/sphinx4/data/save"/>
-                  <arg value="trainer.xml"/>
-	    </java>
-    </target>
-
-
-    <!-- ********************************************************** -->
-    <!-- *                                                        * -->
-    <!-- * Copy.                                                  * -->
-    <!-- *                                                        * -->
-    <!-- ********************************************************** -->
-    <target name="copy"
-	    description="Copy">
-	    <java classname="${trainer_class}"
-	          classpath="${classes_dir}"
-		  fork="true">
-                  <jvmarg value="-ms${initial_heap_size}"/>
-                  <jvmarg value="-mx${maximum_heap_size}"/> 
-                  <sysproperty key="edu.cmu.sphinx.trainer.Trainer.initialStage"
-                               value="_90_CP_MODEL"/>
-                  <sysproperty key="edu.cmu.sphinx.trainer.Trainer.finalStage"
-                               value="_90_CP_MODEL"/>
-                  <arg value="trainer.xml"/>
-	    </java>
-    </target>
-
-
-
 </project>

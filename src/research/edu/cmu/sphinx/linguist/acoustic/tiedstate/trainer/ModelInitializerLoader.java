@@ -15,6 +15,7 @@ package edu.cmu.sphinx.linguist.acoustic.tiedstate.trainer;
 import edu.cmu.sphinx.linguist.acoustic.HMM;
 import edu.cmu.sphinx.linguist.acoustic.HMMPosition;
 import edu.cmu.sphinx.linguist.acoustic.Unit;
+import edu.cmu.sphinx.linguist.acoustic.UnitManager;
 import edu.cmu.sphinx.linguist.acoustic.tiedstate.*;
 import static edu.cmu.sphinx.linguist.acoustic.tiedstate.Pool.Feature.*;
 import edu.cmu.sphinx.util.ExtendedStreamTokenizer;
@@ -36,7 +37,7 @@ import java.util.logging.Logger;
  * <p/>
  * Mixture weights and transition probabilities are maintained in logMath log base,
  */
-class ModelInitializerLoader implements Loader {
+public class ModelInitializerLoader implements Loader {
 
     private final static String SILENCE_CIPHONE = "SIL";
 
@@ -54,13 +55,13 @@ class ModelInitializerLoader implements Loader {
     private Pool<float[]> mixtureWeightsPool;
 
     private Pool<Senone> senonePool;
-    private int vectorLength;
+    private int vectorLength = 39;
 
     private Map<String, Unit> contextIndependentUnits;
     private Map<String, Integer> phoneList;
     private HMMManager hmmManager;
 
-    @S4String
+    @S4String(defaultValue="model")
     public static final String MODEL_NAME = "modelName";
 
     @S4String(defaultValue = ".")
@@ -78,6 +79,10 @@ class ModelInitializerLoader implements Loader {
     @S4Component(type = LogMath.class)
     public static final String LOG_MATH = "logMath";
     private LogMath logMath;
+    
+    @S4Component(type = UnitManager.class)
+    public final static String PROP_UNIT_MANAGER = "unitManager";
+    private UnitManager unitManager;
 
     @S4Boolean(defaultValue = false)
     public final static String PROP_USE_CD_UNITS = "useCDUnits";
@@ -101,6 +106,7 @@ class ModelInitializerLoader implements Loader {
         logger = ps.getLogger();
 
         logMath = (LogMath) ps.getComponent(LOG_MATH);
+        unitManager = (UnitManager) ps.getComponent(PROP_UNIT_MANAGER);
 
         hmmManager = new HMMManager();
         contextIndependentUnits = new LinkedHashMap<String, Unit>();
@@ -368,22 +374,12 @@ class ModelInitializerLoader implements Loader {
                 stid[j] = stateIndex;
             }
 
-            // TODO: check why attribute is not used - comment-outs are not clear
-            // The first filler
-            // String attribute = phone.equals(SILENCE_CIPHONE) ? FILLER : "-";
-
-//            Unit unit = Unit.getUnit(phone, attribute.equals(FILLER));
-            Unit unit = null;
+            Unit unit = unitManager.getUnit(phone,  phone.equals(SILENCE_CIPHONE));
+            
             contextIndependentUnits.put(unit.getName(), unit);
 
             if (logger.isLoggable(Level.FINE)) {
                 logger.fine("Loaded " + unit + " with " + size + " states");
-            }
-
-            // The first filler
-            if (unit.isFiller() && unit.getName().equals(SILENCE_CIPHONE)) {
-//                unit = Unit.SILENCE;
-                unit = null;
             }
 
             // Means

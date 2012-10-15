@@ -13,12 +13,13 @@
 package edu.cmu.sphinx.trainer;
 
 import edu.cmu.sphinx.linguist.acoustic.AcousticModel;
+import edu.cmu.sphinx.linguist.acoustic.UnitManager;
 
 /** Defines the Utterance Graph. */
 public class UtteranceHMMGraph extends Graph implements UtteranceGraph {
 
     /** Constructor for class UtteranceHMMGraph. */
-    public UtteranceHMMGraph(String context, Utterance utterance, AcousticModel acousticModel) {
+    public UtteranceHMMGraph(String context, Utterance utterance, AcousticModel acousticModel, UnitManager unitManager) {
         super();
 
         Graph transcriptGraph;
@@ -28,7 +29,7 @@ public class UtteranceHMMGraph extends Graph implements UtteranceGraph {
             */
             Transcript transcript = utterance.nextTranscript();
             transcriptGraph = new TranscriptHMMGraph(context, transcript,
-                    acousticModel);
+                    acousticModel, unitManager);
             add(transcriptGraph);
         }
     }

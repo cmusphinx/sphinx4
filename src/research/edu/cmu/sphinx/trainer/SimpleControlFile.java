@@ -12,9 +12,9 @@
 
 package edu.cmu.sphinx.trainer;
 
-import edu.cmu.sphinx.linguist.dictionary.Dictionary;
 import edu.cmu.sphinx.util.props.PropertySheet;
 import edu.cmu.sphinx.util.props.PropertyException;
+import edu.cmu.sphinx.util.props.S4Component;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -26,10 +26,13 @@ import java.util.logging.Logger;
 
 /** Provides mechanisms for accessing a next utterance's file name and transcription. */
 public class SimpleControlFile implements ControlFile {
+	
+	@S4Component(type = TrainerDictionary.class)
+	public static final String DICTIONARY = "dictionary";
+	private TrainerDictionary dictionary;
 
     private String audioFile;           // the audio file
     private String transcriptFile;      // the transcript file
-    private Dictionary dictionary;          // the dictionary
     private String wordSeparator;       // the word separator
     private int currentPartition;       // the current partition
     private int numberOfPartitions;     // total number of partitions
@@ -47,15 +50,21 @@ public class SimpleControlFile implements ControlFile {
 
     public void newProperties(PropertySheet ps) throws PropertyException {
         logger = ps.getLogger();
+        this.dictionary = (TrainerDictionary)ps.getComponent(DICTIONARY);
+        try {
+			dictionary.allocate();
+		} catch (IOException e) {
+			throw new PropertyException(e);
+		}
 
         this.audioFile = ps.getString(PROP_AUDIO_FILE);
         this.transcriptFile = ps.getString(PROP_TRANSCRIPT_FILE);
         this.currentPartition = ps.getInt(PROP_WHICH_BATCH);
         this.numberOfPartitions = ps.getInt(PROP_TOTAL_BATCHES);
+       
 
         logger.info("Audio control file: " + this.audioFile);
         logger.info("Transcript file: " + this.transcriptFile);
-        this.dictionary = new TrainerDictionary();
         this.wordSeparator = " \t\n\r\f"; // the white spaces
         logger.info("Processing part " + this.currentPartition +
                 " of " + this.numberOfPartitions);

@@ -13,6 +13,7 @@
 package edu.cmu.sphinx.trainer;
 
 import edu.cmu.sphinx.linguist.acoustic.AcousticModel;
+import edu.cmu.sphinx.linguist.acoustic.UnitManager;
 import edu.cmu.sphinx.linguist.acoustic.tiedstate.trainer.TrainerAcousticModel;
 import edu.cmu.sphinx.linguist.acoustic.tiedstate.trainer.TrainerScore;
 import edu.cmu.sphinx.util.Utilities;
@@ -38,10 +39,14 @@ public class SimpleTrainManager implements TrainManager {
     @S4Component(type = Learner.class)
     public static final String LEARNER = "learner";
     private Learner learner;
-
+    
     @S4Component(type = Learner.class)
     public static final String INIT_LEARNER = "initLearner";
     private Learner initLearner;
+
+    @S4Component(type = UnitManager.class)
+    public static final String UNIT_MANAGER = "unitManager";
+    private UnitManager unitManager;
 
     @S4ComponentList(type = TrainerAcousticModel.class)
     public static final String AM_COLLECTION = "models";
@@ -66,6 +71,7 @@ public class SimpleTrainManager implements TrainManager {
         minimumImprovement = ps.getFloat(PROP_MINIMUM_IMPROVEMENT);
         maxIteration = ps.getInt(PROP_MAXIMUM_ITERATION);        
         acousticModels = ps.getComponentList(AM_COLLECTION, TrainerAcousticModel.class);
+        unitManager = (UnitManager)ps.getComponent(UNIT_MANAGER);
     }
 
 
@@ -191,10 +197,7 @@ public class SimpleTrainManager implements TrainManager {
         for (TrainerAcousticModel model : acousticModels) {
             float logLikelihood;
             float lastLogLikelihood = Float.MAX_VALUE;
-            float relativeImprovement = 100.0f;
-            if (controlFile == null) {
-                controlFile = new SimpleControlFile();
-            }
+            float relativeImprovement = 100.0f;           
             for (int iteration = 0;
                  (iteration < maxIteration) &&
                      (relativeImprovement > minimumImprovement);
@@ -205,7 +208,7 @@ public class SimpleTrainManager implements TrainManager {
                      controlFile.hasMoreUtterances();) {
                     Utterance utterance = controlFile.nextUtterance();
                     uttGraph =
-                        new UtteranceHMMGraph(context, utterance, model);
+                        new UtteranceHMMGraph(context, utterance, model, unitManager);
                     learner.setUtterance(utterance);
                     learner.setGraph(uttGraph);
                     nextScore = null;
