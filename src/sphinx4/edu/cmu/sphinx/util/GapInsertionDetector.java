@@ -32,7 +32,6 @@ public class GapInsertionDetector {
 
     private ReferenceFile referenceFile;
     private HypothesisFile hypothesisFile;
-    private int totalGapInsertions;
     private boolean showGapInsertions;
 
 
@@ -109,7 +108,6 @@ public class GapInsertionDetector {
                 done = true;
             }
         }
-        totalGapInsertions += gaps;
         if (showGapInsertions) {
             System.out.println(log);
         }
