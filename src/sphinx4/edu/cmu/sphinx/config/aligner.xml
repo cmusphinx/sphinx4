@@ -4,15 +4,16 @@
  
     <property name="logLevel" value="WARNING"/>
     
-    <property name="absoluteBeamWidth"  value="-1"/>
+    <property name="acousticModel" value=""/>
+    <property name="dictionary" value=""/>
+    <property name="filler" value=""/>
+    <property name="g2p" value=""/>
+    
+    <property name="absoluteBeamWidth"  value="10000"/>
     <property name="relativeBeamWidth"  value="1E-80"/>
-    <property name="wordInsertionProbability" value="1E-36"/>
+    <property name="wordInsertionProbability" value="0.7"/>
     <property name="languageWeight"     value="8"/>
     
-    <property name="frontend" value="epFrontEnd"/>
-    <property name="recognizer" value="recognizer"/>
-    <property name="showCreations" value="false"/>
-        
     <component name="recognizer" type="edu.cmu.sphinx.recognizer.Recognizer">
         <property name="decoder" value="decoder"/>
    </component>
@@ -43,13 +44,13 @@
     
     <component name="threadedScorer" 
                 type="edu.cmu.sphinx.decoder.scorer.ThreadedAcousticScorer">
-        <property name="frontend" value="${frontend}"/>
+        <property name="frontend" value="frontend"/>
     </component>
 
     <component name="flatLinguist"
                 type="edu.cmu.sphinx.linguist.flat.FlatLinguist">
         <property name="logMath" value="logMath"/>
-        <property name="grammar" value="textAlignGrammar"/>
+        <property name="grammar" value="alignerGrammar"/>
         <property name="acousticModel" value="wsj"/>
         <property name="wordInsertionProbability"
                 value="${wordInsertionProbability}"/>
@@ -57,7 +58,7 @@
         <property name="unitManager" value="unitManager"/>
     </component>
             
-    <component name="textAlignGrammar" type="edu.cmu.sphinx.linguist.language.grammar.TextAlignerGrammar">
+    <component name="alignerGrammar" type="edu.cmu.sphinx.linguist.language.grammar.AlignerGrammar">
         <property name="dictionary" value="dictionary"/>
 	<property name="logMath" value="logMath"/>
     </component>
@@ -65,11 +66,9 @@
     <component name="dictionary" 
         type="edu.cmu.sphinx.linguist.dictionary.FastDictionary">
         <property name="dictionaryPath"
-                  value="resource:/WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz/dict/cmudict.0.6d"/>
+                  value="${dictionary}"/>
         <property name="fillerPath" 
-	          value="resource:/WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz/noisedict"/>
-        <property name="addSilEndingPronunciation" value="false"/>
-        <property name="wordReplacement" value="&lt;sil&gt;"/>
+	          value="${filler}"/>
         <property name="unitManager" value="unitManager"/>
     </component>        
 
@@ -82,19 +81,16 @@
     <component name="wsjLoader" type="edu.cmu.sphinx.linguist.acoustic.tiedstate.Sphinx3Loader">
         <property name="logMath" value="logMath"/>
         <property name="unitManager" value="unitManager"/>
-        <property name="location" value="resource:/WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz"/>
+        <property name="location" value="${acousticModel}"/>
     </component>
     
     <component name="unitManager" 
         type="edu.cmu.sphinx.linguist.acoustic.UnitManager"/>
 
-    <component name="epFrontEnd" type="edu.cmu.sphinx.frontend.FrontEnd">
+    <component name="frontend" type="edu.cmu.sphinx.frontend.FrontEnd">
         <propertylist name="pipeline">
             <item>audioFileDataSource </item>
             <item>dataBlocker </item>
-            <item>speechClassifier </item>
-            <item>speechMarker </item>
-            <item>nonSpeechDataFilter </item>
             <item>preemphasizer </item>
             <item>windower </item>
             <item>fft </item>

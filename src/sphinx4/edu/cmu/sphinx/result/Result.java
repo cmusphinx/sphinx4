@@ -540,7 +540,6 @@ public class Result {
         reference = ref;
     }
 
-
     /**
      * Retrieves the reference text. The reference text is a transcript of the text that was spoken.
      *
@@ -550,5 +549,49 @@ public class Result {
         return reference;
     }
 
-}
 
+	public ArrayList<WordResult> getWords() {
+        
+		ArrayList<WordResult> words = new ArrayList<WordResult>();
+		
+		Token token = getBestToken();
+        if (token == null) 
+            return words;
+		
+        while (token != null) {
+
+            Data lastWordFirstFeature = token.getData();
+            Data lastFeature = lastWordFirstFeature;
+            token = token.getPredecessor();
+
+            while (token != null) {
+                if (token.isWord()) {
+                    Word word = token.getWord();
+                    long sf;                    
+                    long ef;
+
+                    if (lastFeature != null)
+                    	sf = ((FloatData)lastFeature).getFirstSampleNumber();
+                    else
+                    	sf = 0;
+                    if (lastWordFirstFeature != null)
+                    	ef = ((FloatData)lastWordFirstFeature).getFirstSampleNumber();
+                    else
+                    	ef = -1;
+
+                    WordResult wordResult = new SimpleWordResult(word, (int)sf, (int)ef, 0.0, 1.0, null);
+                    words.add(wordResult);
+                    lastWordFirstFeature = lastFeature;
+                }
+                Data feature = token.getData();
+                if (feature != null) {
+                    lastFeature = feature;
+                }
+                token = token.getPredecessor();
+            }
+        }
+        
+        return words;
+	}
+
+}
