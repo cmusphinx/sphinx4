@@ -273,7 +273,7 @@ public class MelFrequencyFilterBank extends BaseDataProcessor {
             output[i] = filter[i].filterOutput(in);
         }
         DoubleData outputMelSpectrum = new DoubleData(output,
-                sampleRate, input.getCollectTime(), input.getFirstSampleNumber());
+                sampleRate, input.getFirstSampleNumber());
         return outputMelSpectrum;
     }
 

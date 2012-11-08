@@ -107,7 +107,6 @@ public class FrameDropper extends BaseDataProcessor {
                             feature = new FloatData
                                     (floatLastFeature.getValues(),
                                             floatLastFeature.getSampleRate(),
-                                            floatLastFeature.getCollectTime(),
                                             floatLastFeature.getFirstSampleNumber());
                         } else {
                             DoubleData doubleLastFeature = (DoubleData)
@@ -115,7 +114,6 @@ public class FrameDropper extends BaseDataProcessor {
                             feature = new DoubleData
                                     (doubleLastFeature.getValues(),
                                             doubleLastFeature.getSampleRate(),
-                                            doubleLastFeature.getCollectTime(),
                                             doubleLastFeature.getFirstSampleNumber());
                         }
                     } else {

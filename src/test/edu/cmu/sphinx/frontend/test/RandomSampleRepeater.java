@@ -181,7 +181,7 @@ public class RandomSampleRepeater extends BaseDataProcessor {
 
 
         DoubleData extendedData = new DoubleData(extFeatures, doubleData.getSampleRate(),
-                doubleData.getCollectTime(), firstSampleNumber);
+                firstSampleNumber);
 
         return extendedData;
     }
@@ -219,7 +219,7 @@ public class RandomSampleRepeater extends BaseDataProcessor {
 
         // create a dummy DoubleData
         double[] data = new double[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-        DoubleData dd = new DoubleData(data, 16000, System.currentTimeMillis(), 0);
+        DoubleData dd = new DoubleData(data, 16000, 0);
 
         DoubleData extData = rsr.process(dd);
 
@@ -246,7 +246,7 @@ public class RandomSampleRepeater extends BaseDataProcessor {
 
         // create a dummy DoubleData
         double[] data = new double[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-        DoubleData dd = new DoubleData(data, 16000, System.currentTimeMillis(), 0);
+        DoubleData dd = new DoubleData(data, 16000, 0);
 
         DoubleData extData = rsr.process(dd);
 
@@ -273,7 +273,7 @@ public class RandomSampleRepeater extends BaseDataProcessor {
 
         // create a dummy DoubleData
         double[] data = new double[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-        DoubleData dd = new DoubleData(data, 16000, System.currentTimeMillis(), 0);
+        DoubleData dd = new DoubleData(data, 16000, 0);
 
         DoubleData extData = rsr.process(dd);
 

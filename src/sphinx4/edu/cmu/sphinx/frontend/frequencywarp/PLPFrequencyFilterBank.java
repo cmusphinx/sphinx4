@@ -221,7 +221,7 @@ public class PLPFrequencyFilterBank extends BaseDataProcessor {
 
         DoubleData output = new DoubleData
                 (outputPLPSpectralArray, input.getSampleRate(),
-                        input.getCollectTime(), input.getFirstSampleNumber());
+                        input.getFirstSampleNumber());
 
         return output;
     }

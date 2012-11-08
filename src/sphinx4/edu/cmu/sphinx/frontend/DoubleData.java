@@ -38,11 +38,10 @@ public class DoubleData extends OVector implements Data {
      *
      * @param values            the data values
      * @param sampleRate        the sample rate of the data
-     * @param collectTime       the time at which this data is collected
      * @param firstSampleNumber the position of the first sample in the original data
      */
     public DoubleData(double[] values, int sampleRate,
-                      long collectTime, long firstSampleNumber) {
+                      long firstSampleNumber) {
         super(values);
 
         this.sampleRate = sampleRate;

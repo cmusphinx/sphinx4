@@ -299,7 +299,7 @@ public class AudioFileDataSource extends BaseDataProcessor {
             doubleData = DataUtil.littleEndianBytesToValues(samplesBuffer, 0, totalRead, bytesPerValue, signedData);
         }
 
-        return new DoubleData(doubleData, sampleRate, collectTime, firstSample);
+        return new DoubleData(doubleData, sampleRate, firstSample);
     }
 
 

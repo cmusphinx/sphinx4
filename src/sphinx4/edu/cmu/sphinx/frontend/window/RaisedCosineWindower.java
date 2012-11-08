@@ -77,7 +77,6 @@ public class RaisedCosineWindower extends BaseDataProcessor {
 
     private List<Data> outputQueue; // cache for output windows
     private DoubleBuffer overflowBuffer; // cache for overlapped audio regions
-    private long currentCollectTime;
     private long currentFirstSampleNumber;
     private int sampleRate;
 
@@ -219,8 +218,6 @@ public class RaisedCosineWindower extends BaseDataProcessor {
      */
     private void process(DoubleData input) throws DataProcessingException {
 
-        currentCollectTime = input.getCollectTime();
-
         double[] in = input.getValues();
         int length = overflowBuffer.getOccupancy() + in.length;
 
@@ -334,7 +331,7 @@ public class RaisedCosineWindower extends BaseDataProcessor {
             // add the frame to the output queue
             outputQueue.add(new DoubleData
                     (myWindow, sampleRate,
-                            currentCollectTime, currentFirstSampleNumber));
+                            currentFirstSampleNumber));
             currentFirstSampleNumber += windowShift;
         }
 

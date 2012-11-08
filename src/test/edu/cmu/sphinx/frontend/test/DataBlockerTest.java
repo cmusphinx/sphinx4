@@ -102,7 +102,7 @@ public class DataBlockerTest extends BaseDataProcessor {
         double counter = 1;
         for (int i = 0; i < numSamples / blockSize; i++) {
             double[] values = new double[blockSize];
-            datas.add(new DoubleData(values, sampleRate, 0, (long) counter + offSet));
+            datas.add(new DoubleData(values, sampleRate, (long) counter + offSet));
 
             for (int j = 0; j < values.length; j++)
                 values[j] = counter++ + offSet;

@@ -82,13 +82,12 @@ public class SocketDataSource extends BaseDataProcessor {
                 } else {
                     double[] data = new double[cepstrumLength];
                     data[0] = firstValue;
-                    long timeStamp = System.currentTimeMillis();
 
                     for (int i = 1; i < cepstrumLength; i++) {
                         data[i] = dataReader.readDouble();
                     }
                     return (new DoubleData
-                            (data, sampleRate, timeStamp, firstSampleNumber));
+                            (data, sampleRate, firstSampleNumber));
                 }
             }
         } catch (IOException ioe) {

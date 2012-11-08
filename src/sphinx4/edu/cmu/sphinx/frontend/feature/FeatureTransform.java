@@ -102,7 +102,7 @@ public class FeatureTransform extends BaseDataProcessor {
                     out[i] += in[j] * transform_matrix_i[j];
                 }
             }
-            output = new FloatData(out, inputData.getSampleRate(), inputData.getCollectTime(), inputData.getFirstSampleNumber());
+            output = new FloatData(out, inputData.getSampleRate(), inputData.getFirstSampleNumber());
         } else {
             output = input;
         }

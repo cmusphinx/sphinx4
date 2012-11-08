@@ -135,7 +135,7 @@ public class SimpleWordResult implements WordResult {
      */
     @Override
     public String toString() {
-        return word.toString();
+        return word.toString() + " " + startFrame + " " + endFrame + " " + confidence;
     }
 
 

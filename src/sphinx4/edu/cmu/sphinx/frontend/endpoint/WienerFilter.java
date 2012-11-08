@@ -102,7 +102,7 @@ public class WienerFilter extends BaseDataProcessor {
         System.arraycopy(input, 0, prevInput, 0, length);
 
         DoubleData outputData = new DoubleData(signal, inputDoubleData
-                .getSampleRate(), inputDoubleData.getCollectTime(),
+                .getSampleRate(),
                 inputDoubleData.getFirstSampleNumber());
 
         return outputData;

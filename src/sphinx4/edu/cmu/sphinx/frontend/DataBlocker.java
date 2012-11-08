@@ -82,7 +82,6 @@ public class DataBlocker extends BaseDataProcessor {
         int copiedSamples = 0;
 
         long firstSample = inBuffer.get(0).getFirstSampleNumber() + curFirstSamplePos;
-        long collectTime = inBuffer.get(0).getCollectTime();
 
         while (!inBuffer.isEmpty()) {
             DoubleData dd = inBuffer.remove(0);
@@ -109,7 +108,7 @@ public class DataBlocker extends BaseDataProcessor {
 //        for (int i = 0; i < newSampleBlock.length; i++) {
 //            newSampleBlock[i] *= 10;
 //        }
-        return new DoubleData(newSampleBlock, sampleRate, collectTime, firstSample);
+        return new DoubleData(newSampleBlock, sampleRate, firstSample);
     }
 
 }

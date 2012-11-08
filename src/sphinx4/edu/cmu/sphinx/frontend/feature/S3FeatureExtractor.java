@@ -77,7 +77,6 @@ public class S3FeatureExtractor extends AbstractFeatureExtractor {
 
         return (new FloatData(feature,
                 currentCepstrum.getSampleRate(),
-                currentCepstrum.getCollectTime(),
                 currentCepstrum.getFirstSampleNumber()));
     }
 }

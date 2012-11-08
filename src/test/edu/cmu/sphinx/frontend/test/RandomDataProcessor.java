@@ -53,7 +53,7 @@ public abstract class RandomDataProcessor extends BaseDataProcessor {
         long shiftSamples = ms2samples((int) shiftMs, sampleRate);
         for (int i = 0; i < numFrames; i++) {
             double[] values = createRandFeatureVector(featDim, null, null);
-            datas.add(new DoubleData(values, sampleRate, System.currentTimeMillis(), curStartSample));
+            datas.add(new DoubleData(values, sampleRate, curStartSample));
 
             curStartSample += shiftSamples;
         }

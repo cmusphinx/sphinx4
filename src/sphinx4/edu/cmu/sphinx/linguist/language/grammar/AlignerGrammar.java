@@ -13,13 +13,10 @@ package edu.cmu.sphinx.linguist.language.grammar;
 
 import java.util.List;
 import java.util.ListIterator;
-import java.io.IOException;
-import java.io.StringReader;
 import java.util.ArrayList;
 
 import edu.cmu.sphinx.linguist.dictionary.Dictionary;
 
-import edu.cmu.sphinx.util.ExtendedStreamTokenizer;
 import edu.cmu.sphinx.util.LogMath;
 import edu.cmu.sphinx.util.props.PropertyException;
 import edu.cmu.sphinx.util.props.PropertySheet;
@@ -30,64 +27,26 @@ public class AlignerGrammar extends Grammar {
 	public final static String PROP_LOG_MATH = "logMath";
 	private LogMath logMath;
 
-	private boolean modelRepetitions = false;
+	private boolean modelRepeats = false;
+	private boolean modelSkips = false;
 
-	private boolean modelDeletions = false;
-	private boolean modelBackwardJumps = false;
-
-	private double selfLoopProbability = 0.0;
-	private double backwardTransitionProbability = 0.0;
-	private double forwardJumpProbability = 0.0;
-	private int numAllowedWordJumps;
+	private float wordRepeatProbability = 0.0f;
+	private float wordSkipProbability = 0.0f;
+	private int wordSkipRange;
 
 	protected GrammarNode finalNode;
 	private final List<String> tokens = new ArrayList<String>();
 
-	public AlignerGrammar(final String text, final LogMath logMath,
+	public AlignerGrammar(final LogMath logMath,
 			final boolean showGrammar, final boolean optimizeGrammar,
 			final boolean addSilenceWords, final boolean addFillerWords,
 			final Dictionary dictionary) {
 		super(showGrammar, optimizeGrammar, addSilenceWords, addFillerWords,
 				dictionary);
 		this.logMath = logMath;
-		setText(text);
 	}
 
 	public AlignerGrammar() {
-
-	}
-
-	/*
-	 * Reads Text and converts it into a list of tokens
-	 */
-	public void setText(String text) {
-		String word;
-		try {
-			final ExtendedStreamTokenizer tok = new ExtendedStreamTokenizer(
-					new StringReader(text), true);
-
-			tokens.clear();
-			while (!tok.isEOF()) {
-				while ((word = tok.getString()) != null) {
-					word = word.toLowerCase();
-					tokens.add(word);
-				}
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	public void allowDeletions(boolean modelDeletions) {
-		this.modelDeletions = modelDeletions;
-	}
-
-	public void allowRepetions(boolean modelRepetitions) {
-		this.modelRepetitions = modelRepetitions;
-	}
-
-	public void allowBackwardJumps(boolean modelBackwardJumps) {
-		this.modelBackwardJumps = modelBackwardJumps;
 	}
 
 	@Override
@@ -96,27 +55,20 @@ public class AlignerGrammar extends Grammar {
 		logMath = (LogMath) ps.getComponent(PROP_LOG_MATH);
 	}
 
-	public void setSelfLoopProbability(double prob) {
-		selfLoopProbability = prob;
-	}
+	/*
+	 * Reads Text and converts it into a list of tokens
+	 */
+	public void setText(String text) {
+		String[] words = text.split(" ");
 
-	public void setBackWardTransitionProbability(double prob) {
-		backwardTransitionProbability = prob;
-	}
-
-	public void setForwardJumpProbability(double prob) {
-
-		forwardJumpProbability = prob;
-	}
-
-	public void setNumAllowedGrammarJumps(int n) {
-		if (n >= 0) {
-			numAllowedWordJumps = n;
+		for (String word : words) {
+				tokens.add(word.toLowerCase());
 		}
+		createGrammar();
 	}
 
 	@Override
-	protected GrammarNode createGrammar() throws IOException {
+	protected GrammarNode createGrammar() {
 
 		logger.info("Creating Grammar");
 		initialNode = createGrammarNode(Dictionary.SILENCE_SPELLING);
@@ -139,39 +91,28 @@ public class AlignerGrammar extends Grammar {
 
 		createBaseGrammar(wordGrammarNodes, branchNode, finalNode);
 
-		if (modelDeletions) {
+		if (modelRepeats) {
 			addForwardJumps(wordGrammarNodes, branchNode, finalNode);
 		}
-		if (modelBackwardJumps) {
+		if (modelSkips) {
 			addBackwardJumps(wordGrammarNodes, branchNode, finalNode);
 		}
-		if (modelRepetitions) {
-			addSelfLoops(wordGrammarNodes);
-		}
+
 		logger.info("Done making Grammar");
 		// initialNode.dumpDot("./graph.dot");
 		return initialNode;
 	}
 
-	private void addSelfLoops(List<GrammarNode> wordGrammarNodes) {
-		ListIterator<GrammarNode> iter = wordGrammarNodes.listIterator();
-		while (iter.hasNext()) {
-			GrammarNode currNode = iter.next();
-			currNode.add(currNode, logMath.linearToLog(selfLoopProbability));
-		}
-
-	}
 
 	private void addBackwardJumps(List<GrammarNode> wordGrammarNodes,
-			GrammarNode branchNode, GrammarNode finalNode2) {
-
+			GrammarNode branchNode, GrammarNode finalNode) {
 		GrammarNode currNode;
 		for (int i = 0; i < wordGrammarNodes.size(); i++) {
 			currNode = wordGrammarNodes.get(i);
-			for (int j = Math.max(i - numAllowedWordJumps - 1, 0); j < i - 1; j++) {
+			for (int j = Math.max(i - wordSkipRange, 0); j < i; j++) {
 				GrammarNode jumpToNode = wordGrammarNodes.get(j);
 				currNode.add(jumpToNode,
-						logMath.linearToLog(backwardTransitionProbability));
+						logMath.linearToLog(wordRepeatProbability));
 			}
 		}
 	}
@@ -184,19 +125,19 @@ public class AlignerGrammar extends Grammar {
 				currNode = wordGrammarNodes.get(i);
 			}
 			for (int j = i + 2; j < Math.min(wordGrammarNodes.size(), i
-					+ numAllowedWordJumps + 1); j++) {
+					+ wordSkipRange); j++) {
 				GrammarNode jumpNode = wordGrammarNodes.get(j);
 				currNode.add(jumpNode,
-						logMath.linearToLog(forwardJumpProbability));
+						logMath.linearToLog(wordSkipProbability));
 			}
 		}
-		for (int i = wordGrammarNodes.size() - numAllowedWordJumps - 1; i < wordGrammarNodes
+		for (int i = wordGrammarNodes.size() - wordSkipRange; i < wordGrammarNodes
 				.size() - 1; i++) {
 			int j = wordGrammarNodes.size();
 			currNode = wordGrammarNodes.get(i);
 			currNode.add(
 					finalNode,
-					logMath.linearToLog((float) forwardJumpProbability
+					logMath.linearToLog(wordSkipProbability
 							* Math.pow(Math.E, j - i)));
 		}
 

@@ -484,7 +484,7 @@ public class DataUtil {
         }
 //      System.arraycopy(data.getValues(), 0, doubleData, 0, numSamples); 
 
-        return new DoubleData(doubleData, data.getSampleRate(), data.getCollectTime(), data.getFirstSampleNumber());
+        return new DoubleData(doubleData, data.getSampleRate(), data.getFirstSampleNumber());
     }
 
 
@@ -501,6 +501,6 @@ public class DataUtil {
         }
 //        System.arraycopy(data.getValues(), 0, floatData, 0, numSamples);
 
-        return new FloatData(floatData, data.getSampleRate(), data.getCollectTime(), data.getFirstSampleNumber());
+        return new FloatData(floatData, data.getSampleRate(), data.getFirstSampleNumber());
     }
 }

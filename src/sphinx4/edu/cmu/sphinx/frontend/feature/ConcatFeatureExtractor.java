@@ -55,7 +55,6 @@ public class ConcatFeatureExtractor extends AbstractFeatureExtractor {
 
         return (new FloatData(feature,
                 currentCepstrum.getSampleRate(),
-                currentCepstrum.getCollectTime(),
                 currentCepstrum.getFirstSampleNumber()));
     }
 }

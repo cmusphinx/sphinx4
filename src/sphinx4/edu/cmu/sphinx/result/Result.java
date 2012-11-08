@@ -552,11 +552,11 @@ public class Result {
 
 	public ArrayList<WordResult> getWords() {
         
-		ArrayList<WordResult> words = new ArrayList<WordResult>();
+		LinkedList<WordResult> words = new LinkedList<WordResult>();
 		
 		Token token = getBestToken();
         if (token == null) 
-            return words;
+            return new ArrayList<WordResult>();
 		
         while (token != null) {
 
@@ -570,17 +570,18 @@ public class Result {
                     long sf;                    
                     long ef;
 
-                    if (lastFeature != null)
-                    	sf = ((FloatData)lastFeature).getFirstSampleNumber();
+                    if (lastFeature != null) {
+                    	sf = ((FloatData)lastFeature).getCollectTime();
+                    }
                     else
                     	sf = 0;
                     if (lastWordFirstFeature != null)
-                    	ef = ((FloatData)lastWordFirstFeature).getFirstSampleNumber();
+                    	ef = ((FloatData)lastWordFirstFeature).getCollectTime();
                     else
                     	ef = -1;
 
                     WordResult wordResult = new SimpleWordResult(word, (int)sf, (int)ef, 0.0, 1.0, null);
-                    words.add(wordResult);
+                    words.addFirst(wordResult);
                     lastWordFirstFeature = lastFeature;
                 }
                 Data feature = token.getData();
@@ -591,7 +592,7 @@ public class Result {
             }
         }
         
-        return words;
+        return new ArrayList<WordResult>(words);
 	}
 
 }

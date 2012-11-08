@@ -51,11 +51,11 @@ public class DataConverter extends BaseDataProcessor {
         if (d instanceof DoubleData && convMode.equals(CONVERT_D2F)) {
             DoubleData dd = (DoubleData) d;
             d = new FloatData(MatrixUtils.double2float(dd.getValues()), dd.getSampleRate(),
-                    dd.getCollectTime(), dd.getFirstSampleNumber());
+                    dd.getFirstSampleNumber());
         } else if (d instanceof FloatData && convMode.equals(CONVERT_F2D)) {
             FloatData fd = (FloatData) d;
             d = new DoubleData(MatrixUtils.float2double(fd.getValues()), fd.getSampleRate(),
-                    fd.getCollectTime(), fd.getFirstSampleNumber());
+                    fd.getFirstSampleNumber());
         }
 
         return d;

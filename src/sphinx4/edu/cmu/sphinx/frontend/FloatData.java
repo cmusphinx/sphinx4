@@ -37,10 +37,10 @@ public class FloatData implements Data, Cloneable {
      * @param firstSampleNumber the position of the first sample in the original data
      */
     public FloatData(float[] values, int sampleRate,
-                     long collectTime, long firstSampleNumber) {
+                     long firstSampleNumber) {
         this.values = values;
         this.sampleRate = sampleRate;
-        this.collectTime = collectTime;
+        this.collectTime = firstSampleNumber * 1000 / sampleRate;
         this.firstSampleNumber = firstSampleNumber;
     }
 
@@ -100,7 +100,7 @@ public class FloatData implements Data, Cloneable {
         else if (data instanceof DoubleData) {
             DoubleData dd = (DoubleData) data;
             convertData = new FloatData(MatrixUtils.double2float(dd.getValues()), dd.getSampleRate(),
-                    dd.getCollectTime(), dd.getFirstSampleNumber());
+                    dd.getFirstSampleNumber());
         } else
             throw new IllegalArgumentException("data type '" + data.getClass() + "' is not supported");
 

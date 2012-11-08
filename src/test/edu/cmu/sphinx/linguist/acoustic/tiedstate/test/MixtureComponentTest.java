@@ -62,7 +62,7 @@ public class MixtureComponentTest {
         MixtureComponent gaussian = new MixtureComponent(lm, new float[]{mean}, new float[]{var});
 
         for (float curX = minX; curX <= maxX; curX += resolution) {
-            double gauLogScore = gaussian.getScore(new FloatData(new float[]{curX}, 0, 0, 0));
+            double gauLogScore = gaussian.getScore(new FloatData(new float[]{curX}, 0, 0));
 
             double manualScore = (1 / sqrt(var * 2 * PI)) * exp((-0.5 / var) * (curX - mean) * (curX - mean));
             double gauScore = lm.logToLinear((float) gauLogScore);

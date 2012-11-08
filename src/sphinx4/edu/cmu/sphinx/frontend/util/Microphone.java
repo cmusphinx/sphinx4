@@ -661,7 +661,7 @@ public class Microphone extends BaseDataProcessor {
 
             return (new DoubleData
                     (samples, (int) audioStream.getFormat().getSampleRate(),
-                            collectTime, firstSampleNumber));
+                            firstSampleNumber));
         }
     }
 

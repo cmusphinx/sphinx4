@@ -129,7 +129,6 @@ public class Dither extends BaseDataProcessor {
         }
 
         output = new DoubleData(outFeatures, doubleData.getSampleRate(),
-                doubleData.getCollectTime(),
                 doubleData.getFirstSampleNumber());
 
         return output;

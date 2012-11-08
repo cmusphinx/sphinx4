@@ -202,7 +202,7 @@ public class StreamCepstrumSource extends BaseDataProcessor {
 
             // System.out.println("Read: " + curPoint);
             data = new DoubleData
-                    (vectorData, sampleRate, collectTime, firstSampleNumber);
+                    (vectorData, sampleRate, firstSampleNumber);
             firstSampleNumber += frameShift;
             // System.out.println(data);
         }
