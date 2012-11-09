@@ -60,7 +60,7 @@ public class AlignerGrammar extends Grammar {
 	 */
 	public void setText(String text) {
 		String[] words = text.split(" ");
-
+		tokens.clear();
 		for (String word : words) {
 				tokens.add(word.toLowerCase());
 		}
