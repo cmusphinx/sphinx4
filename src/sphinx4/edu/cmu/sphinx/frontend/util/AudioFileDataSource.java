@@ -261,7 +261,6 @@ public class AudioFileDataSource extends BaseDataProcessor {
         int totalRead = 0;
         final int bytesToRead = bytesPerRead;
         byte[] samplesBuffer = new byte[bytesPerRead];
-        long collectTime = System.currentTimeMillis();
         long firstSample = totalValuesRead;
         try {
             do {

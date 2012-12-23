@@ -17,47 +17,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
- * Several genearl use utility functions needed by the fst framework
+ * Several general use utility functions needed by the fst framework
  * 
  * @author John Salatas <jsalatas@users.sourceforge.net>
  */
 public class Utils {
-
-    /**
-     * Splits a string into an ArrayList of Strings based on a text delimiter
-     * 
-     * @param input the string to split
-     * @param delim the text delimiter
-     * @return the splitted ArrayList
-     */
-    public static ArrayList<String> split_string(String input, String delim) {
-        ArrayList<String> res = new ArrayList<String>(input.length());
-
-        int start = 0;
-        int len = 0;
-        int pos = 0;
-
-        while (start < input.length()) {
-            if (delim.isEmpty()) {
-                len = 1;
-            } else {
-                pos = input.indexOf(delim, start);
-                if (pos != -1) {
-                    len = pos - start;
-                } else {
-                    len = input.length();
-                }
-            }
-            res.add(input.substring(start, len));
-            if (delim.isEmpty()) {
-                start = start + len;
-            } else {
-                start = start + len + delim.length();
-            }
-        }
-
-        return res;
-    }
 
     /**
      * Searches an ArrayList of Strings starting from a specific position for a
@@ -106,21 +70,6 @@ public class Utils {
     }
 
     /**
-     * Rounds a float number to the specified number of decimal digits
-     * 
-     * @param value the float numbe to round
-     * @param digits the number of digits
-     * @return the rounded number
-     */
-    public static float round(float value, int digits) {
-        if (Float.isInfinite(value) || Float.isNaN(value)) {
-            return value;
-        }
-        return (float) (Math.round(value * Math.pow(10, digits)) / Math.pow(10,
-                digits));
-    }
-
-    /**
      * Get the position (index) of a particular string in a Strings array.
      * 
      * The search is case insensitive.
@@ -151,5 +100,4 @@ public class Utils {
         }
         return res;
     }
-
 }

@@ -180,7 +180,6 @@ public class StreamCepstrumSource extends BaseDataProcessor {
             data = null;
         } else {
             double[] vectorData = new double[cepstrumLength];
-            long collectTime = System.currentTimeMillis();
 
             for (int i = 0; i < cepstrumLength; i++) {
                 try {

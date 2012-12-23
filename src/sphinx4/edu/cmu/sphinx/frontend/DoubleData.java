@@ -45,7 +45,6 @@ public class DoubleData extends OVector implements Data {
         super(values);
 
         this.sampleRate = sampleRate;
-        this.collectTime = collectTime;
         this.firstSampleNumber = firstSampleNumber;
     }
 

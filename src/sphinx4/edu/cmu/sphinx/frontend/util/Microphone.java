@@ -608,7 +608,6 @@ public class Microphone extends BaseDataProcessor {
             byte[] data = new byte[frameSizeInBytes];
 
             int channels = audioStream.getFormat().getChannels();
-            long collectTime = System.currentTimeMillis();
             long firstSampleNumber = totalSamplesRead / channels;
 
             int numBytesRead = audioStream.read(data, 0, data.length);

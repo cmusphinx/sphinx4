@@ -108,7 +108,7 @@
     <component name="speechClassifier" type="edu.cmu.sphinx.frontend.endpoint.SpeechClassifier"/>
     
     <component name="nonSpeechDataFilter" 
-               type="edu.cmu.sphinx.frontend.endpoint.NonSpeechDataFilter"/>
+               type="edu.cmu.sphinx.frontend.endpoint.NonSpeechDataSingleUttFilter"/>
     
     <component name="speechMarker" type="edu.cmu.sphinx.frontend.endpoint.SpeechMarker" />
         

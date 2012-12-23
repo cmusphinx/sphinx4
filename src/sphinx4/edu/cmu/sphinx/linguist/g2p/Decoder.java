@@ -17,9 +17,11 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.regex.Pattern;
 
 import edu.cmu.sphinx.fst.Arc;
 import edu.cmu.sphinx.fst.Fst;
@@ -129,14 +131,9 @@ public class Decoder {
         }
         for (int i = 2; i < syms.length; i++) {
             String sym = syms[i].toLowerCase();
-            if (sym.contains(tie)) {
-                ArrayList<String> tmp = Utils.split_string(sym, tie);
-                ArrayList<String> cluster = new ArrayList<String>();
-                for (int j = 0; j < tmp.size(); j++) {
-                    if (!tmp.get(j).equals(tie)) {
-                        cluster.add(tmp.get(j));
-                    }
-                }
+            if (sym.contains(tie)) {                
+            	String split[] = sym.split(Pattern.quote(tie));
+                ArrayList<String> cluster = new ArrayList<String>(Arrays.asList(split));
                 clusters[i] = cluster;
             }
         }
@@ -196,7 +193,7 @@ public class Decoder {
 
     /**
      * Transforms an input spelling/pronunciation into an equivalent FSA, adding
-     * extra arcs as needed to accomodate clusters.
+     * extra arcs as needed to accommodate clusters.
      * 
      * @param entry the input vector
      * @return the created fst
