@@ -16,11 +16,13 @@ import edu.cmu.sphinx.frontend.util.AudioFileDataSource;
 import edu.cmu.sphinx.recognizer.Recognizer;
 import edu.cmu.sphinx.result.Lattice;
 import edu.cmu.sphinx.result.LatticeOptimizer;
+import edu.cmu.sphinx.result.Nbest;
 import edu.cmu.sphinx.result.Result;
 import edu.cmu.sphinx.util.props.ConfigurationManager;
 
 import javax.sound.sampled.UnsupportedAudioFileException;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URL;
 
@@ -65,9 +67,17 @@ public class LatticeDemo {
                 Lattice lattice = new Lattice(result);
                 LatticeOptimizer optimizer = new LatticeOptimizer(lattice);
                 optimizer.optimize();
-//                lattice.dumpAllPaths();
+
+                System.out.println("Dumping lattice to lattice.slf");
+                lattice.dumpSlf(new FileWriter(new File("lattice.slf")));
+
+                Nbest nbest = new Nbest(lattice);
+                for (String s : nbest.getNbest(10)) {
+                	System.out.println("N-Best Result: " + s);
+                }
+
                 String resultText = result.getBestResultNoFiller();
-//                System.out.println("I heard: " + resultText + '\n');
+                System.out.println("Best Result: " + resultText + '\n');
             } else {
                 done = true;
             }

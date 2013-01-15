@@ -1,6 +1,6 @@
 import sys
 
-libDir = "../../../lib/"
+libDir = "../../../../../../../../lib/"
 classPaths = [
     "sphinx4.jar",
     "jsapi.jar",
@@ -51,7 +51,7 @@ from java.util import ArrayList
 #  throw new Error("USAGE: GroovyTranscriber <sphinx4 root> [<WAV file>]")
 # }
 
-root = "../../.."
+root = "../../../../../../../.."
 
 # init common 
 Logger.getLogger("").setLevel(Level.WARNING)
