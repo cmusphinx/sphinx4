@@ -205,7 +205,7 @@
             <item>dct </item>
             <item>liveCMN </item>
             <item>featureExtraction </item>
-            <item>dataDumper </item>
+            <!--item>dataDumper </item-->
         </propertylist>
     </component>
 

@@ -69,17 +69,32 @@ public class Nbest {
 
             for (Edge e : path.node.getLeavingEdges()) {
                 Node newNode = e.getToNode();
-                double newScore = path.forwardScore
-                        + newNode.getBackwardScore();
+                
                 double newForwardScore = path.forwardScore
                         + e.getAcousticScore() + e.getLMScore();
-                NBestPath newPath = new NBestPath(path.path + " "
-                        + newNode.getWord(), newNode, newScore, newForwardScore);
+
+                double newScore = newForwardScore + newNode.getBackwardScore();
+
+                String newPathString = getNewPathString(path, newNode);
+                
+                NBestPath newPath = new NBestPath(newPathString, newNode, newScore, newForwardScore);
+                
                 queue.add(newPath);
             }
             // printQueue(queue);
         }
         return new ArrayList<String>(result);
+    }
+
+    private String getNewPathString(NBestPath path, Node newNode) {
+        String newPathString;
+        if (newNode.getWord().isSentenceEndWord())
+            newPathString = path.path + " </s>";
+        else if (newNode.getWord().isFiller())
+            newPathString = path.path;
+        else
+            newPathString = path.path + " " + newNode.getWord();
+        return newPathString;
     }
 
     @SuppressWarnings("unused")
