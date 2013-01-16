@@ -28,7 +28,7 @@ import edu.cmu.sphinx.fst.semiring.Semiring;
  * See: M. Mohri, M. Riley,
  * "An Efficient Algorithm for the n-best-strings problem", Proceedings of
  * the International Conference on Spoken Language Processing 2002 (ICSLP
- * ’02).
+ * '02).
  * 
  * @author John Salatas <jsalatas@users.sourceforge.net>
  * 
