@@ -12,7 +12,6 @@
  */
 package edu.cmu.sphinx.util.props;
 
-import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.XMLReader;
@@ -20,7 +19,6 @@ import org.xml.sax.XMLReader;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
@@ -70,10 +68,7 @@ public class SaxLoader {
             XMLReader xr = factory.newSAXParser().getXMLReader();
             ConfigHandler handler = new ConfigHandler(rpdMap, globalProperties, replaceDuplicates, url);
             xr.setContentHandler(handler);
-            xr.setErrorHandler(handler);
-            InputStream is = url.openStream();
-            xr.parse(new InputSource(is));
-            is.close();
+            xr.parse(url.toString());
         } catch (SAXParseException e) {
             String msg = "Error while parsing line " + e.getLineNumber() + " of " + url + ": " + e.getMessage();
             throw new IOException(msg);
