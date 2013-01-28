@@ -444,7 +444,6 @@ public class Result {
 
         while (token != null) {
             if (token.isWord()) {
-        	System.out.println ("WordToken " + token.getWord() + " " + lastFeature);
                 if (word != null && lastFeature != null) {
                     if (wantFiller || !word.isFiller()) {
                         addWord(sb, word,

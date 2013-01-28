@@ -45,7 +45,6 @@ public class LatticeDemo {
             url = LatticeDemo.class.getResource("config.xml");
         }
 
-//        System.out.println("Loading...");
         ConfigurationManager cm = new ConfigurationManager(url);
 
         Recognizer recognizer = (Recognizer) cm.lookup("recognizer");
@@ -64,6 +63,15 @@ public class LatticeDemo {
             Result result = recognizer.recognize();
 
             if (result != null) {
+                // Get plain result
+                String resultText = result.getBestResultNoFiller();
+                System.out.println("Best Result: " + resultText + '\n');
+
+                // Get timed result
+                String timedText = result.getTimedBestResult(false, false);
+                System.out.println("Timed Result: " + timedText + '\n');
+
+                // Dump lattice and print n-best
                 Lattice lattice = new Lattice(result);
                 LatticeOptimizer optimizer = new LatticeOptimizer(lattice);
                 optimizer.optimize();
@@ -72,12 +80,10 @@ public class LatticeDemo {
                 lattice.dumpSlf(new FileWriter(new File("lattice.slf")));
 
                 Nbest nbest = new Nbest(lattice);
-                for (String s : nbest.getNbest(10)) {
-                	System.out.println("N-Best Result: " + s);
+                for (String s : nbest.getNbest(5)) {
+                     System.out.println("N-Best Result: " + s);
                 }
 
-                String resultText = result.getBestResultNoFiller();
-                System.out.println("Best Result: " + resultText + '\n');
             } else {
                 done = true;
             }
