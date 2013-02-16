@@ -72,7 +72,6 @@ public abstract class Grammar implements Configurable, GrammarInterface {
     private final static Word[][] EMPTY_ALTERNATIVE = new Word[0][0];
     private final Random randomizer = new Random(56); // use fixed initial to make get deterministic random value for testing
     private int maxIdentity;
-    private boolean postProcessed;
     private boolean idCheck;
 
     public Grammar(boolean showGrammar,boolean optimizeGrammar,boolean addSilenceWords, boolean addFillerWords, Dictionary dictionary ) {
@@ -114,7 +113,6 @@ public abstract class Grammar implements Configurable, GrammarInterface {
         Timer timer = TimerPool.getTimer(this, "grammarLoad");
         timer.start();
         initialNode = createGrammar();
-        postProcessGrammar();
         timer.stop();
     }
 
@@ -139,27 +137,24 @@ public abstract class Grammar implements Configurable, GrammarInterface {
 
 
     /**
-     * Perform the standard set of grammar post processing. This can include inserting silence nodes and optimizing out
-     * empty nodes
+     * Perform the standard set of grammar post processing. This can include
+     * inserting silence nodes and optimizing out empty nodes
      */
     protected void postProcessGrammar() {
-        if (!postProcessed) {
-            if (addFillerWords) {
-                addFillerWords();
-            } else if (addSilenceWords) {
-                addSilenceWords();
-            }
+        if (addFillerWords) {
+            addFillerWords();
+        } else if (addSilenceWords) {
+            addSilenceWords();
+        }
 
-            if (optimizeGrammar) {
-                optimizeGrammar();
-            }
-            dumpStatistics();
-            if (showGrammar) {
-                //dumpGrammar("grammar.gdl");
-                //dumpRandomSentences("sentences.txt", 100);
-                logger.info("Total number of nodes " + grammarNodes.size());
-            }
-            postProcessed = true;
+        if (optimizeGrammar) {
+            optimizeGrammar();
+        }
+        dumpStatistics();
+        if (showGrammar) {
+            dumpGrammar("grammar.gdl");
+            dumpRandomSentences("sentences.txt", 100);
+            logger.info("Total number of nodes " + grammarNodes.size());
         }
     }
 
@@ -320,9 +315,7 @@ public abstract class Grammar implements Configurable, GrammarInterface {
     protected void newGrammar() {
         maxIdentity = 0;
         grammarNodes = new HashSet<GrammarNode>();
-
         initialNode = null;
-        postProcessed = false;
     }
 
 

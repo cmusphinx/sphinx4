@@ -62,9 +62,11 @@ public class AlignerGrammar extends Grammar {
 		String[] words = text.split(" ");
 		tokens.clear();
 		for (String word : words) {
-				tokens.add(word.toLowerCase());
+		    if (!word.isEmpty())
+		        tokens.add(word.toLowerCase());
 		}
-		createGrammar();
+		createGrammar();		
+		postProcessGrammar();
 	}
 
 	@Override

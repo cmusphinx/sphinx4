@@ -1,5 +1,5 @@
 /*
- * Copyright 1999-2012 Carnegie Mellon University.
+ * Copyright 1999-2013 Carnegie Mellon University.
  * Portions Copyright 2004 Sun Microsystems, Inc.
  * Portions Copyright 2004 Mitsubishi Electric Research Laboratories.
  * All Rights Reserved.  Use is subject to license terms.

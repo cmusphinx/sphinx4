@@ -11,7 +11,8 @@
     
     <property name="absoluteBeamWidth"  value="10000"/>
     <property name="relativeBeamWidth"  value="1E-80"/>
-    <property name="wordInsertionProbability" value="0.7"/>
+    <property name="wordInsertionProbability" value="0.1"/>
+    <property name="silenceInsertionProbability" value="0.9"/>
     <property name="languageWeight"     value="8"/>
     
     <component name="recognizer" type="edu.cmu.sphinx.recognizer.Recognizer">
@@ -54,13 +55,16 @@
         <property name="acousticModel" value="wsj"/>
         <property name="wordInsertionProbability"
                 value="${wordInsertionProbability}"/>
+        <property name="silenceInsertionProbability"
+                value="${silenceInsertionProbability}"/>
         <property name="languageWeight" value="${languageWeight}"/>
         <property name="unitManager" value="unitManager"/>
     </component>
             
     <component name="alignerGrammar" type="edu.cmu.sphinx.linguist.language.grammar.AlignerGrammar">
         <property name="dictionary" value="dictionary"/>
-	<property name="logMath" value="logMath"/>
+		<property name="logMath" value="logMath"/>
+		<property name="addSilenceWords" value="true"/>
     </component>
     
     <component name="dictionary" 
@@ -91,6 +95,9 @@
         <propertylist name="pipeline">
             <item>audioFileDataSource </item>
             <item>dataBlocker </item>
+            <item>speechClassifier </item>
+            <item>speechMarker </item>
+            <item>nonSpeechDataFilter </item>
             <item>preemphasizer </item>
             <item>windower </item>
             <item>fft </item>
@@ -132,10 +139,10 @@
     
     <component name="liveCMN" 
                type="edu.cmu.sphinx.frontend.feature.LiveCMN"/>
-        
+
     <component name="featureExtraction" 
                type="edu.cmu.sphinx.frontend.feature.DeltasFeatureExtractor"/>
-           
+
     <component name="logMath" type="edu.cmu.sphinx.util.LogMath">
         <property name="logBase" value="1.0001"/>
         <property name="useAddTable" value="true"/>
