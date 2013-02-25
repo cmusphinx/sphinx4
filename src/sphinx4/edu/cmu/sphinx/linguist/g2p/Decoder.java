@@ -59,7 +59,7 @@ public class Decoder {
     String skip = "_";
 
     // separator symbol
-    String tie;
+    String tie = "|";
 
     // set containing sequences to ignore
     HashSet<String> skipSeqs = new HashSet<String>();
@@ -109,8 +109,6 @@ public class Decoder {
         ArcSort.apply(g2pmodel, new ILabelCompare());
 
         String[] isyms = g2pmodel.getIsyms();
-        tie = isyms[1]; // The separator symbol is reserved for
-                        // index 1
 
         loadClusters(isyms);
 
@@ -130,7 +128,7 @@ public class Decoder {
             clusters[i] = null;
         }
         for (int i = 2; i < syms.length; i++) {
-            String sym = syms[i].toLowerCase();
+            String sym = syms[i];
             if (sym.contains(tie)) {                
             	String split[] = sym.split(Pattern.quote(tie));
                 ArrayList<String> cluster = new ArrayList<String>(Arrays.asList(split));

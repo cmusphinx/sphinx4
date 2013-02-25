@@ -251,13 +251,22 @@ public class Convert {
                         osyms.put(tokens[3], osyms.size());
                     }
                     int oLabel = osyms.get(tokens[3]);
-                    float arcWeight = Float.parseFloat(tokens[4]);
+
+                    float arcWeight;
+                    if (tokens.length > 4) {
+                        arcWeight = Float.parseFloat(tokens[4]);
+                    } else {
+                        arcWeight = 0;
+                    }
                     Arc arc = new Arc(iLabel, oLabel, arcWeight, nextState);
                     inputState.addArc(arc);
                 } else {
-                    // This is a final weight
-                    float finalWeight = Float.parseFloat(tokens[1]);
-                    inputState.setFinalWeight(finalWeight);
+                    if (tokens.length > 1) {
+                        float finalWeight = Float.parseFloat(tokens[1]);
+                        inputState.setFinalWeight(finalWeight);
+                    } else {
+                        inputState.setFinalWeight(0.0f);
+                    }
                 }
             }
             dis.close();
