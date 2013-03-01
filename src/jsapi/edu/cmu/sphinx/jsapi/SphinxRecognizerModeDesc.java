@@ -18,11 +18,17 @@ import java.util.Locale;
 import javax.speech.Engine;
 import javax.speech.EngineCreate;
 import javax.speech.EngineException;
+import javax.speech.EngineModeDesc;
 import javax.speech.recognition.RecognizerModeDesc;
 
 /**
  * Provides information about a specific operating mode of a sphinx recognition
  * engine.
+ * <p>
+ * This class creates a bridge between the sphinx configuration in an
+ * XML configuration file and the configuration settings needed for
+ * the Java Speech API. 
+ * </p>
  */
 public class SphinxRecognizerModeDesc extends RecognizerModeDesc
         implements EngineCreate {
@@ -34,13 +40,28 @@ public class SphinxRecognizerModeDesc extends RecognizerModeDesc
      * Constructs a new object. 
      */
     public SphinxRecognizerModeDesc() {
+        this(null);
+    }
+
+    /**
+     * Constructs a new object.
+     * @param config name of the configuration file as a resource, maybe
+     * 	             <code>null</code>. In that case the default
+     *               configuration at <code>/sphinx4.config.xml</code>
+     *               is expected. 
+     */
+    public SphinxRecognizerModeDesc(String config) {
         super("Sphinx 4",      // engine name
               null,            // mode name
               Locale.US,
               Boolean.FALSE,   // running?
               Boolean.TRUE,    // dictationGrammarSupported
               null);           // profile[]
-        configFile = "/sphinx4.config.xml";
+        if (config == null) {
+            configFile = "/sphinx4.config.xml";
+        } else {
+            configFile = config;
+        }
     }
 
     /**
@@ -53,17 +74,17 @@ public class SphinxRecognizerModeDesc extends RecognizerModeDesc
     }
 
     /**
-     * Constructs a new object.
-     * @param config name of the configuration file as a resource. 
+     * {@inheritDoc}
      */
-    public SphinxRecognizerModeDesc(String config) {
-        super("Sphinx 4",      // engine name
-              null,            // mode name
-              Locale.US,
-              Boolean.FALSE,   // running?
-              Boolean.TRUE,    // dictationGrammarSupported
-              null);           // profile[]
-        configFile = config;
+    @Override
+    public boolean match(EngineModeDesc descriptor) {
+        if (descriptor instanceof SphinxRecognizerModeDesc) {
+            SphinxRecognizerModeDesc other = (SphinxRecognizerModeDesc) descriptor;
+            if (!configFile.equals(other.getConfigFile())) {
+                return false;
+            }
+        }
+        return super.match(descriptor);
     }
 
     /**

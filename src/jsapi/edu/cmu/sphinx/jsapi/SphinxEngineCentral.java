@@ -22,12 +22,35 @@ import javax.speech.EngineModeDesc;
  * recognition engine.  An instance of this SphinxEngineCentral object is registered with the javax.speeech.Central
  * class.  When requested by the Central class, this object provides a list of EngineModeDesc objects that describes the
  * available operating modes of the engine.
+ * <p>
+ * By default the list of engines returned by {@link #createEngineList(EngineModeDesc)}
+ * contains only one element of {@link SphinxRecognizerModeDesc}. The default
+ * implementation works for english. Other engine description may be added by
+ * {@link #registerEngineModeDesc(SphinxRecognizerModeDesc)}. This allows
+ * for creating other engines with different sphinx settings.
+ * </p>
  */
 public class SphinxEngineCentral implements EngineCentral {
 
-    static private SphinxRecognizerModeDesc sphinxModeDesc
+    private static final SphinxRecognizerModeDesc DEFAULT_MODE_DESCRIPTOR
             = new SphinxRecognizerModeDesc();
 
+    private static final EngineList REGISTERED_MODE_DESCS;
+
+    static {
+        REGISTERED_MODE_DESCS = new EngineList();
+        REGISTERED_MODE_DESCS.add(DEFAULT_MODE_DESCRIPTOR);
+    }
+
+    /**
+     * Registers the given engine mode descriptor to the list of supported
+     * engine mode descriptors by this engine central
+     * @param desc the descriptor to register.
+     */
+    @SuppressWarnings("unchecked")
+    public static void registerEngineModeDesc(SphinxRecognizerModeDesc desc) {
+        REGISTERED_MODE_DESCS.add(desc);
+    }
 
     /**
      * Create an EngineList containing and EngineModeDesc object for each mode of operation of the Sphinx speech engine.
@@ -39,11 +62,17 @@ public class SphinxEngineCentral implements EngineCentral {
      */
     @SuppressWarnings("unchecked")
     public EngineList createEngineList(EngineModeDesc require) {
-        if (require == null || sphinxModeDesc.match(require)) {
-            EngineList el = new EngineList();
-            el.addElement(sphinxModeDesc);
-            return el;
+        EngineList el = new EngineList();
+        for (Object item : REGISTERED_MODE_DESCS) {
+            SphinxRecognizerModeDesc desc = (SphinxRecognizerModeDesc) item;
+            if (require == null || desc.match(require)) {
+                el.addElement(DEFAULT_MODE_DESCRIPTOR);
+                return el;
+            }
         }
-        return null;
+        if (el.isEmpty()) {
+            return null;
+        }
+        return el;
     }
 }
