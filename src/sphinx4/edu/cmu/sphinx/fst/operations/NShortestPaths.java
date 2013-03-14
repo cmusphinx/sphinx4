@@ -13,8 +13,9 @@
 
 package edu.cmu.sphinx.fst.operations;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 
 import edu.cmu.sphinx.fst.Arc;
 import edu.cmu.sphinx.fst.Fst;
@@ -57,29 +58,24 @@ public class NShortestPaths {
 
         Semiring semiring = reversed.getSemiring();
 
-        for (int i = 0; i < d.length; i++) {
-            d[i] = semiring.zero();
-            r[i] = semiring.zero();
-        }
+        Arrays.fill(d, semiring.zero());
+        Arrays.fill(r, semiring.zero());
 
-        State[] stateMap = new State[reversed.getNumStates()];
-        for (int i = 0; i < reversed.getNumStates(); i++) {
-            stateMap[i] = null;
-        }
-        ArrayList<Integer> queue = new ArrayList<Integer>();
+        LinkedHashSet<State> queue = new LinkedHashSet<State>();
 
-        queue.add(reversed.getStart().getId());
-        stateMap[reversed.getStart().getId()] = reversed.getStart();
+        queue.add(reversed.getStart());
 
         d[reversed.getStart().getId()] = semiring.one();
         r[reversed.getStart().getId()] = semiring.one();
 
-        while (queue.size() > 0) {
-            State q = stateMap[queue.remove(0)];
+        while (!queue.isEmpty()) {            
+            State q = queue.iterator().next();
+            queue.remove(q);
+
             float rnew = r[q.getId()];
             r[q.getId()] = semiring.zero();
-            int numArcs = q.getNumArcs();
-            for (int i = 0; i < numArcs; i++) {
+
+            for (int i = 0; i < q.getNumArcs(); i++) {
                 Arc a = q.getArc(i);
                 State nextState = a.getNextState();
                 float dnext = d[a.getNextState().getId()];
@@ -91,8 +87,7 @@ public class NShortestPaths {
                             .getNextState().getId()], semiring.times(rnew,
                             a.getWeight()));
                     if (!queue.contains(nextState.getId())) {
-                        queue.add(nextState.getId());
-                        stateMap[nextState.getId()] = nextState;
+                        queue.add(nextState);
                     }
                 }
             }
@@ -131,21 +126,19 @@ public class NShortestPaths {
         ExtendFinal.apply(fstdet);
 
         int[] r = new int[fstdet.getNumStates()];
-        for (int i = 0; i < r.length; i++) {
-            r[i] = 0;
-        }
 
-        ArrayList<Pair<State, Float>> queue = new ArrayList<Pair<State, Float>>();
+        LinkedHashSet<Pair<State, Float>> queue = new LinkedHashSet<Pair<State, Float>>();
         HashMap<Pair<State, Float>, Pair<State, Float>> previous = new HashMap<Pair<State, Float>, Pair<State, Float>>(
                 fst.getNumStates(), 1.f);
         HashMap<Pair<State, Float>, State> stateMap = new HashMap<Pair<State, Float>, State>(
                 fst.getNumStates(), 1.f);
 
         State start = fstdet.getStart();
-        queue.add(new Pair<State, Float>(start, semiring.one()));
-        previous.put(queue.get(0), null);
+        Pair<State, Float> item = new Pair<State, Float>(start, semiring.one());
+        queue.add(item);
+        previous.put(item, null);
 
-        while (queue.size() > 0) {
+        while (!queue.isEmpty()) {
             Pair<State, Float> pair = getLess(queue, d, semiring);
             State p = pair.getLeft();
             Float c = pair.getRight();
@@ -198,8 +191,8 @@ public class NShortestPaths {
      * Removes from the queue the pair with the lower path cost
      */
     private static Pair<State, Float> getLess(
-            ArrayList<Pair<State, Float>> queue, float[] d, Semiring semiring) {
-        Pair<State, Float> res = queue.get(0);
+            LinkedHashSet<Pair<State, Float>> queue, float[] d, Semiring semiring) {
+        Pair<State, Float> res = queue.iterator().next();
 
         for (Pair<State, Float> p : queue) {
             State previousState = res.getLeft();

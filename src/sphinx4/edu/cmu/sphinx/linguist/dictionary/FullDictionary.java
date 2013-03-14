@@ -14,7 +14,7 @@ package edu.cmu.sphinx.linguist.dictionary;
 import edu.cmu.sphinx.linguist.acoustic.Context;
 import edu.cmu.sphinx.linguist.acoustic.Unit;
 import edu.cmu.sphinx.linguist.acoustic.UnitManager;
-import edu.cmu.sphinx.linguist.g2p.Decoder;
+import edu.cmu.sphinx.linguist.g2p.G2PConverter;
 import edu.cmu.sphinx.linguist.g2p.Path;
 import edu.cmu.sphinx.util.ExtendedStreamTokenizer;
 import edu.cmu.sphinx.util.Timer;
@@ -78,7 +78,7 @@ public class FullDictionary implements Dictionary {
     private Map<String, Word> wordDictionary;
     private Map<String, Word> fillerDictionary;
     private Timer loadTimer;
-    protected Decoder g2pDecoder;
+    protected G2PConverter g2pDecoder;
 
         public FullDictionary(
             URL wordDictionaryFile,
@@ -178,7 +178,7 @@ public class FullDictionary implements Dictionary {
                     loadDictionary(fillerDictionaryFile.openStream(), true);
 
             if(g2pModelFile != null && !g2pModelFile.getPath().equals("")) {
-                g2pDecoder = new Decoder(g2pModelFile);
+                g2pDecoder = new G2PConverter(g2pModelFile);
             }
             loadTimer.stop();
             logger.finest(dumpToString());

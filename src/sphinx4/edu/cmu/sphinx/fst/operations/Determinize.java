@@ -5,6 +5,8 @@ package edu.cmu.sphinx.fst.operations;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Queue;
 
 import edu.cmu.sphinx.fst.Arc;
 import edu.cmu.sphinx.fst.Fst;
@@ -101,21 +103,20 @@ public class Determinize {
         res.setOsyms(fst.getOsyms());
 
         // stores the queue (item in index 0 is next)
-        ArrayList<ArrayList<Pair<State, Float>>> queue = new ArrayList<ArrayList<Pair<State, Float>>>();
+        Queue<ArrayList<Pair<State, Float>>> queue = new LinkedList<ArrayList<Pair<State, Float>>>();
 
         HashMap<String, State> stateMapper = new HashMap<String, State>();
 
         State s = new State(semiring.zero());
         String stateString = "(" + fst.getStart() + "," + semiring.one() + ")";
         queue.add(new ArrayList<Pair<State, Float>>());
-        queue.get(0)
-                .add(new Pair<State, Float>(fst.getStart(), semiring.one()));
+        queue.peek().add(new Pair<State, Float>(fst.getStart(), semiring.one()));
         res.addState(s);
         stateMapper.put(stateString, s);
         res.setStart(s);
 
-        while (queue.size() > 0) {
-            ArrayList<Pair<State, Float>> p = queue.get(0);
+        while (!queue.isEmpty()) {
+            ArrayList<Pair<State, Float>> p = queue.remove();
             State pnew = getStateLabel(p, stateMapper);
             queue.remove(0);
             ArrayList<Integer> labels = getUniqueLabels(fst, p);

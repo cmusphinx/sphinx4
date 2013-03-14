@@ -13,10 +13,10 @@
 
 package edu.cmu.sphinx.fst.operations;
 
-import java.util.ArrayList;
-
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Queue;
 
 import edu.cmu.sphinx.fst.Arc;
 import edu.cmu.sphinx.fst.Fst;
@@ -62,7 +62,7 @@ public class Compose {
         Fst res = new Fst(semiring);
 
         HashMap<Pair<State, State>, State> stateMap = new HashMap<Pair<State, State>, State>();
-        ArrayList<Pair<State, State>> queue = new ArrayList<Pair<State, State>>();
+        Queue<Pair<State, State>> queue = new LinkedList<Pair<State, State>>();
 
         State s1 = fst1.getStart();
         State s2 = fst2.getStart();
@@ -81,8 +81,8 @@ public class Compose {
         stateMap.put(p, s);
         queue.add(p);
 
-        while (queue.size() > 0) {
-            p = queue.remove(0);
+        while (!queue.isEmpty()) {
+            p = queue.remove();
             s1 = p.getLeft();
             s2 = p.getRight();
             s = stateMap.get(p);

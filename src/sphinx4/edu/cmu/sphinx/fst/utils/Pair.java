@@ -66,31 +66,28 @@ public class Pair<L, R> {
         return right;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Object#hashCode()
-     */
     @Override
     public int hashCode() {
-        return left.hashCode() ^ right.hashCode();
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + left.hashCode();
+        result = prime * result + right.hashCode();
+        return result;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Object#equals(java.lang.Object)
-     */
-    @SuppressWarnings("unchecked")
     @Override
-    public boolean equals(Object o) {
-        if (o == null)
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
             return false;
-        if (!(o instanceof Pair))
+        @SuppressWarnings("unchecked")
+        Pair<L,R> other = (Pair<L,R>) obj;
+        if (!left.equals(other.left))
             return false;
-        Pair<L, R> pairo = (Pair<L, R>) o;
-        return this.left.equals(pairo.getLeft())
-                && this.right.equals(pairo.getRight());
+        if (!right.equals(other.right))
+            return false;
+        return true;
     }
 
     /*

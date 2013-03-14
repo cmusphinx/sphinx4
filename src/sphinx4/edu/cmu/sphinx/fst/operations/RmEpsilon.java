@@ -122,17 +122,9 @@ public class RmEpsilon {
 
         Fst res = new Fst(semiring);
 
-        @SuppressWarnings("unchecked")
         HashMap<State, Float>[] cl = new HashMap[fst.getNumStates()];
-        for (int i = 0; i < cl.length; i++) {
-            cl[i] = null;
-        }
         State[] oldToNewStateMap = new State[fst.getNumStates()];
         State[] newToOldStateMap = new State[fst.getNumStates()];
-        for (int i = 0; i < fst.getNumStates(); i++) {
-            oldToNewStateMap[i] = null;
-            newToOldStateMap[i] = null;
-        }
 
         int numStates = fst.getNumStates();
         for (int i = 0; i < numStates; i++) {

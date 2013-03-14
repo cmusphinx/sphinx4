@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.HashSet;
 
 import edu.cmu.sphinx.fst.semiring.Semiring;
 
@@ -417,35 +418,23 @@ public class Fst {
      * @param state the state to delete
      */
     public void deleteState(State state) {
-        if (state.getId() == this.start.getId()) {
+        
+        if (state == start) {
             System.err.println("Cannot delete start state.");
             return;
         }
 
-        this.states.remove(state);
+        states.remove(state);
 
-        // delete arc's with nextstate equal to stateid
-        ArrayList<Integer> toDelete;
-        // for (State s1 : states) {
-        int numStates = states.size();
-        for (int i = 0; i < numStates; i++) {
-            State s1 = states.get(i);
-
-            toDelete = new ArrayList<Integer>();
-            int numArcs = s1.getNumArcs();
-            for (int j = 0; j < numArcs; j++) {
+        for (State s1 : states) {
+            ArrayList<Arc> newArcs = new ArrayList<Arc>();
+            for (int j = 0; j < s1.getNumArcs(); j++) {
                 Arc a = s1.getArc(j);
-                if (a.getNextState().equals(state)) {
-                    toDelete.add(j);
+                if (!a.getNextState().equals(state)) {
+                    newArcs.add(a);
                 }
             }
-            // indices not change when deleting in reverse ordering
-            Object[] toDeleteArray = toDelete.toArray();
-            Arrays.sort(toDeleteArray);
-            for (int j = toDelete.size() - 1; j >= 0; j--) {
-                Integer index = (Integer) toDeleteArray[j];
-                s1.deleteArc(index.intValue());
-            }
+            s1.setArcs(newArcs);
         }
     }
 
@@ -461,5 +450,32 @@ public class Fst {
             states.get(i).id = i;
         }
 
+    }
+
+    public void deleteStates(HashSet<State> toDelete) {
+        
+        if (toDelete.contains(start)) {
+            System.err.println("Cannot delete start state.");
+            return;
+        }
+
+        ArrayList<State> newStates = new ArrayList<State>();
+
+        for (State s1 : states) {
+            if (!toDelete.contains(s1)) {
+                newStates.add(s1);
+                ArrayList<Arc> newArcs = new ArrayList<Arc>();
+                for (int j = 0; j < s1.getNumArcs(); j++) {
+                    Arc a = s1.getArc(j);
+                    if (!toDelete.contains(a.getNextState())) {
+                        newArcs.add(a);
+                    }
+                }
+                s1.setArcs(newArcs);
+            }
+        }
+        states = newStates;
+
+        remapStateIds();
     }
 }

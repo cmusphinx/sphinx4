@@ -21,6 +21,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.regex.Pattern;
 
 import edu.cmu.sphinx.fst.Arc;
@@ -44,7 +46,7 @@ import edu.cmu.sphinx.fst.utils.Utils;
  * 
  * @author John Salatas <jsalatas@users.sourceforge.net>
  */
-public class Decoder {
+public class G2PConverter {
 
     // epsilon symbol
     String eps = "<eps>";
@@ -76,10 +78,11 @@ public class Decoder {
     /**
      * Create a decoder by loading the serialized model from a specified URL
      * 
-     * @param g2pmodel_url the URL of the serialized model
+     * @param g2pmodel_url
+     *            the URL of the serialized model
      * @throws IOException
      */
-    public Decoder(URL g2pmodel_url) throws IOException {
+    public G2PConverter(URL g2pmodel_url) throws IOException {
         g2pmodel = ImmutableFst.loadModel(g2pmodel_url.openStream());
         init();
     }
@@ -88,9 +91,10 @@ public class Decoder {
      * Create a decoder by loading the serialized model from a specified
      * filename
      * 
-     * @param g2pmodel_file the filename of the serialized model
+     * @param g2pmodel_file
+     *            the filename of the serialized model
      */
-    public Decoder(String g2pmodel_file) {
+    public G2PConverter(String g2pmodel_file) {
         g2pmodel = ImmutableFst.loadModel(g2pmodel_file);
         init();
     }
@@ -119,30 +123,13 @@ public class Decoder {
     }
 
     /**
-     * Initialize clusters
-     */
-    @SuppressWarnings("unchecked")
-    private void loadClusters(String[] syms) {
-        clusters = new ArrayList[syms.length];
-        for (int i = 0; i < syms.length; i++) {
-            clusters[i] = null;
-        }
-        for (int i = 2; i < syms.length; i++) {
-            String sym = syms[i];
-            if (sym.contains(tie)) {                
-            	String split[] = sym.split(Pattern.quote(tie));
-                ArrayList<String> cluster = new ArrayList<String>(Arrays.asList(split));
-                clusters[i] = cluster;
-            }
-        }
-    }
-
-    /**
      * Phoneticize a word
      * 
-     * @param entry the word to phoneticize transformed to an ArrayList of
-     *            Strings (each element hold a single character)
-     * @param nbest the number of distinct pronunciations to return
+     * @param entry
+     *            the word to phoneticize transformed to an ArrayList of Strings
+     *            (each element hold a single character)
+     * @param nbest
+     *            the number of distinct pronunciations to return
      * @return the pronunciation(s) of the input word
      */
     public ArrayList<Path> phoneticize(ArrayList<String> entry, int nbest) {
@@ -165,7 +152,7 @@ public class Decoder {
         }
         // result = NShortestPaths.get(result, nbest, false);
         result = RmEpsilon.get(result);
-        ArrayList<Path> paths = Decoder.findAllPaths(result, nbest, skipSeqs,
+        ArrayList<Path> paths = findAllPaths(result, nbest, skipSeqs,
                 tie);
 
         return paths;
@@ -174,8 +161,10 @@ public class Decoder {
     /**
      * Phoneticize a word
      * 
-     * @param entry the word to phoneticize
-     * @param nbest the number of distinct pronunciations to return
+     * @param entry
+     *            the word to phoneticize
+     * @param nbest
+     *            the number of distinct pronunciations to return
      * @return the pronunciation(s) of the input word
      */
     public ArrayList<Path> phoneticize(String word, int nbest) {
@@ -193,7 +182,8 @@ public class Decoder {
      * Transforms an input spelling/pronunciation into an equivalent FSA, adding
      * extra arcs as needed to accommodate clusters.
      * 
-     * @param entry the input vector
+     * @param entry
+     *            the input vector
      * @return the created fst
      */
     private Fst entryToFSA(ArrayList<String> entry) {
@@ -253,21 +243,25 @@ public class Decoder {
     /**
      * Finds nbest paths in an Fst returned by NShortestPaths operation
      * 
-     * @param fst the input fst
-     * @param nbest the number of paths to return 
-     * @param skipSeqs the sequences to ignore
-     * @param tie the separator symbol 
-     * @return the paths 
+     * @param fst
+     *            the input fst
+     * @param nbest
+     *            the number of paths to return
+     * @param skipSeqs
+     *            the sequences to ignore
+     * @param tie
+     *            the separator symbol
+     * @return the paths
      */
     @SuppressWarnings("unchecked")
-    public static ArrayList<Path> findAllPaths(Fst fst, int nbest,
+    private ArrayList<Path> findAllPaths(Fst fst, int nbest,
             HashSet<String> skipSeqs, String tie) {
         Semiring semiring = fst.getSemiring();
 
         // ArrayList<Path> finalPaths = new ArrayList<Path>();
         HashMap<String, Path> finalPaths = new HashMap<String, Path>();
         HashMap<State, Path> paths = new HashMap<State, Path>();
-        ArrayList<State> queue = new ArrayList<State>();
+        Queue<State> queue = new LinkedList<State>();
         Path p = new Path(fst.getSemiring());
         p.setCost(semiring.one());
         paths.put(fst.getStart(), p);
@@ -275,8 +269,8 @@ public class Decoder {
         queue.add(fst.getStart());
 
         String[] osyms = fst.getOsyms();
-        while (queue.size() > 0) {
-            State s = queue.remove(0);
+        while (!queue.isEmpty()) {
+            State s = queue.remove();
             Path currentPath = paths.get(s);
 
             if (s.getFinalWeight() != semiring.zero()) {
@@ -334,9 +328,22 @@ public class Decoder {
     }
 
     /**
-     * Get the g2p model's input symbols 
+     * Initialize clusters
      */
-    public String[] getModelIsyms() {
-        return g2pmodel.getIsyms();
+    @SuppressWarnings("unchecked")
+    private void loadClusters(String[] syms) {
+        clusters = new ArrayList[syms.length];
+        for (int i = 0; i < syms.length; i++) {
+            clusters[i] = null;
+        }
+        for (int i = 2; i < syms.length; i++) {
+            String sym = syms[i];
+            if (sym.contains(tie)) {
+                String split[] = sym.split(Pattern.quote(tie));
+                ArrayList<String> cluster = new ArrayList<String>(
+                        Arrays.asList(split));
+                clusters[i] = cluster;
+            }
+        }
     }
 }

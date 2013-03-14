@@ -15,7 +15,7 @@ package edu.cmu.sphinx.linguist.dictionary;
 import edu.cmu.sphinx.linguist.acoustic.Context;
 import edu.cmu.sphinx.linguist.acoustic.Unit;
 import edu.cmu.sphinx.linguist.acoustic.UnitManager;
-import edu.cmu.sphinx.linguist.g2p.Decoder;
+import edu.cmu.sphinx.linguist.g2p.G2PConverter;
 import edu.cmu.sphinx.linguist.g2p.Path;
 import edu.cmu.sphinx.util.Timer;
 import edu.cmu.sphinx.util.TimerPool;
@@ -86,7 +86,7 @@ public class FastDictionary implements Dictionary {
     // -------------------------------
     protected Map<String, String> dictionary;
     protected Map<String, Word> wordDictionary;
-    protected Decoder g2pDecoder;
+    protected G2PConverter g2pDecoder;
 
     protected final static String FILLER_TAG = "-F-";
     protected Set<String> fillerWords;
@@ -237,7 +237,7 @@ public class FastDictionary implements Dictionary {
             loadDictionary(fillerDictionaryFile.openStream(), true);
 
             if(g2pModelFile != null && !g2pModelFile.getPath().equals("")) {
-                g2pDecoder = new Decoder(g2pModelFile);
+                g2pDecoder = new G2PConverter(g2pModelFile);
             }
             loadTimer.stop();
         }

@@ -14,6 +14,7 @@
 package edu.cmu.sphinx.fst.operations;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 import edu.cmu.sphinx.fst.Arc;
 import edu.cmu.sphinx.fst.Fst;
@@ -31,7 +32,7 @@ public class Connect {
      * Calculates the coaccessible states of an fst
      */
     private static void calcCoAccessible(Fst fst, State state,
-            ArrayList<ArrayList<State>> paths, ArrayList<State> coaccessible) {
+            ArrayList<ArrayList<State>> paths, HashSet<State> coaccessible) {
         // hold the coaccessible added in this loop
         ArrayList<State> newCoAccessibles = new ArrayList<State>();
         for (ArrayList<State> path : paths) {
@@ -75,9 +76,9 @@ public class Connect {
     /**
      * The depth first search recursion
      */
-    private static State dfs(Fst fst, State start,
+    private static State depthFirstSearchNext(Fst fst, State start,
             ArrayList<ArrayList<State>> paths, ArrayList<Arc>[] exploredArcs,
-            ArrayList<State> accessible) {
+            HashSet<State> accessible) {
         int lastPathIndex = paths.size() - 1;
 
         ArrayList<Arc> currentExploredArcs = exploredArcs[start.getId()];
@@ -100,7 +101,7 @@ public class Connect {
                     addExploredArc(start.getId(), arc, exploredArcs);
                     // detect self loops
                     if (next.getId() != start.getId()) {
-                        dfs(fst, next, paths, exploredArcs, accessible);
+                        depthFirstSearchNext(fst, next, paths, exploredArcs, accessible);
                     }
                 }
             }
@@ -126,14 +127,14 @@ public class Connect {
     /**
      * Initialization of a depth first search recursion
      */
-    private static void depthFirstSearch(Fst fst, ArrayList<State> accessible,
+    private static void depthFirstSearch(Fst fst, HashSet<State> accessible,
             ArrayList<ArrayList<State>> paths, ArrayList<Arc>[] exploredArcs,
-            ArrayList<State> coaccessible) {
+            HashSet<State> coaccessible) {
         State currentState = fst.getStart();
         State nextState = currentState;
         do {
             if (!accessible.contains(currentState)) {
-                nextState = dfs(fst, currentState, paths, exploredArcs,
+                nextState = depthFirstSearchNext(fst, currentState, paths, exploredArcs,
                         accessible);
             }
         } while (currentState.getId() != nextState.getId());
@@ -158,32 +159,25 @@ public class Connect {
             return;
         }
 
-        ArrayList<State> accessible = new ArrayList<State>();
-        ArrayList<State> coaccessible = new ArrayList<State>();
+        HashSet<State> accessible = new HashSet<State>();
+        HashSet<State> coaccessible = new HashSet<State>();
         @SuppressWarnings("unchecked")
         ArrayList<Arc>[] exploredArcs = new ArrayList[fst.getNumStates()];
-        for (int i = 0; i < fst.getNumStates(); i++) {
-            exploredArcs[i] = null;
-        }
+
         ArrayList<ArrayList<State>> paths = new ArrayList<ArrayList<State>>();
         paths.add(new ArrayList<State>());
 
         depthFirstSearch(fst, accessible, paths, exploredArcs, coaccessible);
 
-        ArrayList<State> toDelete = new ArrayList<State>();
+        HashSet<State> toDelete = new HashSet<State>();
 
-        int numStates = fst.getNumStates();
-        for (int i = 0; i < numStates; i++) {
+        for (int i = 0; i < fst.getNumStates(); i++) {
             State s = fst.getState(i);
             if (!(accessible.contains(s) || coaccessible.contains(s))) {
                 toDelete.add(s);
             }
         }
 
-        for (State sid : toDelete) {
-            fst.deleteState(sid);
-        }
-
-        fst.remapStateIds();
+        fst.deleteStates(toDelete);
     }
 }
