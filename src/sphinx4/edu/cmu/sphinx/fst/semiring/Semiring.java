@@ -104,7 +104,7 @@ public abstract class Semiring implements Serializable {
      * 
      */
     public boolean naturalLess(float w1, float w2) {
-        return (this.plus(w1, w2) == w1) && (w1 != w2);
+        return (plus(w1, w2) == w1) && (w1 != w2);
     }
 
 }

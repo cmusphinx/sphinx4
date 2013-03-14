@@ -14,8 +14,10 @@
 package edu.cmu.sphinx.fst.operations;
 
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
+import java.util.PriorityQueue;
 
 import edu.cmu.sphinx.fst.Arc;
 import edu.cmu.sphinx.fst.Fst;
@@ -27,9 +29,12 @@ import edu.cmu.sphinx.fst.semiring.Semiring;
  * N-shortest paths operation.
  * 
  * See: M. Mohri, M. Riley,
- * "An Efficient Algorithm for the n-best-strings problem", Proceedings of
- * the International Conference on Spoken Language Processing 2002 (ICSLP
- * '02).
+ * "An Efficient Algorithm for the n-best-strings problem", Proceedings of the
+ * International Conference on Spoken Language Processing 2002 (ICSLP '02).
+ * 
+ * See: M. Mohri,
+ * "Semiring Framework and Algorithms for Shortest-Distance Problems", Journal
+ * of Automata, Languages and Combinatorics, 7(3), pp. 321-350, 2002.
  * 
  * @author John Salatas <jsalatas@users.sourceforge.net>
  * 
@@ -39,14 +44,10 @@ public class NShortestPaths {
     }
 
     /**
-     * Calculates the shortest distances from each state to the final.
+     * Calculates the shortest distances from each state to the final
      * 
-     * See: M. Mohri,
-     * "Semiring Framework and Algorithms for Shortest-Distance Problems",
-     * Journal of Automata, Languages and Combinatorics, 7(3), pp. 321-350,
-     * 2002.
-     * 
-     * @param fst the fst to calculate the shortest distances
+     * @param fst
+     *            the fst to calculate the shortest distances
      * @return the array containing the shortest distances
      */
     public static float[] shortestDistance(Fst fst) {
@@ -68,7 +69,7 @@ public class NShortestPaths {
         d[reversed.getStart().getId()] = semiring.one();
         r[reversed.getStart().getId()] = semiring.one();
 
-        while (!queue.isEmpty()) {            
+        while (!queue.isEmpty()) {
             State q = queue.iterator().next();
             queue.remove(q);
 
@@ -98,9 +99,12 @@ public class NShortestPaths {
     /**
      * Calculates the n-best shortest path from the initial to the final state.
      * 
-     * @param fst the fst to calculate the nbest shortest paths
-     * @param n number of best paths to return
-     * @param determinize if true the input fst will bwe determinized prior the
+     * @param fst
+     *            the fst to calculate the nbest shortest paths
+     * @param n
+     *            number of best paths to return
+     * @param determinize
+     *            if true the input fst will bwe determinized prior the
      *            operation
      * @return an fst containing the n-best shortest paths
      */
@@ -116,22 +120,45 @@ public class NShortestPaths {
         if (determinize) {
             fstdet = Determinize.get(fst);
         }
-        Semiring semiring = fstdet.getSemiring();
+        final Semiring semiring = fstdet.getSemiring();
         Fst res = new Fst(semiring);
         res.setIsyms(fstdet.getIsyms());
         res.setOsyms(fstdet.getOsyms());
 
-        float[] d = shortestDistance(fstdet);
+        final float[] d = shortestDistance(fstdet);
 
         ExtendFinal.apply(fstdet);
 
         int[] r = new int[fstdet.getNumStates()];
 
-        LinkedHashSet<Pair<State, Float>> queue = new LinkedHashSet<Pair<State, Float>>();
+        PriorityQueue<Pair<State, Float>> queue = new PriorityQueue<Pair<State, Float>>(
+                10, new Comparator<Pair<State, Float>>() {
+
+                    public int compare(Pair<State, Float> o1,
+                            Pair<State, Float> o2) {
+                        float previous = o1.getRight();
+                        float d1 = d[o1.getLeft().getId()];
+
+                        float next = o2.getRight();
+                        float d2 = d[o2.getLeft().getId()];
+
+                        float a1 = semiring.times(next, d2);
+                        float a2 = semiring.times(previous, d1);
+
+                        if (semiring.naturalLess(a1, a2))
+                            return 1;
+
+                        if (a1 == a2)
+                            return 0;
+
+                        return -1;
+                    }
+                });
+
         HashMap<Pair<State, Float>, Pair<State, Float>> previous = new HashMap<Pair<State, Float>, Pair<State, Float>>(
-                fst.getNumStates(), 1.f);
+                fst.getNumStates());
         HashMap<Pair<State, Float>, State> stateMap = new HashMap<Pair<State, Float>, State>(
-                fst.getNumStates(), 1.f);
+                fst.getNumStates());
 
         State start = fstdet.getStart();
         Pair<State, Float> item = new Pair<State, Float>(start, semiring.one());
@@ -139,7 +166,7 @@ public class NShortestPaths {
         previous.put(item, null);
 
         while (!queue.isEmpty()) {
-            Pair<State, Float> pair = getLess(queue, d, semiring);
+            Pair<State, Float> pair = queue.remove();
             State p = pair.getLeft();
             Float c = pair.getRight();
 
@@ -153,10 +180,9 @@ public class NShortestPaths {
                 // add the incoming arc from previous to current
                 State previouState = stateMap.get(previous.get(pair));
                 State previousOldState = previous.get(pair).getLeft();
-                int numArcs = previousOldState.getNumArcs();
-                for (int j = 0; j < numArcs; j++) {
+                for (int j = 0; j < previousOldState.getNumArcs(); j++) {
                     Arc a = previousOldState.getArc(j);
-                    if (a.getNextState().getId() == p.getId()) {
+                    if (a.getNextState().equals(p)) {
                         previouState.addArc(new Arc(a.getIlabel(), a
                                 .getOlabel(), a.getWeight(), s));
                     }
@@ -166,14 +192,12 @@ public class NShortestPaths {
             Integer stateIndex = p.getId();
             r[stateIndex]++;
 
-            if ((r[stateIndex] == n)
-                    && (p.getFinalWeight() != res.getSemiring().zero())) {
+            if ((r[stateIndex] == n) && (p.getFinalWeight() != semiring.zero())) {
                 break;
             }
 
             if (r[stateIndex] <= n) {
-                int numArcs = p.getNumArcs();
-                for (int j = 0; j < numArcs; j++) {
+                for (int j = 0; j < p.getNumArcs(); j++) {
                     Arc a = p.getArc(j);
                     float cnew = semiring.times(c, a.getWeight());
                     Pair<State, Float> next = new Pair<State, Float>(
@@ -184,28 +208,6 @@ public class NShortestPaths {
             }
         }
 
-        return res;
-    }
-
-    /**
-     * Removes from the queue the pair with the lower path cost
-     */
-    private static Pair<State, Float> getLess(
-            LinkedHashSet<Pair<State, Float>> queue, float[] d, Semiring semiring) {
-        Pair<State, Float> res = queue.iterator().next();
-
-        for (Pair<State, Float> p : queue) {
-            State previousState = res.getLeft();
-            State nextState = p.getLeft();
-            float previous = res.getRight();
-            float next = p.getRight();
-            if (semiring.naturalLess(
-                    semiring.times(next, d[nextState.getId()]),
-                    semiring.times(previous, d[previousState.getId()]))) {
-                res = p;
-            }
-        }
-        queue.remove(res);
         return res;
     }
 }
