@@ -49,6 +49,22 @@ public class DoubleData extends OVector implements Data {
         this.firstSampleNumber = firstSampleNumber;
     }
 
+    /**
+     * Constructs a Data object with the given values, collect time, and first sample number.
+     *
+     * @param values            the data values
+     * @param sampleRate        the sample rate of the data
+     * @param collectTime       the time at which this data is collected
+     * @param firstSampleNumber the position of the first sample in the original data
+     */
+    public DoubleData(double[] values, int sampleRate,
+                      long collectTime, long firstSampleNumber) {
+        super(values);
+
+        this.sampleRate = sampleRate;
+        this.collectTime = collectTime;
+        this.firstSampleNumber = firstSampleNumber;
+    }
 
     /**
      * @return a string that describes the data.
