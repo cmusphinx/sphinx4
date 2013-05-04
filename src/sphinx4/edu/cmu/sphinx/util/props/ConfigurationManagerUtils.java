@@ -21,8 +21,8 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.logging.Handler;
+import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
-import java.util.logging.LogManager;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -179,31 +179,13 @@ public final class ConfigurationManagerUtils {
      * Configures a logger to use the sphinx4-log-formatter.
      */
     public static void configureLogger(Logger logger) {
-        LogManager logManager = LogManager.getLogManager();
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
 
-        Properties props = new Properties();
-        props.setProperty(".edu.cmu.sphinx.level", "FINEST");
-        props.setProperty("handlers", "java.util.logging.ConsoleHandler");
-        props.setProperty("java.util.logging.ConsoleHandler.level", "FINEST");
-        props.setProperty("java.util.logging.ConsoleHandler.formatter",
-                          "edu.cmu.sphinx.util.SphinxLogFormatter");
-        try {
-            props.store(bos, "");
-            bos.close();
-            ByteArrayInputStream bis = new ByteArrayInputStream(bos.toByteArray());
-            logManager.readConfiguration(bis);
-            bis.close();
-        } catch (IOException ioe) {
-            System.err.println("Can't configure logger, using default configuration");
-        }
+        logger.setUseParentHandlers(false);
 
-        // Now we find the SphinxLogFormatter that the log manager created
-        // and configure it.
-        Handler[] handlers = logger.getHandlers();
-        for (Handler handler : handlers) {
-            handler.setFormatter(new SphinxLogFormatter());
-        }
+        ConsoleHandler handler = new ConsoleHandler();
+        handler.setFormatter(new SphinxLogFormatter());
+                
+        logger.addHandler(handler);
     }
 
 

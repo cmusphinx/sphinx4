@@ -11,7 +11,6 @@
     <property name="silenceInsertionProbability" value=".1"/>
     <property name="frontend" value="epFrontEnd"/>
     <property name="recognizer" value="recognizer"/>
-    <property name="showCreations" value="false"/>
 
     <component name="recognizer" 
                           type="edu.cmu.sphinx.recognizer.Recognizer">
