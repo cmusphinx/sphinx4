@@ -44,6 +44,22 @@ public class FloatData implements Data, Cloneable {
         this.firstSampleNumber = firstSampleNumber;
     }
 
+    /**
+     * Constructs a Data object with the given values, sample rate, collect time, and first sample number.
+     *
+     * @param values            the data values
+     * @param sampleRate        the sample rate of the data
+     * @param collectTime       the time at which this data is collected
+     * @param firstSampleNumber the position of the first sample in the original data
+     */
+    public FloatData(float[] values, int sampleRate,
+                     long collectTime, long firstSampleNumber) {
+        this.values = values;
+        this.sampleRate = sampleRate;
+        this.collectTime = collectTime;
+        this.firstSampleNumber = firstSampleNumber;
+    }
+
 
     /**
      * @return the values of this data.
