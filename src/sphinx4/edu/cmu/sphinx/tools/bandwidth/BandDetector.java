@@ -28,37 +28,41 @@ import edu.cmu.sphinx.frontend.window.RaisedCosineWindower;
  * bandwidth issues leading to the accuracy issues.
  * 
  * The detector simply looks for energies in different mel bands and using the
- * threshold it decides if we have high-energy signal.
- * 
- * It doesn't make a decision on files less than 2 seconds because this seems to
- * be unreliable.
- * 
+ * threshold it decides if we have cut of the frequencies signal. On every frame
+ * we find the maximum energy band, then we just control that energy doesn't
+ * fall too fast in upper bands.
  */
 public class BandDetector {
 
     static final int bands = 40;
-    // Filter 35 starts from 5531 Hz
-    static final int lowEdge = 35;
-    // Main threshold, selected during the experiments
-    static final double noSignalCutoff = 2e-2;
-    // Don't expect to detect that small
-    static final int minLength = 150;
+
+    // From 4750 to 6800 Hz
+    static final int highRangeStart = 35;
+    static final int highRangeEnd = 39;
+
+    // From 2156 to 3687 Hz
+    static final int lowRangeStart = 23;
+    static final int lowRangeEnd = 29;
+
+    // Thresholds, selected during the experiments, about -30dB
+    static final double noSignalLevel = 0.02;
+    static final double signalLevel = 0.5;
+
     // Don't care if intensity is very low
     static final double lowIntensity = 1e+5;
-    // To avoid zero energy
-    static final double lowestIntensity = 1e-5;
 
     private FrontEnd frontend;
     private AudioFileDataSource source;
 
     public BandDetector() {
 
+        // standard frontend
         source = new AudioFileDataSource(320, null);
         RaisedCosineWindower windower = new RaisedCosineWindower(0.97f,
                 25.625f, 10.0f);
         DiscreteFourierTransform fft = new DiscreteFourierTransform(512, false);
-        MelFrequencyFilterBank filterbank = new MelFrequencyFilterBank(200,
-                8000, bands);
+        MelFrequencyFilterBank filterbank = new MelFrequencyFilterBank(130.0,
+                6800.0, bands);
 
         ArrayList<DataProcessor> list = new ArrayList<DataProcessor>();
         list.add(source);
@@ -99,36 +103,45 @@ public class BandDetector {
         source.setAudioFile(new File(file), "");
 
         Data data;
-        int count = 0;
         double energy[] = new double[bands];
 
         while ((data = frontend.getData()) != null) {
             if (data instanceof DoubleData) {
 
-                double maxIntensity = lowestIntensity;
+                double maxIntensity = lowIntensity;
                 double[] frame = ((DoubleData) data).getValues();
 
                 for (int i = 0; i < bands; i++)
                     maxIntensity = Math.max(maxIntensity, frame[i]);
 
-                if (maxIntensity < lowIntensity) {
+                if (maxIntensity <= lowIntensity) {
                     continue;
                 }
 
                 for (int i = 0; i < bands; i++) {
                     energy[i] = Math.max(frame[i] / maxIntensity, energy[i]);
                 }
-                count++;
             }
         }
 
-        boolean lowBandwidth = count > minLength ? true : false;
-        for (int i = lowEdge; i < bands; i++) {
-            if (energy[i] > noSignalCutoff) {
-                lowBandwidth = false;
-                break;
-            }
-        }
-        return lowBandwidth;
+        double maxLow = max(energy, lowRangeStart, lowRangeEnd);
+        double maxHi = max(energy, highRangeStart, highRangeEnd);
+
+        // System.out.format("%f %f\n", maxHi, maxLow);
+        // for (int i = 0; i < bands; i++)
+        // System.out.format("%.4f ", energy[i]);
+        // System.out.println();
+
+        if (maxHi < noSignalLevel && maxLow > signalLevel)
+            return true;
+
+        return false;
+    }
+
+    private double max(double[] energy, int start, int end) {
+        double max = 0;
+        for (int i = start; i <= end; i++)
+            max = Math.max(max, energy[i]);
+        return max;
     }
 }

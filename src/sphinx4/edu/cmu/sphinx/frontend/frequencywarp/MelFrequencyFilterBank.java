@@ -237,6 +237,7 @@ public class MelFrequencyFilterBank extends BaseDataProcessor {
             if (initialFreqBin < leftEdge[i]) {
                 initialFreqBin += deltaFreq;
             }
+            //System.out.format("%d %f %f\n", i, leftEdge[i], rightEdge[i]);
             this.filter[i] = new MelFilter(leftEdge[i], centerFreq[i],
                     rightEdge[i], initialFreqBin, deltaFreq);
         }
