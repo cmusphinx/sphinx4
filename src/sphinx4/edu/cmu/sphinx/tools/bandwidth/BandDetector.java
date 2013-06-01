@@ -31,6 +31,12 @@ import edu.cmu.sphinx.frontend.window.RaisedCosineWindower;
  * threshold it decides if we have cut of the frequencies signal. On every frame
  * we find the maximum energy band, then we just control that energy doesn't
  * fall too fast in upper bands.
+ * 
+ * A paper on the subject is "DETECTING BANDLIMITED AUDIO IN BROADCAST TELEVISION SHOWS"
+ * by by Mark C. Fuhs, Qin Jin and Tanja Schultz where spline approximation is proposed
+ * for detection. However, the paper seems to contain a fundamental flaw. The
+ * decision is made on average spectrum, not per-frame. This probably leads
+ * to omission of the events in high frequency which might signal about wide band.
  */
 public class BandDetector {
 
