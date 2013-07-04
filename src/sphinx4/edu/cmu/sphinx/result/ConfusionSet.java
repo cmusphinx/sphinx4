@@ -116,8 +116,7 @@ public class ConfusionSet extends TreeMap<Double, Set<WordResult>> {
     public WordResult getWordResult(String word) {
         for (Set<WordResult> wordSet : values()) {
             for (WordResult wordResult : wordSet) {                
-                String resultSpelling = wordResult.toString();
-                //= wordResult.getPronunciation().getWord().getSpelling();
+            	String resultSpelling = wordResult.getPronunciation().getWord().getSpelling();
                 if (resultSpelling.equals(word)) {
                     return wordResult;
                 }
