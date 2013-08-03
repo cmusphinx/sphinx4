@@ -83,7 +83,8 @@ public class DiscreteCosineTransform extends BaseDataProcessor {
         return input;
     }
 
-
+    final static double LOG_FLOOR = 1e-4;
+    
     /**
      * Process data, creating the mel cepstrum from an input spectrum frame.
      *
@@ -107,14 +108,7 @@ public class DiscreteCosineTransform extends BaseDataProcessor {
         }
         // first compute the log of the spectrum
         for (int i = 0; i < melspectrum.length; ++i) {
-            if (melspectrum[i] > 0) {
-                melspectrum[i] = Math.log(melspectrum[i]);
-            } else {
-                // in case melspectrum[i] isn't greater than 0
-                // instead of trying to compute a log we just
-                // assign a very small number
-                melspectrum[i] = -1.0e+5;
-            }
+            melspectrum[i] = Math.log(melspectrum[i] + LOG_FLOOR);
         }
 
         double[] cepstrum;
