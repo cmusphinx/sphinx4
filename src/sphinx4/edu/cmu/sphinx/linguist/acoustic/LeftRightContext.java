@@ -21,14 +21,6 @@ public class LeftRightContext extends Context {
     String stringRepresentation;
     final Unit[] leftContext;
     final Unit[] rightContext;
-    private static final boolean CACHING_CONTEXTS = true;
-    private static final Map<String, LeftRightContext> cache;
-
-    static {
-        if (CACHING_CONTEXTS) {
-            cache = new HashMap<String, LeftRightContext>();
-        }
-    }
 
     /**
      * Creates a LeftRightContext
@@ -44,10 +36,7 @@ public class LeftRightContext extends Context {
     /** Provides a string representation of a context */
     @Override
     public String toString() {
-        if (stringRepresentation == null) {
-            stringRepresentation = getStringRepresentation(leftContext, rightContext);
-        }
-        return stringRepresentation;
+        return getContextName(leftContext) + ',' + getContextName(rightContext);
     }
 
     /**
@@ -57,24 +46,8 @@ public class LeftRightContext extends Context {
      * @param rightContext the right context or null if no right context
      * @return a left right context
      */
-    public static LeftRightContext get(Unit[] leftContext, Unit[] rightContext) {
-        LeftRightContext context;
-        if (CACHING_CONTEXTS) {
-            String name = getStringRepresentation(leftContext, rightContext);
-
-            context = cache.get(name);
-            if (context == null) {
-                context = new LeftRightContext(leftContext, rightContext);
-                cache.put(name, context);
-            }
-        } else {
-            context = new LeftRightContext(leftContext, rightContext);
-        }
-        return context;
-    }
-
-    private static String getStringRepresentation(Unit[] leftContext, Unit[] rightContext) {
-        return getContextName(leftContext) + ',' + getContextName(rightContext);
+    public static LeftRightContext get(Unit[] leftContext, Unit[] rightContext) { 
+        return new LeftRightContext(leftContext, rightContext);
     }
 
     /**
