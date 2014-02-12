@@ -182,10 +182,20 @@ public final class ConfigurationManagerUtils {
 
         logger.setUseParentHandlers(false);
 
-        ConsoleHandler handler = new ConsoleHandler();
-        handler.setFormatter(new SphinxLogFormatter());
-                
-        logger.addHandler(handler);
+	boolean hasHandler = false;
+
+        for (Handler handler : logger.getHandlers()) {
+            if (handler.getFormatter() instanceof SphinxLogFormatter) {
+                hasHandler = true;
+                break;
+            }
+        }
+
+        if (!hasHandler) {
+            ConsoleHandler handler = new ConsoleHandler();
+            handler.setFormatter(new SphinxLogFormatter());
+            logger.addHandler(handler);
+        }
     }
 
 
