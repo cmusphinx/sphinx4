@@ -233,7 +233,7 @@ public class RaisedCosineWindower extends BaseDataProcessor {
                 dataList.add((DoubleData) next);
                 length += ((DoubleData) next).getValues().length;
             } else {
-                if (next instanceof DataEndSignal) {
+                if (next instanceof DataEndSignal || next instanceof SpeechEndSignal) {
                     utteranceEnd = next;
                     break;
                 }
