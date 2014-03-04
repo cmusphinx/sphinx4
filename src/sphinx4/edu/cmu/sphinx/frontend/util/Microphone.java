@@ -379,7 +379,8 @@ public class Microphone extends BaseDataProcessor {
                 float sec = ((float) msecPerRead) / 1000.f;
                 frameSizeInBytes =
                         (audioStream.getFormat().getSampleSizeInBits() / 8) *
-                                (int) (sec * audioStream.getFormat().getSampleRate());
+                                (int) (sec * audioStream.getFormat().getSampleRate()) *
+                                desiredFormat.getChannels();
 
                 logger.info("Frame size: " + frameSizeInBytes + " bytes");
             }
