@@ -31,18 +31,17 @@ public class TranscriberDemo {
         Configuration configuration = new Configuration();
 
         // Load model from the jar
-        configuration.setAcousticModelPath("resource:/WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz");
+        configuration.setAcousticModelPath("resource:/edu/cmu/sphinx/models/acoustic/wsj");
         
         // You can also load model from folder
         // configuration.setAcousticModelPath("file:en-us");
         
-        configuration.setDictionaryPath("resource:/WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz/dict/cmudict.0.6d");
-        
-        configuration.setLanguageModelPath("models/language/en-us.lm.dmp");
+        configuration.setDictionaryPath("resource:/edu/cmu/sphinx/models/acoustic/wsj/dict/cmudict.0.6d");
+        configuration.setLanguageModelPath("resource:/edu/cmu/sphinx/models/language/en-us.lm.dmp");
 
         StreamSpeechRecognizer recognizer = 
             new StreamSpeechRecognizer(configuration);
-        recognizer.startRecognition(new URL("file:src/apps/edu/cmu/sphinx/demo/aligner/10001-90210-01803.wav").openStream());
+        recognizer.startRecognition(new URL("file:./sphinx4-samples/src/main/resources/edu/cmu/sphinx/demo/aligner/10001-90210-01803.wav").openStream());
 
         SpeechResult result;
 

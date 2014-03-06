@@ -21,9 +21,9 @@ import edu.cmu.sphinx.api.LiveSpeechRecognizer;
 public class DialogDemo {
 
     private static final String ACOUSTIC_MODEL =
-        "resource:/WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz";
+        "resource:/edu/cmu/sphinx/models/acoustic/wsj";
     private static final String DICTIONARY_PATH =
-        "resource:/WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz/dict/cmudict.0.6d";
+        "resource:/edu/cmu/sphinx/models/acoustic/wsj/dict/cmudict.0.6d";
     private static final String GRAMMAR_PATH =
         "resource:/edu/cmu/sphinx/demo/dialog/";
     private static final String LANGUAGE_MODEL =
