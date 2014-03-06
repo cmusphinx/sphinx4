@@ -1,2 +1,0 @@
-Main-Class: edu.cmu.sphinx.demo.raw.RawEverything
-Class-Path: ../lib/sphinx4.jar ../bin/Transcriber.jar ../bin/HelloNGram.jar ../lib/TIDIGITS_8gau_13dCep_16k_40mel_130Hz_6800Hz.jar

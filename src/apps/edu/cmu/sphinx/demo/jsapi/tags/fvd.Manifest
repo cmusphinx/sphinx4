@@ -1,2 +1,0 @@
-Main-Class: edu.cmu.sphinx.demo.jsapi.tags.FeatureValueDemo
-Class-Path: ../lib/sphinx4.jar ../lib/jsapi-1.0-base.jar ../lib/jsapi.jar ../lib/tags.jar

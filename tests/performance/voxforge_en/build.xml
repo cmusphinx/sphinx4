@@ -17,9 +17,6 @@ Run ant with -Dskip=5 to do the standard 'quick' version of a test.
     <!-- *                                                        * -->
     <!-- ********************************************************** -->
     <property name="top_dir" value="../../.."/>
-    <path id="libs">
-        <fileset dir="lib" includes="${top_dir}/**/jsapi.jar"/>
-    </path>
     <property name="build_dir" value="${top_dir}/bld"/>
     <property name="classes_dir" value="${build_dir}"/>
     <property name="classpath" value="${classes_dir}:${top_dir}/lib/batch.jar"/>

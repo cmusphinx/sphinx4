@@ -19,33 +19,13 @@ Sphinx-4 1.0 Release Steps
 
 4) Create the binary and source distribution:
     - Download fresh copy of Sphinx-4 from sourceforge
-    - cd lib
-    - chmod a+x ./jsapi.sh
-    - ./jsapi.sh or ./jsapi.exe
-    - cd ..
     - ant deploy
-
-5) Deploy ZipCity webstart
-    - build deploy with 'ant -find demo.xml release_zipcity'
-    - release it to sourceforge with  'scripts/deployZipCity.sh'
-    - Test WebStart app (clear webstart cache, go to website, try it out)
 	
 6) Test the Binary Distribution:
     - jar xvf sphinx4-1.0-bin.zip
-    - cd lib
-    - chmod a+x jsapi.sh, ./jsapi.sh or ./jsapi.exe
-    - cd ..
-    - java -mx256m -jar bin/HelloWorld.jar
-    - java -mx312m -jar bin/HelloNGram.jar
-    - java -jar bin/ZipCity.jar
-    - java -jar bin/AudioTool.jar
-    - java -jar bin/Transcriber.jar
-    - java -mx200m -jar bin/Dialog.jar
-    - java -mx200m -jar bin/JSGFDemo.jar
-    - java -jar bin/FeatureValueDemo.jar
-    - java -jar bin/LiveConnectDemo.jar    
-    - java -mx200m -jar bin/Confidence.jar
-    - ant find demo.xml
+    - java -mx256m -jar bin/Transcriber.jar
+    - java -mx256m -jar bin/Dialog.jar
+    - java -mx256m -jar bin/Aligner.jar
     
     - check libs for proper output:
         - cd lib
@@ -63,16 +43,9 @@ Sphinx-4 1.0 Release Steps
     - cd ..
     - ant
     - ant javadoc
-    - java -mx256m -jar bin/HelloWorld.jar
-    - java -mx312m -jar bin/HelloNGram.jar
-    - java -jar bin/ZipCity.jar
-    - java -jar bin/AudioTool.jar
-    - java -jar bin/Transcriber.jar
-    - java -mx200m -jar bin/Dialog.jar
-    - java -mx200m -jar bin/JSGFDemo.jar
-    - java -jar bin/FeatureValueDemo.jar
-    - java -jar bin/LiveConnectDemo.jar
-    - java -mx200m -jar bin/Confidence.jar
+    - java -mx256m -jar bin/Transcriber.jar
+    - java -mx256m -jar bin/Dialog.jar
+    - java -mx256m -jar bin/Aligner.jar
 
     - check libs for proper output:
         - cd lib
@@ -80,14 +53,7 @@ Sphinx-4 1.0 Release Steps
         - java -jar WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz.jar
 	- java -jar WSJ_8gau_13dCep_8kHz_31mel_200Hz_3500Hz.jar
         - java -jar sphinx4.jar
-    - cd tests/live
-       be sure to test the playback for live and live-ep
-    - ant live
-    - ant live-ep
-    - ant live-free
-    - cd to /cardmatch demo
-    - ant run
-    - ant run-ep
+
     - Go through index.html, click through the links to make sure they are
       not broken. (or use 'linklint /@')
 

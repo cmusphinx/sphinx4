@@ -655,13 +655,6 @@ jar xvf sphinx4-{version}-bin.zip<br />jar xvf sphinx4-{version}-src.zip
       listed in the <a href="#download_and_install">Required
       Software</a> section.</p>
 
-      <p><b>Setup JSAPI 1.0</b></p>
-
-      <p>Before you build Sphinx-4, it is important to <a href=
-      "doc/jsapi_setup.html">setup your environment to support the
-      Java Speech API (JSAPI)</a>, because a number of tests and
-      demos rely on having JSAPI installed.</p>
-
       <p><b>Run ant</b></p>
 
       <p>To build Sphinx-4, at the command prompt change to the
@@ -732,12 +725,6 @@ ant -Daccess=private javadoc
         <code>src</code>-directory as source folders to your
         project.</li>
 
-        <li>Add <code>lib/js.jar</code>, <code>lib/tags.jar</code>
-        and <code>lib/jsapi.jar</code> to your project classpath.
-        Due to license restrictions <code>jsapi.jar</code> is
-        not shipped directly with Sphinx4 but can be easily created
-        by running <code>lib/jsapi.sh</code> (or
-        <code>lib/jsapi.bat</code> on windows) once.</li>
       </ol>To perform common tasks (like deployment of  the
       sphinx4.jar, the models or the demo-jars) directly from
       within your IDE you might also want to add the bundled
@@ -813,26 +800,9 @@ ant -Daccess=private javadoc
   
   <ul>
     <li><a href=
-    "src/apps/edu/cmu/sphinx/demo/zipcity/README.html">ZipCity
-    Demo</a>: a Java Web Start technology application that
-    recognizes spoken zip codes and locates the associated city and
-    state.</li>
-
-    <li><a href=
-    "src/apps/edu/cmu/sphinx/demo/jsapi/jsgf/README.html">JSGF
-    Demo</a>: a simple demo program showing how a program can swap
-    between multiple JSGF grammars.</li>
-
-    <li><a href=
-    "src/apps/edu/cmu/sphinx/demo/jsapi/dialog/README.html">Dialog
+    "src/apps/edu/cmu/sphinx/demo/dialog/README.html">Dialog
     Demo</a>: a demo program showing how a program can swap between
     multiple JSGF and dictation grammars.</li>
-
-    <li><a href=
-    "src/apps/edu/cmu/sphinx/demo/jsapi/tags/README.html">Action
-    Tags Demo</a>: a demo program showing how to use action tags
-    for post-processing of RuleParse objects obtained from JSGF
-    grammars.</li>
   </ul> 
 
   <p>There is also a <a href="tests/live/README.html">live-mode

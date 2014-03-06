@@ -1,6 +1,0 @@
-grammar jsgf.importtest;
-
-import  <jsgf.hello.simple>;
-
-public <greeting> = hello universe | <simple>;
-
