@@ -16,6 +16,7 @@ import edu.cmu.sphinx.linguist.acoustic.HMMState;
 
 
 /** Represents a hmmState in an SentenceHMMS */
+@SuppressWarnings("serial")
 public class NonEmittingHMMState extends HMMStateState {
 
     /**

@@ -143,7 +143,7 @@ public class DiscreteCosineTransform extends BaseDataProcessor {
     protected double[] applyMelCosine(double[] melspectrum) {
         // create the cepstrum
         double[] cepstrum = new double[cepstrumSize];
-        double period = (double) numberMelFilters;
+        double period = numberMelFilters;
         double beta = 0.5;
         // apply the melcosine filter
         for (int i = 0; i < cepstrum.length; i++) {

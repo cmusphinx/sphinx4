@@ -42,7 +42,7 @@ public class TokenHeapSearchManager extends WordPruningBreadthFirstSearchManager
     protected void setBestToken(Token token, SearchState state) {
         Object key = getStateKey(state);
 
-        TokenHeap th = (TokenHeap) bestTokenMap.get(key);
+        TokenHeap th = bestTokenMap.get(key);
         if (th == null) {
             th = new TokenHeap(maxTokenHeapSize);
             bestTokenMap.put(key, th);
@@ -56,7 +56,7 @@ public class TokenHeapSearchManager extends WordPruningBreadthFirstSearchManager
 
         // new way... if the heap for this state isn't full return
         // null, otherwise return the worst scoring token
-        TokenHeap th = (TokenHeap) bestTokenMap.get(key);
+        TokenHeap th = bestTokenMap.get(key);
         Token t;
 
         if (th == null) {

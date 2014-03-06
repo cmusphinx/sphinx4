@@ -80,7 +80,6 @@ public class NetworkLanguageModel implements LanguageModel {
      * edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util
      * .props.PropertySheet)
      */
-    @Override
     public void newProperties(PropertySheet ps) throws PropertyException {
 
         if (allocated) {
@@ -95,7 +94,6 @@ public class NetworkLanguageModel implements LanguageModel {
             maxDepth = 3;
     }
 
-    @Override
     public void allocate() throws IOException {
         allocated = true;
 
@@ -109,7 +107,6 @@ public class NetworkLanguageModel implements LanguageModel {
         cache = new LRUCache<WordSequence, Float>(1000);
     }
 
-    @Override
     public void deallocate() {
         allocated = false;
         try {
@@ -119,12 +116,10 @@ public class NetworkLanguageModel implements LanguageModel {
         }
     }
 
-    @Override
     public int getMaxDepth() {
         return maxDepth;
     }
 
-    @Override
     public float getProbability(WordSequence wordSequence) {
 
         Float probability = cache.get(wordSequence);
@@ -159,12 +154,10 @@ public class NetworkLanguageModel implements LanguageModel {
         return probability.floatValue();
     }
 
-    @Override
     public float getSmear(WordSequence wordSequence) {
         return 0.0f;
     }
 
-    @Override
     public Set<String> getVocabulary() {
         Set<String> result = new HashSet<String>();
         try {
@@ -185,11 +178,9 @@ public class NetworkLanguageModel implements LanguageModel {
         return result;
     }
 
-    @Override
     public void start() {
     }
 
-    @Override
     public void stop() {
     }
 }

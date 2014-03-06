@@ -16,6 +16,7 @@ package edu.cmu.sphinx.linguist.flat;
 import edu.cmu.sphinx.linguist.language.grammar.GrammarNode;
 
 /** Represents a non-emitting sentence hmm state */
+@SuppressWarnings("serial")
 public class GrammarState extends SentenceHMMState {
 
     private final GrammarNode grammarNode;

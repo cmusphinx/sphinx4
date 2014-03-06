@@ -60,7 +60,7 @@ public class AlignerGrammar extends Grammar {
 	}
 
 	@Override
-	protected GrammarNode createGrammar() {
+    protected GrammarNode createGrammar() {
 
 		logger.info("Creating Grammar");
 		initialNode = createGrammarNode(Dictionary.SILENCE_SPELLING);

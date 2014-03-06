@@ -34,7 +34,8 @@ public class JSGFRuleToken extends JSGFRule {
 		this.text = text;
 	}
 
-	public String toString() {
+	@Override
+    public String toString() {
 		if ((containsWhiteSpace(text)) || (text.indexOf('\\') >= 0)
 				|| (text.indexOf('"') >= 0)) {
 			StringBuilder stringBuilder = new StringBuilder(text);

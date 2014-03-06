@@ -169,6 +169,7 @@ public class SimpleTranscript implements Transcript {
      *
      * @return the string representation
      */
+    @Override
     public String toString() {
         String result = "";
 

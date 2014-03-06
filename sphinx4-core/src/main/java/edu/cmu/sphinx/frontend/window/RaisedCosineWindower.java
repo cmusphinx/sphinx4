@@ -132,7 +132,7 @@ public class RaisedCosineWindower extends BaseDataProcessor {
             double oneMinusAlpha = (1 - alpha);
             for (int i = 0; i < cosineWindow.length; i++) {
                 cosineWindow[i] = oneMinusAlpha -
-                        alpha * Math.cos(2 * Math.PI * i / ((double) cosineWindow.length - 1.0));
+                        alpha * Math.cos(2 * Math.PI * i / (cosineWindow.length - 1.0));
             }
         }
 

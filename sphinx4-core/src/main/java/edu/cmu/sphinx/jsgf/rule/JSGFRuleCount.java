@@ -45,7 +45,8 @@ public class JSGFRuleCount extends JSGFRule {
 		this.rule = rule;
 	}
 
-	public String toString() {
+	@Override
+    public String toString() {
 		if (count == OPTIONAL) {
 			return '[' + rule.toString() + ']';
 		}

@@ -62,7 +62,7 @@ public class Utils {
     /** Converts a byte array to a signed short value. */
     static public short toShort(byte[] bytes, boolean bigEndian) {
         if (bytes.length == 1) {
-            return (short) bytes[0];
+            return bytes[0];
         } else if (bigEndian) {
             return (short) ((bytes[0] << 8) | (0xff & bytes[1]));
         } else {

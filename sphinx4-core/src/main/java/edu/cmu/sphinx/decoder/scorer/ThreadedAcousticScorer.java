@@ -175,7 +175,6 @@ public class ThreadedAcousticScorer extends SimpleAcousticScorer {
                 for (int from = 0, to = jobSize; from < totalSize; from = to, to += jobSize) {
                     final List<T> scoringJob = scoreableList.subList(from, Math.min(to, totalSize));
                     tasks.add(new Callable<T>() {
-                        @Override
                         public T call() throws Exception {
                             return ThreadedAcousticScorer.super.doScoring(scoringJob, data);
                         }

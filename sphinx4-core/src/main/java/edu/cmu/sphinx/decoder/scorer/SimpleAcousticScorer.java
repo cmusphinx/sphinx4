@@ -67,7 +67,6 @@ public class SimpleAcousticScorer extends ConfigurableAdapter implements Acousti
      * @param scoreableList A list containing scoreable objects to be scored
      * @return The best scoring scoreable, or <code>null</code> if there are no more features to score
      */
-    @Override
     public Data calculateScores(List<? extends Scoreable> scoreableList) {
     	try {
             Data data;
@@ -88,7 +87,7 @@ public class SimpleAcousticScorer extends ConfigurableAdapter implements Acousti
 
             // apply optional score normalization
             if (scoreNormalizer != null && bestToken instanceof Token)
-                bestToken = scoreNormalizer.normalize(scoreableList, (Token)bestToken);
+                bestToken = scoreNormalizer.normalize(scoreableList, bestToken);
 
             return bestToken;
         } catch (Exception e) {
@@ -123,7 +122,6 @@ public class SimpleAcousticScorer extends ConfigurableAdapter implements Acousti
         // we don't treat the end-signal here, but extending classes might do
     }
 
-    @Override
     public void startRecognition() {
         if (useSpeechSignals == null) {
             Data firstData = getNextData();
@@ -145,7 +143,6 @@ public class SimpleAcousticScorer extends ConfigurableAdapter implements Acousti
         }
     }
 
-    @Override
     public void stopRecognition() {
         // nothing needs to be done here
     }
@@ -173,11 +170,9 @@ public class SimpleAcousticScorer extends ConfigurableAdapter implements Acousti
     // Even if we don't do any meaningful allocation here, we implement the methods because
     // most extending scorers do need them either.
     
-    @Override
     public void allocate() {
     }
 
-    @Override
     public void deallocate() {
     }
 }

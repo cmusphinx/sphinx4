@@ -129,16 +129,16 @@ public class DataUtil {
             int i = offset;
 
             for (int j = 0; j < doubleArray.length; j++) {
-                int val = (int) byteArray[i++];
+                int val = byteArray[i++];
                 if (!signedData) {
                     val &= 0xff; // remove the sign extension
                 }
                 for (int c = 1; c < bytesPerValue; c++) {
-                    int temp = (int) byteArray[i++] & 0xff;
+                    int temp = byteArray[i++] & 0xff;
                     val = (val << 8) + temp;
                 }
 
-                doubleArray[j] = (double) val;
+                doubleArray[j] = val;
             }
 
             return doubleArray;
@@ -178,19 +178,19 @@ public class DataUtil {
             int i = offset + bytesPerValue - 1;
 
             for (int j = 0; j < doubleArray.length; j++) {
-                int val = (int) data[i--];
+                int val = data[i--];
                 if (!signedData) {
                     val &= 0xff; // remove the sign extension
                 }
                 for (int c = 1; c < bytesPerValue; c++) {
-                    int temp = (int) data[i--] & 0xff;
+                    int temp = data[i--] & 0xff;
                     val = (val << 8) + temp;
                 }
 
                 // advance 'i' to the last byte of the next value
                 i += (bytesPerValue * 2);
 
-                doubleArray[j] = (double) val;
+                doubleArray[j] = val;
             }
 
             return doubleArray;
@@ -315,14 +315,14 @@ public class DataUtil {
         for (float val : data) {
             if (format == DECIMAL) {
                 dump.append(' ').append(formatDouble
-                    ((double)val,
+                    (val,
                         decimalIntegerDigits, decimalFractionDigits));
             } else if (format == HEXADECIMAL) {
                 int binary = Float.floatToRawIntBits(val);
                 dump.append(" 0x").append(Integer.toHexString(binary));
             } else if (format == SCIENTIFIC) {
                 dump.append(' ').append(Utilities.doubleToScientificString
-                    ((double)val, floatScientificFractionDigits));
+                    (val, floatScientificFractionDigits));
             }
         }
         return dump.toString();
@@ -376,7 +376,7 @@ public class DataUtil {
      */
     public static int getSamplesPerWindow(int sampleRate,
                                           float windowSizeInMs) {
-        return (int) (((float) sampleRate) * windowSizeInMs / 1000);
+        return (int) (sampleRate * windowSizeInMs / 1000);
     }
 
 
@@ -390,7 +390,7 @@ public class DataUtil {
      */
     public static int getSamplesPerShift(int sampleRate,
                                          float windowShiftInMs) {
-        return (int) (((float) sampleRate) * windowShiftInMs / 1000);
+        return (int) (sampleRate * windowShiftInMs / 1000);
     }
 
 

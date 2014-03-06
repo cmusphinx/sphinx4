@@ -101,6 +101,7 @@ public class TrainerDictionary extends FullDictionary {
 
 
     /** Prints out dictionary as a string. */
+    @Override
     public String toString() {
         return "DEFAULT";
     }

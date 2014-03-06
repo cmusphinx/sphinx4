@@ -145,8 +145,8 @@ public class JSGFRuleName extends JSGFRule {
 		return name;
 	}
 
-        @Override
-	public String toString() {
+	@Override
+    public String toString() {
 		return "<" + fullRuleName + ">";
 	}
 }

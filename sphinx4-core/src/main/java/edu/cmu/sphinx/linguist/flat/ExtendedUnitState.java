@@ -23,6 +23,7 @@ import edu.cmu.sphinx.linguist.acoustic.Unit;
  * combine the name and the pronunciation index we allow units with identical contexts in the same position in a
  * pronunciation to be combined.
  */
+@SuppressWarnings("serial")
 public class ExtendedUnitState extends UnitState {
 
     /**

@@ -101,7 +101,6 @@ public class WordActiveListFactory extends ActiveListFactory {
          *
          * @param token the token to add
          */
-        @Override
         public void add(Token token) {
             tokenList.add(token);
             if (bestToken == null || token.getScore() > bestToken.getScore()) {
@@ -116,7 +115,6 @@ public class WordActiveListFactory extends ActiveListFactory {
          * @param oldToken the token to replace (or null in which case, replace works like add).
          * @param newToken the new token to be placed in the list.
          */
-        @Override
         public void replace(Token oldToken, Token newToken) {
             add(newToken);
             if (oldToken != null) {
@@ -131,7 +129,6 @@ public class WordActiveListFactory extends ActiveListFactory {
          * @return a (possible new) active list
          */
 
-        @Override
         public ActiveList purge() {
             int fillerCount = 0;
             Map<Word, Integer> countMap = new HashMap<Word, Integer>();
@@ -183,7 +180,6 @@ public class WordActiveListFactory extends ActiveListFactory {
          *
          * @return the iterator for this token list
          */
-        @Override
         public Iterator<Token> iterator() {
             return tokenList.iterator();
         }
@@ -194,7 +190,6 @@ public class WordActiveListFactory extends ActiveListFactory {
          *
          * @return the set of tokens
          */
-        @Override
         public List<Token> getTokens() {
             return tokenList;
         }
@@ -205,7 +200,6 @@ public class WordActiveListFactory extends ActiveListFactory {
          *
          * @return the size of the active list
          */
-        @Override
         public final int size() {
             return tokenList.size();
         }
@@ -216,7 +210,6 @@ public class WordActiveListFactory extends ActiveListFactory {
          *
          * @return the beam threshold
          */
-        @Override
         public float getBeamThreshold() {
             return getBestScore() + logRelativeBeamWidth;
         }
@@ -227,7 +220,6 @@ public class WordActiveListFactory extends ActiveListFactory {
          *
          * @return the best score
          */
-        @Override
         public float getBestScore() {
             float bestScore = -Float.MAX_VALUE;
             if (bestToken != null) {
@@ -242,7 +234,6 @@ public class WordActiveListFactory extends ActiveListFactory {
          *
          * @param token the best scoring token
          */
-        @Override
         public void setBestToken(Token token) {
             bestToken = token;
         }
@@ -253,7 +244,6 @@ public class WordActiveListFactory extends ActiveListFactory {
          *
          * @return the best scoring token
          */
-        @Override
         public Token getBestToken() {
             return bestToken;
         }
@@ -262,7 +252,6 @@ public class WordActiveListFactory extends ActiveListFactory {
         /* (non-Javadoc)
         * @see edu.cmu.sphinx.decoder.search.ActiveList#createNew()
         */
-        @Override
         public ActiveList newInstance() {
             return WordActiveListFactory.this.newInstance();
         }

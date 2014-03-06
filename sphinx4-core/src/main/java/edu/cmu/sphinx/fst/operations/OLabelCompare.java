@@ -30,7 +30,6 @@ public class OLabelCompare implements Comparator<Arc> {
      * 
      * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
      */
-    @Override
     public int compare(Arc o1, Arc o2) {
         if(o1 == null) {
             return 1;

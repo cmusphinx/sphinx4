@@ -45,6 +45,7 @@ class NMaxGramBuffer extends NGramBuffer {
      * @param nthFollower which follower
      * @return the NGramProbability of the nth follower
      */
+    @Override
     public int getProbabilityID(int nthFollower) {
     	int nthPosition = 0;
     	
@@ -61,6 +62,7 @@ class NMaxGramBuffer extends NGramBuffer {
      * @param nthWordID the ID of the nth word
      * @return the NGramProbability of the given nth word
      */
+    @Override
     public NGramProbability findNGram(int nthWordID) {
 
         int mid, start = 0, end = getNumberNGrams();
@@ -89,6 +91,7 @@ class NMaxGramBuffer extends NGramBuffer {
      * @param nthFollower which follower
      * @return the NGramProbability of the nth follower
      */
+    @Override
     public NGramProbability getNGramProbability(int nthFollower) {
     	int nthPosition = 0, wordID = 0, probID = 0, backoffID = 0, firstNGram = 0;
 

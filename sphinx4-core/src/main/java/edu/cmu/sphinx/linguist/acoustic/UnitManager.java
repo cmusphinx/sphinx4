@@ -42,7 +42,6 @@ public class UnitManager implements Configurable {
         logger = Logger.getLogger(getClass().getName());
     }
 
-    @Override
     public void newProperties(PropertySheet ps) throws PropertyException {
         logger = ps.getLogger();
     }

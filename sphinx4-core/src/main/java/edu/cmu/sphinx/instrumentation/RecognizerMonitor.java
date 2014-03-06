@@ -59,7 +59,6 @@ public class RecognizerMonitor implements StateListener, Monitor {
     *
     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
     */
-    @Override
     public void newProperties(PropertySheet ps) throws PropertyException {
         initRecognizer((Recognizer) ps.getComponent(PROP_RECOGNIZER));
         allocatedMonitors = ps.getComponentList(PROP_ALLOCATED_MONITORS, Runnable.class);
@@ -77,7 +76,6 @@ public class RecognizerMonitor implements StateListener, Monitor {
         }
     }
 
-    @Override
     public void statusChanged(Recognizer.State status) {
         List<Runnable> runnableList = null;
         if (status == State.ALLOCATED) {

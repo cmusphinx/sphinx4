@@ -361,7 +361,7 @@ public class DiscreteFourierTransform extends BaseDataProcessor {
         if (!invert) {
             divisor = 1.0;
         } else {
-            divisor = (double) numberFftPoints;
+            divisor = numberFftPoints;
         }
 
         /**

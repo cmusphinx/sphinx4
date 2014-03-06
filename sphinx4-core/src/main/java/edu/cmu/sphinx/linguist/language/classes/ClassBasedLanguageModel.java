@@ -58,7 +58,6 @@ public class ClassBasedLanguageModel implements LanguageModel {
      *
      * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
      */
-    @Override
     public void newProperties(PropertySheet ps) throws PropertyException {
         if (allocated) {
             throw new PropertyException(
@@ -75,7 +74,6 @@ public class ClassBasedLanguageModel implements LanguageModel {
      *
      * @see edu.cmu.sphinx.linguist.language.ngram.LanguageModel#allocate()
      */
-    @Override
     public void allocate() throws IOException {
         if (!allocated) {
             allocated = true;
@@ -91,7 +89,6 @@ public class ClassBasedLanguageModel implements LanguageModel {
     *
     * @see edu.cmu.sphinx.linguist.language.ngram.LanguageModel#deallocate()
     */
-    @Override
     public void deallocate() throws IOException {
         allocated = false;
         classLM.deallocate();
@@ -102,14 +99,12 @@ public class ClassBasedLanguageModel implements LanguageModel {
     /**
      * Called before a recognition
      */
-    @Override
     public void start() {
     }
 
     /**
      * Called after a recognition
      */
-    @Override
     public void stop() {
     }
 
@@ -119,7 +114,6 @@ public class ClassBasedLanguageModel implements LanguageModel {
      *
      * @see edu.cmu.sphinx.linguist.language.ngram.LanguageModel#getProbability(edu.cmu.sphinx.linguist.WordSequence)
      */
-    @Override
     public float getProbability(WordSequence wordSequence) {
         Word[] classes = new Word[wordSequence.size()];
         float wordToClassProb = 0;
@@ -145,7 +139,6 @@ public class ClassBasedLanguageModel implements LanguageModel {
      * @param wordSequence the word sequence
      * @return the smear term associated with this word sequence
      */
-    @Override
     public float getSmear(WordSequence wordSequence) {
         return 0.0f; // TODO not implemented
     }
@@ -153,7 +146,6 @@ public class ClassBasedLanguageModel implements LanguageModel {
     /* (non-Javadoc)
      * @see edu.cmu.sphinx.linguist.language.ngram.LanguageModel#getVocabulary()
      */
-    @Override
     public Set<String> getVocabulary() {
         return vocabulary;
     }
@@ -163,7 +155,6 @@ public class ClassBasedLanguageModel implements LanguageModel {
      *
      * @return the maximum depth of the language mdoel
      */
-    @Override
     public int getMaxDepth() {
         return classLM.getMaxDepth();
     }

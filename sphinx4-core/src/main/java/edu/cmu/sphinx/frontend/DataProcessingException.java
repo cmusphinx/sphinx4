@@ -12,6 +12,7 @@
 package edu.cmu.sphinx.frontend;
 
 /** Thrown to indicate that a DataProcessor has problems processing incoming Data objects. */
+@SuppressWarnings("serial")
 public class DataProcessingException extends RuntimeException {
 
     /** Constructs a DataProcessingException with no detailed message. */

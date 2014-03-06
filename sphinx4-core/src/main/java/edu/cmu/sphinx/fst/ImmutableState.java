@@ -47,6 +47,7 @@ public class ImmutableState extends State {
      * 
      * @see edu.cmu.sphinx.fst.State#arcSort(java.util.Comparator)
      */
+    @Override
     public void arcSort(Comparator<Arc> cmp) {
         Arrays.sort(arcs, cmp);
     }
@@ -68,6 +69,7 @@ public class ImmutableState extends State {
      * @param index the position to the arcs' array
      * @param arc the arc value to set
      */
+    @Override
     public void setArc(int index, Arc arc) {
         arcs[index] = arc;
     }

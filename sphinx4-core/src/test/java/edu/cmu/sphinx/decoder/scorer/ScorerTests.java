@@ -30,6 +30,7 @@ import java.util.logging.Logger;
  */
 public class ScorerTests {
 
+    @SuppressWarnings("serial")
     Scoreable testToken = new Token(null, 0.f, 0.f, 0.f, 0.f) {
 
         @Override

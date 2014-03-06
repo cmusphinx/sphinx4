@@ -100,7 +100,6 @@ public class ModelInitializerLoader implements Loader {
     /** The logger for this class */
     private Logger logger;
 
-    @Override
     public void newProperties(PropertySheet ps) throws PropertyException {
         logMath = LogMath.getInstance();
         logger = ps.getLogger();
@@ -161,7 +160,6 @@ public class ModelInitializerLoader implements Loader {
         System.out.println("\t...");
     }
 
-    @Override
     public Map<String, Unit> getContextIndependentUnits() {
         return contextIndependentUnits;
     }
@@ -573,76 +571,61 @@ public class ModelInitializerLoader implements Loader {
         return pool;
     }
 
-    @Override
     public void load() throws IOException {
     }
 
-    @Override
     public Pool<float[]> getMeansPool() {
         return meansPool;
     }
 
-    @Override
     public Pool<float[][]> getMeansTransformationMatrixPool() {
         return meanTransformationMatrixPool;
     }
 
-    @Override
     public Pool<float[]> getMeansTransformationVectorPool() {
         return meanTransformationVectorPool;
     }
 
-    @Override
     public Pool<float[]> getVariancePool() {
         return variancePool;
     }
 
-    @Override
     public Pool<float[][]> getVarianceTransformationMatrixPool() {
         return varianceTransformationMatrixPool;
     }
 
-    @Override
     public Pool<float[]> getVarianceTransformationVectorPool() {
         return varianceTransformationVectorPool;
     }
 
-    @Override
     public Pool<float[]> getMixtureWeightPool() {
         return mixtureWeightsPool;
     }
 
-    @Override
     public Pool<float[][]> getTransitionMatrixPool() {
         return matrixPool;
     }
 
-    @Override
     public float[][] getTransformMatrix() {
         return null;
     }
 
-    @Override
     public Pool<Senone> getSenonePool() {
         return senonePool;
     }
 
-    @Override
     public int getLeftContextSize() {
         return CONTEXT_SIZE;
     }
 
-    @Override
     public int getRightContextSize() {
         return CONTEXT_SIZE;
     }
 
-    @Override
     public HMMManager getHMMManager() {
         return hmmManager;
     }
 
-    @Override
     public void logInfo() {
         logger.info("Sphinx3Loader");
         meansPool.logInfo(logger);
@@ -659,7 +642,6 @@ public class ModelInitializerLoader implements Loader {
         hmmManager.logInfo(logger);
     }
 
-    @Override
     public Properties getProperties() {
         return new Properties();
     }

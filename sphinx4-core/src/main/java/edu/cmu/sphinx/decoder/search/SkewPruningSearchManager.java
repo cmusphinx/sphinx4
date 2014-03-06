@@ -20,7 +20,7 @@ public class SkewPruningSearchManager extends
 	private Map<SearchState, Token> skewMap;
 
 	@Override
-	protected boolean allowExpansion(Token t) {
+    protected boolean allowExpansion(Token t) {
 		if (pruneHMM)
 			return skewPruneHMM(t);
 		return skewPruneWord(t);
@@ -33,11 +33,12 @@ public class SkewPruningSearchManager extends
      * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
      */
      @Override
-     public void newProperties(PropertySheet ps) throws PropertyException {
+    public void newProperties(PropertySheet ps) throws PropertyException {
     	 logger = ps.getLogger();
      }
    
-	protected void localStart() {
+	@Override
+    protected void localStart() {
 		skewMap = new HashMap<SearchState, Token>();
 	}
 

@@ -525,7 +525,7 @@ public class BinaryLoader {
                 if ((formatLength = readInt(stream, bigEndian)) == 0) {
                     break;
                 }
-                bytesRead += (long)stream.skipBytes(formatLength);
+                bytesRead += stream.skipBytes(formatLength);
             }
 
             // read log NGram segment size if present
@@ -572,11 +572,11 @@ public class BinaryLoader {
         for (int i = 2; i < maxNGram; i++) {
             if (numberNGrams[i] > 0 && i < maxNGram - 1) {
                 NGramOffset[i] = bytesRead;
-                bytesToSkip = (long) (numberNGrams[i] + 1) * (long) LargeNGramModel.BYTES_PER_NGRAM * (long) getBytesPerField();
+                bytesToSkip = (long) (numberNGrams[i] + 1) * (long) LargeNGramModel.BYTES_PER_NGRAM * getBytesPerField();
                 skipStreamBytes(stream, bytesToSkip);
             } else if (numberNGrams[i] > 0 && i == maxNGram - 1) {
                 NGramOffset[i] = bytesRead;
-                bytesToSkip = (long) (numberNGrams[i]) * (long) LargeNGramModel.BYTES_PER_NMAXGRAM * (long) getBytesPerField();
+                bytesToSkip = (long) (numberNGrams[i]) * (long) LargeNGramModel.BYTES_PER_NMAXGRAM * getBytesPerField();
                 skipStreamBytes(stream, bytesToSkip);
             }
         }
@@ -750,7 +750,7 @@ public class BinaryLoader {
      */
     private int readInt(DataInputStream stream, boolean bigEndian)
             throws IOException {
-        bytesRead += (long)4;
+        bytesRead += 4;
         if (bigEndian) {
             return stream.readInt();
         } else {
@@ -769,7 +769,7 @@ public class BinaryLoader {
      */
     private float readFloat(DataInputStream stream, boolean bigEndian)
             throws IOException {
-        bytesRead += (long)4;
+        bytesRead += 4;
         if (bigEndian) {
             return stream.readFloat();
         } else {

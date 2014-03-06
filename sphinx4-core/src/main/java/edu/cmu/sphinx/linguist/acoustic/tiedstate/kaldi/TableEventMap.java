@@ -3,8 +3,6 @@ package edu.cmu.sphinx.linguist.acoustic.tiedstate.kaldi;
 import java.util.ArrayList;
 import java.util.List;
 
-import edu.cmu.sphinx.linguist.acoustic.Unit;
-
 
 public class TableEventMap extends EventMapWithKey {
 
@@ -23,7 +21,6 @@ public class TableEventMap extends EventMapWithKey {
     /**
      *
      */
-    @Override
     public int map(int pdfClass, int[] context) {
         EventMap eventMap = table.get(getKeyValue(pdfClass, context));
         return eventMap.map(pdfClass, context);

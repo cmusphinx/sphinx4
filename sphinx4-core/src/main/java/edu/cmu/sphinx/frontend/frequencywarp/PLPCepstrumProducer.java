@@ -91,7 +91,7 @@ public class PLPCepstrumProducer extends BaseDataProcessor {
         double period = (double) 2 * numberPLPFilters;
 
         for (int i = 0; i <= LPCOrder; i++) {
-            double frequency = 2 * Math.PI * (double) i / period;
+            double frequency = 2 * Math.PI * i / period;
 
             for (int j = 0; j < numberPLPFilters; j++) {
                 cosine[i][j] = Math.cos(frequency * (j + 0.5));
@@ -191,7 +191,7 @@ public class PLPCepstrumProducer extends BaseDataProcessor {
     private double[] applyCosine(double[] plpspectrum) {
 
         double[] autocor = new double[LPCOrder + 1];
-        double period = (double) numberPLPFilters;
+        double period = numberPLPFilters;
         double beta = 0.5f;
 
         // apply the idct

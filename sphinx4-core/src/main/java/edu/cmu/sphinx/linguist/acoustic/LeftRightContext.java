@@ -12,10 +12,8 @@
 
 package edu.cmu.sphinx.linguist.acoustic;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /** Represents  the context for a unit */
+@SuppressWarnings("serial")
 public class LeftRightContext extends Context {
 
     String stringRepresentation;

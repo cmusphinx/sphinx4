@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Arrays;
 
 /** An real-valued observation. */
+@SuppressWarnings("serial")
 public class OVector implements Cloneable, Serializable {
 
     protected final double[] values;

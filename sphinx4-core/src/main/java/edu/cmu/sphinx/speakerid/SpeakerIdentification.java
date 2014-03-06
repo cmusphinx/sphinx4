@@ -13,7 +13,6 @@
 package edu.cmu.sphinx.speakerid;
 
 import java.io.FileInputStream;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -180,7 +179,6 @@ public class SpeakerIdentification implements Identification {
         return ret * (mat.getRowDimension() / 2);
     }
 
-    @Override
     /**
      * @param inputFileName The name of the file used for diarization
      * @return A cluster for each speaker found in the input file
@@ -196,7 +194,6 @@ public class SpeakerIdentification implements Identification {
         return cluster(features);
     }
 
-    @Override
     /**
      * @param features The feature vectors to be used for clustering
      * @return A cluster for each speaker detected based on the feature vectors provided
@@ -320,14 +317,13 @@ public class SpeakerIdentification implements Identification {
         for (i = 0; i < size; i++) {
             double[] converted = new double[length];
             for (int j = 0; j < length; j++)
-                converted[j] = (double) ((lst.get(i))[j]);
+                converted[j] = ((lst.get(i))[j]);
             ret.setRow(i, converted);
         }
         return ret;
     }
 
     void printMatrix(Array2DRowRealMatrix a) {
-        DecimalFormat df = new DecimalFormat("#.######");
         for (int i = 0; i < a.getRowDimension(); i++) {
             for (int j = 0; j < a.getColumnDimension(); j++)
                 System.out.print(a.getEntry(i, j) + " ");

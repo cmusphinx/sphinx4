@@ -21,6 +21,7 @@ import java.io.Serializable;
 
 /** Represents a hmmState in an SentenceHMMS */
 
+@SuppressWarnings("serial")
 public class HMMStateState extends SentenceHMMState
         implements Serializable, HMMSearchState, ScoreProvider {
 
@@ -46,7 +47,6 @@ public class HMMStateState extends SentenceHMMState
      *
      * @return the hmmState
      */
-    @Override
     public HMMState getHMMState() {
         return hmmState;
     }
@@ -75,7 +75,6 @@ public class HMMStateState extends SentenceHMMState
     }
 
     
-    @Override
     /**
      * Calculate the acoustic score for this state
      *

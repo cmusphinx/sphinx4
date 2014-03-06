@@ -167,6 +167,7 @@ public class ConcatFileDataSource extends StreamDataSource implements ReferenceS
     *
     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
     */
+    @Override
     public void newProperties(PropertySheet ps) throws PropertyException {
         super.newProperties(ps);
 
@@ -183,6 +184,7 @@ public class ConcatFileDataSource extends StreamDataSource implements ReferenceS
 
 
     /** Initializes a ConcatFileDataSource. */
+    @Override
     public void initialize() {
         super.initialize();
 

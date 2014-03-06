@@ -182,7 +182,7 @@ public class SausageMaker extends AbstractSausageMaker {
         Pronunciation p2 = n2.getWord().getMostLikelyPronunciation();
         double sim = stringEditDistance(Arrays.asList(p1.getUnits()),
                 Arrays.asList(p2.getUnits()));
-        sim /= (double) (p1.getUnits().length + p2.getUnits().length);
+        sim /= (p1.getUnits().length + p2.getUnits().length);
         return 1 - sim;
     }
 
@@ -349,7 +349,6 @@ public class SausageMaker extends AbstractSausageMaker {
 
 
     /** @see edu.cmu.sphinx.result.ConfidenceScorer#score(edu.cmu.sphinx.result.Result) */
-    @Override
     public ConfidenceResult score(Result result) {
         lattice = new Lattice(result);
         LatticeOptimizer lop = new LatticeOptimizer(lattice);

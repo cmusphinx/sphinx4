@@ -163,7 +163,6 @@ public class LargeNGramModel implements LanguageModel, BackoffLanguageModel {
     *
     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
     */
-    @Override
     public void newProperties(PropertySheet ps) throws PropertyException {
         logger = ps.getLogger();
         location = ConfigurationManagerUtils.getResource(PROP_LOCATION, ps);
@@ -184,7 +183,6 @@ public class LargeNGramModel implements LanguageModel, BackoffLanguageModel {
     *
     * @see edu.cmu.sphinx.linguist.language.ngram.LanguageModel#allocate()
     */
-    @Override
     @SuppressWarnings("unchecked")
     public void allocate() throws IOException {
         TimerPool.getTimer(this, "Load LM").start();
@@ -259,7 +257,6 @@ public class LargeNGramModel implements LanguageModel, BackoffLanguageModel {
     *
     * @see edu.cmu.sphinx.linguist.language.ngram.LanguageModel#deallocate()
     */
-    @Override
     public void deallocate() throws IOException {
         loader.deallocate();
     }
@@ -300,7 +297,6 @@ public class LargeNGramModel implements LanguageModel, BackoffLanguageModel {
 
 
     /** Called before a recognition */
-    @Override
     public void start() {
         if (logFile != null)
             logFile.println("<START_UTT>");
@@ -308,7 +304,6 @@ public class LargeNGramModel implements LanguageModel, BackoffLanguageModel {
 
 
     /** Called after a recognition */
-    @Override
     public void stop() {
         clearCache();
         
@@ -425,7 +420,6 @@ public class LargeNGramModel implements LanguageModel, BackoffLanguageModel {
      * @return the probability of the word sequence. Probability is in logMath
      *         log base
      */
-    @Override
     public float getProbability(WordSequence wordSequence) {
         ProbDepth probDepth = getProbDepth(wordSequence);
         return probDepth.probability;
@@ -494,7 +488,7 @@ public class LargeNGramModel implements LanguageModel, BackoffLanguageModel {
         
 		if (orderBuffer == 2)  {
 			size = numberNGrams * ((loader.getMaxDepth() == orderBuffer) ? BYTES_PER_NMAXGRAM : BYTES_PER_NGRAM) * loader.getBytesPerField();
-			position = (long) (loader.getNGramOffset(orderBuffer) + (firstCurrentNGramEntry * ((loader.getMaxDepth() == orderBuffer) ? BYTES_PER_NMAXGRAM : BYTES_PER_NGRAM) * loader.getBytesPerField()));
+			position = (loader.getNGramOffset(orderBuffer) + (firstCurrentNGramEntry * ((loader.getMaxDepth() == orderBuffer) ? BYTES_PER_NMAXGRAM : BYTES_PER_NGRAM) * loader.getBytesPerField()));
 		} else { // only for ws.size() >= 2
 			int lastWordId = getWordID(ws.getWord(ws.size() - 1));
 			nMinus1Buffer = getNGramBuffer(ws.getOldest());
@@ -515,7 +509,7 @@ public class LargeNGramModel implements LanguageModel, BackoffLanguageModel {
 				numberNGrams++;
 
 			size = numberNGrams * ((loader.getMaxDepth() == orderBuffer) ? BYTES_PER_NMAXGRAM : BYTES_PER_NGRAM) * loader.getBytesPerField();
-			position = (long) loader.getNGramOffset(orderBuffer) + (long) firstCurrentNGramEntry * (long) ((loader.getMaxDepth() == orderBuffer) ? BYTES_PER_NMAXGRAM : BYTES_PER_NGRAM) * (long) loader.getBytesPerField();
+			position = loader.getNGramOffset(orderBuffer) + (long) firstCurrentNGramEntry * (long) ((loader.getMaxDepth() == orderBuffer) ? BYTES_PER_NMAXGRAM : BYTES_PER_NGRAM) * loader.getBytesPerField();
 		}
 
         try {
@@ -673,7 +667,6 @@ public class LargeNGramModel implements LanguageModel, BackoffLanguageModel {
     int smearCount;
     int smearBigramHit;
 
-    @Override
     public float getSmear(WordSequence wordSequence) {
         float smearTerm = 0.0f;
         
@@ -728,7 +721,6 @@ public class LargeNGramModel implements LanguageModel, BackoffLanguageModel {
      *
      * @return the maximum depth of the language model
      */
-    @Override
     public int getMaxDepth() {
         return maxDepth;
     }
@@ -739,7 +731,6 @@ public class LargeNGramModel implements LanguageModel, BackoffLanguageModel {
      *
      * @return the unmodifiable set of words
      */
-    @Override
     public Set<String> getVocabulary() {
         Set<String> vocabulary = new HashSet<String>(Arrays.asList(loader.getWords()));
         return Collections.unmodifiableSet(vocabulary);

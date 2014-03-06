@@ -295,7 +295,6 @@ public class LexTreeLinguist implements Linguist {
     *
     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
     */
-    @Override
     public void newProperties(PropertySheet ps) throws PropertyException {
         logger = ps.getLogger();
         acousticModel = (AcousticModel) ps.getComponent(PROP_ACOUSTIC_MODEL);
@@ -328,7 +327,6 @@ public class LexTreeLinguist implements Linguist {
     *
     * @see edu.cmu.sphinx.linguist.Linguist#allocate()
     */
-    @Override
     public void allocate() throws IOException {
         dictionary.allocate();
         acousticModel.allocate();
@@ -342,7 +340,6 @@ public class LexTreeLinguist implements Linguist {
     *
     * @see edu.cmu.sphinx.linguist.Linguist#deallocate()
     */
-    @Override
     public void deallocate() throws IOException {
         if (acousticModel != null)
     	    acousticModel.deallocate();
@@ -359,21 +356,18 @@ public class LexTreeLinguist implements Linguist {
     *
     * @see edu.cmu.sphinx.linguist.Linguist#getSearchGraph()
     */
-    @Override
     public SearchGraph getSearchGraph() {
         return searchGraph;
     }
 
 
     /** Called before a recognition */
-    @Override
     public void startRecognition() {
         languageModel.start();
     }
 
 
     /** Called after a recognition */
-    @Override
     public void stopRecognition() {
         languageModel.stop();
     }
@@ -460,7 +454,6 @@ public class LexTreeLinguist implements Linguist {
         *
         * @see edu.cmu.sphinx.linguist.SearchGraph#getInitialState()
         */
-        @Override
         public SearchState getInitialState() {
             return initialState;
         }
@@ -471,7 +464,6 @@ public class LexTreeLinguist implements Linguist {
         *
         * @see edu.cmu.sphinx.linguist.SearchGraph#getSearchStateOrder()
         */
-        @Override
         public int getNumStateOrder() {
             return 6;
         }
@@ -518,7 +510,6 @@ public class LexTreeLinguist implements Linguist {
          *
          * @return the signature
          */
-        @Override
         public String getSignature() {
             return "lts-" + node.hashCode() + "-ws-" + wordSequence;
         }
@@ -578,7 +569,6 @@ public class LexTreeLinguist implements Linguist {
          *
          * @return the successor state
          */
-        @Override
         public SearchState getState() {
             return this;
         }
@@ -589,7 +579,6 @@ public class LexTreeLinguist implements Linguist {
          *
          * @return the log probability
          */
-        @Override
         public float getProbability() {
             return getLanguageProbability() + getInsertionProbability();
         }
@@ -600,7 +589,6 @@ public class LexTreeLinguist implements Linguist {
          *
          * @return the log probability
          */
-        @Override
         public float getLanguageProbability() {
             return logOne;
         }
@@ -611,7 +599,6 @@ public class LexTreeLinguist implements Linguist {
          *
          * @return the log probability
          */
-        @Override
         public float getInsertionProbability() {
             return logOne;
         }
@@ -622,7 +609,6 @@ public class LexTreeLinguist implements Linguist {
          *
          * @return <code>true</code> if this is an emitting state.
          */
-        @Override
         public boolean isEmitting() {
             return false;
         }
@@ -633,7 +619,6 @@ public class LexTreeLinguist implements Linguist {
          *
          * @return <code>true</code> if this is an final state.
          */
-        @Override
         public boolean isFinal() {
             return false;
         }
@@ -654,13 +639,11 @@ public class LexTreeLinguist implements Linguist {
          *
          * @return the word sequence
          */
-        @Override
         public WordSequence getWordHistory() {
             return wordSequence;
         }
 
 
-        @Override
         public Node getLexState() {
             return node;
         }
@@ -671,7 +654,6 @@ public class LexTreeLinguist implements Linguist {
          *
          * @return a list of SearchState objects
          */
-        @Override
         public SearchStateArc[] getSuccessors() {
             SearchStateArc[] arcs = getCachedArcs();
             if (arcs == null) {
@@ -820,7 +802,6 @@ public class LexTreeLinguist implements Linguist {
          *
          * @return a pretty string
          */
-        @Override
         public String toPrettyString() {
             return toString();
         }
@@ -861,7 +842,6 @@ public class LexTreeLinguist implements Linguist {
         }
 
 
-        @Override
         abstract public int getOrder();
     }
 
@@ -899,7 +879,6 @@ public class LexTreeLinguist implements Linguist {
          *
          * @return the base unit
          */
-        @Override
         public Unit getUnit() {
             return getEndNode().getBaseUnit();
         }
@@ -1049,7 +1028,6 @@ public class LexTreeLinguist implements Linguist {
          *
          * @return the base unit
          */
-        @Override
         public Unit getUnit() {
             return getHMMNode().getBaseUnit();
         }
@@ -1198,7 +1176,6 @@ public class LexTreeLinguist implements Linguist {
          *
          * @return the HMM state
          */
-        @Override
         public HMMState getHMMState() {
             return hmmState;
         }
@@ -1339,7 +1316,6 @@ public class LexTreeLinguist implements Linguist {
         }
 
 
-        @Override
         public float getScore(Data data) {
             return hmmState.getScore(data);
         }
@@ -1405,7 +1381,6 @@ public class LexTreeLinguist implements Linguist {
          *
          * @return the pronunciation for this word
          */
-        @Override
         public Pronunciation getPronunciation() {
             return ((WordNode) getNode()).getPronunciation();
         }
@@ -1530,7 +1505,6 @@ public class LexTreeLinguist implements Linguist {
          * @return true if this LexTreeWordState indicates the start of a word, false if this LexTreeWordState indicates
          *         the end of a word
          */
-        @Override
         public boolean isWordStart() {
             return false;
         }

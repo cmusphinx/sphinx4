@@ -87,8 +87,6 @@ public class TransitionModel {
     private Map<Integer, List<HmmState>> phoneStates;
     private Map<Triple, Integer> transitionStates;
     private float[] logProbabilities;
-    private List<DiagGmm> mixtures;
-    private EventMap eventMap;
 
     /**
      * Loads transition model using provided parser.

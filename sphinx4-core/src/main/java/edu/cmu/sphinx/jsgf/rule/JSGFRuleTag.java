@@ -55,7 +55,8 @@ public class JSGFRuleTag extends JSGFRule {
 			this.tag = tag;
 	}
 
-	public String toString() {
+	@Override
+    public String toString() {
 		String str = " {" + escapeTag(tag) + "}";
 
 		if ((rule instanceof JSGFRuleToken) || (rule instanceof JSGFRuleName)) {

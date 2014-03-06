@@ -17,11 +17,8 @@ import java.util.Collection;
 import edu.cmu.sphinx.result.Lattice;
 import edu.cmu.sphinx.result.LatticeOptimizer;
 import edu.cmu.sphinx.result.Nbest;
-import edu.cmu.sphinx.result.Path;
 import edu.cmu.sphinx.result.Result;
 import edu.cmu.sphinx.result.WordResult;
-
-import edu.cmu.sphinx.util.LogMath;
 
 
 /**

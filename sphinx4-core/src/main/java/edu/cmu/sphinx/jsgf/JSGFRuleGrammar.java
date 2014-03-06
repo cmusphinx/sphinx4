@@ -515,6 +515,7 @@ public class JSGFRuleGrammar {
      * 
      * @return specification for this grammar.
      */
+    @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("#JSGF V1.0;").append(LINE_SEPARATOR);

@@ -344,7 +344,7 @@ public class GMMDiag {
 				}
 			}
 			for (int i = 0; i < ngauss; i++) {
-				setWeight(i, weights[i] / (float) nT);
+				setWeight(i, weights[i] / nT);
 			}
 			fin.close();
 			precomputeDistance();
@@ -357,7 +357,7 @@ public class GMMDiag {
 		logMath = LogMath.getInstance();
 		weights = new float[ngauss];
 		for (int i = 0; i < ngauss; i++) {
-			setWeight(i, 1f / (float) ngauss);
+			setWeight(i, 1f / ngauss);
 		}
 	}
 
@@ -543,7 +543,7 @@ public class GMMDiag {
         return Math.abs(1 - b / a) > 0.01;
 	}
 
-	@Override
+    @Override
     public String toString() {
 		StringBuilder sb = new StringBuilder ();
 		for (int i = 0; i < getNgauss(); i++) {

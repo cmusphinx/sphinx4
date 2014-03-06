@@ -13,8 +13,6 @@
  */
 package edu.cmu.sphinx.frontend.feature;
 
-import java.util.Arrays;
-
 import edu.cmu.sphinx.frontend.*;
 import edu.cmu.sphinx.linguist.acoustic.tiedstate.*;
 import edu.cmu.sphinx.util.props.*;

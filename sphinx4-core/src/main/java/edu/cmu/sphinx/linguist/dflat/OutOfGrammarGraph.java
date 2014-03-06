@@ -87,7 +87,6 @@ public class OutOfGrammarGraph {
          *
          * @return the pronunciation
          */
-        @Override
         public Pronunciation getPronunciation() {
             return Word.UNKNOWN.getPronunciations()[0];
         }
@@ -144,7 +143,6 @@ public class OutOfGrammarGraph {
          * @return true if this UnknownWordState indicates the start of a word, false if this UnknownWordState indicates
          *         the end of a word
          */
-        @Override
         public boolean isWordStart() {
             return true;
         }
@@ -226,7 +224,6 @@ public class OutOfGrammarGraph {
          *
          * @return the unit
          */
-        @Override
         public Unit getUnit() {
             return hmm.getBaseUnit();
         }
@@ -312,7 +309,6 @@ public class OutOfGrammarGraph {
          *
          * @return the hmm state
          */
-        @Override
         public HMMState getHMMState() {
             return hmmState;
         }
@@ -391,7 +387,6 @@ public class OutOfGrammarGraph {
         }
 
 
-        @Override
         public float getScore(Data data) {
             return hmmState.getScore(data);
         }
@@ -502,7 +497,6 @@ public class OutOfGrammarGraph {
          *
          * @return the set of successors
          */
-        @Override
         public abstract SearchStateArc[] getSuccessors();
 
 
@@ -512,7 +506,6 @@ public class OutOfGrammarGraph {
          *
          * @return the signature
          */
-        @Override
         public abstract String getSignature();
 
 
@@ -521,7 +514,6 @@ public class OutOfGrammarGraph {
          *
          * @return the order
          */
-        @Override
         public abstract int getOrder();
 
 
@@ -530,7 +522,6 @@ public class OutOfGrammarGraph {
          *
          * @return true if this is an emitting state
          */
-        @Override
         public boolean isEmitting() {
             return false;
         }
@@ -541,7 +532,6 @@ public class OutOfGrammarGraph {
          *
          * @return true if this is a final state
          */
-        @Override
         public boolean isFinal() {
             return false;
         }
@@ -552,7 +542,6 @@ public class OutOfGrammarGraph {
          *
          * @return the lex state (null for this linguist)
          */
-        @Override
         public Object getLexState() {
             return null;
         }
@@ -563,7 +552,6 @@ public class OutOfGrammarGraph {
          *
          * @return the formatted string
          */
-        @Override
         public String toPrettyString() {
             return toString();
         }
@@ -585,7 +573,6 @@ public class OutOfGrammarGraph {
          *
          * @return the word history (null for this linguist)
          */
-        @Override
         public WordSequence getWordHistory() {
             return null;
         }
@@ -596,7 +583,6 @@ public class OutOfGrammarGraph {
          *
          * @return the sucessor state
          */
-        @Override
         public SearchState getState() {
             return this;
         }
@@ -607,7 +593,6 @@ public class OutOfGrammarGraph {
          *
          * @return the log probability
          */
-        @Override
         public float getProbability() {
             return getLanguageProbability() + getInsertionProbability();
         }
@@ -618,7 +603,6 @@ public class OutOfGrammarGraph {
          *
          * @return the log probability
          */
-        @Override
         public float getLanguageProbability() {
             return LogMath.LOG_ONE;
         }
@@ -629,7 +613,6 @@ public class OutOfGrammarGraph {
          *
          * @return the log probability
          */
-        @Override
         public float getInsertionProbability() {
             return LogMath.LOG_ONE;
         }

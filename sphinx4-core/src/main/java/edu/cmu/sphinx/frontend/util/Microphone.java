@@ -184,7 +184,7 @@ public class Microphone extends BaseDataProcessor {
         this.signed = signed;
 
         this.desiredFormat = new AudioFormat
-                ((float) sampleRate, bitsPerSample, channels, signed, bigEndian);
+                (sampleRate, bitsPerSample, channels, signed, bigEndian);
 
         this.closeBetweenUtterances = closeBetweenUtterances;
         this.msecPerRead = msecPerRead;
@@ -218,7 +218,7 @@ public class Microphone extends BaseDataProcessor {
         signed = ps.getBoolean(PROP_SIGNED);
 
         desiredFormat = new AudioFormat
-                ((float) sampleRate, sampleSizeInBits, channels, signed, bigEndian);
+                (sampleRate, sampleSizeInBits, channels, signed, bigEndian);
 
         closeBetweenUtterances = ps.getBoolean(PROP_CLOSE_BETWEEN_UTTERANCES);
         msecPerRead = ps.getInt(PROP_MSEC_PER_READ);
@@ -336,7 +336,6 @@ public class Microphone extends BaseDataProcessor {
              * the line states.
              */
             audioLine.addLineListener(new LineListener() {
-                @Override
                 public void update(LineEvent event) {
                     logger.info("line listener " + event);
                 }
@@ -376,7 +375,7 @@ public class Microphone extends BaseDataProcessor {
 
                 /* Set the frame size depending on the sample rate.
                  */
-                float sec = ((float) msecPerRead) / 1000.f;
+                float sec = msecPerRead / 1000.f;
                 frameSizeInBytes =
                         (audioStream.getFormat().getSampleSizeInBits() / 8) *
                                 (int) (sec * audioStream.getFormat().getSampleRate()) *

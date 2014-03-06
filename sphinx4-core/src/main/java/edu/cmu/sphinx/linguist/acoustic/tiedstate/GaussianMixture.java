@@ -24,6 +24,7 @@ import edu.cmu.sphinx.util.LogMath;
  * All scores and weights are maintained in LogMath log base.
  */
 
+@SuppressWarnings("serial")
 public class GaussianMixture extends ScoreCachingSenone {
 
     // these data element in a senone may be shared with other senones
@@ -58,7 +59,6 @@ public class GaussianMixture extends ScoreCachingSenone {
      *
      * @param msg annotation message
      */
-    @Override
     public void dump(String msg) {
         System.out.println(msg + " GaussianMixture: ID " + getID());
     }
@@ -98,7 +98,6 @@ public class GaussianMixture extends ScoreCachingSenone {
      *
      * @return the senone id
      */
-    @Override
     public long getID() {
         return id;
     }
@@ -140,7 +139,6 @@ public class GaussianMixture extends ScoreCachingSenone {
      * @param feature the feature to score
      * @return the LogMath log scores for the feature, one for each component
      */
-    @Override
     public float[] calculateComponentScore(Data feature) {
         if (feature instanceof DoubleData)
             System.err.println("DoubleData conversion required on mixture level!");

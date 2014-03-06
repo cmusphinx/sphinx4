@@ -96,7 +96,6 @@ public class SpeedTracker
     *
     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
     */
-    @Override
     public void newProperties(PropertySheet ps) throws PropertyException {
         initRecognizer((Recognizer) ps.getComponent(PROP_RECOGNIZER));
         initFrontEnd((FrontEnd) ps.getComponent(PROP_FRONTEND));
@@ -147,7 +146,6 @@ public class SpeedTracker
     *
     * @see edu.cmu.sphinx.decoder.ResultListener#newResult(edu.cmu.sphinx.result.Result)
     */
-    @Override
     public void newResult(Result result) {
         if (result.isFinal()) {
             processingTime = (getTime() - startTime) / 1000.0f;
@@ -206,7 +204,6 @@ public class SpeedTracker
 
 
     /** Resets the speed statistics */
-    @Override
     public void reset() {
         totalProcessingTime = 0;
         totalAudioTime = 0;
@@ -233,7 +230,6 @@ public class SpeedTracker
     *
     * @see edu.cmu.sphinx.frontend.SignalListener#signalOccurred(edu.cmu.sphinx.frontend.Signal)
     */
-    @Override
     public void signalOccurred(Signal signal) {
         if (signal instanceof DataStartSignal) {
             startTime = getTime();
@@ -263,7 +259,6 @@ public class SpeedTracker
     }
 
 
-    @Override
     public void statusChanged(Recognizer.State status) {
         if (status == State.ALLOCATED) {
             if (showTimers) {

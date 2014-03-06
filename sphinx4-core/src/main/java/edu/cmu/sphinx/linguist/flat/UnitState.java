@@ -18,6 +18,7 @@ import edu.cmu.sphinx.linguist.acoustic.Unit;
 import edu.cmu.sphinx.linguist.acoustic.UnitManager;
 
 /** Represents a unit in an SentenceHMMS */
+@SuppressWarnings("serial")
 public class UnitState extends SentenceHMMState implements UnitSearchState {
 
     private final Unit unit;
@@ -72,7 +73,6 @@ public class UnitState extends SentenceHMMState implements UnitSearchState {
      *
      * @return the unit
      */
-    @Override
     public Unit getUnit() {
         return unit;
     }

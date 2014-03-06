@@ -68,6 +68,7 @@ public class NodeType {
      *
      * @return the name of this NodeType.
      */
+    @Override
     public String toString() {
         return name;
     }

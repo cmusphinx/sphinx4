@@ -60,7 +60,6 @@ public class MAPConfidenceScorer implements ConfidenceScorer, Configurable {
      *
      * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
      */
-    @Override
     public void newProperties(PropertySheet ps) throws PropertyException {
         languageWeightAdjustment = ps.getFloat(PROP_LANGUAGE_WEIGHT_ADJUSTMENT);
         dumpLattice = ps.getBoolean(PROP_DUMP_LATTICE);
@@ -75,7 +74,6 @@ public class MAPConfidenceScorer implements ConfidenceScorer, Configurable {
      * @param result the result to compute confidences for
      * @return a confidence result
      */
-    @Override
     public ConfidenceResult score(Result result) {
         Lattice lattice = new Lattice(result);
         LatticeOptimizer lop = new LatticeOptimizer(lattice);
@@ -167,7 +165,6 @@ public class MAPConfidenceScorer implements ConfidenceScorer, Configurable {
          * Returns the path with the maximum posterior probability path. This path should be the same as that returned
          * by Result.getBestToken().
          */
-        @Override
         public Path getBestHypothesis() {
             return mapPath;
         }
@@ -178,7 +175,6 @@ public class MAPConfidenceScorer implements ConfidenceScorer, Configurable {
          *
          * @return length of the result
          */
-        @Override
         public int size() {
             return sausage.size();
         }
@@ -189,7 +185,6 @@ public class MAPConfidenceScorer implements ConfidenceScorer, Configurable {
          *
          * @return confusion set iterator
          */
-        @Override
         public Iterator<ConfusionSet> iterator() {
             return sausage.iterator();
         }
@@ -201,7 +196,6 @@ public class MAPConfidenceScorer implements ConfidenceScorer, Configurable {
          * @param i the index of the confusion set to get
          * @return the requested confusion set
          */
-        @Override
         public ConfusionSet getConfusionSet(int i) {
             return sausage.getConfusionSet(i);
         }

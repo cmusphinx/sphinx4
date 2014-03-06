@@ -20,6 +20,7 @@ package edu.cmu.sphinx.frontend;
  * @see DataProcessor
  * @see Signal
  */
+@SuppressWarnings("serial")
 public class DataEndSignal extends Signal {
 
     private final long duration;

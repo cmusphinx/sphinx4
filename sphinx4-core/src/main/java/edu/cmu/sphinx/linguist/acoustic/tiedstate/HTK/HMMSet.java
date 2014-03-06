@@ -33,11 +33,9 @@ public class HMMSet {
 		Iterator<SingleHMM> it = new Iterator<SingleHMM>() {
 			int cur;
 
-			@Override
             public void remove() {
 			}
 
-			@Override
             public SingleHMM next() {
 				for (;;) {
 					if (cur >= hmms.size())
@@ -50,7 +48,6 @@ public class HMMSet {
 				}
 			}
 
-			@Override
             public boolean hasNext() {
 				return false;
 			}
@@ -62,11 +59,9 @@ public class HMMSet {
 		Iterator<SingleHMM> it = new Iterator<SingleHMM>() {
 			int cur;
 
-			@Override
             public void remove() {
 			}
 
-			@Override
             public SingleHMM next() {
 				for (;;) {
 					if (cur >= hmms.size())
@@ -79,7 +74,6 @@ public class HMMSet {
 				}
 			}
 
-			@Override
             public boolean hasNext() {
 				return false;
 			}

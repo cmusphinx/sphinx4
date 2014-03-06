@@ -61,7 +61,6 @@ public abstract class ActiveListFactory implements Configurable {
     }
 
 
-    @Override
     public void newProperties(PropertySheet ps) throws PropertyException {
         logMath = LogMath.getInstance();
         absoluteBeamWidth = ps.getInt(PROP_ABSOLUTE_BEAM_WIDTH);

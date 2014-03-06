@@ -16,6 +16,7 @@ import java.io.Serializable;
 
 /** Provides a classification of words */
 
+@SuppressWarnings("serial")
 public class WordClassification implements Serializable {
 
     private final String classificationName;

@@ -16,6 +16,7 @@ import edu.cmu.sphinx.linguist.dictionary.Word;
 
 /** Represents a word in an SentenceHMMS */
 
+@SuppressWarnings("serial")
 public class WordState extends SentenceHMMState {
 
     /** Creates a WordState

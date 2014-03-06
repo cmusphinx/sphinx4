@@ -12,8 +12,8 @@ public class JSGFRule {
 	public String ruleName;
 	public JSGFRule parent;
 
-        @Override
-	public String toString() {
+	@Override
+    public String toString() {
 		return ruleName;
 	}
 }

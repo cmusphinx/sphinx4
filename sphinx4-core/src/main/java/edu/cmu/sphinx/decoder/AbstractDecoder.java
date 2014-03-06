@@ -66,7 +66,6 @@ public abstract class AbstractDecoder implements ResultProducer, Configurable {
      */
     public abstract Result decode(String referenceText);
 
-    @Override
     public void newProperties(PropertySheet ps) throws PropertyException {
         init( ps.getInstanceName(), ps.getLogger(), (SearchManager) ps.getComponent(PROP_SEARCH_MANAGER), ps.getBoolean(FIRE_NON_FINAL_RESULTS), ps.getBoolean(AUTO_ALLOCATE), ps.getComponentList(PROP_RESULT_LISTENERS, ResultListener.class));
     }
@@ -106,7 +105,6 @@ public abstract class AbstractDecoder implements ResultProducer, Configurable {
      *
      * @param resultListener the listener to add
      */
-    @Override
     public void addResultListener(ResultListener resultListener) {
         resultListeners.add(resultListener);
     }
@@ -117,7 +115,6 @@ public abstract class AbstractDecoder implements ResultProducer, Configurable {
      *
      * @param resultListener the listener to remove
      */
-    @Override
     public void removeResultListener(ResultListener resultListener) {
         resultListeners.remove(resultListener);
     }

@@ -61,7 +61,6 @@ public abstract class Grammar implements Configurable, GrammarInterface {
     // -----------------------------
     protected Logger logger;
 
-    private boolean showGrammar;
     private boolean optimizeGrammar = true;
     private boolean addSilenceWords;
     private boolean addFillerWords;
@@ -76,7 +75,6 @@ public abstract class Grammar implements Configurable, GrammarInterface {
 
     public Grammar(boolean showGrammar,boolean optimizeGrammar,boolean addSilenceWords, boolean addFillerWords, Dictionary dictionary ) {
         this.logger = Logger.getLogger(getClass().getName());
-        this.showGrammar = showGrammar;
         this.optimizeGrammar = optimizeGrammar;
         this.addSilenceWords = addSilenceWords;
         this.addFillerWords = addFillerWords;
@@ -92,10 +90,8 @@ public abstract class Grammar implements Configurable, GrammarInterface {
     *
     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
     */
-    @Override
     public void newProperties(PropertySheet ps) throws PropertyException {
         logger = ps.getLogger();
-        showGrammar = ps.getBoolean(PROP_SHOW_GRAMMAR);
         optimizeGrammar = ps.getBoolean(PROP_OPTIMIZE_GRAMMAR);
 
         addSilenceWords = ps.getBoolean(PROP_ADD_SIL_WORDS);
@@ -130,7 +126,6 @@ public abstract class Grammar implements Configurable, GrammarInterface {
      *
      * @return the initial grammar node
      */
-    @Override
     public GrammarNode getInitialNode() {
         return initialNode;
     }
@@ -305,7 +300,6 @@ public abstract class Grammar implements Configurable, GrammarInterface {
      *
      * @return the set of nodes
      */
-    @Override
     public Set<GrammarNode> getGrammarNodes() {
         return grammarNodes;
     }

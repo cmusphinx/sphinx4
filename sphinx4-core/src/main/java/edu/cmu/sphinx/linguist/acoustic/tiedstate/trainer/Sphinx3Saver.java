@@ -104,7 +104,6 @@ public class Sphinx3Saver implements Saver {
 
     public boolean useCDUnits;
 
-    @Override
     public void newProperties(PropertySheet ps) throws PropertyException {
         logger = ps.getLogger();
 
@@ -165,7 +164,6 @@ public class Sphinx3Saver implements Saver {
      *
      * @param modelName the name of the acoustic model; if null we just save from the default location
      */
-    @Override
     public void save(String modelName, boolean b) throws IOException {
 
         logger.info("Saving acoustic model: " + modelName);
@@ -196,7 +194,6 @@ public class Sphinx3Saver implements Saver {
         saveHMMPool(useCDUnits, StreamFactory.getOutputStream(location, "mdef", true), location + File.separator + "mdef");
     }
 
-    @Override
     public Map<String, Unit> getContextIndependentUnits() {
         return contextIndependentUnits;
     }
@@ -780,57 +777,46 @@ public class Sphinx3Saver implements Saver {
         dos.close();
     }
 
-    @Override
     public Pool<float[]> getMeansPool() {
         return meansPool;
     }
 
-    @Override
     public Pool<float[][]> getMeansTransformationMatrixPool() {
         return meanTransformationMatrixPool;
     }
 
-    @Override
     public Pool<float[]> getMeansTransformationVectorPool() {
         return meanTransformationVectorPool;
     }
 
-    @Override
     public Pool<float[]> getVariancePool() {
         return variancePool;
     }
 
-    @Override
     public Pool<float[][]> getVarianceTransformationMatrixPool() {
         return varianceTransformationMatrixPool;
     }
 
-    @Override
     public Pool<float[]> getVarianceTransformationVectorPool() {
         return varianceTransformationVectorPool;
     }
 
-    @Override
     public Pool<Senone> getSenonePool() {
         return senonePool;
     }
 
-    @Override
     public int getLeftContextSize() {
         return CONTEXT_SIZE;
     }
 
-    @Override
     public int getRightContextSize() {
         return CONTEXT_SIZE;
     }
 
-    @Override
     public HMMManager getHMMManager() {
         return hmmManager;
     }
 
-    @Override
     public void logInfo() {
         logger.info("Sphinx3Saver");
         meansPool.logInfo(logger);

@@ -68,7 +68,7 @@ public class TrainerAcousticModel extends TiedStateAcousticModel {
 	}
 
 	@Override
-	public void newProperties(PropertySheet ps) throws PropertyException {
+    public void newProperties(PropertySheet ps) throws PropertyException {
 		super.newProperties(ps);
 
 		saver = (Saver) ps.getComponent(SAVER);

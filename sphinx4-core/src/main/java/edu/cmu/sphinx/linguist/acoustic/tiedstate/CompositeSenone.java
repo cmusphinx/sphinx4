@@ -27,6 +27,7 @@ import java.util.Collection;
  * Note that all scores are maintained in LogMath log base
  */
 
+@SuppressWarnings("serial")
 public class CompositeSenone extends ScoreCachingSenone {
 
     private final static int MAX_SENONES = 20000;
@@ -63,7 +64,6 @@ public class CompositeSenone extends ScoreCachingSenone {
      *
      * @param msg annotation for the dump
      */
-    @Override
     public void dump(String msg) {
         System.out.println("   CompositeSenone " + msg + ": ");
         for (Senone senone : senones) {
@@ -100,7 +100,6 @@ public class CompositeSenone extends ScoreCachingSenone {
      * @param feature the current feature
      * @return the score for the feature in LogMath
      */
-    @Override
     public float[] calculateComponentScore(Data feature) {
         assert false : "Not implemented!";
         return null;
@@ -152,7 +151,6 @@ public class CompositeSenone extends ScoreCachingSenone {
      *
      * @return the senone id
      */
-    @Override
     public long getID() {
         long factor = 1L;
         long id = 0L;

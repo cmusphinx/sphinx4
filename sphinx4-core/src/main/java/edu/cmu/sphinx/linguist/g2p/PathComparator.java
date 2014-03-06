@@ -25,7 +25,6 @@ public class PathComparator implements Comparator<Path> {
      * (non-Javadoc)
      * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
      */
-    @Override
     public int compare(Path o1, Path o2) {
         if (o1.getCost() < o2.getCost())
             return -1;

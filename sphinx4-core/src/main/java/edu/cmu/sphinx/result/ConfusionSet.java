@@ -19,6 +19,7 @@ import java.util.*;
  *
  * @author P. Gorniak
  */
+@SuppressWarnings("serial")
 public class ConfusionSet extends TreeMap<Double, Set<WordResult>> {
 
     /**

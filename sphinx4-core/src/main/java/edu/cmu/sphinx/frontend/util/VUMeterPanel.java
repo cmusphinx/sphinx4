@@ -17,6 +17,7 @@ import java.awt.*;
 /**
  * @author Peter Wolf
  */
+@SuppressWarnings("serial")
 public class VUMeterPanel extends JPanel {
 
     public void setVu(VUMeter vu) {

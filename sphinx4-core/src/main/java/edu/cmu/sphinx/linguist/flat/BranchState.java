@@ -3,6 +3,7 @@ package edu.cmu.sphinx.linguist.flat;
 
 /** Represents a branching node in a grammar */
 
+@SuppressWarnings("serial")
 public class BranchState extends SentenceHMMState {
 
     /**

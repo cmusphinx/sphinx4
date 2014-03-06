@@ -13,7 +13,6 @@ package edu.cmu.sphinx.linguist.acoustic.tiedstate;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -25,8 +24,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Scanner;
-
 import edu.cmu.sphinx.linguist.acoustic.HMMPosition;
 import edu.cmu.sphinx.linguist.acoustic.Unit;
 import edu.cmu.sphinx.linguist.acoustic.UnitManager;
@@ -72,7 +69,6 @@ public class KaldiLoader implements Loader {
         this.unitManager = unitManager;
     }
 
-    @Override
     public void newProperties(PropertySheet ps) throws PropertyException {
         init(ps.getString(PROP_LOCATION),
              (UnitManager) ps.getComponent(PROP_UNIT_MANAGER));

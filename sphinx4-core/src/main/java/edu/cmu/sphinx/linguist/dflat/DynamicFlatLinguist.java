@@ -151,7 +151,6 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
     *
     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
     */
-    @Override
     public void newProperties(PropertySheet ps) throws PropertyException {
         // hookup to all of the components
         logger = ps.getLogger();
@@ -181,7 +180,6 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
      *
      * @return the search graph
      */
-    @Override
     public SearchGraph getSearchGraph() {
         return searchGraph;
     }
@@ -199,7 +197,6 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
     }
 
 
-    @Override
     public void allocate() throws IOException {
         logger.info("Allocating DFLAT");
         allocateAcousticModel();
@@ -230,7 +227,6 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
     *
     * @see edu.cmu.sphinx.linguist.Linguist#deallocate()
     */
-    @Override
     public void deallocate() {
         if (acousticModel != null) {
             acousticModel.deallocate();
@@ -240,7 +236,6 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
 
 
     /** Called before a recognition */
-    @Override
     public void startRecognition() {
         if (grammarHasChanged()) {
             compileGrammar();
@@ -249,7 +244,6 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
 
 
     /** Called after a recognition */
-    @Override
     public void stopRecognition() {
     }
 
@@ -371,7 +365,6 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
          *
          * @return the set of successors
          */
-        @Override
         public abstract SearchStateArc[] getSuccessors();
 
 
@@ -381,7 +374,6 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
          *
          * @return the signature
          */
-        @Override
         public abstract String getSignature();
 
 
@@ -390,7 +382,6 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
          *
          * @return the order
          */
-        @Override
         public abstract int getOrder();
 
 
@@ -399,7 +390,6 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
          *
          * @return true if this is an emitting state
          */
-        @Override
         public boolean isEmitting() {
             return false;
         }
@@ -410,7 +400,6 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
          *
          * @return true if this is a final state
          */
-        @Override
         public boolean isFinal() {
             return false;
         }
@@ -421,7 +410,6 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
          *
          * @return the lex state (null for this linguist)
          */
-        @Override
         public Object getLexState() {
             return null;
         }
@@ -432,7 +420,6 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
          *
          * @return the formatted string
          */
-        @Override
         public String toPrettyString() {
             return toString();
         }
@@ -454,7 +441,6 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
          *
          * @return the word history (null for this linguist)
          */
-        @Override
         public WordSequence getWordHistory() {
             return null;
         }
@@ -465,7 +451,6 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
          *
          * @return the successor state
          */
-        @Override
         public SearchState getState() {
             return this;
         }
@@ -476,7 +461,6 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
          *
          * @return the log probability
          */
-        @Override
         public float getProbability() {
             return getLanguageProbability() + getInsertionProbability();
         }
@@ -487,7 +471,6 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
          *
          * @return the log probability
          */
-        @Override
         public float getLanguageProbability() {
             return LogMath.LOG_ONE;
         }
@@ -498,7 +481,6 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
          *
          * @return the log probability
          */
-        @Override
         public float getInsertionProbability() {
             return LogMath.LOG_ONE;
         }
@@ -1001,7 +983,6 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
          *
          * @return the pronunciation
          */
-        @Override
         public Pronunciation getPronunciation() {
             return pronunciation;
         }
@@ -1069,7 +1050,6 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
          * @return true if this WordSearchState indicates the start of a word, false if this WordSearchState indicates
          *         the end of a word
          */
-        @Override
         public boolean isWordStart() {
             return true;
         }
@@ -1199,7 +1179,6 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
          *
          * @return the unit
          */
-        @Override
         public Unit getUnit() {
             return hmm.getBaseUnit();
         }
@@ -1463,13 +1442,11 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
          *
          * @return the hmm state
          */
-        @Override
         public HMMState getHMMState() {
             return hmmState;
         }
 
 
-        @Override
         public float getScore(Data data) {
             return hmmState.getScore(data);
         }
@@ -1484,7 +1461,6 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
         *
         * @see edu.cmu.sphinx.linguist.SearchGraph#getInitialState()
         */
-        @Override
         public SearchState getInitialState() {
             InitialState initialState = new InitialState();
             initialState.addArc(new GrammarState(grammar.getInitialNode()));
@@ -1506,7 +1482,6 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
          * 
          * @see edu.cmu.sphinx.linguist.SearchGraph#getNumStateOrder()
          */
-        @Override
         public int getNumStateOrder() {
             return 5;
         }

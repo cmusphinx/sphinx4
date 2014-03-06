@@ -24,7 +24,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.GregorianCalendar;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -320,7 +320,7 @@ public class Fst {
      * @param filename the binary model filename
      */
     public static Fst loadModel(String filename) {
-        long starttime = GregorianCalendar.getInstance().getTimeInMillis();
+        long starttime = Calendar.getInstance().getTimeInMillis();
         Fst obj;
 
         try {
@@ -347,7 +347,7 @@ public class Fst {
 
         System.err
                 .println("Load Time: "
-                        + (GregorianCalendar.getInstance().getTimeInMillis() - starttime)
+                        + (Calendar.getInstance().getTimeInMillis() - starttime)
                         / 1000.);
         return obj;
     }

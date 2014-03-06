@@ -22,6 +22,7 @@ import java.awt.event.MouseMotionListener;
 import java.util.Arrays;
 
 /** Provides an interface to view and play back various forms of an audio signal. */
+@SuppressWarnings("serial")
 public class AudioPanel extends JPanel
         implements MouseMotionListener, MouseListener {
 
@@ -63,7 +64,6 @@ public class AudioPanel extends JPanel
         setBackground(Color.white);
 
         audio.addChangeListener(new ChangeListener() {
-            @Override
             public void stateChanged(ChangeEvent event) {
                 int width = (int) (audio.getAudioData().length * xScale);
                 int height = (int) ((1 << 16) * yScale);
@@ -299,7 +299,6 @@ public class AudioPanel extends JPanel
      *
      * @param evt the mouse pressed event
      */
-    @Override
     public void mousePressed(MouseEvent evt) {
         xDragStart = Math.max(0, evt.getX());
         setSelectionStart((int) (xDragStart / xScale));
@@ -313,7 +312,6 @@ public class AudioPanel extends JPanel
      *
      * @param evt the mouse dragged event
      */
-    @Override
     public void mouseDragged(MouseEvent evt) {
         xDragEnd = evt.getX();
         if (xDragEnd < (int) (getSelectionStart() * xScale)) {
@@ -325,27 +323,22 @@ public class AudioPanel extends JPanel
     }
 
 
-    @Override
     public void mouseReleased(MouseEvent evt) {
     }
 
 
-    @Override
     public void mouseMoved(MouseEvent evt) {
     }
 
 
-    @Override
     public void mouseEntered(MouseEvent evt) {
     }
 
 
-    @Override
     public void mouseExited(MouseEvent evt) {
     }
 
 
-    @Override
     public void mouseClicked(MouseEvent evt) {
     }
 }

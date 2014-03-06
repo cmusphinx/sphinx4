@@ -71,6 +71,7 @@ public class GrXMLGrammar extends JSGFGrammar {
      * @throws JSGFGrammarParseException
      * @throws JSGFGrammarException
      */
+    @Override
     public void commitChanges() throws IOException, JSGFGrammarParseException,
             JSGFGrammarException {
         try {

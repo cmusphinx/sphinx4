@@ -29,6 +29,7 @@ import java.util.Arrays;
 // TODO: Since many of the subcomponents of a MixtureComponent are shared, are 
 // there some potential opportunities to reduce the number of computations in scoring
 // senones by sharing intermediate results for these subcomponents?
+@SuppressWarnings("serial")
 public class MixtureComponent implements Cloneable, Serializable {
 
     private float[] mean;

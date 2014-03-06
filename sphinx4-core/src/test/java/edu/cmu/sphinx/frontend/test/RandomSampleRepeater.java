@@ -77,6 +77,7 @@ public class RandomSampleRepeater extends BaseDataProcessor {
     *
     * @see edu.cmu.sphinx.frontend.DataProcessor#initialize(edu.cmu.sphinx.frontend.CommonConfig)
     */
+    @Override
     public void initialize() {
         super.initialize();
 
@@ -116,6 +117,7 @@ public class RandomSampleRepeater extends BaseDataProcessor {
      * @throws edu.cmu.sphinx.frontend.DataProcessingException
      *          if a data processing error occurred
      */
+    @Override
     public Data getData() throws DataProcessingException {
         Data input = getPredecessor().getData(); // get the spectrum
 
@@ -192,6 +194,7 @@ public class RandomSampleRepeater extends BaseDataProcessor {
     *
     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
     */
+    @Override
     public void newProperties(PropertySheet ps) throws PropertyException {
         super.newProperties(ps);
 

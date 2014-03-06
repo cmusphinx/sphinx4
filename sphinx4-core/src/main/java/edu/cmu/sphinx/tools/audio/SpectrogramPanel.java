@@ -29,6 +29,7 @@ import java.awt.image.ReplicateScaleFilter;
 import java.util.ArrayList;
 
 /** Converts a set of log magnitude Spectrum data into a graphical representation. */
+@SuppressWarnings("serial")
 public class SpectrogramPanel extends JPanel {
 
     /** Where the spectrogram will live. */
@@ -72,7 +73,6 @@ public class SpectrogramPanel extends JPanel {
         this.frontEnd = frontEnd;
         this.dataSource = dataSource;
         audio.addChangeListener(new ChangeListener() {
-            @Override
             public void stateChanged(ChangeEvent event) {
                 computeSpectrogram();
             }

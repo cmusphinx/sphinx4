@@ -240,7 +240,6 @@ public class Sphinx3Loader implements Loader {
 
     }
 
-    @Override
     public void newProperties(PropertySheet ps) throws PropertyException {
 
         init(ConfigurationManagerUtils.getResource(PROP_LOCATION, ps),
@@ -260,7 +259,6 @@ public class Sphinx3Loader implements Loader {
         return new URL(location.toURI().toString() + "/" + path).openStream();
     }
 
-    @Override
     public void load() throws IOException {
         if (!loaded) {
             TimerPool.getTimer(this, "Load AM").start();
@@ -352,7 +350,6 @@ public class Sphinx3Loader implements Loader {
         modelProps = loadModelProps(dataLocation + "feat.params");
     }
 
-    @Override
     public Map<String, Unit> getContextIndependentUnits() {
         return contextIndependentUnits;
     }
@@ -1070,72 +1067,58 @@ public class Sphinx3Loader implements Loader {
         return result;
     }
 
-    @Override
     public Pool<float[]> getMeansPool() {
         return meansPool;
     }
 
-    @Override
     public Pool<float[][]> getMeansTransformationMatrixPool() {
         return meanTransformationMatrixPool;
     }
 
-    @Override
     public Pool<float[]> getMeansTransformationVectorPool() {
         return meanTransformationVectorPool;
     }
 
-    @Override
     public Pool<float[]> getVariancePool() {
         return variancePool;
     }
 
-    @Override
     public Pool<float[][]> getVarianceTransformationMatrixPool() {
         return varianceTransformationMatrixPool;
     }
 
-    @Override
     public Pool<float[]> getVarianceTransformationVectorPool() {
         return varianceTransformationVectorPool;
     }
 
-    @Override
     public Pool<float[]> getMixtureWeightPool() {
         return mixtureWeightsPool;
     }
 
-    @Override
     public Pool<float[][]> getTransitionMatrixPool() {
         return transitionsPool;
     }
 
-    @Override
     public float[][] getTransformMatrix() {
         return transformMatrix;
     }
 
-    @Override
     public Pool<Senone> getSenonePool() {
         return senonePool;
     }
 
-    @Override
     public int getLeftContextSize() {
         return CONTEXT_SIZE;
     }
 
-    @Override
     public int getRightContextSize() {
         return CONTEXT_SIZE;
     }
 
-    @Override
     public HMMManager getHMMManager() {
         return hmmManager;
     }
 
-    @Override
     public void logInfo() {
         logger.info("Loading tied-state acoustic model from: " + location);
         meansPool.logInfo(logger);
@@ -1159,7 +1142,6 @@ public class Sphinx3Loader implements Loader {
         hmmManager.logInfo(logger);
     }
 
-    @Override
     public Properties getProperties() {
         return modelProps;
     }

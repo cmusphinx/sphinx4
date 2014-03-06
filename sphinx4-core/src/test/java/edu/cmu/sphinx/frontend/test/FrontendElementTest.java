@@ -60,7 +60,7 @@ public class FrontendElementTest {
 		    	double[] values = ((DoubleData)data).getValues();
 		    	Assert.assertEquals(values.length, (int)Integer.valueOf(tokens[1]));
 		    	for (int i = 0; i < values.length; i++) {
-		    		Assert.assertEquals(values[i], (double)Double.valueOf(tokens[2 + i]), Math.abs(0.001 * values[i]));
+		    		Assert.assertEquals(values[i], Double.valueOf(tokens[2 + i]), Math.abs(0.001 * values[i]));
 		    	}
 		    }
 		    if (line.startsWith("FloatFrame")) {
@@ -69,7 +69,7 @@ public class FrontendElementTest {
 		    	float[] values = ((FloatData)data).getValues();
 		    	Assert.assertEquals(values.length, (int)Integer.valueOf(tokens[1]));
 		    	for (int i = 0; i < values.length; i++) {
-		    		Assert.assertEquals(values[i], (double)Float.valueOf(tokens[2 + i]), Math.abs(0.001 * values[i]));
+		    		Assert.assertEquals(values[i], Float.valueOf(tokens[2 + i]), Math.abs(0.001 * values[i]));
 		    	}
 		    }
 		}

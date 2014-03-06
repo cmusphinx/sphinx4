@@ -13,6 +13,7 @@
 package edu.cmu.sphinx.util.props;
 
 /** Indicates that a problem occurred while setting one or more properties for this component */
+@SuppressWarnings("serial")
 public class PropertyException extends RuntimeException {
 
     private String instanceName;

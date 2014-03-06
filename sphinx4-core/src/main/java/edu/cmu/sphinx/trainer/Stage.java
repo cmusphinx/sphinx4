@@ -87,6 +87,7 @@ public class Stage {
      *
      * @return the name of this Stage.
      */
+    @Override
     public String toString() {
         return name;
     }

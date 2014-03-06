@@ -59,7 +59,6 @@ public class SenoneHMMState implements HMMState {
      *
      * @return the HMM
      */
-    @Override
     public HMM getHMM() {
         return hmm;
     }
@@ -70,7 +69,6 @@ public class SenoneHMMState implements HMMState {
      *
      * @return the state
      */
-    @Override
     public int getState() {
         return state;
     }
@@ -82,7 +80,6 @@ public class SenoneHMMState implements HMMState {
      * @param feature the feature to be scored
      * @return the acoustic score for this state.
      */
-    @Override
     public float getScore(Data feature) {
         return senone.getScore(feature);
     }
@@ -147,7 +144,6 @@ public class SenoneHMMState implements HMMState {
      * @return true if the state is an emitting state
      */
     // TODO: We may have non-emitting entry states as well.
-    @Override
     public final boolean isEmitting() {
         return isEmitting;
     }
@@ -158,7 +154,6 @@ public class SenoneHMMState implements HMMState {
      *
      * @return the set of successor state arcs
      */
-    @Override
     public HMMStateArc[] getSuccessors() {
         if (arcs == null) {
             List<HMMStateArc> list = new ArrayList<HMMStateArc>();
@@ -182,7 +177,6 @@ public class SenoneHMMState implements HMMState {
      *
      * @return true if the state is an exit state
      */
-    @Override
     public boolean isExitState() {
         // return (hmm.getTransitionMatrix().length - 1) == state;
         return !isEmitting;

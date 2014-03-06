@@ -7,6 +7,7 @@
  */
 package edu.cmu.sphinx.jsgf;
 
+@SuppressWarnings("serial")
 public class JSGFGrammarParseException extends Exception
 {
 	public int lineNumber;

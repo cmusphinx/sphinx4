@@ -173,7 +173,6 @@ public class FlatLinguist implements Linguist, Configurable {
      *
      * @return the search graph
      */
-    @Override
     public SearchGraph getSearchGraph() {
         return searchGraph;
     }
@@ -219,7 +218,6 @@ public class FlatLinguist implements Linguist, Configurable {
     *
     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
     */
-    @Override
     public void newProperties(PropertySheet ps) throws PropertyException {
         logMath = LogMath.getInstance();
         // hookup to all of the components
@@ -275,7 +273,6 @@ public class FlatLinguist implements Linguist, Configurable {
     *
     * @see edu.cmu.sphinx.linguist.Linguist#allocate()
     */
-    @Override
     public void allocate() throws IOException {
         allocateAcousticModel();
         grammar.allocate();
@@ -304,7 +301,6 @@ public class FlatLinguist implements Linguist, Configurable {
     *
     * @see edu.cmu.sphinx.linguist.Linguist#deallocate()
     */
-    @Override
     public void deallocate() {
         if (acousticModel != null) {
             acousticModel.deallocate();
@@ -316,7 +312,6 @@ public class FlatLinguist implements Linguist, Configurable {
     /**
      * Called before a recognition
      */
-    @Override
     public void startRecognition() {
         if (grammarHasChanged()) {
             stateSet = compileGrammar();
@@ -328,7 +323,6 @@ public class FlatLinguist implements Linguist, Configurable {
     /**
      * Called after a recognition
      */
-    @Override
     public void stopRecognition() {
     }
 
@@ -535,7 +529,6 @@ public class FlatLinguist implements Linguist, Configurable {
         *
         * @see edu.cmu.sphinx.linguist.SearchGraph#getInitialState()
         */
-        @Override
         public SearchState getInitialState() {
             return initialState;
         }
@@ -546,7 +539,6 @@ public class FlatLinguist implements Linguist, Configurable {
         *
         * @see edu.cmu.sphinx.linguist.SearchGraph#getNumStateOrder()
         */
-        @Override
         public int getNumStateOrder() {
             return 7;
         }

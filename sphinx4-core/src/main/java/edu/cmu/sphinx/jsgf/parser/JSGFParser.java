@@ -276,7 +276,8 @@ public class JSGFParser implements JSGFParserConstants {
         }
     }
 
-  final public JSGFRuleGrammar GrammarUnit(JSGFRuleGrammarFactory factory) throws ParseException {
+  @SuppressWarnings("unused")
+final public JSGFRuleGrammar GrammarUnit(JSGFRuleGrammarFactory factory) throws ParseException {
     JSGFRuleGrammar grammar = null;
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case IDENTIFIER:
@@ -317,7 +318,8 @@ public class JSGFParser implements JSGFParserConstants {
     throw new Error("Missing return statement in function");
   }
 
-  final public JSGFRuleGrammar GrammarDeclaration(JSGFRuleGrammarFactory factory) throws ParseException {
+  @SuppressWarnings("unused")
+final public JSGFRuleGrammar GrammarDeclaration(JSGFRuleGrammarFactory factory) throws ParseException {
     String s;
     JSGFRuleGrammar grammar = null;
     Token t = null;
@@ -327,7 +329,7 @@ public class JSGFParser implements JSGFParserConstants {
         grammar = factory.newGrammar (s);
         if (grammar != null && t != null && t.specialToken != null) {
             if (t.specialToken.image != null && t.specialToken.image.startsWith("/**")) {
-                JSGFRuleGrammar JG = (JSGFRuleGrammar) grammar;
+                JSGFRuleGrammar JG = grammar;
                 JG.addGrammarDocComment(t.specialToken.image);
             }
         }
@@ -383,14 +385,15 @@ public class JSGFParser implements JSGFParserConstants {
             grammar.addImport(r);
             if (grammar instanceof JSGFRuleGrammar && t != null && t.specialToken != null) {
                 if (t.specialToken.image != null && t.specialToken.image.startsWith("/**")) {
-                    JSGFRuleGrammar JG = (JSGFRuleGrammar) grammar;
+                    JSGFRuleGrammar JG = grammar;
                     JG.addImportDocComment(r, t.specialToken.image);
                 }
             }
         }
   }
 
-  final public String Name() throws ParseException {
+  @SuppressWarnings("unused")
+final public String Name() throws ParseException {
     Token t1, t2;
     StringBuilder sb = new StringBuilder();
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
@@ -465,7 +468,8 @@ public class JSGFParser implements JSGFParserConstants {
         }
   }
 
-  final public JSGFRuleAlternatives alternatives() throws ParseException {
+  @SuppressWarnings("unused")
+final public JSGFRuleAlternatives alternatives() throws ParseException {
     ArrayList<JSGFRule> ruleList = new ArrayList<JSGFRule>();
     JSGFRule r;
     float w;
@@ -533,7 +537,8 @@ public class JSGFParser implements JSGFParserConstants {
     throw new Error("Missing return statement in function");
   }
 
-  final public String ruleDef() throws ParseException {
+  @SuppressWarnings("unused")
+final public String ruleDef() throws ParseException {
     Token t;
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case IDENTIFIER:
@@ -560,7 +565,8 @@ public class JSGFParser implements JSGFParserConstants {
     throw new Error("Missing return statement in function");
   }
 
-  final public JSGFRuleSequence sequence() throws ParseException {
+  @SuppressWarnings("unused")
+final public JSGFRuleSequence sequence() throws ParseException {
     JSGFRule JSGFRule;
     ArrayList<JSGFRule> ruleList = new ArrayList<JSGFRule>();
     label_6:
@@ -589,7 +595,8 @@ public class JSGFParser implements JSGFParserConstants {
     throw new Error("Missing return statement in function");
   }
 
-  final public float weight() throws ParseException {
+  @SuppressWarnings("unused")
+final public float weight() throws ParseException {
     Token t;
     jj_consume_token(34);
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
@@ -609,7 +616,8 @@ public class JSGFParser implements JSGFParserConstants {
     throw new Error("Missing return statement in function");
   }
 
-  final public JSGFRule item() throws ParseException {
+  @SuppressWarnings("unused")
+final public JSGFRule item() throws ParseException {
     JSGFRule r;
     ArrayList<String> tags = null;
     int count =-1;
@@ -739,7 +747,8 @@ public class JSGFParser implements JSGFParserConstants {
     throw new Error("Missing return statement in function");
   }
 
-  final public ArrayList<String> tags() throws ParseException {
+  @SuppressWarnings("unused")
+final public ArrayList<String> tags() throws ParseException {
     Token token;
     ArrayList<String> tags = new ArrayList<String>();
     label_7:
@@ -759,7 +768,8 @@ public class JSGFParser implements JSGFParserConstants {
     throw new Error("Missing return statement in function");
   }
 
-  final public JSGFRule terminal() throws ParseException {
+  @SuppressWarnings("unused")
+final public JSGFRule terminal() throws ParseException {
     Token t;
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case IDENTIFIER:
@@ -795,7 +805,8 @@ public class JSGFParser implements JSGFParserConstants {
     throw new Error("Missing return statement in function");
   }
 
-  final public JSGFRuleName ruleRef() throws ParseException {
+  @SuppressWarnings("unused")
+final public JSGFRuleName ruleRef() throws ParseException {
     String s;
     jj_consume_token(28);
     s = Name();
@@ -805,7 +816,8 @@ public class JSGFParser implements JSGFParserConstants {
     throw new Error("Missing return statement in function");
   }
 
-  final public JSGFRuleName importRef() throws ParseException {
+  @SuppressWarnings("unused")
+final public JSGFRuleName importRef() throws ParseException {
     String s;
     boolean all = false;
     jj_consume_token(28);
@@ -964,7 +976,8 @@ public class JSGFParser implements JSGFParserConstants {
     throw generateParseException();
   }
 
-  static private final class LookaheadSuccess extends java.lang.Error { }
+  @SuppressWarnings("serial")
+static private final class LookaheadSuccess extends java.lang.Error { }
   final private LookaheadSuccess jj_ls = new LookaheadSuccess();
   private boolean jj_scan_token(int kind) {
     if (jj_scanpos == jj_lastpos) {

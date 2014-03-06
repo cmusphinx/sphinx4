@@ -14,6 +14,7 @@ import edu.cmu.sphinx.frontend.Data;
  *
  * @author Yaniv Kunda
  */
+@SuppressWarnings("serial")
 public abstract class ScoreCachingSenone implements Senone {
 
     private class ScoreCache {
@@ -33,7 +34,6 @@ public abstract class ScoreCachingSenone implements Senone {
      * If the score was not cached, it is calculated using {@link #calculateScore},
      * cached, and then returned.  
      */
-    @Override
     public float getScore(Data feature) {
         ScoreCache cached = scoreCache;
         if (feature != cached.feature) {

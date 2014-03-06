@@ -91,7 +91,6 @@ public class LiveModeRecognizer implements Configurable {
     *
     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
     */
-    @Override
     public void newProperties(PropertySheet ps) throws PropertyException {
         recognizer = (Recognizer) ps.getComponent(PROP_RECOGNIZER);
         dataSource = (ConcatFileDataSource) ps.getComponent(PROP_INPUT_SOURCE);

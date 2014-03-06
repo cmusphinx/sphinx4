@@ -221,8 +221,8 @@ public class Lattice {
              * from the Node to the parentWordNode
              */
             Node fromNode = getNode(token);
-            addEdge(fromNode, parentWordNode, (double) acousticScore,
-                    (double) languageScore);
+            addEdge(fromNode, parentWordNode, acousticScore,
+                    languageScore);
             if (token.getPredecessor() != null) {
                 /* Collapse the token sequence ending in this token. */
                 collapseWordToken(token);

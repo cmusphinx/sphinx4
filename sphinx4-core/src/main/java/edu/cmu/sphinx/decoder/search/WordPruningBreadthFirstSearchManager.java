@@ -216,7 +216,6 @@ public class WordPruningBreadthFirstSearchManager extends TokenSearchManager {
     *
     * @see edu.cmu.sphinx.decoder.search.SearchManager#allocate()
     */
-    @Override
     public void allocate() {
         // tokenTracker = new TokenTracker();
         // tokenTypeTracker = new TokenTypeTracker();
@@ -244,7 +243,6 @@ public class WordPruningBreadthFirstSearchManager extends TokenSearchManager {
     *
     * @see edu.cmu.sphinx.decoder.search.SearchManager#deallocate()
     */
-    @Override
     public void deallocate() {
 	try {
             scorer.deallocate();
@@ -257,7 +255,6 @@ public class WordPruningBreadthFirstSearchManager extends TokenSearchManager {
 
 
     /** Called at the start of recognition. Gets the search manager ready to recognize */
-    @Override
     public void startRecognition() {
         linguist.startRecognition();
         pruner.startRecognition();
@@ -272,7 +269,6 @@ public class WordPruningBreadthFirstSearchManager extends TokenSearchManager {
      * @param nFrames the number of frames to recognize
      * @return the current result
      */
-    @Override
     public Result recognize(int nFrames) {
         boolean done = false;
         Result result = null;
@@ -334,7 +330,6 @@ public class WordPruningBreadthFirstSearchManager extends TokenSearchManager {
 
 
     /** Terminates a recognition */
-    @Override
     public void stopRecognition() {
         localStop();
         scorer.stopRecognition();
@@ -543,7 +538,7 @@ public class WordPruningBreadthFirstSearchManager extends TokenSearchManager {
      */
     protected Token getBestToken(SearchState state) {
         Object key = getStateKey(state);
-        return (Token) bestTokenMap.get(key);
+        return bestTokenMap.get(key);
     }
 
 

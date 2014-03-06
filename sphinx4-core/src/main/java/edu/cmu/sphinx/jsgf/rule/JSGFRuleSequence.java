@@ -35,7 +35,8 @@ public class JSGFRuleSequence extends JSGFRule {
 		this.rules = rules;
 	}
 
-	public String toString() {
+	@Override
+    public String toString() {
 		if (rules.size() == 0) {
 			return "<NULL>";
 		}

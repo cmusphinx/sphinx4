@@ -41,11 +41,11 @@ public class Nbest {
             this.forwardScore = forwardScore;
         }
 
-        @Override
         public int compareTo(NBestPath o) {
             return Double.compare(score, o.score);
         }
 
+        @Override
         public String toString() {
             return path + " [" + score + ',' + forwardScore + ']';
         }

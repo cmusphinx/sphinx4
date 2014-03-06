@@ -25,7 +25,6 @@ public class SimplePruner implements Pruner {
     /* (non-Javadoc)
      * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
      */
-    @Override
     public void newProperties(PropertySheet ps) throws PropertyException {
     }
 
@@ -42,7 +41,6 @@ public class SimplePruner implements Pruner {
 
 
     /** Starts the pruner */
-    @Override
     public void startRecognition() {
     }
 
@@ -52,14 +50,12 @@ public class SimplePruner implements Pruner {
      *
      * @param activeList a activeList of tokens
      */
-    @Override
     public ActiveList prune(ActiveList activeList) {
         return activeList.purge();
     }
 
 
     /** Performs post-recognition cleanup. */
-    @Override
     public void stopRecognition() {
     }
 
@@ -67,7 +63,6 @@ public class SimplePruner implements Pruner {
     /* (non-Javadoc)
      * @see edu.cmu.sphinx.decoder.pruner.Pruner#allocate()
      */
-    @Override
     public void allocate() {
     }
 
@@ -75,7 +70,6 @@ public class SimplePruner implements Pruner {
     /* (non-Javadoc)
      * @see edu.cmu.sphinx.decoder.pruner.Pruner#deallocate()
      */
-    @Override
     public void deallocate() {
 
     }

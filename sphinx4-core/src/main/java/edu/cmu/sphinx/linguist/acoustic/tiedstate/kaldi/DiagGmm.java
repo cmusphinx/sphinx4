@@ -12,6 +12,7 @@ import edu.cmu.sphinx.util.LogMath;
  *
  * @see DiagGmm class in Kaldi.
  */
+@SuppressWarnings("serial")
 public class DiagGmm extends ScoreCachingSenone {
 
     private int id;
@@ -65,7 +66,6 @@ public class DiagGmm extends ScoreCachingSenone {
         return logTotal;
     }
 
-    @Override
     public float[] calculateComponentScore(Data data) {
         float[] features = FloatData.toFloatData(data).getValues();
         int dim = meansInvVars.length / gconsts.length;
@@ -90,12 +90,10 @@ public class DiagGmm extends ScoreCachingSenone {
         return likelihoods;
     }
 
-    @Override
     public long getID() {
         return id;
     }
 
-    @Override
     public void dump(String msg) {
         System.out.format("%s DiagGmm: ID %d\n", msg, id);
     }

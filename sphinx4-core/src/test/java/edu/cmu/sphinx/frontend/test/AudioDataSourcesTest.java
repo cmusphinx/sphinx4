@@ -76,7 +76,6 @@ public class AudioDataSourcesTest {
                 numFileEnds++;
             }
 
-            @Override
             public void newProperties(PropertySheet ps) throws PropertyException {
                 // to avoid compilation error
             }

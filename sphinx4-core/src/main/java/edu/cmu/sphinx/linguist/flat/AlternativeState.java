@@ -18,6 +18,7 @@ import java.io.Serializable;
 
 /** Represents a set of alternatives in an SentenceHMMS */
 
+@SuppressWarnings("serial")
 public class AlternativeState extends SentenceHMMState
         implements Serializable {
 

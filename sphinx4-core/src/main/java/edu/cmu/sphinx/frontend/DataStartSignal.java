@@ -20,6 +20,7 @@ package edu.cmu.sphinx.frontend;
  * @see DataProcessor
  * @see Signal
  */
+@SuppressWarnings("serial")
 public class DataStartSignal extends Signal {
 
     private final int sampleRate;

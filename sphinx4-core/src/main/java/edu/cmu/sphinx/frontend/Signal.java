@@ -24,6 +24,7 @@ import java.util.Map;
  * @see Data
  * @see DataProcessor
  */
+@SuppressWarnings("serial")
 public class Signal implements Data {
 
     /** the time this Signal was issued. */

@@ -139,25 +139,21 @@ public class SocketCommandInterpreter extends Thread {
     public static void main(String[] args) {
         SocketCommandInterpreter sci = new SocketCommandInterpreter(7890);
         sci.add("testCommand", new CommandInterface() {
-            @Override
             public String execute(CommandInterpreter ci, String[] args) {
                 return "this is a test";
             }
 
 
-            @Override
             public String getHelp() {
                 return "a test command";
             }
         });
         sci.add("time", new CommandInterface() {
-            @Override
             public String execute(CommandInterpreter ci, String[] args) {
                 return "Time is " + new Date();
             }
 
 
-            @Override
             public String getHelp() {
                 return "shows the current time";
             }

@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 /** Converts a set of log magnitude Spectrum data into a graphical representation. */
+@SuppressWarnings("serial")
 public class CepstrumPanel extends JPanel {
 
     /** Where the spectrogram will live. */
@@ -74,7 +75,6 @@ public class CepstrumPanel extends JPanel {
         this.frontEnd = frontEnd;
         this.dataSource = dataSource;
         audio.addChangeListener(new ChangeListener() {
-            @Override
             public void stateChanged(ChangeEvent event) {
                 computeCepstrum();
             }

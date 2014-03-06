@@ -88,6 +88,7 @@ public class SphinxAsciiLoader extends Sphinx3Loader {
      * @throws IOException
      *             if an error occurs while loading the data
      */
+    @Override
     protected Pool<float[]> loadDensityFile(String path, float floor) throws IOException, URISyntaxException {
         logger.fine("Loading density file from: " + path);
         InputStream inputStream = getDataStream(path);
@@ -143,6 +144,7 @@ public class SphinxAsciiLoader extends Sphinx3Loader {
      * @throws IOException
      *             if an error occurs while loading the data
      */
+    @Override
     protected Pool<float[]> loadMixtureWeights(String path, float floor) throws IOException, URISyntaxException {
         logger.fine("Loading mixture weights from: " + path);
         InputStream inputStream = getDataStream(path);
@@ -190,6 +192,7 @@ public class SphinxAsciiLoader extends Sphinx3Loader {
      * @throws IOException
      *             if an error occurs while loading the data
      */
+    @Override
     protected Pool<float[][]> loadTransitionMatrices(String path) throws IOException, URISyntaxException {
         logger.fine("Loading transition matrices from: " + path);
 

@@ -50,7 +50,6 @@ public class Sausage implements ConfidenceResult {
      *
      * @return an iterator that steps through confusion sets
      */
-    @Override
     public Iterator<ConfusionSet> iterator() {
         return confusionSets.iterator();
     }
@@ -103,7 +102,6 @@ public class Sausage implements ConfidenceResult {
 
 
     /** @see edu.cmu.sphinx.result.ConfidenceResult#getBestHypothesis() */
-    @Override
     public Path getBestHypothesis() {
         return getBestHypothesis(true);
     }
@@ -205,7 +203,6 @@ public class Sausage implements ConfidenceResult {
      * @param pos the word slot to look at.
      * @return a map from Double posteriors to Sets of String words, sorted from lowest to highest.
      */
-    @Override
     public ConfusionSet getConfusionSet(int pos) {
         return confusionSets.get(pos);
     }
@@ -229,7 +226,6 @@ public class Sausage implements ConfidenceResult {
      *
      * @return The number of word slots in this sausage
      */
-    @Override
     public int size() {
         return confusionSets.size();
     }

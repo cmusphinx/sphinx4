@@ -29,7 +29,6 @@ public interface Scoreable extends Data {
      * in contrast to the natural meaning of the word "min".   
      */
     Comparator<Scoreable> COMPARATOR = new Comparator<Scoreable>() {
-        @Override
         public int compare(Scoreable t1, Scoreable t2) {
             if (t1.getScore() > t2.getScore()) {
                 return -1;

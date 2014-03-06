@@ -172,35 +172,6 @@ public class MelFrequencyFilterBank extends BaseDataProcessor {
     }
 
     /**
-     * Compute linear frequency from mel frequency.
-     * 
-     * @param inputFreq the input frequency in mel scale
-     * @return the frequency in a linear scale
-     */
-    private double melToLinear(double inputFreq) {
-        return 700 * (Math.exp(inputFreq / 1127) - 1);
-    }
-
-    /**
-     * Sets the given frequency to the nearest frequency bin from the FFT. The
-     * FFT can be thought of as a sampling of the actual spectrum of a signal.
-     * We use this function to find the sampling point of the spectrum that is
-     * closest to the given frequency.
-     * 
-     * @param inFreq the input frequency
-     * @param stepFreq the distance between frequency bins
-     * @return the closest frequency bin
-     * @throws IllegalArgumentException
-     */
-    private double setToNearestFrequencyBin(double inFreq, double stepFreq)
-            throws IllegalArgumentException {
-        if (stepFreq == 0) {
-            throw new IllegalArgumentException("stepFreq is zero");
-        }
-        return stepFreq * Math.round(inFreq / stepFreq);
-    }
-
-    /**
      * Build a mel filterbank with the parameters given. Each filter will be
      * shaped as a triangle. The triangles overlap so that they cover the whole
      * frequency range requested. The edges of a given triangle will be by

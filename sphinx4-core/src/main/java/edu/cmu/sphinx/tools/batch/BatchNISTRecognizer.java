@@ -175,6 +175,7 @@ public class BatchNISTRecognizer extends BatchModeRecognizer {
     }
 
 
+    @SuppressWarnings("serial")
     protected class CTLException extends Exception {
         CTLException(String msg) {
             super(msg);
@@ -284,13 +285,11 @@ public class BatchNISTRecognizer extends BatchModeRecognizer {
         }
 
 
-        @Override
         public boolean hasNext() {
             return utterance != null;
         }
 
 
-        @Override
         public CTLUtterance next() {
             CTLUtterance u = utterance;
             utterance = nextUtterance();
@@ -298,7 +297,6 @@ public class BatchNISTRecognizer extends BatchModeRecognizer {
         }
 
 
-        @Override
         public void remove() {
             throw new Error("Not implemented");
         }

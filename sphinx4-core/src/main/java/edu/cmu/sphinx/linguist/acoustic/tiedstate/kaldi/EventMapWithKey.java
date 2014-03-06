@@ -1,8 +1,5 @@
 package edu.cmu.sphinx.linguist.acoustic.tiedstate.kaldi;
 
-import edu.cmu.sphinx.linguist.acoustic.Context;
-import edu.cmu.sphinx.linguist.acoustic.Context;
-
 
 /**
  * Event map that splits on a key.

@@ -26,6 +26,7 @@ public abstract class RandomDataProcessor extends BaseDataProcessor {
     }
 
 
+    @Override
     public Data getData() throws DataProcessingException {
         return input.isEmpty() ? null : input.remove(0);
     }

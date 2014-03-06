@@ -95,7 +95,6 @@ public class SimpleActiveListFactory extends ActiveListFactory {
          *
          * @param token the token to add
          */
-        @Override
         public void add(Token token) {
             tokenList.add(token);
             if (bestToken == null || token.getScore() > bestToken.getScore()) {
@@ -110,7 +109,6 @@ public class SimpleActiveListFactory extends ActiveListFactory {
          * @param oldToken the token to replace (or null in which case, replace works like add).
          * @param newToken the new token to be placed in the list.
          */
-        @Override
         public void replace(Token oldToken, Token newToken) {
             add(newToken);
             if (oldToken != null) {
@@ -132,7 +130,6 @@ public class SimpleActiveListFactory extends ActiveListFactory {
          *
          * @return a (possible new) active list
          */
-        @Override
         public ActiveList purge() {
             if (absoluteBeamWidth > 0 && tokenList.size() > absoluteBeamWidth) {
                 Collections.sort(tokenList, Scoreable.COMPARATOR);
@@ -147,7 +144,6 @@ public class SimpleActiveListFactory extends ActiveListFactory {
          *
          * @return the iterator for this token list
          */
-        @Override
         public Iterator<Token> iterator() {
             return tokenList.iterator();
         }
@@ -158,7 +154,6 @@ public class SimpleActiveListFactory extends ActiveListFactory {
          *
          * @return the set of tokens
          */
-        @Override
         public List<Token> getTokens() {
             return tokenList;
         }
@@ -169,7 +164,6 @@ public class SimpleActiveListFactory extends ActiveListFactory {
          *
          * @return the size of the active list
          */
-        @Override
         public final int size() {
             return tokenList.size();
         }
@@ -180,7 +174,6 @@ public class SimpleActiveListFactory extends ActiveListFactory {
          *
          * @return the beam threshold
          */
-        @Override
         public float getBeamThreshold() {
             return getBestScore() + logRelativeBeamWidth;
         }
@@ -191,7 +184,6 @@ public class SimpleActiveListFactory extends ActiveListFactory {
          *
          * @return the best score
          */
-        @Override
         public float getBestScore() {
             float bestScore = -Float.MAX_VALUE;
             if (bestToken != null) {
@@ -206,7 +198,6 @@ public class SimpleActiveListFactory extends ActiveListFactory {
          *
          * @param token the best scoring token
          */
-        @Override
         public void setBestToken(Token token) {
             bestToken = token;
         }
@@ -217,7 +208,6 @@ public class SimpleActiveListFactory extends ActiveListFactory {
          *
          * @return the best scoring token
          */
-        @Override
         public Token getBestToken() {
             return bestToken;
         }
@@ -226,7 +216,6 @@ public class SimpleActiveListFactory extends ActiveListFactory {
         /* (non-Javadoc)
         * @see edu.cmu.sphinx.decoder.search.ActiveList#createNew()
         */
-        @Override
         public ActiveList newInstance() {
             return SimpleActiveListFactory.this.newInstance();
         }

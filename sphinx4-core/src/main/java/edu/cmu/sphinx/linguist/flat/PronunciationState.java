@@ -17,6 +17,7 @@ import edu.cmu.sphinx.linguist.dictionary.Pronunciation;
 
 
 /** Represents a pronunciation in an SentenceHMMS */
+@SuppressWarnings("serial")
 public class PronunciationState extends SentenceHMMState implements        WordSearchState {
 
     private final Pronunciation pronunciation;
@@ -52,7 +53,6 @@ public class PronunciationState extends SentenceHMMState implements        WordS
      *
      * @return the pronunciation
      */
-    @Override
     public Pronunciation getPronunciation() {
         return pronunciation;
     }

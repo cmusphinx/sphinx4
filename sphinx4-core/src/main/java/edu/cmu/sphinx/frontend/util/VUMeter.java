@@ -19,7 +19,7 @@ public class VUMeter {
     private double peak;
 
     private static final double log10 = Math.log(10.0);
-    private static final double maxDB = Math.max(0.0, 20.0 * Math.log((double) Short.MAX_VALUE) / log10);
+    private static final double maxDB = Math.max(0.0, 20.0 * Math.log(Short.MAX_VALUE) / log10);
 
     private final int peakHoldTime = 1000;
     private long then = System.currentTimeMillis();

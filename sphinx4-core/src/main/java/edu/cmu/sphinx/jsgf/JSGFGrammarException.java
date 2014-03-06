@@ -7,6 +7,7 @@
  */
 package edu.cmu.sphinx.jsgf;
 
+@SuppressWarnings("serial")
 public class JSGFGrammarException extends Exception {
 
 	public JSGFGrammarException(String message) {

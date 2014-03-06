@@ -20,6 +20,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 /** Creates a dialog that prompts for a filename. */
+@SuppressWarnings("serial")
 public class FilenameDialog extends JDialog {
 
     String action;
@@ -87,7 +88,6 @@ public class FilenameDialog extends JDialog {
          */
         JButton okButton = new JButton("Save");
         okButton.addActionListener(new ActionListener() {
-            @Override
             public void actionPerformed(ActionEvent event) {
                 setVisible(false);
             }

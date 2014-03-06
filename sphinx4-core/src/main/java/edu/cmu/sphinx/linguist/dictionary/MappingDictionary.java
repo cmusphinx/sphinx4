@@ -74,7 +74,7 @@ public class MappingDictionary extends FastDictionary implements Dictionary {
     }
 				
 	@Override
-	public void newProperties(PropertySheet ps) throws PropertyException {
+    public void newProperties(PropertySheet ps) throws PropertyException {
 		super.newProperties(ps);
 	   
 		mappingFile = ConfigurationManagerUtils.getResource(PROP_MAP_FILE, ps);
@@ -85,7 +85,7 @@ public class MappingDictionary extends FastDictionary implements Dictionary {
     *
     * @see edu.cmu.sphinx.linguist.dictionary.Dictionary#allocate()
     */
-	@Override
+    @Override
     public void allocate() throws IOException {
     		super.allocate();
     		if (!mappingFile.getFile().equals(""))
@@ -101,7 +101,7 @@ public class MappingDictionary extends FastDictionary implements Dictionary {
 	 *            if true, the unit is a filler unit
 	 * @return the unit
 	 */
-	@Override
+    @Override
     protected Unit getCIUnit(String name, boolean isFiller) {
 		if (mapping.containsKey(name)) {
 			name = mapping.get(name);

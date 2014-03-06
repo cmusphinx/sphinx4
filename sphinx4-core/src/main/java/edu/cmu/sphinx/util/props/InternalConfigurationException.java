@@ -14,6 +14,7 @@ package edu.cmu.sphinx.util.props;
  *
  * @author Holger Brandl
  */
+@SuppressWarnings("serial")
 public class InternalConfigurationException extends PropertyException {
 
     InternalConfigurationException(String instanceName, String propertyName, String msg) {

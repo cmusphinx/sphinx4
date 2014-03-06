@@ -80,7 +80,6 @@ public class StateHistoryTracker {
     static class WordStats {
 
         public final static Comparator<WordStats> COMPARATOR = new Comparator<WordStats>() {
-            @Override
             public int compare(WordStats ws1, WordStats ws2) {
                 if (ws1.maxScore > ws2.maxScore) {
                     return -1;

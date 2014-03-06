@@ -156,7 +156,6 @@ public class FastDictionary implements Dictionary {
      * .props.PropertySheet)
      */
 
-    @Override
     public void newProperties(PropertySheet ps) throws PropertyException {
         logger = ps.getLogger();
 
@@ -200,7 +199,6 @@ public class FastDictionary implements Dictionary {
      * @see edu.cmu.sphinx.linguist.dictionary.Dictionary#allocate()
      */
 
-    @Override
     public void allocate() throws IOException {
         if (!allocated) {
             dictionary = new HashMap<String, String>();
@@ -236,7 +234,6 @@ public class FastDictionary implements Dictionary {
      * @see edu.cmu.sphinx.linguist.dictionary.Dictionary#deallocate()
      */
 
-    @Override
     public void deallocate() {
         if (allocated) {
             dictionary = null;
@@ -323,7 +320,6 @@ public class FastDictionary implements Dictionary {
      * 
      * @return the sentence start word
      */
-    @Override
     public Word getSentenceStartWord() {
         return getWord(SENTENCE_START_SPELLING);
     }
@@ -333,7 +329,6 @@ public class FastDictionary implements Dictionary {
      * 
      * @return the sentence end word
      */
-    @Override
     public Word getSentenceEndWord() {
         return getWord(SENTENCE_END_SPELLING);
     }
@@ -343,7 +338,6 @@ public class FastDictionary implements Dictionary {
      * 
      * @return the silence word
      */
-    @Override
     public Word getSilenceWord() {
         return getWord(SILENCE_SPELLING);
     }
@@ -358,7 +352,6 @@ public class FastDictionary implements Dictionary {
      * @return a Word object
      * @see edu.cmu.sphinx.linguist.dictionary.Word
      */
-    @Override
     public Word getWord(String text) {
         text = text.toLowerCase();
         Word wordObject = wordDictionary.get(text);
@@ -454,7 +447,7 @@ public class FastDictionary implements Dictionary {
             if (count > 1) {
                 lookupWord = lookupWord + '(' + count + ')';
             }
-            line = (String) dictionary.get(lookupWord);
+            line = dictionary.get(lookupWord);
             if (line != null) {
                 StringTokenizer st = new StringTokenizer(line);
 
@@ -492,7 +485,6 @@ public class FastDictionary implements Dictionary {
      * 
      * @return the set of all possible word classifications
      */
-    @Override
     public WordClassification[] getPossibleWordClassifications() {
         return null;
     }
@@ -522,7 +514,6 @@ public class FastDictionary implements Dictionary {
      * 
      * @return an array (possibly empty) of all filler words
      */
-    @Override
     public Word[] getFillerWords() {
         Word[] fillerWordArray = new Word[fillerWords.size()];
         int index = 0;

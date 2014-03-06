@@ -61,6 +61,7 @@ public class GrXMLHandler extends DefaultHandler {
         addToCurrent(newRule, topRule);
     }    
 
+    @Override
     public void characters(char buf[], int offset, int len)throws SAXException {
         String item = new String(buf, offset, len).trim();
 

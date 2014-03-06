@@ -76,21 +76,21 @@ public class RawReader {
             if (!done) {
                 int val = 0;
                 if (bigEndian) {
-                    val = (int) buffer[0];
+                    val = buffer[0];
                     if (!signedData) {
                         val &= 0xff;
                     }
                     for (int i = 1; i < bytesPerSample; i++) {
-                        int temp = (int) buffer[i] & 0xff;
+                        int temp = buffer[i] & 0xff;
                         val = (val << 8) + temp;
                     }
                 } else {
-                    val = (int) buffer[bytesPerSample - 1];
+                    val = buffer[bytesPerSample - 1];
                     if (!signedData) {
                         val &= 0xff;
                     }
                     for (int i = bytesPerSample - 2; i >= 0; i--) {
-                        int temp = (int) buffer[i] & 0xff;
+                        int temp = buffer[i] & 0xff;
                         val = (val << 8) + temp;
                     }
                 }

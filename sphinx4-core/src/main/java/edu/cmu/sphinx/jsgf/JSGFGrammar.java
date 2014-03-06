@@ -222,6 +222,7 @@ public class JSGFGrammar extends Grammar {
      * edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util
      * .props.PropertySheet)
      */
+    @Override
     public void newProperties(PropertySheet ps) throws PropertyException {
         super.newProperties(ps);
         baseURL = ConfigurationManagerUtils.getResource(PROP_BASE_GRAMMAR_URL,
@@ -289,6 +290,7 @@ public class JSGFGrammar extends Grammar {
      * 
      * @return the initial node of the Grammar
      */
+    @Override
     protected GrammarNode createGrammar() throws IOException {
         try {
             commitChanges();
@@ -305,6 +307,7 @@ public class JSGFGrammar extends Grammar {
      * 
      * @return the initial grammar node
      */
+    @Override
     public GrammarNode getInitialNode() {
         return firstNode;
     }

@@ -78,7 +78,7 @@ public class SpeechClassifier extends AbstractVoiceActivityDetector {
     
     public SpeechClassifier(int frameLengthMs, double adjustment, double threshold, double minSignal ) {
         initLogger();
-        this.frameLengthSec = ((float) frameLengthMs) / 1000.f;
+        this.frameLengthSec = frameLengthMs / 1000.f;
 
         this.adjustment = adjustment;
         this.threshold = threshold;
@@ -94,7 +94,7 @@ public class SpeechClassifier extends AbstractVoiceActivityDetector {
     public void newProperties(PropertySheet ps) throws PropertyException {
         super.newProperties(ps);
         int frameLengthMs = ps.getInt(PROP_FRAME_LENGTH_MS);
-        frameLengthSec = ((float) frameLengthMs) / 1000.f;
+        frameLengthSec = frameLengthMs / 1000.f;
 
         adjustment = ps.getDouble(PROP_ADJUSTMENT);
         threshold = ps.getDouble(PROP_THRESHOLD);
@@ -232,6 +232,7 @@ public class SpeechClassifier extends AbstractVoiceActivityDetector {
      * 
      * @return if current frame is speech 
      */
+    @Override
     public boolean isSpeech() {
     	return isSpeech;
     }

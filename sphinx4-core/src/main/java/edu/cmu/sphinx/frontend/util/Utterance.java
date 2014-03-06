@@ -91,7 +91,7 @@ public class Utterance {
      * @return how long is this utterance
      */
     public float getAudioTime() {
-        return ((float) audioBuffer.size()) /
+        return audioBuffer.size() /
                 (audioFormat.getSampleRate() *
                         audioFormat.getSampleSizeInBits() / 8);
     }

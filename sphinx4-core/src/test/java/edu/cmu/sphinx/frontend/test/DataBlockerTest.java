@@ -75,6 +75,7 @@ public class DataBlockerTest extends BaseDataProcessor {
      * @throws edu.cmu.sphinx.frontend.DataProcessingException
      *          if a data processor error occurs
      */
+    @Override
     public Data getData() throws DataProcessingException {
         return input.remove(0);
     }

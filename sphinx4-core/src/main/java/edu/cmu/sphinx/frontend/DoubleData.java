@@ -16,6 +16,7 @@ package edu.cmu.sphinx.frontend;
 import edu.cmu.sphinx.util.machlearn.OVector;
 
 /** A Data object that holds data of primitive type double. */
+@SuppressWarnings("serial")
 public class DoubleData extends OVector implements Data {
 
     private int sampleRate;

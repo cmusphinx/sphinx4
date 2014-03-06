@@ -28,7 +28,6 @@ abstract public class TokenSearchManager implements SearchManager {
      * edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util
      * .props.PropertySheet)
      */
-    @Override
     public void newProperties(PropertySheet ps) throws PropertyException {       
         buildWordLattice = ps.getBoolean(PROP_BUILD_WORD_LATTICE);
         keepAllTokens = ps.getBoolean(PROP_KEEP_ALL_TOKENS);

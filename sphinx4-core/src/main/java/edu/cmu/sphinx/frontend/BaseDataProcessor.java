@@ -36,12 +36,10 @@ public abstract class BaseDataProcessor extends ConfigurableAdapter implements D
      * @return an Data object that has been processed by this DataProcessor
      * @throws DataProcessingException if a data processor error occurs
      */
-    @Override
     public abstract Data getData() throws DataProcessingException;
 
 
     /** Initializes this DataProcessor. This is typically called after the DataProcessor has been configured. */
-    @Override
     public void initialize() {
     }
 
@@ -51,7 +49,6 @@ public abstract class BaseDataProcessor extends ConfigurableAdapter implements D
      *
      * @return the predecessor
      */
-    @Override
     public DataProcessor getPredecessor() {
         return predecessor;
     }
@@ -75,7 +72,6 @@ public abstract class BaseDataProcessor extends ConfigurableAdapter implements D
      *
      * @param predecessor the new predecessor of this DataProcessor
      */
-    @Override
     public void setPredecessor(DataProcessor predecessor) {
         this.predecessor = predecessor;
     }

@@ -29,7 +29,6 @@ public class BackgroundModelNormalizer implements ScoreNormalizer {
     public BackgroundModelNormalizer() {       
     }
 
-    @Override
     public void newProperties(PropertySheet ps) throws PropertyException {
         this.activeListProvider = (SimpleBreadthFirstSearchManager) ps.getComponent(ACTIVE_LIST_PROVIDER);
         this.logger = ps.getLogger();
@@ -48,7 +47,6 @@ public class BackgroundModelNormalizer implements ScoreNormalizer {
         logger.warning("no active list set.");
     }
     
-    @Override
     public Scoreable normalize(List<? extends Scoreable> scoreableList, Scoreable bestToken) {
         if (activeListProvider == null) {
             return bestToken;

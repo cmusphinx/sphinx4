@@ -185,13 +185,12 @@ public class StreamCepstrumSource extends BaseDataProcessor {
                 try {
                     if (binary) {
                         if (bigEndian) {
-                            vectorData[i] = (double) binaryStream.readFloat();
+                            vectorData[i] = binaryStream.readFloat();
                         } else {
-                            vectorData[i] = (double)
-                                    Utilities.readLittleEndianFloat(binaryStream);
+                            vectorData[i] = Utilities.readLittleEndianFloat(binaryStream);
                         }
                     } else {
-                        vectorData[i] = (double) est.getFloat("cepstrum data");
+                        vectorData[i] = est.getFloat("cepstrum data");
                     }
                     curPoint++;
                 } catch (IOException ioe) {

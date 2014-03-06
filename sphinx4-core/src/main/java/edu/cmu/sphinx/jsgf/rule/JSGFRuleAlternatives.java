@@ -83,7 +83,8 @@ public class JSGFRuleAlternatives extends JSGFRule {
 		weights = newWeights;
 	}
 
-	public String toString() {
+	@Override
+    public String toString() {
 		if (rules == null || rules.size() == 0) {
 			return "<VOID>";
 		}

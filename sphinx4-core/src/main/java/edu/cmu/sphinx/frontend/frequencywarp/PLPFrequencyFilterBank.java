@@ -118,8 +118,8 @@ public class PLPFrequencyFilterBank extends BaseDataProcessor {
         DFTFrequencies = new double[numberDFTPoints];
         nyquistFreq = sampleRate / 2;
         for (int i = 0; i < numberDFTPoints; i++) {
-            DFTFrequencies[i] = (double) i * nyquistFreq /
-                    (double) (numberDFTPoints - 1);
+            DFTFrequencies[i] = i * nyquistFreq /
+                    (numberDFTPoints - 1);
         }
 
         /**

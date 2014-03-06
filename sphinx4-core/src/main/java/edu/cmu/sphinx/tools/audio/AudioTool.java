@@ -300,7 +300,6 @@ public class AudioTool {
         JMenuItem menuItem = new JMenuItem("Open...");
         menuItem.setAccelerator(KeyStroke.getKeyStroke("control O"));
         menuItem.addActionListener(new ActionListener() {
-            @Override
             public void actionPerformed(ActionEvent evt) {
                 getFilename("Open...", JFileChooser.OPEN_DIALOG);
                 if (filename == null || filename.isEmpty()) {
@@ -319,7 +318,6 @@ public class AudioTool {
         saveMenuItem.setAccelerator(KeyStroke.getKeyStroke("control S"));
         saveMenuItem.setEnabled(false);
         saveMenuItem.addActionListener(new ActionListener() {
-            @Override
             public void actionPerformed(ActionEvent evt) {
                 if (filename != null && !filename.isEmpty()) {
                     try {
@@ -336,7 +334,6 @@ public class AudioTool {
         menuItem = new JMenuItem("Save As...");
         menuItem.setAccelerator(KeyStroke.getKeyStroke("control V"));
         menuItem.addActionListener(new ActionListener() {
-            @Override
             public void actionPerformed(ActionEvent evt) {
                 getFilename("Save As...", JFileChooser.SAVE_DIALOG);
                 if (filename == null || filename.isEmpty()) {
@@ -355,7 +352,6 @@ public class AudioTool {
         menuItem = new JMenuItem("Quit");
         menuItem.setAccelerator(KeyStroke.getKeyStroke("control Q"));
         menuItem.addActionListener(new ActionListener() {
-            @Override
             public void actionPerformed(ActionEvent evt) {
                 System.exit(0);
             }
@@ -369,7 +365,6 @@ public class AudioTool {
         menuItem = new JMenuItem("Select All");
         menuItem.setAccelerator(KeyStroke.getKeyStroke("control A"));
         menuItem.addActionListener(new ActionListener() {
-            @Override
             public void actionPerformed(ActionEvent evt) {
                 audioPanel.selectAll();
             }
@@ -379,7 +374,6 @@ public class AudioTool {
         menuItem = new JMenuItem("Crop");
         menuItem.setAccelerator(KeyStroke.getKeyStroke("control X"));
         menuItem.addActionListener(new ActionListener() {
-            @Override
             public void actionPerformed(ActionEvent evt) {
                 audioPanel.crop();
             }
@@ -393,7 +387,6 @@ public class AudioTool {
         menuItem = new JMenuItem("Zoom In");
         menuItem.setAccelerator(KeyStroke.getKeyStroke('>'));
         menuItem.addActionListener(new ActionListener() {
-            @Override
             public void actionPerformed(ActionEvent evt) {
                 zoomIn();
             }
@@ -403,7 +396,6 @@ public class AudioTool {
         menuItem = new JMenuItem("Zoom Out");
         menuItem.setAccelerator(KeyStroke.getKeyStroke('<'));
         menuItem.addActionListener(new ActionListener() {
-            @Override
             public void actionPerformed(ActionEvent evt) {
                 zoomOut();
             }
@@ -413,7 +405,6 @@ public class AudioTool {
         menuItem = new JMenuItem("Original Size");
         menuItem.setAccelerator(KeyStroke.getKeyStroke('!'));
         menuItem.addActionListener(new ActionListener() {
-            @Override
             public void actionPerformed(ActionEvent evt) {
                 zoomReset();
             }
@@ -427,7 +418,6 @@ public class AudioTool {
         menuItem = new JMenuItem("Play");
         menuItem.setAccelerator(KeyStroke.getKeyStroke("control P"));
         menuItem.addActionListener(new ActionListener() {
-            @Override
             public void actionPerformed(ActionEvent evt) {
                 player.play(audioPanel.getSelectionStart(),
                         audioPanel.getSelectionEnd());
@@ -436,7 +426,6 @@ public class AudioTool {
         menu.add(menuItem);
 
         recordListener = new ActionListener() {
-            @Override
             public void actionPerformed(ActionEvent evt) {
                 if (!recording) {
                     recording = true;
@@ -476,7 +465,6 @@ public class AudioTool {
         playButton = new JButton("Play");
         playButton.setEnabled(true);
         playButton.addActionListener(new ActionListener() {
-            @Override
             public void actionPerformed(ActionEvent e) {
                 player.play(audioPanel.getSelectionStart(),
                         audioPanel.getSelectionEnd());
@@ -490,7 +478,6 @@ public class AudioTool {
         zoomInButton = new JButton("Zoom In");
         zoomInButton.setEnabled(true);
         zoomInButton.addActionListener(new ActionListener() {
-            @Override
             public void actionPerformed(ActionEvent e) {
                 zoomIn();
             }
@@ -499,7 +486,6 @@ public class AudioTool {
         zoomOutButton = new JButton("Zoom Out");
         zoomOutButton.setEnabled(true);
         zoomOutButton.addActionListener(new ActionListener() {
-            @Override
             public void actionPerformed(ActionEvent e) {
                 zoomOut();
             }
@@ -508,7 +494,6 @@ public class AudioTool {
         zoomResetButton = new JButton("Reset Size");
         zoomResetButton.setEnabled(true);
         zoomResetButton.addActionListener(new ActionListener() {
-            @Override
             public void actionPerformed(ActionEvent e) {
                 zoomReset();
             }
@@ -516,7 +501,6 @@ public class AudioTool {
 
         JButton exitButton = new JButton("Exit");
         exitButton.addActionListener(new ActionListener() {
-            @Override
             public void actionPerformed(ActionEvent e) {
                 System.exit(0);
             }

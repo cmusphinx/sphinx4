@@ -32,6 +32,7 @@ import java.util.*;
  * <p/>
  * All scores are maintained in LogMath log base
  */
+@SuppressWarnings("serial")
 public class Token implements Scoreable {
 
     private static int curCount;
@@ -130,7 +131,6 @@ public class Token implements Scoreable {
      *
      * @return the frame number for this token
      */
-    @Override
     public int getFrameNumber() {
         return frameNumber;
     }
@@ -158,7 +158,6 @@ public class Token implements Scoreable {
      *
      * @return the score of this frame (in logMath log base)
      */
-    @Override
     public float getScore() {
         return logTotalScore;
     }
@@ -171,7 +170,6 @@ public class Token implements Scoreable {
      * @param feature the feature to be scored
      * @return the score for the feature
      */
-    @Override
     public float calculateScore(Data feature) {
         
         logAcousticScore = ((ScoreProvider) searchState).getScore(feature);
@@ -190,7 +188,6 @@ public class Token implements Scoreable {
      * @param maxLogScore the score to normalize this score with
      * @return the normalized score
      */
-    @Override
     public float normalizeScore(float maxLogScore) {
         logTotalScore -= maxLogScore;
         logAcousticScore -= maxLogScore;

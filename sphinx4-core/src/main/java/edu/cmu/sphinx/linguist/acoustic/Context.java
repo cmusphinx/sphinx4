@@ -15,6 +15,7 @@ package edu.cmu.sphinx.linguist.acoustic;
 import java.io.Serializable;
 
 /** Represents  the context for a unit */
+@SuppressWarnings("serial")
 public class Context implements Serializable {
 
     /** Represents an empty context */

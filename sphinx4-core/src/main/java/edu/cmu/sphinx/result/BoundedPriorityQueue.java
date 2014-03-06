@@ -38,7 +38,6 @@ public class BoundedPriorityQueue<T> implements Iterable<T> {
         return items.pollLast();
     }
 
-    @Override
     public Iterator<T> iterator() {
         return items.iterator();
     }

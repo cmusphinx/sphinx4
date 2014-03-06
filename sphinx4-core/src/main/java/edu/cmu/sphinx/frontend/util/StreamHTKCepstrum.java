@@ -206,10 +206,9 @@ public class StreamHTKCepstrum extends BaseDataProcessor {
             for (int i = 0; i < cepstrumLength; i++) {
                 try {
                         if (bigEndian) {
-                            vectorData[i] = (double) binaryStream.readFloat();
+                            vectorData[i] = binaryStream.readFloat();
                         } else {
-                            vectorData[i] = (double)
-                                    Utilities.readLittleEndianFloat(binaryStream);
+                            vectorData[i] = Utilities.readLittleEndianFloat(binaryStream);
                         }
                     curPoint++;
                 } catch (IOException ioe) {

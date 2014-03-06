@@ -88,7 +88,6 @@ public class SentenceHMMStateArc implements SearchStateArc {
      *
      * @return the next state
      */
-    @Override
     public SearchState getState() {
         return nextState;
     }
@@ -111,7 +110,6 @@ public class SentenceHMMStateArc implements SearchStateArc {
      *
      * @return the language  transition probability in the logmath log domain
      */
-    @Override
     public float getLanguageProbability() {
         return logLanguageProbability;
     }
@@ -122,7 +120,6 @@ public class SentenceHMMStateArc implements SearchStateArc {
      *
      * @return the insertion probability  in the logmath log domain
      */
-    @Override
     public float getInsertionProbability() {
         return logInsertionProbability;
     }
@@ -133,7 +130,6 @@ public class SentenceHMMStateArc implements SearchStateArc {
      *
      * @return the log probability
      */
-    @Override
     public float getProbability() {
         return logLanguageProbability +
                 logInsertionProbability;

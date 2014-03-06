@@ -40,14 +40,12 @@ public class ClassPresentingDictionary implements Dictionary {
 
     }
 
-    @Override
     public void newProperties(PropertySheet ps) throws PropertyException {
         classMap = (ClassMap) ps.getComponent(PROP_CLASS_MAP);
         wordDictionary = (Dictionary) ps.getComponent(PROP_WORD_DICTIONARY);
 
     }
 
-    @Override
     public void allocate() throws IOException {
         if (!allocated) {
             allocated = true;
@@ -57,7 +55,6 @@ public class ClassPresentingDictionary implements Dictionary {
     }
 
 
-    @Override
     public void deallocate() {
         allocated = false;
         wordDictionary = null;
@@ -66,7 +63,6 @@ public class ClassPresentingDictionary implements Dictionary {
     /**
      * This method disguises all classes as words.
      */
-    @Override
     public Word getWord(String text) {
         Word word = classMap.getClassAsWord(text);
         return (word != null) ? word : wordDictionary.getWord(text);
@@ -75,7 +71,6 @@ public class ClassPresentingDictionary implements Dictionary {
     /* (non-Javadoc)
      * @see edu.cmu.sphinx.linguist.dictionary.Dictionary#getSentenceStartWord()
      */
-    @Override
     public Word getSentenceStartWord() {
         return wordDictionary.getSentenceStartWord();
     }
@@ -83,7 +78,6 @@ public class ClassPresentingDictionary implements Dictionary {
     /* (non-Javadoc)
      * @see edu.cmu.sphinx.linguist.dictionary.Dictionary#getSentenceEndWord()
      */
-    @Override
     public Word getSentenceEndWord() {
         return wordDictionary.getSentenceEndWord();
     }
@@ -91,7 +85,6 @@ public class ClassPresentingDictionary implements Dictionary {
     /* (non-Javadoc)
      * @see edu.cmu.sphinx.linguist.dictionary.Dictionary#getSilenceWord()
      */
-    @Override
     public Word getSilenceWord() {
         return wordDictionary.getSilenceWord();
     }
@@ -99,7 +92,6 @@ public class ClassPresentingDictionary implements Dictionary {
     /* (non-Javadoc)
      * @see edu.cmu.sphinx.linguist.dictionary.Dictionary#getPossibleWordClassifications()
      */
-    @Override
     public WordClassification[] getPossibleWordClassifications() {
         return wordDictionary.getPossibleWordClassifications();
     }
@@ -107,7 +99,6 @@ public class ClassPresentingDictionary implements Dictionary {
     /* (non-Javadoc)
      * @see edu.cmu.sphinx.linguist.dictionary.Dictionary#getFillerWords()
      */
-    @Override
     public Word[] getFillerWords() {
         return wordDictionary.getFillerWords();
     }

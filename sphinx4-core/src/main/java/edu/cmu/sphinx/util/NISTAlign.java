@@ -212,20 +212,17 @@ public class NISTAlign {
         //
         alignWords(backtrace(createBacktraceTable(referenceItems,
                 hypothesisItems, new  Comparator () {
-                    @Override
                     public boolean isSimilar(Object ref, Object hyp) {
                         if (ref instanceof String && hyp instanceof String) {
-                            return ((String)ref).equals((String)hyp);
+                            return ((String)ref).equals(hyp);
                         }
                         return false;
                     }          
         })), new StringRenderer () {
 
-            @Override
             public String getRef(Object ref, Object hyp) {
                 return (String)ref;
             }
-            @Override
             public String getHyp(Object ref, Object hyp) {
                 return (String)hyp;
             }
@@ -291,7 +288,6 @@ public class NISTAlign {
         //
         alignWords(backtrace(createBacktraceTable(referenceItems,
                 hypothesisItems, new  Comparator () {
-                    @Override
                     public boolean isSimilar(Object refObject, Object hypObject) {
                         if (refObject instanceof String && hypObject instanceof ConfusionSet) {
                             String ref = (String)refObject;
@@ -304,12 +300,10 @@ public class NISTAlign {
                     }          
         })), new StringRenderer() {
             
-            @Override
             public String getRef(Object ref, Object hyp) {
                 return (String)ref;
             }
             
-            @Override
             public String getHyp(Object refObject, Object hypObject) {
                 String ref = (String)refObject;
                 ConfusionSet set = (ConfusionSet)hypObject;

@@ -4,6 +4,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /** An LRU cache */
+@SuppressWarnings("serial")
 public class LRUCache<K, V> extends LinkedHashMap<K, V> {
 
     final int maxSize;

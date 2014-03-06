@@ -149,18 +149,18 @@ public class LinearPredictor {
         cepstra[1] = -ARParameters[1];
 
         for (i = 2; i < Math.min(cepstrumOrder, order + 1); i++) {
-            sum = (double) i * ARParameters[i];
+            sum = i * ARParameters[i];
             for (int j = 1; j < i; j++) {
-                sum += ARParameters[j] * cepstra[i - j] * (double) (i - j);
+                sum += ARParameters[j] * cepstra[i - j] * (i - j);
             }
-            cepstra[i] = -sum / (double) i;
+            cepstra[i] = -sum / i;
         }
         for (; i < cepstrumOrder; i++) { // Only if cepstrumOrder > order+1
             sum = 0;
             for (int j = 1; j <= order; j++) {
-                sum += ARParameters[j] * cepstra[i - j] * (double) (i - j);
+                sum += ARParameters[j] * cepstra[i - j] * (i - j);
             }
-            cepstra[i] = -sum / (double) i;
+            cepstra[i] = -sum / i;
         }
         return cepstra;
     }

@@ -21,7 +21,6 @@ public abstract class ConfigurableAdapter implements Configurable{
         init( name , Logger.getLogger( name ) );
     }
 
-    @Override
     public void newProperties(PropertySheet ps) throws PropertyException {
         init( ps.getInstanceName(), ps.getLogger());
     }
