@@ -1,14 +1,19 @@
 package edu.cmu.sphinx.util.props.test;
 
-import edu.cmu.sphinx.util.props.*;
-import org.junit.Assert;
-import org.junit.Test;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+
+import org.testng.Assert;
+import org.testng.annotations.Test;
+
+import edu.cmu.sphinx.util.props.Configurable;
+import edu.cmu.sphinx.util.props.ConfigurationManager;
+import edu.cmu.sphinx.util.props.ConfigurationManagerUtils;
+import edu.cmu.sphinx.util.props.PropertyException;
+import edu.cmu.sphinx.util.props.PropertySheet;
 
 /**
  * Some unit tests, which ensure a proper implementation of configuration management.
@@ -44,7 +49,7 @@ public class ConfigurationManagerTest {
 
         // now reload it
         ConfigurationManager cmReloaded = new ConfigurationManager(tmpFile.toURI().toURL());
-        Assert.assertTrue("deserialized cm isn't equal to its original", cmReloaded.equals(cm));
+        Assert.assertTrue(cmReloaded.equals(cm), "deserialized cm isn't equal to its original");
     }
 
 

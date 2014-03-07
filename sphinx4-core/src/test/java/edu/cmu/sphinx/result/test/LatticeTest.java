@@ -1,6 +1,6 @@
 package edu.cmu.sphinx.result.test;
 
-import org.junit.Test;
+import org.testng.annotations.Test;
 
 import edu.cmu.sphinx.result.Lattice;
 import edu.cmu.sphinx.result.LatticeOptimizer;

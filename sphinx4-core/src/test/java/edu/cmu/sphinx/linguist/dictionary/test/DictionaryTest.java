@@ -13,12 +13,11 @@
  */
 package edu.cmu.sphinx.linguist.dictionary.test;
 
-import static org.junit.Assert.*;
-
 import java.io.IOException;
 import java.net.URL;
 
-import org.junit.Test;
+import org.testng.Assert;
+import org.testng.annotations.Test;
 
 import edu.cmu.sphinx.linguist.acoustic.UnitManager;
 import edu.cmu.sphinx.linguist.dictionary.Dictionary;
@@ -36,17 +35,17 @@ public class DictionaryTest {
 		Word word;
 
 		word = dictionary.getWord("one");
-		assertEquals(2, word.getPronunciations().length);
-		assertEquals("one(HH W AH N )", word.getPronunciations()[0].toString());
-		assertEquals("one(W AH N )", word.getPronunciations()[1].toString());
+		Assert.assertEquals(2, word.getPronunciations().length);
+		Assert.assertEquals("one(HH W AH N )", word.getPronunciations()[0].toString());
+		Assert.assertEquals("one(W AH N )", word.getPronunciations()[1].toString());
 
 		word = dictionary.getWord("something");
-		assertNull(word);
+		Assert.assertNull(word);
 		
-		assertEquals("</s>", dictionary.getSentenceEndWord().getSpelling());
-		assertEquals("<s>", dictionary.getSentenceStartWord().getSpelling());
-		assertEquals("<sil>", dictionary.getSilenceWord().getSpelling());
+		Assert.assertEquals("</s>", dictionary.getSentenceEndWord().getSpelling());
+		Assert.assertEquals("<s>", dictionary.getSentenceStartWord().getSpelling());
+		Assert.assertEquals("<sil>", dictionary.getSilenceWord().getSpelling());
 		
-		assertEquals(12, dictionary.getFillerWords().length);
+		Assert.assertEquals(12, dictionary.getFillerWords().length);
 	}
 }

@@ -13,9 +13,8 @@
 
 package edu.cmu.sphinx.fst.operations;
 
-import static org.junit.Assert.assertTrue;
-
-import org.junit.Test;
+import org.testng.Assert;
+import org.testng.annotations.Test;
 
 import edu.cmu.sphinx.fst.Fst;
 import edu.cmu.sphinx.fst.openfst.Convert;
@@ -41,7 +40,7 @@ public class ComposeEpsilonTest {
 
         Fst fstComposed = Compose.get(fstA, fstB, new TropicalSemiring());
 
-        assertTrue(fstC.equals(fstComposed));
+        Assert.assertTrue(fstC.equals(fstComposed));
 
         System.out.println("Testing Composition with Epsilons Completed!\n");
     }

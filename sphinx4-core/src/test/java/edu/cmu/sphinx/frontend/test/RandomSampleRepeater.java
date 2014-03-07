@@ -1,12 +1,23 @@
 package edu.cmu.sphinx.frontend.test;
 
-import edu.cmu.sphinx.frontend.*;
-import edu.cmu.sphinx.util.props.*;
-import static org.junit.Assert.assertEquals;
-import org.junit.Test;
-
 import java.util.Random;
 import java.util.logging.Logger;
+
+import org.testng.Assert;
+import org.testng.annotations.Test;
+
+import edu.cmu.sphinx.frontend.BaseDataProcessor;
+import edu.cmu.sphinx.frontend.Data;
+import edu.cmu.sphinx.frontend.DataProcessingException;
+import edu.cmu.sphinx.frontend.DataStartSignal;
+import edu.cmu.sphinx.frontend.DoubleData;
+import edu.cmu.sphinx.frontend.FloatData;
+import edu.cmu.sphinx.util.props.ConfigurationManager;
+import edu.cmu.sphinx.util.props.PropertyException;
+import edu.cmu.sphinx.util.props.PropertySheet;
+import edu.cmu.sphinx.util.props.S4Boolean;
+import edu.cmu.sphinx.util.props.S4Double;
+import edu.cmu.sphinx.util.props.S4Integer;
 
 /**
  * A DataProcessor which inserts short speech snippets with variable length into a speech stream. The snippets are takes
@@ -227,11 +238,11 @@ public class RandomSampleRepeater extends BaseDataProcessor {
         DoubleData extData = rsr.process(dd);
 
         double[] expectedData = new double[]{1, 2, 3, 4, 5, 1, 2, 6, 7, 8, 9, 10};
-        assertEquals(extData.getFirstSampleNumber(), 20, 0);
-        assertEquals(extData.getValues().length, expectedData.length);
+        Assert.assertEquals(extData.getFirstSampleNumber(), 20, 0);
+        Assert.assertEquals(extData.getValues().length, expectedData.length);
 
         for (int i = 0; i < expectedData.length; i++) {
-            assertEquals(extData.getValues()[i], expectedData[i], 0);
+            Assert.assertEquals(extData.getValues()[i], expectedData[i], 0);
         }
     }
 
@@ -254,11 +265,11 @@ public class RandomSampleRepeater extends BaseDataProcessor {
         DoubleData extData = rsr.process(dd);
 
         double[] expectedData = new double[]{1, 2, 3, 4, 5, 1, 2, 6, 7, 8, 9, 10};
-        assertEquals(extData.getFirstSampleNumber(), 20, 0);
-        assertEquals(extData.getValues().length, expectedData.length);
+        Assert.assertEquals(extData.getFirstSampleNumber(), 20, 0);
+        Assert.assertEquals(extData.getValues().length, expectedData.length);
 
         for (int i = 0; i < expectedData.length; i++) {
-            assertEquals(extData.getValues()[i], expectedData[i], 0);
+            Assert.assertEquals(extData.getValues()[i], expectedData[i], 0);
         }
     }
 
@@ -281,11 +292,11 @@ public class RandomSampleRepeater extends BaseDataProcessor {
         DoubleData extData = rsr.process(dd);
 
         double[] expectedData = new double[]{1, 2, 3, 4, 5, 6, 7, 8, 9, 1, 2, 10};
-        assertEquals(extData.getFirstSampleNumber(), 20, 0);
-        assertEquals(extData.getValues().length, expectedData.length);
+        Assert.assertEquals(extData.getFirstSampleNumber(), 20, 0);
+        Assert.assertEquals(extData.getValues().length, expectedData.length);
 
         for (int i = 0; i < expectedData.length; i++) {
-            assertEquals(extData.getValues()[i], expectedData[i], 0);
+            Assert.assertEquals(extData.getValues()[i], expectedData[i], 0);
         }
     }
 

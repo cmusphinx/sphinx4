@@ -13,17 +13,15 @@
  */
 package edu.cmu.sphinx.linguist.language.grammar;
 
-import static org.junit.Assert.assertTrue;
-
 import java.io.IOException;
 import java.net.URL;
 
-import org.junit.Test;
+import org.testng.Assert;
+import org.testng.annotations.Test;
 
 import edu.cmu.sphinx.linguist.acoustic.UnitManager;
 import edu.cmu.sphinx.linguist.dictionary.Dictionary;
 import edu.cmu.sphinx.linguist.dictionary.FastDictionary;
-import edu.cmu.sphinx.linguist.language.grammar.BatchForcedAlignerGrammar;
 
 public class BatchForcedAlignerGrammarTest {
 
@@ -35,6 +33,6 @@ public class BatchForcedAlignerGrammarTest {
                 "src/test/edu/cmu/sphinx/linguist/language/grammar/BatchForcedAlignerGrammarTest.utts", true, true, true, true, dictionary);
         grammar.allocate();
         String sentence = grammar.getRandomSentence();
-        assertTrue(sentence.equals("one") || sentence.equals("two") || sentence.equals("three"));
+        Assert.assertTrue(sentence.equals("one") || sentence.equals("two") || sentence.equals("three"));
     }
 }

@@ -11,20 +11,6 @@
  */
 package edu.cmu.sphinx.result.test;
 
-import edu.cmu.sphinx.frontend.util.StreamDataSource;
-
-import edu.cmu.sphinx.recognizer.Recognizer;
-
-import edu.cmu.sphinx.result.ConfidenceResult;
-import edu.cmu.sphinx.result.ConfidenceScorer;
-import edu.cmu.sphinx.result.Path;
-import edu.cmu.sphinx.result.Result;
-import edu.cmu.sphinx.result.WordResult;
-
-import edu.cmu.sphinx.util.LogMath;
-
-import edu.cmu.sphinx.util.props.ConfigurationManager;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -32,7 +18,17 @@ import java.net.URL;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
-import org.junit.Test;
+import org.testng.annotations.Test;
+
+import edu.cmu.sphinx.frontend.util.StreamDataSource;
+import edu.cmu.sphinx.recognizer.Recognizer;
+import edu.cmu.sphinx.result.ConfidenceResult;
+import edu.cmu.sphinx.result.ConfidenceScorer;
+import edu.cmu.sphinx.result.Path;
+import edu.cmu.sphinx.result.Result;
+import edu.cmu.sphinx.result.WordResult;
+import edu.cmu.sphinx.util.LogMath;
+import edu.cmu.sphinx.util.props.ConfigurationManager;
 
 public class MAPConfidenceTest {
 

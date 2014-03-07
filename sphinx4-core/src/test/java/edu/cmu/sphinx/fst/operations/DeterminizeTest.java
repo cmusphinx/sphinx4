@@ -3,9 +3,8 @@
  */
 package edu.cmu.sphinx.fst.operations;
 
-import static org.junit.Assert.assertTrue;
-
-import org.junit.Test;
+import org.testng.Assert;
+import org.testng.annotations.Test;
 
 import edu.cmu.sphinx.fst.Fst;
 import edu.cmu.sphinx.fst.openfst.Convert;
@@ -25,7 +24,7 @@ public class DeterminizeTest {
                 .loadModel("src/test/edu/cmu/sphinx/fst/data/tests/algorithms/determinize/fstdeterminize.fst.ser");
 
         Fst fstDeterminized = Determinize.get(fstA);
-        assertTrue(determinized.equals(fstDeterminized));
+        Assert.assertTrue(determinized.equals(fstDeterminized));
 
         System.out.println("Testing Determinization Completed!\n");
     }

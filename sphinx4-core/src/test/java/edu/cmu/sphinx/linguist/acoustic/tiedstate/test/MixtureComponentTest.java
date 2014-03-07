@@ -12,15 +12,17 @@
 
 package edu.cmu.sphinx.linguist.acoustic.tiedstate.test;
 
+import static java.lang.Math.PI;
+import static java.lang.Math.exp;
+import static java.lang.Math.sqrt;
+
+import org.testng.Assert;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Test;
+
 import edu.cmu.sphinx.frontend.FloatData;
 import edu.cmu.sphinx.linguist.acoustic.tiedstate.MixtureComponent;
 import edu.cmu.sphinx.util.LogMath;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
-import static java.lang.Math.*;
 
 /**
  * Some tests which test the functionality of <code>MixtureComponentt</code>s.
@@ -58,7 +60,7 @@ public class MixtureComponentTest {
             double manualScore = (1 / sqrt(var * 2 * PI)) * exp((-0.5 / var) * (curX - mean) * (curX - mean));
             double gauScore = LogMath.getInstance().logToLinear((float) gauLogScore);
 
-            assertEquals(manualScore, gauScore, 1E-5);
+            Assert.assertEquals(manualScore, gauScore, 1E-5);
         }
     }
 
@@ -70,7 +72,7 @@ public class MixtureComponentTest {
         float var = 0.001f;
 
         MixtureComponent gaussian = new MixtureComponent(new float[]{mean}, new float[][]{{2}}, new float[]{5}, new float[]{var}, null, null);
-        assertTrue(LogMath.getInstance().logToLinear(gaussian.getScore(new float[]{2 * mean + 5})) > 10);
+        Assert.assertTrue(LogMath.getInstance().logToLinear(gaussian.getScore(new float[]{2 * mean + 5})) > 10);
     }
 
 
@@ -81,10 +83,10 @@ public class MixtureComponentTest {
 
         MixtureComponent clonedGaussian = gaussian.clone();
 
-        assertTrue(!clonedGaussian.equals(gaussian));
+        Assert.assertTrue(!clonedGaussian.equals(gaussian));
 
-        assertTrue(gaussian.getMean() != clonedGaussian.getMean());
-        assertTrue(gaussian.getVariance() != clonedGaussian.getVariance());
-        assertTrue(gaussian.getScore(new float[]{2}) == clonedGaussian.getScore(new float[]{2}));
+        Assert.assertTrue(gaussian.getMean() != clonedGaussian.getMean());
+        Assert.assertTrue(gaussian.getVariance() != clonedGaussian.getVariance());
+        Assert.assertTrue(gaussian.getScore(new float[]{2}) == clonedGaussian.getScore(new float[]{2}));
     }
 }

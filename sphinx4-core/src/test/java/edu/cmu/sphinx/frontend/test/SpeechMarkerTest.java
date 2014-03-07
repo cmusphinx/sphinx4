@@ -1,17 +1,23 @@
 package edu.cmu.sphinx.frontend.test;
 
-import edu.cmu.sphinx.frontend.*;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.testng.Assert;
+import org.testng.annotations.Test;
+
+import edu.cmu.sphinx.frontend.BaseDataProcessor;
+import edu.cmu.sphinx.frontend.Data;
+import edu.cmu.sphinx.frontend.DataEndSignal;
+import edu.cmu.sphinx.frontend.DataProcessingException;
+import edu.cmu.sphinx.frontend.DataStartSignal;
+import edu.cmu.sphinx.frontend.DoubleData;
 import edu.cmu.sphinx.frontend.endpoint.SpeechClassifiedData;
 import edu.cmu.sphinx.frontend.endpoint.SpeechEndSignal;
 import edu.cmu.sphinx.frontend.endpoint.SpeechMarker;
 import edu.cmu.sphinx.frontend.endpoint.SpeechStartSignal;
 import edu.cmu.sphinx.util.props.ConfigurationManager;
 import edu.cmu.sphinx.util.props.PropertyException;
-import static org.junit.Assert.assertTrue;
-import org.junit.Test;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * DOCUMENT ME!
@@ -60,11 +66,11 @@ public class SpeechMarkerTest extends RandomDataProcessor {
 
         List<Data> results = collectOutput(createDataFilter(false));
 
-        assertTrue(results.size() == 104);
-        assertTrue(results.get(0) instanceof DataStartSignal);
-        assertTrue(results.get(1) instanceof SpeechStartSignal);
-        assertTrue(results.get(102) instanceof SpeechEndSignal);
-        assertTrue(results.get(103) instanceof DataEndSignal);
+        Assert.assertTrue(results.size() == 104);
+        Assert.assertTrue(results.get(0) instanceof DataStartSignal);
+        Assert.assertTrue(results.get(1) instanceof SpeechStartSignal);
+        Assert.assertTrue(results.get(102) instanceof SpeechEndSignal);
+        Assert.assertTrue(results.get(103) instanceof DataEndSignal);
     }
 
 

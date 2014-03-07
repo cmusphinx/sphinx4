@@ -3,9 +3,8 @@
  */
 package edu.cmu.sphinx.fst.operations;
 
-import static org.junit.Assert.*;
-
-import org.junit.Test;
+import org.testng.Assert;
+import org.testng.annotations.Test;
 
 import edu.cmu.sphinx.fst.Fst;
 import edu.cmu.sphinx.fst.openfst.Convert;
@@ -28,7 +27,7 @@ public class NShortestPathsTest {
 
         Fst fstNsp = NShortestPaths.get(fst, 6, true);
 
-        assertTrue(nsp.equals(fstNsp));
+        Assert.assertTrue(nsp.equals(fstNsp));
 
         System.out.println("Testing NShortestPaths Completed!\n");
     }

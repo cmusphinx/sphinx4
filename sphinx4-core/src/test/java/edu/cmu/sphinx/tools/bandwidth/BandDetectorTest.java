@@ -9,9 +9,8 @@
 
 package edu.cmu.sphinx.tools.bandwidth;
 
-import junit.framework.Assert;
-
-import org.junit.Test;
+import org.testng.Assert;
+import org.testng.annotations.Test;
 
 public class BandDetectorTest {
     @Test

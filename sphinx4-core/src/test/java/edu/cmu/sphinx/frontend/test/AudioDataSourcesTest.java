@@ -1,17 +1,22 @@
 package edu.cmu.sphinx.frontend.test;
 
-import edu.cmu.sphinx.frontend.*;
+import java.io.File;
+
+import org.testng.Assert;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
+
+import edu.cmu.sphinx.frontend.Data;
+import edu.cmu.sphinx.frontend.DataEndSignal;
+import edu.cmu.sphinx.frontend.DataProcessingException;
+import edu.cmu.sphinx.frontend.DataStartSignal;
+import edu.cmu.sphinx.frontend.DoubleData;
 import edu.cmu.sphinx.frontend.util.AudioFileDataSource;
 import edu.cmu.sphinx.frontend.util.AudioFileProcessListener;
 import edu.cmu.sphinx.frontend.util.ConcatAudioFileDataSource;
 import edu.cmu.sphinx.util.props.ConfigurationManager;
-import edu.cmu.sphinx.util.props.PropertySheet;
 import edu.cmu.sphinx.util.props.PropertyException;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-
-import java.io.File;
+import edu.cmu.sphinx.util.props.PropertySheet;
 
 /**
  * Some small unit tests to check whether the AudioFileDataSource and the ConcatAudioFileDataSource are working
@@ -24,7 +29,7 @@ public class AudioDataSourcesTest {
     private int numFileStarts; // used to test the AudioFileProcessListener implementation
     private int numFileEnds;
 
-    @Before
+    @BeforeMethod
     public void setUp() {
         numFileStarts = 0;
         numFileEnds = 0;

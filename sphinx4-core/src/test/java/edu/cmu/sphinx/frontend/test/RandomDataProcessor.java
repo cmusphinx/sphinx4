@@ -1,11 +1,15 @@
 package edu.cmu.sphinx.frontend.test;
 
-import edu.cmu.sphinx.frontend.*;
-import org.junit.Before;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+
+import org.testng.annotations.BeforeMethod;
+
+import edu.cmu.sphinx.frontend.BaseDataProcessor;
+import edu.cmu.sphinx.frontend.Data;
+import edu.cmu.sphinx.frontend.DataProcessingException;
+import edu.cmu.sphinx.frontend.DoubleData;
 
 /**
  * A DataProcessor implemenation which can be used to setup simple unit-tests for other DataProcessors. Addtionally some
@@ -20,7 +24,7 @@ public abstract class RandomDataProcessor extends BaseDataProcessor {
     protected List<Data> input;
 
 
-    @Before
+    @BeforeMethod
     public void setUp() {
         input = new ArrayList<Data>();
     }

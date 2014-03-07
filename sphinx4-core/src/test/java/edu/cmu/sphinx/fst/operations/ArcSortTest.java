@@ -13,9 +13,8 @@
 
 package edu.cmu.sphinx.fst.operations;
 
-import static org.junit.Assert.*;
-
-import org.junit.Test;
+import org.testng.Assert;
+import org.testng.annotations.Test;
 
 import edu.cmu.sphinx.fst.Arc;
 import edu.cmu.sphinx.fst.Fst;
@@ -129,16 +128,16 @@ public class ArcSortTest {
         // Input label sort test
         Fst fst1 = createUnsorted();
         Fst fst2 = createIsorted();
-        assertTrue(!fst1.equals(fst2));
+        Assert.assertTrue(!fst1.equals(fst2));
         ArcSort.apply(fst1, new ILabelCompare());
-        assertTrue(fst1.equals(fst2));
+        Assert.assertTrue(fst1.equals(fst2));
 
         // Output label sort test
         fst1 = createUnsorted();
         fst2 = createOsorted();
-        assertTrue(!fst1.equals(fst2));
+        Assert.assertTrue(!fst1.equals(fst2));
         ArcSort.apply(fst1, new OLabelCompare());
-        assertTrue(fst1.equals(fst2));
+        Assert.assertTrue(fst1.equals(fst2));
 
         System.out.println("Testing Arc Sort Completed!\n");
 

@@ -1,13 +1,19 @@
 package edu.cmu.sphinx.frontend.test;
 
-import edu.cmu.sphinx.frontend.*;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import org.junit.Before;
-import org.junit.Test;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import org.testng.Assert;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
+
+import edu.cmu.sphinx.frontend.BaseDataProcessor;
+import edu.cmu.sphinx.frontend.Data;
+import edu.cmu.sphinx.frontend.DataBlocker;
+import edu.cmu.sphinx.frontend.DataEndSignal;
+import edu.cmu.sphinx.frontend.DataProcessingException;
+import edu.cmu.sphinx.frontend.DataStartSignal;
+import edu.cmu.sphinx.frontend.DoubleData;
 
 /** Some small tests which ensure that the <code>DataBlocker</code> works properly. */
 public class DataBlockerTest extends BaseDataProcessor {
@@ -15,7 +21,7 @@ public class DataBlockerTest extends BaseDataProcessor {
     private List<Data> input;
 
 
-    @Before
+    @BeforeMethod
     public void setUp() {
         input = new ArrayList<Data>();
     }
@@ -30,7 +36,7 @@ public class DataBlockerTest extends BaseDataProcessor {
         input.addAll(createDataInput(1000, 1000, sampleRate, 0)); // create one second of data sampled with 1kHz
         input.add(new DataEndSignal(0));
 
-        assertTrue(hasIncreasingOrder(collectOutput(100), 1000));
+        Assert.assertTrue(hasIncreasingOrder(collectOutput(100), 1000));
     }
 
 
@@ -45,9 +51,9 @@ public class DataBlockerTest extends BaseDataProcessor {
 
         List<Data> output = collectOutput(100);
 
-        assertEquals(output.size(), 6);
-        assertEquals(201, ((DoubleData) output.get(2)).getFirstSampleNumber());
-        assertTrue(hasIncreasingOrder(output, 600));
+        Assert.assertEquals(output.size(), 6);
+        Assert.assertEquals(201, ((DoubleData) output.get(2)).getFirstSampleNumber());
+        Assert.assertTrue(hasIncreasingOrder(output, 600));
     }
 
 
@@ -62,9 +68,9 @@ public class DataBlockerTest extends BaseDataProcessor {
 
         List<Data> output = collectOutput(250);
 
-        assertEquals(output.size(), 3);
-        assertEquals(501, ((DoubleData) output.get(2)).getFirstSampleNumber());
-        assertTrue(hasIncreasingOrder(output, 750));
+        Assert.assertEquals(output.size(), 3);
+        Assert.assertEquals(501, ((DoubleData) output.get(2)).getFirstSampleNumber());
+        Assert.assertTrue(hasIncreasingOrder(output, 750));
     }
 
 

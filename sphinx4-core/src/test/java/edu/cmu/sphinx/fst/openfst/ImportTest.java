@@ -13,9 +13,8 @@
 
 package edu.cmu.sphinx.fst.openfst;
 
-import static org.junit.Assert.*;
-
-import org.junit.Test;
+import org.testng.Assert;
+import org.testng.annotations.Test;
 
 import edu.cmu.sphinx.fst.Fst;
 import edu.cmu.sphinx.fst.semiring.TropicalSemiring;
@@ -36,7 +35,7 @@ public class ImportTest {
 
         Fst fst2 = Fst.loadModel("src/test/edu/cmu/sphinx/fst/data/openfst/basic.fst.ser");
 
-        assertTrue(fst1.equals(fst2));
+        Assert.assertTrue(fst1.equals(fst2));
 
         System.out.println("Testing Import Completed!\n");
     }

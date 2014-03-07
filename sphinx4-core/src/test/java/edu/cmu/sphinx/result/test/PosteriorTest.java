@@ -12,12 +12,11 @@
 
 package edu.cmu.sphinx.result.test;
 
-import static org.junit.Assert.*;
+import org.testng.Assert;
+import org.testng.annotations.Test;
 
-import org.junit.Test;
-
-import edu.cmu.sphinx.result.Node;
 import edu.cmu.sphinx.result.Lattice;
+import edu.cmu.sphinx.result.Node;
 import edu.cmu.sphinx.util.LogMath;
 
 /**
@@ -63,9 +62,9 @@ public class PosteriorTest {
 		double cPosterior = (pathACBD + pathACD) / allPaths;
 
 		double delta = 1e-4;
-		assertEquals (logMath.logToLinear((float) a.getPosterior()), 1.0, delta);
-		assertEquals (logMath.logToLinear((float) b.getPosterior()), bPosterior, delta);
-		assertEquals (logMath.logToLinear((float) c.getPosterior()), cPosterior, delta);
-		assertEquals (logMath.logToLinear((float) d.getPosterior()), 1.0, delta);
+		Assert.assertEquals (logMath.logToLinear((float) a.getPosterior()), 1.0, delta);
+		Assert.assertEquals (logMath.logToLinear((float) b.getPosterior()), bPosterior, delta);
+		Assert.assertEquals (logMath.logToLinear((float) c.getPosterior()), cPosterior, delta);
+		Assert.assertEquals (logMath.logToLinear((float) d.getPosterior()), 1.0, delta);
 	}
 }

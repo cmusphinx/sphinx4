@@ -1,5 +1,10 @@
 package edu.cmu.sphinx.frontend.test;
 
+import java.util.List;
+
+import org.testng.Assert;
+import org.testng.annotations.Test;
+
 import edu.cmu.sphinx.frontend.Data;
 import edu.cmu.sphinx.frontend.DataEndSignal;
 import edu.cmu.sphinx.frontend.DataProcessingException;
@@ -8,10 +13,6 @@ import edu.cmu.sphinx.frontend.endpoint.NonSpeechDataFilter;
 import edu.cmu.sphinx.frontend.endpoint.SpeechEndSignal;
 import edu.cmu.sphinx.frontend.endpoint.SpeechStartSignal;
 import edu.cmu.sphinx.util.props.ConfigurationManager;
-import static org.junit.Assert.assertTrue;
-import org.junit.Test;
-
-import java.util.List;
 
 /**
  * Some tests to ensure that the NonSpeechDataFilter filters non-speech in the specified manner.
@@ -37,11 +38,11 @@ public class NonSpeechDataFilterTest extends RandomDataProcessor {
 
         List<Data> result = collectOutput(ConfigurationManager.getInstance(NonSpeechDataFilter.class));
 
-        assertTrue(result.size() == 54);
-        assertTrue(result.get(0) instanceof DataStartSignal);
-        assertTrue(result.get(1) instanceof SpeechStartSignal);
-        assertTrue(result.get(52) instanceof SpeechEndSignal);
-        assertTrue(result.get(53) instanceof DataEndSignal);
+        Assert.assertTrue(result.size() == 54);
+        Assert.assertTrue(result.get(0) instanceof DataStartSignal);
+        Assert.assertTrue(result.get(1) instanceof SpeechStartSignal);
+        Assert.assertTrue(result.get(52) instanceof SpeechEndSignal);
+        Assert.assertTrue(result.get(53) instanceof DataEndSignal);
     }
 
 
@@ -70,16 +71,16 @@ public class NonSpeechDataFilterTest extends RandomDataProcessor {
         NonSpeechDataFilter nonSpeechDataFilter = ConfigurationManager.getInstance(NonSpeechDataFilter.class);
         List<Data> result = collectOutput(nonSpeechDataFilter);
 
-        assertTrue(result.size() == 26);
+        Assert.assertTrue(result.size() == 26);
 
-        assertTrue(result.get(0) instanceof DataStartSignal);
-        assertTrue(result.get(1) instanceof SpeechStartSignal);
+        Assert.assertTrue(result.get(0) instanceof DataStartSignal);
+        Assert.assertTrue(result.get(1) instanceof SpeechStartSignal);
 
-        assertTrue(result.get(12) instanceof SpeechEndSignal);
-        assertTrue(result.get(13) instanceof SpeechStartSignal);
+        Assert.assertTrue(result.get(12) instanceof SpeechEndSignal);
+        Assert.assertTrue(result.get(13) instanceof SpeechStartSignal);
 
-        assertTrue(result.get(24) instanceof SpeechEndSignal);
-        assertTrue(result.get(25) instanceof DataEndSignal);
+        Assert.assertTrue(result.get(24) instanceof SpeechEndSignal);
+        Assert.assertTrue(result.get(25) instanceof DataEndSignal);
     }
 
 
@@ -115,20 +116,20 @@ public class NonSpeechDataFilterTest extends RandomDataProcessor {
 
         List<Data> result = collectOutput(ConfigurationManager.getInstance(NonSpeechDataFilter.class));
 
-        assertTrue(result.size() == 24);
+        Assert.assertTrue(result.size() == 24);
 
-        assertTrue(result.get(0) instanceof DataStartSignal);
-        assertTrue(result.get(1) instanceof DataEndSignal);
+        Assert.assertTrue(result.get(0) instanceof DataStartSignal);
+        Assert.assertTrue(result.get(1) instanceof DataEndSignal);
 
-        assertTrue(result.get(2) instanceof DataStartSignal);
-        assertTrue(result.get(3) instanceof SpeechStartSignal);
-        assertTrue(result.get(4) instanceof SpeechEndSignal);
-        assertTrue(result.get(5) instanceof DataEndSignal);
+        Assert.assertTrue(result.get(2) instanceof DataStartSignal);
+        Assert.assertTrue(result.get(3) instanceof SpeechStartSignal);
+        Assert.assertTrue(result.get(4) instanceof SpeechEndSignal);
+        Assert.assertTrue(result.get(5) instanceof DataEndSignal);
 
-        assertTrue(result.get(6) instanceof DataStartSignal);
-        assertTrue(result.get(7) instanceof SpeechStartSignal);
+        Assert.assertTrue(result.get(6) instanceof DataStartSignal);
+        Assert.assertTrue(result.get(7) instanceof SpeechStartSignal);
 
-        assertTrue(result.get(22) instanceof SpeechEndSignal);
-        assertTrue(result.get(23) instanceof DataEndSignal);
+        Assert.assertTrue(result.get(22) instanceof SpeechEndSignal);
+        Assert.assertTrue(result.get(23) instanceof DataEndSignal);
     }
 }

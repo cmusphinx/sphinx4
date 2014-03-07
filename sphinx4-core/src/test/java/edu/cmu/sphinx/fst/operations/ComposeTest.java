@@ -13,9 +13,8 @@
 
 package edu.cmu.sphinx.fst.operations;
 
-import static org.junit.Assert.assertTrue;
-
-import org.junit.Test;
+import org.testng.Assert;
+import org.testng.annotations.Test;
 
 import edu.cmu.sphinx.fst.Fst;
 import edu.cmu.sphinx.fst.openfst.Convert;
@@ -45,7 +44,7 @@ public class ComposeTest {
 
         Fst fstComposed = Compose.get(fstA, fstB, new TropicalSemiring());
 
-        assertTrue(composed.equals(fstComposed));
+        Assert.assertTrue(composed.equals(fstComposed));
 
         System.out.println("Testing Composition Completed!\n");
     }

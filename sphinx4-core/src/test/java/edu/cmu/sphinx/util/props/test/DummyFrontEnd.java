@@ -1,8 +1,12 @@
 package edu.cmu.sphinx.util.props.test;
 
-import edu.cmu.sphinx.util.props.*;
-
 import java.util.List;
+
+import edu.cmu.sphinx.util.props.Configurable;
+import edu.cmu.sphinx.util.props.PropertyException;
+import edu.cmu.sphinx.util.props.PropertySheet;
+import edu.cmu.sphinx.util.props.S4Boolean;
+import edu.cmu.sphinx.util.props.S4ComponentList;
 
 /**
  * DOCUMENT ME!

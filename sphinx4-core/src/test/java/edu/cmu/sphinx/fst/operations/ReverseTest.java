@@ -3,9 +3,8 @@
  */
 package edu.cmu.sphinx.fst.operations;
 
-import static org.junit.Assert.assertTrue;
-
-import org.junit.Test;
+import org.testng.Assert;
+import org.testng.annotations.Test;
 
 import edu.cmu.sphinx.fst.Fst;
 import edu.cmu.sphinx.fst.openfst.Convert;
@@ -28,7 +27,7 @@ public class ReverseTest {
 
         Fst fstReversed = Reverse.get(fst);
 
-        assertTrue(fstB.equals(fstReversed));
+        Assert.assertTrue(fstB.equals(fstReversed));
 
         System.out.println("Testing Reverse Completed!\n");
     }

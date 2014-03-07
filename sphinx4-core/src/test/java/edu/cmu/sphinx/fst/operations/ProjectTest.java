@@ -13,9 +13,8 @@
 
 package edu.cmu.sphinx.fst.operations;
 
-import static org.junit.Assert.assertTrue;
-
-import org.junit.Test;
+import org.testng.Assert;
+import org.testng.annotations.Test;
 
 import edu.cmu.sphinx.fst.Arc;
 import edu.cmu.sphinx.fst.Fst;
@@ -141,13 +140,13 @@ public class ProjectTest {
         Fst fst = createFst();
         Fst p = createPi();
         Project.apply(fst, ProjectType.INPUT);
-        assertTrue(fst.equals(p));
+        Assert.assertTrue(fst.equals(p));
 
         // Project on Output label
         fst = createFst();
         p = createPo();
         Project.apply(fst, ProjectType.OUTPUT);
-        assertTrue(fst.equals(p));
+        Assert.assertTrue(fst.equals(p));
 
         System.out.println("Testing Project Completed!\n");
 

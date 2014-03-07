@@ -13,9 +13,8 @@
 
 package edu.cmu.sphinx.fst.operations;
 
-import static org.junit.Assert.*;
-
-import org.junit.Test;
+import org.testng.Assert;
+import org.testng.annotations.Test;
 
 import edu.cmu.sphinx.fst.Fst;
 import edu.cmu.sphinx.fst.openfst.Convert;
@@ -35,7 +34,7 @@ public class ConnectTest {
                 .loadModel("src/test/edu/cmu/sphinx/fst/data/tests/algorithms/connect/fstconnect.fst.ser");
         Connect.apply(fst);
 
-        assertTrue(connectSaved.equals(fst));
+        Assert.assertTrue(connectSaved.equals(fst));
 
         System.out.println("Testing Connect Completed!\n");
     }
