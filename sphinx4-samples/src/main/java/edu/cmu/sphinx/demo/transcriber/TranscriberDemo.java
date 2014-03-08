@@ -11,6 +11,7 @@
 
 package edu.cmu.sphinx.demo.transcriber;
 
+import java.io.InputStream;
 import java.net.URL;
 
 import edu.cmu.sphinx.api.Configuration;
@@ -41,7 +42,9 @@ public class TranscriberDemo {
 
         StreamSpeechRecognizer recognizer = 
             new StreamSpeechRecognizer(configuration);
-        recognizer.startRecognition(new URL("file:./sphinx4-samples/src/main/resources/edu/cmu/sphinx/demo/aligner/10001-90210-01803.wav").openStream());
+        InputStream stream = TranscriberDemo.class.getResourceAsStream(
+                "/edu/cmu/sphinx/demo/aligner/10001-90210-01803.wav");
+        recognizer.startRecognition(stream);
 
         SpeechResult result;
 
