@@ -123,7 +123,8 @@ public class BinaryLoader {
     }
 
     public void deallocate() throws IOException {
-        file.close();
+        if (null != file)
+            file.close();
     }
 
     /**
