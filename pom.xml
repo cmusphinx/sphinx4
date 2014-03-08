@@ -35,7 +35,7 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <project.scm.root>svn.code.sf.net/p/cmusphinx/code/branches/hl-interface</project.scm.root>
+    <project.scm.root>svn.code.sf.net/p/cmusphinx/code/trunk/sphinx4</project.scm.root>
   </properties>
 
   <scm>
