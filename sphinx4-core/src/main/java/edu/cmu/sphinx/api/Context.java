@@ -55,8 +55,7 @@ public class Context {
     public Context(String path, Configuration config)
         throws IOException, MalformedURLException
     {
-        URL url = resourceToURL(path);
-        configurationManager = new ConfigurationManager(url);
+        configurationManager = new ConfigurationManager(resourceToURL(path));
 
         setAcousticModel(config.getAcousticModelPath());
         setDictionary(config.getDictionaryPath());
