@@ -12,7 +12,6 @@
 package edu.cmu.sphinx.demo.transcriber;
 
 import java.io.InputStream;
-import java.net.URL;
 
 import edu.cmu.sphinx.api.Configuration;
 import edu.cmu.sphinx.api.SpeechResult;
