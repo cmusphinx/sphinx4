@@ -3,8 +3,11 @@ package edu.cmu.sphinx.frontend;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.instanceOf;
+import static org.testng.Assert.assertFalse;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
 
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -66,7 +69,8 @@ public class AudioDataSourcesTest extends Sphinx4TestCase {
     }
 
     @Test
-    public void testConcatDataSource() throws DataProcessingException {
+    public void testConcatDataSource() throws DataProcessingException,
+            IOException {
         ConcatAudioFileDataSource dataSource = ConfigurationManager
                 .getInstance(ConcatAudioFileDataSource.class);
 
@@ -85,8 +89,16 @@ public class AudioDataSourcesTest extends Sphinx4TestCase {
             }
         });
 
-        File file = getResourceFile("test.drv");
-        dataSource.setBatchFile(file);
+        File tmpFile = File.createTempFile(getClass().getName(), ".drv");
+        tmpFile.deleteOnExit();
+        PrintWriter pw = new PrintWriter(tmpFile);
+        String path = getResourceFile("test.wav").getPath();
+        pw.println(path);
+        pw.println(path);
+        pw.print(path);
+        assertFalse(pw.checkError());
+        
+        dataSource.setBatchFile(tmpFile);
         assertThat(dataSource.getData(), instanceOf(DataStartSignal.class));
         assertThat(dataSource.getData(), instanceOf(DoubleData.class));
 

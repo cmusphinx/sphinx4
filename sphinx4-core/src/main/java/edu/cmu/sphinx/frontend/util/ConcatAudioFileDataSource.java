@@ -9,6 +9,7 @@ import javax.sound.sampled.*;
 
 import edu.cmu.sphinx.util.ReferenceSource;
 
+
 /**
  * Concatenates a list of audio files as one continuous audio stream.
  * <p/>
@@ -59,7 +60,6 @@ public class ConcatAudioFileDataSource extends AudioFileDataSource implements
 
     public void setBatchFiles(List<File> files) {
         List<URL> urls = new ArrayList<URL>();
-        
 
         try {
             for (File file : files)
@@ -82,18 +82,16 @@ public class ConcatAudioFileDataSource extends AudioFileDataSource implements
      * @param fileName
      */
     private static List<URL> readDriver(String fileName) {
-        File file = new File(fileName);
+        File inputFile = new File(fileName);
         List<URL> driverFiles = null;
 
         try {
-            BufferedReader bf = new BufferedReader(new FileReader(file));
+            BufferedReader bf = new BufferedReader(new FileReader(inputFile));
             driverFiles = new ArrayList<URL>();
 
             String line;
             while ((line = bf.readLine()) != null && line.trim().length() != 0) {
-//                File file = new File(line);
-
-                assert file.isFile() : "file " + file + " does not exist!";
+                File file = new File(line);
                 driverFiles.add(file.toURI().toURL());
             }
 
@@ -186,8 +184,6 @@ public class ConcatAudioFileDataSource extends AudioFileDataSource implements
                     }
 
                     stream = ais;
-                    // System.out.println(nextFile);
-
                     logger.finer("Strating processing of '"
                             + lastFile.getFile() + '\'');
                     for (AudioFileProcessListener fl : fileListeners)
