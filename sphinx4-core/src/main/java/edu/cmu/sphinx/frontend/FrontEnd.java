@@ -87,7 +87,7 @@ import java.util.*;
  * edu.cmu.sphinx.frontend.window.RaisedCosineWindower}"/&gt;
  * &lt;component name="dft" type="{@link edu.cmu.sphinx.frontend.transform.DiscreteFourierTransform
  * edu.cmu.sphinx.frontend.transform.DiscreteFourierTransform}"/&gt;
- * &lt;component name="melFilterBank" type="{@link edu.cmu.sphinx.frontend.frequencywarp.MelFrequencyFilterBank
+ * &lt;component name="melFilterBank" type="{@link edu.cmu.sphinx.frontend.frequencywarp.MelFrequencyFilterBank2
  * edu.cmu.sphinx.frontend.frequencywarp.MelFrequencyFilterBank}"/&gt;
  * &lt;component name="dct" type="{@link edu.cmu.sphinx.frontend.transform.DiscreteCosineTransform
  * edu.cmu.sphinx.frontend.transform.DiscreteCosineTransform}"/&gt;

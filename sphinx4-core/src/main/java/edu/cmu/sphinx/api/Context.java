@@ -75,7 +75,7 @@ public class Context {
      *
      * It also reads feat.params which should be located at the root of
      * acoustic model and sets corresponding parameters of
-     * {@link MelFrequencyFilterBank} instance.
+     * {@link MelFrequencyFilterBank2} instance.
      *
      * @param  path path to directory with acoustic model files
      *

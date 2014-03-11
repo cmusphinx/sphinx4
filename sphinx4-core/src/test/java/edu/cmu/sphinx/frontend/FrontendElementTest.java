@@ -13,6 +13,7 @@ import java.io.*;
 import java.net.URL;
 
 import org.testng.Assert;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import edu.cmu.sphinx.Sphinx4TestCase;
@@ -24,7 +25,35 @@ import edu.cmu.sphinx.util.props.ConfigurationManager;
 
 public class FrontendElementTest extends Sphinx4TestCase {
 
-    public void runTest(String frontendName, String name) throws IOException {
+    @DataProvider(name = "frontendProvider")
+    public Object[][] provide() {
+        return new Object[][] {
+            {
+                "preempTest",
+                "after-preemp.dump"},
+            {
+                "windowTest",
+                "after-window.dump"},
+            {
+                "fftTest",
+                "after-fft.dump"},
+            {
+                "melTest",
+                "after-mel.dump"},
+            {
+                "dctTest",
+                "after-dct.dump"},
+            {
+                "cmnTest",
+                "after-cmn.dump"},
+            {
+                "feTest",
+                "after-feature.dump"}};
+    }
+
+    @Test(dataProvider = "frontendProvider")
+    public void testElement(String frontendName, String name)
+            throws IOException {
         URL url = getResourceUrl("frontend.xml");
         ConfigurationManager cm = new ConfigurationManager(url);
 
@@ -79,40 +108,5 @@ public class FrontendElementTest extends Sphinx4TestCase {
                                        abs(0.001 * values[i])));
             }
         }
-    }
-
-    @Test
-    public void testPreemp() throws IOException {
-        runTest("preempTest", "after-preemp.dump");
-    }
-
-    @Test
-    public void testWindow() throws IOException {
-        runTest("windowTest", "after-window.dump");
-    }
-
-    @Test
-    public void testFFT() throws IOException {
-        runTest("fftTest", "after-fft.dump");
-    }
-
-    @Test
-    public void testMel() throws IOException {
-        runTest("melTest", "after-mel.dump");
-    }
-
-    @Test
-    public void testDct() throws IOException {
-        runTest("dctTest", "after-dct.dump");
-    }
-
-    @Test
-    public void testCMN() throws IOException {
-        runTest("cmnTest", "after-cmn.dump");
-    }
-
-    @Test
-    public void testFeature() throws IOException {
-        runTest("feTest", "after-feature.dump");
     }
 }

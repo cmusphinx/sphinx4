@@ -12,6 +12,9 @@
 
 package edu.cmu.sphinx.result;
 
+import static javax.sound.sampled.AudioSystem.getAudioInputStream;
+import static org.testng.Assert.assertTrue;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -20,13 +23,10 @@ import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
-import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import edu.cmu.sphinx.frontend.util.StreamDataSource;
 import edu.cmu.sphinx.recognizer.Recognizer;
-import edu.cmu.sphinx.result.Lattice;
-import edu.cmu.sphinx.result.Result;
 import edu.cmu.sphinx.util.props.ConfigurationManager;
 import edu.cmu.sphinx.util.props.ConfigurationManagerUtils;
 
@@ -74,17 +74,17 @@ public class LatticeCompTest {
 		
 		ConfigurationManagerUtils.setProperty(cm, "keepAllTokens", "true");
 		
-		recognizer = (Recognizer) cm.lookup("recognizer");
+		recognizer = cm.lookup("recognizer");
 		recognizer.allocate();
 		
-		reader = (StreamDataSource) cm.lookup("streamDataSource");
-		reader.setInputStream(AudioSystem.getAudioInputStream(audioFileURL));
+		reader = cm.lookup("streamDataSource");
+		reader.setInputStream(getAudioInputStream(audioFileURL));
 
 		Result allResult = recognizer.recognize();
 
 		Lattice allLattice = new Lattice(allResult);
 		allLattice.dumpAISee("logs/allLattice.gdl", "All Lattice");
 
-		Assert.assertTrue(lattice.isEquivalent(allLattice));
+		assertTrue(lattice.isEquivalent(allLattice));
 	}
 }
