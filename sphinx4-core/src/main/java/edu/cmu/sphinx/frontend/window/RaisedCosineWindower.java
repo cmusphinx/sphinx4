@@ -53,8 +53,7 @@ import java.util.Map;
 public class RaisedCosineWindower extends BaseDataProcessor {
 
     /** The property for window size in milliseconds. */
-//    @S4Double(defaultValue = 25.625)
-    @S4Double(defaultValue = 25)
+    @S4Double(defaultValue = 25.625)
     public static final String PROP_WINDOW_SIZE_MS = "windowSizeInMs";
     private float windowSizeInMs;
 
