@@ -11,6 +11,8 @@
 
 package edu.cmu.sphinx.util;
 
+import static com.google.common.base.Preconditions.checkState;
+
 /**
  * Provides a set of methods for performing simple math in the log domain.
  *
@@ -131,8 +133,7 @@ public final class LogMath {
      */
     public static void setLogBase(float logBase) {
         synchronized(LogMath.class) {
-            if (null != instance)
-                throw new IllegalStateException(IMMUTABLE_INSTANCE_ERROR);
+            checkState(null == instance, IMMUTABLE_INSTANCE_ERROR);
             LogMath.logBase = logBase;
         }
     }
@@ -145,8 +146,7 @@ public final class LogMath {
      */
     public static void setUseTable(boolean useTable) {
         synchronized(LogMath.class) {
-            if (null != instance)
-                throw new IllegalStateException(IMMUTABLE_INSTANCE_ERROR);
+            checkState(null == instance, IMMUTABLE_INSTANCE_ERROR);
             LogMath.useTable = useTable;
         }
     }

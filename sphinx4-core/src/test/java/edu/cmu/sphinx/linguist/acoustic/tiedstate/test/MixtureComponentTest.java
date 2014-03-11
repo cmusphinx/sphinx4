@@ -17,7 +17,7 @@ import static java.lang.Math.exp;
 import static java.lang.Math.sqrt;
 
 import org.testng.Assert;
-import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
 import edu.cmu.sphinx.frontend.FloatData;
@@ -32,11 +32,10 @@ import edu.cmu.sphinx.util.LogMath;
  */
 public class MixtureComponentTest {
 
-    @BeforeClass
-    public static void setup() {
+    @BeforeSuite
+    public void setupLogMath() {
         LogMath.setUseTable(true);
     }
-
 
     /**
      * Compute the density values of a sampled interval with an univariate <code>MixtureComponent</code> and compare

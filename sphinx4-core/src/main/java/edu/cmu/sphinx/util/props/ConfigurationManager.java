@@ -1,5 +1,7 @@
 package edu.cmu.sphinx.util.props;
 
+import static com.google.common.base.Preconditions.checkArgument;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -147,18 +149,19 @@ public class ConfigurationManager implements Cloneable {
      *                                        configurable object, or if an error occured while setting a component
      *                                        property.
      */
-    public Configurable lookup(String instanceName) throws InternalConfigurationException {
-        // apply all new properties to the model
+    @SuppressWarnings("unchecked")
+    public <C extends Configurable> C lookup(String instanceName) throws InternalConfigurationException {
+        // Apply all new properties to the model.
         instanceName = getStrippedComponentName(instanceName);
-
         PropertySheet ps = getPropertySheet(instanceName);
+        
         if (ps == null)
             return null;
 
         if (showCreations)
             getRootLogger().config("Creating: " + instanceName);
 
-        return ps.getOwner();
+        return (C) ps.getOwner();
     }
 
 
@@ -179,9 +182,7 @@ public class ConfigurationManager implements Cloneable {
         if (matchPropSheets.isEmpty())
             return null;
 
-        if (matchPropSheets.size() > 1)
-            throw new IllegalArgumentException("more than one match to type " + confClass + ": " + matchPropSheets);
-
+        checkArgument(1 == matchPropSheets.size(), "multiple instances exist");
         return confClass.cast(lookup(matchPropSheets.get(0).getInstanceName()));
     }
 

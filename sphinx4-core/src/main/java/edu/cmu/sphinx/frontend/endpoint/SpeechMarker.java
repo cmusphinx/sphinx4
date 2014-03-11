@@ -334,10 +334,7 @@ public class SpeechMarker extends BaseDataProcessor {
             }
         }
 
-        if (speechLeader > 0) {
-            assert lastCollectTime != 0;
-        }
-        // add the SPEECH_START
+        // Add the SPEECH_START.
         i.add(new SpeechStartSignal(lastCollectTime));
     }
 
