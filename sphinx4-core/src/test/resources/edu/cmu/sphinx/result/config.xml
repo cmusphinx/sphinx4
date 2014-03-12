@@ -102,9 +102,9 @@
     <component name="dictionary" 
         type="edu.cmu.sphinx.linguist.dictionary.FastDictionary">
         <property name="dictionaryPath"
-                  value="resource:/WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz/dict/cmudict.0.6d"/>
+                  value="resource:/edu/cmu/sphinx/models/acoustic/wsj/dict/cmudict.0.6d"/>
         <property name="fillerPath" 
-	          value="resource:/WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz/noisedict"/>
+	          value="resource:/edu/cmu/sphinx/models/acoustic/wsj/noisedict"/>
         <property name="addSilEndingPronunciation" value="false"/>
         <property name="wordReplacement" value="&lt;sil&gt;"/>
         <property name="unitManager" value="unitManager"/>
@@ -112,7 +112,7 @@
 
     <component name="trigramModel" 
                type="edu.cmu.sphinx.linguist.language.ngram.SimpleNGramModel">
-        <property name="location" value="src/test/edu/cmu/sphinx/result/test/hellongram.trigram.lm"/>
+        <property name="location" value=""/>
         <property name="dictionary" value="dictionary"/>
         <property name="maxDepth" value="3"/>
         <property name="unigramWeight" value=".7"/>
@@ -126,7 +126,7 @@
 
     <component name="wsjLoader" type="edu.cmu.sphinx.linguist.acoustic.tiedstate.Sphinx3Loader">
         <property name="unitManager" value="unitManager"/>
-        <property name="location" value="resource:/WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz"/>
+        <property name="location" value="resource:/edu/cmu/sphinx/models/acoustic/wsj"/>
     </component>
 
     <component name="unitManager" 

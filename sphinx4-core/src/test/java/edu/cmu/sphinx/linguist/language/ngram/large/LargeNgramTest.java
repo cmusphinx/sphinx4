@@ -8,6 +8,7 @@
  */
 package edu.cmu.sphinx.linguist.language.ngram.large;
 
+import static com.google.common.io.Resources.getResource;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.closeTo;
 import static org.hamcrest.Matchers.equalTo;
@@ -17,21 +18,21 @@ import java.net.URL;
 
 import org.testng.annotations.Test;
 
-import edu.cmu.sphinx.Sphinx4TestCase;
 import edu.cmu.sphinx.linguist.WordSequence;
 import edu.cmu.sphinx.linguist.acoustic.UnitManager;
 import edu.cmu.sphinx.linguist.dictionary.Dictionary;
 import edu.cmu.sphinx.linguist.dictionary.FullDictionary;
 import edu.cmu.sphinx.linguist.dictionary.Word;
-import edu.cmu.sphinx.linguist.language.ngram.large.LargeTrigramModel;
+import edu.cmu.sphinx.models.Sphinx4Model;
 
 
-public class LargeNgramTest extends Sphinx4TestCase {
+public class LargeNgramTest {
 
     @Test
     public void testNgram() throws IOException {
-        URL dictUrl = getResourceUrl("100.dict");
-        URL noisedictUrl = getResourceUrl("noisedict");
+        URL dictUrl = getResource(getClass(), "100.dict");
+        URL noisedictUrl = getResource(Sphinx4Model.class,
+                                       "acoustic/wsj/noisedict");
 
         Dictionary dictionary = new FullDictionary(dictUrl,
                                                    noisedictUrl,
@@ -42,7 +43,7 @@ public class LargeNgramTest extends Sphinx4TestCase {
                                                    false,
                                                    new UnitManager());
 
-        URL lm = getResourceUrl("100.arpa.dmp");
+        URL lm = getResource(getClass(), "100.arpa.dmp");
         LargeTrigramModel model = new LargeTrigramModel("",
                                                         lm,
                                                         null,
@@ -60,14 +61,16 @@ public class LargeNgramTest extends Sphinx4TestCase {
         model.allocate();
         assertThat(model.getMaxDepth(), equalTo(3));
 
-        Word[] words = {new Word("huggins", null, false),
-                        new Word("daines", null, false)};
+        Word[] words = {
+            new Word("huggins", null, false),
+            new Word("daines", null, false)};
         assertThat((double) model.getProbability(new WordSequence(words)),
                    closeTo(-830.862, .001));
 
-        Word[] words1 = {new Word("huggins", null, false),
-                         new Word("daines", null, false),
-                         new Word("david", null, false)};
+        Word[] words1 = {
+            new Word("huggins", null, false),
+            new Word("daines", null, false),
+            new Word("david", null, false)};
         assertThat((double) model.getProbability(new WordSequence(words1)),
                    closeTo(-67625.77, .01));
     }

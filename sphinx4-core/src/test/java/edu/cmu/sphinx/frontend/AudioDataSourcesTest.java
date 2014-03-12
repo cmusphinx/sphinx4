@@ -1,5 +1,6 @@
 package edu.cmu.sphinx.frontend;
 
+import static com.google.common.io.Resources.getResource;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.instanceOf;
@@ -8,11 +9,11 @@ import static org.testng.Assert.assertFalse;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.URISyntaxException;
 
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import edu.cmu.sphinx.Sphinx4TestCase;
 import edu.cmu.sphinx.frontend.util.AudioFileDataSource;
 import edu.cmu.sphinx.frontend.util.AudioFileProcessListener;
 import edu.cmu.sphinx.frontend.util.ConcatAudioFileDataSource;
@@ -25,12 +26,9 @@ import edu.cmu.sphinx.util.props.PropertySheet;
  * Some small unit tests to check whether the AudioFileDataSource and the
  * ConcatAudioFileDataSource are working properly.
  */
-public class AudioDataSourcesTest extends Sphinx4TestCase {
+public class AudioDataSourcesTest {
 
-    public static final String BASE_DIR = "/edu/cmu/sphinx/frontend/test/data";
-
-    private int numFileStarts; // used to test the AudioFileProcessListener
-                               // implementation
+    private int numFileStarts;
     private int numFileEnds;
 
     @BeforeMethod
@@ -40,24 +38,22 @@ public class AudioDataSourcesTest extends Sphinx4TestCase {
     }
 
     @Test
-    public void testSimpleFileSources() throws DataProcessingException {
-        // TODO: use paremeterized tests
+    public void testSimpleFileSources() throws DataProcessingException,
+            URISyntaxException {
+        // TODO: test.ogg
         runAssert("test.wav");
         runAssert("test.aiff");
         runAssert("test.au");
-        // TODO: check if OGG is supported and skip if it's not
-        // runAssert("test.ogg"); // only works if the appropriate JavaSound
-        // extension is installed
     }
 
     @Test
-    public void test8KhzSource() throws DataProcessingException {
+    public void test8KhzSource() throws DataProcessingException,
+            URISyntaxException {
         AudioFileDataSource dataSource = ConfigurationManager
                 .getInstance(AudioFileDataSource.class);
 
         // Test simple WAV.
-        File file = getResourceFile("test8k.wav");
-
+        File file = new File(getResource(getClass(), "test8k.wav").toURI());
         dataSource.setAudioFile(file, null);
         assertThat(dataSource.getData(), instanceOf(DataStartSignal.class));
         Data d = dataSource.getData();
@@ -92,12 +88,12 @@ public class AudioDataSourcesTest extends Sphinx4TestCase {
         File tmpFile = File.createTempFile(getClass().getName(), ".drv");
         tmpFile.deleteOnExit();
         PrintWriter pw = new PrintWriter(tmpFile);
-        String path = getResourceFile("test.wav").getPath();
+        String path = getResource(getClass(), "test.wav").getPath();
         pw.println(path);
         pw.println(path);
         pw.print(path);
         assertFalse(pw.checkError());
-        
+
         dataSource.setBatchFile(tmpFile);
         assertThat(dataSource.getData(), instanceOf(DataStartSignal.class));
         assertThat(dataSource.getData(), instanceOf(DoubleData.class));
@@ -110,11 +106,12 @@ public class AudioDataSourcesTest extends Sphinx4TestCase {
         assertThat(numFileEnds, equalTo(3));
     }
 
-    private void runAssert(String fileName) throws DataProcessingException {
+    private void runAssert(String fileName) throws DataProcessingException,
+            URISyntaxException {
         AudioFileDataSource dataSource = ConfigurationManager
                 .getInstance(AudioFileDataSource.class);
 
-        File file = getResourceFile(fileName);
+        File file = new File(getResource(getClass(), fileName).toURI());
         dataSource.setAudioFile(file, null);
         assertThat(dataSource.getData(), instanceOf(DataStartSignal.class));
         assertThat(dataSource.getData(), instanceOf(DoubleData.class));

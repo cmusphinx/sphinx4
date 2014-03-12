@@ -61,7 +61,6 @@ public class MelFilter {
                      double rightEdge,
                      double initialFreq,
                      double deltaFreq) throws IllegalArgumentException {
-
         double filterHeight;
         double leftSlope;
         double rightSlope;

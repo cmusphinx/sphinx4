@@ -18,7 +18,6 @@ import static org.hamcrest.Matchers.equalTo;
 
 import org.testng.annotations.Test;
 
-import edu.cmu.sphinx.Sphinx4TestCase;
 import edu.cmu.sphinx.fst.Fst;
 import edu.cmu.sphinx.fst.operations.Compose;
 import edu.cmu.sphinx.fst.semiring.TropicalSemiring;
@@ -27,7 +26,7 @@ import edu.cmu.sphinx.fst.semiring.TropicalSemiring;
  * @author John Salatas <jsalatas@users.sourceforge.net>
  * 
  */
-public class ComposeEpsilonTest extends Sphinx4TestCase {
+public class ComposeEpsilonTest  {
     
     @Test
     public void testCompose() {

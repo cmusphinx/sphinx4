@@ -8,15 +8,16 @@
 
 package edu.cmu.sphinx.fst;
 
+import static com.google.common.io.Resources.getResource;
 import static edu.cmu.sphinx.fst.Convert.importFst;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
 import java.io.File;
+import java.net.URL;
 
 import org.testng.annotations.Test;
 
-import edu.cmu.sphinx.Sphinx4TestCase;
 import edu.cmu.sphinx.fst.operations.Compose;
 import edu.cmu.sphinx.fst.semiring.TropicalSemiring;
 
@@ -28,12 +29,13 @@ import edu.cmu.sphinx.fst.semiring.TropicalSemiring;
  * 
  * @author John Salatas <jsalatas@users.sourceforge.net>
  */
-public class ComposeTest extends Sphinx4TestCase {
+public class ComposeTest {
 
     @Test
     public void testCompose() {
         String path = "algorithms/compose/fstcompose.fst.ser";
-        File parent = getResourceFile(path).getParentFile();
+        URL url = getResource(getClass(), path);                      
+        File parent = new File(url.getPath()).getParentFile();
 
         path = new File(parent, "A").getPath();
         Fst fstA = importFst(path, new TropicalSemiring());

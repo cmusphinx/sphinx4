@@ -17,10 +17,12 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
 import java.io.File;
+import java.net.URL;
 
 import org.testng.annotations.Test;
 
-import edu.cmu.sphinx.Sphinx4TestCase;
+import com.google.common.io.Resources;
+
 import edu.cmu.sphinx.fst.operations.RmEpsilon;
 import edu.cmu.sphinx.fst.semiring.ProbabilitySemiring;
 
@@ -28,12 +30,13 @@ import edu.cmu.sphinx.fst.semiring.ProbabilitySemiring;
  * @author John Salatas <jsalatas@users.sourceforge.net>
  * 
  */
-public class RmEpsilonTest extends Sphinx4TestCase {
+public class RmEpsilonTest {
 
     @Test
     public void testRmEpsilon() {
         String path = "algorithms/rmepsilon/A.fst.txt";
-        File parent = getResourceFile(path).getParentFile();
+        URL url = Resources.getResource(getClass(), path);
+        File parent = new File(url.getPath()).getParentFile();
         
         path = new File(parent, "A").getPath();
         Fst fst = Convert.importFst(path,new ProbabilitySemiring());

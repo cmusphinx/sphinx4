@@ -1,26 +1,22 @@
 /*
- * Copyright 1999-2004 Carnegie Mellon University.
- * Portions Copyright 2004 Sun Microsystems, Inc.
- * Portions Copyright 2004 Mitsubishi Electric Research Laboratories.
- * All Rights Reserved.  Use is subject to license terms.
- *
- * See the file "license.terms" for information on usage and
- * redistribution of this file, and for a DISCLAIMER OF ALL
- * WARRANTIES.
- *
+ * Copyright 1999-2004 Carnegie Mellon University. Portions Copyright 2004 Sun
+ * Microsystems, Inc. Portions Copyright 2004 Mitsubishi Electric Research
+ * Laboratories. All Rights Reserved. Use is subject to license terms. See the
+ * file "license.terms" for information on usage and redistribution of this
+ * file, and for a DISCLAIMER OF ALL WARRANTIES.
  */
 
 package edu.cmu.sphinx.result;
 
+import static com.google.common.io.Resources.getResource;
+import static edu.cmu.sphinx.util.props.ConfigurationManagerUtils.setProperty;
 import static javax.sound.sampled.AudioSystem.getAudioInputStream;
 import static org.testng.Assert.assertTrue;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 
 import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
 import org.testng.annotations.Test;
@@ -28,63 +24,50 @@ import org.testng.annotations.Test;
 import edu.cmu.sphinx.frontend.util.StreamDataSource;
 import edu.cmu.sphinx.recognizer.Recognizer;
 import edu.cmu.sphinx.util.props.ConfigurationManager;
-import edu.cmu.sphinx.util.props.ConfigurationManagerUtils;
+
 
 /**
- * Compares the lattices generated when the LexTreeLinguist flag 'keepAllTokens'
- * is turned on/off.
+ * Compares the lattices generated when the LexTreeLinguist flag
+ * 'keepAllTokens' is turned on/off.
  */
 public class LatticeCompTest {
 
-	/**
-	 * Main method for running the LatticeCompTest demo.
-	 * @throws IOException 
-	 * @throws UnsupportedAudioFileException 
-	 */
-	@Test
-	public void testLatticeComp() throws UnsupportedAudioFileException, IOException {
-		URL audioFileURL = new File("src/test/edu/cmu/sphinx/result/test/green.wav").toURI().toURL();
-		URL configURL = new File("src/test/edu/cmu/sphinx/result/test/config.xml").toURI().toURL();
+    /**
+     * Main method for running the LatticeCompTest demo.
+     * 
+     * @throws IOException
+     * @throws UnsupportedAudioFileException
+     */
+    @Test
+    public void testLatticeComp() throws UnsupportedAudioFileException,
+            IOException {
+        // TODO: make an integration test, too heavy to be a unit test
+        URL audioFileURL = getResource(getClass(), "green.wav");
+        URL configURL = getResource(getClass(), "config.xml");
+        URL lm = getResource(getClass(), "hellongram.trigram.lm");
 
-		ConfigurationManager cm = new ConfigurationManager(configURL);
+        ConfigurationManager cm = new ConfigurationManager(configURL);
+        setProperty(cm, "trigramModel", "location", lm.getPath());
 
-		Recognizer recognizer = (Recognizer) cm.lookup("recognizer");
+        Recognizer recognizer = cm.lookup("recognizer");
+        StreamDataSource dataSource = cm.lookup(StreamDataSource.class);
 
-		StreamDataSource reader = (StreamDataSource) cm
-				.lookup("streamDataSource");
+        AudioInputStream ais = getAudioInputStream(audioFileURL);
+        dataSource.setInputStream(ais);
 
-		AudioInputStream ais = AudioSystem.getAudioInputStream(audioFileURL);
+        recognizer.allocate();
+        Lattice lattice = new Lattice(recognizer.recognize());
 
-		/* set the stream data source to read from the audio file */
-		reader.setInputStream(ais);
-		
-		/* allocate the resource necessary for the recognizer */
-		recognizer.allocate();
+        cm = new ConfigurationManager(configURL);
+        setProperty(cm, "keepAllTokens", "true");
+        setProperty(cm, "trigramModel", "location", lm.getPath());
 
-		/* decode the audio file */
-		Result result = recognizer.recognize();
+        recognizer = cm.lookup("recognizer");
+        recognizer.allocate();
+        dataSource = cm.lookup(StreamDataSource.class);
+        dataSource.setInputStream(getAudioInputStream(audioFileURL));
+        Lattice allLattice = new Lattice(recognizer.recognize());
 
-		/* print out the results */
-		Lattice lattice = new Lattice(result);
-		lattice.dumpAISee("logs/lattice.gdl", "lattice");
-
-		recognizer.deallocate();
-		
-		cm = new ConfigurationManager(configURL);
-		
-		ConfigurationManagerUtils.setProperty(cm, "keepAllTokens", "true");
-		
-		recognizer = cm.lookup("recognizer");
-		recognizer.allocate();
-		
-		reader = cm.lookup("streamDataSource");
-		reader.setInputStream(getAudioInputStream(audioFileURL));
-
-		Result allResult = recognizer.recognize();
-
-		Lattice allLattice = new Lattice(allResult);
-		allLattice.dumpAISee("logs/allLattice.gdl", "All Lattice");
-
-		assertTrue(lattice.isEquivalent(allLattice));
-	}
+        assertTrue(lattice.isEquivalent(allLattice));
+    }
 }

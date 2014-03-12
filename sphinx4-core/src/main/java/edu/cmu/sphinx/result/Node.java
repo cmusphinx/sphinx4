@@ -611,7 +611,7 @@ public class Node {
                 ((word.getSpelling().equals(other.getWord().getSpelling()) &&
                         (getEnteringEdges().size() == other.getEnteringEdges().size() &&
                                 getLeavingEdges().size() == other.getLeavingEdges().size())) &&
-                        (beginTime == other.getBeginTime() &&
+                        (getBeginTime() == other.getBeginTime() &&
                                 endTime == other.getEndTime()));
     }
 

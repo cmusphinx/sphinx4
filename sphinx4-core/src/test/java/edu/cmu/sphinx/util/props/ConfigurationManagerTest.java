@@ -1,5 +1,6 @@
 package edu.cmu.sphinx.util.props;
 
+import static com.google.common.io.Resources.getResource;
 import static java.lang.Double.MIN_VALUE;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -15,7 +16,6 @@ import java.util.Map;
 import org.hamcrest.Matchers;
 import org.testng.annotations.Test;
 
-import edu.cmu.sphinx.Sphinx4TestCase;
 
 /**
  * Some unit tests, which ensure a proper implementation of configuration
@@ -24,7 +24,7 @@ import edu.cmu.sphinx.Sphinx4TestCase;
  * @author Holger Brandl
  */
 
-public class ConfigurationManagerTest extends Sphinx4TestCase {
+public class ConfigurationManagerTest {
 
     @Test
     public void testDynamicConfCreation() throws PropertyException,
@@ -43,7 +43,8 @@ public class ConfigurationManagerTest extends Sphinx4TestCase {
 
     @Test
     public void testSerialization() throws IOException, PropertyException {
-        URL url = getResourceUrl("ConfigurationManagerTest.testconfig.sxl");
+        URL url = getResource(getClass(),
+                              "ConfigurationManagerTest.testconfig.sxl");
         ConfigurationManager cm = new ConfigurationManager(url);
 
         File tmpFile = File.createTempFile("ConfigurationManager", ".tmp.sxl");
@@ -59,7 +60,8 @@ public class ConfigurationManagerTest extends Sphinx4TestCase {
     @Test
     public void testDynamicConfiguruationChange() throws IOException,
             PropertyException, InstantiationException {
-        URL url = getResourceUrl("ConfigurationManagerTest.testconfig.sxl");
+        URL url = getResource(getClass(),
+                              "ConfigurationManagerTest.testconfig.sxl");
         ConfigurationManager cm = new ConfigurationManager(url);
 
         assertThat(cm.getInstanceNames(DummyFrontEndProcessor.class), empty());
@@ -85,8 +87,9 @@ public class ConfigurationManagerTest extends Sphinx4TestCase {
 
         cm.addConfigurable(DummyFrontEnd.class, frontEndName);
         PropertySheet propSheet = cm.getPropertySheet(frontEndName);
-        propSheet.setComponentList("dataProcs", Arrays.asList("fooBar"), Arrays
-                .<Configurable> asList(new AnotherDummyProcessor()));
+        propSheet
+                .setComponentList("dataProcs", Arrays.asList("fooBar"), Arrays
+                        .<Configurable> asList(new AnotherDummyProcessor()));
 
         String xmlString = ConfigurationManagerUtils.toXML(cm);
 
@@ -101,7 +104,8 @@ public class ConfigurationManagerTest extends Sphinx4TestCase {
 
     @Test
     public void testXmlExtendedConfiguration() {
-        URL url = getResourceUrl("ConfigurationManagerTest.sxl");
+        URL url = getResource(getClass(),
+                              "ConfigurationManagerTest.sxl");
         ConfigurationManager cm = new ConfigurationManager(url);
 
         String instanceName = "duco";
@@ -126,7 +130,8 @@ public class ConfigurationManagerTest extends Sphinx4TestCase {
 
     @Test
     public void testGetComponentClass() {
-        URL url = getResourceUrl("ConfigurationManagerTest.sxl");
+        URL url = getResource(getClass(),
+                              "ConfigurationManagerTest.sxl");
         ConfigurationManager cm = new ConfigurationManager(url);
 
         String instanceName = "duco";

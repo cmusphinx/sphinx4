@@ -8,27 +8,28 @@
 
 package edu.cmu.sphinx.fst;
 
+import static com.google.common.io.Resources.getResource;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
 import java.io.File;
+import java.net.URL;
 
 import org.testng.annotations.Test;
 
-import edu.cmu.sphinx.Sphinx4TestCase;
-import edu.cmu.sphinx.fst.Fst;
 import edu.cmu.sphinx.fst.semiring.TropicalSemiring;
 
 
 /**
  * @author "John Salatas <jsalatas@users.sourceforge.net>"
  */
-public class ImportTest extends Sphinx4TestCase {
+public class ImportTest  {
 
     @Test
     public void testConvert() {
-        String dir = getResourceFile("openfst/basic.fst").getParent();
-
+        URL url = getResource(getClass(), "openfst/basic.fst");
+        String dir = new File(url.getPath()).getParent();
+        
         String path = new File(dir, "basic").getPath();
         Fst fst1 = Convert.importFst(path, new TropicalSemiring());
 

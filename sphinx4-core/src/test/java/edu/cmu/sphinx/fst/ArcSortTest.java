@@ -13,13 +13,13 @@
 
 package edu.cmu.sphinx.fst;
 
-import org.testng.Assert;
+import static edu.cmu.sphinx.fst.operations.ArcSort.apply;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.not;
+
 import org.testng.annotations.Test;
 
-import edu.cmu.sphinx.fst.Arc;
-import edu.cmu.sphinx.fst.Fst;
-import edu.cmu.sphinx.fst.State;
-import edu.cmu.sphinx.fst.operations.ArcSort;
 import edu.cmu.sphinx.fst.operations.ILabelCompare;
 import edu.cmu.sphinx.fst.operations.OLabelCompare;
 import edu.cmu.sphinx.fst.semiring.TropicalSemiring;
@@ -127,23 +127,19 @@ public class ArcSortTest {
 
     @Test
     public void testArcSort() {
-        System.out.println("Testing Arc Sort...");
         // Input label sort test
         Fst fst1 = createUnsorted();
         Fst fst2 = createIsorted();
-        Assert.assertTrue(!fst1.equals(fst2));
-        ArcSort.apply(fst1, new ILabelCompare());
-        Assert.assertTrue(fst1.equals(fst2));
+        assertThat(fst1, not(equalTo(fst2)));
+        apply(fst1, new ILabelCompare());
+        assertThat(fst1, equalTo(fst2));
 
         // Output label sort test
         fst1 = createUnsorted();
         fst2 = createOsorted();
-        Assert.assertTrue(!fst1.equals(fst2));
-        ArcSort.apply(fst1, new OLabelCompare());
-        Assert.assertTrue(fst1.equals(fst2));
-
-        System.out.println("Testing Arc Sort Completed!\n");
-
+        assertThat(fst1, not(equalTo(fst2)));
+        apply(fst1, new OLabelCompare());
+        assertThat(fst1, equalTo(fst2));
     }
 
 }

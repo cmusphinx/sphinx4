@@ -1,5 +1,7 @@
 package edu.cmu.sphinx.frontend;
 
+import static com.google.common.io.Resources.getResource;
+import static com.google.common.io.Resources.readLines;
 import static java.lang.Double.parseDouble;
 import static java.lang.Float.parseFloat;
 import static java.lang.Integer.parseInt;
@@ -9,21 +11,21 @@ import static org.hamcrest.Matchers.closeTo;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.instanceOf;
 
-import java.io.*;
+import java.io.IOException;
 import java.net.URL;
+import java.nio.charset.Charset;
 
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
-import edu.cmu.sphinx.Sphinx4TestCase;
 import edu.cmu.sphinx.frontend.endpoint.SpeechEndSignal;
 import edu.cmu.sphinx.frontend.endpoint.SpeechStartSignal;
 import edu.cmu.sphinx.frontend.util.AudioFileDataSource;
 import edu.cmu.sphinx.util.props.ConfigurationManager;
 
 
-public class FrontendElementTest extends Sphinx4TestCase {
+public class FrontendElementTest {
 
     @DataProvider(name = "frontendProvider")
     public Object[][] provide() {
@@ -54,11 +56,11 @@ public class FrontendElementTest extends Sphinx4TestCase {
     @Test(dataProvider = "frontendProvider")
     public void testElement(String frontendName, String name)
             throws IOException {
-        URL url = getResourceUrl("frontend.xml");
+        URL url = getResource(getClass(), "frontend.xml");
         ConfigurationManager cm = new ConfigurationManager(url);
 
-        AudioFileDataSource dataSource = cm.lookup("audioFileDataSource");
-        dataSource.setAudioFile(getResourceFile("test-feat.wav"), null);
+        AudioFileDataSource ds = cm.lookup("audioFileDataSource");
+        ds.setAudioFile(getResource(getClass(), "test-feat.wav"), null);
 
         FrontEnd frontend = cm.lookup(frontendName);
         compareDump(frontend, name);
@@ -66,11 +68,9 @@ public class FrontendElementTest extends Sphinx4TestCase {
 
     private void compareDump(FrontEnd frontend, String name)
             throws NumberFormatException, DataProcessingException, IOException {
-        FileInputStream stream = new FileInputStream(getResourceFile(name));
-        BufferedReader br = new BufferedReader(new InputStreamReader(stream));
-        String line;
-
-        while ((line = br.readLine()) != null) {
+        Charset charset = Charset.defaultCharset();
+        
+        for (String line : readLines(getResource(getClass(), name), charset)) {
             Data data = frontend.getData();
 
             if (line.startsWith("DataStartSignal"))
@@ -93,7 +93,7 @@ public class FrontendElementTest extends Sphinx4TestCase {
                 for (int i = 0; i < values.length; i++)
                     assertThat(values[i],
                                closeTo(parseDouble(tokens[2 + i]),
-                                       abs(0.001 * values[i])));
+                                       abs(0.01 * values[i])));
             }
 
             if (line.startsWith("FloatFrame")) {
@@ -105,7 +105,7 @@ public class FrontendElementTest extends Sphinx4TestCase {
                 for (int i = 0; i < values.length; i++)
                     assertThat(Double.valueOf(values[i]),
                                closeTo(parseFloat(tokens[2 + i]),
-                                       abs(0.001 * values[i])));
+                                       abs(0.01 * values[i])));
             }
         }
     }
