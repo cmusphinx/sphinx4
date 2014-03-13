@@ -1,7 +1,5 @@
 package edu.cmu.sphinx.frontend;
 
-import static com.google.common.io.Resources.getResource;
-import static com.google.common.io.Resources.readLines;
 import static java.lang.Double.parseDouble;
 import static java.lang.Float.parseFloat;
 import static java.lang.Integer.parseInt;
@@ -11,9 +9,8 @@ import static org.hamcrest.Matchers.closeTo;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.instanceOf;
 
-import java.io.IOException;
+import java.io.*;
 import java.net.URL;
-import java.nio.charset.Charset;
 
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
@@ -56,11 +53,11 @@ public class FrontendElementTest {
     @Test(dataProvider = "frontendProvider")
     public void testElement(String frontendName, String name)
             throws IOException {
-        URL url = getResource(getClass(), "frontend.xml");
+        URL url = getClass().getResource("frontend.xml");
         ConfigurationManager cm = new ConfigurationManager(url);
 
         AudioFileDataSource ds = cm.lookup("audioFileDataSource");
-        ds.setAudioFile(getResource(getClass(), "test-feat.wav"), null);
+        ds.setAudioFile(getClass().getResource("test-feat.wav"), null);
 
         FrontEnd frontend = cm.lookup(frontendName);
         compareDump(frontend, name);
@@ -68,9 +65,12 @@ public class FrontendElementTest {
 
     private void compareDump(FrontEnd frontend, String name)
             throws NumberFormatException, DataProcessingException, IOException {
-        Charset charset = Charset.defaultCharset();
+        InputStream stream = getClass().getResource(name).openStream();
+        Reader reader = new InputStreamReader(stream);
+        BufferedReader br = new BufferedReader(reader);
+        String line;
         
-        for (String line : readLines(getResource(getClass(), name), charset)) {
+        while (null != (line = br.readLine())) {
             Data data = frontend.getData();
 
             if (line.startsWith("DataStartSignal"))

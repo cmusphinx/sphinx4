@@ -8,7 +8,6 @@
  */
 package edu.cmu.sphinx.linguist.language.grammar;
 
-import static com.google.common.io.Resources.getResource;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.isOneOf;
 
@@ -27,10 +26,10 @@ public class BatchForcedAlignerGrammarTest {
 
     @Test
     public void testForcedAlignerGrammar() throws IOException {
-        URL dictionaryUrl = getResource(Sphinx4Model.class,
-                                        "acoustic/wsj/dict/digits.dict");
-        URL noisedictUrl = getResource(Sphinx4Model.class,
-                                       "acoustic/wsj/noisedict");
+        URL dictionaryUrl = Sphinx4Model.class.getResource(
+                "acoustic/wsj/dict/digits.dict");
+        URL noisedictUrl = Sphinx4Model.class.getResource(
+                "acoustic/wsj/noisedict");
 
         Dictionary dictionary = new FastDictionary(dictionaryUrl,
                                                    noisedictUrl,
@@ -41,7 +40,7 @@ public class BatchForcedAlignerGrammarTest {
                                                    false,
                                                    new UnitManager());
 
-        URL url = getResource(getClass(), "BatchForcedAlignerGrammarTest.utts");
+        URL url = getClass().getResource("BatchForcedAlignerGrammarTest.utts");
         BatchForcedAlignerGrammar grammar;
         grammar = new BatchForcedAlignerGrammar(url.getPath(),
                                                 true,

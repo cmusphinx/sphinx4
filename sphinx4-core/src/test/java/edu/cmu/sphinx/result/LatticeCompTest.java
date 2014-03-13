@@ -8,7 +8,6 @@
 
 package edu.cmu.sphinx.result;
 
-import static com.google.common.io.Resources.getResource;
 import static edu.cmu.sphinx.util.props.ConfigurationManagerUtils.setProperty;
 import static javax.sound.sampled.AudioSystem.getAudioInputStream;
 import static org.testng.Assert.assertTrue;
@@ -42,9 +41,9 @@ public class LatticeCompTest {
     public void testLatticeComp() throws UnsupportedAudioFileException,
             IOException {
         // TODO: make an integration test, too heavy to be a unit test
-        URL audioFileURL = getResource(getClass(), "green.wav");
-        URL configURL = getResource(getClass(), "config.xml");
-        URL lm = getResource(getClass(), "hellongram.trigram.lm");
+        URL audioFileURL = getClass().getResource("green.wav");
+        URL configURL = getClass().getResource("config.xml");
+        URL lm = getClass().getResource("hellongram.trigram.lm");
 
         ConfigurationManager cm = new ConfigurationManager(configURL);
         setProperty(cm, "trigramModel", "location", lm.getPath());

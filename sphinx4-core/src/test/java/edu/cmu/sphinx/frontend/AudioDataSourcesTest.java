@@ -1,6 +1,5 @@
 package edu.cmu.sphinx.frontend;
 
-import static com.google.common.io.Resources.getResource;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.instanceOf;
@@ -53,7 +52,7 @@ public class AudioDataSourcesTest {
                 .getInstance(AudioFileDataSource.class);
 
         // Test simple WAV.
-        File file = new File(getResource(getClass(), "test8k.wav").toURI());
+        File file = new File(getClass().getResource("test8k.wav").toURI());
         dataSource.setAudioFile(file, null);
         assertThat(dataSource.getData(), instanceOf(DataStartSignal.class));
         Data d = dataSource.getData();
@@ -88,7 +87,7 @@ public class AudioDataSourcesTest {
         File tmpFile = File.createTempFile(getClass().getName(), ".drv");
         tmpFile.deleteOnExit();
         PrintWriter pw = new PrintWriter(tmpFile);
-        String path = getResource(getClass(), "test.wav").getPath();
+        String path = getClass().getResource("test.wav").getPath();
         pw.println(path);
         pw.println(path);
         pw.print(path);
@@ -111,7 +110,7 @@ public class AudioDataSourcesTest {
         AudioFileDataSource dataSource = ConfigurationManager
                 .getInstance(AudioFileDataSource.class);
 
-        File file = new File(getResource(getClass(), fileName).toURI());
+        File file = new File(getClass().getResource(fileName).toURI());
         dataSource.setAudioFile(file, null);
         assertThat(dataSource.getData(), instanceOf(DataStartSignal.class));
         assertThat(dataSource.getData(), instanceOf(DoubleData.class));

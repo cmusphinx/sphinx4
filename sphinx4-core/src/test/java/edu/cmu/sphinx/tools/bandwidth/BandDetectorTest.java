@@ -7,7 +7,6 @@
 
 package edu.cmu.sphinx.tools.bandwidth;
 
-import static com.google.common.io.Resources.getResource;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
@@ -20,11 +19,10 @@ public class BandDetectorTest {
     public void test() {
         BandDetector detector = new BandDetector();
         assertTrue(detector
-                .bandwidth(getResource(getClass(),
-                                       "10001-90210-01803-8khz.wav")
-                        .getPath()));
+                .bandwidth(getClass()
+                        .getResource("10001-90210-01803-8khz.wav").getPath()));
         assertFalse(detector
-                .bandwidth(getResource(getClass(), "10001-90210-01803.wav")
+                .bandwidth(getClass().getResource("10001-90210-01803.wav")
                         .getPath()));
     }
 }

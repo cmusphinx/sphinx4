@@ -1,6 +1,6 @@
 package edu.cmu.sphinx.util.props;
 
-import static com.google.common.base.Preconditions.checkArgument;
+import static edu.cmu.sphinx.util.Preconditions.checkArgument;
 
 import java.io.File;
 import java.io.IOException;

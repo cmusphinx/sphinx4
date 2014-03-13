@@ -8,7 +8,6 @@
 
 package edu.cmu.sphinx.fst;
 
-import static com.google.common.io.Resources.getResource;
 import static edu.cmu.sphinx.fst.Convert.importFst;
 import static edu.cmu.sphinx.fst.operations.Connect.apply;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -30,7 +29,7 @@ public class ConnectTest {
     @Test
     public void testConnect() {
         String path = "algorithms/connect/fstconnect.fst.ser";
-        URL url = getResource(getClass(), path);
+        URL url = getClass().getResource(path);
         File parent = new File(url.getPath()).getParentFile();
 
         path = new File(parent, "A").getPath();

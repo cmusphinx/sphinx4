@@ -11,22 +11,22 @@ import java.net.URL;
 
 import org.testng.annotations.Test;
 
-import com.google.common.io.Resources;
-
 import edu.cmu.sphinx.fst.operations.Determinize;
 import edu.cmu.sphinx.fst.semiring.TropicalSemiring;
+
 
 /**
  * @author John Salatas <jsalatas@users.sourceforge.net>
  * 
  */
 public class DeterminizeTest {
+
     @Test
     public void testDeterminize() {
         String path = "algorithms/determinize/fstdeterminize.fst.ser";
-        URL url = Resources.getResource(getClass(), path);
+        URL url = getClass().getResource(path);
         File parent = new File(url.getPath()).getParentFile();
-        
+
         path = new File(parent, "A").getPath();
         Fst fstA = Convert.importFst(path, new TropicalSemiring());
         path = new File(parent, "fstdeterminize.fst.ser").getPath();

@@ -10,15 +10,9 @@
  */
 package edu.cmu.sphinx.frontend.frequencywarp;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import edu.cmu.sphinx.frontend.BaseDataProcessor;
-import edu.cmu.sphinx.frontend.Data;
-import edu.cmu.sphinx.frontend.DataProcessingException;
-import edu.cmu.sphinx.frontend.DoubleData;
-import edu.cmu.sphinx.util.props.PropertyException;
-import edu.cmu.sphinx.util.props.PropertySheet;
-import edu.cmu.sphinx.util.props.S4Double;
-import edu.cmu.sphinx.util.props.S4Integer;
+import static edu.cmu.sphinx.util.Preconditions.checkArgument;
+import edu.cmu.sphinx.frontend.*;
+import edu.cmu.sphinx.util.props.*;
 
 /**
  * Filters an input power spectrum through a bank of number of mel-filters. The

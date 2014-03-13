@@ -1,6 +1,5 @@
 package edu.cmu.sphinx.linguist.language.grammar;
 
-import static com.google.common.io.Resources.getResource;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
 
@@ -19,9 +18,9 @@ public class FSTGrammarTest {
 
     @Test
     public void testForcedAlignerGrammar() throws IOException {
-        URL dictionaryUrl = getResource(getClass(), "FSTGrammarTest.dic");
-        URL noisedictUrl = getResource(Sphinx4Model.class,
-                                       "acoustic/wsj/noisedict");
+        URL dictionaryUrl = getClass().getResource("FSTGrammarTest.dic");
+        URL noisedictUrl = Sphinx4Model.class
+                .getResource("acoustic/wsj/noisedict");
 
         Dictionary dictionary = new FastDictionary(dictionaryUrl,
                                                    noisedictUrl,
@@ -32,7 +31,7 @@ public class FSTGrammarTest {
                                                    false,
                                                    new UnitManager());
 
-        URL url = getResource(getClass(), "FSTGrammarTest.gram");
+        URL url = getClass().getResource("FSTGrammarTest.gram");
         FSTGrammar grammar = new FSTGrammar(url.getPath(),
                                             true,
                                             true,

@@ -8,7 +8,6 @@
  */
 package edu.cmu.sphinx.linguist.dictionary;
 
-import static com.google.common.io.Resources.getResource;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.arrayWithSize;
 import static org.hamcrest.Matchers.equalTo;
@@ -27,10 +26,10 @@ public class DictionaryTest {
 
     @Test
     public void testDictionary() throws IOException {
-        URL dictUrl = getResource(Sphinx4Model.class,
-                                  "acoustic/wsj/dict/digits.dict");
-        URL noiseDictUrl = getResource(Sphinx4Model.class,
-                                       "acoustic/wsj/noisedict");
+        URL dictUrl = Sphinx4Model.class
+                .getResource("acoustic/wsj/dict/digits.dict");
+        URL noiseDictUrl = Sphinx4Model.class
+                .getResource("acoustic/wsj/noisedict");
 
         Dictionary dictionary = new FullDictionary(dictUrl,
                                                    noiseDictUrl,

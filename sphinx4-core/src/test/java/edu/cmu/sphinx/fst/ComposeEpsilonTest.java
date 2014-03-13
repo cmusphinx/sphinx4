@@ -11,7 +11,6 @@
 
 package edu.cmu.sphinx.fst;
 
-import static com.google.common.io.Resources.getResource;
 import static edu.cmu.sphinx.fst.Convert.importFst;
 import static edu.cmu.sphinx.fst.operations.Compose.get;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -33,7 +32,7 @@ public class ComposeEpsilonTest {
 
     @Test
     public void testCompose() {
-        URL url = getResource(getClass(), "algorithms/composeeps/A.fst.txt");
+        URL url = getClass().getResource("algorithms/composeeps/A.fst.txt");
         File parent = new File(url.getPath()).getParentFile();
 
         String path = new File(parent, "A").getPath();

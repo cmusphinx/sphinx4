@@ -8,7 +8,6 @@
  */
 package edu.cmu.sphinx.linguist.language.ngram.large;
 
-import static com.google.common.io.Resources.getResource;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.closeTo;
 import static org.hamcrest.Matchers.equalTo;
@@ -30,9 +29,9 @@ public class LargeNgramTest {
 
     @Test
     public void testNgram() throws IOException {
-        URL dictUrl = getResource(getClass(), "100.dict");
-        URL noisedictUrl = getResource(Sphinx4Model.class,
-                                       "acoustic/wsj/noisedict");
+        URL dictUrl = getClass().getResource("100.dict");
+        URL noisedictUrl = Sphinx4Model.class
+                .getResource("acoustic/wsj/noisedict");
 
         Dictionary dictionary = new FullDictionary(dictUrl,
                                                    noisedictUrl,
@@ -43,7 +42,7 @@ public class LargeNgramTest {
                                                    false,
                                                    new UnitManager());
 
-        URL lm = getResource(getClass(), "100.arpa.dmp");
+        URL lm = getClass().getResource("100.arpa.dmp");
         LargeTrigramModel model = new LargeTrigramModel("",
                                                         lm,
                                                         null,

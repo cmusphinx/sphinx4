@@ -1,6 +1,5 @@
 package edu.cmu.sphinx.util.props;
 
-import static com.google.common.io.Resources.getResource;
 import static java.lang.Double.MIN_VALUE;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -43,8 +42,8 @@ public class ConfigurationManagerTest {
 
     @Test
     public void testSerialization() throws IOException, PropertyException {
-        URL url = getResource(getClass(),
-                              "ConfigurationManagerTest.testconfig.sxl");
+        URL url = getClass()
+                .getResource("ConfigurationManagerTest.testconfig.sxl");
         ConfigurationManager cm = new ConfigurationManager(url);
 
         File tmpFile = File.createTempFile("ConfigurationManager", ".tmp.sxl");
@@ -60,8 +59,8 @@ public class ConfigurationManagerTest {
     @Test
     public void testDynamicConfiguruationChange() throws IOException,
             PropertyException, InstantiationException {
-        URL url = getResource(getClass(),
-                              "ConfigurationManagerTest.testconfig.sxl");
+        URL url = getClass()
+                .getResource("ConfigurationManagerTest.testconfig.sxl");
         ConfigurationManager cm = new ConfigurationManager(url);
 
         assertThat(cm.getInstanceNames(DummyFrontEndProcessor.class), empty());
@@ -104,8 +103,7 @@ public class ConfigurationManagerTest {
 
     @Test
     public void testXmlExtendedConfiguration() {
-        URL url = getResource(getClass(),
-                              "ConfigurationManagerTest.sxl");
+        URL url = getClass().getResource("ConfigurationManagerTest.sxl");
         ConfigurationManager cm = new ConfigurationManager(url);
 
         String instanceName = "duco";
@@ -130,8 +128,7 @@ public class ConfigurationManagerTest {
 
     @Test
     public void testGetComponentClass() {
-        URL url = getResource(getClass(),
-                              "ConfigurationManagerTest.sxl");
+        URL url = getClass().getResource("ConfigurationManagerTest.sxl");
         ConfigurationManager cm = new ConfigurationManager(url);
 
         String instanceName = "duco";

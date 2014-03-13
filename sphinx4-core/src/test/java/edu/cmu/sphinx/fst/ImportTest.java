@@ -8,7 +8,6 @@
 
 package edu.cmu.sphinx.fst;
 
-import static com.google.common.io.Resources.getResource;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
@@ -27,7 +26,7 @@ public class ImportTest  {
 
     @Test
     public void testConvert() {
-        URL url = getResource(getClass(), "openfst/basic.fst");
+        URL url = getClass().getResource("openfst/basic.fst");
         String dir = new File(url.getPath()).getParent();
         
         String path = new File(dir, "basic").getPath();
