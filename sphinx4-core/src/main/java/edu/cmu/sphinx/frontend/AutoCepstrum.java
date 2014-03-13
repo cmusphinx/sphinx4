@@ -138,7 +138,7 @@ public class AutoCepstrum extends BaseDataProcessor {
                                                          hiFreq,
                                                          numFilter);
             else
-                filterBank = new MelFrequencyFilterBank(hiFreq,
+                filterBank = new MelFrequencyFilterBank(lowFreq,
                                                         hiFreq,
                                                         numFilter);
 
