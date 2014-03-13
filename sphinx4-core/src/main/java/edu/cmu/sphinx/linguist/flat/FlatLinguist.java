@@ -220,8 +220,8 @@ public class FlatLinguist implements Linguist, Configurable {
     */
     public void newProperties(PropertySheet ps) throws PropertyException {
         logMath = LogMath.getInstance();
-        // hookup to all of the components
-        setupAcousticModel(ps);
+
+        acousticModel = (AcousticModel) ps.getComponent(PROP_ACOUSTIC_MODEL);
         grammar = (Grammar) ps.getComponent(PROP_GRAMMAR);
         unitManager = (UnitManager) ps.getComponent(PROP_UNIT_MANAGER);
 
@@ -244,17 +244,6 @@ public class FlatLinguist implements Linguist, Configurable {
         }
 
         name = ps.getInstanceName();
-    }
-
-
-    /**
-     * Sets up the acoustic model.
-     *
-     * @param ps the PropertySheet from which to obtain the acoustic model
-     * @throws edu.cmu.sphinx.util.props.PropertyException
-     */
-    protected void setupAcousticModel(PropertySheet ps) throws PropertyException {
-        acousticModel = (AcousticModel) ps.getComponent(PROP_ACOUSTIC_MODEL);
     }
 
 

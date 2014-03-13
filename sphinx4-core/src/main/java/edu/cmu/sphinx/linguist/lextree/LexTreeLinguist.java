@@ -297,8 +297,9 @@ public class LexTreeLinguist implements Linguist {
     */
     public void newProperties(PropertySheet ps) throws PropertyException {
         logger = ps.getLogger();
-        acousticModel = (AcousticModel) ps.getComponent(PROP_ACOUSTIC_MODEL);
         logMath = LogMath.getInstance();
+
+        acousticModel = (AcousticModel) ps.getComponent(PROP_ACOUSTIC_MODEL);
         unitManager = (UnitManager) ps.getComponent(PROP_UNIT_MANAGER);
         languageModel = (BackoffLanguageModel) ps.getComponent(PROP_LANGUAGE_MODEL);
         dictionary = (Dictionary) ps.getComponent(PROP_DICTIONARY);

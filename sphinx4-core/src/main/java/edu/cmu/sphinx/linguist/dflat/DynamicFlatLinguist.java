@@ -152,10 +152,10 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
     */
     public void newProperties(PropertySheet ps) throws PropertyException {
-        // hookup to all of the components
         logger = ps.getLogger();
-        acousticModel = (AcousticModel) ps.getComponent(ACOUSTIC_MODEL);
+        logMath = LogMath.getInstance();
 
+        acousticModel = (AcousticModel) ps.getComponent(ACOUSTIC_MODEL);
         grammar = (Grammar) ps.getComponent(GRAMMAR);
         unitManager = (UnitManager) ps.getComponent(UNIT_MANAGER);
 
@@ -183,19 +183,6 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
     public SearchGraph getSearchGraph() {
         return searchGraph;
     }
-
-
-    /**
-     * Sets up the acoustic model.
-     *
-     * @param ps the PropertySheet from which to obtain the acoustic model
-     * @throws edu.cmu.sphinx.util.props.PropertyException
-     */
-    protected void setupAcousticModel(PropertySheet ps)
-            throws PropertyException {
-        acousticModel = (AcousticModel) ps.getComponent(ACOUSTIC_MODEL);
-    }
-
 
     public void allocate() throws IOException {
         logger.info("Allocating DFLAT");
