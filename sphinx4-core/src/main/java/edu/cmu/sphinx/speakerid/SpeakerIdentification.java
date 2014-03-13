@@ -12,7 +12,8 @@
  */
 package edu.cmu.sphinx.speakerid;
 
-import java.io.FileInputStream;
+import java.io.InputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -21,11 +22,7 @@ import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.EigenDecomposition;
 import org.apache.commons.math3.stat.correlation.Covariance;
 
-import edu.cmu.sphinx.frontend.Data;
-import edu.cmu.sphinx.frontend.DataEndSignal;
-import edu.cmu.sphinx.frontend.DoubleData;
-import edu.cmu.sphinx.frontend.FloatData;
-import edu.cmu.sphinx.frontend.FrontEnd;
+import edu.cmu.sphinx.frontend.*;
 import edu.cmu.sphinx.frontend.util.StreamDataSource;
 import edu.cmu.sphinx.util.props.ConfigurationManager;
 
@@ -37,16 +34,15 @@ public class SpeakerIdentification implements Identification {
 
     public final String FRONTEND_NAME = "plpFrontEnd";
 
-    public final String CONFIG_FILE = "src/sphinx4/edu/cmu/sphinx/speakerid/frontend.config.xml";
-
     private FrontEnd frontEnd;
     private StreamDataSource audioSource;
     private ConfigurationManager cm;
 
     public SpeakerIdentification() {
-        cm = new ConfigurationManager(CONFIG_FILE);
-        audioSource = (StreamDataSource) cm.lookup("streamDataSource");
-        frontEnd = (FrontEnd) cm.lookup(FRONTEND_NAME);
+        URL url = getClass().getResource("frontend.config.xml");
+        cm = new ConfigurationManager(url);
+        audioSource = cm.lookup("streamDataSource");
+        frontEnd = cm.lookup(FRONTEND_NAME);
     }
 
     /**
@@ -183,13 +179,8 @@ public class SpeakerIdentification implements Identification {
      * @param inputFileName The name of the file used for diarization
      * @return A cluster for each speaker found in the input file
      */
-    public ArrayList<SpeakerCluster> cluster(String inputFileName) {
-        try {
-            audioSource.setInputStream(new FileInputStream(inputFileName));
-        } catch (Exception e) {
-            System.out.println(e.toString());
-            System.exit(1);
-        }
+    public ArrayList<SpeakerCluster> cluster(InputStream stream) {
+        audioSource.setInputStream(stream);
         ArrayList<float[]> features = getFeatures();
         return cluster(features);
     }

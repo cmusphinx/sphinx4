@@ -12,8 +12,7 @@
  */
 package edu.cmu.sphinx.speakerid;
 
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -143,7 +142,8 @@ public class Tester {
      *            the input file that needs to be diarized
      */
     public static void testSpeakerIdentification(String inputFile) throws IOException {
-        ArrayList<SpeakerCluster> speakers = (new SpeakerIdentification().cluster(inputFile));
+        InputStream stream = new FileInputStream(inputFile);
+        ArrayList<SpeakerCluster> speakers = new SpeakerIdentification().cluster(stream);
         printIntervals(speakers);
         printSpeakerIntervals(speakers, inputFile);
     }

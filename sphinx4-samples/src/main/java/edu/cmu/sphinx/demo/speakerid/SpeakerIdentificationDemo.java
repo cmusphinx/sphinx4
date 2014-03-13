@@ -1,8 +1,12 @@
 package edu.cmu.sphinx.demo.speakerid;
 
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
-import edu.cmu.sphinx.speakerid.*;
+
+import edu.cmu.sphinx.speakerid.Segment;
+import edu.cmu.sphinx.speakerid.SpeakerCluster;
+import edu.cmu.sphinx.speakerid.SpeakerIdentification;
 
 public class SpeakerIdentificationDemo {
 
@@ -35,9 +39,9 @@ public class SpeakerIdentificationDemo {
     }
 
     public static void main(String[] args) throws IOException {
-        String inputFile = "src/apps/edu/cmu/sphinx/demo/speakerid/test.wav";
         SpeakerIdentification sd = new SpeakerIdentification();
-        ArrayList<SpeakerCluster> clusters = sd.cluster(inputFile);
-        printSpeakerIntervals(clusters, inputFile);
+        URL url = SpeakerIdentificationDemo.class.getResource("test.wav");
+        ArrayList<SpeakerCluster> clusters = sd.cluster(url.openStream());
+        printSpeakerIntervals(clusters, url.getPath());
     }
 }

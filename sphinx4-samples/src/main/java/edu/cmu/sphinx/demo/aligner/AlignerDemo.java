@@ -15,7 +15,6 @@ import java.net.URL;
 
 import edu.cmu.sphinx.api.Configuration;
 import edu.cmu.sphinx.api.SpeechAligner;
-
 import edu.cmu.sphinx.result.WordResult;
 
 /**
@@ -37,18 +36,20 @@ import edu.cmu.sphinx.result.WordResult;
  */
 public class AlignerDemo {
 
+    private static final String MODEL_PATH =
+        "resource:/edu/cmu/sphinx/models/acoustic/wsj";
     private static final String TEXT =
         "one zero zero zero one nine oh two one oh zero one eight zero three";
-    private static final String AUDIO_PATH =
-        "file:src/apps/edu/cmu/sphinx/demo/aligner/10001-90210-01803.wav";
 
     public static void main(String Args[]) throws Exception {
         Configuration config = new Configuration();
-        config.setAcousticModelPath("file:models/acoustic/wsj");
-        config.setDictionaryPath("file:models/acoustic/wsj/dict/cmudict.0.6d");
+        config.setAcousticModelPath(MODEL_PATH);
+        config.setDictionaryPath(MODEL_PATH + "/dict/cmudict.0.6d");
         SpeechAligner aligner = new SpeechAligner(config);
+        
+        URL url = AlignerDemo.class.getResource("10001-90210-01803.wav");
 
-        for (WordResult result : aligner.align(new URL(AUDIO_PATH), TEXT))
+        for (WordResult result : aligner.align(url, TEXT))
             System.out.println(result);
     }
 }
