@@ -180,10 +180,7 @@ public class AutoCepstrum extends BaseDataProcessor {
             if ((featParams.get("-transform") != null)
                     && (featParams.get("-transform").equals("dct"))) {
                 dct = new DiscreteCosineTransform2(
-                                                   DiscreteCosineTransform.class
-                                                           .getField("PROP_NUMBER_FILTERS")
-                                                           .getAnnotation(S4Integer.class)
-                                                           .defaultValue(),
+                                                   numFilter,
                                                    DiscreteCosineTransform.class
                                                            .getField("PROP_CEPSTRUM_LENGTH")
                                                            .getAnnotation(S4Integer.class)
@@ -192,19 +189,13 @@ public class AutoCepstrum extends BaseDataProcessor {
                     && (featParams.get("-transform").equals("kaldi")))
             {
                 dct = new KaldiDiscreteCosineTransform(
-                                                       DiscreteCosineTransform.class
-                                                               .getField("PROP_NUMBER_FILTERS")
-                                                               .getAnnotation(S4Integer.class)
-                                                               .defaultValue(),
+                                                       numFilter,
                                                        DiscreteCosineTransform.class
                                                                .getField("PROP_CEPSTRUM_LENGTH")
                                                                .getAnnotation(S4Integer.class)
                                                                .defaultValue());
             } else {
-                dct = new DiscreteCosineTransform(DiscreteCosineTransform.class
-                                                          .getField("PROP_NUMBER_FILTERS")
-                                                          .getAnnotation(S4Integer.class)
-                                                          .defaultValue(),
+                dct = new DiscreteCosineTransform(numFilter,
                                                   DiscreteCosineTransform.class
                                                           .getField("PROP_CEPSTRUM_LENGTH")
                                                           .getAnnotation(S4Integer.class)
