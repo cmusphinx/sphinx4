@@ -19,17 +19,16 @@ import java.net.URL;
 import org.testng.annotations.Test;
 
 import edu.cmu.sphinx.linguist.acoustic.UnitManager;
-import edu.cmu.sphinx.models.Sphinx4Model;
 
 
 public class DictionaryTest {
 
     @Test
     public void testDictionary() throws IOException {
-        URL dictUrl = Sphinx4Model.class
-                .getResource("acoustic/wsj/dict/digits.dict");
-        URL noiseDictUrl = Sphinx4Model.class
-                .getResource("acoustic/wsj/noisedict");
+        URL dictUrl = getClass()
+                .getResource("/edu/cmu/sphinx/models/acoustic/wsj/dict/digits.dict");
+        URL noiseDictUrl = getClass()
+                .getResource("/edu/cmu/sphinx/models/acoustic/wsj/noisedict");
 
         Dictionary dictionary = new FullDictionary(dictUrl,
                                                    noiseDictUrl,

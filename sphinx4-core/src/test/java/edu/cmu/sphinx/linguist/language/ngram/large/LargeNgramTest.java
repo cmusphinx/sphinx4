@@ -22,7 +22,6 @@ import edu.cmu.sphinx.linguist.acoustic.UnitManager;
 import edu.cmu.sphinx.linguist.dictionary.Dictionary;
 import edu.cmu.sphinx.linguist.dictionary.FullDictionary;
 import edu.cmu.sphinx.linguist.dictionary.Word;
-import edu.cmu.sphinx.models.Sphinx4Model;
 
 
 public class LargeNgramTest {
@@ -30,8 +29,8 @@ public class LargeNgramTest {
     @Test
     public void testNgram() throws IOException {
         URL dictUrl = getClass().getResource("100.dict");
-        URL noisedictUrl = Sphinx4Model.class
-                .getResource("acoustic/wsj/noisedict");
+        URL noisedictUrl = getClass()
+                .getResource("/edu/cmu/sphinx/models/acoustic/wsj/noisedict");
 
         Dictionary dictionary = new FullDictionary(dictUrl,
                                                    noisedictUrl,
