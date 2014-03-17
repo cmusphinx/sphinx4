@@ -64,6 +64,8 @@ public class Context {
             setGrammar(config.getGrammarPath(), config.getGrammarName());
         if (null != config.getLanguageModelPath() && !config.getUseGrammar())
             setLanguageModel(config.getLanguageModelPath());
+            
+        setSampleRate(config.getSampleRate());
 
         // Force ConfigurationManager to build the whole graph
         // in order to enable instance lookup by class.
@@ -93,6 +95,15 @@ public class Context {
      */
     public void setDictionary(String path) {
         setLocalProperty("dictionary->dictionaryPath", path);
+    }
+
+    /**
+     * Sets sampleRate.
+     *
+     * @param sampleRate sample rate of the input stream.
+     */
+    public void setSampleRate(int sampleRate) {
+        setLocalProperty("dataSource->sampleRate", Integer.toString(sampleRate));
     }
 
     /**

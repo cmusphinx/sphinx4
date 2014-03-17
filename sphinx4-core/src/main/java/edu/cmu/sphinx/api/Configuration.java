@@ -29,6 +29,7 @@ public class Configuration {
     private String grammarPath;
     private String grammarName;
 
+    private int sampleRate = 16000;
     private boolean useGrammar = false;
 
     /**
@@ -113,5 +114,19 @@ public class Configuration {
      */
     public void setUseGrammar(boolean useGrammar) {
         this.useGrammar = useGrammar;
+    }
+
+    /**
+     * Returns the config sample rate.
+     */
+    public int getSampleRate() {
+        return sampleRate;
+    }
+
+    /**
+     * Sets sample rate for the input stream.
+     */
+    public void setSampleRate(int sampleRate) {
+        this.sampleRate = sampleRate;
     }
 }
