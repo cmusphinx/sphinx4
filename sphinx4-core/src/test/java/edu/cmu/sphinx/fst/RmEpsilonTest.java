@@ -16,6 +16,7 @@ import static org.hamcrest.Matchers.equalTo;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.net.URL;
 
 import org.testng.annotations.Test;
@@ -31,12 +32,11 @@ import edu.cmu.sphinx.fst.semiring.ProbabilitySemiring;
 public class RmEpsilonTest {
 
     @Test
-    public void testRmEpsilon() throws NumberFormatException, IOException, ClassNotFoundException {
-        String path = "algorithms/rmepsilon/A.fst.txt";
-        URL url = getClass().getResource(path);
-        File parent = new File(url.getPath()).getParentFile();
+    public void testRmEpsilon() throws NumberFormatException, IOException, ClassNotFoundException, URISyntaxException {
+        URL url = getClass().getResource("algorithms/rmepsilon/A.fst.txt");
+        File parent = new File(url.toURI()).getParentFile();
 
-        path = new File(parent, "A").getPath();
+        String path = new File(parent, "A").getPath();
         Fst fst = Convert.importFst(path, new ProbabilitySemiring());
         path = new File(parent, "fstrmepsilon.fst.ser").getPath();
         Fst fstRmEps = Fst.loadModel(path);

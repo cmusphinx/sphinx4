@@ -14,6 +14,7 @@ import static org.hamcrest.Matchers.equalTo;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.net.URL;
 
 import org.testng.annotations.Test;
@@ -32,10 +33,10 @@ import edu.cmu.sphinx.fst.semiring.TropicalSemiring;
 public class ComposeTest {
 
     @Test
-    public void testCompose() throws NumberFormatException, IOException, ClassNotFoundException {
+    public void testCompose() throws NumberFormatException, IOException, ClassNotFoundException, URISyntaxException {
         String path = "algorithms/compose/fstcompose.fst.ser";
         URL url = getClass().getResource(path);                      
-        File parent = new File(url.getPath()).getParentFile();
+        File parent = new File(url.toURI()).getParentFile();
 
         path = new File(parent, "A").getPath();
         Fst fstA = importFst(path, new TropicalSemiring());

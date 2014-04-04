@@ -11,7 +11,9 @@ package edu.cmu.sphinx.linguist.language.grammar;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.isOneOf;
 
+import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.net.URL;
 
 import org.testng.annotations.Test;
@@ -24,7 +26,7 @@ import edu.cmu.sphinx.linguist.dictionary.FastDictionary;
 public class BatchForcedAlignerGrammarTest {
 
     @Test
-    public void testForcedAlignerGrammar() throws IOException {
+    public void testForcedAlignerGrammar() throws IOException, URISyntaxException {
         URL dictionaryUrl = getClass()
                 .getResource(
                              "/edu/cmu/sphinx/models/acoustic/wsj/dict/digits.dict");
@@ -42,7 +44,7 @@ public class BatchForcedAlignerGrammarTest {
 
         URL url = getClass().getResource("BatchForcedAlignerGrammarTest.utts");
         BatchForcedAlignerGrammar grammar;
-        grammar = new BatchForcedAlignerGrammar(url.getPath(),
+        grammar = new BatchForcedAlignerGrammar(new File(url.toURI()).getPath(),
                                                 true,
                                                 true,
                                                 true,

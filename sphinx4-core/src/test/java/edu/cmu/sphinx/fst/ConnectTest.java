@@ -15,6 +15,7 @@ import static org.hamcrest.Matchers.equalTo;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.net.URL;
 
 import org.testng.annotations.Test;
@@ -28,10 +29,10 @@ import edu.cmu.sphinx.fst.semiring.TropicalSemiring;
 public class ConnectTest {
 
     @Test
-    public void testConnect() throws NumberFormatException, IOException, ClassNotFoundException {
+    public void testConnect() throws NumberFormatException, IOException, ClassNotFoundException, URISyntaxException {
         String path = "algorithms/connect/fstconnect.fst.ser";
         URL url = getClass().getResource(path);
-        File parent = new File(url.getPath()).getParentFile();
+        File parent = new File(url.toURI()).getParentFile();
 
         path = new File(parent, "A").getPath();
         Fst fst = importFst(path, new TropicalSemiring());

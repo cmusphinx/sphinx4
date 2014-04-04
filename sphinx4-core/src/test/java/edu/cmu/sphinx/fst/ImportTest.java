@@ -13,6 +13,7 @@ import static org.hamcrest.Matchers.equalTo;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.net.URL;
 
 import org.testng.annotations.Test;
@@ -26,9 +27,9 @@ import edu.cmu.sphinx.fst.semiring.TropicalSemiring;
 public class ImportTest  {
 
     @Test
-    public void testConvert() throws NumberFormatException, IOException, ClassNotFoundException {
+    public void testConvert() throws NumberFormatException, IOException, ClassNotFoundException, URISyntaxException {
         URL url = getClass().getResource("openfst/basic.fst");
-        String dir = new File(url.getPath()).getParent();
+        String dir = new File(url.toURI()).getParent();
         
         String path = new File(dir, "basic").getPath();
         Fst fst1 = Convert.importFst(path, new TropicalSemiring());

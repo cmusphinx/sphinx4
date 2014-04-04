@@ -18,6 +18,7 @@ import static org.hamcrest.Matchers.equalTo;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.net.URL;
 
 import org.testng.annotations.Test;
@@ -32,9 +33,9 @@ import edu.cmu.sphinx.fst.semiring.TropicalSemiring;
 public class ComposeEpsilonTest {
 
     @Test
-    public void testCompose() throws NumberFormatException, IOException {
+    public void testCompose() throws NumberFormatException, IOException, URISyntaxException {
         URL url = getClass().getResource("algorithms/composeeps/A.fst.txt");
-        File parent = new File(url.getPath()).getParentFile();
+        File parent = new File(url.toURI()).getParentFile();
 
         String path = new File(parent, "A").getPath();
         Fst fstA = importFst(path, new TropicalSemiring());

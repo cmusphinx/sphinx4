@@ -65,7 +65,7 @@ public class AudioDataSourcesTest {
 
     @Test
     public void testConcatDataSource() throws DataProcessingException,
-            IOException {
+            IOException, URISyntaxException {
         ConcatAudioFileDataSource dataSource = ConfigurationManager
                 .getInstance(ConcatAudioFileDataSource.class);
 
@@ -87,7 +87,7 @@ public class AudioDataSourcesTest {
         File tmpFile = File.createTempFile(getClass().getName(), ".drv");
         tmpFile.deleteOnExit();
         PrintWriter pw = new PrintWriter(tmpFile);
-        String path = getClass().getResource("test.wav").getPath();
+        String path = new File(getClass().getResource("test.wav").toURI()).getPath();
         pw.println(path);
         pw.println(path);
         pw.print(path);

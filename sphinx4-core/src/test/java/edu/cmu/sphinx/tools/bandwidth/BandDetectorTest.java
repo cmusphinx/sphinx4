@@ -10,19 +10,21 @@ package edu.cmu.sphinx.tools.bandwidth;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
+import java.io.File;
+import java.net.URISyntaxException;
+
 import org.testng.annotations.Test;
 
 
 public class BandDetectorTest {
 
     @Test
-    public void test() {
+    public void test() throws URISyntaxException {
         BandDetector detector = new BandDetector();
-        assertTrue(detector
-                .bandwidth(getClass()
-                        .getResource("10001-90210-01803-8khz.wav").getPath()));
-        assertFalse(detector
-                .bandwidth(getClass().getResource("10001-90210-01803.wav")
-                        .getPath()));
+        String path;
+        path = new File(getClass().getResource("10001-90210-01803-8khz.wav").toURI()).getPath();
+        assertTrue(detector.bandwidth(path));
+        path = new File(getClass().getResource("10001-90210-01803.wav").toURI()).getPath();
+        assertFalse(detector.bandwidth(path));
     }
 }

@@ -27,6 +27,7 @@ import edu.cmu.sphinx.linguist.util.LRUCache;
 import edu.cmu.sphinx.util.props.*;
 
 import java.io.*;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.*;
 import java.util.logging.Level;
@@ -194,8 +195,12 @@ public class LargeNGramModel implements LanguageModel, BackoffLanguageModel {
             logFile = new PrintWriter(new FileOutputStream(ngramLogFile));
         
         if (location.getProtocol() == null || location.getProtocol().equals("file")) {
-            loader = new BinaryLoader(new File(location.getFile()), format, applyLanguageWeightAndWip,
+            try {
+                loader = new BinaryLoader(new File(location.toURI()), format, applyLanguageWeightAndWip,
                                       languageWeight, wip, unigramWeight);
+            } catch (URISyntaxException e) {
+                throw new IOException(e);
+            }
         } else {
             loader = new BinaryStreamLoader(location, format, applyLanguageWeightAndWip,
                     languageWeight, wip, unigramWeight);            
