@@ -12,6 +12,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 
 import org.testng.annotations.Test;
@@ -25,7 +26,7 @@ import edu.cmu.sphinx.fst.semiring.TropicalSemiring;
 public class ImportTest  {
 
     @Test
-    public void testConvert() {
+    public void testConvert() throws NumberFormatException, IOException, ClassNotFoundException {
         URL url = getClass().getResource("openfst/basic.fst");
         String dir = new File(url.getPath()).getParent();
         

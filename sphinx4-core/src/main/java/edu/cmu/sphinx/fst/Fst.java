@@ -14,10 +14,8 @@
 package edu.cmu.sphinx.fst;
 
 import java.io.BufferedInputStream;
-
 import java.io.BufferedOutputStream;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -66,7 +64,8 @@ public class Fst {
      * Constructor specifying the initial capacity of the states ArrayList (this
      * is an optimization used in various operations)
      * 
-     * @param numStates the initial capacity
+     * @param numStates
+     *            the initial capacity
      */
     public Fst(int numStates) {
         if (numStates > 0) {
@@ -77,7 +76,8 @@ public class Fst {
     /**
      * Constructor specifying the fst's semiring
      * 
-     * @param s the fst's semiring
+     * @param s
+     *            the fst's semiring
      */
     public Fst(Semiring s) {
         this();
@@ -101,7 +101,8 @@ public class Fst {
     /**
      * Set the Semiring
      * 
-     * @param semiring the semiring to set
+     * @param semiring
+     *            the semiring to set
      */
     public void setSemiring(Semiring semiring) {
         this.semiring = semiring;
@@ -110,7 +111,8 @@ public class Fst {
     /**
      * Set the initial state
      * 
-     * @param start the initial state
+     * @param start
+     *            the initial state
      */
     public void setStart(State start) {
         this.start = start;
@@ -130,7 +132,8 @@ public class Fst {
     /**
      * Adds a state to the fst
      * 
-     * @param state the state to be added
+     * @param state
+     *            the state to be added
      */
     public void addState(State state) {
         this.states.add(state);
@@ -147,7 +150,8 @@ public class Fst {
     /**
      * Set the input symbols
      * 
-     * @param isyms the isyms to set
+     * @param isyms
+     *            the isyms to set
      */
     public void setIsyms(String[] isyms) {
         this.isyms = isyms;
@@ -163,7 +167,8 @@ public class Fst {
     /**
      * Set the output symbols
      * 
-     * @param osyms the osyms to set
+     * @param osyms
+     *            the osyms to set
      */
     public void setOsyms(String[] osyms) {
         this.osyms = osyms;
@@ -172,9 +177,11 @@ public class Fst {
     /**
      * Serializes a symbol map to an ObjectOutputStream
      * 
-     * @param out the ObjectOutputStream. It should be already be initialized by
+     * @param out
+     *            the ObjectOutputStream. It should be already be initialized by
      *            the caller.
-     * @param map the symbol map to serialize
+     * @param map
+     *            the symbol map to serialize
      * @throws IOException
      */
     private void writeStringMap(ObjectOutputStream out, String[] map)
@@ -188,7 +195,8 @@ public class Fst {
     /**
      * Serializes the current Fst instance to an ObjectOutputStream
      * 
-     * @param out the ObjectOutputStream. It should be already be initialized by
+     * @param out
+     *            the ObjectOutputStream. It should be already be initialized by
      *            the caller.
      * @throws IOException
      */
@@ -227,7 +235,8 @@ public class Fst {
     /**
      * Saves binary model to disk
      * 
-     * @param filename the binary model filename
+     * @param filename
+     *            the binary model filename
      * @throws IOException
      */
     public void saveModel(String filename) throws IOException {
@@ -244,7 +253,8 @@ public class Fst {
     /**
      * Deserializes a symbol map from an ObjectInputStream
      * 
-     * @param in the ObjectInputStream. It should be already be initialized by
+     * @param in
+     *            the ObjectInputStream. It should be already be initialized by
      *            the caller.
      * @return the deserialized symbol map
      * @throws IOException
@@ -266,7 +276,8 @@ public class Fst {
     /**
      * Deserializes an Fst from an ObjectInputStream
      * 
-     * @param in the ObjectInputStream. It should be already be initialized by
+     * @param in
+     *            the ObjectInputStream. It should be already be initialized by
      *            the caller.
      * @return
      * @throws IOException
@@ -317,38 +328,30 @@ public class Fst {
     /**
      * Deserializes an Fst from disk
      * 
-     * @param filename the binary model filename
+     * @param filename
+     *            the binary model filename
+     * @throws IOException
+     * @throws ClassNotFoundException
      */
-    public static Fst loadModel(String filename) {
+    public static Fst loadModel(String filename) throws IOException,
+            ClassNotFoundException {
         long starttime = Calendar.getInstance().getTimeInMillis();
         Fst obj;
 
-        try {
-            FileInputStream fis = null;
-            BufferedInputStream bis = null;
-            ObjectInputStream ois = null;
-            fis = new FileInputStream(filename);
-            bis = new BufferedInputStream(fis);
-            ois = new ObjectInputStream(bis);
-            obj = readFst(ois);
-            ois.close();
-            bis.close();
-            fis.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            return null;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-            return null;
-        }
+        FileInputStream fis = null;
+        BufferedInputStream bis = null;
+        ObjectInputStream ois = null;
+        fis = new FileInputStream(filename);
+        bis = new BufferedInputStream(fis);
+        ois = new ObjectInputStream(bis);
+        obj = readFst(ois);
+        ois.close();
+        bis.close();
+        fis.close();
 
-        System.err
-                .println("Load Time: "
-                        + (Calendar.getInstance().getTimeInMillis() - starttime)
-                        / 1000.);
+        System.err.println("Load Time: "
+                + (Calendar.getInstance().getTimeInMillis() - starttime)
+                / 1000.);
         return obj;
     }
 
@@ -415,10 +418,11 @@ public class Fst {
     /**
      * Deletes a state
      * 
-     * @param state the state to delete
+     * @param state
+     *            the state to delete
      */
     public void deleteState(State state) {
-        
+
         if (state == start) {
             System.err.println("Cannot delete start state.");
             return;
@@ -453,7 +457,7 @@ public class Fst {
     }
 
     public void deleteStates(HashSet<State> toDelete) {
-        
+
         if (toDelete.contains(start)) {
             System.err.println("Cannot delete start state.");
             return;

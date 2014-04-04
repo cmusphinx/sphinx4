@@ -14,6 +14,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 
 import org.testng.annotations.Test;
@@ -27,7 +28,7 @@ import edu.cmu.sphinx.fst.semiring.TropicalSemiring;
 public class ConnectTest {
 
     @Test
-    public void testConnect() {
+    public void testConnect() throws NumberFormatException, IOException, ClassNotFoundException {
         String path = "algorithms/connect/fstconnect.fst.ser";
         URL url = getClass().getResource(path);
         File parent = new File(url.getPath()).getParentFile();
@@ -39,11 +40,6 @@ public class ConnectTest {
         
         apply(fst);
         assertThat(connectSaved, equalTo(fst));
-    }
-
-    public static void main(String[] args) {
-        ConnectTest test = new ConnectTest();
-        test.testConnect();
     }
 
 }

@@ -47,7 +47,8 @@ public class ImmutableFst extends Fst {
      * 
      * @see edu.cmu.sphinx.fst.ImmutableFst#loadModel(String)
      * 
-     * @param numStates the number of fst's states
+     * @param numStates
+     *            the number of fst's states
      */
     private ImmutableFst(int numStates) {
         super(0);
@@ -99,7 +100,8 @@ public class ImmutableFst extends Fst {
     /**
      * Deserializes an ImmutableFst from an ObjectInputStream
      * 
-     * @param in the ObjectInputStream. It should be already be initialized by
+     * @param in
+     *            the ObjectInputStream. It should be already be initialized by
      *            the caller.
      * @return
      * @throws IOException
@@ -150,31 +152,24 @@ public class ImmutableFst extends Fst {
     /**
      * Deserializes an ImmutableFst from an InputStream
      * 
-     * @param inputStream the InputStream. It should be already be initialized
-     *            by the caller.
+     * @param inputStream
+     *            the InputStream. It should be already be initialized by the
+     *            caller.
+     * @throws IOException
+     * @throws ClassNotFoundException
      */
-    public static ImmutableFst loadModel(InputStream inputStream) {
+    public static ImmutableFst loadModel(InputStream inputStream)
+            throws IOException, ClassNotFoundException {
         ImmutableFst obj;
 
-        try {
-            BufferedInputStream bis = null;
-            ObjectInputStream ois = null;
-            bis = new BufferedInputStream(inputStream);
-            ois = new ObjectInputStream(bis);
-            obj = readImmutableFst(ois);
-            ois.close();
-            bis.close();
-            inputStream.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            return null;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-            return null;
-        }
+        BufferedInputStream bis = null;
+        ObjectInputStream ois = null;
+        bis = new BufferedInputStream(inputStream);
+        ois = new ObjectInputStream(bis);
+        obj = readImmutableFst(ois);
+        ois.close();
+        bis.close();
+        inputStream.close();
 
         return obj;
     }
@@ -182,7 +177,8 @@ public class ImmutableFst extends Fst {
     /**
      * Deserializes an ImmutableFst from disk
      * 
-     * @param filename the binary model filename
+     * @param filename
+     *            the binary model filename
      */
     public static ImmutableFst loadModel(String filename) {
         ImmutableFst obj;

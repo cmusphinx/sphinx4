@@ -13,6 +13,8 @@
 
 package edu.cmu.sphinx.fst;
 
+import java.io.IOException;
+
 
 /**
  * Provides a command line utility to convert a java binary fst model to
@@ -36,8 +38,10 @@ public class Export {
      * 
      * @param args[0] the java binary model filename 
      * @param args[1] openfst's files basename
+     * @throws IOException 
+     * @throws ClassNotFoundException 
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException, ClassNotFoundException {
         if (args.length < 2) {
             System.err.println("Input and output files not provided");
             System.err

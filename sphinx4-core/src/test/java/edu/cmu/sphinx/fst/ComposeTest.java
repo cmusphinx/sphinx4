@@ -13,6 +13,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 
 import org.testng.annotations.Test;
@@ -31,7 +32,7 @@ import edu.cmu.sphinx.fst.semiring.TropicalSemiring;
 public class ComposeTest {
 
     @Test
-    public void testCompose() {
+    public void testCompose() throws NumberFormatException, IOException, ClassNotFoundException {
         String path = "algorithms/compose/fstcompose.fst.ser";
         URL url = getClass().getResource(path);                      
         File parent = new File(url.getPath()).getParentFile();

@@ -38,8 +38,10 @@ public class Import {
      * 
      * @param args[0] openfst's files basename
      * @param args[1] the java binary model filename
+     * @throws IOException 
+     * @throws NumberFormatException 
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) throws NumberFormatException, IOException {
         if (args.length < 2) {
             System.err.println("Input and output files not provided");
             System.err

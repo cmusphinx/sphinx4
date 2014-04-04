@@ -92,6 +92,7 @@ public class AudioDataSourcesTest {
         pw.println(path);
         pw.print(path);
         assertFalse(pw.checkError());
+        pw.close();
 
         dataSource.setBatchFile(tmpFile);
         assertThat(dataSource.getData(), instanceOf(DataStartSignal.class));

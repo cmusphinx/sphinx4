@@ -7,6 +7,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 
 import org.testng.annotations.Test;
@@ -22,7 +23,7 @@ import edu.cmu.sphinx.fst.semiring.TropicalSemiring;
 public class DeterminizeTest {
 
     @Test
-    public void testDeterminize() {
+    public void testDeterminize() throws NumberFormatException, IOException, ClassNotFoundException {
         String path = "algorithms/determinize/fstdeterminize.fst.ser";
         URL url = getClass().getResource(path);
         File parent = new File(url.getPath()).getParentFile();

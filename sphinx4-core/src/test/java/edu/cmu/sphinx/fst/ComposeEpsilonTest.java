@@ -17,6 +17,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 
 import org.testng.annotations.Test;
@@ -31,7 +32,7 @@ import edu.cmu.sphinx.fst.semiring.TropicalSemiring;
 public class ComposeEpsilonTest {
 
     @Test
-    public void testCompose() {
+    public void testCompose() throws NumberFormatException, IOException {
         URL url = getClass().getResource("algorithms/composeeps/A.fst.txt");
         File parent = new File(url.getPath()).getParentFile();
 

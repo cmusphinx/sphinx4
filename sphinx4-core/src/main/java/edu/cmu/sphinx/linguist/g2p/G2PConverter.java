@@ -16,7 +16,6 @@ package edu.cmu.sphinx.linguist.g2p;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
-
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -78,12 +77,17 @@ public class G2PConverter {
     /**
      * Create a decoder by loading the serialized model from a specified URL
      * 
-     * @param g2pmodel_url
+     * @param g2pModelUrl
      *            the URL of the serialized model
      * @throws IOException
+     * @throws ClassNotFoundException 
      */
-    public G2PConverter(URL g2pmodel_url) throws IOException {
-        g2pmodel = ImmutableFst.loadModel(g2pmodel_url.openStream());
+    public G2PConverter(URL g2pModelUrl) throws IOException {
+        try {
+            g2pmodel = ImmutableFst.loadModel(g2pModelUrl.openStream());
+        } catch (ClassNotFoundException e) {
+            throw new IOException("Failed to load the model from " + g2pModelUrl, e);
+        }
         init();
     }
 
