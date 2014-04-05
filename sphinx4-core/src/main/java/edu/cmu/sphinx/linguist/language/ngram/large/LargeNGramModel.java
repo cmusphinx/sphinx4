@@ -198,8 +198,9 @@ public class LargeNGramModel implements LanguageModel, BackoffLanguageModel {
             try {
                 loader = new BinaryLoader(new File(location.toURI()), format, applyLanguageWeightAndWip,
                                       languageWeight, wip, unigramWeight);
-            } catch (URISyntaxException e) {
-                throw new IOException(e);
+            } catch (Exception e) {
+                loader = new BinaryLoader(new File(location.getPath()), format, applyLanguageWeightAndWip,
+                        languageWeight, wip, unigramWeight);
             }
         } else {
             loader = new BinaryStreamLoader(location, format, applyLanguageWeightAndWip,

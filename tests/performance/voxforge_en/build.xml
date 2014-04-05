@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<project basedir="." default="none" name="Voxforge Tests">
+<project basedir="." default="test" name="Voxforge Tests">
 <description>
 This file is used to run the voxforge performance tests.
 
@@ -11,15 +11,7 @@ NOTE:  Before running the tests, you must have already built
 Run ant with -Dskip=5 to do the standard 'quick' version of a test.
 </description>
 
-    <!-- ********************************************************** -->
-    <!-- *                                                        * -->
-    <!-- * Properties common to all tests                         * -->
-    <!-- *                                                        * -->
-    <!-- ********************************************************** -->
-    <property name="top_dir" value="../../.."/>
-    <property name="build_dir" value="${top_dir}/bld"/>
-    <property name="classes_dir" value="${build_dir}"/>
-    <property name="classpath" value="${classes_dir}:${top_dir}/lib/batch.jar"/>
+    <property name="classpath" value="../../../sphinx4-core/target/classes"/>
 
     <property name="skip"               value="40"/>
     <property name="logger_props"       value=""/>
@@ -28,24 +20,13 @@ Run ant with -Dskip=5 to do the standard 'quick' version of a test.
     <property name="maximum_heap_size"  value="2048m"/>
     <property name="jit"                value="server"/>
     <property name="gc_log_file"        value="gc.txt"/>
-    <property name="batch_main" value="edu.cmu.sphinx.tools.batch.BatchModeRecognizer"/>
 
-    <!-- ********************************************************** -->
-    <!-- *                                                        * -->
-    <!-- * Displays minimal help.                                 * -->
-    <!-- *                                                        * -->
-    <!-- ********************************************************** -->
-    <target name="none">
-        <echo>Type 'ant -p' for possible targets.</echo>
-    </target>
-
-    <!-- dummy target for automated test compilation -->
     <target name="compile" />
     
     <target name="test"
             description="trigram decoding of Voxforge test data">
-       <java classpath="${classes_dir}"
-              classname="${batch_main}"
+       <java classpath="${classpath}"
+              classname="edu.cmu.sphinx.tools.batch.BatchModeRecognizer"
               fork="true">
             <jvmarg value="-${jit}"/>   
             <jvmarg value="-ms${initial_heap_size}"/>

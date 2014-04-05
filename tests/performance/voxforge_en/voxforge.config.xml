@@ -186,11 +186,7 @@
 
     <component name="streamDataSource"
           type="edu.cmu.sphinx.frontend.util.StreamDataSource">
-        <property name="sampleRate" value="8000"/>
-        <property name="bitsPerSample" value="16"/>
-        <property name="bigEndianData" value="false"/>
-        <property name="signedData" value="true"/>
-        <property name="bytesPerRead" value="160"/>
+        <property name="sampleRate" value="16000"/>
     </component>
 
     <component name="preemphasizer"
