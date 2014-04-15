@@ -46,7 +46,7 @@ public class LatticeCompTest {
         URL lm = getClass().getResource("hellongram.trigram.lm");
 
         ConfigurationManager cm = new ConfigurationManager(configURL);
-        setProperty(cm, "trigramModel", "location", lm.getPath());
+        setProperty(cm, "trigramModel", "location", lm.toString());
 
         Recognizer recognizer = cm.lookup("recognizer");
         StreamDataSource dataSource = cm.lookup(StreamDataSource.class);
@@ -59,7 +59,7 @@ public class LatticeCompTest {
 
         cm = new ConfigurationManager(configURL);
         setProperty(cm, "keepAllTokens", "true");
-        setProperty(cm, "trigramModel", "location", lm.getPath());
+        setProperty(cm, "trigramModel", "location", lm.toString());
 
         recognizer = cm.lookup("recognizer");
         recognizer.allocate();
