@@ -37,9 +37,6 @@ import edu.cmu.sphinx.util.props.S4String;
 public class GrXMLGrammar extends JSGFGrammar {
 
     Map<String, JSGFRule> rules;
-    /** The property that defines the location of the JSGF grammar file. */
-    @S4String
-    public final static String PROP_BASE_GRAMMAR_URL = "grammarLocation";
 
     protected void loadXML() throws IOException {
         try {

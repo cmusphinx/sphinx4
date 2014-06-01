@@ -573,7 +573,7 @@ public class PropertySheet implements Cloneable {
 
                 // make sure that there is not already another property with this name
                 assert !classProperties.contains(propertyName) :
-                        "duplicate property-name for different properties: " + propertyName;
+                        "duplicate property-name for different properties: " + propertyName + " for the class " + confClass;
 
                 registerProperty(propertyName, new S4PropWrapper(entry.getValue()));
                 classProperties.add(propertyName);
