@@ -27,7 +27,6 @@ import org.xml.sax.XMLReader;
 
 import edu.cmu.sphinx.jsgf.rule.JSGFRule;
 import edu.cmu.sphinx.linguist.language.grammar.GrammarNode;
-import edu.cmu.sphinx.util.props.S4String;
 
 /**
  * Grammar for GrXML W3C Standard

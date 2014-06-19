@@ -23,10 +23,10 @@ import edu.cmu.sphinx.fst.semiring.Semiring;
 public class Path {
     // the path
     private ArrayList<String> path;
-    
+
     // the path's cost
     private float cost;
-    
+
     // the paths' semiring
     private Semiring semiring;
 
@@ -85,11 +85,8 @@ public class Path {
         sb.append(cost + "\t");
         for (String s : path) {
             sb.append(s);
-
-            if (!s.equals(path.get(path.size() - 1))) {
-                sb.append(" ");
-            }
+            sb.append(' ');
         }
-        return sb.toString();
+        return sb.toString().trim();
     }
 }
