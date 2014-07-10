@@ -10,7 +10,7 @@
  */
 package edu.cmu.sphinx.frontend.frequencywarp;
 
-import static edu.cmu.sphinx.util.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkArgument;
 import edu.cmu.sphinx.frontend.*;
 import edu.cmu.sphinx.util.props.*;
 
@@ -93,7 +93,7 @@ import edu.cmu.sphinx.util.props.*;
  * Representations for Monosyllable Word Recognition in Continuously Spoken
  * Sentences, IEEE Transactions on Acoustic, Speech and Signal Processing, 1980
  * </i>.
- * 
+ *
  * @see MelFilter2
  */
 public class MelFrequencyFilterBank2 extends BaseDataProcessor {
@@ -158,7 +158,7 @@ public class MelFrequencyFilterBank2 extends BaseDataProcessor {
 
     /**
      * Compute mel frequency from linear frequency.
-     * 
+     *
      * @param inputFreq the input frequency in linear scale
      * @return the frequency in a mel scale
      */
@@ -171,7 +171,7 @@ public class MelFrequencyFilterBank2 extends BaseDataProcessor {
      * shaped as a triangle. The triangles overlap so that they cover the whole
      * frequency range requested. The edges of a given triangle will be by
      * default at the center of the neighboring triangles.
-     * 
+     *
      * @param windowLength number of points in the power spectrum
      * @param numberFilters number of filters in the filterbank
      * @param minFreq lowest frequency in the range of interest
@@ -214,7 +214,7 @@ public class MelFrequencyFilterBank2 extends BaseDataProcessor {
 
     /**
      * Process data, creating the power spectrum from an input audio frame.
-     * 
+     *
      * @param input input power spectrum
      * @return power spectrum
      * @throws java.lang.IllegalArgumentException
@@ -247,7 +247,7 @@ public class MelFrequencyFilterBank2 extends BaseDataProcessor {
     /**
      * Reads the next Data object, which is the power spectrum of an audio
      * input frame. Signals are returned unmodified.
-     * 
+     *
      * @return the next available Data or Signal object, or returns null if no
      *         Data is available
      * @throws DataProcessingException if there is a data processing error

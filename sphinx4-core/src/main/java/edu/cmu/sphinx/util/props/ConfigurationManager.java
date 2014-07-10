@@ -1,6 +1,7 @@
 package edu.cmu.sphinx.util.props;
 
-import static edu.cmu.sphinx.util.Preconditions.checkArgument;
+
+import static com.google.common.base.Preconditions.checkArgument;
 
 import java.io.File;
 import java.io.IOException;
@@ -55,7 +56,7 @@ public class ConfigurationManager implements Cloneable {
      */
     public ConfigurationManager(URL url) throws PropertyException {
         configURL = url;
-        
+
         try {
             rawPropertyMap = new SaxLoader(url, globalProperties).load();
         } catch (IOException e) {
@@ -88,7 +89,7 @@ public class ConfigurationManager implements Cloneable {
                 String className = rpd.getClassName();
                 try {
                     Class<?> cls = Class.forName(className);
-                    
+
                     // now load the property-sheet by using the class annotation
                     PropertySheet propertySheet = new PropertySheet(cls.asSubclass(Configurable.class), instanceName, this, rpd);
 
@@ -154,7 +155,7 @@ public class ConfigurationManager implements Cloneable {
         // Apply all new properties to the model.
         instanceName = getStrippedComponentName(instanceName);
         PropertySheet ps = getPropertySheet(instanceName);
-        
+
         if (ps == null)
             return null;
 
@@ -483,11 +484,11 @@ public class ConfigurationManager implements Cloneable {
         // make sure that both configuration managers have the same set of global properties
         return cm.getGlobalProperties().equals(getGlobalProperties());
     }
-    
+
     @Override
     public int hashCode() {
     	  assert false : "hashCode not designed";
-    	  return 1; // any arbitrary constant will do 
+    	  return 1; // any arbitrary constant will do
     }
 
     /** Creates a deep copy of the given CM instance. */

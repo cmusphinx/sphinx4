@@ -1,17 +1,18 @@
 /*
- * Copyright 1999-2002 Carnegie Mellon University.  
- * Portions Copyright 2002 Sun Microsystems, Inc.  
+ * Copyright 1999-2002 Carnegie Mellon University.
+ * Portions Copyright 2002 Sun Microsystems, Inc.
  * Portions Copyright 2002 Mitsubishi Electric Research Laboratories.
  * All Rights Reserved.  Use is subject to license terms.
- * 
+ *
  * See the file "license.terms" for information on usage and
- * redistribution of this file, and for a DISCLAIMER OF ALL 
+ * redistribution of this file, and for a DISCLAIMER OF ALL
  * WARRANTIES.
  */
 
 package edu.cmu.sphinx.util;
 
-import static edu.cmu.sphinx.util.Preconditions.checkState;
+import static com.google.common.base.Preconditions.checkState;
+
 
 /**
  * Provides a set of methods for performing simple math in the log domain.
@@ -133,7 +134,7 @@ public final class LogMath {
      */
     public static void setLogBase(float logBase) {
         synchronized(LogMath.class) {
-            checkState(useTable, IMMUTABLE_INSTANCE_ERROR);
+            checkState(null == instance, IMMUTABLE_INSTANCE_ERROR);
             LogMath.logBase = logBase;
         }
     }
@@ -415,7 +416,7 @@ public final class LogMath {
         }
     }
 
-    
+
     /** Converts a vector from log to linear domain using a given <code>LogMath</code>-instance for conversion. */
     public void logToLinear(float[] vector, float[] out) {
         for (int i = 0; i < vector.length; i++) {
