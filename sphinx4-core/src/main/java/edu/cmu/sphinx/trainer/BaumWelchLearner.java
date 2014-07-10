@@ -64,7 +64,7 @@ public class BaumWelchLearner implements Learner {
 
 
     public void newProperties(PropertySheet ps) throws PropertyException {
-        logMath = LogMath.getInstance();
+        logMath = LogMath.getLogMath();
         dataSource = (StreamCepstrumSource) ps.getComponent(DATA_SOURCE);
 
         frontEnd = (FrontEnd) ps.getComponent(FRONT_END);

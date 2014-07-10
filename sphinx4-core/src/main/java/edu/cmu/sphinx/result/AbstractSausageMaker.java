@@ -208,7 +208,7 @@ public abstract class AbstractSausageMaker implements ConfidenceScorer, Configur
      */
     protected double clusterProbability(List<Node> cluster) {
         float p = LogMath.LOG_ZERO;
-        LogMath logMath = LogMath.getInstance();
+        LogMath logMath = LogMath.getLogMath();
 
         for (Node node : cluster)
             p = logMath.addAsLinear(p, (float)node.getPosterior());

@@ -101,7 +101,7 @@ public class ModelInitializerLoader implements Loader {
     private Logger logger;
 
     public void newProperties(PropertySheet ps) throws PropertyException {
-        logMath = LogMath.getInstance();
+        logMath = LogMath.getLogMath();
         logger = ps.getLogger();
 
         unitManager = (UnitManager) ps.getComponent(PROP_UNIT_MANAGER);

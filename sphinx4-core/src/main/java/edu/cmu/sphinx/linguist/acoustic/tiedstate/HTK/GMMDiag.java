@@ -354,7 +354,7 @@ public class GMMDiag {
 	}
 
 	private void allocateWeights() {
-		logMath = LogMath.getInstance();
+		logMath = LogMath.getLogMath();
 		weights = new float[ngauss];
 		for (int i = 0; i < ngauss; i++) {
 			setWeight(i, 1f / ngauss);

@@ -80,7 +80,7 @@ public class Result {
         this.resultList = resultList;
         this.currentFrameNumber = frameNumber;
         this.isFinal = isFinal;
-        logMath = LogMath.getInstance();
+        logMath = LogMath.getLogMath();
     }
 
 

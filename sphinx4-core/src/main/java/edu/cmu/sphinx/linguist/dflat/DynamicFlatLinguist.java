@@ -125,7 +125,7 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
 
         this.logger = Logger.getLogger(getClass().getName());
         this.acousticModel = acousticModel;
-        logMath = LogMath.getInstance();
+        logMath = LogMath.getLogMath();
         this.grammar = grammar;
         this.unitManager = unitManager;
 
@@ -153,7 +153,7 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
     */
     public void newProperties(PropertySheet ps) throws PropertyException {
         logger = ps.getLogger();
-        logMath = LogMath.getInstance();
+        logMath = LogMath.getLogMath();
 
         acousticModel = (AcousticModel) ps.getComponent(ACOUSTIC_MODEL);
         grammar = (Grammar) ps.getComponent(GRAMMAR);

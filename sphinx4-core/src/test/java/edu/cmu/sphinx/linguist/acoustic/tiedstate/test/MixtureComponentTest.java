@@ -57,7 +57,7 @@ public class MixtureComponentTest {
             double gauLogScore = gaussian.getScore(new FloatData(new float[]{curX}, 16000, 0));
 
             double manualScore = (1 / sqrt(var * 2 * PI)) * exp((-0.5 / var) * (curX - mean) * (curX - mean));
-            double gauScore = LogMath.getInstance().logToLinear((float) gauLogScore);
+            double gauScore = LogMath.getLogMath().logToLinear((float) gauLogScore);
 
             Assert.assertEquals(manualScore, gauScore, 1E-5);
         }
@@ -71,7 +71,7 @@ public class MixtureComponentTest {
         float var = 0.001f;
 
         MixtureComponent gaussian = new MixtureComponent(new float[]{mean}, new float[][]{{2}}, new float[]{5}, new float[]{var}, null, null);
-        Assert.assertTrue(LogMath.getInstance().logToLinear(gaussian.getScore(new float[]{2 * mean + 5})) > 10);
+        Assert.assertTrue(LogMath.getLogMath().logToLinear(gaussian.getScore(new float[]{2 * mean + 5})) > 10);
     }
 
 

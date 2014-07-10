@@ -58,7 +58,7 @@ public class Sausage implements ConfidenceResult {
      * Adds skip elements for each word slot in which the word posteriors do not add up to linear 1.
      */
     public void fillInBlanks() {
-        LogMath logMath = LogMath.getInstance();
+        LogMath logMath = LogMath.getLogMath();
         int index = 0;
         for (ConfusionSet set : confusionSets) {
             float sum = LogMath.LOG_ZERO;

@@ -78,7 +78,7 @@ public class BeamFinder implements ResultListener,
     
     public BeamFinder( Recognizer recognizer, boolean showSummary, boolean showDetails, boolean enabled) {
         initRecognizer(recognizer);
-        logMath = LogMath.getInstance();
+        logMath = LogMath.getLogMath();
         this.showSummary = showSummary;
         this.showDetails = showDetails;
         this.enabled = enabled;

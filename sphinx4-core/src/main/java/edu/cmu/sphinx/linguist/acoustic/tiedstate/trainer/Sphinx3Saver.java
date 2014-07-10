@@ -112,7 +112,7 @@ public class Sphinx3Saver implements Saver {
 
         sparseForm = ps.getBoolean(PROP_SPARSE_FORM);
         useCDUnits = ps.getBoolean(PROP_USE_CD_UNITS);
-        logMath = LogMath.getInstance();
+        logMath = LogMath.getLogMath();
 
         // extract the feature vector length
         vectorLength = ps.getInt(PROP_VECTOR_LENGTH);

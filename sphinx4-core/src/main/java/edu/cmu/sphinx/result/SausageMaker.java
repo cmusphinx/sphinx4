@@ -202,7 +202,7 @@ public class SausageMaker extends AbstractSausageMaker {
         float totalSim = LogMath.LOG_ZERO;
         float wordPairCount = (float) 0.0;
         HashSet<String> wordsSeen1 = new HashSet<String>();
-        LogMath logMath = LogMath.getInstance();
+        LogMath logMath = LogMath.getLogMath();
 
         for (Node node1 : c1.getElements()) {
             String word1 = node1.getWord().getSpelling();
@@ -259,7 +259,7 @@ public class SausageMaker extends AbstractSausageMaker {
      *         together.
      */
     protected double intraClusterDistance(Cluster cluster1, Cluster cluster2) {
-        LogMath logMath = LogMath.getInstance();
+        LogMath logMath = LogMath.getLogMath();
         double maxSim = Double.NEGATIVE_INFINITY;
 
         for (Node node1 : cluster1.getElements()) {

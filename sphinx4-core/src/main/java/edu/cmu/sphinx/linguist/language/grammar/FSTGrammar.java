@@ -139,7 +139,7 @@ public class FSTGrammar extends Grammar {
     public FSTGrammar(String path, boolean showGrammar, boolean optimizeGrammar, boolean addSilenceWords, boolean addFillerWords, Dictionary dictionary) {
         super(showGrammar,optimizeGrammar,addSilenceWords,addFillerWords,dictionary);
         this.path = path;
-        logMath = LogMath.getInstance();
+        logMath = LogMath.getLogMath();
     }
 
     public FSTGrammar() {

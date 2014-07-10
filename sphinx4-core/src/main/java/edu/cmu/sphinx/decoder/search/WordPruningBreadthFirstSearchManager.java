@@ -164,7 +164,7 @@ public class WordPruningBreadthFirstSearchManager extends TokenSearchManager {
                                            boolean keepAllTokens) {
 
         this.logger = Logger.getLogger(getClass().getName());
-        this.logMath = LogMath.getInstance();
+        this.logMath = LogMath.getLogMath();
         this.linguist = linguist;
         this.pruner = pruner;
         this.scorer = scorer;
@@ -193,7 +193,7 @@ public class WordPruningBreadthFirstSearchManager extends TokenSearchManager {
     public void newProperties(PropertySheet ps) throws PropertyException {
         super.newProperties(ps);
         
-        logMath = LogMath.getInstance();
+        logMath = LogMath.getLogMath();
         logger = ps.getLogger();
 
         linguist = (Linguist) ps.getComponent(PROP_LINGUIST);

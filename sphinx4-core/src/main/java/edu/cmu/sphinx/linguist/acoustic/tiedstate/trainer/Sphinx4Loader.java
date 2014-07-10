@@ -233,7 +233,7 @@ class Sphinx4Loader extends Sphinx3Loader {
         String location = "";
         InputStream inputStream = StreamFactory.getInputStream(location, path);
 
-        LogMath logMath = LogMath.getInstance();
+        LogMath logMath = LogMath.getLogMath();
         logger.info("Loading transition matrices from: ");
         logger.info(path);
 

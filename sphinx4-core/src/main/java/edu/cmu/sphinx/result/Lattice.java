@@ -100,7 +100,7 @@ public class Lattice {
     public Lattice() {
         edges = new HashSet<Edge>();
         nodes = new HashMap<String, Node>();
-        logMath = LogMath.getInstance();
+        logMath = LogMath.getLogMath();
     }
 
     /**

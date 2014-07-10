@@ -60,7 +60,7 @@ public class SimpleWordListGrammar extends Grammar implements Configurable {
         super(showGrammar,optimizeGrammar,addSilenceWords,addFillerWords,dictionary);
         this.path = path;
         this.isLooping = isLooping;
-        logMath = LogMath.getInstance();
+        logMath = LogMath.getLogMath();
     }
 
     public SimpleWordListGrammar() {

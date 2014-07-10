@@ -111,7 +111,7 @@ public final class LogMath {
         }
     }
 
-    public static LogMath getInstance() {
+    public static LogMath getLogMath() {
         if (null == instance) {
             synchronized(LogMath.class) {
                 if (null == instance)

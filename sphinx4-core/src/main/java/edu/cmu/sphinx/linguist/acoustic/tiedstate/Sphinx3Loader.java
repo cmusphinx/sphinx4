@@ -224,7 +224,7 @@ public class Sphinx3Loader implements Loader {
     protected void init(URL location, String model, String dataLocatoin,
             UnitManager unitManager, float distFloor, float mixtureWeightFloor,
             float varianceFloor, boolean useCDUnits, Logger logger) {
-        logMath = LogMath.getInstance();
+        logMath = LogMath.getLogMath();
         this.location = location;
         this.logger = logger;
         this.model = model;

@@ -174,7 +174,7 @@ public class SphinxAsciiLoader extends Sphinx3Loader {
                 }
                 logMixtureWeight[j] = val;
             }
-            LogMath.getInstance().linearToLog(logMixtureWeight);
+            LogMath.getLogMath().linearToLog(logMixtureWeight);
             pool.put(i, logMixtureWeight);
         }
         est.close();
@@ -204,7 +204,7 @@ public class SphinxAsciiLoader extends Sphinx3Loader {
         Pool<float[][]> pool = new Pool<float[][]>(path);
         ExtendedStreamTokenizer est =
             new ExtendedStreamTokenizer(inputStream, '#', false);
-        LogMath logMath = LogMath.getInstance();
+        LogMath logMath = LogMath.getLogMath();
         est.expectString("tmat");
         int numMatrices = est.getInt("numMatrices");
         int numStates = est.getInt("numStates");

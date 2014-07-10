@@ -52,7 +52,7 @@ public class GDLDumper extends LinguistDumper {
         this.skipHMMs = skipHMMs;
         this.dumpArcLabels = dumpArcLabels;
         setDepthFirst(false); // breadth first traversal
-        logMath = LogMath.getInstance();
+        logMath = LogMath.getLogMath();
     }
 
     public GDLDumper() {

@@ -47,7 +47,7 @@ public class GaussianMixture extends ScoreCachingSenone {
 
         assert mixtureComponents.length == logMixtureWeights.length;
 
-        logMath = LogMath.getInstance();
+        logMath = LogMath.getLogMath();
         this.mixtureComponents = mixtureComponents;
         this.logMixtureWeights = logMixtureWeights;
         this.id = id;

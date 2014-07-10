@@ -263,7 +263,7 @@ public class LexTreeLinguist implements Linguist {
         logger = Logger.getLogger(getClass().getName());
 
         this.acousticModel = acousticModel;
-        this.logMath = LogMath.getInstance();
+        this.logMath = LogMath.getLogMath();
         this.unitManager = unitManager;
         this.languageModel = languageModel;
         this.dictionary = dictionary;
@@ -297,7 +297,7 @@ public class LexTreeLinguist implements Linguist {
     */
     public void newProperties(PropertySheet ps) throws PropertyException {
         logger = ps.getLogger();
-        logMath = LogMath.getInstance();
+        logMath = LogMath.getLogMath();
 
         acousticModel = (AcousticModel) ps.getComponent(PROP_ACOUSTIC_MODEL);
         unitManager = (UnitManager) ps.getComponent(PROP_UNIT_MANAGER);

@@ -38,11 +38,11 @@ public class AlignerGrammar extends Grammar {
 			final Dictionary dictionary) {
 		super(showGrammar, optimizeGrammar, addSilenceWords, addFillerWords,
 				dictionary);
-		logMath = LogMath.getInstance();
+		logMath = LogMath.getLogMath();
 	}
 
 	public AlignerGrammar() {
-		logMath = LogMath.getInstance();
+		logMath = LogMath.getLogMath();
 	}
 
 	/*

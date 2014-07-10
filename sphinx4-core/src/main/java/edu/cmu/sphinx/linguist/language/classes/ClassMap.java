@@ -44,7 +44,7 @@ public class ClassMap implements Configurable {
     public ClassMap(URL classDefsLocation) {
         this.logger = Logger.getLogger(getClass().getName());
         this.classDefsLocation = classDefsLocation;
-        logMath = LogMath.getInstance();
+        logMath = LogMath.getLogMath();
     }
 
     public ClassMap() {

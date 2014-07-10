@@ -161,7 +161,7 @@ public class LargeNGramModel implements LanguageModel, BackoffLanguageModel {
         this.ngramCacheSize = maxNGramCacheSize;
         this.clearCacheAfterUtterance = clearCacheAfterUtterance;
         this.maxDepth = maxDepth;
-        logMath = LogMath.getInstance();
+        logMath = LogMath.getLogMath();
         this.dictionary = dictionary;
         this.applyLanguageWeightAndWip = applyLanguageWeightAndWip;
         this.languageWeight = languageWeight;

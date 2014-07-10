@@ -78,7 +78,7 @@ class HMMPoolManager {
 
         createBuffers();
         logLikelihood = 0.0f;
-        logMath = LogMath.getInstance();
+        logMath = LogMath.getLogMath();
     }
 
     /** Recreates the buffers. */

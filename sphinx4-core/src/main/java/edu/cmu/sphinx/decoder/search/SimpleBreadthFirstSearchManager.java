@@ -153,7 +153,7 @@ public class SimpleBreadthFirstSearchManager extends TokenSearchManager {
                                            int growSkipInterval, boolean wantEntryPruning) {
         this.name = getClass().getName();
         this.logger = Logger.getLogger(name);
-        this.logMath = LogMath.getInstance();
+        this.logMath = LogMath.getLogMath();
         this.linguist = linguist;
         this.pruner = pruner;
         this.scorer = scorer;
@@ -169,7 +169,7 @@ public class SimpleBreadthFirstSearchManager extends TokenSearchManager {
     public void newProperties(PropertySheet ps) throws PropertyException {
         super.newProperties(ps);
         
-        logMath = LogMath.getInstance();
+        logMath = LogMath.getLogMath();
         logger = ps.getLogger();
         name = ps.getInstanceName();
 

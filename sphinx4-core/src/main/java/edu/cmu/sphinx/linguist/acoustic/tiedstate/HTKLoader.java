@@ -165,7 +165,7 @@ public class HTKLoader implements Loader {
         this.propsFile = propsFile;
         loadProperties();
 
-        logMath = LogMath.getInstance();
+        logMath = LogMath.getLogMath();
         this.unitManager = unitManager;
         this.model = model;
         this.tie1ph = tie1ph;

@@ -116,7 +116,7 @@ public class BinaryLoader {
         startWordID = -1;
         endWordID = -1;
         this.applyLanguageWeightAndWip = applyLanguageWeightAndWip;
-        logMath = LogMath.getInstance();
+        logMath = LogMath.getLogMath();
         this.languageWeight = languageWeight;
         this.wip = wip;
         this.unigramWeight = unigramWeight;

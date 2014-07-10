@@ -52,7 +52,7 @@ public abstract class ActiveListFactory implements Configurable {
      * @param relativeBeamWidth
      */
     public ActiveListFactory(int absoluteBeamWidth,double relativeBeamWidth){
-        logMath = LogMath.getInstance();
+        logMath = LogMath.getLogMath();
         this.absoluteBeamWidth = absoluteBeamWidth;
         this.logRelativeBeamWidth = logMath.linearToLog(relativeBeamWidth);      
     }
@@ -62,7 +62,7 @@ public abstract class ActiveListFactory implements Configurable {
 
 
     public void newProperties(PropertySheet ps) throws PropertyException {
-        logMath = LogMath.getInstance();
+        logMath = LogMath.getLogMath();
         absoluteBeamWidth = ps.getInt(PROP_ABSOLUTE_BEAM_WIDTH);
         double relativeBeamWidth = ps.getDouble(PROP_RELATIVE_BEAM_WIDTH);
 

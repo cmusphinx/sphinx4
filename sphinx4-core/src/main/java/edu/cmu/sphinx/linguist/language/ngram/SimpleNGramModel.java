@@ -66,7 +66,7 @@ public class SimpleNGramModel implements LanguageModel, BackoffLanguageModel {
     {
         this.urlLocation = urlLocation;
         this.unigramWeight = unigramWeight;
-        this.logMath = LogMath.getInstance();
+        this.logMath = LogMath.getLogMath();
         this.desiredMaxDepth = desiredMaxDepth;
         this.dictionary = dictionary;
         this.map = new HashMap<WordSequence, Probability>();
@@ -84,7 +84,7 @@ public class SimpleNGramModel implements LanguageModel, BackoffLanguageModel {
     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
     */
     public void newProperties(PropertySheet ps) throws PropertyException {
-        logMath = LogMath.getInstance();
+        logMath = LogMath.getLogMath();
 
         if (allocated) {
             throw new RuntimeException("Can't change properties after allocation");

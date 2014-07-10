@@ -67,7 +67,7 @@ public class NetworkLanguageModel implements LanguageModel {
         this.port = port;
         this.maxDepth = maxDepth;
         this.location = location;
-        logMath = LogMath.getInstance();
+        logMath = LogMath.getLogMath();
     }
 
     public NetworkLanguageModel() {

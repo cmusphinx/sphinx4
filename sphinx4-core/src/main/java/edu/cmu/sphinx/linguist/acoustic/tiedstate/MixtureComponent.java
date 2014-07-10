@@ -110,7 +110,7 @@ public class MixtureComponent implements Cloneable, Serializable {
 
         assert variance.length == mean.length;
 
-        logMath = LogMath.getInstance();
+        logMath = LogMath.getLogMath();
         this.mean = mean;
         this.meanTransformationMatrix = meanTransformationMatrix;
         this.meanTransformationVector = meanTransformationVector;

@@ -184,7 +184,7 @@ public class FlatLinguist implements Linguist, Configurable {
             double outOfGrammarBranchProbability, double phoneInsertionProbability, AcousticModel phoneLoopAcousticModel    ) {
 
         this.acousticModel = acousticModel;
-        this.logMath = LogMath.getInstance();
+        this.logMath = LogMath.getLogMath();
         this.grammar = grammar;
         this.unitManager = unitManager;
 
@@ -219,7 +219,7 @@ public class FlatLinguist implements Linguist, Configurable {
     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
     */
     public void newProperties(PropertySheet ps) throws PropertyException {
-        logMath = LogMath.getInstance();
+        logMath = LogMath.getLogMath();
 
         acousticModel = (AcousticModel) ps.getComponent(PROP_ACOUSTIC_MODEL);
         grammar = (Grammar) ps.getComponent(PROP_GRAMMAR);
