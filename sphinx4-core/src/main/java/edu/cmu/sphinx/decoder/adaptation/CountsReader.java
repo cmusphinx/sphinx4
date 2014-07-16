@@ -4,68 +4,38 @@ import java.io.DataInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 
+/**
+ * This class is used for reading and storing counts from file
+ */
 public class CountsReader {
 
-	private String filepath;
-	private float[][][] wt_mean;
-	private float[][][] wt_var;
+	private String filePath;
+	private float[][][] mean;
+	private float[][][] variance;
 	private float[][][] dnom;
 	private int[] veclen;
-	private int n_cb;
-	private int n_feat;
-	private int n_density;
+	private int nCb;
+	private int nFeat;
+	private int nDensity;
+	private int pass2var;
 	private String header;
-
-	public void setHeader(String header) {
-		this.header = header;
-	}
 
 	public CountsReader(String filepath) {
 		super();
-		this.filepath = filepath;
+		this.filePath = filepath;
+		this.header = "";
 	}
 
 	public CountsReader() {
+		this.header = "";
 	}
 
-	public void setFilepath(String filepath) {
-		this.filepath = filepath;
+	public float[][][] getMean() {
+		return mean;
 	}
 
-	public void setWt_mean(float[][][] wt_mean) {
-		this.wt_mean = wt_mean;
-	}
-
-	public void setWt_var(float[][][] wt_var) {
-		this.wt_var = wt_var;
-	}
-
-	public void setDnom(float[][][] dnom) {
-		this.dnom = dnom;
-	}
-
-	public void setVeclen(int[] veclen) {
-		this.veclen = veclen;
-	}
-
-	public void setN_cb(int n_cb) {
-		this.n_cb = n_cb;
-	}
-
-	public void setN_feat(int n_feat) {
-		this.n_feat = n_feat;
-	}
-
-	public void setN_density(int n_density) {
-		this.n_density = n_density;
-	}
-
-	public float[][][] getWt_mean() {
-		return wt_mean;
-	}
-
-	public float[][][] getWt_var() {
-		return wt_var;
+	public float[][][] getVariance() {
+		return variance;
 	}
 
 	public float[][][] getDnom() {
@@ -76,22 +46,37 @@ public class CountsReader {
 		return veclen;
 	}
 
-	public int getN_cb() {
-		return n_cb;
+	public int getnCb() {
+		return nCb;
 	}
 
-	public int getN_feat() {
-		return n_feat;
+	public int getnFeat() {
+		return nFeat;
 	}
 
-	public int getN_density() {
-		return n_density;
+	public int getnDensity() {
+		return nDensity;
+	}
+
+	public int getPass2var() {
+		return pass2var;
 	}
 
 	public String getHeader() {
 		return header;
 	}
 
+	public void setFilePath(String filePath) {
+		this.filePath = filePath;
+	}
+
+	/**
+	 * Swaps bytes of an integer number
+	 * 
+	 * @param number
+	 *            integer number to swap
+	 * @return swapped integer value
+	 */
 	public int swapInt(int number) {
 		int swapped = 0, byte1, byte2, byte3, byte4;
 
@@ -104,7 +89,14 @@ public class CountsReader {
 		return swapped;
 	}
 
-	public int swapedReadInt(DataInputStream is) {
+	/**
+	 * Reads integer from input stream and swaps its bytes
+	 * 
+	 * @param is
+	 *            input stream to read from
+	 * @return swapped integer value of the number read from input stream
+	 */
+	public int swappedReadInt(DataInputStream is) {
 		int number, swapped = 0;
 
 		try {
@@ -117,7 +109,14 @@ public class CountsReader {
 		return swapped;
 	}
 
-	public float swapedReadFloat(DataInputStream is) {
+	/**
+	 * Reads float from input stream and swaps its bytes
+	 * 
+	 * @param is
+	 *            input stream to read from
+	 * @return swapped float value of the number read from input stream
+	 */
+	public float swappedReadFloat(DataInputStream is) {
 		int number, swappedInt;
 		float swappedFloat = 0;
 
@@ -132,131 +131,139 @@ public class CountsReader {
 		return swappedFloat;
 	}
 
-	public void read() {
+	/**
+	 * Used for reading the mean and variance 3d-arrays. The method reads all
+	 * data in one 1d-array and puts it in a 3d-array
+	 * 
+	 * @param n
+	 *            the number of float numbers to be read
+	 * @param d1
+	 *            first dimension of the array
+	 * @param d2
+	 *            second dimension of the array
+	 * @param d3
+	 *            third dimension of the array
+	 * @param is
+	 *            input stream to read from
+	 * @return the 3d-array read from input stream
+	 */
+	float[][][] read3dArray(int n, int d1, int d2, int d3, DataInputStream is) {
+		float[][][] array;
+		float[] buf = null;
+		buf = new float[n];
 
-		int n_cb = 0, n_feat = 0, n_density = 0, bom, has_means, has_vars, pass2var, n, nc, d1, d2, d3;
+		for (int i = 0; i < n; i++) {
+			buf[i] = swappedReadFloat(is);
+		}
+
+		array = new float[d1][d2][d3];
+
+		for (int i = 0, bi = 0; i < d1; i++) {
+			for (int j = 0; j < d2; j++) {
+				for (int k = 0; k < d3; k++) {
+					array[i][j][k] = buf[bi];
+					bi += this.veclen[j];
+				}
+			}
+		}
+
+		return array;
+	}
+
+	/**
+	 * Reads the denominator 3d-array
+	 * 
+	 * @param is
+	 *            input stream to read from
+	 * @throws Exception
+	 *             in case of array dimensions mismatch
+	 */
+	void readDnomArray(DataInputStream is) throws Exception {
+		int d1, d2, d3, n, nc;
+		float[] buf = null;
+
+		d1 = swappedReadInt(is);
+		d2 = swappedReadInt(is);
+		d3 = swappedReadInt(is);
+		n = swappedReadInt(is);
+		buf = new float[n];
+
+		for (int i = 0; i < n; i++) {
+			buf[i] = swappedReadFloat(is);
+		}
+
+		if (n != d1 * d2 * d3) {
+			throw new Exception("Dimensions mismatch!");
+		}
+
+		this.dnom = new float[d1][d2][d3];
+		nc = 0;
+
+		for (int i = 0; i < d1; i++) {
+			for (int j = 0; j < d2; j++) {
+				for (int k = 0; k < d3; k++) {
+					this.dnom[i][j][k] = buf[nc++];
+				}
+			}
+		}
+	}
+
+	/**
+	 * Reads and stores in the class fields all data from the binary file
+	 * provided in the filepath field.
+	 */
+	public void read() throws Exception {
+
+		int bom, hasMeans, hasVars, n, nc, d1, d2, d3;
 		FileInputStream fp = null;
 		DataInputStream is = null;
-		String header = "";
-		int[] veclen = null;
-		float[][][] wt_mean = null;
-		float[][][] wt_var = null;
-		float[][][] dnom = null;
 		float[] buf = null;
 		byte[] ba = null;
 
 		try {
-			fp = new FileInputStream(filepath);
+			fp = new FileInputStream(filePath);
 			is = new DataInputStream(fp);
 			ba = new byte[40];
 			is.read(ba, 0, 40);
 
 			for (int i = 0; i < ba.length; i++) {
-				header += (char) ba[i];
+				this.header += (char) ba[i];
 			}
 
 			bom = is.readInt();
-			has_means = swapedReadInt(is);
-			has_vars = swapedReadInt(is);
-			pass2var = swapedReadInt(is);
-			n_cb = swapedReadInt(is);
-			n_density = swapedReadInt(is);
-			n_feat = swapedReadInt(is);
+			hasMeans = swappedReadInt(is);
+			hasVars = swappedReadInt(is);
+			this.pass2var = swappedReadInt(is);
+			this.nCb = swappedReadInt(is);
+			this.nDensity = swappedReadInt(is);
+			this.nFeat = swappedReadInt(is);
 
-			veclen = new int[n_feat];
+			this.veclen = new int[this.nFeat];
 
-			for (int i = 0; i < n_feat; i++) {
-				veclen[i] = swapedReadInt(is);
+			for (int i = 0; i < this.nFeat; i++) {
+				this.veclen[i] = swappedReadInt(is);
 			}
 
-			n = swapedReadInt(is);
+			n = swappedReadInt(is);
 
-			if (has_means == 1) {
-				buf = new float[n];
-
-				for (int i = 0; i < n; i++) {
-					buf[i] = swapedReadFloat(is);
-				}
-
-				wt_mean = new float[n_cb][n_feat][n_density];
-
-				for (int i = 0, b_i = 0; i < n_cb; i++) {
-					for (int j = 0; j < n_feat; j++) {
-						for (int k = 0; k < n_density; k++) {
-							wt_mean[i][j][k] = buf[b_i];
-							b_i += veclen[j];
-						}
-					}
-				}
-
+			if (hasMeans == 1) {
+				this.mean = this.read3dArray(n, this.nCb, this.nFeat,
+						this.nDensity, is);
 			} else {
-				System.out.println("No means available!");
+				throw new Exception("No means available!");
 			}
 
-			n = swapedReadInt(is);
+			n = swappedReadInt(is);
 
-			if (has_vars == 1) {
-				buf = new float[n];
-
-				for (int i = 0; i < n; i++) {
-					buf[i] = swapedReadFloat(is);
-				}
-
-				wt_var = new float[n_cb][n_feat][n_density];
-
-				for (int i = 0, b_i = 0; i < n_cb; i++) {
-					for (int j = 0; j < n_feat; j++) {
-						for (int k = 0; k < n_density; k++) {
-							wt_var[i][j][k] = buf[b_i];
-							b_i += veclen[j];
-						}
-					}
-				}
-
+			if (hasVars == 1) {
+				this.variance = this.read3dArray(n, this.nCb, this.nFeat,
+						this.nDensity, is);
 			} else {
-				System.out.println("No variances available!");
+				throw new Exception("No variances available!");
 			}
 
-			d1 = swapedReadInt(is);
-			d2 = swapedReadInt(is);
-			d3 = swapedReadInt(is);
-			n = swapedReadInt(is);
-			buf = new float[n];
+			this.readDnomArray(is);
 
-			for (int i = 0; i < n; i++) {
-				buf[i] = swapedReadFloat(is);
-			}
-
-			if (n != d1 * d2 * d3) {
-				System.out.println("Dimensions mismatch!");
-			}
-
-			dnom = new float[d1][d2][d3];
-			nc = 0;
-
-			for (int i = 0; i < d1; i++) {
-				for (int j = 0; j < d2; j++) {
-					for (int k = 0; k < d3; k++) {
-						dnom[i][j][k] = buf[nc++];
-					}
-				}
-			}
-
-		} catch (IOException e) {
-			System.out.println("Could not open file!");
-			e.printStackTrace();
-		}
-
-		this.setWt_mean(wt_mean);
-		this.setWt_var(wt_var);
-		this.setDnom(dnom);
-		this.setN_cb(n_cb);
-		this.setN_density(n_density);
-		this.setN_feat(n_feat);
-		this.setVeclen(veclen);
-		this.setHeader(header);
-
-		try {
 			fp.close();
 			is.close();
 		} catch (IOException e) {
