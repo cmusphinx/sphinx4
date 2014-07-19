@@ -10,8 +10,8 @@ import java.io.IOException;
 public class CountsReader {
 
 	private String filePath;
-	private float[][][] mean;
-	private float[][][] variance;
+	private float[][][][] mean;
+	private float[][][][] variance;
 	private float[][][] dnom;
 	private int[] veclen;
 	private int nCb;
@@ -30,11 +30,11 @@ public class CountsReader {
 		this.header = "";
 	}
 
-	public float[][][] getMean() {
+	public float[][][][] getMean() {
 		return mean;
 	}
 
-	public float[][][] getVariance() {
+	public float[][][][] getVariance() {
 		return variance;
 	}
 
@@ -147,8 +147,8 @@ public class CountsReader {
 	 *            input stream to read from
 	 * @return the 3d-array read from input stream
 	 */
-	float[][][] read3dArray(int n, int d1, int d2, int d3, DataInputStream is) {
-		float[][][] array;
+	float[][][][] read4dArray(int n, int d1, int d2, int d3, DataInputStream is) {
+		float[][][][] array;
 		float[] buf = null;
 		buf = new float[n];
 
@@ -156,12 +156,14 @@ public class CountsReader {
 			buf[i] = swappedReadFloat(is);
 		}
 
-		array = new float[d1][d2][d3];
+		array = new float[d1][d2][d3][this.veclen[0]];
 
 		for (int i = 0, bi = 0; i < d1; i++) {
 			for (int j = 0; j < d2; j++) {
 				for (int k = 0; k < d3; k++) {
-					array[i][j][k] = buf[bi];
+					for (int l = 0; l < this.veclen[j]; l++){
+						array[i][j][k][l] = buf[bi + l];
+					}
 					bi += this.veclen[j];
 				}
 			}
@@ -247,7 +249,7 @@ public class CountsReader {
 			n = swappedReadInt(is);
 
 			if (hasMeans == 1) {
-				this.mean = this.read3dArray(n, this.nCb, this.nFeat,
+				this.mean = this.read4dArray(n, this.nCb, this.nFeat,
 						this.nDensity, is);
 			} else {
 				throw new Exception("No means available!");
@@ -256,7 +258,7 @@ public class CountsReader {
 			n = swappedReadInt(is);
 
 			if (hasVars == 1) {
-				this.variance = this.read3dArray(n, this.nCb, this.nFeat,
+				this.variance = this.read4dArray(n, this.nCb, this.nFeat,
 						this.nDensity, is);
 			} else {
 				throw new Exception("No variances available!");
