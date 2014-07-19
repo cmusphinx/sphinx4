@@ -1,15 +1,13 @@
 /*
- * Copyright 1999-2002 Carnegie Mellon University.  
- * Portions Copyright 2002 Sun Microsystems, Inc.  
+ * Copyright 1999-2002 Carnegie Mellon University.
+ * Portions Copyright 2002 Sun Microsystems, Inc.
  * Portions Copyright 2002 Mitsubishi Electric Research Laboratories.
  * All Rights Reserved.  Use is subject to license terms.
- * 
- * See the file "license.terms" for information on usage and
- * redistribution of this file, and for a DISCLAIMER OF ALL 
- * WARRANTIES.
  *
+ * See the file "license.terms" for information on usage and
+ * redistribution of this file, and for a DISCLAIMER OF ALL
+ * WARRANTIES.
  */
-
 
 package edu.cmu.sphinx.frontend;
 
@@ -28,21 +26,15 @@ public class FloatData implements Data, Cloneable {
     private final long firstSampleNumber;
     private final long collectTime;
 
-
     /**
      * Constructs a Data object with the given values, sample rate, collect time, and first sample number.
      *
      * @param values            the data values
      * @param sampleRate        the sample rate of the data
-     * @param collectTime       the time at which this data is collected
      * @param firstSampleNumber the position of the first sample in the original data
      */
-    public FloatData(float[] values, int sampleRate,
-                     long firstSampleNumber) {
-        this.values = values;
-        this.sampleRate = sampleRate;
-        this.collectTime = firstSampleNumber * 1000 / sampleRate;
-        this.firstSampleNumber = firstSampleNumber;
+    public FloatData(float[] values, int sampleRate, long firstSampleNumber) {
+        this(values, sampleRate, firstSampleNumber * 1000 / sampleRate, firstSampleNumber);
     }
 
     /**
