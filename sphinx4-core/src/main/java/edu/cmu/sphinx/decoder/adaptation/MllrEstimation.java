@@ -103,12 +103,12 @@ public class MllrEstimation {
 	}
 
 	public void fillRegLowerPart() {
-		for (int m = 0; m < this.nMllrClass; m++) {
-			for (int j = 0; j < this.means.getNumStreams(); j++) {
-				for (int l = 0; l < this.cr.getVeclen()[j]; l++) {
-					for (int p = 0; p <= this.cr.getVeclen()[j]; p++) {
-						for (int q = p + 1; q <= this.cr.getVeclen()[j]; q++) {
-							this.regL[m][j][l][q][p] = this.regL[m][j][l][p][q];
+		for (int m = 0; m < nMllrClass; m++) {
+			for (int j = 0; j < means.getNumStreams(); j++) {
+				for (int l = 0; l < cr.getVeclen()[j]; l++) {
+					for (int p = 0; p <= cr.getVeclen()[j]; p++) {
+						for (int q = p + 1; q <= cr.getVeclen()[j]; q++) {
+							regL[m][j][l][q][p] = regL[m][j][l][p][q];
 						}
 					}
 				}
@@ -119,7 +119,7 @@ public class MllrEstimation {
 	public void fillRegMatrices() {
 		int mc, len;
 
-		for (int i = 0; i < this.means.getNumStates(); i++) {
+		for (int i = 0; i < means.getNumStates(); i++) {
 			float[] tmean;
 			float wtMeanVar, wtDcountVar, wtDcountVarMean;
 			mc = cb2mllr[i];
@@ -127,63 +127,58 @@ public class MllrEstimation {
 			if (mc < 0)
 				continue;
 
-			for (int j = 0; j < this.means.getNumStreams(); j++) {
-				len = this.means.getVectorLength()[j];
+			for (int j = 0; j < means.getNumStreams(); j++) {
+				len = means.getVectorLength()[j];
 
-				for (int k = 0; k < this.means.getNumGaussiansPerState(); k++) {
+				for (int k = 0; k < means.getNumGaussiansPerState(); k++) {
 					if (cr.getDnom()[i][j][k] > 0.) {
-						tmean = this.means.getPool().get(
-								i * this.means.getNumStates() + k);
+						tmean = means.getPool().get(
+								i * means.getNumStates() + k);
 						for (int l = 0; l < len; l++) {
 							wtMeanVar = cr.getMean()[i][j][k][l]
-									* this.variances.getPool().get(
-											i * this.means.getNumStates() + k)[l];
+									* variances.getPool().get(
+											i * means.getNumStates() + k)[l];
 							wtDcountVar = cr.getDnom()[i][j][k]
-									* this.variances.getPool().get(
-											i * this.means.getNumStates() + k)[l];
+									* variances.getPool().get(
+											i * means.getNumStates() + k)[l];
 
 							for (int p = 0; p < len; p++) {
 								wtDcountVarMean = wtDcountVar * tmean[p];
 
 								for (int q = p; q < len; q++) {
-									this.regL[mc][j][l][p][q] += wtDcountVarMean
+									regL[mc][j][l][p][q] += wtDcountVarMean
 											* tmean[q];
 								}
 
-								this.regL[mc][j][l][p][len] += wtDcountVarMean;
-								this.regR[mc][j][l][p] += wtMeanVar * tmean[p];
+								regL[mc][j][l][p][len] += wtDcountVarMean;
+								regR[mc][j][l][p] += wtMeanVar * tmean[p];
 							}
-							this.regL[mc][j][l][len][len] += wtDcountVar;
-							this.regR[mc][j][l][len] += wtMeanVar;
+							regL[mc][j][l][len][len] += wtDcountVar;
+							regR[mc][j][l][len] += wtMeanVar;
 						}
 					}
 				}
 			}
 		}
 
-		this.fillRegLowerPart();
+		fillRegLowerPart();
 
 	}
 
 	public void invertVariances() {
-		this.cb2mllr = new int[this.means.getNumStates()];
+		this.cb2mllr = new int[means.getNumStates()];
 
-		for (int i = 0; i < this.means.getNumStates(); i++) {
-			for (int k = 0; k < this.means.getNumGaussiansPerState(); k++) {
-				for (int l = 0; l < this.means.getVectorLength()[0]; l++) {
-					if (this.variances.getPool().get(
-							i * this.means.getNumStates() + k)[l] <= 0.) {
-						this.variances.getPool().get(
-								i * this.means.getNumStates() + k)[l] = (float) 0.5;
-					} else if (this.variances.getPool().get(
-							i * this.means.getNumStates() + k)[l] < this.varFlor) {
-						this.variances.getPool().get(
-								i * this.means.getNumStates() + k)[l] = (float) (1. / this.varFlor);
+		for (int i = 0; i < means.getNumStates(); i++) {
+			for (int k = 0; k < means.getNumGaussiansPerState(); k++) {
+				for (int l = 0; l < means.getVectorLength()[0]; l++) {
+					if (variances.getPool().get(i * means.getNumStates() + k)[l] <= 0.) {
+						variances.getPool().get(i * means.getNumStates() + k)[l] = (float) 0.5;
+					} else if (variances.getPool().get(
+							i * means.getNumStates() + k)[l] < varFlor) {
+						variances.getPool().get(i * means.getNumStates() + k)[l] = (float) (1. / varFlor);
 					} else {
-						this.variances.getPool().get(
-								i * this.means.getNumStates() + k)[l] = (float) (1. / this.variances
-								.getPool().get(
-										i * this.means.getNumStates() + k)[l]);
+						variances.getPool().get(i * means.getNumStates() + k)[l] = (float) (1. / variances
+								.getPool().get(i * means.getNumStates() + k)[l]);
 					}
 				}
 			}
@@ -197,26 +192,26 @@ public class MllrEstimation {
 		RealMatrix coef;
 		RealVector vect, ABloc;
 
-		this.A = new float[this.nMllrClass][this.means.getNumStreams()][][];
-		this.B = new float[this.nMllrClass][this.means.getNumStreams()][];
+		this.A = new float[nMllrClass][means.getNumStreams()][][];
+		this.B = new float[nMllrClass][means.getNumStreams()][];
 
-		for (int m = 0; m < this.nMllrClass; m++) {
-			for (int i = 0; i < this.means.getNumStreams(); i++) {
+		for (int m = 0; m < nMllrClass; m++) {
+			for (int i = 0; i < means.getNumStreams(); i++) {
 
-				len = this.means.getVectorLength()[i];
+				len = means.getVectorLength()[i];
 				this.A[m][i] = new float[len][len];
 				this.B[m][i] = new float[len];
 
 				for (int j = 0; j < len; ++j) {
-					coef = new Array2DRowRealMatrix(this.regL[m][i][j], false);
+					coef = new Array2DRowRealMatrix(regL[m][i][j], false);
 					solver = new LUDecomposition(coef).getSolver();
-					vect = new ArrayRealVector(this.regR[m][i][j], false);
+					vect = new ArrayRealVector(regR[m][i][j], false);
 					ABloc = solver.solve(vect);
 
 					for (int k = 0; k < len; ++k) {
 						this.A[m][i][j][k] = (float) ABloc.getEntry(k);
 					}
-					
+
 					this.B[m][i][j] = (float) ABloc.getEntry(len);
 
 				}
@@ -230,13 +225,13 @@ public class MllrEstimation {
 		this.readCounts();
 		this.invertVariances();
 
-		int len = this.means.getVectorLength()[0];
-		this.regL = new double[this.nMllrClass][this.means.getNumStreams()][][][];
-		this.regR = new double[this.nMllrClass][this.means.getNumStreams()][][];
+		int len = means.getVectorLength()[0];
+		this.regL = new double[nMllrClass][means.getNumStreams()][][][];
+		this.regR = new double[nMllrClass][means.getNumStreams()][][];
 
-		for (int i = 0; i < this.nMllrClass; i++) {
-			for (int j = 0; j < this.means.getNumStreams(); j++) {
-				len = this.means.getVectorLength()[j];
+		for (int i = 0; i < nMllrClass; i++) {
+			for (int j = 0; j < means.getNumStreams(); j++) {
+				len = means.getVectorLength()[j];
 				this.regL[i][j] = new double[len][len + 1][len + 1];
 				this.regR[i][j] = new double[len][len + 1];
 			}
