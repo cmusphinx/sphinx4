@@ -1,5 +1,8 @@
 package edu.cmu.sphinx.decoder.adaptation;
 
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
 
 import org.apache.commons.math3.linear.Array2DRowRealMatrix;
@@ -16,6 +19,7 @@ public class MllrEstimation {
 	private String location;
 	private String model;
 	private String countsFilePath;
+	private String outputFilePath;
 	private DensityFileData means;
 	private DensityFileData variances;
 	private float varFlor;
@@ -28,12 +32,13 @@ public class MllrEstimation {
 	private CountsReader cr;
 
 	public MllrEstimation(String location, String countsFilePath,
-			float varFlor, int nMllrClass) {
+			float varFlor, int nMllrClass, String outputFilePath) {
 		super();
 		this.location = location;
 		this.countsFilePath = countsFilePath;
 		this.varFlor = varFlor;
 		this.nMllrClass = nMllrClass;
+		this.outputFilePath = outputFilePath;
 	}
 
 	public MllrEstimation() {
@@ -59,6 +64,10 @@ public class MllrEstimation {
 
 	public void setCountsFilePath(String countsFilePath) {
 		this.countsFilePath = countsFilePath;
+	}
+
+	public void setOutputFilePath(String outputFilePath) {
+		this.outputFilePath = outputFilePath;
 	}
 
 	public void setVarFlor(float varFlor) {
@@ -220,6 +229,45 @@ public class MllrEstimation {
 		}
 	}
 
+	private void createMllrFile() throws FileNotFoundException,
+			UnsupportedEncodingException {
+		PrintWriter writer = new PrintWriter(this.outputFilePath, "UTF-8");
+		
+		writer.println(nMllrClass);;
+		writer.println(means.getNumStreams());
+		
+		for (int m = 0; m < nMllrClass; m++) {
+			for (int i = 0; i < means.getNumStreams(); i++) {
+				writer.println(means.getVectorLength()[i]);
+				
+				for (int j = 0; j < means.getVectorLength()[i]; j++) {
+					for (int k = 0; k < means.getVectorLength()[i]; ++k) {
+						writer.print(A[m][i][j][k]);
+						writer.print(" ");
+					}
+					writer.println();
+				}
+				
+				for (int j = 0; j < means.getVectorLength()[i]; j++) {
+					writer.print(B[m][i][j]);
+					writer.print(" ");
+				
+				}
+				writer.println();
+				
+				for (int j = 0; j < means.getVectorLength()[i]; j++) {
+					writer.print("1.0 ");
+
+				}
+				
+				writer.println();
+			}
+		}
+		
+		writer.close();
+
+	}
+
 	public void estimateMatrices() throws Exception {
 		this.readMeansAndVariances();
 		this.readCounts();
@@ -238,8 +286,8 @@ public class MllrEstimation {
 		}
 
 		this.fillRegMatrices();
-
 		this.computeMllr();
+		this.createMllrFile();
 	}
 
 }
