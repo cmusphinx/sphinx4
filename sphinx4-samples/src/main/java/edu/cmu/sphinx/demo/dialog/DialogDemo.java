@@ -69,7 +69,7 @@ public class DialogDemo {
         while (true) {
             String utterance = recognizer.getResult().getHypothesis();
             if (utterance.equals("one zero one")
-                | utterance.equals("one oh one"))
+                || utterance.equals("one oh one"))
                 break;
             else
                 System.out.println(utterance);
