@@ -14,6 +14,7 @@ package edu.cmu.sphinx.result;
 import java.util.Iterator;
 import java.util.TreeSet;
 
+// TODO: replace with MinMaxPriorityQueue
 public class BoundedPriorityQueue<T> implements Iterable<T> {
 
     TreeSet<T> items;

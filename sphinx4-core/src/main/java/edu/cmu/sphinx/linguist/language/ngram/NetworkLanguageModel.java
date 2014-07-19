@@ -1,9 +1,6 @@
 package edu.cmu.sphinx.linguist.language.ngram;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.Socket;
 import java.net.URL;
 import java.util.HashSet;
@@ -13,15 +10,12 @@ import edu.cmu.sphinx.linguist.WordSequence;
 import edu.cmu.sphinx.linguist.dictionary.Word;
 import edu.cmu.sphinx.linguist.util.LRUCache;
 import edu.cmu.sphinx.util.LogMath;
-import edu.cmu.sphinx.util.props.ConfigurationManagerUtils;
-import edu.cmu.sphinx.util.props.PropertyException;
-import edu.cmu.sphinx.util.props.PropertySheet;
-import edu.cmu.sphinx.util.props.S4String;
-import edu.cmu.sphinx.util.props.S4Integer;
+import edu.cmu.sphinx.util.props.*;
+
 
 /*
- * The client of the SRILM language model server. It needs to
- * read the vocabulary from a vocabulary file though.
+ * The client of the SRILM language model server. It needs to read the
+ * vocabulary from a vocabulary file though.
  */
 public class NetworkLanguageModel implements LanguageModel {
 
@@ -49,20 +43,16 @@ public class NetworkLanguageModel implements LanguageModel {
 
     /**
      * Creates network language model client
-     * 
-     * @param host
-     *            server host
-     * @param port
-     *            server port
-     * @param location
-     *            URL of the file with vocabulary (only needed for 1-stage
-     *            model)
-     * @param maxDepth
-     *            depth of the model
-     * @param logMath
-     *            logMath
+     *
+     * @param host server host
+     * @param port server port
+     * @param location URL of the file with vocabulary (only needed for 1-stage
+     *        model)
+     * @param maxDepth depth of the model
+     * @param logMath logMath
      */
-    public NetworkLanguageModel(String host, int port, URL location, int maxDepth) {
+    public NetworkLanguageModel(String host, int port, URL location,
+            int maxDepth) {
         this.host = host;
         this.port = port;
         this.maxDepth = maxDepth;
@@ -75,7 +65,6 @@ public class NetworkLanguageModel implements LanguageModel {
 
     /*
      * (non-Javadoc)
-     * 
      * @see
      * edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util
      * .props.PropertySheet)
@@ -98,7 +87,8 @@ public class NetworkLanguageModel implements LanguageModel {
         allocated = true;
 
         socket = new Socket(host, port);
-        inReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        inReader =
+            new BufferedReader(new InputStreamReader(socket.getInputStream()));
         outWriter = new PrintWriter(socket.getOutputStream(), true);
         String greeting = inReader.readLine();
         if (!greeting.equals("probserver ready")) {
@@ -161,7 +151,8 @@ public class NetworkLanguageModel implements LanguageModel {
     public Set<String> getVocabulary() {
         Set<String> result = new HashSet<String>();
         try {
-            BufferedReader reader = new BufferedReader(new InputStreamReader(location.openStream()));
+            BufferedReader reader =
+                new BufferedReader(new InputStreamReader(location.openStream()));
             String line;
             while (true) {
                 line = reader.readLine();
@@ -176,11 +167,5 @@ public class NetworkLanguageModel implements LanguageModel {
             e.printStackTrace();
         }
         return result;
-    }
-
-    public void start() {
-    }
-
-    public void stop() {
     }
 }

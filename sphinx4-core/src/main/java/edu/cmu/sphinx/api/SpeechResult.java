@@ -11,14 +11,11 @@
 
 package edu.cmu.sphinx.api;
 
-import java.util.List;
 import java.util.Collection;
+import java.util.List;
 
-import edu.cmu.sphinx.result.Lattice;
-import edu.cmu.sphinx.result.LatticeOptimizer;
-import edu.cmu.sphinx.result.Nbest;
-import edu.cmu.sphinx.result.Result;
-import edu.cmu.sphinx.result.WordResult;
+import edu.cmu.sphinx.recognizer.Recognizer;
+import edu.cmu.sphinx.result.*;
 
 
 /**
@@ -48,7 +45,7 @@ public final class SpeechResult {
      * @return words that form the result
      */
     public List<WordResult> getWords() {
-        return result.getWords();
+        return result.getTimedBestResult(true, true);
     }
 
     /**

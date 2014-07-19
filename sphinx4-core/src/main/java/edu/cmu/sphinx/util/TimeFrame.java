@@ -15,11 +15,12 @@ package edu.cmu.sphinx.util;
 public class TimeFrame {
 
     public static final TimeFrame NULL = new TimeFrame(0);
+    public static final TimeFrame INFINITE = new TimeFrame(Long.MAX_VALUE);
 
     private final long start;
     private final long end;
 
-    public TimeFrame(int duration) {
+    public TimeFrame(long duration) {
         this(0, duration);
     }
 
@@ -38,5 +39,10 @@ public class TimeFrame {
 
     public long length() {
         return end - start;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("%d:%d", start, end);
     }
 }

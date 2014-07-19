@@ -1,16 +1,21 @@
 /*
- * Copyright 1999-2002 Carnegie Mellon University.  
- * Portions Copyright 2002 Sun Microsystems, Inc.  
+ * Copyright 1999-2002 Carnegie Mellon University.
+ * Portions Copyright 2002 Sun Microsystems, Inc.
  * Portions Copyright 2002 Mitsubishi Electric Research Laboratories.
  * All Rights Reserved.  Use is subject to license terms.
- * 
+ *
  * See the file "license.terms" for information on usage and
- * redistribution of this file, and for a DISCLAIMER OF ALL 
+ * redistribution of this file, and for a DISCLAIMER OF ALL
  * WARRANTIES.
  *
  */
 
 package edu.cmu.sphinx.linguist.lextree;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Logger;
 
 import edu.cmu.sphinx.decoder.scorer.ScoreProvider;
 import edu.cmu.sphinx.frontend.Data;
@@ -23,14 +28,11 @@ import edu.cmu.sphinx.linguist.language.grammar.Grammar;
 import edu.cmu.sphinx.linguist.language.ngram.BackoffLanguageModel;
 import edu.cmu.sphinx.linguist.language.ngram.LanguageModel;
 import edu.cmu.sphinx.linguist.language.ngram.ProbDepth;
+import edu.cmu.sphinx.linguist.language.ngram.large.LargeNGramModel;
 import edu.cmu.sphinx.linguist.util.LRUCache;
 import edu.cmu.sphinx.util.LogMath;
 import edu.cmu.sphinx.util.TimerPool;
 import edu.cmu.sphinx.util.props.*;
-
-import java.io.IOException;
-import java.util.*;
-import java.util.logging.Logger;
 
 /**
  * A linguist that can represent large vocabularies efficiently. This class implements the Linguist interface. The main
@@ -130,12 +132,12 @@ import java.util.logging.Logger;
  * <b>Word Histories </b>
  * <p/>
  * We use explicit backoff for word histories. That technique is proven to be useful and save number of
- * states. The reasoning is the following. With a vocabulary of size N, you have N^2 unique bigram 
+ * states. The reasoning is the following. With a vocabulary of size N, you have N^2 unique bigram
  * histories. So the token stack will have N^2*K unique tokens, where K is the number of states per token.
- * For a 100k vocab, 3 states per HMM, that will be 3*10^10 tokens (max). Of course, a large majority 
- * of them will be pruned, but really, its still way too much. If you stick with the <b>actual</b>  K-gram 
+ * For a 100k vocab, 3 states per HMM, that will be 3*10^10 tokens (max). Of course, a large majority
+ * of them will be pruned, but really, its still way too much. If you stick with the <b>actual</b>  K-gram
  * used (i.e. accounting explicitly for backoff), then this reduces <b>tremendously</b>.
- * Most bigrams dont have corresponding trigrams.  Not all 10^10 bigrams have trigrams. We only 
+ * Most bigrams dont have corresponding trigrams.  Not all 10^10 bigrams have trigrams. We only
  * need to store as many explicit tokens as the number of bigrams that have trigrams.
  */
 public class LexTreeLinguist implements Linguist {
@@ -153,7 +155,7 @@ public class LexTreeLinguist implements Linguist {
     public final static String PROP_UNIT_MANAGER = "unitManager";
 
     /**
-     * The property that determines whether or not full word histories are used to 
+     * The property that determines whether or not full word histories are used to
      * determine when two states are equal.
      */
     @S4Boolean(defaultValue = true)
@@ -189,11 +191,11 @@ public class LexTreeLinguist implements Linguist {
      * language probability could be only calculated when we reach word end node.
      * Until that point we need to keep path alive and give it some language
      * probability. See
-     * 
+     *
      * Alleva, F., Huang, X. & Hwang, M.-Y., "Improvements on the pronunciation
      * prefix tree search organization", Proceedings of ICASSP, pp. 133-136,
      * Atlanta, GA, 1996.
-     * 
+     *
      * for the description of this technique.
      */
     @S4Boolean(defaultValue = true)
@@ -289,7 +291,7 @@ public class LexTreeLinguist implements Linguist {
     public LexTreeLinguist() {
 
     }
-    
+
     /*
     * (non-Javadoc)
     *
@@ -364,13 +366,14 @@ public class LexTreeLinguist implements Linguist {
 
     /** Called before a recognition */
     public void startRecognition() {
-        languageModel.start();
     }
 
 
     /** Called after a recognition */
     public void stopRecognition() {
-        languageModel.stop();
+        // FIXME: remove
+        if (languageModel instanceof LargeNGramModel)
+            ((LargeNGramModel) languageModel).stop();
     }
 
 
@@ -706,13 +709,13 @@ public class LexTreeLinguist implements Linguist {
             float languageProbability = logOne;
             Word nextWord = wordNode.getWord();
             float smearTerm = previous.getSmearTerm();
-            
+
             if (nextWord.isFiller() && nextWord != sentenceEndWord) {
                 return new LexTreeWordState(wordNode, lastUnit,
                         wordSequence,
-                        smearTerm, logOne, languageProbability, collapsed);                
+                        smearTerm, logOne, languageProbability, collapsed);
             }
-  
+
             WordSequence nextWordSequence = wordSequence.addWord(nextWord, maxDepth);
             ProbDepth probDepth = languageModel.getProbDepth(nextWordSequence);
             smearTerm = getSmearTermFromLanguageModel(nextWordSequence);
@@ -721,15 +724,15 @@ public class LexTreeLinguist implements Linguist {
             float probability = probDepth.probability * languageWeight;
             // subtract off the previously applied smear probability
             languageProbability = probability - previous.getSmearProb();
-  
+
             boolean collapse = (probDepth.depth < maxDepth - 1) || !fullWordHistories;
-            
+
             if (nextWord == sentenceEndWord) {
                 return new LexTreeEndWordState(wordNode, lastUnit,
                         nextWordSequence.trim(maxDepth - 1),
                         smearTerm, logOne, languageProbability, collapse);
             }
-            
+
             return new LexTreeWordState(wordNode, lastUnit,
                         nextWordSequence.trim(maxDepth - 1),
                         smearTerm, logOne, languageProbability, collapse);

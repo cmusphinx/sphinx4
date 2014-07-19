@@ -1,21 +1,15 @@
 /*
- * Copyright 1999-2002 Carnegie Mellon University.  
- * Portions Copyright 2002 Sun Microsystems, Inc.  
+ * Copyright 1999-2002 Carnegie Mellon University.
+ * Portions Copyright 2002 Sun Microsystems, Inc.
  * Portions Copyright 2002 Mitsubishi Electric Research Laboratories.
  * All Rights Reserved.  Use is subject to license terms.
- * 
+ *
  * See the file "license.terms" for information on usage and
- * redistribution of this file, and for a DISCLAIMER OF ALL 
+ * redistribution of this file, and for a DISCLAIMER OF ALL
  * WARRANTIES.
  *
  */
 package edu.cmu.sphinx.tools.live;
-
-import edu.cmu.sphinx.frontend.util.ConcatFileDataSource;
-import edu.cmu.sphinx.recognizer.Recognizer;
-import edu.cmu.sphinx.result.Result;
-import edu.cmu.sphinx.util.*;
-import edu.cmu.sphinx.util.props.*;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -23,6 +17,14 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.LinkedList;
 import java.util.List;
+
+import com.google.common.base.Joiner;
+
+import edu.cmu.sphinx.frontend.util.ConcatFileDataSource;
+import edu.cmu.sphinx.recognizer.Recognizer;
+import edu.cmu.sphinx.result.Result;
+import edu.cmu.sphinx.util.*;
+import edu.cmu.sphinx.util.props.*;
 
 /**
  * Decodes a batch file containing a list of files to decode. The files can be either audio files or cepstral files, but
@@ -85,7 +87,7 @@ public class LiveModeRecognizer implements Configurable {
     public LiveModeRecognizer() {
 
     }
-    
+
     /*
     * (non-Javadoc)
     *
@@ -119,8 +121,8 @@ public class LiveModeRecognizer implements Configurable {
             System.out.println("   Sentences: " + numUtterances);
             resultList.add(resultText);
 
-            hypothesisTranscript.write(result.getTimedBestResult(false, true)
-                    + '\n');
+            hypothesisTranscript.write(Joiner.on(' ').join(result.getTimedBestResult(false, true)));
+            hypothesisTranscript.write('\n');
             hypothesisTranscript.flush();
 
             if (alignInterval > 0 && (numUtterances % alignInterval == 0)) {

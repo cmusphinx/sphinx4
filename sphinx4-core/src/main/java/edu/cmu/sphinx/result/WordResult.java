@@ -34,7 +34,7 @@ public class WordResult {
     /**
      * Construct a word result from a string and a confidence score.
      *
-     * @param w          the word
+     * @param w the word
      * @param confidence the confidence for this word
      */
     public WordResult(String w, double confidence) {
@@ -48,14 +48,14 @@ public class WordResult {
     /**
      * Construct a word result with full information.
      *
-     * @param w          the word object to store
-     * @param timeFrame  time frame
-     * @param ef         word end time
-     * @param score      score of the word
+     * @param w the word object to store
+     * @param timeFrame time frame
+     * @param ef word end time
+     * @param score score of the word
      * @param confidence confidence (posterior) of the word
      */
     public WordResult(Word w, TimeFrame timeFrame,
-                      double score, double confidence)
+            double score, double confidence)
     {
         this.word = w;
         this.timeFrame = timeFrame;
@@ -71,7 +71,7 @@ public class WordResult {
      *
      * TODO: score is currently set to zero
      *
-     * @param node       the node to extract information from
+     * @param node the node to extract information from
      * @param confidence the confidence (posterior) to assign
      */
     public WordResult(Node node, double confidence) {
@@ -113,6 +113,15 @@ public class WordResult {
     }
 
     /**
+     * Gets the word object associated with the given result.
+     *
+     * @return the word object
+     */
+    public Word getWord() {
+        return word;
+    }
+
+    /**
      * Gets time frame for the word
      */
     public TimeFrame getTimeFrame() {
@@ -130,9 +139,6 @@ public class WordResult {
 
     @Override
     public String toString() {
-        return String.format("{%s, %f, [%d, %d]}",
-                             word, confidence,
-                             timeFrame.getStart(), timeFrame.getEnd());
+        return String.format("{%s, %f, [%s]}", word, confidence, timeFrame);
     }
 }
-

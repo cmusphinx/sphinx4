@@ -11,12 +11,13 @@
  */
 package edu.cmu.sphinx.linguist.language.grammar;
 
+import static java.util.Arrays.asList;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.ArrayList;
 
 import edu.cmu.sphinx.linguist.dictionary.Dictionary;
-
 import edu.cmu.sphinx.util.LogMath;
 
 public class AlignerGrammar extends Grammar {
@@ -49,15 +50,19 @@ public class AlignerGrammar extends Grammar {
 	 * Reads Text and converts it into a list of tokens
 	 */
 	public void setText(String text) {
-		String[] words = text.split(" ");
-		tokens.clear();
-		for (String word : words) {
-		    if (!word.isEmpty())
-		        tokens.add(word.toLowerCase());
-		}
-		createGrammar();		
-		postProcessGrammar();
+		setWords(asList(text.split(" ")));
 	}
+
+    public void setWords(Iterable<String> words) {
+        tokens.clear();
+		for (String word : words) {
+		    if (!word.isEmpty()) {
+		        tokens.add(word.toLowerCase());
+		    }
+		}
+		createGrammar();
+		postProcessGrammar();
+    }
 
 	@Override
     protected GrammarNode createGrammar() {

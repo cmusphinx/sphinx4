@@ -3,6 +3,10 @@
  */
 package edu.cmu.sphinx.linguist.language.classes;
 
+import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
+
 import edu.cmu.sphinx.linguist.WordSequence;
 import edu.cmu.sphinx.linguist.dictionary.Word;
 import edu.cmu.sphinx.linguist.language.ngram.LanguageModel;
@@ -10,23 +14,21 @@ import edu.cmu.sphinx.util.props.PropertyException;
 import edu.cmu.sphinx.util.props.PropertySheet;
 import edu.cmu.sphinx.util.props.S4Component;
 
-import java.io.IOException;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
- * An LM that computes a probability of a word sequence by
- * converting words to classes and asking the class-based probability
- * from a delegate LM.
+ * An LM that computes a probability of a word sequence by converting words to
+ * classes and asking the class-based probability from a delegate LM.
  *
  * @author Tanel Alumae
  */
 public class ClassBasedLanguageModel implements LanguageModel {
+
     /**
      * The property that defines the classLanguageModel component.
      */
     @S4Component(type = LanguageModel.class)
-    public final static String PROP_CLASS_LANGUAGE_MODEL = "classLanguageModel";
+    public final static String PROP_CLASS_LANGUAGE_MODEL =
+        "classLanguageModel";
 
     /**
      * The property that defines the classMap component.
@@ -52,18 +54,19 @@ public class ClassBasedLanguageModel implements LanguageModel {
     public ClassBasedLanguageModel() {
 
     }
-        
+
     /*
      * (non-Javadoc)
-     *
-     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
+     * @see
+     * edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.
+     * util.props.PropertySheet)
      */
     public void newProperties(PropertySheet ps) throws PropertyException {
         if (allocated) {
             throw new PropertyException(
-                    ClassBasedLanguageModel.class.getName(),
-                    null,
-                    "Can't change properties after allocation");
+                                        ClassBasedLanguageModel.class.getName(),
+                                        null,
+                                        "Can't change properties after allocation");
         }
         classMap = (ClassMap) ps.getComponent(PROP_CLASS_MAP);
         classLM = (LanguageModel) ps.getComponent(PROP_CLASS_LANGUAGE_MODEL);
@@ -71,7 +74,6 @@ public class ClassBasedLanguageModel implements LanguageModel {
 
     /*
      * (non-Javadoc)
-     *
      * @see edu.cmu.sphinx.linguist.language.ngram.LanguageModel#allocate()
      */
     public void allocate() throws IOException {
@@ -83,12 +85,10 @@ public class ClassBasedLanguageModel implements LanguageModel {
         }
     }
 
-
     /*
-    * (non-Javadoc)
-    *
-    * @see edu.cmu.sphinx.linguist.language.ngram.LanguageModel#deallocate()
-    */
+     * (non-Javadoc)
+     * @see edu.cmu.sphinx.linguist.language.ngram.LanguageModel#deallocate()
+     */
     public void deallocate() throws IOException {
         allocated = false;
         classLM.deallocate();
@@ -97,30 +97,21 @@ public class ClassBasedLanguageModel implements LanguageModel {
     }
 
     /**
-     * Called before a recognition
-     */
-    public void start() {
-    }
-
-    /**
-     * Called after a recognition
-     */
-    public void stop() {
-    }
-
-    /*
-     * Actual implementation of the class-based LM:
-     * P=P(W|C1)*P(C1|C2,C3..)
-     *
-     * @see edu.cmu.sphinx.linguist.language.ngram.LanguageModel#getProbability(edu.cmu.sphinx.linguist.WordSequence)
+     * Actual implementation of the class-based LM: P=P(W|C1)*P(C1|C2,C3..)
+     * @see
+     * edu.cmu.sphinx.linguist.language.ngram.LanguageModel#getProbability(
+     * edu.cmu.sphinx.linguist.WordSequence)
      */
     public float getProbability(WordSequence wordSequence) {
         Word[] classes = new Word[wordSequence.size()];
         float wordToClassProb = 0;
         for (int i = 0; i < classes.length; i++) {
             Word sourceWord = wordSequence.getWord(i);
-            ClassProbability classProbability = classMap.getClassProbability(sourceWord.getSpelling());
-            classes[i] = (classProbability == null ? sourceWord : classMap.getClassAsWord(classProbability.getClassName()));
+            ClassProbability classProbability =
+                classMap.getClassProbability(sourceWord.getSpelling());
+            classes[i] =
+                (classProbability == null ? sourceWord : classMap
+                        .getClassAsWord(classProbability.getClassName()));
             if (i == classes.length - 1) {
                 if (classProbability != null) {
                     // the first word of the word sequence is a class
@@ -128,10 +119,10 @@ public class ClassBasedLanguageModel implements LanguageModel {
                 }
             }
         }
-        float classBasedProbability = classLM.getProbability(new WordSequence(classes));
+        float classBasedProbability =
+            classLM.getProbability(new WordSequence(classes));
         return classBasedProbability + wordToClassProb;
     }
-
 
     /**
      * Gets the smear term for the given wordSequence
@@ -143,8 +134,10 @@ public class ClassBasedLanguageModel implements LanguageModel {
         return 0.0f; // TODO not implemented
     }
 
-    /* (non-Javadoc)
-     * @see edu.cmu.sphinx.linguist.language.ngram.LanguageModel#getVocabulary()
+    /*
+     * (non-Javadoc)
+     * @see
+     * edu.cmu.sphinx.linguist.language.ngram.LanguageModel#getVocabulary()
      */
     public Set<String> getVocabulary() {
         return vocabulary;
@@ -174,6 +167,5 @@ public class ClassBasedLanguageModel implements LanguageModel {
             }
         }
     }
-
 
 }
