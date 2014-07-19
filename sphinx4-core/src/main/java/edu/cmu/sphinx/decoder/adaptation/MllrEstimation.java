@@ -142,14 +142,16 @@ public class MllrEstimation {
 				for (int k = 0; k < means.getNumGaussiansPerState(); k++) {
 					if (cr.getDnom()[i][j][k] > 0.) {
 						tmean = means.getPool().get(
-								i * means.getNumStates() + k);
+								i * means.getNumGaussiansPerState() + k);
 						for (int l = 0; l < len; l++) {
 							wtMeanVar = cr.getMean()[i][j][k][l]
 									* variances.getPool().get(
-											i * means.getNumStates() + k)[l];
+											i * means.getNumGaussiansPerState()
+													+ k)[l];
 							wtDcountVar = cr.getDnom()[i][j][k]
 									* variances.getPool().get(
-											i * means.getNumStates() + k)[l];
+											i * means.getNumGaussiansPerState()
+													+ k)[l];
 
 							for (int p = 0; p < len; p++) {
 								wtDcountVarMean = wtDcountVar * tmean[p];
@@ -180,14 +182,19 @@ public class MllrEstimation {
 		for (int i = 0; i < means.getNumStates(); i++) {
 			for (int k = 0; k < means.getNumGaussiansPerState(); k++) {
 				for (int l = 0; l < means.getVectorLength()[0]; l++) {
-					if (variances.getPool().get(i * means.getNumStates() + k)[l] <= 0.) {
-						variances.getPool().get(i * means.getNumStates() + k)[l] = (float) 0.5;
+					if (variances.getPool().get(
+							i * means.getNumGaussiansPerState() + k)[l] <= 0.) {
+						variances.getPool().get(
+								i * means.getNumGaussiansPerState() + k)[l] = (float) 0.5;
 					} else if (variances.getPool().get(
-							i * means.getNumStates() + k)[l] < varFlor) {
-						variances.getPool().get(i * means.getNumStates() + k)[l] = (float) (1. / varFlor);
+							i * means.getNumGaussiansPerState() + k)[l] < varFlor) {
+						variances.getPool().get(
+								i * means.getNumGaussiansPerState() + k)[l] = (float) (1. / varFlor);
 					} else {
-						variances.getPool().get(i * means.getNumStates() + k)[l] = (float) (1. / variances
-								.getPool().get(i * means.getNumStates() + k)[l]);
+						variances.getPool().get(
+								i * means.getNumGaussiansPerState() + k)[l] = (float) (1. / variances
+								.getPool()
+								.get(i * means.getNumGaussiansPerState() + k)[l]);
 					}
 				}
 			}
@@ -232,14 +239,15 @@ public class MllrEstimation {
 	private void createMllrFile() throws FileNotFoundException,
 			UnsupportedEncodingException {
 		PrintWriter writer = new PrintWriter(this.outputFilePath, "UTF-8");
-		
-		writer.println(nMllrClass);;
+
+		writer.println(nMllrClass);
+		;
 		writer.println(means.getNumStreams());
-		
+
 		for (int m = 0; m < nMllrClass; m++) {
 			for (int i = 0; i < means.getNumStreams(); i++) {
 				writer.println(means.getVectorLength()[i]);
-				
+
 				for (int j = 0; j < means.getVectorLength()[i]; j++) {
 					for (int k = 0; k < means.getVectorLength()[i]; ++k) {
 						writer.print(A[m][i][j][k]);
@@ -247,23 +255,23 @@ public class MllrEstimation {
 					}
 					writer.println();
 				}
-				
+
 				for (int j = 0; j < means.getVectorLength()[i]; j++) {
 					writer.print(B[m][i][j]);
 					writer.print(" ");
-				
+
 				}
 				writer.println();
-				
+
 				for (int j = 0; j < means.getVectorLength()[i]; j++) {
 					writer.print("1.0 ");
 
 				}
-				
+
 				writer.println();
 			}
 		}
-		
+
 		writer.close();
 
 	}
