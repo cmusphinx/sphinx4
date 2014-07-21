@@ -29,10 +29,14 @@ public class MllrEstimation {
 	private float[][][] B;
 	private double[][][][][] regL;
 	private double[][][][] regR;
+	private Counts counts;
 	private CountsReader cr;
+	private CountsCollector cc;
+	private boolean countsFromFile;
 
 	public MllrEstimation(String location, String countsFilePath,
-			float varFlor, int nMllrClass, String outputFilePath) {
+			float varFlor, int nMllrClass, String outputFilePath,
+			boolean countsFromFile) {
 		super();
 		this.location = location;
 		this.countsFilePath = countsFilePath;
@@ -78,13 +82,21 @@ public class MllrEstimation {
 		this.nMllrClass = nMllrClass;
 	}
 
+	public void setCountsFromFile(boolean countsFromFile) {
+		this.countsFromFile = countsFromFile;
+	}
+
 	public void readCounts() throws Exception {
-		cr = new CountsReader(this.countsFilePath);
-		cr.read();
-		this.cb2mllr = new int[cr.getnCb()];
-		/*
-		 * store useful information
-		 */
+		if (this.countsFromFile) {
+			cr = new CountsReader(this.countsFilePath);
+			cr.read();
+			this.counts = cr.getCounts();
+			this.cb2mllr = new int[counts.getnCb()];
+		} else {
+			cc = new CountsCollector();
+			cc.collect();
+			this.counts = cc.getCounts();
+		}
 	}
 
 	public void readMeansAndVariances() throws Exception {
@@ -114,9 +126,9 @@ public class MllrEstimation {
 	public void fillRegLowerPart() {
 		for (int m = 0; m < nMllrClass; m++) {
 			for (int j = 0; j < means.getNumStreams(); j++) {
-				for (int l = 0; l < cr.getVeclen()[j]; l++) {
-					for (int p = 0; p <= cr.getVeclen()[j]; p++) {
-						for (int q = p + 1; q <= cr.getVeclen()[j]; q++) {
+				for (int l = 0; l < counts.getVeclen()[j]; l++) {
+					for (int p = 0; p <= counts.getVeclen()[j]; p++) {
+						for (int q = p + 1; q <= counts.getVeclen()[j]; q++) {
 							regL[m][j][l][q][p] = regL[m][j][l][p][q];
 						}
 					}
@@ -140,15 +152,15 @@ public class MllrEstimation {
 				len = means.getVectorLength()[j];
 
 				for (int k = 0; k < means.getNumGaussiansPerState(); k++) {
-					if (cr.getDnom()[i][j][k] > 0.) {
+					if (counts.getDnom()[i][j][k] > 0.) {
 						tmean = means.getPool().get(
 								i * means.getNumGaussiansPerState() + k);
 						for (int l = 0; l < len; l++) {
-							wtMeanVar = cr.getMean()[i][j][k][l]
+							wtMeanVar = counts.getMean()[i][j][k][l]
 									* variances.getPool().get(
 											i * means.getNumGaussiansPerState()
 													+ k)[l];
-							wtDcountVar = cr.getDnom()[i][j][k]
+							wtDcountVar = counts.getDnom()[i][j][k]
 									* variances.getPool().get(
 											i * means.getNumGaussiansPerState()
 													+ k)[l];

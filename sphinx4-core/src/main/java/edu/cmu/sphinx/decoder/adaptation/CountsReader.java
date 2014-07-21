@@ -10,60 +10,20 @@ import java.io.IOException;
 public class CountsReader {
 
 	private String filePath;
-	private float[][][][] mean;
-	private float[][][][] variance;
-	private float[][][] dnom;
-	private int[] veclen;
-	private int nCb;
-	private int nFeat;
-	private int nDensity;
-	private int pass2var;
-	private String header;
+	private Counts counts;
 
 	public CountsReader(String filepath) {
 		super();
+		this.counts = new Counts();
 		this.filePath = filepath;
-		this.header = "";
 	}
 
 	public CountsReader() {
-		this.header = "";
+		this.counts = new Counts();
 	}
 
-	public float[][][][] getMean() {
-		return mean;
-	}
-
-	public float[][][][] getVariance() {
-		return variance;
-	}
-
-	public float[][][] getDnom() {
-		return dnom;
-	}
-
-	public int[] getVeclen() {
-		return veclen;
-	}
-
-	public int getnCb() {
-		return nCb;
-	}
-
-	public int getnFeat() {
-		return nFeat;
-	}
-
-	public int getnDensity() {
-		return nDensity;
-	}
-
-	public int getPass2var() {
-		return pass2var;
-	}
-
-	public String getHeader() {
-		return header;
+	public Counts getCounts() {
+		return this.counts;
 	}
 
 	public void setFilePath(String filePath) {
@@ -156,15 +116,15 @@ public class CountsReader {
 			buf[i] = swappedReadFloat(is);
 		}
 
-		array = new float[d1][d2][d3][this.veclen[0]];
+		array = new float[d1][d2][d3][counts.getVeclen()[0]];
 
 		for (int i = 0, bi = 0; i < d1; i++) {
 			for (int j = 0; j < d2; j++) {
 				for (int k = 0; k < d3; k++) {
-					for (int l = 0; l < this.veclen[j]; l++){
+					for (int l = 0; l < counts.getVeclen()[j]; l++) {
 						array[i][j][k][l] = buf[bi + l];
 					}
-					bi += this.veclen[j];
+					bi += counts.getVeclen()[j];
 				}
 			}
 		}
@@ -198,13 +158,13 @@ public class CountsReader {
 			throw new Exception("Dimensions mismatch!");
 		}
 
-		this.dnom = new float[d1][d2][d3];
+		counts.setDnom(new float[d1][d2][d3]);
 		nc = 0;
 
 		for (int i = 0; i < d1; i++) {
 			for (int j = 0; j < d2; j++) {
 				for (int k = 0; k < d3; k++) {
-					this.dnom[i][j][k] = buf[nc++];
+					counts.getDnom()[i][j][k] = buf[nc++];
 				}
 			}
 		}
@@ -229,28 +189,28 @@ public class CountsReader {
 			is.read(ba, 0, 40);
 
 			for (int i = 0; i < ba.length; i++) {
-				this.header += (char) ba[i];
+				counts.setHeader(counts.getHeader() + (char) ba[i]);
 			}
 
 			bom = is.readInt();
 			hasMeans = swappedReadInt(is);
 			hasVars = swappedReadInt(is);
-			this.pass2var = swappedReadInt(is);
-			this.nCb = swappedReadInt(is);
-			this.nDensity = swappedReadInt(is);
-			this.nFeat = swappedReadInt(is);
+			counts.setPass2var(swappedReadInt(is));
+			counts.setnCb(swappedReadInt(is));
+			counts.setnDensity(swappedReadInt(is));
+			counts.setnFeat(swappedReadInt(is));
+			
+			counts.setVeclen(new int[counts.getnFeat()]);
 
-			this.veclen = new int[this.nFeat];
-
-			for (int i = 0; i < this.nFeat; i++) {
-				this.veclen[i] = swappedReadInt(is);
+			for (int i = 0; i < counts.getnFeat(); i++) {
+				counts.getVeclen()[i] = swappedReadInt(is);
 			}
 
 			n = swappedReadInt(is);
 
 			if (hasMeans == 1) {
-				this.mean = this.read4dArray(n, this.nCb, this.nFeat,
-						this.nDensity, is);
+				counts.setMean(this.read4dArray(n, counts.getnCb(), counts.getnFeat(),
+						counts.getnDensity(), is));
 			} else {
 				throw new Exception("No means available!");
 			}
@@ -258,8 +218,8 @@ public class CountsReader {
 			n = swappedReadInt(is);
 
 			if (hasVars == 1) {
-				this.variance = this.read4dArray(n, this.nCb, this.nFeat,
-						this.nDensity, is);
+				counts.setVariance(this.read4dArray(n, counts.getnCb(), counts.getnFeat(),
+						counts.getnDensity(), is));
 			} else {
 				throw new Exception("No variances available!");
 			}
