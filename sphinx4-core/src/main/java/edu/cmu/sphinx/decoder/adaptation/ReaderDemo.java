@@ -20,15 +20,17 @@ public class ReaderDemo {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
-		CountsReader cd;
+		
+		CountsReader cr;
+		Counts cd;
 		int nCb, nFeat, nDensity;
 		int[] veclen;
 		float[][][][] mean, variance;
 		float[][][] dnom;
 
-		cd = new CountsReader(fp);
-		cd.read();
+		cr = new CountsReader(fp);
+		cr.read();
+		cd = cr.getCounts();
 		nCb = cd.getnCb();
 		nFeat = cd.getnFeat();
 		nDensity = cd.getnDensity();
