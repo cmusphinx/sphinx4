@@ -362,7 +362,7 @@ public class FastDictionary implements Dictionary {
 
         String word = dictionary.get(text);
         if (word == null) { // deal with 'not found' case
-            logger.warning("The dictionary is missing a phonetic transcription for the word '"
+            logger.info("The dictionary is missing a phonetic transcription for the word '"
                     + text + "'");
             if (wordReplacement != null) {
                 wordObject = getWord(wordReplacement);
@@ -370,7 +370,7 @@ public class FastDictionary implements Dictionary {
                 if (createMissingWords) {
                     if (g2pModelFile != null
                             && !g2pModelFile.getPath().equals("")) {
-                        logger.warning("Generating phonetic transcription(s) for the word '"
+                        logger.info("Generating phonetic transcription(s) for the word '"
                                 + text + "' using g2p model");
                         ArrayList<Path> paths = g2pDecoder
                                 .phoneticize(text, g2pMaxPron);
