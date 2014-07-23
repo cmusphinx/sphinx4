@@ -1,13 +1,8 @@
 package edu.cmu.sphinx.decoder.adaptation;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import edu.cmu.sphinx.decoder.search.Token;
-import edu.cmu.sphinx.frontend.Data;
 import edu.cmu.sphinx.frontend.DoubleData;
 import edu.cmu.sphinx.frontend.FloatData;
-import edu.cmu.sphinx.linguist.SearchState;
 import edu.cmu.sphinx.linguist.acoustic.HMMState;
 import edu.cmu.sphinx.linguist.acoustic.tiedstate.MixtureComponent;
 import edu.cmu.sphinx.result.Result;
@@ -20,7 +15,7 @@ public class CountsCollector {
 	private int numStates;
 	private int numStreams;
 	private int numGaussiansPerState;
-	private List<DoubleData> features;
+
 
 	public CountsCollector(int[] vectorLength, int numStates, int numStreams,
 			int numGaussiansPerState, Result result) {
@@ -67,7 +62,6 @@ public class CountsCollector {
 	public void collect() throws Exception {
 		Token token = result.getBestToken();
 		HMMState state;
-		float lmr;
 		float[] componentScore, featureVector;
 		float totalScore, dn;
 		int mId;
