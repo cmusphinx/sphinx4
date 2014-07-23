@@ -12,12 +12,15 @@
 package edu.cmu.sphinx.demo.aligner;
 
 import static com.google.common.base.Charsets.UTF_8;
+import static com.google.common.collect.Lists.transform;
 import static com.google.common.io.Files.asCharSource;
+import static edu.cmu.sphinx.result.WordResults.toSpelling;
 
 import java.io.File;
 import java.net.URL;
+import java.util.List;
 
-import edu.cmu.sphinx.alignment.SpeechAligner;
+import edu.cmu.sphinx.alignment.*;
 import edu.cmu.sphinx.result.WordResult;
 
 
@@ -58,10 +61,37 @@ public class AlignerDemo {
         SpeechAligner aligner =
                 new SpeechAligner(acousticModelPath, dictionaryPath, g2pPath);
 
-        for (WordResult result : aligner.align(audioUrl, transcript)) {
-            System.out.format("%-25s [%s]\n",
-                              result.getWord().getSpelling(),
-                              result.getTimeFrame());
+        WordTokenizer tokenizer = new EnglishWordTokenizer();
+        List<WordResult> results = aligner.align(audioUrl, transcript);
+        LongTextAligner textAligner =
+                new LongTextAligner(transform(results, toSpelling()), 1);
+        List<String> words = tokenizer.getWords(transcript);
+        int[] aid = textAligner.align(words);
+
+        int lastId = -1;
+        for (int i = 0; i < aid.length; ++i) {
+            if (aid[i] == -1) {
+                System.out.format("- %s\n", words.get(i));
+            } else {
+                if (aid[i] - lastId > 1) {
+                    for (WordResult result : results.subList(lastId + 1,
+                            aid[i])) {
+                        System.out.format("+ %-25s [%s]\n", result.getWord()
+                                .getSpelling(), result.getTimeFrame());
+                    }
+                }
+                System.out.format("  %-25s [%s]\n", results.get(aid[i])
+                        .getWord().getSpelling(), results.get(aid[i])
+                        .getTimeFrame());
+                lastId = aid[i];
+            }
+        }
+
+        if (results.size() - lastId > 1) {
+            for (WordResult result : results.subList(lastId, results.size())) {
+                System.out.format("+ %-25s [%s]\n", result.getWord()
+                        .getSpelling(), result.getTimeFrame());
+            }
         }
     }
 }
