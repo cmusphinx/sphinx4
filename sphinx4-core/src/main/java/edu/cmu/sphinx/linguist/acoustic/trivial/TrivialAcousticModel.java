@@ -14,6 +14,7 @@ package edu.cmu.sphinx.linguist.acoustic.trivial;
 
 import edu.cmu.sphinx.frontend.Data;
 import edu.cmu.sphinx.linguist.acoustic.*;
+import edu.cmu.sphinx.linguist.acoustic.tiedstate.MixtureComponent;
 import edu.cmu.sphinx.util.props.PropertyException;
 import edu.cmu.sphinx.util.props.PropertySheet;
 import edu.cmu.sphinx.util.props.S4Integer;
@@ -362,4 +363,22 @@ class TrivialHMMState implements HMMState {
     public boolean isExitState() {
         return isFinal;
     }
+
+    /**
+     * Returns the mixture components associated with this Gaussian
+     *
+     * @return the array of mixture components
+     */
+	public MixtureComponent[] getMixtureComponents() {
+		return null;
+	}
+
+    /**
+     * Gets the ID for this senone
+     *
+     * @return the senone id
+     */
+	public long getMixtureId() {
+		return 0;
+	}
 }

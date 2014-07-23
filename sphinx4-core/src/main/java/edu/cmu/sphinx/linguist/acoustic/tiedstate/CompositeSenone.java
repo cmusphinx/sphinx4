@@ -171,4 +171,8 @@ public class CompositeSenone extends ScoreCachingSenone {
     public String toString() {
         return "senone id: " + getID();
     }
+
+	public MixtureComponent[] getMixtureComponents() {
+		return null;
+	}
 }
