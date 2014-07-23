@@ -6,6 +6,7 @@ import edu.cmu.sphinx.frontend.FloatData;
 import edu.cmu.sphinx.linguist.acoustic.HMMState;
 import edu.cmu.sphinx.linguist.acoustic.tiedstate.MixtureComponent;
 import edu.cmu.sphinx.result.Result;
+import edu.cmu.sphinx.util.LogMath;
 
 public class CountsCollector {
 
@@ -15,6 +16,7 @@ public class CountsCollector {
 	private int numStates;
 	private int numStreams;
 	private int numGaussiansPerState;
+    private LogMath logMath;
 
 
 	public CountsCollector(int[] vectorLength, int numStates, int numStreams,
@@ -32,10 +34,10 @@ public class CountsCollector {
 	}
 
 	public float computeTotalScore(float[] scores) {
-		float totalScore = 0;
+		float totalScore = LogMath.LOG_ZERO;
 
 		for (int i = 0; i < scores.length; i++) {
-			totalScore += scores[i];
+			totalScore = logMath.addAsLinear(totalScore, scores[i]);
 		}
 
 		return totalScore;
