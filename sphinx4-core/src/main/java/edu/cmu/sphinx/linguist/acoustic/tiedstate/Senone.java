@@ -60,4 +60,10 @@ public interface Senone extends Serializable {
      */
     public MixtureComponent[] getMixtureComponents();
 
+    /**
+     * 
+     * @return the mixture weights vector
+     */
+	public float[] getLogMixtureWeights();
+
 }

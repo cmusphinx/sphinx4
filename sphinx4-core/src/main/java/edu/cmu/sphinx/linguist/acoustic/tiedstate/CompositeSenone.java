@@ -175,4 +175,9 @@ public class CompositeSenone extends ScoreCachingSenone {
 	public MixtureComponent[] getMixtureComponents() {
 		return null;
 	}
+
+
+	public float[] getLogMixtureWeights() {
+		return null;
+	}
 }

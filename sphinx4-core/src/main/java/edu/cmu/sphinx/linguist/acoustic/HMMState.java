@@ -40,6 +40,12 @@ public interface HMMState {
     public long getMixtureId();
     
     /**
+     * 
+     * @return the mixture weights vector
+     */
+    public float[] getLogMixtureWeights();
+    
+    /**
      * Gets the state
      *
      * @return the state

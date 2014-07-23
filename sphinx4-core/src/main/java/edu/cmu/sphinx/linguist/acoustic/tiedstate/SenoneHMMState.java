@@ -200,5 +200,9 @@ public class SenoneHMMState implements HMMState {
 	public long getMixtureId() {
 		return senone.getID();
 	}
+
+	public float[] getLogMixtureWeights() {
+		return senone.getLogMixtureWeights();
+	}
 }
 

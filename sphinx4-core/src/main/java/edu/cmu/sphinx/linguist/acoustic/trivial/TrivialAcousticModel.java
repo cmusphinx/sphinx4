@@ -381,4 +381,9 @@ class TrivialHMMState implements HMMState {
 	public long getMixtureId() {
 		return 0;
 	}
+
+
+	public float[] getLogMixtureWeights() {
+		return null;
+	}
 }
