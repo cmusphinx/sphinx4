@@ -13,6 +13,7 @@ import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.linear.RealVector;
 
 import edu.cmu.sphinx.linguist.acoustic.tiedstate.Sphinx3Loader;
+import edu.cmu.sphinx.result.Result;
 
 public class MllrEstimation {
 
@@ -33,16 +34,19 @@ public class MllrEstimation {
 	private CountsReader cr;
 	private CountsCollector cc;
 	private boolean countsFromFile;
+	private Result result;
 
 	public MllrEstimation(String location, String countsFilePath,
 			float varFlor, int nMllrClass, String outputFilePath,
-			boolean countsFromFile) {
+			boolean countsFromFile, Result result) {
 		super();
 		this.location = location;
 		this.countsFilePath = countsFilePath;
 		this.varFlor = varFlor;
 		this.nMllrClass = nMllrClass;
 		this.outputFilePath = outputFilePath;
+		this.countsFromFile = countsFromFile;
+		this.result = result;
 	}
 
 	public MllrEstimation() {
@@ -86,14 +90,16 @@ public class MllrEstimation {
 		this.countsFromFile = countsFromFile;
 	}
 
-	public void readCounts() throws Exception {
+	public void readCounts(Result result) throws Exception {
 		if (this.countsFromFile) {
 			cr = new CountsReader(this.countsFilePath);
 			cr.read();
 			this.counts = cr.getCounts();
 			this.cb2mllr = new int[counts.getnCb()];
 		} else {
-			cc = new CountsCollector();
+			cc = new CountsCollector(means.getVectorLength(),
+					means.getNumStates(), means.getNumStreams(),
+					means.getNumGaussiansPerState(), result);
 			cc.collect();
 			this.counts = cc.getCounts();
 		}
@@ -126,9 +132,9 @@ public class MllrEstimation {
 	public void fillRegLowerPart() {
 		for (int m = 0; m < nMllrClass; m++) {
 			for (int j = 0; j < means.getNumStreams(); j++) {
-				for (int l = 0; l < counts.getVeclen()[j]; l++) {
-					for (int p = 0; p <= counts.getVeclen()[j]; p++) {
-						for (int q = p + 1; q <= counts.getVeclen()[j]; q++) {
+				for (int l = 0; l < means.getVectorLength()[j]; l++) {
+					for (int p = 0; p <= means.getVectorLength()[j]; p++) {
+						for (int q = p + 1; q <= means.getVectorLength()[j]; q++) {
 							regL[m][j][l][q][p] = regL[m][j][l][p][q];
 						}
 					}
@@ -290,7 +296,7 @@ public class MllrEstimation {
 
 	public void estimateMatrices() throws Exception {
 		this.readMeansAndVariances();
-		this.readCounts();
+		this.readCounts(this.result);
 		this.invertVariances();
 
 		int len = means.getVectorLength()[0];
