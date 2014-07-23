@@ -170,6 +170,11 @@ public class GaussianMixture extends ScoreCachingSenone {
     }
 
 
+    public float[] getLogMixtureWeights(){
+    	return this.logMixtureWeights;
+    }
+    
+
     /** @return the (linearly scaled) mixture weights of the component densities */
     public float[] getComponentWeights() {
         float[] mixWeights = new float[getMixtureComponents().length];
