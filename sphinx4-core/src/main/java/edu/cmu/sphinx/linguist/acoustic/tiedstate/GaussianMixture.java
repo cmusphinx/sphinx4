@@ -93,11 +93,7 @@ public class GaussianMixture extends ScoreCachingSenone {
     }
 
 
-    /**
-     * Gets the ID for this senone
-     *
-     * @return the senone id
-     */
+
     public long getID() {
         return id;
     }
@@ -157,11 +153,6 @@ public class GaussianMixture extends ScoreCachingSenone {
     }
 
 
-    /**
-     * Returns the mixture components associated with this Gaussian
-     *
-     * @return the array of mixture components
-     */
     public MixtureComponent[] getMixtureComponents() {
         return mixtureComponents;
     }
