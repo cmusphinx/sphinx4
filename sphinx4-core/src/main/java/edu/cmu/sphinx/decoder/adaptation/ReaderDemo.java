@@ -24,7 +24,6 @@ public class ReaderDemo {
 		CountsReader cr;
 		Counts cd;
 		int nCb, nFeat, nDensity;
-		int[] veclen;
 		float[][][][] mean, variance;
 		float[][][] dnom;
 
@@ -40,7 +39,6 @@ public class ReaderDemo {
 		System.out.println("n_feat = " + nFeat + "\n");
 		System.out.println("n_density = " + nDensity + "\n");
 
-		veclen = cd.getVeclen();
 		mean = cd.getMean();
 		variance = cd.getVariance();
 		dnom = cd.getDnom();

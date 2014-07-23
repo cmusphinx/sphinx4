@@ -174,12 +174,12 @@ public class CountsReader {
 	 * Reads and stores in the class fields all data from the binary file
 	 * provided in the filepath field.
 	 */
+	@SuppressWarnings("unused")
 	public void read() throws Exception {
 
-		int bom, hasMeans, hasVars, n, nc, d1, d2, d3;
+		int bom, hasMeans, hasVars, n;
 		FileInputStream fp = null;
 		DataInputStream is = null;
-		float[] buf = null;
 		byte[] ba = null;
 
 		try {
