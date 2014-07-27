@@ -381,6 +381,9 @@ public class FastDictionary implements Dictionary {
                             for (String token : p.getPath()) {
                                 units.add(getCIUnit(token, false));
                             }
+                            if (units.size() == 0) {
+                                units.add(UnitManager.SILENCE);
+                            }
                             pronunciations.add(new Pronunciation(units));
                             if (addSilEndingPronunciation) {
                                 units.add(UnitManager.SILENCE);
