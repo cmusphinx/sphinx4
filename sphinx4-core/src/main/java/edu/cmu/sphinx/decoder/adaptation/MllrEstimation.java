@@ -4,6 +4,7 @@ import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
+import java.util.List;
 
 import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.ArrayRealVector;
@@ -34,11 +35,11 @@ public class MllrEstimation {
 	private CountsReader cr;
 	private CountsCollector cc;
 	private boolean countsFromFile;
-	private Result result;
+	private List<Result> results;
 
 	public MllrEstimation(String location, String countsFilePath,
 			float varFlor, int nMllrClass, String outputFilePath,
-			boolean countsFromFile, Result result) {
+			boolean countsFromFile, List<Result> results) {
 		super();
 		this.location = location;
 		this.countsFilePath = countsFilePath;
@@ -46,7 +47,7 @@ public class MllrEstimation {
 		this.nMllrClass = nMllrClass;
 		this.outputFilePath = outputFilePath;
 		this.countsFromFile = countsFromFile;
-		this.result = result;
+		this.results = results;
 	}
 
 	public MllrEstimation() {
@@ -90,17 +91,23 @@ public class MllrEstimation {
 		this.countsFromFile = countsFromFile;
 	}
 
-	public void readCounts(Result result) throws Exception {
+	public void readCounts() throws Exception {
 		if (this.countsFromFile) {
 			cr = new CountsReader(this.countsFilePath);
 			cr.read();
 			this.counts = cr.getCounts();
 			this.cb2mllr = new int[counts.getnCb()];
 		} else {
-			cc = new CountsCollector(means.getVectorLength(),
-					means.getNumStates(), means.getNumStreams(),
-					means.getNumGaussiansPerState(), result);
-			cc.collect();
+			if (cc == null) {
+				cc = new CountsCollector(means.getVectorLength(),
+						means.getNumStates(), means.getNumStreams(),
+						means.getNumGaussiansPerState());
+			}
+			
+			for (Result result : this.results){
+				cc.collect(result);
+			}
+			
 			this.counts = cc.getCounts();
 		}
 	}
@@ -296,7 +303,7 @@ public class MllrEstimation {
 
 	public void estimateMatrices() throws Exception {
 		this.readMeansAndVariances();
-		this.readCounts(this.result);
+		this.readCounts();
 		this.invertVariances();
 
 		int len = means.getVectorLength()[0];
