@@ -38,12 +38,12 @@ public class MllrEstimation {
 	private List<Result> results;
 
 	public MllrEstimation(String location, String countsFilePath,
-			float varFlor, int nMllrClass, String outputFilePath,
-			boolean countsFromFile, List<Result> results) {
+			int nMllrClass, String outputFilePath, boolean countsFromFile,
+			List<Result> results) {
 		super();
 		this.location = location;
 		this.countsFilePath = countsFilePath;
-		this.varFlor = varFlor;
+		this.varFlor = (float) 1e-5;
 		this.nMllrClass = nMllrClass;
 		this.outputFilePath = outputFilePath;
 		this.countsFromFile = countsFromFile;
@@ -98,16 +98,14 @@ public class MllrEstimation {
 			this.counts = cr.getCounts();
 			this.cb2mllr = new int[counts.getnCb()];
 		} else {
-			if (cc == null) {
-				cc = new CountsCollector(means.getVectorLength(),
-						means.getNumStates(), means.getNumStreams(),
-						means.getNumGaussiansPerState());
-			}
-			
-			for (Result result : this.results){
+			cc = new CountsCollector(means.getVectorLength(),
+					means.getNumStates(), means.getNumStreams(),
+					means.getNumGaussiansPerState());
+
+			for (Result result : this.results) {
 				cc.collect(result);
 			}
-			
+
 			this.counts = cc.getCounts();
 		}
 	}
@@ -261,12 +259,11 @@ public class MllrEstimation {
 		}
 	}
 
-	private void createMllrFile() throws FileNotFoundException,
+	public void createMllrFile() throws FileNotFoundException,
 			UnsupportedEncodingException {
 		PrintWriter writer = new PrintWriter(this.outputFilePath, "UTF-8");
 
 		writer.println(nMllrClass);
-		;
 		writer.println(means.getNumStreams());
 
 		for (int m = 0; m < nMllrClass; m++) {
@@ -320,7 +317,6 @@ public class MllrEstimation {
 
 		this.fillRegMatrices();
 		this.computeMllr();
-		this.createMllrFile();
 	}
 
 }
