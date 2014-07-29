@@ -11,26 +11,25 @@ import edu.cmu.sphinx.util.LogMath;
 public class CountsCollector {
 
 	private Counts counts;
-	private Result result;
 	private int[] vectorLength;
 	private int numStates;
 	private int numStreams;
 	private int numGaussiansPerState;
-    private LogMath logMath;
+	private LogMath logMath;
 
+	public Counts getCounts() {
+		return counts;
+	}
 
 	public CountsCollector(int[] vectorLength, int numStates, int numStreams,
-			int numGaussiansPerState, Result result) {
+			int numGaussiansPerState) {
 		super();
 		this.vectorLength = vectorLength;
 		this.numStates = numStates;
 		this.numStreams = numStreams;
 		this.numGaussiansPerState = numGaussiansPerState;
-		this.result = result;
-	}
-
-	public Counts getCounts() {
-		return counts;
+		this.counts = new Counts(vectorLength, numStates, numStreams,
+				numGaussiansPerState);
 	}
 
 	public float computeTotalScore(float[] scores) {
@@ -56,12 +55,28 @@ public class CountsCollector {
 		return logComponentScore;
 	}
 
-	public float computeLmr(HMMState searchState) {
-		searchState.getState();
-		return 0;
+	public void addCounts(float[][][] denominatorArray, float[][][][] meansArray) {
+		float[][][] dnom;
+		float[][][][] means;
+
+		dnom = counts.getDnom();
+		means = counts.getMean();
+		for (int i = 0; i < numStates; i++) {
+			for (int j = 0; j < numStreams; j++) {
+				for (int k = 0; k < numGaussiansPerState; k++) {
+					dnom[i][j][k] += denominatorArray[i][j][k];
+					for (int l = 0; l < vectorLength[0]; l++) {
+						means[i][j][k][l] += meansArray[i][j][k][l];
+					}
+				}
+			}
+		}
+
+		counts.setDnom(dnom);
+		counts.setMean(means);
 	}
 
-	public void collect() throws Exception {
+	public void collect(Result result) throws Exception {
 		Token token = result.getBestToken();
 		HMMState state;
 		float[] componentScore, featureVector;
@@ -95,5 +110,6 @@ public class CountsCollector {
 			token = token.getPredecessor();
 		} while (token != null);
 
+		this.addCounts(dnom, means);
 	}
 }

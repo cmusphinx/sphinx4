@@ -17,6 +17,17 @@ public class Counts {
 		this.header="";
 	}
 
+	public Counts(int[] vectorLength, int numStates, int numStreams,
+			int numGaussiansPerState) {
+		this.header="";
+		this.nCb = numStates;
+		this.nFeat = numStreams;
+		this.nDensity = numGaussiansPerState;
+		this.veclen = vectorLength;
+		this.dnom = new float[numStates][numStreams][numGaussiansPerState];
+		this.mean = new float[numStates][numStreams][numGaussiansPerState][vectorLength[0]];
+	}
+
 	public float[][][][] getMean() {
 		return mean;
 	}
@@ -89,8 +100,4 @@ public class Counts {
 		this.header = header;
 	}
 	
-	
-	
-	
-
 }
