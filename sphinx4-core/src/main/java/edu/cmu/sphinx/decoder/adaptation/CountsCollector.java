@@ -94,6 +94,10 @@ public class CountsCollector {
 
 		do {
 			DoubleData feature = (DoubleData) token.getData();
+			
+			if(!(token.getSearchState() instanceof HMMState))
+				continue;
+			
 			state = (HMMState) token.getSearchState();
 			componentScore = this.calculateComponentScore(feature, state);
 			totalScore = this.computeTotalScore(componentScore);
