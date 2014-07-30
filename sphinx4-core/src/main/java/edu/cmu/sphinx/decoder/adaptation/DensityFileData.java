@@ -72,6 +72,22 @@ public class DensityFileData {
 	public void setVarFloor(float varFloor) {
 		this.varFloor = varFloor;
 	}
+	
+	public void setNumStates(int numStates) {
+		this.numStates = numStates;
+	}
+
+	public void setNumStreams(int numStreams) {
+		this.numStreams = numStreams;
+	}
+
+	public void setNumGaussiansPerState(int numGaussiansPerState) {
+		this.numGaussiansPerState = numGaussiansPerState;
+	}
+
+	public void setPool(Pool<float[]> pool) {
+		this.pool = pool;
+	}
 
 	@SuppressWarnings("unused")
 	public void loadFile() throws IOException, URISyntaxException {
