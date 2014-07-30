@@ -28,13 +28,20 @@ public class DensityFileData {
 	private int[] vectorLength;
 	Pool<float[]> pool;
 
-	public DensityFileData(String filePath, float varFloor, Sphinx3Loader loader)
-			throws IOException, URISyntaxException {
+	public DensityFileData(String filePath, float varFloor,
+			Sphinx3Loader loader, boolean meansFromFile) throws IOException,
+			URISyntaxException {
 		super();
 		this.filePath = filePath;
 		this.varFloor = varFloor;
 		this.loader = loader;
-		this.loadFile();
+		if (meansFromFile) {
+			this.loadFile();
+		}
+	}
+
+	public DensityFileData() {
+		this.varFloor = (float) 1e-5;
 	}
 
 	public int getNumStates() {
@@ -72,7 +79,7 @@ public class DensityFileData {
 	public void setVarFloor(float varFloor) {
 		this.varFloor = varFloor;
 	}
-	
+
 	public void setNumStates(int numStates) {
 		this.numStates = numStates;
 	}
@@ -87,6 +94,10 @@ public class DensityFileData {
 
 	public void setPool(Pool<float[]> pool) {
 		this.pool = pool;
+	}
+
+	public void setVectorLength(int[] vectorLength) {
+		this.vectorLength = vectorLength;
 	}
 
 	@SuppressWarnings("unused")
