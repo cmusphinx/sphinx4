@@ -11,18 +11,19 @@
 
 package edu.cmu.sphinx.api;
 
+import static edu.cmu.sphinx.util.props.ConfigurationManagerUtils.resourceToURL;
+import static edu.cmu.sphinx.util.props.ConfigurationManagerUtils.setProperty;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import edu.cmu.sphinx.frontend.frequencywarp.MelFrequencyFilterBank2;
 import edu.cmu.sphinx.frontend.util.StreamDataSource;
-
+import edu.cmu.sphinx.linguist.acoustic.tiedstate.Loader;
 import edu.cmu.sphinx.util.props.Configurable;
 import edu.cmu.sphinx.util.props.ConfigurationManager;
-
-import static edu.cmu.sphinx.util.props.ConfigurationManagerUtils.resourceToURL;
-import static edu.cmu.sphinx.util.props.ConfigurationManagerUtils.setProperty;
 
 
 /**
@@ -213,5 +214,14 @@ public class Context {
      */
     public <C extends Configurable> C getInstance(Class<C> clazz) {
         return configurationManager.lookup(clazz);
+    }
+    
+    /**
+     * Returns the Loader object used for loading the acoustic model.
+     * 
+     * @return the loader  object
+     */
+    public Loader getLoader(){
+    	return (Loader) configurationManager.lookup("acousticModelLoader");
     }
 }
