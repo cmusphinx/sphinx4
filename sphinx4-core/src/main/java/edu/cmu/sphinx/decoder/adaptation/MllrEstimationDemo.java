@@ -11,6 +11,7 @@ public class MllrEstimationDemo {
 		me1.setOutputFilePath("/home/bogdanpetcu/RSoC/data/BillGates_2010/adapted/mllrMatrix");
 		me1.setCountsFromFile(true);
 		me1.estimateMatrices();
+		me1.createMllrFile();
 	
 		MllrEstimation me2 = new MllrEstimation();
 
@@ -20,6 +21,7 @@ public class MllrEstimationDemo {
 		me2.setOutputFilePath("/home/bogdanpetcu/RSoC/data/EricMead_2009/adapted/mllrMatrix");
 		me2.setCountsFromFile(true);
 		me2.estimateMatrices();
+		me2.createMllrFile();
 		
 		MllrEstimation me3 = new MllrEstimation();
 
@@ -29,7 +31,8 @@ public class MllrEstimationDemo {
 		me3.setOutputFilePath("/home/bogdanpetcu/RSoC/data/GaryFlake_2010/adapted/mllrMatrix");
 		me3.setCountsFromFile(true);
 		me3.estimateMatrices();
-
+		me3.createMllrFile();
+		
 		MllrEstimation me4 = new MllrEstimation();
 
 		me4.setLocation("/home/bogdanpetcu/RSoC/en-us");
@@ -38,7 +41,7 @@ public class MllrEstimationDemo {
 		me4.setOutputFilePath("/home/bogdanpetcu/RSoC/data/JaneMcGonigal_2010/adapted/mllrMatrix");
 		me4.setCountsFromFile(true);
 		me4.estimateMatrices();
-
+		me4.createMllrFile();
 	
 	}
 

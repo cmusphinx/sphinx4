@@ -35,11 +35,14 @@ public class MllrEstimation {
 	private CountsReader cr;
 	private CountsCollector cc;
 	private boolean countsFromFile;
+	private boolean modelFromFile;
 	private List<Result> results;
+	private Sphinx3Loader s3loader;
 
-	public MllrEstimation(String location, String countsFilePath,
-			int nMllrClass, String outputFilePath, boolean countsFromFile,
-			List<Result> results) {
+	public MllrEstimation(String location, int nMllrClass,
+			String outputFilePath, boolean countsFromFile,
+			String countsFilePath, boolean modelFromFile,
+			Sphinx3Loader s3loader, List<Result> results) {
 		super();
 		this.location = location;
 		this.countsFilePath = countsFilePath;
@@ -48,6 +51,8 @@ public class MllrEstimation {
 		this.outputFilePath = outputFilePath;
 		this.countsFromFile = countsFromFile;
 		this.results = results;
+		this.modelFromFile = modelFromFile;
+		this.s3loader = s3loader;
 	}
 
 	public MllrEstimation() {
@@ -91,6 +96,14 @@ public class MllrEstimation {
 		this.countsFromFile = countsFromFile;
 	}
 
+	public void setModelFromFile(boolean modelFromFile) {
+		this.modelFromFile = modelFromFile;
+	}
+
+	public void setS3loader(Sphinx3Loader s3loader) {
+		this.s3loader = s3loader;
+	}
+
 	public void readCounts() throws Exception {
 		if (this.countsFromFile) {
 			cr = new CountsReader(this.countsFilePath);
@@ -111,25 +124,40 @@ public class MllrEstimation {
 	}
 
 	public void readMeansAndVariances() throws Exception {
-		URL location = new URL("file:" + this.location);
-		Sphinx3Loader loader = new Sphinx3Loader(location, this.model, "",
-				null, 0, 0, this.varFlor, false);
 
-		this.means = new DensityFileData("means", -Float.MAX_VALUE, loader);
-		this.variances = new DensityFileData("variances", this.varFlor, loader);
+		if (modelFromFile) {
+			URL location = new URL("file:" + this.location);
+			Sphinx3Loader loader = new Sphinx3Loader(location, this.model, "",
+					null, 0, 0, this.varFlor, false);
 
-		if (means.getNumStates() != variances.getNumStates()
-				|| means.getNumStreams() != variances.getNumStreams()
-				|| means.getNumGaussiansPerState() != variances
-						.getNumGaussiansPerState()) {
-			throw new Exception("Dimensions mismatch!");
-		}
+			this.means = new DensityFileData("means", -Float.MAX_VALUE, loader);
+			this.variances = new DensityFileData("variances", this.varFlor,
+					loader);
 
-		for (int i = 0; i < means.getNumStreams(); i++) {
-			if (means.getVectorLength()[i] != variances.getVectorLength()[i]) {
-				throw new Exception(
-						"Mismatch between vector length of some stream(s) and prior length");
+			if (means.getNumStates() != variances.getNumStates()
+					|| means.getNumStreams() != variances.getNumStreams()
+					|| means.getNumGaussiansPerState() != variances
+							.getNumGaussiansPerState()) {
+				throw new Exception("Dimensions mismatch!");
 			}
+
+			for (int i = 0; i < means.getNumStreams(); i++) {
+				if (means.getVectorLength()[i] != variances.getVectorLength()[i]) {
+					throw new Exception(
+							"Mismatch between vector length of some stream(s) and prior length");
+				}
+			}
+		} else {
+			this.means.setPool(s3loader.getMeansPool());
+			this.means.setNumGaussiansPerState(s3loader
+					.getNumGaussiansPerState());
+			this.means.setNumStreams(s3loader.getNumStreams());
+			this.means.setNumStates(s3loader.getNumStates());
+			this.variances.setPool(s3loader.getVariancePool());
+			this.variances.setNumGaussiansPerState(s3loader
+					.getNumGaussiansPerState());
+			this.variances.setNumStreams(s3loader.getNumStreams());
+			this.variances.setNumStates(s3loader.getNumStates());
 		}
 
 	}
