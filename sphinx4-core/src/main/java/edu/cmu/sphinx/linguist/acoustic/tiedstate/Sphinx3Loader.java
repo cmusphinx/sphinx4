@@ -169,7 +169,11 @@ public class Sphinx3Loader implements Loader {
     protected Pool<float[]> variancePool;
     protected Pool<float[][]> transitionsPool;
     protected Pool<float[]> mixtureWeightsPool;
-
+	private int numStates;
+	private int numStreams;
+	private int numGaussiansPerState;
+	private int[] vectorLength;
+    
     private Pool<float[][]> meanTransformationMatrixPool;
     private Pool<float[]> meanTransformationVectorPool;
     private Pool<float[][]> varianceTransformationMatrixPool;
@@ -239,8 +243,24 @@ public class Sphinx3Loader implements Loader {
     public Sphinx3Loader() {
 
     }
+    
+    public int getNumStates() {
+		return numStates;
+	}
 
-    public void newProperties(PropertySheet ps) throws PropertyException {
+	public int getNumStreams() {
+		return numStreams;
+	}
+
+	public int getNumGaussiansPerState() {
+		return numGaussiansPerState;
+	}
+
+	public int[] getVectorLength() {
+		return vectorLength;
+	}
+
+	public void newProperties(PropertySheet ps) throws PropertyException {
 
         init(ConfigurationManagerUtils.getResource(PROP_LOCATION, ps),
                 ps.getString(PROP_MODEL), ps.getString(PROP_DATA_LOCATION),
@@ -489,6 +509,12 @@ public class Sphinx3Loader implements Loader {
         validateChecksum(dis, doCheckSum);
 
         dis.close();
+        
+        this.numStates = numStates;
+        this.numStreams = numStreams;
+        this.numGaussiansPerState = numGaussiansPerState;
+        this.vectorLength = vectorLength;
+        
         return pool;
     }
 
