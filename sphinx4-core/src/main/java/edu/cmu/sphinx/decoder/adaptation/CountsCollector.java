@@ -42,7 +42,7 @@ public class CountsCollector {
 		return totalScore;
 	}
 
-	public float[] calculateComponentScore(DoubleData feature, HMMState state) {
+	public float[] calculateComponentScore(FloatData feature, HMMState state) {
 		MixtureComponent[] mc = state.getMixtureComponents();
 		float[] mw = state.getLogMixtureWeights();
 		float[] featureVector = FloatData.toFloatData(feature).getValues();
@@ -93,10 +93,12 @@ public class CountsCollector {
 		means = new float[numStates][numStreams][numGaussiansPerState][vectorLength[0]];
 
 		do {
-			DoubleData feature = (DoubleData) token.getData();
-			
-			if(!(token.getSearchState() instanceof HMMState))
+			FloatData feature = (FloatData) token.getData();
+
+			if(!(token.getSearchState() instanceof HMMState)){
+				token = token.getPredecessor();
 				continue;
+			}
 			
 			state = (HMMState) token.getSearchState();
 			componentScore = this.calculateComponentScore(feature, state);
@@ -111,7 +113,7 @@ public class CountsCollector {
 				}
 			}
 
-			token = token.getPredecessor();
+
 		} while (token != null);
 
 		this.addCounts(dnom, means);

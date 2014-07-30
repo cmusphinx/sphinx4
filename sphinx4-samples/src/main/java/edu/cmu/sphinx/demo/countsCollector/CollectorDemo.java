@@ -1,6 +1,5 @@
 package edu.cmu.sphinx.demo.countsCollector;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.LinkedList;
 
@@ -9,6 +8,7 @@ import edu.cmu.sphinx.api.SpeechResult;
 import edu.cmu.sphinx.api.StreamSpeechRecognizer;
 import edu.cmu.sphinx.decoder.adaptation.MllrEstimation;
 import edu.cmu.sphinx.demo.transcriber.TranscriberDemo;
+import edu.cmu.sphinx.linguist.acoustic.tiedstate.Sphinx3Loader;
 import edu.cmu.sphinx.result.Result;
 import edu.cmu.sphinx.result.WordResult;
 
@@ -26,10 +26,11 @@ public class CollectorDemo {
 		configuration
 				.setLanguageModelPath("resource:/edu/cmu/sphinx/models/language/en-us.lm.dmp");
 
+
 		StreamSpeechRecognizer recognizer = new StreamSpeechRecognizer(
 				configuration);
 		InputStream stream = TranscriberDemo.class
-				.getResourceAsStream("/edu/cmu/sphinx/demo/aligner/10001-90210-01803.wav");
+				.getResourceAsStream("/edu/cmu/sphinx/demo/countsCollector/out.wav");
 		recognizer.startRecognition(stream);
 
 		SpeechResult result;
@@ -52,8 +53,8 @@ public class CollectorDemo {
 		}
 
 		recognizer.stopRecognition();
-		MllrEstimation me = new MllrEstimation("/home/bogdanpetcu/RSoC/wsj",
-				"", 1, "/home/bogdanpetcu/mllr_mat", false, results);
+		Sphinx3Loader loader = (Sphinx3Loader) recognizer.getLoader();
+		MllrEstimation me = new MllrEstimation("", 1, "/home/bogdanpetcu/mllrmat", false, "", false, loader, results);
 		me.estimateMatrices();
 		me.createMllrFile();
 	}

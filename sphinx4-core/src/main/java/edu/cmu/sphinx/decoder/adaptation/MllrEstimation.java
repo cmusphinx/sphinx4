@@ -13,6 +13,7 @@ import org.apache.commons.math3.linear.LUDecomposition;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.linear.RealVector;
 
+import edu.cmu.sphinx.linguist.acoustic.tiedstate.Loader;
 import edu.cmu.sphinx.linguist.acoustic.tiedstate.Sphinx3Loader;
 import edu.cmu.sphinx.result.Result;
 
@@ -41,8 +42,8 @@ public class MllrEstimation {
 
 	public MllrEstimation(String location, int nMllrClass,
 			String outputFilePath, boolean countsFromFile,
-			String countsFilePath, boolean modelFromFile,
-			Sphinx3Loader s3loader, List<Result> results) {
+			String countsFilePath, boolean modelFromFile, Loader loader,
+			List<Result> results) {
 		super();
 		this.location = location;
 		this.countsFilePath = countsFilePath;
@@ -52,7 +53,7 @@ public class MllrEstimation {
 		this.countsFromFile = countsFromFile;
 		this.results = results;
 		this.modelFromFile = modelFromFile;
-		this.s3loader = s3loader;
+		this.s3loader = (Sphinx3Loader) loader;
 	}
 
 	public MllrEstimation() {
@@ -100,8 +101,8 @@ public class MllrEstimation {
 		this.modelFromFile = modelFromFile;
 	}
 
-	public void setS3loader(Sphinx3Loader s3loader) {
-		this.s3loader = s3loader;
+	public void setS3loader(Loader loader) {
+		this.s3loader = (Sphinx3Loader) loader;
 	}
 
 	public void readCounts() throws Exception {
@@ -130,9 +131,10 @@ public class MllrEstimation {
 			Sphinx3Loader loader = new Sphinx3Loader(location, this.model, "",
 					null, 0, 0, this.varFlor, false);
 
-			this.means = new DensityFileData("means", -Float.MAX_VALUE, loader);
+			this.means = new DensityFileData("means", -Float.MAX_VALUE, loader,
+					true);
 			this.variances = new DensityFileData("variances", this.varFlor,
-					loader);
+					loader, true);
 
 			if (means.getNumStates() != variances.getNumStates()
 					|| means.getNumStreams() != variances.getNumStreams()
@@ -148,16 +150,20 @@ public class MllrEstimation {
 				}
 			}
 		} else {
+			this.means = new DensityFileData();
+			this.variances = new DensityFileData();
 			this.means.setPool(s3loader.getMeansPool());
 			this.means.setNumGaussiansPerState(s3loader
 					.getNumGaussiansPerState());
 			this.means.setNumStreams(s3loader.getNumStreams());
 			this.means.setNumStates(s3loader.getNumStates());
+			this.means.setVectorLength(s3loader.getVectorLength());
 			this.variances.setPool(s3loader.getVariancePool());
 			this.variances.setNumGaussiansPerState(s3loader
 					.getNumGaussiansPerState());
 			this.variances.setNumStreams(s3loader.getNumStreams());
 			this.variances.setNumStates(s3loader.getNumStates());
+			this.variances.setVectorLength(s3loader.getVectorLength());
 		}
 
 	}
