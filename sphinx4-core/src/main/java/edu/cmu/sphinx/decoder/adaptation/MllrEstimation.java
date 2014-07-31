@@ -37,13 +37,12 @@ public class MllrEstimation {
 	private CountsCollector cc;
 	private boolean countsFromFile;
 	private boolean modelFromFile;
-	private List<Result> results;
 	private Sphinx3Loader s3loader;
 
 	public MllrEstimation(String location, int nMllrClass,
 			String outputFilePath, boolean countsFromFile,
-			String countsFilePath, boolean modelFromFile, Loader loader,
-			List<Result> results) {
+			String countsFilePath, boolean modelFromFile, Loader loader)
+			throws Exception {
 		super();
 		this.location = location;
 		this.countsFilePath = countsFilePath;
@@ -51,11 +50,16 @@ public class MllrEstimation {
 		this.nMllrClass = nMllrClass;
 		this.outputFilePath = outputFilePath;
 		this.countsFromFile = countsFromFile;
-		this.results = results;
 		this.modelFromFile = modelFromFile;
 		this.s3loader = (Sphinx3Loader) loader;
+		this.init();
 	}
 
+	public void init() throws Exception {
+		this.readMeansAndVariances();
+		this.readCounts();
+	}
+	
 	public MllrEstimation() {
 		this.varFlor = (float) 1e-5;
 		this.nMllrClass = 1;
@@ -115,12 +119,6 @@ public class MllrEstimation {
 			cc = new CountsCollector(means.getVectorLength(),
 					means.getNumStates(), means.getNumStreams(),
 					means.getNumGaussiansPerState());
-
-			for (Result result : this.results) {
-				cc.collect(result);
-			}
-
-			this.counts = cc.getCounts();
 		}
 	}
 
@@ -292,6 +290,10 @@ public class MllrEstimation {
 			}
 		}
 	}
+	
+	public void addCounts(Result result) throws Exception{
+		cc.collect(result);
+	}
 
 	public void createMllrFile() throws FileNotFoundException,
 			UnsupportedEncodingException {
@@ -332,9 +334,12 @@ public class MllrEstimation {
 
 	}
 
-	public void estimateMatrices() throws Exception {
-		this.readMeansAndVariances();
-		this.readCounts();
+	public void estimateMatrices() {
+		
+		if(!countsFromFile){
+			this.counts = cc.getCounts();
+		}
+		
 		this.invertVariances();
 
 		int len = means.getVectorLength()[0];

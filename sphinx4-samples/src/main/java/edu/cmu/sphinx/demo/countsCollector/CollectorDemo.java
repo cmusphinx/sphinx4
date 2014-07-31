@@ -35,8 +35,11 @@ public class CollectorDemo {
 
 		SpeechResult result;
 
+		Sphinx3Loader loader = (Sphinx3Loader) recognizer.getLoader();
+		MllrEstimation me = new MllrEstimation("", 1, "/home/bogdanpetcu/mllrmat", false, "", false, loader);
+		
 		while ((result = recognizer.getResult()) != null) {
-			results.add(result.getResult());
+			me.addCounts(result.getResult());
 			System.out.format("Hypothesis: %s\n", result.getHypothesis());
 
 			System.out.println("List of recognized words and their times:");
@@ -53,8 +56,6 @@ public class CollectorDemo {
 		}
 
 		recognizer.stopRecognition();
-		Sphinx3Loader loader = (Sphinx3Loader) recognizer.getLoader();
-		MllrEstimation me = new MllrEstimation("", 1, "/home/bogdanpetcu/mllrmat", false, "", false, loader, results);
 		me.estimateMatrices();
 		me.createMllrFile();
 	}
