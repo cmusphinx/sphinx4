@@ -3,6 +3,7 @@ package edu.cmu.sphinx.decoder.adaptation;
 import edu.cmu.sphinx.decoder.search.Token;
 import edu.cmu.sphinx.frontend.DoubleData;
 import edu.cmu.sphinx.frontend.FloatData;
+import edu.cmu.sphinx.linguist.HMMSearchState;
 import edu.cmu.sphinx.linguist.acoustic.HMMState;
 import edu.cmu.sphinx.linguist.acoustic.tiedstate.MixtureComponent;
 import edu.cmu.sphinx.result.Result;
@@ -42,9 +43,9 @@ public class CountsCollector {
 		return totalScore;
 	}
 
-	public float[] calculateComponentScore(FloatData feature, HMMState state) {
-		MixtureComponent[] mc = state.getMixtureComponents();
-		float[] mw = state.getLogMixtureWeights();
+	public float[] calculateComponentScore(FloatData feature, HMMSearchState state) {
+		MixtureComponent[] mc = state.getHMMState().getMixtureComponents();
+		float[] mw = state.getHMMState().getLogMixtureWeights();
 		float[] featureVector = FloatData.toFloatData(feature).getValues();
 		float[] logComponentScore = new float[mc.length];
 
@@ -78,7 +79,7 @@ public class CountsCollector {
 
 	public void collect(Result result) throws Exception {
 		Token token = result.getBestToken();
-		HMMState state;
+		HMMSearchState state;
 		float[] componentScore, featureVector;
 		float totalScore, dn;
 		int mId;
@@ -95,19 +96,20 @@ public class CountsCollector {
 		do {
 			FloatData feature = (FloatData) token.getData();
 
-			if(!(token.getSearchState() instanceof HMMState)){
+			if(!(token.getSearchState() instanceof HMMSearchState)){
 				token = token.getPredecessor();
 				continue;
 			}
 			
-			state = (HMMState) token.getSearchState();
+			state = (HMMSearchState) token.getSearchState();
 			componentScore = this.calculateComponentScore(feature, state);
 			totalScore = this.computeTotalScore(componentScore);
 			featureVector = FloatData.toFloatData(feature).getValues();
-			mId = (int) state.getMixtureId();
+			mId = (int) state.getHMMState().getMixtureId();
 
 			for (int i = 0; i < componentScore.length; i++) {
-				dn = dnom[mId][0][i] = componentScore[i] / totalScore;
+				dnom[mId][0][i] = componentScore[i] / totalScore;
+				dn = dnom[mId][0][i];
 				for (int j = 0; j < featureVector.length; j++) {
 					means[mId][0][i][j] = dn * featureVector[j];
 				}
@@ -116,6 +118,16 @@ public class CountsCollector {
 
 		} while (token != null);
 
+						for(int i=0; i<dnom.length; i++){
+							for(int j=0; j<dnom[0].length; j++){
+								for (int k=0; k<dnom[0][0].length; k++){
+									if(dnom[i][j][k]!=0){
+										System.out.println(dnom[i][j][k]);
+									}
+								}
+							}
+						}
+						
 		this.addCounts(dnom, means);
 	}
 }
