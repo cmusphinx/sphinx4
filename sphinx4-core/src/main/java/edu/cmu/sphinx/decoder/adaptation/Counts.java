@@ -99,5 +99,5 @@ public class Counts {
 	public void setHeader(String header) {
 		this.header = header;
 	}
-	
+
 }

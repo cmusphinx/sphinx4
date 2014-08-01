@@ -1,10 +1,9 @@
 package edu.cmu.sphinx.decoder.adaptation;
 
 import edu.cmu.sphinx.decoder.search.Token;
-import edu.cmu.sphinx.frontend.DoubleData;
 import edu.cmu.sphinx.frontend.FloatData;
 import edu.cmu.sphinx.linguist.HMMSearchState;
-import edu.cmu.sphinx.linguist.acoustic.HMMState;
+import edu.cmu.sphinx.linguist.SearchState;
 import edu.cmu.sphinx.linguist.acoustic.tiedstate.MixtureComponent;
 import edu.cmu.sphinx.result.Result;
 import edu.cmu.sphinx.util.LogMath;
@@ -31,6 +30,7 @@ public class CountsCollector {
 		this.numGaussiansPerState = numGaussiansPerState;
 		this.counts = new Counts(vectorLength, numStates, numStreams,
 				numGaussiansPerState);
+		this.logMath = LogMath.getInstance();
 	}
 
 	public float computeTotalScore(float[] scores) {
@@ -43,7 +43,8 @@ public class CountsCollector {
 		return totalScore;
 	}
 
-	public float[] calculateComponentScore(FloatData feature, HMMSearchState state) {
+	public float[] calculateComponentScore(FloatData feature,
+			HMMSearchState state) {
 		MixtureComponent[] mc = state.getHMMState().getMixtureComponents();
 		float[] mw = state.getHMMState().getLogMixtureWeights();
 		float[] featureVector = FloatData.toFloatData(feature).getValues();
@@ -95,12 +96,13 @@ public class CountsCollector {
 
 		do {
 			FloatData feature = (FloatData) token.getData();
+			SearchState ss = token.getSearchState();
 
-			if(!(token.getSearchState() instanceof HMMSearchState)){
+			if (!(ss instanceof HMMSearchState && ss.isEmitting())) {
 				token = token.getPredecessor();
 				continue;
 			}
-			
+
 			state = (HMMSearchState) token.getSearchState();
 			componentScore = this.calculateComponentScore(feature, state);
 			totalScore = this.computeTotalScore(componentScore);
@@ -114,20 +116,10 @@ public class CountsCollector {
 					means[mId][0][i][j] = dn * featureVector[j];
 				}
 			}
-
-
+			
+			token = token.getPredecessor();
 		} while (token != null);
 
-						for(int i=0; i<dnom.length; i++){
-							for(int j=0; j<dnom[0].length; j++){
-								for (int k=0; k<dnom[0][0].length; k++){
-									if(dnom[i][j][k]!=0){
-										System.out.println(dnom[i][j][k]);
-									}
-								}
-							}
-						}
-						
 		this.addCounts(dnom, means);
 	}
 }
