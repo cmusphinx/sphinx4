@@ -340,6 +340,7 @@ public class MllrEstimation {
 			this.counts = cc.getCounts();
 		}
 		
+		
 		this.invertVariances();
 
 		int len = means.getVectorLength()[0];
