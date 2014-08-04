@@ -66,9 +66,9 @@ public class CountsCollector {
 		for (int i = 0; i < numStates; i++) {
 			for (int j = 0; j < numStreams; j++) {
 				for (int k = 0; k < numGaussiansPerState; k++) {
-					dnom[i][j][k] += denominatorArray[i][j][k];
+					dnom[i][j][k] = logMath.addAsLinear(dnom[i][j][k], denominatorArray[i][j][k]);
 					for (int l = 0; l < vectorLength[0]; l++) {
-						means[i][j][k][l] += meansArray[i][j][k][l];
+						means[i][j][k][l] = logMath.addAsLinear(means[i][j][k][l], meansArray[i][j][k][l]);
 					}
 				}
 			}
@@ -110,13 +110,12 @@ public class CountsCollector {
 			mId = (int) state.getHMMState().getMixtureId();
 
 			for (int i = 0; i < componentScore.length; i++) {
-				dnom[mId][0][i] = componentScore[i] / totalScore;
-				dn = dnom[mId][0][i];
+				dn = dnom[mId][0][i] = logMath.addAsLinear(dnom[mId][0][i] ,componentScore[i] / totalScore);
 				for (int j = 0; j < featureVector.length; j++) {
-					means[mId][0][i][j] = dn * featureVector[j];
+					means[mId][0][i][j] = logMath.addAsLinear(means[mId][0][i][j], dn * featureVector[j]);
 				}
 			}
-			
+
 			token = token.getPredecessor();
 		} while (token != null);
 
