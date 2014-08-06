@@ -57,6 +57,25 @@ public class CountsCollector {
 		return logComponentScore;
 	}
 
+	public float[] computePosterios(float[] componentScores) {
+		float max;
+		float[] posteriors = componentScores;
+
+		max = posteriors[0];
+		
+		for (int i = 1; i < componentScores.length; i++) {
+			if (posteriors[i] > max){
+				max = posteriors[i];
+			}
+		}
+
+		for (int i = 0; i < componentScores.length; i++) {
+			posteriors[i] = (float) logMath.logToLinear(posteriors[i] - max);
+		}
+
+		return posteriors;
+	}
+
 	public void addCounts(float[][][] denominatorArray, float[][][][] meansArray) {
 		float[][][] dnom;
 		float[][][][] means;
@@ -66,9 +85,9 @@ public class CountsCollector {
 		for (int i = 0; i < numStates; i++) {
 			for (int j = 0; j < numStreams; j++) {
 				for (int k = 0; k < numGaussiansPerState; k++) {
-					dnom[i][j][k] = logMath.addAsLinear(dnom[i][j][k], denominatorArray[i][j][k]);
+					dnom[i][j][k] += denominatorArray[i][j][k];
 					for (int l = 0; l < vectorLength[0]; l++) {
-						means[i][j][k][l] = logMath.addAsLinear(means[i][j][k][l], meansArray[i][j][k][l]);
+						means[i][j][k][l] += meansArray[i][j][k][l];
 					}
 				}
 			}
@@ -81,7 +100,7 @@ public class CountsCollector {
 	public void collect(Result result) throws Exception {
 		Token token = result.getBestToken();
 		HMMSearchState state;
-		float[] componentScore, featureVector;
+		float[] componentScore, featureVector, posteriors;
 		float totalScore, dn;
 		int mId;
 
@@ -108,11 +127,13 @@ public class CountsCollector {
 			totalScore = this.computeTotalScore(componentScore);
 			featureVector = FloatData.toFloatData(feature).getValues();
 			mId = (int) state.getHMMState().getMixtureId();
+			posteriors = this.computePosterios(componentScore);
 
 			for (int i = 0; i < componentScore.length; i++) {
-				dn = dnom[mId][0][i] = logMath.addAsLinear(dnom[mId][0][i] ,componentScore[i] / totalScore);
+				dnom[mId][0][i] += posteriors[i];
+				dn = dnom[mId][0][i];
 				for (int j = 0; j < featureVector.length; j++) {
-					means[mId][0][i][j] = logMath.addAsLinear(means[mId][0][i][j], dn * featureVector[j]);
+					means[mId][0][i][j] += dn * featureVector[j];
 				}
 			}
 
