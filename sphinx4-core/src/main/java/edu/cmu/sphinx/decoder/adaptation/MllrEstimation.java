@@ -147,6 +147,10 @@ public class MllrEstimation {
 				}
 			}
 		} else {
+			if(s3loader==null){
+				throw new Exception("Sphinx3Loader is not set.");
+			}
+			
 			this.means = new DensityFileData();
 			this.variances = new DensityFileData();
 			this.means.setPool(s3loader.getMeansPool());
@@ -162,7 +166,6 @@ public class MllrEstimation {
 			this.variances.setNumStates(s3loader.getNumStates());
 			this.variances.setVectorLength(s3loader.getVectorLength());
 		}
-
 	}
 
 	public void fillRegLowerPart() {
@@ -225,9 +228,7 @@ public class MllrEstimation {
 				}
 			}
 		}
-
 		fillRegLowerPart();
-
 	}
 
 	public void invertVariances() {
@@ -253,7 +254,6 @@ public class MllrEstimation {
 				}
 			}
 		}
-
 	}
 
 	public void computeMllr() {
@@ -267,7 +267,6 @@ public class MllrEstimation {
 
 		for (int m = 0; m < nMllrClass; m++) {
 			for (int i = 0; i < means.getNumStreams(); i++) {
-
 				len = means.getVectorLength()[i];
 				this.A[m][i] = new float[len][len];
 				this.B[m][i] = new float[len];
@@ -283,9 +282,7 @@ public class MllrEstimation {
 					}
 
 					this.B[m][i][j] = (float) ABloc.getEntry(len);
-
 				}
-
 			}
 		}
 	}
@@ -324,21 +321,16 @@ public class MllrEstimation {
 					writer.print("1.0 ");
 
 				}
-
 				writer.println();
 			}
 		}
-
 		writer.close();
-
 	}
 
 	public void estimateMatrices() {
-		
 		if(!countsFromFile){
 			this.counts = cc.getCounts();
 		}
-		
 		
 		this.invertVariances();
 
@@ -357,5 +349,4 @@ public class MllrEstimation {
 		this.fillRegMatrices();
 		this.computeMllr();
 	}
-
 }
