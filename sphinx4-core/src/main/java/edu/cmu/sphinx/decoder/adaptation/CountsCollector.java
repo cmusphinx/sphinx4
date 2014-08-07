@@ -33,16 +33,6 @@ public class CountsCollector {
 		this.logMath = LogMath.getInstance();
 	}
 
-	public float computeTotalScore(float[] scores) {
-		float totalScore = LogMath.LOG_ZERO;
-
-		for (int i = 0; i < scores.length; i++) {
-			totalScore = logMath.addAsLinear(totalScore, scores[i]);
-		}
-
-		return totalScore;
-	}
-
 	public float[] calculateComponentScore(FloatData feature,
 			HMMSearchState state) {
 		MixtureComponent[] mc = state.getHMMState().getMixtureComponents();
@@ -101,7 +91,6 @@ public class CountsCollector {
 		Token token = result.getBestToken();
 		HMMSearchState state;
 		float[] componentScore, featureVector, posteriors;
-		float totalScore, dn;
 		int mId;
 
 		if (token == null)
@@ -124,16 +113,14 @@ public class CountsCollector {
 
 			state = (HMMSearchState) token.getSearchState();
 			componentScore = this.calculateComponentScore(feature, state);
-			totalScore = this.computeTotalScore(componentScore);
 			featureVector = FloatData.toFloatData(feature).getValues();
 			mId = (int) state.getHMMState().getMixtureId();
 			posteriors = this.computePosterios(componentScore);
 
 			for (int i = 0; i < componentScore.length; i++) {
 				dnom[mId][0][i] += posteriors[i];
-				dn = dnom[mId][0][i];
 				for (int j = 0; j < featureVector.length; j++) {
-					means[mId][0][i][j] += dn * featureVector[j];
+					means[mId][0][i][j] += posteriors[i] * featureVector[j];
 				}
 			}
 
