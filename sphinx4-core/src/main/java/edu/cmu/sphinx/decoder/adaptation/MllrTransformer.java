@@ -4,6 +4,8 @@ import java.io.DataOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import edu.cmu.sphinx.util.Utilities;
+
 public class MllrTransformer {
 
 	private DensityFileData means;
@@ -11,20 +13,25 @@ public class MllrTransformer {
 	private float[][][][] A;
 	private float[][][] B;
 	private String header;
+	private boolean meansToFile;
 
-	public MllrTransformer(DensityFileData means, String outputMeanFile,
-			float[][][][] a, float[][][] b) {
+	public MllrTransformer(DensityFileData means, float[][][][] a,
+			float[][][] b, boolean meansToFile, String outputMeanFile) {
 		super();
 		this.means = means;
 		this.outputMeanFile = outputMeanFile;
 		A = a;
 		B = b;
-		this.header = "s3" + "\n" + "version 1.0" + "\n" + "chksum0 no" + "\n"
-				+ "      endhdr" + "\n";
+		this.header = "s3\nversion 1.0\nchksum0 yes\n      endhdr\n";
+		this.meansToFile = meansToFile;
 	}
 
 	public void setHeader(String header) {
 		this.header = header;
+	}
+	
+	public DensityFileData getMeans(){
+		return this.means;
 	}
 
 	private void writeToFile() throws IOException {
@@ -34,32 +41,44 @@ public class MllrTransformer {
 		fp = new FileOutputStream(this.outputMeanFile);
 		os = new DataOutputStream(fp);
 
-		os.writeChars(this.header);
-		os.writeInt(means.getNumStates());
-		os.writeInt(means.getNumStreams());
-		os.writeInt(means.getNumGaussiansPerState());
+		os.write(this.header.getBytes());
+
+		// byte-order magic
+		os.writeInt(1144201745);
+
+		os.writeInt(Utilities.swapInteger(means.getNumStates()));
+		os.writeInt(Utilities.swapInteger(means.getNumStreams()));
+		os.writeInt(Utilities.swapInteger(means.getNumGaussiansPerState()));
 
 		for (int i = 0; i < means.getNumStreams(); i++) {
-			os.writeInt(means.getVectorLength()[i]);
+			os.writeInt(Utilities.swapInteger(means.getVectorLength()[i]));
 		}
+
+		os.writeInt(Utilities.swapInteger(means.getNumGaussiansPerState()
+				* means.getVectorLength()[0] * means.getNumStates()));
 
 		for (int i = 0; i < means.getNumStates(); i++) {
 			for (int j = 0; j < means.getNumStreams(); j++) {
 				for (int k = 0; k < means.getNumGaussiansPerState(); k++) {
 					for (int l = 0; l < means.getVectorLength()[0]; l++) {
-						os.writeFloat(means.getPool().get(
-								i * means.getNumGaussiansPerState() + k)[l]);
+						os.writeFloat(Utilities.swapFloat(means.getPool().get(
+								i * means.getNumStreams()
+										* means.getNumGaussiansPerState() + j
+										* means.getNumGaussiansPerState() + k)[l]));
 					}
 				}
 			}
 		}
+
+		// checksum
+		os.writeInt(0);
 
 		os.close();
 		fp.close();
 
 	}
 
-	public void transformMean() {
+	private void transformMean() {
 		float[] tmean;
 
 		for (int i = 0; i < means.getNumStates(); i++) {
@@ -88,12 +107,14 @@ public class MllrTransformer {
 		}
 	}
 
-	public void adaptMean() throws IOException {
+	private void adaptMean() throws IOException {
 		this.transformMean();
-		this.writeToFile();
 	}
 
 	public void transform() throws IOException {
 		this.adaptMean();
+		if(this.meansToFile){
+			this.writeToFile();
+		}
 	}
 }
