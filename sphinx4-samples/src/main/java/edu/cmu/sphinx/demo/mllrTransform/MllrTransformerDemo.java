@@ -17,7 +17,7 @@ public class MllrTransformerDemo {
 		Sphinx3Loader loader = new Sphinx3Loader(x, "en-us", "", null, 0, 0,
 				(float) 1e-5, false);
 
-		DensityFileData means = new DensityFileData("means", (float) 1e-5,
+		DensityFileData means = new DensityFileData("means", -Float.MAX_VALUE,
 				loader, true);
 		means.loadFile();
 		
