@@ -256,10 +256,15 @@ public class Utilities {
      * @param integer the integer to swap
      */
     public static int swapInteger(int integer) {
-        return (((0x000000ff & integer) << 24) |
-                ((0x0000ff00 & integer) << 8) |
-                ((0x00ff0000 & integer) >> 8) |
-                ((0xff000000 & integer) >> 24));
+		int swapped = 0, byte1, byte2, byte3, byte4;
+
+		byte1 = (integer >> 0) & 0xff;
+		byte2 = (integer >> 8) & 0xff;
+		byte3 = (integer >> 16) & 0xff;
+		byte4 = (integer >> 24) & 0xff;
+		swapped = byte1 << 24 | byte2 << 16 | byte3 << 8 | byte4 << 0;
+
+		return swapped;
     }
 
 
@@ -271,7 +276,7 @@ public class Utilities {
      */
     public static float swapFloat(float floatValue) {
         return Float.intBitsToFloat
-                (swapInteger(Float.floatToRawIntBits(floatValue)));
+                (swapInteger(Float.floatToIntBits(floatValue)));
     }
     
 

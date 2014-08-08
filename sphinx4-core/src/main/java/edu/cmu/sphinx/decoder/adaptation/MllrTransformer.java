@@ -29,8 +29,8 @@ public class MllrTransformer {
 	public void setHeader(String header) {
 		this.header = header;
 	}
-	
-	public DensityFileData getMeans(){
+
+	public DensityFileData getMeans() {
 		return this.means;
 	}
 
@@ -75,7 +75,6 @@ public class MllrTransformer {
 
 		os.close();
 		fp.close();
-
 	}
 
 	private void transformMean() {
@@ -113,7 +112,7 @@ public class MllrTransformer {
 
 	public void transform() throws IOException {
 		this.adaptMean();
-		if(this.meansToFile){
+		if (this.meansToFile) {
 			this.writeToFile();
 		}
 	}
