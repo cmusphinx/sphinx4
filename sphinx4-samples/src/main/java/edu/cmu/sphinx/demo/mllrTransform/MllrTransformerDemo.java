@@ -21,8 +21,9 @@ public class MllrTransformerDemo {
 				loader, true);
 		means.loadFile();
 		
-		MllrTransformer mt = new MllrTransformer(means, new float[0][0][0][0], new float[0][0][0], true, "/home/bogdanpetcu/output");
+		MllrTransformer mt = new MllrTransformer(means, new float[0][0][0][0], new float[0][0][0], "/home/bogdanpetcu/output");
 		mt.transform();
+		mt.writeToFile();
 	}
 
 }
