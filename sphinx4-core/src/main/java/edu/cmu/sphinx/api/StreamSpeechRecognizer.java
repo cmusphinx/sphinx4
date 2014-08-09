@@ -13,6 +13,7 @@ package edu.cmu.sphinx.api;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URISyntaxException;
 
 
 /**
@@ -32,6 +33,12 @@ public class StreamSpeechRecognizer extends AbstractSpeechRecognizer {
     {
         super(configuration);
     }
+    
+    private void adaptOnline() throws IOException, URISyntaxException {
+    	//TODO: access frontend for buffering the sent results
+    	while (this.getResult() != null);
+    	this.adaptCurrentModel();
+    }
 
     /**
      * Starts recognition process.
@@ -41,12 +48,20 @@ public class StreamSpeechRecognizer extends AbstractSpeechRecognizer {
      * @param clear clear cached microphone data
      * @see         StreamSpeechRecognizer#stopRecognition()
      */
-    public void startRecognition(InputStream stream) {
+    public void startRecognition(InputStream stream, boolean useOnlineAdaptation) {
         recognizer.allocate();
         context.setSpeechSource(stream);
+        if(useOnlineAdaptation){
+        	try {
+				this.initAdaptation();
+				this.adaptOnline();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+        }
     }
 
-    /**
+	/**
      * Stops recognition process.
      *
      * Recognition process is paused until the next call to startRecognition.

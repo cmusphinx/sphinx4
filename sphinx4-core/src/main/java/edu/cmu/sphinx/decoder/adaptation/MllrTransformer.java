@@ -13,28 +13,30 @@ public class MllrTransformer {
 	private float[][][][] A;
 	private float[][][] B;
 	private String header;
-	private boolean meansToFile;
 
 	public MllrTransformer(DensityFileData means, float[][][][] a,
-			float[][][] b, boolean meansToFile, String outputMeanFile) {
+			float[][][] b, String outputMeanFile) {
 		super();
 		this.means = means;
 		this.outputMeanFile = outputMeanFile;
 		A = a;
 		B = b;
 		this.header = "s3\nversion 1.0\nchksum0 yes\n      endhdr\n";
-		this.meansToFile = meansToFile;
 	}
 
 	public void setHeader(String header) {
 		this.header = header;
+	}
+	
+	public void setOutputMeanFile(String outputMeanFile){
+		this.outputMeanFile = outputMeanFile;
 	}
 
 	public DensityFileData getMeans() {
 		return this.means;
 	}
 
-	private void writeToFile() throws IOException {
+	public void writeToFile() throws IOException {
 		FileOutputStream fp;
 		DataOutputStream os;
 
@@ -112,8 +114,5 @@ public class MllrTransformer {
 
 	public void transform() throws IOException {
 		this.adaptMean();
-		if (this.meansToFile) {
-			this.writeToFile();
-		}
 	}
 }

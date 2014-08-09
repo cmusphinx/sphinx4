@@ -37,6 +37,7 @@ public class MllrEstimation {
 	private boolean countsFromFile;
 	private boolean modelFromFile;
 	private Sphinx3Loader s3loader;
+	private boolean estimated;
 
 	public MllrEstimation(String location, int nMllrClass,
 			String outputFilePath, boolean countsFromFile,
@@ -106,6 +107,10 @@ public class MllrEstimation {
 
 	public void setS3loader(Loader loader) {
 		this.s3loader = (Sphinx3Loader) loader;
+	}
+	
+	public boolean isComplete(){
+		return this.estimated;
 	}
 
 	public void readCounts() throws Exception {
@@ -348,5 +353,6 @@ public class MllrEstimation {
 
 		this.fillRegMatrices();
 		this.computeMllr();
+		this.estimated = true;
 	}
 }

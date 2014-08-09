@@ -11,9 +11,16 @@
 
 package edu.cmu.sphinx.api;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URISyntaxException;
 
+import edu.cmu.sphinx.decoder.adaptation.DensityFileData;
+import edu.cmu.sphinx.decoder.adaptation.MllrEstimation;
+import edu.cmu.sphinx.decoder.adaptation.MllrTransformer;
 import edu.cmu.sphinx.linguist.acoustic.tiedstate.Loader;
+import edu.cmu.sphinx.linguist.acoustic.tiedstate.Sphinx3Loader;
 import edu.cmu.sphinx.result.Result;
 import edu.cmu.sphinx.recognizer.Recognizer;
 
@@ -27,6 +34,9 @@ public class AbstractSpeechRecognizer {
     protected final Recognizer recognizer;
 
     protected final SpeechSourceProvider speechSourceProvider;
+    
+    private boolean collectStatsForAdaptation;
+    private MllrEstimation estimation;
 
     /**
      * Constructs recognizer object using provided configuration.
@@ -42,13 +52,77 @@ public class AbstractSpeechRecognizer {
         recognizer = context.getInstance(Recognizer.class);
         speechSourceProvider = new SpeechSourceProvider();
     }
+    
+    protected void initAdaptation() throws Exception{
+    	this.collectStatsForAdaptation = true;
+    	Loader loader = context.getLoader();
+    	this.estimation = new MllrEstimation("", 1, "", false, "", false, loader);
+    }
+    
+    private MllrTransformer getTransformer() throws IOException, URISyntaxException{
+    	Sphinx3Loader loader = (Sphinx3Loader) context.getLoader();
+    	DensityFileData means = new DensityFileData("", -Float.MAX_VALUE, loader, false);
+    	MllrTransformer transformer;
+    	
+    	if (!this.estimation.isComplete()){
+    		this.estimation.estimateMatrices();
+    	}
+    	
+    	means.getMeansFromLoader();
+    	transformer = new MllrTransformer(means, estimation.getA(), estimation.getB(), "");
+    	transformer.transform();
+    	
+    	return transformer;
+    }
+    
+    public void adaptModelOnDisk() throws IOException, URISyntaxException{
+    	Sphinx3Loader loader = (Sphinx3Loader) context.getLoader();
+    	String path = loader.getLocation() + "/means";
+    	MllrTransformer transformer = this.getTransformer();
+    	
+    	transformer.setOutputMeanFile(path);
+    	transformer.writeToFile();
+    }
+    
+    public void writeTransformationToFile(String filepath){
+    	if (!this.estimation.isComplete()){
+    		this.estimation.estimateMatrices();
+    	}
+    	
+    	this.estimation.setOutputFilePath(filepath);
+    	
+    	try {
+			estimation.createMllrFile();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+    }
+    
+    public void adaptCurrentModel() throws IOException, URISyntaxException{
+    	MllrTransformer transformer = this.getTransformer();
+
+    	//TODO : adapt current model
+    }
+    
 
     /**
      * Returns result of the recognition.
      */
     public SpeechResult getResult() {
         Result result = recognizer.recognize();
-        return null == result ? null : new SpeechResult(result);
+        SpeechResult speechRes = null == result ? null : new SpeechResult(result);
+        
+        if(this.collectStatsForAdaptation && speechRes != null){
+        	try {
+				estimation.addCounts(result);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+        }
+        
+        return speechRes;
     }
     
     /**
