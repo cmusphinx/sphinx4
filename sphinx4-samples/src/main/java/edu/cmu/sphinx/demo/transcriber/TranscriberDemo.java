@@ -43,7 +43,7 @@ public class TranscriberDemo {
             new StreamSpeechRecognizer(configuration);
         InputStream stream = TranscriberDemo.class.getResourceAsStream(
                 "/edu/cmu/sphinx/demo/aligner/10001-90210-01803.wav");
-        recognizer.startRecognition(stream);
+        recognizer.startRecognition(stream, false);
 
         SpeechResult result;
 

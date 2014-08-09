@@ -27,7 +27,7 @@ public class CollectorDemo {
 				configuration);
 		InputStream stream = TranscriberDemo.class
 				.getResourceAsStream("/edu/cmu/sphinx/demo/countsCollector/out.wav");
-		recognizer.startRecognition(stream);
+		recognizer.startRecognition(stream, false);
 
 		SpeechResult result;
 
