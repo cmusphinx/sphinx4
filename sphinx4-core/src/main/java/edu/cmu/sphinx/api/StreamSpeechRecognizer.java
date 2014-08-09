@@ -38,6 +38,7 @@ public class StreamSpeechRecognizer extends AbstractSpeechRecognizer {
     	//TODO: access frontend for buffering the sent results
     	while (this.getResult() != null);
     	this.adaptCurrentModel();
+    	this.collectStatsForAdaptation = false;
     }
 
     /**
