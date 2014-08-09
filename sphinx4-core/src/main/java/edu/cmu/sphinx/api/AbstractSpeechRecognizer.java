@@ -35,7 +35,7 @@ public class AbstractSpeechRecognizer {
 
     protected final SpeechSourceProvider speechSourceProvider;
     
-    private boolean collectStatsForAdaptation;
+    protected boolean collectStatsForAdaptation;
     private MllrEstimation estimation;
 
     /**
