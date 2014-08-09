@@ -42,9 +42,16 @@ public class LiveSpeechRecognizer extends AbstractSpeechRecognizer {
      * @param clear clear cached microphone data
      * @see         LiveSpeechRecognizer#stopRecognition()
      */
-    public void startRecognition(boolean clear) {
+    public void startRecognition(boolean clear, boolean collectStatsForAdaptation) {
         recognizer.allocate();
         microphone.startRecording();
+        if (collectStatsForAdaptation){
+        	try {
+				this.initAdaptation();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+        }
     }
 
     /**

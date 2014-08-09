@@ -259,6 +259,10 @@ public class Sphinx3Loader implements Loader {
 	public int[] getVectorLength() {
 		return vectorLength;
 	}
+	
+	public String getLocation(){
+		return this.location.getPath();
+	}
 
 	public void newProperties(PropertySheet ps) throws PropertyException {
 
