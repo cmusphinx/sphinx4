@@ -99,6 +99,14 @@ public class DensityFileData {
 	public void setVectorLength(int[] vectorLength) {
 		this.vectorLength = vectorLength;
 	}
+	
+	public void getMeansFromLoader(){
+		this.numStates = loader.getNumStates();
+		this.numStreams = loader.getNumStreams();
+		this.numGaussiansPerState = loader.getNumGaussiansPerState();
+		this.vectorLength = loader.getVectorLength();
+		this.pool = loader.getMeansPool();
+	}
 
 	@SuppressWarnings("unused")
 	public void loadFile() throws IOException, URISyntaxException {
