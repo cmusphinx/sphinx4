@@ -21,7 +21,7 @@ public class MllrTransformer {
 		this.outputMeanFile = outputMeanFile;
 		A = a;
 		B = b;
-		this.header = "s3\nversion 1.0\nchksum0 yes\n      endhdr\n";
+		this.header = "s3\nversion 1.0\nchksum0 no \n      endhdr\n";
 	}
 
 	public void setHeader(String header) {
@@ -72,8 +72,6 @@ public class MllrTransformer {
 			}
 		}
 
-		// checksum
-		os.writeInt(0);
 
 		os.close();
 		fp.close();
