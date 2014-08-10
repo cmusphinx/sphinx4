@@ -15,6 +15,7 @@ import static com.google.common.collect.Sets.newTreeSet;
 import static edu.cmu.sphinx.common.collections.PriorityQueue.newPriorityQueue;
 import static java.lang.Math.abs;
 import static java.lang.Math.max;
+import static java.lang.Math.min;
 import static java.util.Arrays.fill;
 import static java.util.Collections.emptyList;
 
@@ -196,6 +197,7 @@ public class LongTextAligner {
     private final int tupleSize;
     private final List<String> reftup;
     private final Multimap<String, Integer> tupleIndex;
+    private List<String> refWords;
 
     /**
      * Constructs new text aligner that servers requests for alignment of
@@ -211,6 +213,7 @@ public class LongTextAligner {
 
         joiner = Joiner.on(' ');
         this.tupleSize = tupleSize;
+        this.refWords = words;
 
         int offset = 0;
         reftup = getTuples(words);
@@ -225,7 +228,7 @@ public class LongTextAligner {
      * @return indices of alignment
      */
     public int[] align(List<String> query) {
-        return align(query, Range.atLeast(0));
+        return align(query, Range.closed(0, refWords.size()));
     }
 
     /**
@@ -234,6 +237,12 @@ public class LongTextAligner {
      * @return indices of alignment
      */
     public int[] align(List<String> words, Range<Integer> range) {
+        
+        if (range.upperEndpoint() - range.lowerEndpoint() < 10 || words.size() < 10) {
+            return alignTextSimple(refWords.subList(range.lowerEndpoint(), range.upperEndpoint()), words, range.lowerEndpoint());
+        }
+        
+        
         int[] result = new int[words.size()];
         fill(result, -1);
         int lastIndex = 0;
@@ -263,5 +272,60 @@ public class LongTextAligner {
             tuple.removeFirst();
         }
         return result;
+    }
+    
+    static int[] alignTextSimple(List<String> database, List<String> query,
+            int offset) {
+        int n = database.size() + 1;
+        int m = query.size() + 1;
+        int[][] f = new int[n][m];
+
+        for (int i = 1; i < n; ++i) {
+            f[i][0] = i;
+        }
+
+        for (int j = 1; j < m; ++j) {
+            f[0][j] = j;
+        }
+
+        for (int i = 1; i < n; ++i) {
+            for (int j = 1; j < m; ++j) {
+                int match = f[i - 1][j - 1];
+                String refWord = database.get(i - 1);
+                String queryWord = query.get(j - 1);
+                if (!refWord.equals(queryWord)) {
+                    ++match;
+                }
+                int insert = f[i][j - 1] + 1;
+                int delete = f[i - 1][j] + 1;
+                f[i][j] = min(match, min(insert, delete));
+            }
+        }
+
+        --n;
+        --m;
+        int[] alignment = new int[m];
+        Arrays.fill(alignment, -1);
+        while (m > 0) {
+            if (n == 0) {
+                --m;
+            } else {
+                String refWord = database.get(n - 1);
+                String queryWord = query.get(m - 1);
+                if (f[n - 1][m - 1] <= f[n - 1][m - 1]
+                        && f[n - 1][m - 1] <= f[n][m - 1]
+                        && refWord.equals(queryWord)) {
+                    alignment[--m] = --n + offset;
+                } else {
+                    if (f[n - 1][m] < f[n][m - 1]) {
+                        --n;
+                    } else {
+                        --m;
+                    }
+                }
+            }
+        }
+
+        return alignment;
     }
 }

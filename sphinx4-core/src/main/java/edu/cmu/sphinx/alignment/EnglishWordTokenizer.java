@@ -1,8 +1,6 @@
 package edu.cmu.sphinx.alignment;
 
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.Arrays;
 
 public class EnglishWordTokenizer implements WordTokenizer {

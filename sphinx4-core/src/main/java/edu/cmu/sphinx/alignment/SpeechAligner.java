@@ -7,7 +7,6 @@ import static com.google.common.collect.Lists.transform;
 import static com.google.common.collect.Maps.newTreeMap;
 import static com.google.common.collect.Queues.newArrayDeque;
 import static edu.cmu.sphinx.result.WordResults.toSpelling;
-import static java.lang.Math.min;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -96,7 +95,7 @@ public class SpeechAligner {
         Queue<List<String>> texts = newArrayDeque();
         Queue<TimeFrame> timeFrames = newArrayDeque();
 
-        ranges.offer(Range.atLeast(0));
+        ranges.offer(Range.closed(0, transcript.size()));
         texts.offer(transcript);
         TimeFrame totalTimeFrame = TimeFrame.INFINITE;
         timeFrames.offer(totalTimeFrame);
@@ -134,14 +133,7 @@ public class SpeechAligner {
                 }
 
                 List<String> words = transform(hypothesis, toSpelling());
-                int[] alignment;
-                if (text.size() < 3) {
-                    alignment =
-                            alignText(text, words, ranges.poll()
-                                    .lowerEndpoint());
-                } else {
-                    alignment = aligner.align(words, ranges.poll());
-                }
+                int[] alignment = aligner.align(words, ranges.poll());
 
                 for (int j = 0; j < alignment.length; j++) {
                     if (alignment[j] != -1) {
@@ -177,58 +169,4 @@ public class SpeechAligner {
         return newArrayList(alignedWords.values());
     }
 
-    static int[] alignText(List<String> database, List<String> query,
-            int offset) {
-        int n = database.size() + 1;
-        int m = query.size() + 1;
-        int[][] f = new int[n][m];
-
-        for (int i = 1; i < n; ++i) {
-            f[i][0] = i;
-        }
-
-        for (int j = 1; j < m; ++j) {
-            f[0][j] = j;
-        }
-
-        for (int i = 1; i < n; ++i) {
-            for (int j = 1; j < m; ++j) {
-                int match = f[i - 1][j - 1];
-                String refWord = database.get(i - 1);
-                String queryWord = query.get(j - 1);
-                if (!refWord.equals(queryWord)) {
-                    ++match;
-                }
-                int insert = f[i][j - 1] + 1;
-                int delete = f[i - 1][j] + 1;
-                f[i][j] = min(match, min(insert, delete));
-            }
-        }
-
-        --n;
-        --m;
-        int[] alignment = new int[m];
-        Arrays.fill(alignment, -1);
-        while (m > 0) {
-            if (n == 0) {
-                --m;
-            } else {
-                String refWord = database.get(n - 1);
-                String queryWord = query.get(m - 1);
-                if (f[n - 1][m - 1] <= f[n - 1][m - 1]
-                        && f[n - 1][m - 1] <= f[n][m - 1]
-                        && refWord.equals(queryWord)) {
-                    alignment[--m] = --n + offset;
-                } else {
-                    if (f[n - 1][m] < f[n][m - 1]) {
-                        --n;
-                    } else {
-                        --m;
-                    }
-                }
-            }
-        }
-
-        return alignment;
-    }
 }

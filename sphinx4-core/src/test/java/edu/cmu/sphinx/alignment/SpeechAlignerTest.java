@@ -1,6 +1,5 @@
 package edu.cmu.sphinx.alignment;
 
-import static edu.cmu.sphinx.alignment.SpeechAligner.alignText;
 import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
@@ -26,7 +25,8 @@ public class SpeechAlignerTest {
     }
 
     private void align(List<String> database, List<String> query, Integer... result) {
-        int[] alignment = alignText(database, query, 1);
+        LongTextAligner aligner = new LongTextAligner(database, 1);
+        int[] alignment = aligner.align(query);
         assertThat(Ints.asList(alignment), contains(result));
     }
 }
