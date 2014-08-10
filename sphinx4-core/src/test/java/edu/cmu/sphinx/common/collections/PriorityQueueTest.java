@@ -2,7 +2,7 @@ package edu.cmu.sphinx.common.collections;
 
 import static com.google.common.base.Functions.forMap;
 import static com.google.common.collect.Maps.newHashMap;
-import static edu.cmu.sphinx.common.collections.PriorityQueue.newPriorityQueue;
+import static edu.cmu.sphinx.util.PriorityQueue.newPriorityQueue;
 import static java.util.Arrays.sort;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -13,6 +13,8 @@ import java.util.Random;
 
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+
+import edu.cmu.sphinx.util.PriorityQueue;
 
 
 public class PriorityQueueTest {

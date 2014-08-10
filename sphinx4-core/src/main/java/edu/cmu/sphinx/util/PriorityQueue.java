@@ -1,4 +1,4 @@
-package edu.cmu.sphinx.common.collections;
+package edu.cmu.sphinx.util;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Lists.newArrayList;

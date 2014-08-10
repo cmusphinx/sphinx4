@@ -22,7 +22,7 @@ import static com.google.common.collect.Lists.*;
 import static com.google.common.collect.Maps.newHashMap;
 import static com.google.common.collect.Sets.newHashSet;
 import static com.google.common.collect.Sets.newTreeSet;
-import static edu.cmu.sphinx.common.collections.PriorityQueue.newPriorityQueue;
+import static edu.cmu.sphinx.util.PriorityQueue.newPriorityQueue;
 import static java.lang.Math.abs;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
@@ -37,7 +37,7 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Range;
 
-import edu.cmu.sphinx.common.collections.PriorityQueue;
+import edu.cmu.sphinx.util.PriorityQueue;
 
 
 /**
