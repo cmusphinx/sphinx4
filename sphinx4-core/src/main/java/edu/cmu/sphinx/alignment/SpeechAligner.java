@@ -1,3 +1,11 @@
+/**
+ * Copyright 2014 Alpha Cephei Inc.
+ * All Rights Reserved.  Use is subject to license terms.
+ *
+ * See the file "license.terms" for information on usage and
+ * redistribution of this file, and for a DISCLAIMER OF ALL
+ * WARRANTIES.
+ */
 package edu.cmu.sphinx.alignment;
 
 import static com.google.common.base.Preconditions.checkState;
@@ -25,11 +33,8 @@ import edu.cmu.sphinx.result.Result;
 import edu.cmu.sphinx.result.WordResult;
 import edu.cmu.sphinx.util.TimeFrame;
 
-/**
- * TODO: fill
- * 
+/** 
  * @author Alexander Solovets
- * 
  */
 public class SpeechAligner {
 
@@ -118,9 +123,8 @@ public class SpeechAligner {
                 TimeFrame frame = timeFrames.poll();
                 Range<Integer> range = ranges.poll();
 
-                System.out.println("---------------------------");
-                System.out.println("Aligning frame " + frame + " to text "
-                        + text + " range " + range);
+                logger.info("Aligning frame " + frame + " to text " + text
+                        + " range " + range);
 
                 if (i < 3) {
                     languageModel.setText(text);
@@ -150,43 +154,11 @@ public class SpeechAligner {
                 List<String> words = transform(hypothesis, toSpelling());
                 int[] alignment = aligner.align(words, range);
 
-                if (i < 5) {
-                    List<WordResult> results = hypothesis;
+                List<WordResult> results = hypothesis;
 
-                    System.out.println("--Result--------------------");
+                logger.info("Decoding result is " + results);
 
-                    for (WordResult result1 : results) {
-                        System.out.println(result1.getWord());
-                    }
-                    System.out.println("-----------------------");
-
-                    int[] aid = alignment;
-                    int lastId = -1;
-                    for (int ij = 0; ij < aid.length; ++ij) {
-                        if (aid[ij] == -1) {
-                            System.out.format("+ %s\n", results.get(ij));
-                        } else {
-                            if (aid[ij] - lastId > 1) {
-                                for (String result1 : transcript.subList(
-                                        lastId + 1, aid[ij])) {
-                                    System.out.format("- %-25s\n", result1);
-                                }
-                            } else {
-                                System.out.format("  %-25s\n",
-                                        transcript.get(aid[ij]));
-                            }
-                            lastId = aid[ij];
-                        }
-                    }
-
-                    if (lastId >= 0 && transcript.size() - lastId > 1) {
-                        for (String result1 : transcript.subList(lastId + 1,
-                                transcript.size())) {
-                            System.out.format("- %-25s\n", result1);
-                        }
-                    }
-
-                }
+                dumpAlignment(transcript, alignment, results);
 
                 for (int j = 0; j < alignment.length; j++) {
                     if (alignment[j] != -1) {
@@ -197,24 +169,62 @@ public class SpeechAligner {
                 recognizer.deallocate();
             }
 
-            int prevKey = -1;
-            long prevEnd = 0;
-            for (Map.Entry<Integer, WordResult> e : alignedWords.entrySet()) {
-                if (e.getKey() - prevKey > 1) {
-                    checkedOffer(transcript, texts, timeFrames, ranges,
-                            prevKey + 1, e.getKey(), prevEnd, e.getValue()
-                                    .getTimeFrame().getStart());
-                }
-                prevKey = e.getKey();
-                prevEnd = e.getValue().getTimeFrame().getEnd();
-            }
-            if (transcript.size() - prevKey > 1) {
-                checkedOffer(transcript, texts, timeFrames, ranges,
-                        prevKey + 1, transcript.size(), prevEnd, lastFrame);
-            }
+            scheduleNextAlignment(transcript, alignedWords, ranges, texts,
+                    timeFrames, lastFrame);
         }
 
         return newArrayList(alignedWords.values());
+    }
+
+    private void scheduleNextAlignment(List<String> transcript,
+            Map<Integer, WordResult> alignedWords,
+            Queue<Range<Integer>> ranges, Queue<List<String>> texts,
+            Queue<TimeFrame> timeFrames, long lastFrame) {
+        int prevKey = -1;
+        long prevEnd = 0;
+        for (Map.Entry<Integer, WordResult> e : alignedWords.entrySet()) {
+            if (e.getKey() - prevKey > 1) {
+                checkedOffer(transcript, texts, timeFrames, ranges,
+                        prevKey + 1, e.getKey(), prevEnd, e.getValue()
+                                .getTimeFrame().getStart());
+            }
+            prevKey = e.getKey();
+            prevEnd = e.getValue().getTimeFrame().getEnd();
+        }
+        if (transcript.size() - prevKey > 1) {
+            checkedOffer(transcript, texts, timeFrames, ranges,
+                    prevKey + 1, transcript.size(), prevEnd, lastFrame);
+        }
+    }
+
+    private void dumpAlignment(List<String> transcript, int[] alignment,
+            List<WordResult> results) {
+        logger.info("Alignment");
+        int[] aid = alignment;
+        int lastId = -1;
+        for (int ij = 0; ij < aid.length; ++ij) {
+            if (aid[ij] == -1) {
+                logger.info(String.format("+ %s\n", results.get(ij)));
+            } else {
+                if (aid[ij] - lastId > 1) {
+                    for (String result1 : transcript.subList(lastId + 1,
+                            aid[ij])) {
+                        logger.info(String.format("- %-25s\n", result1));
+                    }
+                } else {
+                    logger.info(String.format("  %-25s\n",
+                            transcript.get(aid[ij])));
+                }
+                lastId = aid[ij];
+            }
+        }
+
+        if (lastId >= 0 && transcript.size() - lastId > 1) {
+            for (String result1 : transcript.subList(lastId + 1,
+                    transcript.size())) {
+                logger.info(String.format("- %-25s\n", result1));
+            }
+        }
     }
 
     private void checkedOffer(List<String> transcript,
