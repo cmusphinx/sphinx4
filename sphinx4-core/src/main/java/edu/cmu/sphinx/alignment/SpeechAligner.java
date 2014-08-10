@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
+import java.util.logging.Logger;
 
 import com.google.common.collect.Range;
 
@@ -40,6 +41,8 @@ public class SpeechAligner {
     private final AlignerGrammar grammar;
     private final DynamicTrigramModel languageModel;
 
+    private final Logger logger = Logger.getLogger(getClass().getSimpleName());
+
     /**
      * TODO: fill
      *
@@ -47,7 +50,7 @@ public class SpeechAligner {
      * @throws MalformedURLException
      */
     public SpeechAligner(String amPath, String dictPath, String g2pPath)
-            throws MalformedURLException, IOException {
+    throws MalformedURLException, IOException {
         Configuration configuration = new Configuration();
         configuration.setAcousticModelPath(amPath);
         configuration.setDictionaryPath(dictPath);
@@ -74,7 +77,7 @@ public class SpeechAligner {
      * @throws IOException
      */
     public List<WordResult> align(URL audioUrl, String transcript)
-            throws IOException {
+    throws IOException {
         WordTokenizer tokenizer = new EnglishWordTokenizer();
         return align(audioUrl, tokenizer.getWords(transcript));
     }
@@ -88,7 +91,7 @@ public class SpeechAligner {
      * @throws IOException
      */
     public List<WordResult> align(URL audioUrl, List<String> transcript)
-            throws IOException {
+    throws IOException {
         LongTextAligner aligner = new LongTextAligner(transcript, TUPLE_SIZE);
         Map<Integer, WordResult> alignedWords = newTreeMap();
         Queue<Range<Integer>> ranges = newArrayDeque();
@@ -99,11 +102,12 @@ public class SpeechAligner {
         texts.offer(transcript);
         TimeFrame totalTimeFrame = TimeFrame.INFINITE;
         timeFrames.offer(totalTimeFrame);
+        long lastFrame = TimeFrame.INFINITE.getEnd();
 
         for (int i = 0; i < 4; ++i) {
             if (i == 3) {
                 context.setLocalProperty("decoder->searchManager",
-                        "alignerSearchManager");
+                                         "alignerSearchManager");
                 context.processBatch();
             }
 
@@ -124,7 +128,7 @@ public class SpeechAligner {
                 }
 
                 context.setSpeechSource(audioUrl.openStream(),
-                        timeFrames.poll());
+                                        timeFrames.poll());
 
                 List<WordResult> hypothesis = newArrayList();
                 Result result;
@@ -132,8 +136,52 @@ public class SpeechAligner {
                     addAll(hypothesis, result.getTimedBestResult(false, i > 2));
                 }
 
+                if (i == 0) {
+                    if (hypothesis.size() > 0) {
+                        lastFrame = hypothesis.get(hypothesis.size() - 1).getTimeFrame().getEnd();
+                    }
+                }
+
                 List<String> words = transform(hypothesis, toSpelling());
                 int[] alignment = aligner.align(words, ranges.poll());
+
+                if (i < 5) {
+                    List<WordResult> results = hypothesis;
+
+                    System.out.println("-----------------------");
+
+                    for (WordResult result1 : results) {
+                        System.out.println(result1.getWord());
+                    }
+                    System.out.println("-----------------------");
+
+                    int[] aid = alignment;
+                    int lastId = -1;
+                    for (int ij  = 0; ij < aid.length; ++ij) {
+                        if (aid[ij] == -1) {
+                            System.out.format("+ %s\n", results.get(ij));
+                        } else {
+                            if (aid[ij] - lastId > 1) {
+                                for (String result1 : text.subList(lastId + 1,
+                                                                   aid[ij])) {
+                                    System.out.format("- %-25s\n", result1);
+                                }
+                            } else {
+                                System.out.format("  %-25s\n", text.get(aid[ij]));
+                            }
+                            lastId = aid[ij];
+                        }
+                    }
+
+                    if (lastId >= 0 && text.size() - lastId > 1) {
+                        for (String result1 : text.subList(lastId + 1, text.size())) {
+                            System.out.format("- %-25s\n", result1);
+                        }
+                    }
+
+                }
+
+
 
                 for (int j = 0; j < alignment.length; j++) {
                     if (alignment[j] != -1) {
@@ -148,25 +196,33 @@ public class SpeechAligner {
             long prevEnd = 0;
             for (Map.Entry<Integer, WordResult> e : alignedWords.entrySet()) {
                 if (e.getKey() - prevKey > 1) {
-                    texts.offer(transcript.subList(prevKey + 1, e.getKey()));
-                    timeFrames.offer(new TimeFrame(prevEnd, e.getValue()
-                            .getTimeFrame().getStart()));
-                    // TODO: 'texts' are not required, should use only 'ranges'
-                    ranges.offer(Range.closed(prevKey + 1, e.getKey() - 1));
+                    checkedOffer(transcript, texts, timeFrames, ranges, prevKey + 1, e.getKey(), prevEnd, e.getValue()
+                                 .getTimeFrame().getStart());
                 }
                 prevKey = e.getKey();
                 prevEnd = e.getValue().getTimeFrame().getEnd();
             }
             if (transcript.size() - prevKey > 1) {
-                texts.offer(transcript.subList(prevKey + 1, transcript.size()));
-                // TODO: do not use MAX_VALUE
-                timeFrames.offer(new TimeFrame(prevEnd, totalTimeFrame
-                        .getEnd()));
-                ranges.offer(Range.closed(prevKey + 1, transcript.size() - 1));
+                checkedOffer(transcript, texts, timeFrames, ranges, prevKey + 1, transcript.size(), prevEnd, lastFrame);
             }
         }
 
         return newArrayList(alignedWords.values());
     }
 
+    private void checkedOffer(List<String> transcript, Queue<List<String>> texts, Queue<TimeFrame> timeFrames, Queue<Range<Integer>> ranges, int start, int end, long timeStart, long timeEnd) {
+
+        double wordDensity = ((double)(timeEnd - timeStart)) / (end - start);
+
+        System.out.println("Word density " + wordDensity + " " + timeEnd  + " " + timeStart + " " + end + " " + start + " "  + transcript.subList(start,  end).toString());
+        // Skip range if it's too short, average word is less than 10 milliseconds
+        if (wordDensity < 10.0) {
+            logger.info("Skipping text range due to a high density " + transcript.subList(start,  end).toString());
+            return;
+        }
+
+        texts.offer(transcript.subList(start, end));
+        timeFrames.offer(new TimeFrame(timeStart, timeEnd));
+        ranges.offer(Range.closed(start, end - 1));
+    }
 }

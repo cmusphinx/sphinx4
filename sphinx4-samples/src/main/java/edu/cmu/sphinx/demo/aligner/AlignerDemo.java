@@ -64,9 +64,17 @@ public class AlignerDemo {
         WordTokenizer tokenizer = new EnglishWordTokenizer();
         List<WordResult> results = aligner.align(audioUrl, transcript);
         LongTextAligner textAligner =
-                new LongTextAligner(transform(results, toSpelling()), 1);
+                new LongTextAligner(transform(results, toSpelling()), 3);
         List<String> words = tokenizer.getWords(transcript);
+
+	System.out.println(results);
+
         int[] aid = textAligner.align(words);
+
+	System.out.println(words);
+        for (int i = 0; i < aid.length; ++i) {
+    	    System.out.println(i + " " + aid[i]);
+        }
 
         int lastId = -1;
         for (int i = 0; i < aid.length; ++i) {
@@ -87,8 +95,8 @@ public class AlignerDemo {
             }
         }
 
-        if (results.size() - lastId > 1) {
-            for (WordResult result : results.subList(lastId, results.size())) {
+        if (lastId >= 0 && results.size() - lastId > 1) {
+            for (WordResult result : results.subList(lastId + 1, results.size())) {
                 System.out.format("+ %-25s [%s]\n", result.getWord()
                         .getSpelling(), result.getTimeFrame());
             }

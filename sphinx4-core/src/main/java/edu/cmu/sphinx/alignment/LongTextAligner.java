@@ -228,7 +228,7 @@ public class LongTextAligner {
      * @return indices of alignment
      */
     public int[] align(List<String> query) {
-        return align(query, Range.closed(0, refWords.size()));
+        return align(query, Range.closed(0, query.size()));
     }
 
     /**
@@ -238,7 +238,7 @@ public class LongTextAligner {
      */
     public int[] align(List<String> words, Range<Integer> range) {
         
-        if (range.upperEndpoint() - range.lowerEndpoint() < 10 || words.size() < 10) {
+        if (range.upperEndpoint() - range.lowerEndpoint() < 3 || words.size() < 3) {
             return alignTextSimple(refWords.subList(range.lowerEndpoint(), range.upperEndpoint()), words, range.lowerEndpoint());
         }
         
