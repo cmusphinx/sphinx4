@@ -228,7 +228,7 @@ public class LongTextAligner {
      * @return indices of alignment
      */
     public int[] align(List<String> query) {
-        return align(query, Range.closed(0, query.size()));
+        return align(query, Range.closed(0, refWords.size() - 1));
     }
 
     /**

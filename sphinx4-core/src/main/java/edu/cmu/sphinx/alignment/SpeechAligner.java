@@ -25,12 +25,11 @@ import edu.cmu.sphinx.result.Result;
 import edu.cmu.sphinx.result.WordResult;
 import edu.cmu.sphinx.util.TimeFrame;
 
-
 /**
  * TODO: fill
- *
+ * 
  * @author Alexander Solovets
- *
+ * 
  */
 public class SpeechAligner {
 
@@ -45,12 +44,12 @@ public class SpeechAligner {
 
     /**
      * TODO: fill
-     *
+     * 
      * @throws IOException
      * @throws MalformedURLException
      */
     public SpeechAligner(String amPath, String dictPath, String g2pPath)
-    throws MalformedURLException, IOException {
+            throws MalformedURLException, IOException {
         Configuration configuration = new Configuration();
         configuration.setAcousticModelPath(amPath);
         configuration.setDictionaryPath(dictPath);
@@ -63,7 +62,7 @@ public class SpeechAligner {
             context.setLocalProperty("dictionary->g2pMaxPron", "2");
         }
         context.setLocalProperty("lexTreeLinguist->languageModel",
-                                 "dynamicTrigramModel");
+                "dynamicTrigramModel");
         recognizer = context.getInstance(Recognizer.class);
         grammar = context.getInstance(AlignerGrammar.class);
         languageModel = context.getInstance(DynamicTrigramModel.class);
@@ -71,27 +70,27 @@ public class SpeechAligner {
 
     /**
      * TODO: fill
-     *
+     * 
      * @param dataStream
      * @return
      * @throws IOException
      */
     public List<WordResult> align(URL audioUrl, String transcript)
-    throws IOException {
+            throws IOException {
         WordTokenizer tokenizer = new EnglishWordTokenizer();
         return align(audioUrl, tokenizer.getWords(transcript));
     }
 
     /**
      * TOOD: fill
-     *
+     * 
      * @param audioFile
      * @param transcript
      * @return
      * @throws IOException
      */
     public List<WordResult> align(URL audioUrl, List<String> transcript)
-    throws IOException {
+            throws IOException {
         LongTextAligner aligner = new LongTextAligner(transcript, TUPLE_SIZE);
         Map<Integer, WordResult> alignedWords = newTreeMap();
         Queue<Range<Integer>> ranges = newArrayDeque();
@@ -107,7 +106,7 @@ public class SpeechAligner {
         for (int i = 0; i < 4; ++i) {
             if (i == 3) {
                 context.setLocalProperty("decoder->searchManager",
-                                         "alignerSearchManager");
+                        "alignerSearchManager");
                 context.processBatch();
             }
 
@@ -117,10 +116,11 @@ public class SpeechAligner {
 
                 List<String> text = texts.poll();
                 TimeFrame frame = timeFrames.poll();
-                Range range = ranges.poll();
-                
+                Range<Integer> range = ranges.poll();
+
                 System.out.println("---------------------------");
-                System.out.println("Aligning frame " + frame + " to text " + text + " range " + range);
+                System.out.println("Aligning frame " + frame + " to text "
+                        + text + " range " + range);
 
                 if (i < 3) {
                     languageModel.setText(text);
@@ -142,7 +142,8 @@ public class SpeechAligner {
 
                 if (i == 0) {
                     if (hypothesis.size() > 0) {
-                        lastFrame = hypothesis.get(hypothesis.size() - 1).getTimeFrame().getEnd();
+                        lastFrame = hypothesis.get(hypothesis.size() - 1)
+                                .getTimeFrame().getEnd();
                     }
                 }
 
@@ -161,31 +162,31 @@ public class SpeechAligner {
 
                     int[] aid = alignment;
                     int lastId = -1;
-                    for (int ij  = 0; ij < aid.length; ++ij) {
+                    for (int ij = 0; ij < aid.length; ++ij) {
                         if (aid[ij] == -1) {
                             System.out.format("+ %s\n", results.get(ij));
                         } else {
                             if (aid[ij] - lastId > 1) {
-                                for (String result1 : transcript.subList(lastId + 1,
-                                                                   aid[ij])) {
+                                for (String result1 : transcript.subList(
+                                        lastId + 1, aid[ij])) {
                                     System.out.format("- %-25s\n", result1);
                                 }
                             } else {
-                                System.out.format("  %-25s\n", transcript.get(aid[ij]));
+                                System.out.format("  %-25s\n",
+                                        transcript.get(aid[ij]));
                             }
                             lastId = aid[ij];
                         }
                     }
 
                     if (lastId >= 0 && transcript.size() - lastId > 1) {
-                        for (String result1 : transcript.subList(lastId + 1, transcript.size())) {
+                        for (String result1 : transcript.subList(lastId + 1,
+                                transcript.size())) {
                             System.out.format("- %-25s\n", result1);
                         }
                     }
 
                 }
-
-
 
                 for (int j = 0; j < alignment.length; j++) {
                     if (alignment[j] != -1) {
@@ -200,28 +201,37 @@ public class SpeechAligner {
             long prevEnd = 0;
             for (Map.Entry<Integer, WordResult> e : alignedWords.entrySet()) {
                 if (e.getKey() - prevKey > 1) {
-                    checkedOffer(transcript, texts, timeFrames, ranges, prevKey + 1, e.getKey(), prevEnd, e.getValue()
-                                 .getTimeFrame().getStart());
+                    checkedOffer(transcript, texts, timeFrames, ranges,
+                            prevKey + 1, e.getKey(), prevEnd, e.getValue()
+                                    .getTimeFrame().getStart());
                 }
                 prevKey = e.getKey();
                 prevEnd = e.getValue().getTimeFrame().getEnd();
             }
             if (transcript.size() - prevKey > 1) {
-                checkedOffer(transcript, texts, timeFrames, ranges, prevKey + 1, transcript.size(), prevEnd, lastFrame);
+                checkedOffer(transcript, texts, timeFrames, ranges,
+                        prevKey + 1, transcript.size(), prevEnd, lastFrame);
             }
         }
 
         return newArrayList(alignedWords.values());
     }
 
-    private void checkedOffer(List<String> transcript, Queue<List<String>> texts, Queue<TimeFrame> timeFrames, Queue<Range<Integer>> ranges, int start, int end, long timeStart, long timeEnd) {
+    private void checkedOffer(List<String> transcript,
+            Queue<List<String>> texts, Queue<TimeFrame> timeFrames,
+            Queue<Range<Integer>> ranges, int start, int end, long timeStart,
+            long timeEnd) {
 
-        double wordDensity = ((double)(timeEnd - timeStart)) / (end - start);
+        double wordDensity = ((double) (timeEnd - timeStart)) / (end - start);
 
-        System.out.println("Word density " + wordDensity + " " + timeEnd  + " " + timeStart + " " + end + " " + start + " "  + transcript.subList(start,  end).toString());
-        // Skip range if it's too short, average word is less than 10 milliseconds
+        System.out.println("Word density " + wordDensity + " " + timeEnd + " "
+                + timeStart + " " + end + " " + start + " "
+                + transcript.subList(start, end).toString());
+        // Skip range if it's too short, average word is less than 10
+        // milliseconds
         if (wordDensity < 10.0) {
-            logger.info("Skipping text range due to a high density " + transcript.subList(start,  end).toString());
+            logger.info("Skipping text range due to a high density "
+                    + transcript.subList(start, end).toString());
             return;
         }
 
