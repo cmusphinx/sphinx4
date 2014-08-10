@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 2014 Alpha Cephei Inc.
  * All Rights Reserved.  Use is subject to license terms.
  *

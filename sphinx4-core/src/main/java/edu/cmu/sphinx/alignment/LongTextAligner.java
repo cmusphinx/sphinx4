@@ -1,3 +1,13 @@
+/*
+ * Copyright 2014 Alpha Cephei Inc.
+ * All Rights Reserved.  Use is subject to license terms.
+ *
+ * See the file "license.terms" for information on usage and
+ * redistribution of this file, and for a DISCLAIMER OF ALL
+ * WARRANTIES.
+ *
+ */
+
 package edu.cmu.sphinx.alignment;
 
 import static com.google.common.base.Functions.forMap;

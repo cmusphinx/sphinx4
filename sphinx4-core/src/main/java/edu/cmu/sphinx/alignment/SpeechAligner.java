@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 2014 Alpha Cephei Inc.
  * All Rights Reserved.  Use is subject to license terms.
  *
@@ -6,6 +6,7 @@
  * redistribution of this file, and for a DISCLAIMER OF ALL
  * WARRANTIES.
  */
+
 package edu.cmu.sphinx.alignment;
 
 import static com.google.common.base.Preconditions.checkState;
@@ -234,9 +235,6 @@ public class SpeechAligner {
 
         double wordDensity = ((double) (timeEnd - timeStart)) / (end - start);
 
-        System.out.println("Word density " + wordDensity + " " + timeEnd + " "
-                + timeStart + " " + end + " " + start + " "
-                + transcript.subList(start, end).toString());
         // Skip range if it's too short, average word is less than 10
         // milliseconds
         if (wordDensity < 10.0) {
