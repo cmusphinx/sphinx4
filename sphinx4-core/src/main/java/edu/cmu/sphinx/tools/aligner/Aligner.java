@@ -13,7 +13,6 @@ package edu.cmu.sphinx.tools.aligner;
 
 import java.io.File;
 import java.io.IOException;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,11 +22,8 @@ import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
-import edu.cmu.sphinx.api.Configuration;
 import edu.cmu.sphinx.api.SpeechAligner;
-
 import edu.cmu.sphinx.util.TimeFrame;
-
 import edu.cmu.sphinx.result.WordResult;
 
 /**
@@ -44,12 +40,8 @@ public class Aligner {
      * @param args acoustic model, dictionary, audio file, text
      */
     public static void main(String args[]) throws Exception {
-        Configuration configuration = new Configuration();
-        configuration.setAcousticModelPath(args[0]);
-        configuration.setDictionaryPath(args[1]);
-
         File file = new File(args[2]);
-        SpeechAligner aligner = new SpeechAligner(configuration);
+        SpeechAligner aligner = new SpeechAligner(args[0], args[1], null);
         splitStream(file, aligner.align(file.toURI().toURL(), args[3]));
     }
 

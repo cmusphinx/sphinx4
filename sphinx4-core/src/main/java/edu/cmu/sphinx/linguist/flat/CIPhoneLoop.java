@@ -124,6 +124,9 @@ public class CIPhoneLoop {
             return 5;
         }
 
+        public boolean getWordTokenFirst() {
+            return false;
+        }
 
         /**
          * Checks to see if a state that matches the given state already exists

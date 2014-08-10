@@ -21,6 +21,7 @@ import java.net.URL;
 import java.util.List;
 
 import edu.cmu.sphinx.alignment.*;
+import edu.cmu.sphinx.api.SpeechAligner;
 import edu.cmu.sphinx.result.WordResult;
 
 /**
@@ -30,7 +31,7 @@ import edu.cmu.sphinx.result.WordResult;
  * <br/>
  * In order to initialize the aligner you need to specify several data files
  * which might be downloaded from the CMUSphinx website. There should be an
- * acoustic model for your lanaguage, a dictionary an optional G2P model to
+ * acoustic model for your language, a dictionary, an optional G2P model to
  * convert word strings to pronunciation. <br/>
  * Currently the audio must have specific format (16khz, 16bit, mono), but in
  * the future other formats will be supported. <br/>

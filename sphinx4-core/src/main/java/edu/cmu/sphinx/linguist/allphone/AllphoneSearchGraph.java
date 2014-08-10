@@ -20,5 +20,8 @@ public class AllphoneSearchGraph implements SearchGraph {
     public int getNumStateOrder() {
         return 2;
     }
-
+    
+    public boolean getWordTokenFirst() {
+        return false;
+    }
 }

@@ -45,7 +45,7 @@ public final class SpeechResult {
      * @return words that form the result
      */
     public List<WordResult> getWords() {
-        return result.getTimedBestResult(true, true);
+        return result.getTimedBestResult(true);
     }
 
     /**

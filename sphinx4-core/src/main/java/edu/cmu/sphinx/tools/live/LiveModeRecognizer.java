@@ -121,7 +121,7 @@ public class LiveModeRecognizer implements Configurable {
             System.out.println("   Sentences: " + numUtterances);
             resultList.add(resultText);
 
-            hypothesisTranscript.write(Joiner.on(' ').join(result.getTimedBestResult(false, true)));
+            hypothesisTranscript.write(Joiner.on(' ').join(result.getTimedBestResult(false)));
             hypothesisTranscript.write('\n');
             hypothesisTranscript.flush();
 

@@ -45,6 +45,7 @@ public class Result {
     private final List<Token> resultList;
     private AlternateHypothesisManager alternateHypothesisManager;
     private boolean isFinal;
+    private boolean wordTokenFirst;
     private final int currentFrameNumber;
     private String reference;
     private final LogMath logMath;
@@ -60,9 +61,10 @@ public class Result {
      */
     public Result(AlternateHypothesisManager alternateHypothesisManager,
             ActiveList activeList, List<Token> resultList, int frameNumber,
-            boolean isFinal) {
+            boolean isFinal, boolean wordTokenFirst) {
         this(activeList, resultList, frameNumber, isFinal);
         this.alternateHypothesisManager = alternateHypothesisManager;
+        this.wordTokenFirst = wordTokenFirst;
     }
 
 
@@ -373,8 +375,7 @@ public class Result {
      * @param wordTokenFirst true if the word tokens come before other types of tokens
      * @return the string of words
      */
-    public List<WordResult> getTimedBestResult(boolean withFillers,
-            boolean wordTokenFirst) {
+    public List<WordResult> getTimedBestResult(boolean withFillers) {
         Token token = getBestToken();
         if (token == null) {
             return emptyList();
@@ -529,52 +530,5 @@ public class Result {
      */
     public String getReferenceText() {
         return reference;
-    }
-
-
-    public List<WordResult> getWords() {
-        Token token = getBestToken();
-        if (token == null) {
-            emptyList();
-        }
-
-        LinkedList<WordResult> words = new LinkedList<WordResult>();
-        while (token != null) {
-            Data lastWordFirstFeature = token.getData();
-            Data lastFeature = lastWordFirstFeature;
-            token = token.getPredecessor();
-
-            while (token != null) {
-                if (token.isWord()) {
-                    Word word = token.getWord();
-                    long sf;
-                    long ef;
-
-                    if (lastFeature != null) {
-                        sf = ((FloatData) lastFeature).getCollectTime();
-                    } else
-                        sf = 0;
-                    if (lastWordFirstFeature != null)
-                        ef =
-                                ((FloatData) lastWordFirstFeature)
-                                        .getCollectTime();
-                    else
-                        ef = -1;
-
-                    WordResult wordResult =
-                            new WordResult(word, new TimeFrame(sf, ef), 0.0,
-                                    1.0);
-                    words.addFirst(wordResult);
-                    lastWordFirstFeature = lastFeature;
-                }
-                Data feature = token.getData();
-                if (feature != null) {
-                    lastFeature = feature;
-                }
-                token = token.getPredecessor();
-            }
-        }
-
-        return new ArrayList<WordResult>(words);
     }
 }

@@ -471,6 +471,10 @@ public class LexTreeLinguist implements Linguist {
         public int getNumStateOrder() {
             return 6;
         }
+        
+        public boolean getWordTokenFirst() {
+            return false;
+        }
     }
 
     /**

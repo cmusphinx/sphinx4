@@ -30,4 +30,8 @@ public interface SearchGraph {
      */
     int getNumStateOrder();
 
+    /**
+     * Returns order of words and data tokens
+     */
+    boolean getWordTokenFirst();
 }

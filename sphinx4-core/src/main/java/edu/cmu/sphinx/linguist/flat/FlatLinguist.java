@@ -512,6 +512,9 @@ public class FlatLinguist implements Linguist, Configurable {
             this.initialState = initialState;
         }
 
+        public boolean getWordTokenFirst() {
+            return true;
+        }
 
         /*
         * (non-Javadoc)

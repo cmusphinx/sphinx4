@@ -1472,5 +1472,9 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
         public int getNumStateOrder() {
             return 5;
         }
+        
+        public boolean getWordTokenFirst() {
+            return true;
+        }
     }
 }
