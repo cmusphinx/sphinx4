@@ -238,8 +238,8 @@ public class LongTextAligner {
      */
     public int[] align(List<String> words, Range<Integer> range) {
         
-        if (range.upperEndpoint() - range.lowerEndpoint() < 3 || words.size() < 3) {
-            return alignTextSimple(refWords.subList(range.lowerEndpoint(), range.upperEndpoint()), words, range.lowerEndpoint());
+        if (range.upperEndpoint() - range.lowerEndpoint() < tupleSize || words.size() < tupleSize) {
+            return alignTextSimple(refWords.subList(range.lowerEndpoint(), range.upperEndpoint() + 1), words, range.lowerEndpoint());
         }
         
         
