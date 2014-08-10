@@ -112,9 +112,8 @@ public class AbstractSpeechRecognizer {
      */
     public SpeechResult getResult() {
         Result result = recognizer.recognize();
-        SpeechResult speechRes = null == result ? null : new SpeechResult(result);
         
-        if(this.collectStatsForAdaptation && speechRes != null){
+        if(this.collectStatsForAdaptation && result != null){
         	try {
 				estimation.addCounts(result);
 			} catch (Exception e) {
@@ -122,7 +121,7 @@ public class AbstractSpeechRecognizer {
 			}
         }
         
-        return speechRes;
+        return null == result ? null : new SpeechResult(result);
     }
     
     /**

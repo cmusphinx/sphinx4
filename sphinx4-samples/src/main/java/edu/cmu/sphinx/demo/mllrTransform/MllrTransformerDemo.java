@@ -37,7 +37,7 @@ public class MllrTransformerDemo {
 				loader, false);
 		means.getMeansFromLoader();
 
-		MllrEstimation me = new MllrEstimation("", 1, "", false, "", false,
+		MllrEstimation me = new MllrEstimation("", 1, "/home/bogdanpetcu/mllr_mat2", false, "", false,
 				loader);
 
 		while ((result = recognizer.getResult()) != null) {
@@ -60,8 +60,9 @@ public class MllrTransformerDemo {
 
 		recognizer.stopRecognition();
 		me.estimateMatrices();
+		me.createMllrFile();
 		mt = new MllrTransformer(means, me.getA(), me.getB(),
-				"/home/bogdanpetcu/output");
+				"/home/bogdanpetcu/means");
 		mt.transform();
 		mt.writeToFile();
 		
