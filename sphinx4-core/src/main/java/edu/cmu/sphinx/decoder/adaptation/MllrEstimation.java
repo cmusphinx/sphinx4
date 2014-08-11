@@ -14,7 +14,6 @@ import org.apache.commons.math3.linear.RealVector;
 
 import edu.cmu.sphinx.linguist.acoustic.tiedstate.Loader;
 import edu.cmu.sphinx.linguist.acoustic.tiedstate.Sphinx3Loader;
-import edu.cmu.sphinx.result.Result;
 
 public class MllrEstimation {
 
@@ -33,14 +32,13 @@ public class MllrEstimation {
 	private double[][][][] regR;
 	private Counts counts;
 	private CountsReader cr;
-	private CountsCollector cc;
 	private boolean countsFromFile;
 	private boolean modelFromFile;
 	private Sphinx3Loader s3loader;
 	private boolean estimated;
 
 	public MllrEstimation(String location, int nMllrClass,
-			String outputFilePath, boolean countsFromFile,
+			String outputFilePath, boolean countsFromFile, Counts counts,
 			String countsFilePath, boolean modelFromFile, Loader loader)
 			throws Exception {
 		super();
@@ -52,12 +50,15 @@ public class MllrEstimation {
 		this.countsFromFile = countsFromFile;
 		this.modelFromFile = modelFromFile;
 		this.s3loader = (Sphinx3Loader) loader;
+		this.counts = counts;
 		this.init();
 	}
 
 	public void init() throws Exception {
 		this.readMeansAndVariances();
-		this.readCounts();
+		if(countsFromFile){
+			this.readCountsFromFile();
+		}
 	}
 	
 	public MllrEstimation() {
@@ -113,17 +114,11 @@ public class MllrEstimation {
 		return this.estimated;
 	}
 
-	public void readCounts() throws Exception {
-		if (this.countsFromFile) {
+	public void readCountsFromFile() throws Exception {
 			cr = new CountsReader(this.countsFilePath);
 			cr.read();
 			this.counts = cr.getCounts();
 			this.cb2mllr = new int[counts.getnCb()];
-		} else {
-			cc = new CountsCollector(means.getVectorLength(),
-					means.getNumStates(), means.getNumStreams(),
-					means.getNumGaussiansPerState());
-		}
 	}
 
 	public void readMeansAndVariances() throws Exception {
@@ -292,9 +287,6 @@ public class MllrEstimation {
 		}
 	}
 	
-	public void addCounts(Result result) throws Exception{
-		cc.collect(result);
-	}
 
 	public void createMllrFile() throws FileNotFoundException,
 			UnsupportedEncodingException {
@@ -332,10 +324,7 @@ public class MllrEstimation {
 		writer.close();
 	}
 
-	public void estimateMatrices() {
-		if(!countsFromFile){
-			this.counts = cc.getCounts();
-		}
+	public void estimateMatrices() throws Exception {
 		
 		this.invertVariances();
 

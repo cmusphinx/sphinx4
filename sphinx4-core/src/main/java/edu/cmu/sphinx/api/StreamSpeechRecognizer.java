@@ -13,7 +13,6 @@ package edu.cmu.sphinx.api;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URISyntaxException;
 
 
 /**
@@ -34,7 +33,7 @@ public class StreamSpeechRecognizer extends AbstractSpeechRecognizer {
         super(configuration);
     }
     
-    private void adaptOnline() throws IOException, URISyntaxException {
+    private void adaptOnline() throws Exception {
     	//TODO: access frontend for buffering the sent results
     	while (this.getResult() != null);
     	this.adaptCurrentModel();

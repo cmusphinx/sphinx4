@@ -5,6 +5,7 @@ import java.io.InputStream;
 import edu.cmu.sphinx.api.Configuration;
 import edu.cmu.sphinx.api.SpeechResult;
 import edu.cmu.sphinx.api.StreamSpeechRecognizer;
+import edu.cmu.sphinx.decoder.adaptation.CountsCollector;
 import edu.cmu.sphinx.decoder.adaptation.DensityFileData;
 import edu.cmu.sphinx.decoder.adaptation.MllrEstimation;
 import edu.cmu.sphinx.decoder.adaptation.MllrTransformer;
@@ -37,11 +38,12 @@ public class MllrTransformerDemo {
 				loader, false);
 		means.getMeansFromLoader();
 
-		MllrEstimation me = new MllrEstimation("", 1, "/home/bogdanpetcu/mllr_mat2", false, "", false,
-				loader);
+		CountsCollector cc = new CountsCollector(loader.getVectorLength(),
+				loader.getNumStates(), loader.getNumStreams(),
+				loader.getNumGaussiansPerState());
 
 		while ((result = recognizer.getResult()) != null) {
-			me.addCounts(result.getResult());
+			cc.collect(result.getResult());
 
 			System.out.format("Hypothesis: %s\n", result.getHypothesis());
 
@@ -58,6 +60,10 @@ public class MllrTransformerDemo {
 					+ result.getLattice().getNodes().size() + " nodes");
 		}
 
+		MllrEstimation me = new MllrEstimation("", 1,
+				"/home/bogdanpetcu/mllr_mat2", false, cc.getCounts(), "",
+				false, loader);
+
 		recognizer.stopRecognition();
 		me.estimateMatrices();
 		me.createMllrFile();
@@ -65,6 +71,6 @@ public class MllrTransformerDemo {
 				"/home/bogdanpetcu/means");
 		mt.transform();
 		mt.writeToFile();
-		
+
 	}
 }

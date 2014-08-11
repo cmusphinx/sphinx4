@@ -14,120 +14,115 @@ package edu.cmu.sphinx.api;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.net.URISyntaxException;
 
+import edu.cmu.sphinx.decoder.adaptation.CountsCollector;
 import edu.cmu.sphinx.decoder.adaptation.DensityFileData;
 import edu.cmu.sphinx.decoder.adaptation.MllrEstimation;
 import edu.cmu.sphinx.decoder.adaptation.MllrTransformer;
 import edu.cmu.sphinx.linguist.acoustic.tiedstate.Loader;
 import edu.cmu.sphinx.linguist.acoustic.tiedstate.Sphinx3Loader;
-import edu.cmu.sphinx.result.Result;
 import edu.cmu.sphinx.recognizer.Recognizer;
-
+import edu.cmu.sphinx.result.Result;
 
 /**
  * Base class for high-level speech recognizers.
  */
 public class AbstractSpeechRecognizer {
 
-    protected final Context context;
-    protected final Recognizer recognizer;
+	protected final Context context;
+	protected final Recognizer recognizer;
 
-    protected final SpeechSourceProvider speechSourceProvider;
-    
-    protected boolean collectStatsForAdaptation;
-    private MllrEstimation estimation;
+	protected final SpeechSourceProvider speechSourceProvider;
 
-    /**
-     * Constructs recognizer object using provided configuration.
-     */
-    public AbstractSpeechRecognizer(Configuration configuration)
-        throws IOException
-    {
-        this(new Context(configuration));
-    }
+	protected boolean collectStatsForAdaptation;
+	private MllrEstimation estimation;
+	private CountsCollector cc;
 
-    protected AbstractSpeechRecognizer(Context context) throws IOException {
-        this.context = context;
-        recognizer = context.getInstance(Recognizer.class);
-        speechSourceProvider = new SpeechSourceProvider();
-    }
-    
-    protected void initAdaptation() throws Exception{
-    	this.collectStatsForAdaptation = true;
-    	Loader loader = context.getLoader();
-    	this.estimation = new MllrEstimation("", 1, "", false, "", false, loader);
-    }
-    
-    private MllrTransformer getTransformer() throws IOException, URISyntaxException{
-    	Sphinx3Loader loader = (Sphinx3Loader) context.getLoader();
-    	DensityFileData means = new DensityFileData("", -Float.MAX_VALUE, loader, false);
-    	MllrTransformer transformer;
-    	
-    	if (!this.estimation.isComplete()){
-    		this.estimation.estimateMatrices();
-    	}
-    	
-    	means.getMeansFromLoader();
-    	transformer = new MllrTransformer(means, estimation.getA(), estimation.getB(), "");
-    	transformer.transform();
-    	
-    	return transformer;
-    }
-    
-    public void adaptModelOnDisk() throws IOException, URISyntaxException{
-    	Sphinx3Loader loader = (Sphinx3Loader) context.getLoader();
-    	String path = loader.getLocation() + "/means";
-    	MllrTransformer transformer = this.getTransformer();
-    	
-    	transformer.setOutputMeanFile(path);
-    	transformer.writeToFile();
-    }
-    
-    public void writeTransformationToFile(String filepath){
-    	if (!this.estimation.isComplete()){
-    		this.estimation.estimateMatrices();
-    	}
-    	
-    	this.estimation.setOutputFilePath(filepath);
-    	
-    	try {
+	/**
+	 * Constructs recognizer object using provided configuration.
+	 */
+	public AbstractSpeechRecognizer(Configuration configuration)
+			throws IOException {
+		this(new Context(configuration));
+	}
+
+	protected AbstractSpeechRecognizer(Context context) throws IOException {
+		this.context = context;
+		recognizer = context.getInstance(Recognizer.class);
+		speechSourceProvider = new SpeechSourceProvider();
+	}
+
+	protected void initAdaptation() throws Exception {
+		this.collectStatsForAdaptation = true;
+		Sphinx3Loader loader = (Sphinx3Loader) context.getLoader();
+		this.cc = new CountsCollector(loader.getVectorLength(),
+				loader.getNumStates(), loader.getNumStreams(),
+				loader.getNumGaussiansPerState());
+	}
+
+	private MllrTransformer getTransformer() throws Exception {
+		Sphinx3Loader loader = (Sphinx3Loader) context.getLoader();
+		DensityFileData means = new DensityFileData("", -Float.MAX_VALUE,
+				loader, false);
+		MllrTransformer transformer;
+
+		if (!this.estimation.isComplete()) {
+			this.estimation.estimateMatrices();
+		}
+
+		means.getMeansFromLoader();
+		transformer = new MllrTransformer(means, estimation.getA(),
+				estimation.getB(), "");
+		transformer.transform();
+
+		return transformer;
+	}
+
+	public void writeTransformationToFile(String filepath) throws Exception {
+		if (!this.estimation.isComplete()) {
+			this.estimation.estimateMatrices();
+		}
+
+		this.estimation.setOutputFilePath(filepath);
+
+		try {
 			estimation.createMllrFile();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}
-    }
-    
-    public void adaptCurrentModel() throws IOException, URISyntaxException{
-    	MllrTransformer transformer = this.getTransformer();
+	}
 
-    	//TODO : adapt current model
-    }
-    
+	protected void adaptCurrentModel() throws Exception {
+		this.estimation = new MllrEstimation("", 1, "", false, cc.getCounts(),
+				"", false, this.getLoader());
+		MllrTransformer transformer = this.getTransformer();
 
-    /**
-     * Returns result of the recognition.
-     */
-    public SpeechResult getResult() {
-        Result result = recognizer.recognize();
-        
-        if(this.collectStatsForAdaptation && result != null){
-        	try {
-				estimation.addCounts(result);
+		// TODO : adapt current model
+	}
+
+	/**
+	 * Returns result of the recognition.
+	 */
+	public SpeechResult getResult() {
+		Result result = recognizer.recognize();
+
+		if (this.collectStatsForAdaptation && result != null) {
+			try {
+				cc.collect(result);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-        }
-        
-        return null == result ? null : new SpeechResult(result);
-    }
-    
-    /**
-     * Returns the Loader object used for loading the acoustic model.
-     */
-    public Loader getLoader() {
-    	return (Loader) context.getLoader();
-    }
+		}
+
+		return null == result ? null : new SpeechResult(result);
+	}
+
+	/**
+	 * Returns the Loader object used for loading the acoustic model.
+	 */
+	public Loader getLoader() {
+		return (Loader) context.getLoader();
+	}
 }
