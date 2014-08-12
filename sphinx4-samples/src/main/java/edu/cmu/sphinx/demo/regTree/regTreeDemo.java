@@ -6,8 +6,10 @@ import edu.cmu.sphinx.api.Configuration;
 import edu.cmu.sphinx.api.SpeechResult;
 import edu.cmu.sphinx.api.StreamSpeechRecognizer;
 import edu.cmu.sphinx.decoder.adaptation.CountsCollector;
+import edu.cmu.sphinx.decoder.adaptation.DensityFileData;
 import edu.cmu.sphinx.decoder.adaptation.regtree.ClusteredDensityFileData;
 import edu.cmu.sphinx.decoder.adaptation.regtree.RegTreeEstimation;
+import edu.cmu.sphinx.decoder.adaptation.regtree.RegTreeTransform;
 import edu.cmu.sphinx.demo.transcriber.TranscriberDemo;
 import edu.cmu.sphinx.linguist.acoustic.tiedstate.Sphinx3Loader;
 import edu.cmu.sphinx.result.WordResult;
@@ -64,7 +66,15 @@ public class regTreeDemo {
 		
 		RegTreeEstimation regTreeEstimation = new RegTreeEstimation(cc.getCounts(), cm, 10, loader);
 		regTreeEstimation.estimate();
-	
+		
+		DensityFileData means = new DensityFileData("", -Float.MAX_VALUE,
+				loader, false);
+		means.getMeansFromLoader();
+		
+		RegTreeTransform rt = new RegTreeTransform(means, "/home/bogdanpetcu/regMeans", 10, regTreeEstimation);
+		rt.transform();
+		rt.writeToFile();
+		
 	}
 
 }
