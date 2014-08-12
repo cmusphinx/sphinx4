@@ -40,6 +40,10 @@ public class RegTreeEstimation {
 	public float[][][][] getBs() {
 		return Bs;
 	}
+	
+	public ClusteredDensityFileData getClusteredData(){
+		return this.cm;
+	}
 
 	private Counts getClusterCounts(int k) {
 		Counts clusterCounts = new Counts(vectorLength, numStates, numStreams,
