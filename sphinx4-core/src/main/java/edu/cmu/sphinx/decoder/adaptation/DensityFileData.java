@@ -26,7 +26,7 @@ public class DensityFileData {
 	private int numStreams;
 	private int numGaussiansPerState;
 	private int[] vectorLength;
-	Pool<float[]> pool;
+	public Pool<float[]> pool;
 
 	public DensityFileData(String filePath, float varFloor,
 			Sphinx3Loader loader, boolean meansFromFile) throws IOException,
