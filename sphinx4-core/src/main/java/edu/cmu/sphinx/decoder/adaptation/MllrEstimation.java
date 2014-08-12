@@ -4,6 +4,7 @@ import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
+import java.util.ArrayList;
 
 import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.ArrayRealVector;
@@ -36,6 +37,8 @@ public class MllrEstimation {
 	private boolean modelFromFile;
 	private Sphinx3Loader s3loader;
 	private boolean estimated;
+	private boolean classEstimation;
+	private ArrayList<Integer> stateNumbers;
 
 	public MllrEstimation(String location, int nMllrClass,
 			String outputFilePath, boolean countsFromFile, Counts counts,
@@ -110,18 +113,26 @@ public class MllrEstimation {
 		this.s3loader = (Sphinx3Loader) loader;
 	}
 	
+	public void setClassEstimation(boolean classEstimation, ArrayList<Integer> stateNumbers) throws Exception{
+		this.classEstimation = classEstimation;
+		if (classEstimation && (stateNumbers==null || stateNumbers.size()==0)){
+			throw new Exception("Empty set of indexes that form the class");
+		}
+		this.stateNumbers = stateNumbers;
+	}
+	
 	public boolean isComplete(){
 		return this.estimated;
 	}
 
-	public void readCountsFromFile() throws Exception {
+	private void readCountsFromFile() throws Exception {
 			cr = new CountsReader(this.countsFilePath);
 			cr.read();
 			this.counts = cr.getCounts();
 			this.cb2mllr = new int[counts.getnCb()];
 	}
 
-	public void readMeansAndVariances() throws Exception {
+	private void readMeansAndVariances() throws Exception {
 
 		if (modelFromFile) {
 			URL location = new URL("file:" + this.location);
@@ -168,7 +179,7 @@ public class MllrEstimation {
 		}
 	}
 
-	public void fillRegLowerPart() {
+	private void fillRegLowerPart() {
 		for (int m = 0; m < nMllrClass; m++) {
 			for (int j = 0; j < means.getNumStreams(); j++) {
 				for (int l = 0; l < means.getVectorLength()[j]; l++) {
@@ -181,57 +192,66 @@ public class MllrEstimation {
 			}
 		}
 	}
+	
+	private void fill(int i){
+		float[] tmean;
+		float wtMeanVar, wtDcountVar, wtDcountVarMean;
+		int mc = cb2mllr[i], len;
 
-	public void fillRegMatrices() {
-		int mc, len;
+		if (mc < 0)
+			return;
 
-		for (int i = 0; i < means.getNumStates(); i++) {
-			float[] tmean;
-			float wtMeanVar, wtDcountVar, wtDcountVarMean;
-			mc = cb2mllr[i];
+		for (int j = 0; j < means.getNumStreams(); j++) {
+			len = means.getVectorLength()[j];
 
-			if (mc < 0)
-				continue;
+			for (int k = 0; k < means.getNumGaussiansPerState(); k++) {
+				if (counts.getDnom()[i][j][k] > 0.) {
+					tmean = means.getPool().get(
+							i * means.getNumGaussiansPerState() + k);
+					for (int l = 0; l < len; l++) {
+						wtMeanVar = counts.getMean()[i][j][k][l]
+								* variances.getPool().get(
+										i * means.getNumGaussiansPerState()
+												+ k)[l];
+						wtDcountVar = counts.getDnom()[i][j][k]
+								* variances.getPool().get(
+										i * means.getNumGaussiansPerState()
+												+ k)[l];
 
-			for (int j = 0; j < means.getNumStreams(); j++) {
-				len = means.getVectorLength()[j];
+						for (int p = 0; p < len; p++) {
+							wtDcountVarMean = wtDcountVar * tmean[p];
 
-				for (int k = 0; k < means.getNumGaussiansPerState(); k++) {
-					if (counts.getDnom()[i][j][k] > 0.) {
-						tmean = means.getPool().get(
-								i * means.getNumGaussiansPerState() + k);
-						for (int l = 0; l < len; l++) {
-							wtMeanVar = counts.getMean()[i][j][k][l]
-									* variances.getPool().get(
-											i * means.getNumGaussiansPerState()
-													+ k)[l];
-							wtDcountVar = counts.getDnom()[i][j][k]
-									* variances.getPool().get(
-											i * means.getNumGaussiansPerState()
-													+ k)[l];
-
-							for (int p = 0; p < len; p++) {
-								wtDcountVarMean = wtDcountVar * tmean[p];
-
-								for (int q = p; q < len; q++) {
-									regL[mc][j][l][p][q] += wtDcountVarMean
-											* tmean[q];
-								}
-
-								regL[mc][j][l][p][len] += wtDcountVarMean;
-								regR[mc][j][l][p] += wtMeanVar * tmean[p];
+							for (int q = p; q < len; q++) {
+								regL[mc][j][l][p][q] += wtDcountVarMean
+										* tmean[q];
 							}
-							regL[mc][j][l][len][len] += wtDcountVar;
-							regR[mc][j][l][len] += wtMeanVar;
+
+							regL[mc][j][l][p][len] += wtDcountVarMean;
+							regR[mc][j][l][p] += wtMeanVar * tmean[p];
 						}
+						regL[mc][j][l][len][len] += wtDcountVar;
+						regR[mc][j][l][len] += wtMeanVar;
 					}
 				}
 			}
 		}
+	}
+
+	private void fillRegMatrices() {
+		if(!this.classEstimation){
+			for (int i = 0; i < means.getNumStates(); i++) {
+				this.fill(i);
+			}
+		} else {
+			for (int i : this.stateNumbers){
+				this.fill(i);
+			}
+		}
+		
 		fillRegLowerPart();
 	}
 
-	public void invertVariances() {
+	private void invertVariances() {
 		this.cb2mllr = new int[means.getNumStates()];
 
 		for (int i = 0; i < means.getNumStates(); i++) {
@@ -256,7 +276,7 @@ public class MllrEstimation {
 		}
 	}
 
-	public void computeMllr() {
+	private void computeMllr() {
 		int len;
 		DecompositionSolver solver;
 		RealMatrix coef;

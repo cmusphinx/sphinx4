@@ -71,6 +71,7 @@ public class RegTreeEstimation {
 			clusterCounts = this.getClusterCounts(i);
 			estimation = new MllrEstimation("", 1, "", false, clusterCounts,
 					"", false, loader);
+			estimation.setClassEstimation(true, this.cm.getStateNumbers().get(i));
 			estimation.estimateMatrices();
 			As[i] = estimation.getA();
 			Bs[i] = estimation.getB();
