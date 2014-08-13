@@ -99,13 +99,17 @@ public class LongTextAligner {
 
             public List<Node> adjacent() {
                 List<Node> result = newArrayListWithCapacity(3);
-                if (databaseIndex < shifts.size())
-                    result.add(new Node(queryIndex, databaseIndex + 1));
-                if (queryIndex < indices.size())
-                    result.add(new Node(queryIndex + 1, databaseIndex));
                 if (queryIndex < indices.size() &&
-                    databaseIndex < shifts.size())
+                    databaseIndex < shifts.size()) {
                     result.add(new Node(queryIndex + 1, databaseIndex + 1));
+                }
+                if (databaseIndex < shifts.size()) {
+                    result.add(new Node(queryIndex, databaseIndex + 1));
+                }
+                if (queryIndex < indices.size()) {
+                    result.add(new Node(queryIndex + 1, databaseIndex));
+                }
+
                 return result;
             }
 

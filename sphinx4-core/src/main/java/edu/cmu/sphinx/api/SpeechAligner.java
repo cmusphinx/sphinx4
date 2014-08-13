@@ -20,14 +20,18 @@ import static edu.cmu.sphinx.result.WordResults.toSpelling;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.*;
-import java.util.logging.Logger;
+import java.util.List;
+import java.util.Map;
+import java.util.Queue;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Range;
 
-import edu.cmu.sphinx.alignment.EnglishWordTokenizer;
 import edu.cmu.sphinx.alignment.LongTextAligner;
-import edu.cmu.sphinx.alignment.WordTokenizer;
+import edu.cmu.sphinx.alignment.UsEnglishWordExpander;
+import edu.cmu.sphinx.alignment.WordExpander;
 import edu.cmu.sphinx.linguist.language.grammar.AlignerGrammar;
 import edu.cmu.sphinx.linguist.language.ngram.DynamicTrigramModel;
 import edu.cmu.sphinx.recognizer.Recognizer;
@@ -35,10 +39,11 @@ import edu.cmu.sphinx.result.Result;
 import edu.cmu.sphinx.result.WordResult;
 import edu.cmu.sphinx.util.TimeFrame;
 
-/** 
+/**
  * @author Alexander Solovets
  */
 public class SpeechAligner {
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     private static final int TUPLE_SIZE = 3;
 
@@ -47,11 +52,11 @@ public class SpeechAligner {
     private final AlignerGrammar grammar;
     private final DynamicTrigramModel languageModel;
 
-    private final Logger logger = Logger.getLogger(getClass().getSimpleName());
+    private WordExpander wordExpander;
 
     /**
      * TODO: fill
-     * 
+     *
      * @throws IOException
      * @throws MalformedURLException
      */
@@ -73,24 +78,25 @@ public class SpeechAligner {
         recognizer = context.getInstance(Recognizer.class);
         grammar = context.getInstance(AlignerGrammar.class);
         languageModel = context.getInstance(DynamicTrigramModel.class);
+        setWordExpander(new UsEnglishWordExpander());
     }
 
     /**
      * TODO: fill
-     * 
+     *
      * @param dataStream
      * @return
      * @throws IOException
+     * @throws ProcessException
      */
     public List<WordResult> align(URL audioUrl, String transcript)
             throws IOException {
-        WordTokenizer tokenizer = new EnglishWordTokenizer();
-        return align(audioUrl, tokenizer.getWords(transcript));
+        return align(audioUrl, getWordExpander().expand(transcript));
     }
 
     /**
      * TOOD: fill
-     * 
+     *
      * @param audioFile
      * @param transcript
      * @return
@@ -206,15 +212,15 @@ public class SpeechAligner {
         int lastId = -1;
         for (int ij = 0; ij < aid.length; ++ij) {
             if (aid[ij] == -1) {
-                logger.info(String.format("+ %s\n", results.get(ij)));
+                logger.info(String.format("+ %s", results.get(ij)));
             } else {
                 if (aid[ij] - lastId > 1) {
                     for (String result1 : transcript.subList(lastId + 1,
                             aid[ij])) {
-                        logger.info(String.format("- %-25s\n", result1));
+                        logger.info(String.format("- %-25s", result1));
                     }
                 } else {
-                    logger.info(String.format("  %-25s\n",
+                    logger.info(String.format("  %-25s",
                             transcript.get(aid[ij])));
                 }
                 lastId = aid[ij];
@@ -224,7 +230,7 @@ public class SpeechAligner {
         if (lastId >= 0 && transcript.size() - lastId > 1) {
             for (String result1 : transcript.subList(lastId + 1,
                     transcript.size())) {
-                logger.info(String.format("- %-25s\n", result1));
+                logger.info(String.format("- %-25s", result1));
             }
         }
     }
@@ -247,5 +253,13 @@ public class SpeechAligner {
         texts.offer(transcript.subList(start, end));
         timeFrames.offer(new TimeFrame(timeStart, timeEnd));
         ranges.offer(Range.closed(start, end - 1));
+    }
+
+    public WordExpander getWordExpander() {
+        return wordExpander;
+    }
+
+    public void setWordExpander(WordExpander wordExpander) {
+        this.wordExpander = wordExpander;
     }
 }

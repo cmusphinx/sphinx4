@@ -12,6 +12,10 @@ package edu.cmu.sphinx.alignment;
 
 import java.util.List;
 
-public interface WordTokenizer {
-    List<String> getWords(String text);
+/**
+ *
+ * @author Alexander Solovets
+ */
+public interface WordExpander {
+    List<String> expand(String text);
 }

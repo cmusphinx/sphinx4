@@ -1,0 +1,109 @@
+*** Cart dump created by cart_dump
+*** Flite version: flite-1.1-release December 2001
+*** 
+*** Portions Copyright 2001,2002 Sun Microsystems, Inc.
+*** Portions Copyright 1999-2001 Language Technologies Institute, 
+*** Carnegie Mellon University.
+*** All Rights Reserved.  Use is subject to license terms.
+*** 
+*** See the file "license.terms" for information on usage and
+*** redistribution of this file, and for a DISCLAIMER OF ALL 
+*** WARRANTIES.
+TOTAL 97
+NODE num_digits < Float(3.800000) 56
+NODE p.token_pos_guess = String(month) 5
+NODE month_range = String(0) 4
+LEAF String(year)
+LEAF String(ordinal)
+NODE n.token_pos_guess = String(month) 9
+NODE month_range = String(0) 8
+LEAF String(cardinal)
+LEAF String(ordinal)
+NODE n.token_pos_guess = String(numeric) 19
+NODE num_digits < Float(2.000000) 16
+NODE p.token_pos_guess = String(numeric) 15
+NODE p.p.token_pos_guess = String(sym) 14
+LEAF String(digits)
+LEAF String(cardinal)
+LEAF String(cardinal)
+NODE n.n.token_pos_guess = String(sym) 18
+LEAF String(cardinal)
+LEAF String(digits)
+NODE num_digits < Float(2.000000) 27
+NODE n.n.token_pos_guess = String(numeric) 26
+NODE n.token_pos_guess = String(sym) 25
+NODE month_range = String(0) 24
+LEAF String(digits)
+LEAF String(cardinal)
+LEAF String(cardinal)
+LEAF String(cardinal)
+NODE name < Float(302.299988) 35
+NODE p.token_pos_guess = String(flight) 30
+LEAF String(digits)
+NODE n.token_pos_guess = String(sym) 34
+NODE p.token_pos_guess = String(sym) 33
+LEAF String(digits)
+LEAF String(cardinal)
+LEAF String(cardinal)
+NODE p.token_pos_guess = String(a) 37
+LEAF String(digits)
+NODE n.token_pos_guess = String(sym) 43
+NODE n.n.token_pos_guess = String(sym) 42
+NODE name < Float(669.200012) 41
+LEAF String(digits)
+LEAF String(cardinal)
+LEAF String(cardinal)
+NODE name < Float(373.200012) 45
+LEAF String(cardinal)
+NODE name < Float(436.200012) 49
+NODE name < Float(392.600006) 48
+LEAF String(digits)
+LEAF String(cardinal)
+NODE name < Float(716.500000) 51
+LEAF String(cardinal)
+NODE name < Float(773.599976) 55
+NODE p.token_pos_guess = String(_other_) 54
+LEAF String(digits)
+LEAF String(cardinal)
+LEAF String(cardinal)
+NODE p.token_pos_guess = String(numeric) 62
+NODE p.p.token_pos_guess = String(month) 59
+LEAF String(year)
+NODE n.n.token_pos_guess = String(numeric) 61
+LEAF String(cardinal)
+LEAF String(digits)
+NODE n.n.token_pos_guess = String(numeric) 70
+NODE n.token_pos_guess = String(month) 65
+LEAF String(cardinal)
+NODE n.token_pos_guess = String(numeric) 67
+LEAF String(digits)
+NODE p.token_pos_guess = String(_other_) 69
+LEAF String(cardinal)
+LEAF String(year)
+NODE p.token_pos_guess = String(_other_) 80
+NODE num_digits < Float(4.400000) 77
+NODE name < Float(2959.600098) 76
+NODE name < Float(1773.400024) 75
+LEAF String(cardinal)
+LEAF String(year)
+LEAF String(cardinal)
+NODE p.p.token_pos_guess = String(_other_) 79
+LEAF String(digits)
+LEAF String(cardinal)
+NODE n.token_pos_guess = String(to) 82
+LEAF String(year)
+NODE p.token_pos_guess = String(sym) 88
+NODE p.p.token_pos_guess = String(sym) 85
+LEAF String(cardinal)
+NODE num_digits < Float(4.600000) 87
+LEAF String(year)
+LEAF String(digits)
+NODE num_digits < Float(4.800000) 96
+NODE name < Float(2880.000000) 95
+NODE name < Float(1633.199951) 94
+NODE name < Float(1306.400024) 93
+LEAF String(cardinal)
+LEAF String(year)
+LEAF String(year)
+LEAF String(cardinal)
+LEAF String(cardinal)
