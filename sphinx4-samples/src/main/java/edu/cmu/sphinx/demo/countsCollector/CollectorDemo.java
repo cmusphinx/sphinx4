@@ -17,7 +17,7 @@ public class CollectorDemo {
 		Configuration configuration = new Configuration();
 
 		configuration
-				.setAcousticModelPath("/home/bogdanpetcu/RSoC/en-us");
+				.setAcousticModelPath("/home/bogdanpetcu/RSoC/en-uss");
 		configuration
 				.setDictionaryPath("resource:/edu/cmu/sphinx/models/acoustic/wsj/dict/cmudict.0.6d");
 		configuration
@@ -26,7 +26,7 @@ public class CollectorDemo {
 		StreamSpeechRecognizer recognizer = new StreamSpeechRecognizer(
 				configuration);
 		InputStream stream = TranscriberDemo.class
-				.getResourceAsStream("/edu/cmu/sphinx/demo/countsCollector/out.wav");
+				.getResourceAsStream("/edu/cmu/sphinx/demo/countsCollector/out2.wav");
 		recognizer.startRecognition(stream, false);
 
 		SpeechResult result;

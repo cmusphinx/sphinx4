@@ -30,7 +30,7 @@ public class regTreeDemo {
 				configuration);
 
 		InputStream stream = TranscriberDemo.class
-				.getResourceAsStream("/edu/cmu/sphinx/demo/countsCollector/BillGates_2010_554.62_564.32.wav");
+				.getResourceAsStream("/edu/cmu/sphinx/demo/countsCollector/out8mins.wav");
 		recognizer.startRecognition(stream, false);
 
 		Sphinx3Loader loader = (Sphinx3Loader) recognizer.getLoader();

@@ -12,7 +12,7 @@ public class ClusteredDensityFileData {
 	private Pool<float[]> initialData;
 	private int numberOfClusters;
 	private ArrayList<Cluster> clusters;
-	private ArrayList<ArrayList<Integer>> stateNumbers;
+	private ArrayList<ArrayList<Integer>> gaussianNumbers;
 	private int numStates;
 	private int numGaussiansPerState;
 
@@ -22,9 +22,9 @@ public class ClusteredDensityFileData {
 		this.numberOfClusters = numberOfClusters;
 		this.numStates = numStates;
 		this.numGaussiansPerState = numGaussiansPerState;
-		this.stateNumbers = new ArrayList<ArrayList<Integer>>(numberOfClusters);
+		this.gaussianNumbers = new ArrayList<ArrayList<Integer>>(numberOfClusters);
 		for(int i=0; i<numberOfClusters; i++){
-			this.stateNumbers.add(new ArrayList<Integer>(numGaussiansPerState * numStates));
+			this.gaussianNumbers.add(new ArrayList<Integer>(numGaussiansPerState * numStates));
 		}
 		this.kMeansClustering(15);
 	}
@@ -33,8 +33,8 @@ public class ClusteredDensityFileData {
 		return clusters;
 	}
 
-	public ArrayList<ArrayList<Integer>> getStateNumbers() {
-		return stateNumbers;
+	public ArrayList<ArrayList<Integer>> getGaussianNumbers() {
+		return gaussianNumbers;
 	}
 
 	private float euclidianDistance(float[] a, float[] b) {
@@ -87,9 +87,9 @@ public class ClusteredDensityFileData {
 		while (!converged && nrOfIterations > 0) {
 
 			array = new float[numberOfClusters][numberOfElements][];
-			this.stateNumbers = new ArrayList<ArrayList<Integer>>(numberOfClusters);
+			this.gaussianNumbers = new ArrayList<ArrayList<Integer>>(numberOfClusters);
 			for(int i=0; i<numberOfClusters; i++){
-				this.stateNumbers.add(new ArrayList<Integer>(numGaussiansPerState * numStates));
+				this.gaussianNumbers.add(new ArrayList<Integer>(numGaussiansPerState * numStates));
 			}
 
 			for (int i = 0; i < numberOfClusters; i++) {
@@ -117,7 +117,7 @@ public class ClusteredDensityFileData {
 					
 					
 					array[index][count[index]] = currentValue;
-					this.stateNumbers.get(index).add(i);
+					this.gaussianNumbers.get(index).add(i * numGaussiansPerState + j);
 					count[index]++;
 				}
 			}

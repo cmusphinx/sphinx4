@@ -40,7 +40,7 @@ public class MllrEstimation {
 	private Sphinx3Loader s3loader;
 	private boolean estimated;
 	private boolean classEstimation;
-	private ArrayList<Integer> stateNumbers;
+	private ArrayList<Integer> gaussianNumbers;
 
 	public MllrEstimation(String location, int nMllrClass,
 			String outputFilePath, boolean countsFromFile,
@@ -60,9 +60,15 @@ public class MllrEstimation {
 
 	public void init() throws Exception {
 		this.readMeansAndVariances();
+<<<<<<< HEAD
 		this.readCounts();
+=======
+		if (countsFromFile) {
+			this.readCountsFromFile();
+		}
+>>>>>>> changed clustering so it clusters gaussians by gaussian index, not state index
 	}
-	
+
 	public MllrEstimation() {
 		this.varFlor = (float) 1e-5;
 		this.nMllrClass = 1;
@@ -111,16 +117,18 @@ public class MllrEstimation {
 	public void setS3loader(Loader loader) {
 		this.s3loader = (Sphinx3Loader) loader;
 	}
-	
-	public void setClassEstimation(boolean classEstimation, ArrayList<Integer> stateNumbers) throws Exception{
+
+	public void setClassEstimation(boolean classEstimation,
+			ArrayList<Integer> stateNumbers) throws Exception {
 		this.classEstimation = classEstimation;
-		if (classEstimation && (stateNumbers==null || stateNumbers.size()==0)){
+		if (classEstimation
+				&& (stateNumbers == null || stateNumbers.size() == 0)) {
 			throw new Exception("Empty set of indexes that form the class");
 		}
-		this.stateNumbers = stateNumbers;
+		this.gaussianNumbers = stateNumbers;
 	}
-	
-	public boolean isComplete(){
+
+	public boolean isComplete() {
 		return this.estimated;
 	}
 
@@ -129,6 +137,7 @@ public class MllrEstimation {
 		if (this.countsFromFile) {
 =======
 	private void readCountsFromFile() throws Exception {
+<<<<<<< HEAD
 >>>>>>> implemented mllr estimation per class
 			cr = new CountsReader(this.countsFilePath);
 			cr.read();
@@ -139,6 +148,12 @@ public class MllrEstimation {
 					means.getNumStates(), means.getNumStreams(),
 					means.getNumGaussiansPerState());
 		}
+=======
+		cr = new CountsReader(this.countsFilePath);
+		cr.read();
+		this.counts = cr.getCounts();
+		this.cb2mllr = new int[counts.getnCb()];
+>>>>>>> changed clustering so it clusters gaussians by gaussian index, not state index
 	}
 
 	private void readMeansAndVariances() throws Exception {
@@ -167,10 +182,10 @@ public class MllrEstimation {
 				}
 			}
 		} else {
-			if(s3loader==null){
+			if (s3loader == null) {
 				throw new Exception("Sphinx3Loader is not set.");
 			}
-			
+
 			this.means = new DensityFileData();
 			this.variances = new DensityFileData();
 			this.means.setPool(s3loader.getMeansPool());
@@ -201,62 +216,111 @@ public class MllrEstimation {
 			}
 		}
 	}
-	
-	private void fill(int i){
-		float[] tmean;
-		float wtMeanVar, wtDcountVar, wtDcountVarMean;
-		int mc = cb2mllr[i], len;
 
-		if (mc < 0)
-			return;
+	private void fill() {
+		int mc, len;
 
-		for (int j = 0; j < means.getNumStreams(); j++) {
-			len = means.getVectorLength()[j];
+		for (int i = 0; i < means.getNumStates(); i++) {
+			float[] tmean;
+			float wtMeanVar, wtDcountVar, wtDcountVarMean;
+			mc = cb2mllr[i];
 
-			for (int k = 0; k < means.getNumGaussiansPerState(); k++) {
-				if (counts.getDnom()[i][j][k] > 0.) {
-					tmean = means.getPool().get(
-							i * means.getNumGaussiansPerState() + k);
-					for (int l = 0; l < len; l++) {
-						wtMeanVar = counts.getMean()[i][j][k][l]
-								* variances.getPool().get(
-										i * means.getNumGaussiansPerState()
-												+ k)[l];
-						wtDcountVar = counts.getDnom()[i][j][k]
-								* variances.getPool().get(
-										i * means.getNumGaussiansPerState()
-												+ k)[l];
+			if (mc < 0)
+				continue;
 
-						for (int p = 0; p < len; p++) {
-							wtDcountVarMean = wtDcountVar * tmean[p];
+			for (int j = 0; j < means.getNumStreams(); j++) {
+				len = means.getVectorLength()[j];
 
-							for (int q = p; q < len; q++) {
-								regL[mc][j][l][p][q] += wtDcountVarMean
-										* tmean[q];
+				for (int k = 0; k < means.getNumGaussiansPerState(); k++) {
+					if (counts.getDnom()[i][j][k] > 0.) {
+						tmean = means.getPool().get(
+								i * means.getNumGaussiansPerState() + k);
+						for (int l = 0; l < len; l++) {
+							wtMeanVar = counts.getMean()[i][j][k][l]
+									* variances.getPool().get(
+											i * means.getNumGaussiansPerState()
+													+ k)[l];
+							wtDcountVar = counts.getDnom()[i][j][k]
+									* variances.getPool().get(
+											i * means.getNumGaussiansPerState()
+													+ k)[l];
+
+							for (int p = 0; p < len; p++) {
+								wtDcountVarMean = wtDcountVar * tmean[p];
+
+								for (int q = p; q < len; q++) {
+									regL[mc][j][l][p][q] += wtDcountVarMean
+											* tmean[q];
+								}
+
+								regL[mc][j][l][p][len] += wtDcountVarMean;
+								regR[mc][j][l][p] += wtMeanVar * tmean[p];
 							}
-
-							regL[mc][j][l][p][len] += wtDcountVarMean;
-							regR[mc][j][l][p] += wtMeanVar * tmean[p];
+							regL[mc][j][l][len][len] += wtDcountVar;
+							regR[mc][j][l][len] += wtMeanVar;
 						}
-						regL[mc][j][l][len][len] += wtDcountVar;
-						regR[mc][j][l][len] += wtMeanVar;
 					}
 				}
 			}
 		}
 	}
 
-	private void fillRegMatrices() {
-		if(!this.classEstimation){
-			for (int i = 0; i < means.getNumStates(); i++) {
-				this.fill(i);
+	private void fillForClass() {
+		int mc, len, stateIndex, gaussianIndex;
+
+		for (int gaussianNumber : this.gaussianNumbers) {
+			stateIndex = gaussianNumber / means.getNumGaussiansPerState();
+			gaussianIndex = gaussianNumber % means.getNumGaussiansPerState();
+			float[] tmean;
+			float wtMeanVar, wtDcountVar, wtDcountVarMean;
+			mc = cb2mllr[stateIndex];
+
+			if (mc < 0)
+				continue;
+
+			len = means.getVectorLength()[0];
+
+			if (counts.getDnom()[stateIndex][0][gaussianIndex] > 0.) {
+				tmean = means.getPool().get(
+						stateIndex * means.getNumGaussiansPerState()
+								+ gaussianIndex);
+				for (int l = 0; l < len; l++) {
+					wtMeanVar = counts.getMean()[stateIndex][0][gaussianIndex][l]
+							* variances.getPool().get(
+									stateIndex
+											* means.getNumGaussiansPerState()
+											+ gaussianIndex)[l];
+					wtDcountVar = counts.getDnom()[stateIndex][0][gaussianIndex]
+							* variances.getPool().get(
+									stateIndex
+											* means.getNumGaussiansPerState()
+											+ gaussianIndex)[l];
+
+					for (int p = 0; p < len; p++) {
+						wtDcountVarMean = wtDcountVar * tmean[p];
+
+						for (int q = p; q < len; q++) {
+							regL[mc][0][l][p][q] += wtDcountVarMean * tmean[q];
+						}
+
+						regL[mc][0][l][p][len] += wtDcountVarMean;
+						regR[mc][0][l][p] += wtMeanVar * tmean[p];
+					}
+					regL[mc][0][l][len][len] += wtDcountVar;
+					regR[mc][0][l][len] += wtMeanVar;
+				}
 			}
-		} else {
-			for (int i : this.stateNumbers){
-				this.fill(i);
-			}
+
 		}
-		
+	}
+
+	private void fillRegMatrices() {
+		if (!this.classEstimation) {
+			this.fill();
+		} else {
+			this.fillForClass();
+		}
+
 		fillRegLowerPart();
 	}
 
@@ -315,10 +379,13 @@ public class MllrEstimation {
 			}
 		}
 	}
+<<<<<<< HEAD
 	
 	public void addCounts(Result result) throws Exception{
 		cc.collect(result);
 	}
+=======
+>>>>>>> changed clustering so it clusters gaussians by gaussian index, not state index
 
 	public void createMllrFile() throws FileNotFoundException,
 			UnsupportedEncodingException {
@@ -356,11 +423,16 @@ public class MllrEstimation {
 		writer.close();
 	}
 
+<<<<<<< HEAD
 	public void estimateMatrices() {
 		if(!countsFromFile){
 			this.counts = cc.getCounts();
 		}
 		
+=======
+	public void estimateMatrices() throws Exception {
+
+>>>>>>> changed clustering so it clusters gaussians by gaussian index, not state index
 		this.invertVariances();
 
 		int len = means.getVectorLength()[0];

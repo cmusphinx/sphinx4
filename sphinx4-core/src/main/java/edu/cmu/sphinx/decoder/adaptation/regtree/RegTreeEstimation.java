@@ -48,13 +48,16 @@ public class RegTreeEstimation {
 	private Counts getClusterCounts(int k) {
 		Counts clusterCounts = new Counts(vectorLength, numStates, numStreams,
 				numGaussinsPerState);
-		ArrayList<Integer> stateNumbers = cm.getStateNumbers().get(k);
+		ArrayList<Integer> gaussianNumbers = cm.getGaussianNumbers().get(k);
 		float[][][][] mean = new float[numStates][numStreams][numGaussinsPerState][vectorLength[0]];
 		float[][][] dnom = new float[numStates][numStreams][numGaussinsPerState];
+		int stateIndex, gaussianIndex;
 
-		for (int id : stateNumbers) {
-			mean[id] = counts.getMean()[id];
-			dnom[id] = counts.getDnom()[id];
+		for (int id : gaussianNumbers) {
+			stateIndex = id / numGaussinsPerState;
+			gaussianIndex = id % numGaussinsPerState;
+			mean[stateIndex][0][gaussianIndex] = counts.getMean()[stateIndex][0][gaussianIndex];
+			dnom[stateIndex][0][gaussianIndex] = counts.getDnom()[stateIndex][0][gaussianIndex];
 		}
 
 		clusterCounts.setDnom(dnom);
@@ -71,7 +74,7 @@ public class RegTreeEstimation {
 			clusterCounts = this.getClusterCounts(i);
 			estimation = new MllrEstimation("", 1, "", false, clusterCounts,
 					"", false, loader);
-			estimation.setClassEstimation(true, this.cm.getStateNumbers().get(i));
+			estimation.setClassEstimation(true, this.cm.getGaussianNumbers().get(i));
 			estimation.estimateMatrices();
 			As[i] = estimation.getA();
 			Bs[i] = estimation.getB();
