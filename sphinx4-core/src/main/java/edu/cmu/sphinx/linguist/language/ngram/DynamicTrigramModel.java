@@ -4,12 +4,11 @@ import static com.google.common.base.Optional.fromNullable;
 import static com.google.common.collect.Lists.transform;
 import static com.google.common.collect.Maps.newHashMap;
 import static com.google.common.collect.Sets.newHashSet;
+import static com.google.common.collect.Sets.newTreeSet;
 import static java.util.Collections.unmodifiableSet;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import com.google.common.base.Function;
 import com.google.common.collect.HashMultiset;
@@ -106,16 +105,28 @@ public class DynamicTrigramModel implements BackoffLanguageModel {
         float logUniformProb = -lmath.linearToLog(uniprobs.size());
         float discount = .5f;
 
-        for (WordSequence unigram : unigrams.elementSet()) {
-            float sum = 0.f;
-            for (WordSequence bigram : bigrams.elementSet()) {
-                if (unigram.equals(bigram.getOldest()))
-                    sum += uniprobs.get(bigram.getNewest());
-            }
+        Set<WordSequence> sorted1grams = newTreeSet(unigrams.elementSet());
+        Iterator<WordSequence> iter =
+                newTreeSet(bigrams.elementSet()).iterator();
+        WordSequence ws = iter.hasNext() ? iter.next() : null;
+        for (WordSequence unigram : sorted1grams) {
             float p = lmath.linearToLog(uniprobs.get(unigram));
             p += logUnigramWeight;
             p = lmath.addAsLinear(p, logUniformProb + invLogUnigramWeight);
             logProbs.put(unigram, p);
+
+            float sum = 0.f;
+            while (ws != null) {
+                int cmp = ws.getOldest().compareTo(unigram);
+                if (cmp > 0) {
+                    break;
+                }
+                if (cmp == 0) {
+                    sum += uniprobs.get(ws.getNewest());
+                }
+                ws = iter.hasNext() ? iter.next() : null;
+            }
+
             logBackoffs.put(unigram, lmath.linearToLog(discount / (1 - sum)));
         }
 
@@ -127,13 +138,23 @@ public class DynamicTrigramModel implements BackoffLanguageModel {
                         entry.getCount() * deflate / unigramCount);
         }
 
-        for (WordSequence biword : bigrams.elementSet()) {
-            float sum = 0.f;
-            for (WordSequence triword : trigrams.elementSet()) {
-                if (biword.equals(triword.getOldest()))
-                    sum += biprobs.get(triword.getNewest());
-            }
+        Set<WordSequence> sorted2grams = newTreeSet(bigrams.elementSet());
+        iter = newTreeSet(trigrams).iterator();
+        ws = iter.hasNext() ? iter.next() : null;
+        for (WordSequence biword : sorted2grams) {
             logProbs.put(biword, lmath.linearToLog(biprobs.get(biword)));
+
+            float sum = 0.f;
+            while (ws != null) {
+                int cmp = ws.getOldest().compareTo(biword);
+                if (cmp > 0) {
+                    break;
+                }
+                if (cmp == 0) {
+                    sum += biprobs.get(ws.getNewest());
+                }
+                ws = iter.hasNext() ? iter.next() : null;
+            }
             logBackoffs.put(biword, lmath.linearToLog(sum));
         }
 

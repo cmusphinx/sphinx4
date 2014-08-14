@@ -1,11 +1,11 @@
 /*
- * Copyright 1999-2002 Carnegie Mellon University.  
- * Portions Copyright 2002 Sun Microsystems, Inc.  
+ * Copyright 1999-2002 Carnegie Mellon University.
+ * Portions Copyright 2002 Sun Microsystems, Inc.
  * Portions Copyright 2002 Mitsubishi Electric Research Laboratories.
  * All Rights Reserved.  Use is subject to license terms.
- * 
+ *
  * See the file "license.terms" for information on usage and
- * redistribution of this file, and for a DISCLAIMER OF ALL 
+ * redistribution of this file, and for a DISCLAIMER OF ALL
  * WARRANTIES.
  *
  */
@@ -14,17 +14,15 @@ package edu.cmu.sphinx.linguist;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.collect.Lists.transform;
+import static java.lang.Math.min;
 import static java.util.Arrays.asList;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 import com.google.common.base.Function;
 
 import edu.cmu.sphinx.linguist.dictionary.Dictionary;
 import edu.cmu.sphinx.linguist.dictionary.Word;
-
 
 /**
  * This class can be used to keep track of a word sequence. This class is an
@@ -32,14 +30,23 @@ import edu.cmu.sphinx.linguist.dictionary.Word;
  * perhaps for transient, cached things such as a precalculated hashcode).
  */
 
-public final class WordSequence {
+public final class WordSequence implements Comparable<WordSequence> {
+
+    /**
+     * Comparator that compares two sequences by their oldest part.
+     */
+    public final static Comparator<WordSequence> OLDEST_COMPARATOR =
+            new Comparator<WordSequence>() {
+                public int compare(WordSequence o1, WordSequence o2) {
+                    return o1.getOldest().compareTo(o2.getOldest());
+                }
+            };
 
     /** an empty word sequence, that is, it has no words. */
     public final static WordSequence EMPTY = new WordSequence(0);
 
     public static WordSequence asWordSequence(final Dictionary dictionary,
-                                              String... words)
-    {
+            String... words) {
         Function<String, Word> toWord = new Function<String, Word>() {
 
             public Word apply(String word) {
@@ -256,5 +263,16 @@ public final class WordSequence {
     public Word[] getWords() {
         return getSubSequence(0, size()).words; // create a copy to keep the
                                                 // class immutable
+    }
+
+    public int compareTo(WordSequence other) {
+        int n = min(words.length, other.words.length);
+        for (int i = 0; i < n; ++i) {
+            if (!words[i].equals(other.words[i])) {
+                return words[i].compareTo(other.words[i]);
+            }
+        }
+
+        return words.length - other.words.length;
     }
 }
