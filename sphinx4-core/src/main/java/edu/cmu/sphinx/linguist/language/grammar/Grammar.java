@@ -1,21 +1,15 @@
 /*
- * Copyright 1999-2002 Carnegie Mellon University.  
- * Portions Copyright 2002 Sun Microsystems, Inc.  
+ * Copyright 1999-2002 Carnegie Mellon University.
+ * Portions Copyright 2002 Sun Microsystems, Inc.
  * Portions Copyright 2002 Mitsubishi Electric Research Laboratories.
  * All Rights Reserved.  Use is subject to license terms.
- * 
+ *
  * See the file "license.terms" for information on usage and
- * redistribution of this file, and for a DISCLAIMER OF ALL 
+ * redistribution of this file, and for a DISCLAIMER OF ALL
  * WARRANTIES.
  *
  */
 package edu.cmu.sphinx.linguist.language.grammar;
-
-import edu.cmu.sphinx.linguist.dictionary.Dictionary;
-import edu.cmu.sphinx.linguist.dictionary.Word;
-import edu.cmu.sphinx.util.Timer;
-import edu.cmu.sphinx.util.TimerPool;
-import edu.cmu.sphinx.util.props.*;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -23,6 +17,12 @@ import java.io.PrintWriter;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import edu.cmu.sphinx.linguist.dictionary.Dictionary;
+import edu.cmu.sphinx.linguist.dictionary.Word;
+import edu.cmu.sphinx.util.Timer;
+import edu.cmu.sphinx.util.TimerPool;
+import edu.cmu.sphinx.util.props.*;
 
 /**
  * Classes that implement this interface create grammars. A grammar is represented internally as a graph of {@link
@@ -146,11 +146,6 @@ public abstract class Grammar implements Configurable, GrammarInterface {
             optimizeGrammar();
         }
         dumpStatistics();
-        if (false) {
-            dumpGrammar("grammar.gdl");
-            dumpRandomSentences("sentences.txt", 100);
-            logger.info("Total number of nodes " + grammarNodes.size());
-        }
     }
 
 
