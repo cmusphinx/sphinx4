@@ -10,15 +10,24 @@
  */
 package edu.cmu.sphinx.alignment;
 
+import static com.google.common.collect.Maps.newLinkedHashMap;
+
+import java.text.DecimalFormat;
+import java.util.Map;
 
 /**
- * Represents the abstract interface to an entity that has a set of features.
- * Provides interfaces to set and get the name/value pairs as well as providing
- * a set of convenience methods for setting and retrieving values of a
- * particular type.
+ * Implementation of the FeatureSet interface.
  */
+public class FeatureSet {
+    private final Map<String, Object> featureMap;
+    static DecimalFormat formatter;
 
-public interface FeatureSet {
+    /**
+     * Creates a new empty feature set
+     */
+    public FeatureSet() {
+        featureMap = newLinkedHashMap();
+    }
 
     /**
      * Determines if the given feature is present.
@@ -27,14 +36,18 @@ public interface FeatureSet {
      *
      * @return true if the named feature is present
      */
-    boolean isPresent(String name);
+    public boolean isPresent(String name) {
+        return featureMap.containsKey(name);
+    }
 
     /**
      * Removes the named feature from this set of features.
      *
      * @param name the name of the feature of interest
      */
-    void remove(String name);
+    public void remove(String name) {
+        featureMap.remove(name);
+    }
 
     /**
      * Convenience method that returns the named feature as a string.
@@ -46,19 +59,23 @@ public interface FeatureSet {
      *
      * @throws ClassCastException if the associated value is not a String
      */
-    String getString(String name);
+    public String getString(String name) {
+        return (String) getObject(name);
+    }
 
     /**
-     * Convenience method that returns the named feature as an int.
+     * Convenience method that returns the named feature as a int.
      *
      * @param name the name of the feature
      *
      * @return the value associated with the name or null if the value is not
      *         found
      *
-     * @throws ClassCastException if the associated value is not an int
+     * @throws ClassCastException if the associated value is not an int.
      */
-    int getInt(String name);
+    public int getInt(String name) {
+        return ((Integer) getObject(name)).intValue();
+    }
 
     /**
      * Convenience method that returns the named feature as a float.
@@ -66,11 +83,13 @@ public interface FeatureSet {
      * @param name the name of the feature
      *
      * @return the value associated with the name or null if the value is not
-     *         found
+     *         found.
      *
-     * @throws ClassCastException if the associated value is not a float.
+     * @throws ClassCastException if the associated value is not a float
      */
-    float getFloat(String name);
+    public float getFloat(String name) {
+        return ((Float) getObject(name)).floatValue();
+    }
 
     /**
      * Returns the named feature as an object.
@@ -80,23 +99,29 @@ public interface FeatureSet {
      * @return the value associated with the name or null if the value is not
      *         found
      */
-    Object getObject(String name);
+    public Object getObject(String name) {
+        return featureMap.get(name);
+    }
 
     /**
-     * Convenience method that sets the named feature as an int.
+     * Convenience method that sets the named feature as a int.
      *
      * @param name the name of the feature
      * @param value the value of the feature
      */
-    void setInt(String name, int value);
+    public void setInt(String name, int value) {
+        setObject(name, new Integer(value));
+    }
 
     /**
-     * Convenience method that sets the named feature as a float
+     * Convenience method that sets the named feature as a float.
      *
      * @param name the name of the feature
      * @param value the value of the feature
      */
-    void setFloat(String name, float value);
+    public void setFloat(String name, float value) {
+        setObject(name, new Float(value));
+    }
 
     /**
      * Convenience method that sets the named feature as a String.
@@ -104,13 +129,17 @@ public interface FeatureSet {
      * @param name the name of the feature
      * @param value the value of the feature
      */
-    void setString(String name, String value);
+    public void setString(String name, String value) {
+        setObject(name, value);
+    }
 
     /**
-     * Sets the named feature .
+     * Sets the named feature.
      *
      * @param name the name of the feature
      * @param value the value of the feature
      */
-    void setObject(String name, Object value);
+    public void setObject(String name, Object value) {
+        featureMap.put(name, value);
+    }
 }

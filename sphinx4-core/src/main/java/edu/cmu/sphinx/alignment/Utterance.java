@@ -35,8 +35,8 @@ public class Utterance {
      * @param tokenList the list of tokens for this utterance
      */
     public Utterance(CharTokenizer tokenizer) {
-        features = new FeatureSetImpl();
-        relations = new FeatureSetImpl();
+        features = new FeatureSet();
+        relations = new FeatureSet();
         setTokenList(newArrayList(tokenizer));
     }
 
@@ -146,7 +146,7 @@ public class Utterance {
                     "Utterance.getItem(): relation cannot be " + relation);
         }
 
-        PathExtractor path = new PathExtractorImpl(pathName, false);
+        PathExtractor path = new PathExtractor(pathName, false);
 
         // get the Item in the Segment Relation with the given time
         Item segmentItem = getItem(segmentRelation, time);

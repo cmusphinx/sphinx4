@@ -426,7 +426,7 @@ public class DecisionTree {
          */
         public DecisionNode(String feature, Object value, int qtrue, int qfalse) {
             super(value);
-            this.path = new PathExtractorImpl(feature, true);
+            this.path = new PathExtractor(feature, true);
             this.qtrue = qtrue;
             this.qfalse = qfalse;
         }

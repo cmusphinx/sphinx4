@@ -15,15 +15,15 @@ package edu.cmu.sphinx.alignment;
  * Contains the information that is shared between multiple items.
  */
 public class ItemContents {
-    private FeatureSetImpl features;
-    private FeatureSetImpl relations;
+    private FeatureSet features;
+    private FeatureSet relations;
 
     /**
      * Class Constructor.
      */
     public ItemContents() {
-        features = new FeatureSetImpl();
-        relations = new FeatureSetImpl();
+        features = new FeatureSet();
+        relations = new FeatureSet();
     }
 
     /**
