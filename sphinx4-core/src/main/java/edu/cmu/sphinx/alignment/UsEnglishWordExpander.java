@@ -418,6 +418,9 @@ public class UsEnglishWordExpander implements WordExpander {
         text = text.replace('’', '\'');
         text = text.replace('”', '"');
         text = text.replace('“', '"');
+        text = text.replace('»', '"');
+        text = text.replace('«', '"');
+        text = text.replace('–', '-');
         text = text.replace((char)0xc, ' ');
         return text;
     }
