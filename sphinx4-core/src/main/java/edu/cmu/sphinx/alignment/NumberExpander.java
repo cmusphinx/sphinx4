@@ -41,6 +41,11 @@ public class NumberExpander {
     "tenth", "twentieth", "thirtieth", "fortieth", "fiftieth", "sixtieth",
             "seventieth", "eightieth", "ninetieth"};
 
+    private static String[] digit2Numness = {
+           "", "tens", "twenties", "thirties", "fourties", "fifties", 
+           "sixties", "seventies", "eighties", "nineties" 
+    };
+
     /**
      * Unconstructable
      */
@@ -268,6 +273,16 @@ public class NumberExpander {
             }
         }
     }
+    
+
+    public static void expandNumess(String rawString, WordRelation wordRelation) {
+            if (rawString.length() == 4) {
+                expand2DigitNumber(rawString.substring(0, 2), wordRelation);
+                expandNumess(rawString.substring(2), wordRelation);
+            } else {
+                wordRelation.addWord(digit2Numness[rawString.charAt(0) - '0']);
+            }
+    }
 
     /**
      * Finds a match of the given string in the given array, and returns the
@@ -429,4 +444,5 @@ public class NumberExpander {
         }
         return value;
     }
+
 }

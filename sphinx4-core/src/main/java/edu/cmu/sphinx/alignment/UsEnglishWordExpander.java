@@ -51,7 +51,7 @@ class UsEnglish {
             "-?(([0-9]+\\.[0-9]*)|([0-9]+)|(\\.[0-9]+))([eE][---+]?[0-9]+)?";
     /** default integer with commas regular expression pattern */
     public static final String RX_DEFAULT_US_EN_COMMAINT =
-            "[0-9][0-9]?[0-9]?,([0-9][0-9][0-9],)*[0-9][0-9][0-9](\\.[0-9]+)?";
+            "[0-9][0-9]?[0-9]?[,']([0-9][0-9][0-9][,'])*[0-9][0-9][0-9](\\.[0-9]+)?";
     /** default digits regular expression pattern */
     public static final String RX_DEFAULT_US_EN_DIGITS = "[0-9][0-9]*";
     /** default dotted abbreviation regular expression pattern */
@@ -250,7 +250,6 @@ public class UsEnglishWordExpander implements WordExpander {
         }
     }
 
-    private static final String[] postrophes = {"'s", "'ll", "'ve", "'d"};
 
     // Finite state machines to check if a Token is pronounceable
     private PronounceableFSM prefixFSM = null;
@@ -451,22 +450,6 @@ public class UsEnglishWordExpander implements WordExpander {
                     p_p_name))));
     }
 
-    /**
-     * Returns true if the given string is in the given string array.
-     *
-     * @param value the string to check
-     * @param stringArray the array to check
-     *
-     * @return true if the string is in the array, false otherwise
-     */
-    private static boolean inStringArray(String value, String[] stringArray) {
-        for (int i = 0; i < stringArray.length; i++) {
-            if (stringArray[i].equals(value)) {
-                return true;
-            }
-        }
-        return false;
-    }
 
     /**
      * Converts the given Token into (word) Items in the WordRelation.
@@ -552,7 +535,7 @@ public class UsEnglishWordExpander implements WordExpander {
         } else if (matches(commaIntPattern, tokenVal)) {
 
             /* 99,999,999 */
-            NumberExpander.expandReal(tokenVal.replace(",", ""), wordRelation);
+            NumberExpander.expandReal(tokenVal.replace(",", "").replace("'", ""), wordRelation);
 
         } else if (matches(sevenPhoneNumberPattern, tokenVal)) {
 
@@ -616,14 +599,9 @@ public class UsEnglishWordExpander implements WordExpander {
         } else if (tokenLength > 0 && tokenVal.charAt(tokenLength - 1) == '%') {
             /* Y% */
             tokenToWords(tokenVal.substring(0, tokenLength - 1));
-            wordRelation.addWord("per");
-            wordRelation.addWord("cent");
+            wordRelation.addWord("percent");
         } else if (matches(numessPattern, tokenVal)) {
-            /* 60s and 7s and 9s */
-            tokenToWords(tokenVal.substring(0, tokenLength - 1));
-            wordRelation.addWord("'s");
-        } else if (tokenVal.indexOf('\'') != -1) {
-            postropheToWords(tokenVal);
+            NumberExpander.expandNumess(tokenVal.substring(0, tokenLength - 1), wordRelation);
         } else if (matches(digitsSlashDigitsPattern, tokenVal)
                 && tokenVal.equals(itemName)) {
             digitsSlashDigitsToWords(tokenVal);
@@ -634,6 +612,8 @@ public class UsEnglishWordExpander implements WordExpander {
         } else if (tokenVal.equals("&")) {
             // &
             wordRelation.addWord("and");
+        } else if (tokenVal.equals("-")) {
+            // Skip it
         } else {
             // Just a word.
             wordRelation.addWord(tokenVal.toLowerCase());
@@ -879,33 +859,6 @@ public class UsEnglishWordExpander implements WordExpander {
     }
 
     /**
-     * Convert the given apostrophed word into (word) Items in the Word
-     * Relation.
-     *
-     * @param tokenVal the apostrophed word string
-     */
-    private void postropheToWords(String tokenVal) {
-        int index = tokenVal.indexOf('\'');
-        String bbb = tokenVal.substring(index).toLowerCase();
-
-        if (inStringArray(bbb, postrophes)) {
-            String aaa = tokenVal.substring(0, index);
-            tokenToWords(aaa);
-            wordRelation.addWord(bbb);
-        } else if (bbb.equals("'tve")) {
-            String aaa = tokenVal.substring(0, index - 2);
-            tokenToWords(aaa);
-            wordRelation.addWord("'ve");
-
-        } else {
-            /* internal single quote deleted */
-            StringBuffer buffer = new StringBuffer(tokenVal);
-            buffer.deleteCharAt(index);
-            tokenToWords(buffer.toString());
-        }
-    }
-
-    /**
      * Convert the given digits/digits string into word (Items) in the
      * WordRelation.
      *
@@ -977,10 +930,14 @@ public class UsEnglishWordExpander implements WordExpander {
         int index = 0;
         int tokenLength = tokenVal.length();
 
-        for (; index < tokenLength; index++) {
+        for (; index < tokenLength - 1; index++) {
             if (isTextSplitable(tokenVal, index)) {
                 break;
             }
+        }
+        if (index == tokenLength - 1) {
+            wordRelation.addWord(tokenVal.toLowerCase());
+            return;
         }
 
         String aaa = tokenVal.substring(0, index + 1);
@@ -1094,12 +1051,18 @@ public class UsEnglishWordExpander implements WordExpander {
      *         otherwise
      */
     private static boolean isTextSplitable(String text, int index) {
+
+
         char c0 = text.charAt(index);
         char c1 = text.charAt(index + 1);
 
         if (Character.isLetter(c0) && Character.isLetter(c1)) {
             return false;
         } else if (Character.isDigit(c0) && Character.isDigit(c1)) {
+            return false;
+        } else if (c0 == '\'' || Character.isLetter(c1)) {
+            return false;
+        } else if (c1 == '\'' || Character.isLetter(c0)) {
             return false;
         } else {
             return true;
