@@ -377,12 +377,15 @@ public class UsEnglishWordExpander implements WordExpander {
      *         processing of the utterance
      */
     public List<String> expand(String text) {
+        
+        String simplifiedText = simplifyChars(text);
+        
         CharTokenizer tokenizer = new CharTokenizer();
         tokenizer.setWhitespaceSymbols(UsEnglish.WHITESPACE_SYMBOLS);
         tokenizer.setSingleCharSymbols(UsEnglish.SINGLE_CHAR_SYMBOLS);
         tokenizer.setPrepunctuationSymbols(UsEnglish.PREPUNCTUATION_SYMBOLS);
         tokenizer.setPostpunctuationSymbols(UsEnglish.PUNCTUATION_SYMBOLS);
-        tokenizer.setInputText(text);
+        tokenizer.setInputText(simplifiedText);
         Utterance utterance = new Utterance(tokenizer);
 
         Relation tokenRelation;
@@ -410,6 +413,14 @@ public class UsEnglishWordExpander implements WordExpander {
             }
         }
         return words;
+    }
+
+    private String simplifyChars(String text) {
+        text = text.replace('’', '\'');
+        text = text.replace('”', '"');
+        text = text.replace('“', '"');
+        text = text.replace((char)0xc, ' ');
+        return text;
     }
 
     /**
