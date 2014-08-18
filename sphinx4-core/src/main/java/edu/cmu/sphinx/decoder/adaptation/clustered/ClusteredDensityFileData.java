@@ -11,7 +11,6 @@ public class ClusteredDensityFileData {
 
 	private Pool<float[]> initialData;
 	private int numberOfClusters;
-	private ArrayList<Cluster> clusters;
 	private ArrayList<ArrayList<Integer>> gaussianNumbers;
 	private int numStates;
 	private int numGaussiansPerState;
@@ -29,10 +28,6 @@ public class ClusteredDensityFileData {
 					numGaussiansPerState * numStates));
 		}
 		this.kMeansClustering(15);
-	}
-
-	public ArrayList<Cluster> getClusters() {
-		return clusters;
 	}
 
 	public ArrayList<ArrayList<Integer>> getGaussianNumbers() {
@@ -65,7 +60,6 @@ public class ClusteredDensityFileData {
 	}
 
 	private void kMeansClustering(int maxIterations) {
-		ArrayList<Cluster> clusters = new ArrayList<Cluster>(numberOfClusters);
 		ArrayList<float[]> oldCentroids = new ArrayList<float[]>(
 				numberOfClusters);
 		ArrayList<float[]> centroids = new ArrayList<float[]>(numberOfClusters);
@@ -154,18 +148,6 @@ public class ClusteredDensityFileData {
 
 			nrOfIterations--;
 		}
-
-		for (int i = 0; i < numberOfClusters; i++) {
-			Pool<float[]> values = new Pool<float[]>("values");
-
-			for (int j = 0; j < count[i]; j++) {
-				values.put(j, array[i][j]);
-			}
-
-			clusters.add(new Cluster(values));
-		}
-
-		this.clusters = clusters;
 	}
 
 }
