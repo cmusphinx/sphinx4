@@ -152,8 +152,12 @@ public class MllrEstimation {
 		cr = new CountsReader(this.countsFilePath);
 		cr.read();
 		this.counts = cr.getCounts();
+<<<<<<< HEAD
 		this.cb2mllr = new int[counts.getnCb()];
 >>>>>>> changed clustering so it clusters gaussians by gaussian index, not state index
+=======
+		this.cb2mllr = new int[counts.getNumStates()];
+>>>>>>> fixed some naming and formating issues in decoder.adaptation package
 	}
 
 	private void readMeansAndVariances() throws Exception {

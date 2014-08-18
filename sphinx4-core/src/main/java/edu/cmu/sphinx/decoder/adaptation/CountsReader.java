@@ -196,21 +196,22 @@ public class CountsReader {
 			hasMeans = swappedReadInt(is);
 			hasVars = swappedReadInt(is);
 			counts.setPass2var(swappedReadInt(is));
-			counts.setnCb(swappedReadInt(is));
-			counts.setnDensity(swappedReadInt(is));
-			counts.setnFeat(swappedReadInt(is));
-			
-			counts.setVeclen(new int[counts.getnFeat()]);
+			counts.setNumStates(swappedReadInt(is));
+			counts.setNumGaussiansPerState(swappedReadInt(is));
+			counts.setNumStreams(swappedReadInt(is));
 
-			for (int i = 0; i < counts.getnFeat(); i++) {
+			counts.setVeclen(new int[counts.getNumStreams()]);
+
+			for (int i = 0; i < counts.getNumStreams(); i++) {
 				counts.getVeclen()[i] = swappedReadInt(is);
 			}
 
 			n = swappedReadInt(is);
 
 			if (hasMeans == 1) {
-				counts.setMean(this.read4dArray(n, counts.getnCb(), counts.getnFeat(),
-						counts.getnDensity(), is));
+				counts.setMean(this.read4dArray(n, counts.getNumStates(),
+						counts.getNumStreams(),
+						counts.getNumGaussiansPerState(), is));
 			} else {
 				throw new Exception("No means available!");
 			}
@@ -218,8 +219,9 @@ public class CountsReader {
 			n = swappedReadInt(is);
 
 			if (hasVars == 1) {
-				counts.setVariance(this.read4dArray(n, counts.getnCb(), counts.getnFeat(),
-						counts.getnDensity(), is));
+				counts.setVariance(this.read4dArray(n, counts.getNumStates(),
+						counts.getNumStreams(),
+						counts.getNumGaussiansPerState(), is));
 			} else {
 				throw new Exception("No variances available!");
 			}
