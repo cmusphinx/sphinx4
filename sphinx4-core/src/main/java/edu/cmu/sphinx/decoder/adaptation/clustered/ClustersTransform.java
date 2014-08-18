@@ -1,15 +1,15 @@
-package edu.cmu.sphinx.decoder.adaptation.regtree;
+package edu.cmu.sphinx.decoder.adaptation.clustered;
 
 import edu.cmu.sphinx.decoder.adaptation.DensityFileData;
 import edu.cmu.sphinx.decoder.adaptation.Transformer;
 
-public class RegTreeTransform extends Transformer {
+public class ClustersTransform extends Transformer {
 
 	private int nrOfClusters;
-	RegTreeEstimation estimation;
+	ClustersEstimation estimation;
 
-	public RegTreeTransform(DensityFileData means, String OutputMeanFile,
-			int k, RegTreeEstimation estimation) {
+	public ClustersTransform(DensityFileData means, String OutputMeanFile,
+			int k, ClustersEstimation estimation) {
 		super(means, OutputMeanFile);
 		this.nrOfClusters = k;
 		this.estimation = estimation;
@@ -46,5 +46,5 @@ public class RegTreeTransform extends Transformer {
 			}
 		}
 	}
-	
+
 }

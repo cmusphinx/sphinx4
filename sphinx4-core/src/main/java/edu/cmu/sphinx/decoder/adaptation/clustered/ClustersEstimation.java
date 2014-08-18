@@ -1,4 +1,4 @@
-package edu.cmu.sphinx.decoder.adaptation.regtree;
+package edu.cmu.sphinx.decoder.adaptation.clustered;
 
 import java.util.ArrayList;
 
@@ -6,7 +6,7 @@ import edu.cmu.sphinx.decoder.adaptation.Counts;
 import edu.cmu.sphinx.decoder.adaptation.MllrEstimation;
 import edu.cmu.sphinx.linguist.acoustic.tiedstate.Sphinx3Loader;
 
-public class RegTreeEstimation {
+public class ClustersEstimation {
 
 	private ClusteredDensityFileData cm;
 	private float[][][][][] As;
@@ -19,8 +19,8 @@ public class RegTreeEstimation {
 	private int numGaussinsPerState;
 	private int[] vectorLength;
 
-	public RegTreeEstimation(Counts counts, ClusteredDensityFileData cm, int k,
-			Sphinx3Loader loader) {
+	public ClustersEstimation(Counts counts, ClusteredDensityFileData cm,
+			int k, Sphinx3Loader loader) {
 		this.counts = counts;
 		this.cm = cm;
 		this.k = k;
@@ -32,7 +32,7 @@ public class RegTreeEstimation {
 		As = new float[k][][][][];
 		Bs = new float[k][][][];
 	}
-	
+
 	public float[][][][][] getAs() {
 		return As;
 	}
@@ -40,8 +40,8 @@ public class RegTreeEstimation {
 	public float[][][][] getBs() {
 		return Bs;
 	}
-	
-	public ClusteredDensityFileData getClusteredData(){
+
+	public ClusteredDensityFileData getClusteredData() {
 		return this.cm;
 	}
 
@@ -74,7 +74,8 @@ public class RegTreeEstimation {
 			clusterCounts = this.getClusterCounts(i);
 			estimation = new MllrEstimation("", 1, "", false, clusterCounts,
 					"", false, loader);
-			estimation.setClassEstimation(true, this.cm.getGaussianNumbers().get(i));
+			estimation.setClassEstimation(true, this.cm.getGaussianNumbers()
+					.get(i));
 			estimation.estimateMatrices();
 			As[i] = estimation.getA();
 			Bs[i] = estimation.getB();

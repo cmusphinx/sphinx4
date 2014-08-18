@@ -1,12 +1,9 @@
 package edu.cmu.sphinx.decoder.adaptation;
 
-
-public class MllrTransformer extends Transformer{
-
+public class MllrTransformer extends Transformer {
 
 	private float[][][][] A;
 	private float[][][] B;
-
 
 	public MllrTransformer(DensityFileData means, float[][][][] a,
 			float[][][] b, String outputMeanFile) {
@@ -14,7 +11,6 @@ public class MllrTransformer extends Transformer{
 		A = a;
 		B = b;
 	}
-
 
 	protected void transformMean() {
 		float[] tmean;
@@ -44,5 +40,5 @@ public class MllrTransformer extends Transformer{
 			}
 		}
 	}
-	
+
 }
