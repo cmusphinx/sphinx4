@@ -131,7 +131,7 @@ public class MllrEstimation {
 		cr = new CountsReader(this.countsFilePath);
 		cr.read();
 		this.counts = cr.getCounts();
-		this.cb2mllr = new int[counts.getnCb()];
+		this.cb2mllr = new int[counts.getNumStates()];
 	}
 
 	private void readMeansAndVariances() throws Exception {
