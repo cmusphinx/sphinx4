@@ -1,4 +1,4 @@
-package edu.cmu.sphinx.decoder.adaptation.regtree;
+package edu.cmu.sphinx.decoder.adaptation.clustered;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -16,15 +16,17 @@ public class ClusteredDensityFileData {
 	private int numStates;
 	private int numGaussiansPerState;
 
-	public ClusteredDensityFileData(Pool<float[]> initialData, int numberOfClusters,
-			int numStates, int numGaussiansPerState) {
+	public ClusteredDensityFileData(Pool<float[]> initialData,
+			int numberOfClusters, int numStates, int numGaussiansPerState) {
 		this.initialData = initialData;
 		this.numberOfClusters = numberOfClusters;
 		this.numStates = numStates;
 		this.numGaussiansPerState = numGaussiansPerState;
-		this.gaussianNumbers = new ArrayList<ArrayList<Integer>>(numberOfClusters);
-		for(int i=0; i<numberOfClusters; i++){
-			this.gaussianNumbers.add(new ArrayList<Integer>(numGaussiansPerState * numStates));
+		this.gaussianNumbers = new ArrayList<ArrayList<Integer>>(
+				numberOfClusters);
+		for (int i = 0; i < numberOfClusters; i++) {
+			this.gaussianNumbers.add(new ArrayList<Integer>(
+					numGaussiansPerState * numStates));
 		}
 		this.kMeansClustering(15);
 	}
@@ -87,9 +89,11 @@ public class ClusteredDensityFileData {
 		while (!converged && nrOfIterations > 0) {
 
 			array = new float[numberOfClusters][numberOfElements][];
-			this.gaussianNumbers = new ArrayList<ArrayList<Integer>>(numberOfClusters);
-			for(int i=0; i<numberOfClusters; i++){
-				this.gaussianNumbers.add(new ArrayList<Integer>(numGaussiansPerState * numStates));
+			this.gaussianNumbers = new ArrayList<ArrayList<Integer>>(
+					numberOfClusters);
+			for (int i = 0; i < numberOfClusters; i++) {
+				this.gaussianNumbers.add(new ArrayList<Integer>(
+						numGaussiansPerState * numStates));
 			}
 
 			for (int i = 0; i < numberOfClusters; i++) {
@@ -114,10 +118,10 @@ public class ClusteredDensityFileData {
 							index = k;
 						}
 					}
-					
-					
+
 					array[index][count[index]] = currentValue;
-					this.gaussianNumbers.get(index).add(i * numGaussiansPerState + j);
+					this.gaussianNumbers.get(index).add(
+							i * numGaussiansPerState + j);
 					count[index]++;
 				}
 			}
@@ -160,7 +164,7 @@ public class ClusteredDensityFileData {
 
 			clusters.add(new Cluster(values));
 		}
-		
+
 		this.clusters = clusters;
 	}
 
