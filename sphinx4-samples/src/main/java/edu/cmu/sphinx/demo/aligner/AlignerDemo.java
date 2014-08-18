@@ -20,7 +20,8 @@ import java.io.File;
 import java.net.URL;
 import java.util.List;
 
-import edu.cmu.sphinx.alignment.LongTextAligner;
+import edu.cmu.sphinx.alignment.GlobalSequenceAligner;
+import edu.cmu.sphinx.alignment.SequenceAligner;
 import edu.cmu.sphinx.api.SpeechAligner;
 import edu.cmu.sphinx.result.WordResult;
 
@@ -65,8 +66,8 @@ public class AlignerDemo {
                 new SpeechAligner(acousticModelPath, dictionaryPath, g2pPath);
 
         List<WordResult> results = aligner.align(audioUrl, transcript);
-        LongTextAligner textAligner =
-                new LongTextAligner(transform(results, toSpelling()), 1);
+        SequenceAligner<String> textAligner =
+                new GlobalSequenceAligner<String>(transform(results, toSpelling()));
         List<String> words = aligner.getWordExpander().expand(transcript);
 
         int[] aid = textAligner.align(words);
