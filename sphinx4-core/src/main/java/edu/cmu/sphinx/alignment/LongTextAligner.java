@@ -25,7 +25,6 @@ import static com.google.common.collect.Sets.newTreeSet;
 import static edu.cmu.sphinx.util.PriorityQueue.newPriorityQueue;
 import static java.lang.Math.abs;
 import static java.lang.Math.max;
-import static java.lang.Math.min;
 import static java.util.Arrays.fill;
 import static java.util.Collections.emptyList;
 
@@ -39,12 +38,11 @@ import com.google.common.collect.Range;
 
 import edu.cmu.sphinx.util.PriorityQueue;
 
-
 /**
  *
  * @author Alexander Solovets
  */
-public class LongTextAligner {
+public class LongTextAligner implements SequenceAligner<String> {
 
     private final class Alignment {
 
@@ -93,14 +91,14 @@ public class LongTextAligner {
             }
 
             public boolean isTarget() {
-                return queryIndex == indices.size() &&
-                       databaseIndex == shifts.size();
+                return queryIndex == indices.size()
+                        && databaseIndex == shifts.size();
             }
 
             public List<Node> adjacent() {
                 List<Node> result = newArrayListWithCapacity(3);
-                if (queryIndex < indices.size() &&
-                    databaseIndex < shifts.size()) {
+                if (queryIndex < indices.size()
+                        && databaseIndex < shifts.size()) {
                     result.add(new Node(queryIndex + 1, databaseIndex + 1));
                 }
                 if (databaseIndex < shifts.size()) {
@@ -119,8 +117,8 @@ public class LongTextAligner {
                     return false;
 
                 Node other = (Node) object;
-                return queryIndex == other.queryIndex &&
-                       databaseIndex == other.databaseIndex;
+                return queryIndex == other.queryIndex
+                        && databaseIndex == other.databaseIndex;
             }
 
             @Override
@@ -183,11 +181,11 @@ public class LongTextAligner {
                 closedSet.add(q);
                 for (Node nb : filter(q.adjacent(), not(in(closedSet)))) {
                     // FIXME: move to appropriate location
-                    int l = abs(indices.size() - shifts.size() - q.queryIndex +
-                                q.databaseIndex) -
-                            abs(indices.size() - shifts.size() -
-                                nb.queryIndex +
-                                nb.databaseIndex);
+                    int l =
+                            abs(indices.size() - shifts.size() - q.queryIndex
+                                    + q.databaseIndex)
+                                    - abs(indices.size() - shifts.size()
+                                            - nb.queryIndex + nb.databaseIndex);
 
                     int oldScore = priority.apply(nb);
                     int newScore = priority.apply(q) + nb.getValue() - l;
@@ -251,12 +249,14 @@ public class LongTextAligner {
      * @return indices of alignment
      */
     public int[] align(List<String> words, Range<Integer> range) {
-        
-        if (range.upperEndpoint() - range.lowerEndpoint() < tupleSize || words.size() < tupleSize) {
-            return alignTextSimple(refWords.subList(range.lowerEndpoint(), range.upperEndpoint() + 1), words, range.lowerEndpoint());
+
+        if (range.upperEndpoint() - range.lowerEndpoint() < tupleSize
+                || words.size() < tupleSize) {
+            return new GlobalSequenceAligner<String>(refWords.subList(
+                    range.lowerEndpoint(), range.upperEndpoint() + 1),
+                    range.lowerEndpoint()).align(words);
         }
-        
-        
+
         int[] result = new int[words.size()];
         fill(result, -1);
         int lastIndex = 0;
@@ -265,8 +265,9 @@ public class LongTextAligner {
             // for (int j = 0; j < tupleSize; ++j)
             lastIndex = max(lastIndex, node.getQueryIndex());
             for (; lastIndex < node.getQueryIndex() + tupleSize; ++lastIndex)
-                result[lastIndex] = node.getDatabaseIndex() + lastIndex -
-                                    node.getQueryIndex();
+                result[lastIndex] =
+                        node.getDatabaseIndex() + lastIndex
+                                - node.getQueryIndex();
         }
         return result;
     }
@@ -286,60 +287,5 @@ public class LongTextAligner {
             tuple.removeFirst();
         }
         return result;
-    }
-    
-    static int[] alignTextSimple(List<String> database, List<String> query,
-            int offset) {
-        int n = database.size() + 1;
-        int m = query.size() + 1;
-        int[][] f = new int[n][m];
-
-        for (int i = 1; i < n; ++i) {
-            f[i][0] = i;
-        }
-
-        for (int j = 1; j < m; ++j) {
-            f[0][j] = j;
-        }
-
-        for (int i = 1; i < n; ++i) {
-            for (int j = 1; j < m; ++j) {
-                int match = f[i - 1][j - 1];
-                String refWord = database.get(i - 1);
-                String queryWord = query.get(j - 1);
-                if (!refWord.equals(queryWord)) {
-                    ++match;
-                }
-                int insert = f[i][j - 1] + 1;
-                int delete = f[i - 1][j] + 1;
-                f[i][j] = min(match, min(insert, delete));
-            }
-        }
-
-        --n;
-        --m;
-        int[] alignment = new int[m];
-        Arrays.fill(alignment, -1);
-        while (m > 0) {
-            if (n == 0) {
-                --m;
-            } else {
-                String refWord = database.get(n - 1);
-                String queryWord = query.get(m - 1);
-                if (f[n - 1][m - 1] <= f[n - 1][m - 1]
-                        && f[n - 1][m - 1] <= f[n][m - 1]
-                        && refWord.equals(queryWord)) {
-                    alignment[--m] = --n + offset;
-                } else {
-                    if (f[n - 1][m] < f[n][m - 1]) {
-                        --n;
-                    } else {
-                        --m;
-                    }
-                }
-            }
-        }
-
-        return alignment;
     }
 }
