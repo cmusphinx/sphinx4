@@ -1,4 +1,4 @@
-package edu.cmu.sphinx.demo.regTree;
+package edu.cmu.sphinx.demo.clusteredTransform;
 
 import java.io.InputStream;
 
@@ -7,14 +7,14 @@ import edu.cmu.sphinx.api.SpeechResult;
 import edu.cmu.sphinx.api.StreamSpeechRecognizer;
 import edu.cmu.sphinx.decoder.adaptation.CountsCollector;
 import edu.cmu.sphinx.decoder.adaptation.DensityFileData;
-import edu.cmu.sphinx.decoder.adaptation.regtree.ClusteredDensityFileData;
-import edu.cmu.sphinx.decoder.adaptation.regtree.RegTreeEstimation;
-import edu.cmu.sphinx.decoder.adaptation.regtree.RegTreeTransform;
+import edu.cmu.sphinx.decoder.adaptation.clustered.ClusteredDensityFileData;
+import edu.cmu.sphinx.decoder.adaptation.clustered.ClustersEstimation;
+import edu.cmu.sphinx.decoder.adaptation.clustered.ClustersTransform;
 import edu.cmu.sphinx.demo.transcriber.TranscriberDemo;
 import edu.cmu.sphinx.linguist.acoustic.tiedstate.Sphinx3Loader;
 import edu.cmu.sphinx.result.WordResult;
 
-public class regTreeDemo {
+public class ClusteredTransformDemo {
 
 	public static void main(String[] args) throws Exception {
 
@@ -30,12 +30,12 @@ public class regTreeDemo {
 				configuration);
 
 		InputStream stream = TranscriberDemo.class
-				.getResourceAsStream("/edu/cmu/sphinx/demo/countsCollector/out8mins.wav");
+				.getResourceAsStream("/edu/cmu/sphinx/demo/countsCollector/BillGates5Mins.wav");
 		recognizer.startRecognition(stream, false);
 
 		Sphinx3Loader loader = (Sphinx3Loader) recognizer.getLoader();
 
-		ClusteredDensityFileData cm = new ClusteredDensityFileData(loader.getMeansPool(), 10,
+		ClusteredDensityFileData cm = new ClusteredDensityFileData(loader.getMeansPool(), 1,
 				loader.getNumStates(), loader.getNumGaussiansPerState());
 
 		CountsCollector cc = new CountsCollector(loader.getVectorLength(),
@@ -64,14 +64,14 @@ public class regTreeDemo {
 
 		recognizer.stopRecognition();
 		
-		RegTreeEstimation regTreeEstimation = new RegTreeEstimation(cc.getCounts(), cm, 10, loader);
+		ClustersEstimation regTreeEstimation = new ClustersEstimation(cc.getCounts(), cm, 1, loader);
 		regTreeEstimation.estimate();
 		
 		DensityFileData means = new DensityFileData("", -Float.MAX_VALUE,
 				loader, false);
 		means.getMeansFromLoader();
 		
-		RegTreeTransform rt = new RegTreeTransform(means, "/home/bogdanpetcu/regMeans", 10, regTreeEstimation);
+		ClustersTransform rt = new ClustersTransform(means, "/home/bogdanpetcu/regMeans", 1, regTreeEstimation);
 		rt.transform();
 		rt.writeToFile();
 		
