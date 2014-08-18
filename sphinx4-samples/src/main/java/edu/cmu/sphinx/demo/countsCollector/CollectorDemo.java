@@ -17,8 +17,7 @@ public class CollectorDemo {
 
 		Configuration configuration = new Configuration();
 
-		configuration
-				.setAcousticModelPath("/home/bogdanpetcu/RSoC/en-uss");
+		configuration.setAcousticModelPath("/home/bogdanpetcu/RSoC/en-us");
 		configuration
 				.setDictionaryPath("resource:/edu/cmu/sphinx/models/acoustic/wsj/dict/cmudict.0.6d");
 		configuration
@@ -27,7 +26,7 @@ public class CollectorDemo {
 		StreamSpeechRecognizer recognizer = new StreamSpeechRecognizer(
 				configuration);
 		InputStream stream = TranscriberDemo.class
-				.getResourceAsStream("/edu/cmu/sphinx/demo/countsCollector/out2.wav");
+				.getResourceAsStream("/edu/cmu/sphinx/demo/countsCollector/billgates5Mins.wav");
 		recognizer.startRecognition(stream, false);
 
 		SpeechResult result;
@@ -58,8 +57,9 @@ public class CollectorDemo {
 		recognizer.stopRecognition();
 
 		MllrEstimation me = new MllrEstimation("", 1,
-				"/home/bogdanpetcu/mllrmat", false, cc.getCounts(), "", false, loader);
-		
+				"/home/bogdanpetcu/mllr_mat_billgates", false, cc.getCounts(),
+				"", false, loader);
+
 		me.estimateMatrices();
 		me.createMllrFile();
 	}
