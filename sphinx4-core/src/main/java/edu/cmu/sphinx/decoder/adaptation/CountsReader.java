@@ -4,6 +4,8 @@ import java.io.DataInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 
+import edu.cmu.sphinx.util.Utilities;
+
 /**
  * This class is used for reading and storing counts from file
  */
@@ -31,25 +33,6 @@ public class CountsReader {
 	}
 
 	/**
-	 * Swaps bytes of an integer number
-	 * 
-	 * @param number
-	 *            integer number to swap
-	 * @return swapped integer value
-	 */
-	public int swapInt(int number) {
-		int swapped = 0, byte1, byte2, byte3, byte4;
-
-		byte1 = (number >> 0) & 0xff;
-		byte2 = (number >> 8) & 0xff;
-		byte3 = (number >> 16) & 0xff;
-		byte4 = (number >> 24) & 0xff;
-		swapped = byte1 << 24 | byte2 << 16 | byte3 << 8 | byte4 << 0;
-
-		return swapped;
-	}
-
-	/**
 	 * Reads integer from input stream and swaps its bytes
 	 * 
 	 * @param is
@@ -61,7 +44,7 @@ public class CountsReader {
 
 		try {
 			number = is.readInt();
-			swapped = swapInt(number);
+			swapped = Utilities.swapInteger(number);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -82,7 +65,7 @@ public class CountsReader {
 
 		try {
 			number = Float.floatToIntBits(is.readFloat());
-			swappedInt = swapInt(number);
+			swappedInt = Utilities.swapInteger(number);
 			swappedFloat = Float.intBitsToFloat(swappedInt);
 		} catch (IOException e) {
 			e.printStackTrace();
