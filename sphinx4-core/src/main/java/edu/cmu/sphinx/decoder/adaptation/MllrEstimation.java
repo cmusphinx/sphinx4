@@ -391,8 +391,12 @@ public class MllrEstimation {
 =======
 >>>>>>> changed clustering so it clusters gaussians by gaussian index, not state index
 
-	public void createMllrFile() throws FileNotFoundException,
-			UnsupportedEncodingException {
+	public void createMllrFile() throws Exception {
+		
+		if(!this.isComplete()){
+			throw new Exception("Estimation is not computed!");
+		}
+		
 		PrintWriter writer = new PrintWriter(this.outputFilePath, "UTF-8");
 
 		writer.println(nMllrClass);
