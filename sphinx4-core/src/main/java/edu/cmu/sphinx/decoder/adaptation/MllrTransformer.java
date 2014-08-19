@@ -2,11 +2,11 @@ package edu.cmu.sphinx.decoder.adaptation;
 
 public class MllrTransformer extends Transformer {
 
-	private float[][][][] A;
-	private float[][][] B;
+	private float[][][] A;
+	private float[][] B;
 
-	public MllrTransformer(DensityFileData means, float[][][][] a,
-			float[][][] b, String outputMeanFile) {
+	public MllrTransformer(DensityFileData means, float[][][] a,
+			float[][] b, String outputMeanFile) {
 		super(means, outputMeanFile);
 		A = a;
 		B = b;
@@ -24,12 +24,12 @@ public class MllrTransformer extends Transformer {
 					for (int l = 0; l < means.getVectorLength()[j]; l++) {
 						tmean[l] = 0;
 						for (int m = 0; m < means.getVectorLength()[j]; m++) {
-							tmean[l] += A[0][j][l][m]
+							tmean[l] += A[j][l][m]
 									* means.getPool().get(
 											i * means.getNumGaussiansPerState()
 													+ k)[m];
 						}
-						tmean[l] += B[0][j][l];
+						tmean[l] += B[j][l];
 					}
 
 					for (int l = 0; l < means.getVectorLength()[j]; l++) {
