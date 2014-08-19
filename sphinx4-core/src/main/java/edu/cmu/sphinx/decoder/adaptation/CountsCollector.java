@@ -20,6 +20,22 @@ public class CountsCollector {
 	public Counts getCounts() {
 		return counts;
 	}
+	
+	public int[] getVectorLength() {
+		return vectorLength;
+	}
+
+	public int getNumStates() {
+		return numStates;
+	}
+
+	public int getNumStreams() {
+		return numStreams;
+	}
+
+	public int getNumGaussiansPerState() {
+		return numGaussiansPerState;
+	}
 
 	public CountsCollector(int[] vectorLength, int numStates, int numStreams,
 			int numGaussiansPerState) {
