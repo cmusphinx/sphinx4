@@ -25,7 +25,7 @@ public class CollectorDemo {
 		StreamSpeechRecognizer recognizer = new StreamSpeechRecognizer(
 				configuration);
 		InputStream stream = TranscriberDemo.class
-				.getResourceAsStream("/edu/cmu/sphinx/demo/countsCollector/billgates5Mins.wav");
+				.getResourceAsStream("/edu/cmu/sphinx/demo/countsCollector/BillGates5Mins.wav");
 		recognizer.startRecognition(stream, false);
 
 		SpeechResult result;

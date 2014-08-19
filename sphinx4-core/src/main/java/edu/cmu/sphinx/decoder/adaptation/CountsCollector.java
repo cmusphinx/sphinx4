@@ -66,27 +66,6 @@ public class CountsCollector {
 		return posteriors;
 	}
 
-	public void addCounts(float[][][] denominatorArray, float[][][][] meansArray) {
-		float[][][] dnom;
-		float[][][][] means;
-
-		dnom = counts.getDnom();
-		means = counts.getMean();
-		for (int i = 0; i < numStates; i++) {
-			for (int j = 0; j < numStreams; j++) {
-				for (int k = 0; k < numGaussiansPerState; k++) {
-					dnom[i][j][k] += denominatorArray[i][j][k];
-					for (int l = 0; l < vectorLength[0]; l++) {
-						means[i][j][k][l] += meansArray[i][j][k][l];
-					}
-				}
-			}
-		}
-
-		counts.setDnom(dnom);
-		counts.setMean(means);
-	}
-
 	public void collect(Result result) throws Exception {
 		Token token = result.getBestToken();
 		HMMSearchState state;
@@ -95,12 +74,6 @@ public class CountsCollector {
 
 		if (token == null)
 			throw new Exception("Best token not found!");
-
-		float[][][] dnom;
-		float[][][][] means;
-
-		dnom = new float[numStates][numStreams][numGaussiansPerState];
-		means = new float[numStates][numStreams][numGaussiansPerState][vectorLength[0]];
 
 		do {
 			FloatData feature = (FloatData) token.getData();
@@ -118,15 +91,14 @@ public class CountsCollector {
 			posteriors = this.computePosterios(componentScore);
 
 			for (int i = 0; i < componentScore.length; i++) {
-				dnom[mId][0][i] += posteriors[i];
+				counts.getDnom()[mId][0][i] += posteriors[i];
 				for (int j = 0; j < featureVector.length; j++) {
-					means[mId][0][i][j] += posteriors[i] * featureVector[j];
+					counts.getMean()[mId][0][i][j] += posteriors[i] * featureVector[j];
 				}
 			}
 
 			token = token.getPredecessor();
 		} while (token != null);
 
-		this.addCounts(dnom, means);
 	}
 }
