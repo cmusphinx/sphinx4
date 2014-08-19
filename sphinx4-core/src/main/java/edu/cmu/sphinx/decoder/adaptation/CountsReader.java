@@ -39,7 +39,7 @@ public class CountsReader {
 	 *            input stream to read from
 	 * @return swapped integer value of the number read from input stream
 	 */
-	public int swappedReadInt(DataInputStream is) {
+	private int swappedReadInt(DataInputStream is) {
 		int number, swapped = 0;
 
 		try {
@@ -59,7 +59,7 @@ public class CountsReader {
 	 *            input stream to read from
 	 * @return swapped float value of the number read from input stream
 	 */
-	public float swappedReadFloat(DataInputStream is) {
+	private float swappedReadFloat(DataInputStream is) {
 		int number, swappedInt;
 		float swappedFloat = 0;
 
@@ -90,7 +90,7 @@ public class CountsReader {
 	 *            input stream to read from
 	 * @return the 3d-array read from input stream
 	 */
-	float[][][][] read4dArray(int n, int d1, int d2, int d3, DataInputStream is) {
+	private float[][][][] read4dArray(int n, int d1, int d2, int d3, DataInputStream is) {
 		float[][][][] array;
 		float[] buf = null;
 		buf = new float[n];
@@ -123,7 +123,7 @@ public class CountsReader {
 	 * @throws Exception
 	 *             in case of array dimensions mismatch
 	 */
-	void readDnomArray(DataInputStream is) throws Exception {
+	private void readDnomArray(DataInputStream is) throws Exception {
 		int d1, d2, d3, n, nc;
 		float[] buf = null;
 
