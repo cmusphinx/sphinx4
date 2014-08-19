@@ -30,13 +30,13 @@ public class ClustersTransform extends Transformer {
 				for (int l = 0; l < means.getVectorLength()[0]; l++) {
 					tmean[l] = 0;
 					for (int m = 0; m < means.getVectorLength()[0]; m++) {
-						tmean[l] += estimation.getAs()[i][0][0][l][m]
+						tmean[l] += estimation.getAs()[i][0][l][m]
 								* means.getPool()
 										.get(stateIndex
 												* means.getNumGaussiansPerState()
 												+ gaussianIndex)[m];
 					}
-					tmean[l] += estimation.getBs()[i][0][0][l];
+					tmean[l] += estimation.getBs()[i][0][l];
 				}
 
 				for (int l = 0; l < means.getVectorLength()[0]; l++) {

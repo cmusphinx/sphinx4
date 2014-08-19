@@ -9,8 +9,8 @@ import edu.cmu.sphinx.linguist.acoustic.tiedstate.Sphinx3Loader;
 public class ClustersEstimation {
 
 	private ClusteredDensityFileData cm;
-	private float[][][][][] As;
-	private float[][][][] Bs;
+	private float[][][][] As;
+	private float[][][] Bs;
 	private int k;
 	private Counts counts;
 	Sphinx3Loader loader;
@@ -29,15 +29,15 @@ public class ClustersEstimation {
 		this.numStates = loader.getNumStates();
 		this.numStreams = loader.getNumStreams();
 		this.numGaussinsPerState = loader.getNumGaussiansPerState();
-		As = new float[k][][][][];
-		Bs = new float[k][][][];
+		As = new float[k][][][];
+		Bs = new float[k][][];
 	}
 
-	public float[][][][][] getAs() {
+	public float[][][][] getAs() {
 		return As;
 	}
 
-	public float[][][][] getBs() {
+	public float[][][] getBs() {
 		return Bs;
 	}
 

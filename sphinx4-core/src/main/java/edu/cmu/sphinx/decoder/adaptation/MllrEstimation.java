@@ -1,8 +1,6 @@
 package edu.cmu.sphinx.decoder.adaptation;
 
-import java.io.FileNotFoundException;
 import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.util.ArrayList;
 
@@ -26,11 +24,10 @@ public class MllrEstimation {
 	private DensityFileData variances;
 	private float varFlor;
 	private int nMllrClass;
-	private int[] cb2mllr;
-	private float[][][][] A;
-	private float[][][] B;
-	private double[][][][][] regL;
-	private double[][][][] regR;
+	private float[][][] A;
+	private float[][] B;
+	private double[][][][] regL;
+	private double[][][] regR;
 	private Counts counts;
 	private CountsReader cr;
 	private boolean countsFromFile;
@@ -69,11 +66,11 @@ public class MllrEstimation {
 		this.nMllrClass = 1;
 	}
 
-	public float[][][][] getA() {
+	public float[][][] getA() {
 		return A;
 	}
 
-	public float[][][] getB() {
+	public float[][] getB() {
 		return B;
 	}
 
@@ -131,7 +128,6 @@ public class MllrEstimation {
 		cr = new CountsReader(this.countsFilePath);
 		cr.read();
 		this.counts = cr.getCounts();
-		this.cb2mllr = new int[counts.getNumStates()];
 	}
 
 	private void readMeansAndVariances() throws Exception {
@@ -182,13 +178,11 @@ public class MllrEstimation {
 	}
 
 	private void fillRegLowerPart() {
-		for (int m = 0; m < nMllrClass; m++) {
-			for (int j = 0; j < means.getNumStreams(); j++) {
-				for (int l = 0; l < means.getVectorLength()[j]; l++) {
-					for (int p = 0; p <= means.getVectorLength()[j]; p++) {
-						for (int q = p + 1; q <= means.getVectorLength()[j]; q++) {
-							regL[m][j][l][q][p] = regL[m][j][l][p][q];
-						}
+		for (int j = 0; j < means.getNumStreams(); j++) {
+			for (int l = 0; l < means.getVectorLength()[j]; l++) {
+				for (int p = 0; p <= means.getVectorLength()[j]; p++) {
+					for (int q = p + 1; q <= means.getVectorLength()[j]; q++) {
+						regL[j][l][q][p] = regL[j][l][p][q];
 					}
 				}
 			}
@@ -196,15 +190,11 @@ public class MllrEstimation {
 	}
 
 	private void fill() {
-		int mc, len;
+		int len;
 
 		for (int i = 0; i < means.getNumStates(); i++) {
 			float[] tmean;
 			float wtMeanVar, wtDcountVar, wtDcountVarMean;
-			mc = cb2mllr[i];
-
-			if (mc < 0)
-				continue;
 
 			for (int j = 0; j < means.getNumStreams(); j++) {
 				len = means.getVectorLength()[j];
@@ -227,15 +217,14 @@ public class MllrEstimation {
 								wtDcountVarMean = wtDcountVar * tmean[p];
 
 								for (int q = p; q < len; q++) {
-									regL[mc][j][l][p][q] += wtDcountVarMean
+									regL[j][l][p][q] += wtDcountVarMean
 											* tmean[q];
 								}
-
-								regL[mc][j][l][p][len] += wtDcountVarMean;
-								regR[mc][j][l][p] += wtMeanVar * tmean[p];
+								regL[j][l][p][len] += wtDcountVarMean;
+								regR[j][l][p] += wtMeanVar * tmean[p];
 							}
-							regL[mc][j][l][len][len] += wtDcountVar;
-							regR[mc][j][l][len] += wtMeanVar;
+							regL[j][l][len][len] += wtDcountVar;
+							regR[j][l][len] += wtMeanVar;
 						}
 					}
 				}
@@ -244,17 +233,13 @@ public class MllrEstimation {
 	}
 
 	private void fillForClass() {
-		int mc, len, stateIndex, gaussianIndex;
+		int len, stateIndex, gaussianIndex;
 
 		for (int gaussianNumber : this.gaussianNumbers) {
 			stateIndex = gaussianNumber / means.getNumGaussiansPerState();
 			gaussianIndex = gaussianNumber % means.getNumGaussiansPerState();
 			float[] tmean;
 			float wtMeanVar, wtDcountVar, wtDcountVarMean;
-			mc = cb2mllr[stateIndex];
-
-			if (mc < 0)
-				continue;
 
 			len = means.getVectorLength()[0];
 
@@ -278,14 +263,14 @@ public class MllrEstimation {
 						wtDcountVarMean = wtDcountVar * tmean[p];
 
 						for (int q = p; q < len; q++) {
-							regL[mc][0][l][p][q] += wtDcountVarMean * tmean[q];
+							regL[0][l][p][q] += wtDcountVarMean * tmean[q];
 						}
 
-						regL[mc][0][l][p][len] += wtDcountVarMean;
-						regR[mc][0][l][p] += wtMeanVar * tmean[p];
+						regL[0][l][p][len] += wtDcountVarMean;
+						regR[0][l][p] += wtMeanVar * tmean[p];
 					}
-					regL[mc][0][l][len][len] += wtDcountVar;
-					regR[mc][0][l][len] += wtMeanVar;
+					regL[0][l][len][len] += wtDcountVar;
+					regR[0][l][len] += wtMeanVar;
 				}
 			}
 
@@ -303,7 +288,6 @@ public class MllrEstimation {
 	}
 
 	private void invertVariances() {
-		this.cb2mllr = new int[means.getNumStates()];
 
 		for (int i = 0; i < means.getNumStates(); i++) {
 			for (int k = 0; k < means.getNumGaussiansPerState(); k++) {
@@ -333,67 +317,63 @@ public class MllrEstimation {
 		RealMatrix coef;
 		RealVector vect, ABloc;
 
-		this.A = new float[nMllrClass][means.getNumStreams()][][];
-		this.B = new float[nMllrClass][means.getNumStreams()][];
+		this.A = new float[means.getNumStreams()][][];
+		this.B = new float[means.getNumStreams()][];
 
-		for (int m = 0; m < nMllrClass; m++) {
-			for (int i = 0; i < means.getNumStreams(); i++) {
-				len = means.getVectorLength()[i];
-				this.A[m][i] = new float[len][len];
-				this.B[m][i] = new float[len];
+		for (int i = 0; i < means.getNumStreams(); i++) {
+			len = means.getVectorLength()[i];
+			this.A[i] = new float[len][len];
+			this.B[i] = new float[len];
 
-				for (int j = 0; j < len; ++j) {
-					coef = new Array2DRowRealMatrix(regL[m][i][j], false);
-					solver = new LUDecomposition(coef).getSolver();
-					vect = new ArrayRealVector(regR[m][i][j], false);
-					ABloc = solver.solve(vect);
+			for (int j = 0; j < len; ++j) {
+				coef = new Array2DRowRealMatrix(regL[i][j], false);
+				solver = new LUDecomposition(coef).getSolver();
+				vect = new ArrayRealVector(regR[i][j], false);
+				ABloc = solver.solve(vect);
 
-					for (int k = 0; k < len; ++k) {
-						this.A[m][i][j][k] = (float) ABloc.getEntry(k);
-					}
-
-					this.B[m][i][j] = (float) ABloc.getEntry(len);
+				for (int k = 0; k < len; ++k) {
+					this.A[i][j][k] = (float) ABloc.getEntry(k);
 				}
+
+				this.B[i][j] = (float) ABloc.getEntry(len);
 			}
 		}
 	}
 
 	public void createMllrFile() throws Exception {
-		
-		if(!this.isComplete()){
+
+		if (!this.isComplete()) {
 			throw new Exception("Estimation is not computed!");
 		}
-		
+
 		PrintWriter writer = new PrintWriter(this.outputFilePath, "UTF-8");
 
 		writer.println(nMllrClass);
 		writer.println(means.getNumStreams());
 
-		for (int m = 0; m < nMllrClass; m++) {
-			for (int i = 0; i < means.getNumStreams(); i++) {
-				writer.println(means.getVectorLength()[i]);
+		for (int i = 0; i < means.getNumStreams(); i++) {
+			writer.println(means.getVectorLength()[i]);
 
-				for (int j = 0; j < means.getVectorLength()[i]; j++) {
-					for (int k = 0; k < means.getVectorLength()[i]; ++k) {
-						writer.print(A[m][i][j][k]);
-						writer.print(" ");
-					}
-					writer.println();
-				}
-
-				for (int j = 0; j < means.getVectorLength()[i]; j++) {
-					writer.print(B[m][i][j]);
+			for (int j = 0; j < means.getVectorLength()[i]; j++) {
+				for (int k = 0; k < means.getVectorLength()[i]; ++k) {
+					writer.print(A[i][j][k]);
 					writer.print(" ");
-
-				}
-				writer.println();
-
-				for (int j = 0; j < means.getVectorLength()[i]; j++) {
-					writer.print("1.0 ");
-
 				}
 				writer.println();
 			}
+
+			for (int j = 0; j < means.getVectorLength()[i]; j++) {
+				writer.print(B[i][j]);
+				writer.print(" ");
+
+			}
+			writer.println();
+
+			for (int j = 0; j < means.getVectorLength()[i]; j++) {
+				writer.print("1.0 ");
+
+			}
+			writer.println();
 		}
 		writer.close();
 	}
@@ -403,15 +383,13 @@ public class MllrEstimation {
 		this.invertVariances();
 
 		int len = means.getVectorLength()[0];
-		this.regL = new double[nMllrClass][means.getNumStreams()][][][];
-		this.regR = new double[nMllrClass][means.getNumStreams()][][];
+		this.regL = new double[means.getNumStreams()][][][];
+		this.regR = new double[means.getNumStreams()][][];
 
-		for (int i = 0; i < nMllrClass; i++) {
-			for (int j = 0; j < means.getNumStreams(); j++) {
-				len = means.getVectorLength()[j];
-				this.regL[i][j] = new double[len][len + 1][len + 1];
-				this.regR[i][j] = new double[len][len + 1];
-			}
+		for (int i = 0; i < means.getNumStreams(); i++) {
+			len = means.getVectorLength()[i];
+			this.regL[i] = new double[len][len + 1][len + 1];
+			this.regR[i] = new double[len][len + 1];
 		}
 
 		this.fillRegMatrices();
