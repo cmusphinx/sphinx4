@@ -1,5 +1,10 @@
 package edu.cmu.sphinx.decoder.adaptation;
 
+/**
+ * Used for storing counts information.
+ * 
+ * @author Bogdan Petcu
+ */
 public class Counts {
 
 	private float[][][][] mean;

@@ -8,6 +8,11 @@ import edu.cmu.sphinx.linguist.acoustic.tiedstate.MixtureComponent;
 import edu.cmu.sphinx.result.Result;
 import edu.cmu.sphinx.util.LogMath;
 
+/**
+ * This class is used for collecting counts from Result objects.
+ * 
+ * @author Bogdan Petcu
+ */
 public class CountsCollector {
 
 	private Counts counts;
@@ -20,7 +25,7 @@ public class CountsCollector {
 	public Counts getCounts() {
 		return counts;
 	}
-	
+
 	public int[] getVectorLength() {
 		return vectorLength;
 	}
@@ -49,11 +54,20 @@ public class CountsCollector {
 		this.logMath = LogMath.getInstance();
 	}
 
-	public float[] calculateComponentScore(FloatData feature,
+	/**
+	 * Computes score for each component.
+	 * 
+	 * @param features
+	 *            feature vector.
+	 * @param state
+	 *            the search state associated with the feature vector.
+	 * @return scores for each component.
+	 */
+	public float[] calculateComponentScore(FloatData features,
 			HMMSearchState state) {
 		MixtureComponent[] mc = state.getHMMState().getMixtureComponents();
 		float[] mw = state.getHMMState().getLogMixtureWeights();
-		float[] featureVector = FloatData.toFloatData(feature).getValues();
+		float[] featureVector = FloatData.toFloatData(features).getValues();
 		float[] logComponentScore = new float[mc.length];
 
 		for (int i = 0; i < mc.length; i++) {
@@ -63,14 +77,21 @@ public class CountsCollector {
 		return logComponentScore;
 	}
 
+	/**
+	 * Computes posterior values for the each component.
+	 * 
+	 * @param componentScores
+	 *            from which the posterior values are computed.
+	 * @return posterior values for all components.
+	 */
 	public float[] computePosterios(float[] componentScores) {
 		float max;
 		float[] posteriors = componentScores;
 
 		max = posteriors[0];
-		
+
 		for (int i = 1; i < componentScores.length; i++) {
-			if (posteriors[i] > max){
+			if (posteriors[i] > max) {
 				max = posteriors[i];
 			}
 		}
@@ -82,6 +103,15 @@ public class CountsCollector {
 		return posteriors;
 	}
 
+	/**
+	 * Collects data from the Result object parameter and stores in the Counts
+	 * field.
+	 * 
+	 * @param result
+	 *            Result object from which the Counts are collected.
+	 * @throws Exception
+	 *             "Best token not found" if the Result object has no best token.
+	 */
 	public void collect(Result result) throws Exception {
 		Token token = result.getBestToken();
 		HMMSearchState state;
@@ -109,7 +139,8 @@ public class CountsCollector {
 			for (int i = 0; i < componentScore.length; i++) {
 				counts.getDnom()[mId][0][i] += posteriors[i];
 				for (int j = 0; j < featureVector.length; j++) {
-					counts.getMean()[mId][0][i][j] += posteriors[i] * featureVector[j];
+					counts.getMean()[mId][0][i][j] += posteriors[i]
+							* featureVector[j];
 				}
 			}
 

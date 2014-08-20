@@ -18,7 +18,7 @@ import java.io.UnsupportedEncodingException;
 import edu.cmu.sphinx.decoder.adaptation.CountsCollector;
 import edu.cmu.sphinx.decoder.adaptation.DensityFileData;
 import edu.cmu.sphinx.decoder.adaptation.MllrEstimation;
-import edu.cmu.sphinx.decoder.adaptation.MllrTransformer;
+import edu.cmu.sphinx.decoder.adaptation.MllrTransform;
 import edu.cmu.sphinx.linguist.acoustic.tiedstate.Loader;
 import edu.cmu.sphinx.linguist.acoustic.tiedstate.Sphinx3Loader;
 import edu.cmu.sphinx.recognizer.Recognizer;
@@ -60,18 +60,18 @@ public class AbstractSpeechRecognizer {
 				loader.getNumGaussiansPerState());
 	}
 
-	private MllrTransformer getTransformer() throws Exception {
+	private MllrTransform getTransformer() throws Exception {
 		Sphinx3Loader loader = (Sphinx3Loader) context.getLoader();
 		DensityFileData means = new DensityFileData("", -Float.MAX_VALUE,
 				loader, false);
-		MllrTransformer transformer;
+		MllrTransform transformer;
 
 		if (!this.estimation.isComplete()) {
 			this.estimation.estimateMatrices();
 		}
 
 		means.getMeansFromLoader();
-		transformer = new MllrTransformer(means, estimation.getA(),
+		transformer = new MllrTransform(means, estimation.getA(),
 				estimation.getB(), "");
 		transformer.transform();
 
@@ -97,7 +97,7 @@ public class AbstractSpeechRecognizer {
 	protected void adaptCurrentModel() throws Exception {
 		this.estimation = new MllrEstimation("", 1, "", false, cc.getCounts(),
 				"", false, this.getLoader());
-		MllrTransformer transformer = this.getTransformer();
+		MllrTransform transformer = this.getTransformer();
 
 		// TODO : adapt current model
 	}

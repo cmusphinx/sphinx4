@@ -6,24 +6,31 @@ import java.io.IOException;
 
 import edu.cmu.sphinx.util.Utilities;
 
+/**
+ * Base class for transforming acoustic models.
+ * This class is extended by MllrTransform and ClustersTransfrom, each
+ * implementing a different way transformMean method.
+ * 
+ * @author Bogdan Petcu
+ */
 public abstract class Transformer {
 
 	protected DensityFileData means;
 	private String outputMeanFile;
 	private String header;
-	
+
 	public Transformer(DensityFileData means, String outputMeanFile) {
 		super();
 		this.means = means;
 		this.outputMeanFile = outputMeanFile;
 		this.header = "s3\nversion 1.0\nchksum0 no \n      endhdr\n";
 	}
-	
+
 	public void setHeader(String header) {
 		this.header = header;
 	}
-	
-	public void setOutputMeanFile(String outputMeanFile){
+
+	public void setOutputMeanFile(String outputMeanFile) {
 		this.outputMeanFile = outputMeanFile;
 	}
 
@@ -31,6 +38,10 @@ public abstract class Transformer {
 		return this.means;
 	}
 	
+	/**
+	 * Writes the new adapted means to file.
+	 * @throws IOException
+	 */
 	public void writeToFile() throws IOException {
 		FileOutputStream fp;
 		DataOutputStream os;
@@ -71,14 +82,24 @@ public abstract class Transformer {
 		fp.close();
 	}
 	
-	protected abstract void transformMean();                                                                                
-	
-	private void adaptMean(){
+	/**
+	 * Transforms the means using the received A and B matrices.
+	 */
+	protected abstract void transformMean();
+
+	/**
+	 * Adapts the means.
+	 */
+	private void adaptMean() {
 		this.transformMean();
 	}
-	
-	public void transform(){
+
+	/**
+	 * Transforms the acoustic model
+	 */
+	public void transform() {
 		this.adaptMean();
+		//TODO: Variance adaptation
 	}
-	
+
 }

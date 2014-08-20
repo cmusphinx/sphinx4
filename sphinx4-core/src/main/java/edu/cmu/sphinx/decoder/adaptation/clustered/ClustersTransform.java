@@ -3,6 +3,11 @@ package edu.cmu.sphinx.decoder.adaptation.clustered;
 import edu.cmu.sphinx.decoder.adaptation.DensityFileData;
 import edu.cmu.sphinx.decoder.adaptation.Transformer;
 
+/**
+ * Transforms means using the transformations created with ClustersEstimation.
+ * 
+ * @author Bogdan Petcu
+ */
 public class ClustersTransform extends Transformer {
 
 	private int nrOfClusters;

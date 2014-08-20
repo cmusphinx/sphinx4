@@ -8,7 +8,7 @@ import edu.cmu.sphinx.api.StreamSpeechRecognizer;
 import edu.cmu.sphinx.decoder.adaptation.CountsCollector;
 import edu.cmu.sphinx.decoder.adaptation.DensityFileData;
 import edu.cmu.sphinx.decoder.adaptation.MllrEstimation;
-import edu.cmu.sphinx.decoder.adaptation.MllrTransformer;
+import edu.cmu.sphinx.decoder.adaptation.MllrTransform;
 import edu.cmu.sphinx.demo.transcriber.TranscriberDemo;
 import edu.cmu.sphinx.linguist.acoustic.tiedstate.Sphinx3Loader;
 import edu.cmu.sphinx.result.WordResult;
@@ -32,7 +32,7 @@ public class MllrTransformerDemo {
 		recognizer.startRecognition(stream, false);
 
 		SpeechResult result;
-		MllrTransformer mt;
+		MllrTransform mt;
 		Sphinx3Loader loader = (Sphinx3Loader) recognizer.getLoader();
 		DensityFileData means = new DensityFileData("", -Float.MAX_VALUE,
 				loader, false);
@@ -67,7 +67,7 @@ public class MllrTransformerDemo {
 		recognizer.stopRecognition();
 		me.estimateMatrices();
 		me.createMllrFile();
-		mt = new MllrTransformer(means, me.getA(), me.getB(),
+		mt = new MllrTransform(means, me.getA(), me.getB(),
 				"/home/bogdanpetcu/means");
 		mt.transform();
 		mt.writeToFile();

@@ -13,6 +13,11 @@ import edu.cmu.sphinx.linguist.acoustic.tiedstate.Pool;
 import edu.cmu.sphinx.linguist.acoustic.tiedstate.Sphinx3Loader;
 import edu.cmu.sphinx.util.Utilities;
 
+/**
+ * This class is used for storing data read from a density file.
+ * 
+ * @author Bogdan Petcu
+ */
 public class DensityFileData {
 
 	private Sphinx3Loader loader;
@@ -100,6 +105,9 @@ public class DensityFileData {
 		this.vectorLength = vectorLength;
 	}
 
+	/**
+	 * Stores means from the Sphinx3Loader stored in the loader field.
+	 */
 	public void getMeansFromLoader() {
 		this.numStates = loader.getNumStates();
 		this.numStreams = loader.getNumStreams();
@@ -108,6 +116,12 @@ public class DensityFileData {
 		this.pool = loader.getMeansPool();
 	}
 
+	/**
+	 * Reads and stores information from the file provided in filePath field.
+	 * 
+	 * @throws IOException
+	 * @throws URISyntaxException
+	 */
 	@SuppressWarnings("unused")
 	public void loadFile() throws IOException, URISyntaxException {
 		int blockSize = 0, rawLength;

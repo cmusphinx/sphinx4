@@ -7,7 +7,7 @@ import java.io.IOException;
 import edu.cmu.sphinx.util.Utilities;
 
 /**
- * This class is used for reading and storing counts from file
+ * This class is used for reading counts from file.
  */
 public class CountsReader {
 
@@ -33,11 +33,11 @@ public class CountsReader {
 	}
 
 	/**
-	 * Reads integer from input stream and swaps its bytes
+	 * Reads integer from input stream and swaps its bytes.
 	 * 
 	 * @param is
-	 *            input stream to read from
-	 * @return swapped integer value of the number read from input stream
+	 *            input stream to read from.
+	 * @return swapped integer value of the number read from input stream.
 	 */
 	private int swappedReadInt(DataInputStream is) {
 		int number, swapped = 0;
@@ -53,11 +53,11 @@ public class CountsReader {
 	}
 
 	/**
-	 * Reads float from input stream and swaps its bytes
+	 * Reads float from input stream and swaps its bytes.
 	 * 
 	 * @param is
-	 *            input stream to read from
-	 * @return swapped float value of the number read from input stream
+	 *            input stream to read from.
+	 * @return swapped float value of the number read from input stream.
 	 */
 	private float swappedReadFloat(DataInputStream is) {
 		int number, swappedInt;
@@ -76,19 +76,19 @@ public class CountsReader {
 
 	/**
 	 * Used for reading the mean and variance 3d-arrays. The method reads all
-	 * data in one 1d-array and puts it in a 3d-array
+	 * data in one 1d-array and puts it in a 3d-array.
 	 * 
 	 * @param n
-	 *            the number of float numbers to be read
+	 *            the number of float numbers to be read.
 	 * @param d1
-	 *            first dimension of the array
+	 *            first dimension of the array.
 	 * @param d2
-	 *            second dimension of the array
+	 *            second dimension of the array.
 	 * @param d3
-	 *            third dimension of the array
+	 *            third dimension of the array.
 	 * @param is
-	 *            input stream to read from
-	 * @return the 3d-array read from input stream
+	 *            input stream to read from.
+	 * @return the 3d-array read from input stream.
 	 */
 	private float[][][][] read4dArray(int n, int d1, int d2, int d3, DataInputStream is) {
 		float[][][][] array;
@@ -119,9 +119,9 @@ public class CountsReader {
 	 * Reads the denominator 3d-array
 	 * 
 	 * @param is
-	 *            input stream to read from
+	 *            input stream to read from.
 	 * @throws Exception
-	 *             in case of array dimensions mismatch
+	 *             in case of array dimensions mismatch.
 	 */
 	private void readDnomArray(DataInputStream is) throws Exception {
 		int d1, d2, d3, n, nc;
@@ -154,7 +154,7 @@ public class CountsReader {
 	}
 
 	/**
-	 * Reads and stores in the class fields all data from the binary file
+	 * Reads and stores in the class fields all data from the binary file.
 	 * provided in the filepath field.
 	 */
 	@SuppressWarnings("unused")
