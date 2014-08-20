@@ -1,7 +1,6 @@
 package edu.cmu.sphinx.decoder.adaptation;
 
 import java.io.PrintWriter;
-import java.net.URL;
 import java.util.ArrayList;
 
 import org.apache.commons.math3.linear.Array2DRowRealMatrix;
@@ -23,12 +22,7 @@ import edu.cmu.sphinx.result.Result;
  */
 public class MllrEstimation {
 
-	private String location;
-	private String model;
-	private String countsFilePath;
 	private String outputFilePath;
-	private DensityFileData means;
-	private DensityFileData variances;
 	private float varFlor;
 	private int nMllrClass;
 	private float[][][] A;
@@ -36,28 +30,33 @@ public class MllrEstimation {
 	private double[][][][] regL;
 	private double[][][] regR;
 	private Counts counts;
+<<<<<<< HEAD
 	private CountsReader cr;
 	private CountsCollector cc;
 	private boolean countsFromFile;
 	private boolean modelFromFile;
+=======
+>>>>>>> removed unuseful storage of means and variances
 	private Sphinx3Loader s3loader;
 	private boolean estimated;
 	private boolean classEstimation;
 	private ArrayList<Integer> gaussianNumbers;
 
+<<<<<<< HEAD
 	public MllrEstimation(String location, int nMllrClass,
 			String outputFilePath, boolean countsFromFile,
 			String countsFilePath, boolean modelFromFile, Loader loader)
 			throws Exception {
+=======
+	public MllrEstimation(int nMllrClass, String outputFilePath, Counts counts,
+			Loader loader) throws Exception {
+>>>>>>> removed unuseful storage of means and variances
 		super();
-		this.location = location;
-		this.countsFilePath = countsFilePath;
 		this.varFlor = (float) 1e-5;
 		this.nMllrClass = nMllrClass;
 		this.outputFilePath = outputFilePath;
-		this.countsFromFile = countsFromFile;
-		this.modelFromFile = modelFromFile;
 		this.s3loader = (Sphinx3Loader) loader;
+<<<<<<< HEAD
 		this.init();
 	}
 
@@ -76,6 +75,13 @@ public class MllrEstimation {
 			this.readCountsFromFile();
 		}
 >>>>>>> changed clustering so it clusters gaussians by gaussian index, not state index
+=======
+		this.counts = counts;
+		if (s3loader == null) {
+			throw new Exception("Sphinx3Loader is not set.");
+		}
+
+>>>>>>> removed unuseful storage of means and variances
 	}
 
 	public MllrEstimation() {
@@ -91,18 +97,6 @@ public class MllrEstimation {
 		return B;
 	}
 
-	public void setLocation(String location) {
-		this.location = location;
-	}
-
-	public void setModel(String model) {
-		this.model = model;
-	}
-
-	public void setCountsFilePath(String countsFilePath) {
-		this.countsFilePath = countsFilePath;
-	}
-
 	public void setOutputFilePath(String outputFilePath) {
 		this.outputFilePath = outputFilePath;
 	}
@@ -113,14 +107,6 @@ public class MllrEstimation {
 
 	public void setnMllrClass(int nMllrClass) {
 		this.nMllrClass = nMllrClass;
-	}
-
-	public void setCountsFromFile(boolean countsFromFile) {
-		this.countsFromFile = countsFromFile;
-	}
-
-	public void setModelFromFile(boolean modelFromFile) {
-		this.modelFromFile = modelFromFile;
 	}
 
 	public void setS3loader(Loader loader) {
@@ -157,6 +143,7 @@ public class MllrEstimation {
 =======
 =======
 	/**
+<<<<<<< HEAD
 	 * Reads counts from file if called.
 	 * 
 	 * @throws Exception
@@ -243,13 +230,15 @@ public class MllrEstimation {
 	}
 
 	/**
+=======
+>>>>>>> removed unuseful storage of means and variances
 	 * Fill lower part of Legetter's set of G matrices.
 	 */
 	private void fillRegLowerPart() {
-		for (int j = 0; j < means.getNumStreams(); j++) {
-			for (int l = 0; l < means.getVectorLength()[j]; l++) {
-				for (int p = 0; p <= means.getVectorLength()[j]; p++) {
-					for (int q = p + 1; q <= means.getVectorLength()[j]; q++) {
+		for (int j = 0; j < s3loader.getNumStreams(); j++) {
+			for (int l = 0; l < s3loader.getVectorLength()[j]; l++) {
+				for (int p = 0; p <= s3loader.getVectorLength()[j]; p++) {
+					for (int q = p + 1; q <= s3loader.getVectorLength()[j]; q++) {
 						regL[j][l][q][p] = regL[j][l][p][q];
 					}
 				}
@@ -263,25 +252,31 @@ public class MllrEstimation {
 	private void fill() {
 		int len;
 
-		for (int i = 0; i < means.getNumStates(); i++) {
+		for (int i = 0; i < s3loader.getNumStates(); i++) {
 			float[] tmean;
 			float wtMeanVar, wtDcountVar, wtDcountVarMean;
 
-			for (int j = 0; j < means.getNumStreams(); j++) {
-				len = means.getVectorLength()[j];
+			for (int j = 0; j < s3loader.getNumStreams(); j++) {
+				len = s3loader.getVectorLength()[j];
 
-				for (int k = 0; k < means.getNumGaussiansPerState(); k++) {
+				for (int k = 0; k < s3loader.getNumGaussiansPerState(); k++) {
 					if (counts.getDnom()[i][j][k] > 0.) {
-						tmean = means.getPool().get(
-								i * means.getNumGaussiansPerState() + k);
+						tmean = s3loader.getMeansPool().get(
+								i * s3loader.getNumGaussiansPerState() + k);
 						for (int l = 0; l < len; l++) {
 							wtMeanVar = counts.getMean()[i][j][k][l]
-									* variances.getPool().get(
-											i * means.getNumGaussiansPerState()
+									* s3loader
+											.getVariancePool()
+											.get(i
+													* s3loader
+															.getNumGaussiansPerState()
 													+ k)[l];
 							wtDcountVar = counts.getDnom()[i][j][k]
-									* variances.getPool().get(
-											i * means.getNumGaussiansPerState()
+									* s3loader
+											.getVariancePool()
+											.get(i
+													* s3loader
+															.getNumGaussiansPerState()
 													+ k)[l];
 
 							for (int p = 0; p < len; p++) {
@@ -310,27 +305,29 @@ public class MllrEstimation {
 		int len, stateIndex, gaussianIndex;
 
 		for (int gaussianNumber : this.gaussianNumbers) {
-			stateIndex = gaussianNumber / means.getNumGaussiansPerState();
-			gaussianIndex = gaussianNumber % means.getNumGaussiansPerState();
+			stateIndex = gaussianNumber / s3loader.getNumGaussiansPerState();
+			gaussianIndex = gaussianNumber % s3loader.getNumGaussiansPerState();
 			float[] tmean;
 			float wtMeanVar, wtDcountVar, wtDcountVarMean;
 
-			len = means.getVectorLength()[0];
+			len = s3loader.getVectorLength()[0];
 
 			if (counts.getDnom()[stateIndex][0][gaussianIndex] > 0.) {
-				tmean = means.getPool().get(
-						stateIndex * means.getNumGaussiansPerState()
+				tmean = s3loader.getMeansPool().get(
+						stateIndex * s3loader.getNumGaussiansPerState()
 								+ gaussianIndex);
 				for (int l = 0; l < len; l++) {
 					wtMeanVar = counts.getMean()[stateIndex][0][gaussianIndex][l]
-							* variances.getPool().get(
+							* s3loader.getVariancePool().get(
 									stateIndex
-											* means.getNumGaussiansPerState()
+											* s3loader
+													.getNumGaussiansPerState()
 											+ gaussianIndex)[l];
 					wtDcountVar = counts.getDnom()[stateIndex][0][gaussianIndex]
-							* variances.getPool().get(
+							* s3loader.getVariancePool().get(
 									stateIndex
-											* means.getNumGaussiansPerState()
+											* s3loader
+													.getNumGaussiansPerState()
 											+ gaussianIndex)[l];
 
 					for (int p = 0; p < len; p++) {
@@ -366,22 +363,23 @@ public class MllrEstimation {
 	 */
 	private void invertVariances() {
 
-		for (int i = 0; i < means.getNumStates(); i++) {
-			for (int k = 0; k < means.getNumGaussiansPerState(); k++) {
-				for (int l = 0; l < means.getVectorLength()[0]; l++) {
-					if (variances.getPool().get(
-							i * means.getNumGaussiansPerState() + k)[l] <= 0.) {
-						variances.getPool().get(
-								i * means.getNumGaussiansPerState() + k)[l] = (float) 0.5;
-					} else if (variances.getPool().get(
-							i * means.getNumGaussiansPerState() + k)[l] < varFlor) {
-						variances.getPool().get(
-								i * means.getNumGaussiansPerState() + k)[l] = (float) (1. / varFlor);
+		for (int i = 0; i < s3loader.getNumStates(); i++) {
+			for (int k = 0; k < s3loader.getNumGaussiansPerState(); k++) {
+				for (int l = 0; l < s3loader.getVectorLength()[0]; l++) {
+					if (s3loader.getVariancePool().get(
+							i * s3loader.getNumGaussiansPerState() + k)[l] <= 0.) {
+						s3loader.getVariancePool().get(
+								i * s3loader.getNumGaussiansPerState() + k)[l] = (float) 0.5;
+					} else if (s3loader.getVariancePool().get(
+							i * s3loader.getNumGaussiansPerState() + k)[l] < varFlor) {
+						s3loader.getVariancePool().get(
+								i * s3loader.getNumGaussiansPerState() + k)[l] = (float) (1. / varFlor);
 					} else {
-						variances.getPool().get(
-								i * means.getNumGaussiansPerState() + k)[l] = (float) (1. / variances
-								.getPool()
-								.get(i * means.getNumGaussiansPerState() + k)[l]);
+						s3loader.getVariancePool().get(
+								i * s3loader.getNumGaussiansPerState() + k)[l] = (float) (1. / s3loader
+								.getVariancePool().get(
+										i * s3loader.getNumGaussiansPerState()
+												+ k)[l]);
 					}
 				}
 			}
@@ -397,11 +395,11 @@ public class MllrEstimation {
 		RealMatrix coef;
 		RealVector vect, ABloc;
 
-		this.A = new float[means.getNumStreams()][][];
-		this.B = new float[means.getNumStreams()][];
+		this.A = new float[s3loader.getNumStreams()][][];
+		this.B = new float[s3loader.getNumStreams()][];
 
-		for (int i = 0; i < means.getNumStreams(); i++) {
-			len = means.getVectorLength()[i];
+		for (int i = 0; i < s3loader.getNumStreams(); i++) {
+			len = s3loader.getVectorLength()[i];
 			this.A[i] = new float[len][len];
 			this.B[i] = new float[len];
 
@@ -441,27 +439,27 @@ public class MllrEstimation {
 		PrintWriter writer = new PrintWriter(this.outputFilePath, "UTF-8");
 
 		writer.println(nMllrClass);
-		writer.println(means.getNumStreams());
+		writer.println(s3loader.getNumStreams());
 
-		for (int i = 0; i < means.getNumStreams(); i++) {
-			writer.println(means.getVectorLength()[i]);
+		for (int i = 0; i < s3loader.getNumStreams(); i++) {
+			writer.println(s3loader.getVectorLength()[i]);
 
-			for (int j = 0; j < means.getVectorLength()[i]; j++) {
-				for (int k = 0; k < means.getVectorLength()[i]; ++k) {
+			for (int j = 0; j < s3loader.getVectorLength()[i]; j++) {
+				for (int k = 0; k < s3loader.getVectorLength()[i]; ++k) {
 					writer.print(A[i][j][k]);
 					writer.print(" ");
 				}
 				writer.println();
 			}
 
-			for (int j = 0; j < means.getVectorLength()[i]; j++) {
+			for (int j = 0; j < s3loader.getVectorLength()[i]; j++) {
 				writer.print(B[i][j]);
 				writer.print(" ");
 
 			}
 			writer.println();
 
-			for (int j = 0; j < means.getVectorLength()[i]; j++) {
+			for (int j = 0; j < s3loader.getVectorLength()[i]; j++) {
 				writer.print("1.0 ");
 
 			}
@@ -480,7 +478,7 @@ public class MllrEstimation {
 =======
 =======
 	/**
-	 * Deploys the whole process of mllr transform estimation.
+	 * Deploys the whole process of MLLR transform estimation.
 	 * 
 	 * @throws Exception
 	 */
@@ -490,12 +488,12 @@ public class MllrEstimation {
 >>>>>>> changed clustering so it clusters gaussians by gaussian index, not state index
 		this.invertVariances();
 
-		int len = means.getVectorLength()[0];
-		this.regL = new double[means.getNumStreams()][][][];
-		this.regR = new double[means.getNumStreams()][][];
+		int len = s3loader.getVectorLength()[0];
+		this.regL = new double[s3loader.getNumStreams()][][][];
+		this.regR = new double[s3loader.getNumStreams()][][];
 
-		for (int i = 0; i < means.getNumStreams(); i++) {
-			len = means.getVectorLength()[i];
+		for (int i = 0; i < s3loader.getNumStreams(); i++) {
+			len = s3loader.getVectorLength()[i];
 			this.regL[i] = new double[len][len + 1][len + 1];
 			this.regR[i] = new double[len][len + 1];
 		}

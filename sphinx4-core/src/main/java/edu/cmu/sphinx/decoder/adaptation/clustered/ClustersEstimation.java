@@ -92,8 +92,7 @@ public class ClustersEstimation {
 			MllrEstimation estimation;
 
 			clusterCounts = this.getClusterCounts(i);
-			estimation = new MllrEstimation("", 1, "", false, clusterCounts,
-					"", false, loader);
+			estimation = new MllrEstimation(1, "", clusterCounts, loader);
 			estimation.setClassEstimation(true, this.cm.getGaussianNumbers()
 					.get(i));
 			estimation.estimateMatrices();
