@@ -15,6 +15,12 @@ import edu.cmu.sphinx.linguist.acoustic.tiedstate.Loader;
 import edu.cmu.sphinx.linguist.acoustic.tiedstate.Sphinx3Loader;
 import edu.cmu.sphinx.result.Result;
 
+/**
+ * Used for computing a MLLR estimation provided as A and B matrix
+ * (representing: A*x + B)
+ * 
+ * @author Bogdan Petcu
+ */
 public class MllrEstimation {
 
 	private String location;
@@ -55,6 +61,12 @@ public class MllrEstimation {
 		this.init();
 	}
 
+	/**
+	 * Reads Means and Variances and also counts if it's requested to read them
+	 * from file.
+	 * 
+	 * @throws Exception
+	 */
 	public void init() throws Exception {
 		this.readMeansAndVariances();
 <<<<<<< HEAD
@@ -115,6 +127,10 @@ public class MllrEstimation {
 		this.s3loader = (Sphinx3Loader) loader;
 	}
 
+	/**
+	 * This method is called if the estimation is just for a certain group of
+	 * gaussians.
+	 */
 	public void setClassEstimation(boolean classEstimation,
 			ArrayList<Integer> stateNumbers) throws Exception {
 		this.classEstimation = classEstimation;
@@ -125,14 +141,27 @@ public class MllrEstimation {
 		this.gaussianNumbers = stateNumbers;
 	}
 
+	/**
+	 * Used for verifying if the estimation is fully computed.
+	 * 
+	 * @return true if the estimation is computed, else false
+	 */
 	public boolean isComplete() {
 		return this.estimated;
 	}
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 	public void readCounts() throws Exception {
 		if (this.countsFromFile) {
 =======
+=======
+	/**
+	 * Reads counts from file if called.
+	 * 
+	 * @throws Exception
+	 */
+>>>>>>> added javadocs
 	private void readCountsFromFile() throws Exception {
 <<<<<<< HEAD
 >>>>>>> implemented mllr estimation per class
@@ -160,6 +189,12 @@ public class MllrEstimation {
 >>>>>>> removed unused dimension of A and B matrices
 	}
 
+	/**
+	 * Reads means and variances. These are from a provided file or from the
+	 * provided Sphinx3Loader.
+	 * 
+	 * @throws Exception
+	 */
 	private void readMeansAndVariances() throws Exception {
 
 		if (modelFromFile) {
@@ -207,6 +242,9 @@ public class MllrEstimation {
 		}
 	}
 
+	/**
+	 * Fill lower part of Legetter's set of G matrices.
+	 */
 	private void fillRegLowerPart() {
 		for (int j = 0; j < means.getNumStreams(); j++) {
 			for (int l = 0; l < means.getVectorLength()[j]; l++) {
@@ -219,6 +257,9 @@ public class MllrEstimation {
 		}
 	}
 
+	/**
+	 * Fill Legetter's sets of G and Z matrices.
+	 */
 	private void fill() {
 		int len;
 
@@ -262,6 +303,9 @@ public class MllrEstimation {
 		}
 	}
 
+	/**
+	 * Fill Legetter's sets of G and Z matrices for a single class of gaussians.
+	 */
 	private void fillForClass() {
 		int len, stateIndex, gaussianIndex;
 
@@ -317,6 +361,9 @@ public class MllrEstimation {
 		fillRegLowerPart();
 	}
 
+	/**
+	 * Used for inverting variances.
+	 */
 	private void invertVariances() {
 
 		for (int i = 0; i < means.getNumStates(); i++) {
@@ -341,6 +388,9 @@ public class MllrEstimation {
 		}
 	}
 
+	/**
+	 * Used for computing the actual transformation (A and B matrices).
+	 */
 	private void computeMllr() {
 		int len;
 		DecompositionSolver solver;
@@ -377,6 +427,11 @@ public class MllrEstimation {
 =======
 >>>>>>> changed clustering so it clusters gaussians by gaussian index, not state index
 
+	/**
+	 * Writes the transformation to file.
+	 * 
+	 * @throws Exception
+	 */
 	public void createMllrFile() throws Exception {
 
 		if (!this.isComplete()) {
@@ -416,12 +471,20 @@ public class MllrEstimation {
 	}
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 	public void estimateMatrices() {
 		if(!countsFromFile){
 			this.counts = cc.getCounts();
 		}
 		
 =======
+=======
+	/**
+	 * Deploys the whole process of mllr transform estimation.
+	 * 
+	 * @throws Exception
+	 */
+>>>>>>> added javadocs
 	public void estimateMatrices() throws Exception {
 
 >>>>>>> changed clustering so it clusters gaussians by gaussian index, not state index

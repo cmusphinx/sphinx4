@@ -7,6 +7,12 @@ import org.apache.commons.math3.util.FastMath;
 
 import edu.cmu.sphinx.linguist.acoustic.tiedstate.Pool;
 
+/**
+ * Used for clustering gaussians. The clustering is performed by euclidean
+ * distance criterium. For clustering the k Means Clustering algorithm is used.
+ * 
+ * @author Bogdan Petcu
+ */
 public class ClusteredDensityFileData {
 
 	private Pool<float[]> initialData;
@@ -34,6 +40,15 @@ public class ClusteredDensityFileData {
 		return gaussianNumbers;
 	}
 
+	/**
+	 * Computes euclidean distance for the 2 n-dimensional points.
+	 * 
+	 * @param a
+	 *            - n-dimensional a point
+	 * @param b
+	 *            - n-dimensional b point
+	 * @return the euclidean distance between a and b.
+	 */
 	private float euclidianDistance(float[] a, float[] b) {
 		double s = 0, d;
 
@@ -45,6 +60,15 @@ public class ClusteredDensityFileData {
 		return (float) FastMath.sqrt(s);
 	}
 
+	/**
+	 * Checks if the two float array have the same components
+	 * 
+	 * @param a
+	 *            - float array a
+	 * @param b
+	 *            - float array b
+	 * @return true if values from a are equal to the ones in b, else false.
+	 */
 	private boolean isEqual(float[] a, float[] b) {
 		if (a.length != b.length) {
 			return false;
@@ -59,6 +83,12 @@ public class ClusteredDensityFileData {
 		return true;
 	}
 
+	/**
+	 * Performs k-means-clustering algorithm for clustering gaussians.
+	 * Clustering is done using euclidean distance criterium.
+	 * 
+	 * @param maxIterations
+	 */
 	private void kMeansClustering(int maxIterations) {
 		ArrayList<float[]> oldCentroids = new ArrayList<float[]>(
 				numberOfClusters);

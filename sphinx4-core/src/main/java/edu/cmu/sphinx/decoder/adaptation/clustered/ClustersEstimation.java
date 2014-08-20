@@ -6,6 +6,13 @@ import edu.cmu.sphinx.decoder.adaptation.Counts;
 import edu.cmu.sphinx.decoder.adaptation.MllrEstimation;
 import edu.cmu.sphinx.linguist.acoustic.tiedstate.Sphinx3Loader;
 
+/**
+ * This class is used for estimating a MLLR transform for each cluster of data.
+ * The clustering must be previously performed using
+ * ClusteredDensityFileData.java
+ * 
+ * @author Bogdan Petcu
+ */
 public class ClustersEstimation {
 
 	private ClusteredDensityFileData cm;
@@ -45,6 +52,14 @@ public class ClustersEstimation {
 		return this.cm;
 	}
 
+	/**
+	 * Extracts from the counts collected from all the results the ones that
+	 * correspond to the cluster identified by the index provided.
+	 * 
+	 * @param k
+	 *            - cluster id
+	 * @return - the counts corresponding to this cluster
+	 */
 	private Counts getClusterCounts(int k) {
 		Counts clusterCounts = new Counts(vectorLength, numStates, numStreams,
 				numGaussinsPerState);
@@ -66,6 +81,11 @@ public class ClustersEstimation {
 		return clusterCounts;
 	}
 
+	/**
+	 * Creates an estimation for each of the clusters.
+	 * 
+	 * @throws Exception
+	 */
 	public void estimate() throws Exception {
 		for (int i = 0; i < k; i++) {
 			Counts clusterCounts;
