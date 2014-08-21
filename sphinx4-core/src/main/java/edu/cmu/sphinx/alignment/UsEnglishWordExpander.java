@@ -416,12 +416,14 @@ public class UsEnglishWordExpander implements WordExpander {
 
     private String simplifyChars(String text) {
         text = text.replace('’', '\'');
+        text = text.replace('‘', '\'');
         text = text.replace('”', '"');
         text = text.replace('“', '"');
         text = text.replace('»', '"');
         text = text.replace('«', '"');
         text = text.replace('–', '-');
         text = text.replace('—', ' ');
+        text = text.replace('…', ' ');
         text = text.replace((char)0xc, ' ');
         return text;
     }
