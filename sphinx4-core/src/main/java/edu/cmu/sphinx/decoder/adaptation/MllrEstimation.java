@@ -1,7 +1,6 @@
 package edu.cmu.sphinx.decoder.adaptation;
 
 import java.io.PrintWriter;
-import java.util.ArrayList;
 
 import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.ArrayRealVector;
@@ -10,9 +9,19 @@ import org.apache.commons.math3.linear.LUDecomposition;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.linear.RealVector;
 
+import edu.cmu.sphinx.decoder.search.Token;
+import edu.cmu.sphinx.frontend.FloatData;
+import edu.cmu.sphinx.linguist.HMMSearchState;
+import edu.cmu.sphinx.linguist.SearchState;
 import edu.cmu.sphinx.linguist.acoustic.tiedstate.Loader;
+import edu.cmu.sphinx.linguist.acoustic.tiedstate.MixtureComponent;
+import edu.cmu.sphinx.linguist.acoustic.tiedstate.Pool;
 import edu.cmu.sphinx.linguist.acoustic.tiedstate.Sphinx3Loader;
 import edu.cmu.sphinx.result.Result;
+<<<<<<< HEAD
+=======
+import edu.cmu.sphinx.util.LogMath;
+>>>>>>> implemented direct counts collecting in MllrEstimation.java and ClustersEstimation.java. This way the program uses less memory than the previous form when the counts were stored before they were used in computing the transform
 
 /**
  * Used for computing a MLLR estimation provided as A and B matrix
@@ -29,6 +38,7 @@ public class MllrEstimation {
 	private float[][] B;
 	private double[][][][] regL;
 	private double[][][] regR;
+<<<<<<< HEAD
 	private Counts counts;
 <<<<<<< HEAD
 	private CountsReader cr;
@@ -38,10 +48,14 @@ public class MllrEstimation {
 =======
 >>>>>>> removed unuseful storage of means and variances
 	private Sphinx3Loader s3loader;
+=======
+	protected Sphinx3Loader s3loader;
+>>>>>>> implemented direct counts collecting in MllrEstimation.java and ClustersEstimation.java. This way the program uses less memory than the previous form when the counts were stored before they were used in computing the transform
 	private boolean estimated;
-	private boolean classEstimation;
-	private ArrayList<Integer> gaussianNumbers;
+	private LogMath logMath = LogMath.getInstance();
+	private Pool<float[]> variancePool;
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 	public MllrEstimation(String location, int nMllrClass,
 			String outputFilePath, boolean countsFromFile,
@@ -51,11 +65,16 @@ public class MllrEstimation {
 	public MllrEstimation(int nMllrClass, String outputFilePath, Counts counts,
 			Loader loader) throws Exception {
 >>>>>>> removed unuseful storage of means and variances
+=======
+	public MllrEstimation(String outputFilePath, Loader loader)
+			throws Exception {
+>>>>>>> implemented direct counts collecting in MllrEstimation.java and ClustersEstimation.java. This way the program uses less memory than the previous form when the counts were stored before they were used in computing the transform
 		super();
 		this.varFlor = (float) 1e-5;
-		this.nMllrClass = nMllrClass;
+		this.nMllrClass = 1;
 		this.outputFilePath = outputFilePath;
 		this.s3loader = (Sphinx3Loader) loader;
+<<<<<<< HEAD
 <<<<<<< HEAD
 		this.init();
 	}
@@ -77,16 +96,49 @@ public class MllrEstimation {
 >>>>>>> changed clustering so it clusters gaussians by gaussian index, not state index
 =======
 		this.counts = counts;
+=======
+>>>>>>> implemented direct counts collecting in MllrEstimation.java and ClustersEstimation.java. This way the program uses less memory than the previous form when the counts were stored before they were used in computing the transform
 		if (s3loader == null) {
 			throw new Exception("Sphinx3Loader is not set.");
 		}
 
+<<<<<<< HEAD
 >>>>>>> removed unuseful storage of means and variances
+=======
+		this.variancePool = s3loader.getVariancePool();
+		this.invertVariances();
+		this.init();
+	}
+
+	protected MllrEstimation(Loader loader) throws Exception {
+		super();
+		this.varFlor = (float) 1e-5;
+		this.nMllrClass = 1;
+		this.s3loader = (Sphinx3Loader) loader;
+		if (s3loader == null) {
+			throw new Exception("Sphinx3Loader is not set.");
+		}
+
+		this.variancePool = s3loader.getVariancePool();
+		this.invertVariances();
+>>>>>>> implemented direct counts collecting in MllrEstimation.java and ClustersEstimation.java. This way the program uses less memory than the previous form when the counts were stored before they were used in computing the transform
 	}
 
 	public MllrEstimation() {
 		this.varFlor = (float) 1e-5;
 		this.nMllrClass = 1;
+	}
+
+	private void init() {
+		int len = s3loader.getVectorLength()[0];
+		this.regL = new double[s3loader.getNumStreams()][][][];
+		this.regR = new double[s3loader.getNumStreams()][][];
+
+		for (int i = 0; i < s3loader.getNumStreams(); i++) {
+			len = s3loader.getVectorLength()[i];
+			this.regL[i] = new double[len][len + 1][len + 1];
+			this.regR[i] = new double[len][len + 1];
+		}
 	}
 
 	public float[][][] getA() {
@@ -114,26 +166,61 @@ public class MllrEstimation {
 	}
 
 	/**
-	 * This method is called if the estimation is just for a certain group of
-	 * gaussians.
-	 */
-	public void setClassEstimation(boolean classEstimation,
-			ArrayList<Integer> stateNumbers) throws Exception {
-		this.classEstimation = classEstimation;
-		if (classEstimation
-				&& (stateNumbers == null || stateNumbers.size() == 0)) {
-			throw new Exception("Empty set of indexes that form the class");
-		}
-		this.gaussianNumbers = stateNumbers;
-	}
-
-	/**
 	 * Used for verifying if the estimation is fully computed.
 	 * 
 	 * @return true if the estimation is computed, else false
 	 */
 	public boolean isComplete() {
 		return this.estimated;
+	}
+
+	/**
+	 * Computes score for each component.
+	 * 
+	 * @param features
+	 *            feature vector.
+	 * @param state
+	 *            the search state associated with the feature vector.
+	 * @return scores for each component.
+	 */
+	protected float[] calculateComponentScore(FloatData features,
+			HMMSearchState state) {
+		MixtureComponent[] mc = state.getHMMState().getMixtureComponents();
+		float[] mw = state.getHMMState().getLogMixtureWeights();
+		float[] featureVector = FloatData.toFloatData(features).getValues();
+		float[] logComponentScore = new float[mc.length];
+
+		for (int i = 0; i < mc.length; i++) {
+			logComponentScore[i] = mc[i].getScore(featureVector) + mw[i];
+		}
+
+		return logComponentScore;
+	}
+
+	/**
+	 * Computes posterior values for the each component.
+	 * 
+	 * @param componentScores
+	 *            from which the posterior values are computed.
+	 * @return posterior values for all components.
+	 */
+	protected float[] computePosterios(float[] componentScores) {
+		float max;
+		float[] posteriors = componentScores;
+
+		max = posteriors[0];
+
+		for (int i = 1; i < componentScores.length; i++) {
+			if (posteriors[i] > max) {
+				max = posteriors[i];
+			}
+		}
+
+		for (int i = 0; i < componentScores.length; i++) {
+			posteriors[i] = (float) logMath.logToLinear(posteriors[i] - max);
+		}
+
+		return posteriors;
 	}
 
 <<<<<<< HEAD
@@ -246,137 +333,94 @@ public class MllrEstimation {
 		}
 	}
 
-	/**
-	 * Fill Legetter's sets of G and Z matrices.
-	 */
-	private void fill() {
-		int len;
+	public void collect(Result result) throws Exception {
+		Token token = result.getBestToken();
+		HMMSearchState state;
+		float[] componentScore, featureVector, posteriors, tmean;
+		float dnom, wtMeanVar, wtDcountVar, wtDcountVarMean, mean;
+		int mId, len;
 
-		for (int i = 0; i < s3loader.getNumStates(); i++) {
-			float[] tmean;
-			float wtMeanVar, wtDcountVar, wtDcountVarMean;
+		if (token == null)
+			throw new Exception("Best token not found!");
 
-			for (int j = 0; j < s3loader.getNumStreams(); j++) {
-				len = s3loader.getVectorLength()[j];
+		do {
+			FloatData feature = (FloatData) token.getData();
+			SearchState ss = token.getSearchState();
 
-				for (int k = 0; k < s3loader.getNumGaussiansPerState(); k++) {
-					if (counts.getDnom()[i][j][k] > 0.) {
-						tmean = s3loader.getMeansPool().get(
-								i * s3loader.getNumGaussiansPerState() + k);
-						for (int l = 0; l < len; l++) {
-							wtMeanVar = counts.getMean()[i][j][k][l]
-									* s3loader
-											.getVariancePool()
-											.get(i
-													* s3loader
-															.getNumGaussiansPerState()
-													+ k)[l];
-							wtDcountVar = counts.getDnom()[i][j][k]
-									* s3loader
-											.getVariancePool()
-											.get(i
-													* s3loader
-															.getNumGaussiansPerState()
-													+ k)[l];
-
-							for (int p = 0; p < len; p++) {
-								wtDcountVarMean = wtDcountVar * tmean[p];
-
-								for (int q = p; q < len; q++) {
-									regL[j][l][p][q] += wtDcountVarMean
-											* tmean[q];
-								}
-								regL[j][l][p][len] += wtDcountVarMean;
-								regR[j][l][p] += wtMeanVar * tmean[p];
-							}
-							regL[j][l][len][len] += wtDcountVar;
-							regR[j][l][len] += wtMeanVar;
-						}
-					}
-				}
+			if (!(ss instanceof HMMSearchState && ss.isEmitting())) {
+				token = token.getPredecessor();
+				continue;
 			}
-		}
-	}
 
-	/**
-	 * Fill Legetter's sets of G and Z matrices for a single class of gaussians.
-	 */
-	private void fillForClass() {
-		int len, stateIndex, gaussianIndex;
-
-		for (int gaussianNumber : this.gaussianNumbers) {
-			stateIndex = gaussianNumber / s3loader.getNumGaussiansPerState();
-			gaussianIndex = gaussianNumber % s3loader.getNumGaussiansPerState();
-			float[] tmean;
-			float wtMeanVar, wtDcountVar, wtDcountVarMean;
-
+			state = (HMMSearchState) token.getSearchState();
+			componentScore = this.calculateComponentScore(feature, state);
+			featureVector = FloatData.toFloatData(feature).getValues();
+			mId = (int) state.getHMMState().getMixtureId();
+			posteriors = this.computePosterios(componentScore);
 			len = s3loader.getVectorLength()[0];
 
-			if (counts.getDnom()[stateIndex][0][gaussianIndex] > 0.) {
-				tmean = s3loader.getMeansPool().get(
-						stateIndex * s3loader.getNumGaussiansPerState()
-								+ gaussianIndex);
-				for (int l = 0; l < len; l++) {
-					wtMeanVar = counts.getMean()[stateIndex][0][gaussianIndex][l]
-							* s3loader.getVariancePool().get(
-									stateIndex
-											* s3loader
-													.getNumGaussiansPerState()
-											+ gaussianIndex)[l];
-					wtDcountVar = counts.getDnom()[stateIndex][0][gaussianIndex]
-							* s3loader.getVariancePool().get(
-									stateIndex
-											* s3loader
-													.getNumGaussiansPerState()
-											+ gaussianIndex)[l];
+			for (int i = 0; i < componentScore.length; i++) {
+				dnom = posteriors[i];
+				if (dnom > 0.) {
+					tmean = s3loader.getMeansPool().get(
+							mId * s3loader.getNumGaussiansPerState() + i);
 
-					for (int p = 0; p < len; p++) {
-						wtDcountVarMean = wtDcountVar * tmean[p];
+					for (int j = 0; j < featureVector.length; j++) {
+						mean = posteriors[i] * featureVector[j];
+						wtMeanVar = mean
+								* s3loader
+										.getVariancePool()
+										.get(mId
+												* s3loader
+														.getNumGaussiansPerState()
+												+ i)[j];
+						wtDcountVar = dnom
+								* s3loader
+										.getVariancePool()
+										.get(mId
+												* s3loader
+														.getNumGaussiansPerState()
+												+ i)[j];
 
-						for (int q = p; q < len; q++) {
-							regL[0][l][p][q] += wtDcountVarMean * tmean[q];
+						for (int p = 0; p < featureVector.length; p++) {
+							wtDcountVarMean = wtDcountVar * tmean[p];
+
+							for (int q = p; q < featureVector.length; q++) {
+								regL[0][j][p][q] += wtDcountVarMean * tmean[q];
+							}
+							regL[0][j][p][len] += wtDcountVarMean;
+							regR[0][j][p] += wtMeanVar * tmean[p];
 						}
+						regL[0][j][len][len] += wtDcountVar;
+						regR[0][j][len] += wtMeanVar;
 
-						regL[0][l][p][len] += wtDcountVarMean;
-						regR[0][l][p] += wtMeanVar * tmean[p];
 					}
-					regL[0][l][len][len] += wtDcountVar;
-					regR[0][l][len] += wtMeanVar;
 				}
 			}
 
-		}
-	}
-
-	private void fillRegMatrices() {
-		if (!this.classEstimation) {
-			this.fill();
-		} else {
-			this.fillForClass();
-		}
-
-		fillRegLowerPart();
+			token = token.getPredecessor();
+		} while (token != null);
 	}
 
 	/**
 	 * Used for inverting variances.
 	 */
-	private void invertVariances() {
+	protected void invertVariances() {
 
 		for (int i = 0; i < s3loader.getNumStates(); i++) {
 			for (int k = 0; k < s3loader.getNumGaussiansPerState(); k++) {
 				for (int l = 0; l < s3loader.getVectorLength()[0]; l++) {
 					if (s3loader.getVariancePool().get(
 							i * s3loader.getNumGaussiansPerState() + k)[l] <= 0.) {
-						s3loader.getVariancePool().get(
-								i * s3loader.getNumGaussiansPerState() + k)[l] = (float) 0.5;
+						this.variancePool.get(i
+								* s3loader.getNumGaussiansPerState() + k)[l] = (float) 0.5;
 					} else if (s3loader.getVariancePool().get(
 							i * s3loader.getNumGaussiansPerState() + k)[l] < varFlor) {
-						s3loader.getVariancePool().get(
-								i * s3loader.getNumGaussiansPerState() + k)[l] = (float) (1. / varFlor);
+						this.variancePool.get(i
+								* s3loader.getNumGaussiansPerState() + k)[l] = (float) (1. / varFlor);
 					} else {
-						s3loader.getVariancePool().get(
-								i * s3loader.getNumGaussiansPerState() + k)[l] = (float) (1. / s3loader
+						this.variancePool.get(i
+								* s3loader.getNumGaussiansPerState() + k)[l] = (float) (1. / s3loader
 								.getVariancePool().get(
 										i * s3loader.getNumGaussiansPerState()
 												+ k)[l]);
@@ -484,6 +528,7 @@ public class MllrEstimation {
 	 */
 >>>>>>> added javadocs
 	public void estimateMatrices() throws Exception {
+<<<<<<< HEAD
 
 >>>>>>> changed clustering so it clusters gaussians by gaussian index, not state index
 		this.invertVariances();
@@ -499,6 +544,9 @@ public class MllrEstimation {
 		}
 
 		this.fillRegMatrices();
+=======
+		this.fillRegLowerPart();
+>>>>>>> implemented direct counts collecting in MllrEstimation.java and ClustersEstimation.java. This way the program uses less memory than the previous form when the counts were stored before they were used in computing the transform
 		this.computeMllr();
 		this.estimated = true;
 	}

@@ -1,10 +1,19 @@
 package edu.cmu.sphinx.decoder.adaptation.clustered;
 
-import java.util.ArrayList;
+import org.apache.commons.math3.linear.Array2DRowRealMatrix;
+import org.apache.commons.math3.linear.ArrayRealVector;
+import org.apache.commons.math3.linear.DecompositionSolver;
+import org.apache.commons.math3.linear.LUDecomposition;
+import org.apache.commons.math3.linear.RealMatrix;
+import org.apache.commons.math3.linear.RealVector;
 
-import edu.cmu.sphinx.decoder.adaptation.Counts;
 import edu.cmu.sphinx.decoder.adaptation.MllrEstimation;
-import edu.cmu.sphinx.linguist.acoustic.tiedstate.Sphinx3Loader;
+import edu.cmu.sphinx.decoder.search.Token;
+import edu.cmu.sphinx.frontend.FloatData;
+import edu.cmu.sphinx.linguist.HMMSearchState;
+import edu.cmu.sphinx.linguist.SearchState;
+import edu.cmu.sphinx.linguist.acoustic.tiedstate.Loader;
+import edu.cmu.sphinx.result.Result;
 
 /**
  * This class is used for estimating a MLLR transform for each cluster of data.
@@ -13,92 +22,176 @@ import edu.cmu.sphinx.linguist.acoustic.tiedstate.Sphinx3Loader;
  * 
  * @author Bogdan Petcu
  */
-public class ClustersEstimation {
+public class ClustersEstimation extends MllrEstimation {
 
-	private ClusteredDensityFileData cm;
+	private ClusteredDensityFileData cd;
+	private double[][][][][] regLs;
+	private double[][][][] regRs;
 	private float[][][][] As;
 	private float[][][] Bs;
-	private int k;
-	private Counts counts;
-	Sphinx3Loader loader;
-	private int numStates;
-	private int numStreams;
-	private int numGaussinsPerState;
-	private int[] vectorLength;
+	protected int nrOfClusters;
 
-	public ClustersEstimation(Counts counts, ClusteredDensityFileData cm,
-			int k, Sphinx3Loader loader) {
-		this.counts = counts;
-		this.cm = cm;
-		this.k = k;
-		this.loader = loader;
-		this.vectorLength = loader.getVectorLength();
-		this.numStates = loader.getNumStates();
-		this.numStreams = loader.getNumStreams();
-		this.numGaussinsPerState = loader.getNumGaussiansPerState();
-		As = new float[k][][][];
-		Bs = new float[k][][];
+	public ClustersEstimation(int nMllrClass, Loader loader, int nrOfClusters,
+			ClusteredDensityFileData cd) throws Exception {
+		super(loader);
+		this.nrOfClusters = nrOfClusters;
+		this.cd = cd;
+		this.invertVariances();
+		this.init();
 	}
 
-	public float[][][][] getAs() {
-		return As;
-	}
+	private void init() {
+		int len = s3loader.getVectorLength()[0];
+		this.regLs = new double[nrOfClusters][][][][];
+		this.regRs = new double[nrOfClusters][][][];
 
-	public float[][][] getBs() {
-		return Bs;
+		As = new float[nrOfClusters][][][];
+		Bs = new float[nrOfClusters][][];
+
+		for (int i = 0; i < nrOfClusters; i++) {
+			this.regLs[i] = new double[s3loader.getNumStreams()][][][];
+			this.regRs[i] = new double[s3loader.getNumStreams()][][];
+
+			for (int j = 0; j < s3loader.getNumStreams(); j++) {
+				len = s3loader.getVectorLength()[j];
+				this.regLs[i][j] = new double[len][len + 1][len + 1];
+				this.regRs[i][j] = new double[len][len + 1];
+			}
+		}
 	}
 
 	public ClusteredDensityFileData getClusteredData() {
-		return this.cm;
+		return this.cd;
 	}
 
-	/**
-	 * Extracts from the counts collected from all the results the ones that
-	 * correspond to the cluster identified by the index provided.
-	 * 
-	 * @param k
-	 *            - cluster id
-	 * @return - the counts corresponding to this cluster
-	 */
-	private Counts getClusterCounts(int k) {
-		Counts clusterCounts = new Counts(vectorLength, numStates, numStreams,
-				numGaussinsPerState);
-		ArrayList<Integer> gaussianNumbers = cm.getGaussianNumbers().get(k);
-		float[][][][] mean = new float[numStates][numStreams][numGaussinsPerState][vectorLength[0]];
-		float[][][] dnom = new float[numStates][numStreams][numGaussinsPerState];
-		int stateIndex, gaussianIndex;
-
-		for (int id : gaussianNumbers) {
-			stateIndex = id / numGaussinsPerState;
-			gaussianIndex = id % numGaussinsPerState;
-			mean[stateIndex][0][gaussianIndex] = counts.getMean()[stateIndex][0][gaussianIndex];
-			dnom[stateIndex][0][gaussianIndex] = counts.getDnom()[stateIndex][0][gaussianIndex];
-		}
-
-		clusterCounts.setDnom(dnom);
-		clusterCounts.setMean(mean);
-
-		return clusterCounts;
+	public float[][][][] getAs() {
+		return this.As;
 	}
 
-	/**
-	 * Creates an estimation for each of the clusters.
-	 * 
-	 * @throws Exception
-	 */
-	public void estimate() throws Exception {
-		for (int i = 0; i < k; i++) {
-			Counts clusterCounts;
-			MllrEstimation estimation;
+	public float[][][] getBs() {
+		return this.Bs;
+	}
 
-			clusterCounts = this.getClusterCounts(i);
-			estimation = new MllrEstimation(1, "", clusterCounts, loader);
-			estimation.setClassEstimation(true, this.cm.getGaussianNumbers()
-					.get(i));
-			estimation.estimateMatrices();
-			As[i] = estimation.getA();
-			Bs[i] = estimation.getB();
+	public void collect(Result result) throws Exception {
+		Token token = result.getBestToken();
+		HMMSearchState state;
+		float[] componentScore, featureVector, posteriors, tmean;
+		float dnom, wtMeanVar, wtDcountVar, wtDcountVarMean, mean;
+		int mId, len, cluster;
+
+		if (token == null)
+			throw new Exception("Best token not found!");
+
+		do {
+			FloatData feature = (FloatData) token.getData();
+			SearchState ss = token.getSearchState();
+
+			if (!(ss instanceof HMMSearchState && ss.isEmitting())) {
+				token = token.getPredecessor();
+				continue;
+			}
+
+			state = (HMMSearchState) token.getSearchState();
+			componentScore = this.calculateComponentScore(feature, state);
+			featureVector = FloatData.toFloatData(feature).getValues();
+			mId = (int) state.getHMMState().getMixtureId();
+			posteriors = this.computePosterios(componentScore);
+			len = s3loader.getVectorLength()[0];
+
+			for (int i = 0; i < componentScore.length; i++) {
+				cluster = cd.getClassIndex(mId
+						* s3loader.getNumGaussiansPerState() + i);
+				dnom = posteriors[i];
+				if (dnom > 0.) {
+					tmean = s3loader.getMeansPool().get(
+							mId * s3loader.getNumGaussiansPerState() + i);
+
+					for (int j = 0; j < featureVector.length; j++) {
+						mean = posteriors[i] * featureVector[j];
+						wtMeanVar = mean
+								* s3loader
+										.getVariancePool()
+										.get(mId
+												* s3loader
+														.getNumGaussiansPerState()
+												+ i)[j];
+						wtDcountVar = dnom
+								* s3loader
+										.getVariancePool()
+										.get(mId
+												* s3loader
+														.getNumGaussiansPerState()
+												+ i)[j];
+
+						for (int p = 0; p < featureVector.length; p++) {
+							wtDcountVarMean = wtDcountVar * tmean[p];
+
+							for (int q = p; q < featureVector.length; q++) {
+								regLs[cluster][0][j][p][q] += wtDcountVarMean
+										* tmean[q];
+							}
+							regLs[cluster][0][j][p][len] += wtDcountVarMean;
+							regRs[cluster][0][j][p] += wtMeanVar * tmean[p];
+						}
+						regLs[cluster][0][j][len][len] += wtDcountVar;
+						regRs[cluster][0][j][len] += wtMeanVar;
+
+					}
+				}
+			}
+
+			token = token.getPredecessor();
+		} while (token != null);
+	}
+
+	private void fillRegLowerPart() {
+		for (int i = 0; i < this.nrOfClusters; i++) {
+			for (int j = 0; j < s3loader.getNumStreams(); j++) {
+				for (int l = 0; l < s3loader.getVectorLength()[j]; l++) {
+					for (int p = 0; p <= s3loader.getVectorLength()[j]; p++) {
+						for (int q = p + 1; q <= s3loader.getVectorLength()[j]; q++) {
+							regLs[i][j][l][q][p] = regLs[i][j][l][p][q];
+						}
+					}
+				}
+			}
 		}
+	}
+
+	private void computeMllrTransforms() {
+		int len;
+		DecompositionSolver solver;
+		RealMatrix coef;
+		RealVector vect, ABloc;
+
+		for (int c = 0; c < nrOfClusters; c++) {
+			this.As[c] = new float[s3loader.getNumStreams()][][];
+			this.Bs[c] = new float[s3loader.getNumStreams()][];
+
+			for (int i = 0; i < s3loader.getNumStreams(); i++) {
+				len = s3loader.getVectorLength()[i];
+				this.As[c][i] = new float[len][len];
+				this.Bs[c][i] = new float[len];
+
+				for (int j = 0; j < len; ++j) {
+					coef = new Array2DRowRealMatrix(regLs[c][i][j], false);
+					solver = new LUDecomposition(coef).getSolver();
+					vect = new ArrayRealVector(regRs[c][i][j], false);
+					ABloc = solver.solve(vect);
+
+					for (int k = 0; k < len; ++k) {
+						this.As[c][i][j][k] = (float) ABloc.getEntry(k);
+					}
+
+					this.Bs[c][i][j] = (float) ABloc.getEntry(len);
+				}
+			}
+		}
+	}
+
+	public void estimate() {
+		this.fillRegLowerPart();
+		this.computeMllrTransforms();
 	}
 
 }

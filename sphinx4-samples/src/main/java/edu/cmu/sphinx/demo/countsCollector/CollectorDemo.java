@@ -31,11 +31,19 @@ public class CollectorDemo {
 		SpeechResult result;
 
 		Sphinx3Loader loader = (Sphinx3Loader) recognizer.getLoader();
+<<<<<<< HEAD
 		MllrEstimation me = new MllrEstimation("", 1,
 				"/home/bogdanpetcu/mllrmat", false, "", false, loader);
 
 		while ((result = recognizer.getResult()) != null) {
 			me.addCounts(result.getResult());
+=======
+
+		MllrEstimation me = new MllrEstimation("/home/bogdanpetcu/billgatesopttest", loader);
+
+		while ((result = recognizer.getResult()) != null) {
+			me.collect(result.getResult());
+>>>>>>> implemented direct counts collecting in MllrEstimation.java and ClustersEstimation.java. This way the program uses less memory than the previous form when the counts were stored before they were used in computing the transform
 
 			System.out.format("Hypothesis: %s\n", result.getHypothesis());
 
@@ -54,10 +62,13 @@ public class CollectorDemo {
 		recognizer.stopRecognition();
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 		MllrEstimation me = new MllrEstimation("", 1,
 				"/home/bogdanpetcu/mllr_mat_billgates", false, cc.getCounts(),
 				"", false, loader);
+=======
+>>>>>>> implemented direct counts collecting in MllrEstimation.java and ClustersEstimation.java. This way the program uses less memory than the previous form when the counts were stored before they were used in computing the transform
 
 >>>>>>> updated test files and CollectorDemo
 		me.estimateMatrices();

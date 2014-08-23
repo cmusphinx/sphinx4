@@ -58,6 +58,11 @@ public class MllrTransformerDemo {
 					+ result.getLattice().getNodes().size() + " nodes");
 		}
 
+<<<<<<< HEAD
+=======
+		MllrEstimation me = new MllrEstimation("/home/bogdanpetcu/mllrmat",loader);
+
+>>>>>>> implemented direct counts collecting in MllrEstimation.java and ClustersEstimation.java. This way the program uses less memory than the previous form when the counts were stored before they were used in computing the transform
 		recognizer.stopRecognition();
 		me.estimateMatrices();
 		me.createMllrFile();
