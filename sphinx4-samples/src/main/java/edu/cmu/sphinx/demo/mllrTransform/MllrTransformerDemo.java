@@ -60,9 +60,7 @@ public class MllrTransformerDemo {
 					+ result.getLattice().getNodes().size() + " nodes");
 		}
 
-		MllrEstimation me = new MllrEstimation("", 1,
-				"/home/bogdanpetcu/mllr_mat2", false, cc.getCounts(), "",
-				false, loader);
+		MllrEstimation me = new MllrEstimation("/home/bogdanpetcu/mllrmat",loader);
 
 		recognizer.stopRecognition();
 		me.estimateMatrices();

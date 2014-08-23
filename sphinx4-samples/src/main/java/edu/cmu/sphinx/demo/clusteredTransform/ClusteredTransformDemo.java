@@ -35,17 +35,14 @@ public class ClusteredTransformDemo {
 
 		Sphinx3Loader loader = (Sphinx3Loader) recognizer.getLoader();
 
-		ClusteredDensityFileData cm = new ClusteredDensityFileData(loader.getMeansPool(), 1,
+		ClusteredDensityFileData cm = new ClusteredDensityFileData(loader.getMeansPool(), 10,
 				loader.getNumStates(), loader.getNumGaussiansPerState());
 
-		CountsCollector cc = new CountsCollector(loader.getVectorLength(),
-				loader.getNumStates(), loader.getNumStreams(),
-				loader.getNumGaussiansPerState());
-
 		SpeechResult result;
-
+		ClustersEstimation regTreeEstimation = new ClustersEstimation(1, loader, 10, cm);
+		
 		while ((result = recognizer.getResult()) != null) {
-			cc.collect(result.getResult());
+			regTreeEstimation.collect(result.getResult());
 
 			System.out.format("Hypothesis: %s\n", result.getHypothesis());
 
@@ -64,14 +61,14 @@ public class ClusteredTransformDemo {
 
 		recognizer.stopRecognition();
 		
-		ClustersEstimation regTreeEstimation = new ClustersEstimation(cc.getCounts(), cm, 1, loader);
+	
 		regTreeEstimation.estimate();
 		
 		DensityFileData means = new DensityFileData("", -Float.MAX_VALUE,
 				loader, false);
 		means.getMeansFromLoader();
 		
-		ClustersTransform rt = new ClustersTransform(means, "/home/bogdanpetcu/regMeans", 1, regTreeEstimation);
+		ClustersTransform rt = new ClustersTransform(means, "/home/bogdanpetcu/todaystest", 10, regTreeEstimation);
 		rt.transform();
 		rt.writeToFile();
 		

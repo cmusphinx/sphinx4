@@ -95,8 +95,7 @@ public class AbstractSpeechRecognizer {
 	}
 
 	protected void adaptCurrentModel() throws Exception {
-		this.estimation = new MllrEstimation(1, "", cc.getCounts(),
-				this.getLoader());
+		this.estimation = new MllrEstimation("", this.getLoader());
 		MllrTransform transformer = this.getTransformer();
 
 		// TODO : adapt current model

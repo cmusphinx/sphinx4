@@ -14,9 +14,9 @@ public class ClustersTransform extends Transformer {
 	ClustersEstimation estimation;
 
 	public ClustersTransform(DensityFileData means, String OutputMeanFile,
-			int k, ClustersEstimation estimation) {
+			int nrOfClusters, ClustersEstimation estimation) {
 		super(means, OutputMeanFile);
-		this.nrOfClusters = k;
+		this.nrOfClusters = nrOfClusters;
 		this.estimation = estimation;
 	}
 

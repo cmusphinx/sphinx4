@@ -5,7 +5,6 @@ import java.io.InputStream;
 import edu.cmu.sphinx.api.Configuration;
 import edu.cmu.sphinx.api.SpeechResult;
 import edu.cmu.sphinx.api.StreamSpeechRecognizer;
-import edu.cmu.sphinx.decoder.adaptation.CountsCollector;
 import edu.cmu.sphinx.decoder.adaptation.MllrEstimation;
 import edu.cmu.sphinx.demo.transcriber.TranscriberDemo;
 import edu.cmu.sphinx.linguist.acoustic.tiedstate.Sphinx3Loader;
@@ -33,12 +32,10 @@ public class CollectorDemo {
 
 		Sphinx3Loader loader = (Sphinx3Loader) recognizer.getLoader();
 
-		CountsCollector cc = new CountsCollector(loader.getVectorLength(),
-				loader.getNumStates(), loader.getNumStreams(),
-				loader.getNumGaussiansPerState());
+		MllrEstimation me = new MllrEstimation("/home/bogdanpetcu/billgatesopttest", loader);
 
 		while ((result = recognizer.getResult()) != null) {
-			cc.collect(result.getResult());
+			me.collect(result.getResult());
 
 			System.out.format("Hypothesis: %s\n", result.getHypothesis());
 
@@ -56,9 +53,6 @@ public class CollectorDemo {
 		}
 		recognizer.stopRecognition();
 
-		MllrEstimation me = new MllrEstimation("", 1,
-				"/home/bogdanpetcu/mllr_mat_billgates", false, cc.getCounts(),
-				"", false, loader);
 
 		me.estimateMatrices();
 		me.createMllrFile();

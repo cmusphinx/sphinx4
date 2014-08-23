@@ -18,6 +18,7 @@ public class ClusteredDensityFileData {
 	private Pool<float[]> initialData;
 	private int numberOfClusters;
 	private ArrayList<ArrayList<Integer>> gaussianNumbers;
+	private int[] corespondingClass;
 	private int numStates;
 	private int numGaussiansPerState;
 
@@ -38,6 +39,10 @@ public class ClusteredDensityFileData {
 
 	public ArrayList<ArrayList<Integer>> getGaussianNumbers() {
 		return gaussianNumbers;
+	}
+
+	public int getClassIndex(int gaussian) {
+		return corespondingClass[gaussian];
 	}
 
 	/**
@@ -112,6 +117,7 @@ public class ClusteredDensityFileData {
 
 		while (!converged && nrOfIterations > 0) {
 
+			corespondingClass = new int[numStates * numGaussiansPerState];
 			array = new float[numberOfClusters][numberOfElements][];
 			this.gaussianNumbers = new ArrayList<ArrayList<Integer>>(
 					numberOfClusters);
@@ -146,6 +152,7 @@ public class ClusteredDensityFileData {
 					array[index][count[index]] = currentValue;
 					this.gaussianNumbers.get(index).add(
 							i * numGaussiansPerState + j);
+					corespondingClass[i * numGaussiansPerState + j] = index;
 					count[index]++;
 				}
 			}
