@@ -17,7 +17,7 @@ public class MllrTransform extends Transformer {
 		A = a;
 		B = b;
 	}
-
+	
 	protected void transformMean() {
 		float[] tmean;
 

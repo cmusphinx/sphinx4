@@ -83,7 +83,7 @@ public abstract class Transformer {
 	}
 	
 	/**
-	 * Transforms the means using the received A and B matrices.
+	 * Transforms the means using provided A and B matrices and stores them in "means" field.
 	 */
 	protected abstract void transformMean();
 

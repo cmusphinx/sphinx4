@@ -9,7 +9,8 @@ import edu.cmu.sphinx.linguist.acoustic.tiedstate.Pool;
 
 /**
  * Used for clustering gaussians. The clustering is performed by euclidean
- * distance criterium. For clustering the k Means Clustering algorithm is used.
+ * distance criterium. The "k Means" clustering algorithm is used for clustering
+ * the gaussians.
  * 
  * @author Bogdan Petcu
  */
@@ -40,18 +41,23 @@ public class ClusteredDensityFileData {
 	public ArrayList<ArrayList<Integer>> getGaussianNumbers() {
 		return gaussianNumbers;
 	}
-
+	
+	/**
+	 * Used for accessing the index that is specific to a gaussian.
+	 * @param gaussian provided in a i * numStates + gaussianIndex form.
+	 * @return
+	 */
 	public int getClassIndex(int gaussian) {
 		return corespondingClass[gaussian];
 	}
 
 	/**
-	 * Computes euclidean distance for the 2 n-dimensional points.
+	 * Computes euclidean distance between 2 n-dimensional points.
 	 * 
 	 * @param a
-	 *            - n-dimensional a point
+	 *            - n-dimensional "a" point
 	 * @param b
-	 *            - n-dimensional b point
+	 *            - n-dimensional "b" point
 	 * @return the euclidean distance between a and b.
 	 */
 	private float euclidianDistance(float[] a, float[] b) {

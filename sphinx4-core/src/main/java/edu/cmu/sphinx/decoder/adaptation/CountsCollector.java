@@ -63,7 +63,7 @@ public class CountsCollector {
 	 *            the search state associated with the feature vector.
 	 * @return scores for each component.
 	 */
-	public float[] calculateComponentScore(FloatData features,
+	private float[] calculateComponentScore(FloatData features,
 			HMMSearchState state) {
 		MixtureComponent[] mc = state.getHMMState().getMixtureComponents();
 		float[] mw = state.getHMMState().getLogMixtureWeights();
@@ -84,7 +84,7 @@ public class CountsCollector {
 	 *            from which the posterior values are computed.
 	 * @return posterior values for all components.
 	 */
-	public float[] computePosterios(float[] componentScores) {
+	private float[] computePosterios(float[] componentScores) {
 		float max;
 		float[] posteriors = componentScores;
 
