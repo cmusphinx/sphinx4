@@ -21,8 +21,8 @@ import edu.cmu.sphinx.result.Result;
 import edu.cmu.sphinx.util.LogMath;
 
 /**
- * Used for computing a MLLR estimation provided as A and B matrix
- * (representing: A*x + B)
+ * Used for computing a MLLR estimation that will be provided as A and B matrix
+ * (representing: A*x + B = C)
  * 
  * @author Bogdan Petcu
  */
@@ -120,13 +120,11 @@ public class MllrEstimation {
 	}
 
 	/**
-	 * Computes score for each component.
-	 * 
-	 * @param features
-	 *            feature vector.
-	 * @param state
-	 *            the search state associated with the feature vector.
-	 * @return scores for each component.
+	 * Calculates the scores for each component in the senone.
+	 *
+	 * @param feature
+	 *            the feature to score
+	 * @return the LogMath log scores for the feature, one for each component
 	 */
 	protected float[] calculateComponentScore(FloatData features,
 			HMMSearchState state) {
@@ -183,12 +181,19 @@ public class MllrEstimation {
 		}
 	}
 
+	/**
+	 * This method is used for directly collect and use counts in order to
+	 * compute a MLLR Estimation
+	 * 
+	 * @param result
+	 *            Result object to collect counts from.
+	 */
 	public void collect(Result result) throws Exception {
 		Token token = result.getBestToken();
 		HMMSearchState state;
 		float[] componentScore, featureVector, posteriors, tmean;
 		float dnom, wtMeanVar, wtDcountVar, wtDcountVarMean, mean;
-		int mId, len;
+		int mixtureId, len;
 
 		if (token == null)
 			throw new Exception("Best token not found!");
@@ -205,7 +210,7 @@ public class MllrEstimation {
 			state = (HMMSearchState) token.getSearchState();
 			componentScore = this.calculateComponentScore(feature, state);
 			featureVector = FloatData.toFloatData(feature).getValues();
-			mId = (int) state.getHMMState().getMixtureId();
+			mixtureId = (int) state.getHMMState().getMixtureId();
 			posteriors = this.computePosterios(componentScore);
 			len = s3loader.getVectorLength()[0];
 
@@ -213,25 +218,24 @@ public class MllrEstimation {
 				dnom = posteriors[i];
 				if (dnom > 0.) {
 					tmean = s3loader.getMeansPool().get(
-							mId * s3loader.getNumGaussiansPerState() + i);
+							mixtureId * s3loader.getNumGaussiansPerState() + i);
 
 					for (int j = 0; j < featureVector.length; j++) {
 						mean = posteriors[i] * featureVector[j];
 						wtMeanVar = mean
 								* s3loader
 										.getVariancePool()
-										.get(mId
+										.get(mixtureId
 												* s3loader
 														.getNumGaussiansPerState()
 												+ i)[j];
 						wtDcountVar = dnom
 								* s3loader
 										.getVariancePool()
-										.get(mId
+										.get(mixtureId
 												* s3loader
 														.getNumGaussiansPerState()
 												+ i)[j];
-
 						for (int p = 0; p < featureVector.length; p++) {
 							wtDcountVarMean = wtDcountVar * tmean[p];
 
@@ -243,7 +247,6 @@ public class MllrEstimation {
 						}
 						regL[0][j][len][len] += wtDcountVar;
 						regR[0][j][len] += wtMeanVar;
-
 					}
 				}
 			}
@@ -313,9 +316,9 @@ public class MllrEstimation {
 	}
 
 	/**
-	 * Writes the transformation to file.
+	 * Writes the transformation to file in a format that could further be used
+	 * in Sphinx3 and Sphinx4.
 	 * 
-	 * @throws Exception
 	 */
 	public void createMllrFile() throws Exception {
 
