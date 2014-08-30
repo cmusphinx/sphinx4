@@ -5,10 +5,9 @@ import java.io.InputStream;
 import edu.cmu.sphinx.api.Configuration;
 import edu.cmu.sphinx.api.SpeechResult;
 import edu.cmu.sphinx.api.StreamSpeechRecognizer;
-import edu.cmu.sphinx.decoder.adaptation.CountsCollector;
-import edu.cmu.sphinx.decoder.adaptation.DensityFileData;
 import edu.cmu.sphinx.decoder.adaptation.MllrEstimation;
-import edu.cmu.sphinx.decoder.adaptation.MllrTransform;
+import edu.cmu.sphinx.decoder.adaptation.MllrTransformer;
+import edu.cmu.sphinx.decoder.adaptation.Transform;
 import edu.cmu.sphinx.demo.transcriber.TranscriberDemo;
 import edu.cmu.sphinx.linguist.acoustic.tiedstate.Sphinx3Loader;
 import edu.cmu.sphinx.result.WordResult;
@@ -29,21 +28,16 @@ public class MllrTransformerDemo {
 				configuration);
 		InputStream stream = TranscriberDemo.class
 				.getResourceAsStream("/edu/cmu/sphinx/demo/countsCollector/out.wav");
-		recognizer.startRecognition(stream, false);
+		recognizer.startRecognition(stream);
 
 		SpeechResult result;
-		MllrTransform mt;
+		MllrTransformer mt;
 		Sphinx3Loader loader = (Sphinx3Loader) recognizer.getLoader();
-		DensityFileData means = new DensityFileData("", -Float.MAX_VALUE,
-				loader, false);
-		means.getMeansFromLoader();
-
-		CountsCollector cc = new CountsCollector(loader.getVectorLength(),
-				loader.getNumStates(), loader.getNumStreams(),
-				loader.getNumGaussiansPerState());
-
+		
+		MllrEstimation me = new MllrEstimation(loader);
+		
 		while ((result = recognizer.getResult()) != null) {
-			cc.collect(result.getResult());
+			me.collect(result.getResult());
 
 			System.out.format("Hypothesis: %s\n", result.getHypothesis());
 
@@ -60,15 +54,14 @@ public class MllrTransformerDemo {
 					+ result.getLattice().getNodes().size() + " nodes");
 		}
 
-		MllrEstimation me = new MllrEstimation("/home/bogdanpetcu/mllrmat",loader);
-
 		recognizer.stopRecognition();
-		me.estimateMatrices();
-		me.createMllrFile();
-		mt = new MllrTransform(means, me.getA(), me.getB(),
-				"/home/bogdanpetcu/means");
-		mt.transform();
-		mt.writeToFile();
+		
+		Transform transform = new Transform(loader);
+		transform.load(me);
+
+		mt = new MllrTransformer(loader, transform);
+		mt.applyTransform();
+		mt.createNewMeansFile("/home/bogdanpetcu/test");
 
 	}
 }

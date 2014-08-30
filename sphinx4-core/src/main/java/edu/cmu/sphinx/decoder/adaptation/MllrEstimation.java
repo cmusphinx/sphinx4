@@ -1,7 +1,5 @@
 package edu.cmu.sphinx.decoder.adaptation;
 
-import java.io.PrintWriter;
-
 import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.linear.DecompositionSolver;
@@ -14,7 +12,6 @@ import edu.cmu.sphinx.frontend.FloatData;
 import edu.cmu.sphinx.linguist.HMMSearchState;
 import edu.cmu.sphinx.linguist.SearchState;
 import edu.cmu.sphinx.linguist.acoustic.tiedstate.Loader;
-import edu.cmu.sphinx.linguist.acoustic.tiedstate.MixtureComponent;
 import edu.cmu.sphinx.linguist.acoustic.tiedstate.Pool;
 import edu.cmu.sphinx.linguist.acoustic.tiedstate.Sphinx3Loader;
 import edu.cmu.sphinx.result.Result;
@@ -28,25 +25,21 @@ import edu.cmu.sphinx.util.LogMath;
  */
 public class MllrEstimation {
 
-	private String outputFilePath;
 	private float varFlor;
-	private int nMllrClass;
 	private float[][][] A;
 	private float[][] B;
 	private double[][][][] regL;
 	private double[][][] regR;
 	protected Sphinx3Loader s3loader;
-	private boolean estimated;
-	private LogMath logMath = LogMath.getInstance();
+	private static LogMath logMath = LogMath.getInstance();
 	private Pool<float[]> variancePool;
 
-	public MllrEstimation(String outputFilePath, Loader loader)
+	public MllrEstimation(Loader loader)
 			throws Exception {
 		super();
 		this.varFlor = (float) 1e-5;
-		this.nMllrClass = 1;
-		this.outputFilePath = outputFilePath;
 		this.s3loader = (Sphinx3Loader) loader;
+		
 		if (s3loader == null) {
 			throw new Exception("Sphinx3Loader is not set.");
 		}
@@ -56,22 +49,8 @@ public class MllrEstimation {
 		this.init();
 	}
 
-	protected MllrEstimation(Loader loader) throws Exception {
-		super();
-		this.varFlor = (float) 1e-5;
-		this.nMllrClass = 1;
-		this.s3loader = (Sphinx3Loader) loader;
-		if (s3loader == null) {
-			throw new Exception("Sphinx3Loader is not set.");
-		}
-
-		this.variancePool = s3loader.getVariancePool();
-		this.invertVariances();
-	}
-
 	public MllrEstimation() {
 		this.varFlor = (float) 1e-5;
-		this.nMllrClass = 1;
 	}
 
 	private void init() {
@@ -94,50 +73,12 @@ public class MllrEstimation {
 		return B;
 	}
 
-	public void setOutputFilePath(String outputFilePath) {
-		this.outputFilePath = outputFilePath;
-	}
-
 	public void setVarFlor(float varFlor) {
 		this.varFlor = varFlor;
 	}
 
-	public void setnMllrClass(int nMllrClass) {
-		this.nMllrClass = nMllrClass;
-	}
-
 	public void setS3loader(Loader loader) {
 		this.s3loader = (Sphinx3Loader) loader;
-	}
-
-	/**
-	 * Used for verifying if the estimation is fully computed.
-	 * 
-	 * @return true if the estimation is computed, else false
-	 */
-	public boolean isComplete() {
-		return this.estimated;
-	}
-
-	/**
-	 * Calculates the scores for each component in the senone.
-	 *
-	 * @param feature
-	 *            the feature to score
-	 * @return the LogMath log scores for the feature, one for each component
-	 */
-	protected float[] calculateComponentScore(FloatData features,
-			HMMSearchState state) {
-		MixtureComponent[] mc = state.getHMMState().getMixtureComponents();
-		float[] mw = state.getHMMState().getLogMixtureWeights();
-		float[] featureVector = FloatData.toFloatData(features).getValues();
-		float[] logComponentScore = new float[mc.length];
-
-		for (int i = 0; i < mc.length; i++) {
-			logComponentScore[i] = mc[i].getScore(featureVector) + mw[i];
-		}
-
-		return logComponentScore;
 	}
 
 	/**
@@ -147,7 +88,7 @@ public class MllrEstimation {
 	 *            from which the posterior values are computed.
 	 * @return posterior values for all components.
 	 */
-	protected float[] computePosterios(float[] componentScores) {
+	public static float[] computePosterios(float[] componentScores) {
 		float max;
 		float[] posteriors = componentScores;
 
@@ -208,10 +149,10 @@ public class MllrEstimation {
 			}
 
 			state = (HMMSearchState) token.getSearchState();
-			componentScore = this.calculateComponentScore(feature, state);
+			componentScore = state.calculateComponentScore(feature);
 			featureVector = FloatData.toFloatData(feature).getValues();
 			mixtureId = (int) state.getHMMState().getMixtureId();
-			posteriors = this.computePosterios(componentScore);
+			posteriors = computePosterios(componentScore);
 			len = s3loader.getVectorLength()[0];
 
 			for (int i = 0; i < componentScore.length; i++) {
@@ -315,57 +256,13 @@ public class MllrEstimation {
 		}
 	}
 
-	/**
-	 * Writes the transformation to file in a format that could further be used
-	 * in Sphinx3 and Sphinx4.
-	 * 
-	 */
-	public void createMllrFile() throws Exception {
 
-		if (!this.isComplete()) {
-			throw new Exception("Estimation is not computed!");
-		}
-
-		PrintWriter writer = new PrintWriter(this.outputFilePath, "UTF-8");
-
-		writer.println(nMllrClass);
-		writer.println(s3loader.getNumStreams());
-
-		for (int i = 0; i < s3loader.getNumStreams(); i++) {
-			writer.println(s3loader.getVectorLength()[i]);
-
-			for (int j = 0; j < s3loader.getVectorLength()[i]; j++) {
-				for (int k = 0; k < s3loader.getVectorLength()[i]; ++k) {
-					writer.print(A[i][j][k]);
-					writer.print(" ");
-				}
-				writer.println();
-			}
-
-			for (int j = 0; j < s3loader.getVectorLength()[i]; j++) {
-				writer.print(B[i][j]);
-				writer.print(" ");
-
-			}
-			writer.println();
-
-			for (int j = 0; j < s3loader.getVectorLength()[i]; j++) {
-				writer.print("1.0 ");
-
-			}
-			writer.println();
-		}
-		writer.close();
-	}
 
 	/**
 	 * Deploys the whole process of MLLR transform estimation.
-	 * 
-	 * @throws Exception
 	 */
-	public void estimateMatrices() throws Exception {
+	public void perform() throws Exception {
 		this.fillRegLowerPart();
 		this.computeMllr();
-		this.estimated = true;
 	}
 }
