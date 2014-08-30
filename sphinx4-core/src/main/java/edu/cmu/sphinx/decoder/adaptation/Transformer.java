@@ -4,6 +4,7 @@ import java.io.DataOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import edu.cmu.sphinx.linguist.acoustic.tiedstate.Sphinx3Loader;
 import edu.cmu.sphinx.util.Utilities;
 
 /**
@@ -15,13 +16,13 @@ import edu.cmu.sphinx.util.Utilities;
  */
 public abstract class Transformer {
 
-	protected DensityFileData means;
+	protected Sphinx3Loader loader;
 	private String outputMeanFile;
 	private String header;
 
-	public Transformer(DensityFileData means, String outputMeanFile) {
+	public Transformer(Sphinx3Loader loader, String outputMeanFile) {
 		super();
-		this.means = means;
+		this.loader = loader;
 		this.outputMeanFile = outputMeanFile;
 		this.header = "s3\nversion 1.0\nchksum0 no \n      endhdr\n";
 	}
@@ -34,10 +35,6 @@ public abstract class Transformer {
 		this.outputMeanFile = outputMeanFile;
 	}
 
-	public DensityFileData getMeans() {
-		return this.means;
-	}
-	
 	/**
 	 * Writes the new adapted means to file.
 	 * @throws IOException
@@ -54,25 +51,25 @@ public abstract class Transformer {
 		// byte-order magic
 		os.writeInt(1144201745);
 
-		os.writeInt(Utilities.swapInteger(means.getNumStates()));
-		os.writeInt(Utilities.swapInteger(means.getNumStreams()));
-		os.writeInt(Utilities.swapInteger(means.getNumGaussiansPerState()));
+		os.writeInt(Utilities.swapInteger(loader.getNumStates()));
+		os.writeInt(Utilities.swapInteger(loader.getNumStreams()));
+		os.writeInt(Utilities.swapInteger(loader.getNumGaussiansPerState()));
 
-		for (int i = 0; i < means.getNumStreams(); i++) {
-			os.writeInt(Utilities.swapInteger(means.getVectorLength()[i]));
+		for (int i = 0; i < loader.getNumStreams(); i++) {
+			os.writeInt(Utilities.swapInteger(loader.getVectorLength()[i]));
 		}
 
-		os.writeInt(Utilities.swapInteger(means.getNumGaussiansPerState()
-				* means.getVectorLength()[0] * means.getNumStates()));
+		os.writeInt(Utilities.swapInteger(loader.getNumGaussiansPerState()
+				* loader.getVectorLength()[0] * loader.getNumStates()));
 
-		for (int i = 0; i < means.getNumStates(); i++) {
-			for (int j = 0; j < means.getNumStreams(); j++) {
-				for (int k = 0; k < means.getNumGaussiansPerState(); k++) {
-					for (int l = 0; l < means.getVectorLength()[0]; l++) {
-						os.writeFloat(Utilities.swapFloat(means.getPool().get(
-								i * means.getNumStreams()
-										* means.getNumGaussiansPerState() + j
-										* means.getNumGaussiansPerState() + k)[l]));
+		for (int i = 0; i < loader.getNumStates(); i++) {
+			for (int j = 0; j < loader.getNumStreams(); j++) {
+				for (int k = 0; k < loader.getNumGaussiansPerState(); k++) {
+					for (int l = 0; l < loader.getVectorLength()[0]; l++) {
+						os.writeFloat(Utilities.swapFloat(loader.getMeansPool().get(
+								i * loader.getNumStreams()
+										* loader.getNumGaussiansPerState() + j
+										* loader.getNumGaussiansPerState() + k)[l]));
 					}
 				}
 			}
