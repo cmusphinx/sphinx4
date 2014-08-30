@@ -65,7 +65,7 @@ public class DialogDemo {
         System.out.println("Say \"101\" to exit");
         System.out.println("--------------------------------");
 
-        recognizer.startRecognition(true, false);
+        recognizer.startRecognition(true);
         while (true) {
             String utterance = recognizer.getResult().getHypothesis();
             if (utterance.equals("one zero one")
@@ -87,7 +87,7 @@ public class DialogDemo {
         System.out.println("-------------------------------");
 
         double savings = .0;
-        recognizer.startRecognition(true, false);
+        recognizer.startRecognition(true);
 
         while (true) {
             String utterance = recognizer.getResult().getHypothesis();
@@ -118,7 +118,7 @@ public class DialogDemo {
         System.out.println("Example: sunny spells on wednesday");
         System.out.println("-------------------------------------");
 
-        recognizer.startRecognition(true, false);
+        recognizer.startRecognition(true);
         while (true) {
             String utterance = recognizer.getResult().getHypothesis();
             if (utterance.equals("the end"))
@@ -149,7 +149,7 @@ public class DialogDemo {
         LiveSpeechRecognizer lmRecognizer =
             new LiveSpeechRecognizer(configuration);
 
-        jsgfRecognizer.startRecognition(true, false);
+        jsgfRecognizer.startRecognition(true);
         while (true) {
             System.out.println("Choose menu item:");
             System.out.println("Example: go to the bank account");
@@ -165,19 +165,19 @@ public class DialogDemo {
             if (utterance.equals("digits")) {
                 jsgfRecognizer.stopRecognition();
                 recognizeDigits(grxmlRecognizer);
-                jsgfRecognizer.startRecognition(true, false);
+                jsgfRecognizer.startRecognition(true);
             }
 
             if (utterance.equals("bank account")) {
                 jsgfRecognizer.stopRecognition();
                 recognizerBankAccount(jsgfRecognizer);
-                jsgfRecognizer.startRecognition(true, false);
+                jsgfRecognizer.startRecognition(true);
             }
 
             if (utterance.endsWith("weather forecast")) {
                 jsgfRecognizer.stopRecognition();
                 recognizeWeather(lmRecognizer);
-                jsgfRecognizer.startRecognition(true, false);
+                jsgfRecognizer.startRecognition(true);
             }
         }
 

@@ -8,19 +8,16 @@ import edu.cmu.sphinx.linguist.acoustic.tiedstate.Sphinx3Loader;
  * 
  * @author Bogdan Petcu
  */
-public class MllrTransform extends Transformer {
+public class MllrTransformer extends Transformer {
 
-	private float[][][] A;
-	private float[][] B;
+	private Transform transform;
 
-	public MllrTransform(Sphinx3Loader loader, float[][][] a, float[][] b,
-			String outputMeanFile) {
-		super(loader, outputMeanFile);
-		A = a;
-		B = b;
+	public MllrTransformer(Sphinx3Loader loader, Transform transform) {
+		super(loader);
+		this.transform = transform;
 	}
 	
-	protected void transformMean() {
+	protected void transformMean() throws Exception {
 		float[] tmean;
 
 		for (int i = 0; i < loader.getNumStates(); i++) {
@@ -32,18 +29,18 @@ public class MllrTransform extends Transformer {
 					for (int l = 0; l < loader.getVectorLength()[j]; l++) {
 						tmean[l] = 0;
 						for (int m = 0; m < loader.getVectorLength()[j]; m++) {
-							tmean[l] += A[j][l][m]
-									* loader.getMeansPool().get(
-											i * loader.getNumGaussiansPerState()
+							tmean[l] += transform.getA()[j][l][m]
+									* loader.getMeansPool()
+											.get(i
+													* loader.getNumGaussiansPerState()
 													+ k)[m];
 						}
-						tmean[l] += B[j][l];
+						tmean[l] += transform.getB()[j][l];
 					}
-					
-					//TO SEEE
+
 					for (int l = 0; l < loader.getVectorLength()[j]; l++) {
-						this.loader.getMeansPool().get(i * loader.getNumGaussiansPerState()
-								+ k)[l] = tmean[l];
+						this.means
+								.get(i * loader.getNumGaussiansPerState() + k)[l] = tmean[l];
 					}
 				}
 			}

@@ -17,7 +17,7 @@ import edu.cmu.sphinx.result.Result;
 
 import edu.cmu.sphinx.recognizer.Recognizer;
 
-import edu.cmu.sphinx.linguist.acoustic.tiedstate.Loader; 
+import edu.cmu.sphinx.linguist.acoustic.tiedstate.Loader;
 
 
 /**

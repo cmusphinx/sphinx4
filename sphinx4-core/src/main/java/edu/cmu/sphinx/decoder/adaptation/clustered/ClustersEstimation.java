@@ -12,7 +12,8 @@ import edu.cmu.sphinx.decoder.search.Token;
 import edu.cmu.sphinx.frontend.FloatData;
 import edu.cmu.sphinx.linguist.HMMSearchState;
 import edu.cmu.sphinx.linguist.SearchState;
-import edu.cmu.sphinx.linguist.acoustic.tiedstate.Loader;
+import edu.cmu.sphinx.linguist.acoustic.tiedstate.Pool;
+import edu.cmu.sphinx.linguist.acoustic.tiedstate.Sphinx3Loader;
 import edu.cmu.sphinx.result.Result;
 
 /**
@@ -22,20 +23,30 @@ import edu.cmu.sphinx.result.Result;
  * 
  * @author Bogdan Petcu
  */
-public class ClustersEstimation extends MllrEstimation {
+public class ClustersEstimation {
 
-	private ClusteredDensityFileData cd;
+	private ClusteredDensityFileData means;
 	private double[][][][][] regLs;
 	private double[][][][] regRs;
 	private float[][][][] As;
 	private float[][][] Bs;
-	protected int nrOfClusters;
+	private int nrOfClusters;
+	private Sphinx3Loader s3loader;
+	private Pool<float[]> variancePool;
+	private float varFlor;
 
-	public ClustersEstimation(int nMllrClass, Loader loader, int nrOfClusters,
-			ClusteredDensityFileData cd) throws Exception {
-		super(loader);
+	public ClustersEstimation(int nMllrClass, Sphinx3Loader loader,
+			int nrOfClusters, ClusteredDensityFileData means) throws Exception {
+		this.s3loader = loader;
 		this.nrOfClusters = nrOfClusters;
-		this.cd = cd;
+		this.means = means;
+		this.varFlor = (float) 1e-5;
+
+		if (s3loader == null) {
+			throw new Exception("Sphinx3Loader is not set.");
+		}
+
+		this.variancePool = s3loader.getVariancePool();
 		this.invertVariances();
 		this.init();
 	}
@@ -61,7 +72,7 @@ public class ClustersEstimation extends MllrEstimation {
 	}
 
 	public ClusteredDensityFileData getClusteredData() {
-		return this.cd;
+		return this.means;
 	}
 
 	public float[][][][] getAs() {
@@ -72,6 +83,41 @@ public class ClustersEstimation extends MllrEstimation {
 		return this.Bs;
 	}
 
+	/**
+	 * Used for inverting variances.
+	 */
+	protected void invertVariances() {
+
+		for (int i = 0; i < s3loader.getNumStates(); i++) {
+			for (int k = 0; k < s3loader.getNumGaussiansPerState(); k++) {
+				for (int l = 0; l < s3loader.getVectorLength()[0]; l++) {
+					if (s3loader.getVariancePool().get(
+							i * s3loader.getNumGaussiansPerState() + k)[l] <= 0.) {
+						this.variancePool.get(i
+								* s3loader.getNumGaussiansPerState() + k)[l] = (float) 0.5;
+					} else if (s3loader.getVariancePool().get(
+							i * s3loader.getNumGaussiansPerState() + k)[l] < varFlor) {
+						this.variancePool.get(i
+								* s3loader.getNumGaussiansPerState() + k)[l] = (float) (1. / varFlor);
+					} else {
+						this.variancePool.get(i
+								* s3loader.getNumGaussiansPerState() + k)[l] = (float) (1. / s3loader
+								.getVariancePool().get(
+										i * s3loader.getNumGaussiansPerState()
+												+ k)[l]);
+					}
+				}
+			}
+		}
+	}
+
+	/**
+	 * This method is used for directly collect and use counts. The counts are
+	 * collected and stored separately for each cluster.
+	 * 
+	 * @param result
+	 *            Result object to collect counts from.
+	 */
 	public void collect(Result result) throws Exception {
 		Token token = result.getBestToken();
 		HMMSearchState state;
@@ -92,14 +138,14 @@ public class ClustersEstimation extends MllrEstimation {
 			}
 
 			state = (HMMSearchState) token.getSearchState();
-			componentScore = this.calculateComponentScore(feature, state);
+			componentScore = state.calculateComponentScore(feature);
 			featureVector = FloatData.toFloatData(feature).getValues();
 			mId = (int) state.getHMMState().getMixtureId();
-			posteriors = this.computePosterios(componentScore);
+			posteriors = MllrEstimation.computePosterios(componentScore);
 			len = s3loader.getVectorLength()[0];
 
 			for (int i = 0; i < componentScore.length; i++) {
-				cluster = cd.getClassIndex(mId
+				cluster = means.getClassIndex(mId
 						* s3loader.getNumGaussiansPerState() + i);
 				dnom = posteriors[i];
 				if (dnom > 0.) {
@@ -157,7 +203,11 @@ public class ClustersEstimation extends MllrEstimation {
 			}
 		}
 	}
-
+	
+	/**
+	 * Used for computing the actual transformations (A and B matrices).
+	 * These are stored in As and Bs.
+	 */
 	private void computeMllrTransforms() {
 		int len;
 		DecompositionSolver solver;
@@ -188,7 +238,10 @@ public class ClustersEstimation extends MllrEstimation {
 			}
 		}
 	}
-
+	
+	/**
+	 * Deploys the whole process of MLLR transform estimation.
+	 */
 	public void estimate() {
 		this.fillRegLowerPart();
 		this.computeMllrTransforms();

@@ -8,14 +8,14 @@ import edu.cmu.sphinx.linguist.acoustic.tiedstate.Sphinx3Loader;
  * 
  * @author Bogdan Petcu
  */
-public class ClustersTransform extends Transformer {
+public class ClustersTransformer extends Transformer {
 
 	private int nrOfClusters;
 	ClustersEstimation estimation;
 
-	public ClustersTransform(Sphinx3Loader loader, String OutputMeanFile,
-			int nrOfClusters, ClustersEstimation estimation) {
-		super(loader, OutputMeanFile);
+	public ClustersTransformer(Sphinx3Loader loader, int nrOfClusters,
+			ClustersEstimation estimation) {
+		super(loader);
 		this.nrOfClusters = nrOfClusters;
 		this.estimation = estimation;
 	}
@@ -45,8 +45,9 @@ public class ClustersTransform extends Transformer {
 				}
 
 				for (int l = 0; l < loader.getVectorLength()[0]; l++) {
-					this.loader.getMeansPool().get(stateIndex
-							* loader.getNumGaussiansPerState() + gaussianIndex)[l] = tmean[l];
+					this.loader.getMeansPool().get(
+							stateIndex * loader.getNumGaussiansPerState()
+									+ gaussianIndex)[l] = tmean[l];
 				}
 			}
 		}
