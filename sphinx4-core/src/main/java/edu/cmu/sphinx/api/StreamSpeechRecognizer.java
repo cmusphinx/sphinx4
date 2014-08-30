@@ -34,18 +34,9 @@ public class StreamSpeechRecognizer extends AbstractSpeechRecognizer {
     {
         super(configuration);
     }
-<<<<<<< HEAD
 
     public void startRecognition(InputStream stream) {
         startRecognition(stream, TimeFrame.INFINITE);
-=======
-    
-    private void adaptOnline() throws IOException, URISyntaxException {
-    	//TODO: access frontend for buffering the sent results
-    	while (this.getResult() != null);
-    	this.adaptCurrentModel();
-    	this.collectStatsForAdaptation = false;
->>>>>>> updated MllrTransformerDemo so it runs to the entire adaptive decoding
     }
 
     /**
@@ -72,4 +63,3 @@ public class StreamSpeechRecognizer extends AbstractSpeechRecognizer {
         recognizer.deallocate();
     }
 }
-
