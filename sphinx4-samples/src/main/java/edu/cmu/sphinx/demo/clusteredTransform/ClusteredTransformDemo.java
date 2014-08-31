@@ -33,13 +33,10 @@ public class ClusteredTransformDemo {
 
 		Sphinx3Loader loader = (Sphinx3Loader) recognizer.getLoader();
 
-		ClusteredDensityFileData cm = new ClusteredDensityFileData(
-				loader.getMeansPool(), 10, loader.getNumStates(),
-				loader.getNumGaussiansPerState());
+		ClusteredDensityFileData cm = new ClusteredDensityFileData(loader, 10);
 
 		SpeechResult result;
-		ClustersEstimation estimation = new ClustersEstimation(1, loader, 10,
-				cm);
+		ClustersEstimation estimation = new ClustersEstimation(1, loader, 10, cm);
 
 		while ((result = recognizer.getResult()) != null) {
 			estimation.collect(result.getResult());
@@ -63,7 +60,7 @@ public class ClusteredTransformDemo {
 
 		estimation.estimate();
 
-		ClustersTransformer rt = new ClustersTransformer(loader, 10, estimation);
+		ClustersTransformer rt = new ClustersTransformer(loader, 10, estimation.getAs(), estimation.getBs(), cm);
 		
 		rt.applyTransform();
 		rt.createNewMeansFile("/home/bogdanpetcu/ClusteredTest");

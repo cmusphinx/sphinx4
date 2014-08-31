@@ -6,6 +6,7 @@ import java.util.Random;
 import org.apache.commons.math3.util.FastMath;
 
 import edu.cmu.sphinx.linguist.acoustic.tiedstate.Pool;
+import edu.cmu.sphinx.linguist.acoustic.tiedstate.Sphinx3Loader;
 
 /**
  * Used for clustering gaussians. The clustering is performed by euclidean
@@ -23,12 +24,11 @@ public class ClusteredDensityFileData {
 	private int numStates;
 	private int numGaussiansPerState;
 
-	public ClusteredDensityFileData(Pool<float[]> initialData,
-			int numberOfClusters, int numStates, int numGaussiansPerState) {
-		this.initialData = initialData;
-		this.numberOfClusters = numberOfClusters;
-		this.numStates = numStates;
-		this.numGaussiansPerState = numGaussiansPerState;
+	public ClusteredDensityFileData(Sphinx3Loader loader, int nrOfClusters) {
+		this.initialData = loader.getMeansPool();
+		this.numberOfClusters = nrOfClusters;
+		this.numStates = loader.getNumStates();
+		this.numGaussiansPerState = loader.getNumGaussiansPerState();
 		this.gaussianNumbers = new ArrayList<ArrayList<Integer>>(
 				numberOfClusters);
 		for (int i = 0; i < numberOfClusters; i++) {
