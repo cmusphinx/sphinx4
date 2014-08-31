@@ -115,18 +115,12 @@ public class MllrTransformer {
 		fp.close();
 	}
 
-	/**
-	 * Adapts the means.
-	 */
-	private void adaptMean() throws Exception {
-		this.transformMean();
-	}
 
 	/**
 	 * Transforms the acoustic model
 	 */
 	public void applyTransform() throws Exception {
-		this.adaptMean();
+		this.transformMean();
 		// TODO: Variance adaptation
 	}
 
