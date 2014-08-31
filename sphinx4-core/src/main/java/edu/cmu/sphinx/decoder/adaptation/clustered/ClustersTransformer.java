@@ -124,8 +124,6 @@ public class ClustersTransformer {
 
 	/**
 	 * Transforms the acoustic model
-	 * 
-	 * @throws Exception
 	 */
 	public void applyTransform() throws Exception {
 		this.adaptMean();

@@ -26,14 +26,25 @@ public class MllrTransformer {
 				new ClusteredDensityFileData(loader, 1));
 	}
 	
+	/**
+	 * Writes the new adapted means to file.
+	 * 
+	 * @throws IOException
+	 */
 	public void createNewMeansFile(String path) throws IOException{
 		transformer.createNewMeansFile(path);
 	}
 	
+	/**
+	 * Adapts the means.
+	 */
 	private void adaptMean() throws Exception{
 		transformer.applyTransform();
 	}
 	
+	/**
+	 * Transforms the acoustic model
+	 */
 	public void applyTransform() throws Exception {
 		this.adaptMean();
 	}
