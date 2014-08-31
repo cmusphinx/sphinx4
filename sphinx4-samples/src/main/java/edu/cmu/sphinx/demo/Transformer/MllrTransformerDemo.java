@@ -62,7 +62,7 @@ public class MllrTransformerDemo {
 
 		MllrTransformer rt = new MllrTransformer(loader, 10, transform);
 		
-		rt.applyTransform();
+		rt.transformMean();
 		rt.createNewMeansFile("/home/bogdanpetcu/ClusteredTest");
 
 	}

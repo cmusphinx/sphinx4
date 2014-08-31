@@ -38,7 +38,7 @@ public class MllrTransformer {
 		this.header = header;
 	}
 
-	protected void transformMean() {
+	public void transformMean() {
 		float[] tmean;
 		int stateIndex, gaussianIndex;
 
@@ -113,15 +113,6 @@ public class MllrTransformer {
 
 		os.close();
 		fp.close();
-	}
-
-
-	/**
-	 * Transforms the acoustic model
-	 */
-	public void applyTransform() throws Exception {
-		this.transformMean();
-		// TODO: Variance adaptation
 	}
 
 }

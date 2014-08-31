@@ -75,7 +75,7 @@ public class Stats {
 	/**
 	 * Used for inverting variances.
 	 */
-	protected void invertVariances() {
+	private void invertVariances() {
 
 		for (int i = 0; i < s3loader.getNumStates(); i++) {
 			for (int k = 0; k < s3loader.getNumGaussiansPerState(); k++) {
