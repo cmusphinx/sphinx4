@@ -5,9 +5,8 @@ import java.io.InputStream;
 import edu.cmu.sphinx.api.Configuration;
 import edu.cmu.sphinx.api.SpeechResult;
 import edu.cmu.sphinx.api.StreamSpeechRecognizer;
-import edu.cmu.sphinx.decoder.adaptation.clustered.ClusteredDensityFileData;
-import edu.cmu.sphinx.decoder.adaptation.clustered.ClustersEstimation;
-import edu.cmu.sphinx.decoder.adaptation.clustered.ClustersTransformer;
+import edu.cmu.sphinx.decoder.adaptation.StatsCollector;
+import edu.cmu.sphinx.decoder.adaptation.MllrTransformer;
 import edu.cmu.sphinx.demo.transcriber.TranscriberDemo;
 import edu.cmu.sphinx.linguist.acoustic.tiedstate.Sphinx3Loader;
 import edu.cmu.sphinx.result.WordResult;
@@ -33,13 +32,11 @@ public class ClusteredTransformDemo {
 
 		Sphinx3Loader loader = (Sphinx3Loader) recognizer.getLoader();
 
-		ClusteredDensityFileData cm = new ClusteredDensityFileData(loader, 10);
-
 		SpeechResult result;
-		ClustersEstimation estimation = new ClustersEstimation(1, loader, 10, cm);
+		StatsCollector collector = new StatsCollector(1, loader, 10);
 
 		while ((result = recognizer.getResult()) != null) {
-			estimation.collect(result.getResult());
+			collector.collect(result.getResult());
 
 			System.out.format("Hypothesis: %s\n", result.getHypothesis());
 
@@ -58,9 +55,9 @@ public class ClusteredTransformDemo {
 
 		recognizer.stopRecognition();
 
-		estimation.estimate();
+		collector.perform();
 
-		ClustersTransformer rt = new ClustersTransformer(loader, 10, estimation.getAs(), estimation.getBs(), cm);
+		MllrTransformer rt = new MllrTransformer(loader, 10, collector);
 		
 		rt.applyTransform();
 		rt.createNewMeansFile("/home/bogdanpetcu/ClusteredTest");

@@ -15,14 +15,14 @@ public class Transform {
 	}
 	
 	/**
-	 * Loads a transform using a MllrEstimation object.
+	 * Populates the object using a MllrEstimation object.
 	 * @param estimation used for computing transform.
 	 * 
 	 */
-	public void load(MllrEstimation estimation) throws Exception {
+	public void fillFrom(StatsCollector estimation, int index) throws Exception {
 		estimation.perform();
-		this.A = estimation.getA();
-		this.B = estimation.getB();
+		this.A = estimation.getAs()[index];
+		this.B = estimation.getBs()[index];
 	}
 	
 	/**
