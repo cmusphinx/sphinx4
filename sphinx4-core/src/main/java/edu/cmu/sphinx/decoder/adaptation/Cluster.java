@@ -1,4 +1,4 @@
-package edu.cmu.sphinx.decoder.adaptation.clustered;
+package edu.cmu.sphinx.decoder.adaptation;
 
 import edu.cmu.sphinx.linguist.acoustic.tiedstate.Pool;
 

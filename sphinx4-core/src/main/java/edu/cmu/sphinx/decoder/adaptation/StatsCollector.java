@@ -1,4 +1,4 @@
-package edu.cmu.sphinx.decoder.adaptation.clustered;
+package edu.cmu.sphinx.decoder.adaptation;
 
 import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.ArrayRealVector;
@@ -7,7 +7,6 @@ import org.apache.commons.math3.linear.LUDecomposition;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.linear.RealVector;
 
-import edu.cmu.sphinx.decoder.adaptation.MllrEstimation;
 import edu.cmu.sphinx.decoder.search.Token;
 import edu.cmu.sphinx.frontend.FloatData;
 import edu.cmu.sphinx.linguist.HMMSearchState;
@@ -15,6 +14,7 @@ import edu.cmu.sphinx.linguist.SearchState;
 import edu.cmu.sphinx.linguist.acoustic.tiedstate.Pool;
 import edu.cmu.sphinx.linguist.acoustic.tiedstate.Sphinx3Loader;
 import edu.cmu.sphinx.result.Result;
+import edu.cmu.sphinx.util.LogMath;
 
 /**
  * This class is used for estimating a MLLR transform for each cluster of data.
@@ -23,7 +23,7 @@ import edu.cmu.sphinx.result.Result;
  * 
  * @author Bogdan Petcu
  */
-public class ClustersEstimation {
+public class StatsCollector {
 
 	private ClusteredDensityFileData means;
 	private double[][][][][] regLs;
@@ -34,18 +34,19 @@ public class ClustersEstimation {
 	private Sphinx3Loader s3loader;
 	private Pool<float[]> variancePool;
 	private float varFlor;
+	private LogMath logMath = LogMath.getInstance();
 
-	public ClustersEstimation(int nMllrClass, Sphinx3Loader loader,
-			int nrOfClusters, ClusteredDensityFileData means) throws Exception {
+	public StatsCollector(int nMllrClass, Sphinx3Loader loader,
+			int nrOfClusters) throws Exception {
 		this.s3loader = loader;
 		this.nrOfClusters = nrOfClusters;
-		this.means = means;
+		this.means = new ClusteredDensityFileData(loader, nrOfClusters);
 		this.varFlor = (float) 1e-5;
 
 		if (s3loader == null) {
 			throw new Exception("Sphinx3Loader is not set.");
 		}
-		
+
 		this.variancePool = s3loader.getVariancePool();
 		this.invertVariances();
 		this.init();
@@ -110,6 +111,32 @@ public class ClustersEstimation {
 			}
 		}
 	}
+	
+	/**
+	 * Computes posterior values for the each component.
+	 * 
+	 * @param componentScores
+	 *            from which the posterior values are computed.
+	 * @return posterior values for all components.
+	 */
+	public float[] computePosterios(float[] componentScores) {
+		float max;
+		float[] posteriors = componentScores;
+
+		max = posteriors[0];
+
+		for (int i = 1; i < componentScores.length; i++) {
+			if (posteriors[i] > max) {
+				max = posteriors[i];
+			}
+		}
+
+		for (int i = 0; i < componentScores.length; i++) {
+			posteriors[i] = (float) logMath.logToLinear(posteriors[i] - max);
+		}
+
+		return posteriors;
+	}
 
 	/**
 	 * This method is used for directly collect and use counts. The counts are
@@ -141,7 +168,7 @@ public class ClustersEstimation {
 			componentScore = state.calculateComponentScore(feature);
 			featureVector = FloatData.toFloatData(feature).getValues();
 			mId = (int) state.getHMMState().getMixtureId();
-			posteriors = MllrEstimation.computePosterios(componentScore);
+			posteriors = this.computePosterios(componentScore);
 			len = s3loader.getVectorLength()[0];
 
 			for (int i = 0; i < componentScore.length; i++) {
@@ -242,7 +269,7 @@ public class ClustersEstimation {
 	/**
 	 * Deploys the whole process of MLLR transform estimation.
 	 */
-	public void estimate() {
+	public void perform() {
 		this.fillRegLowerPart();
 		this.computeMllrTransforms();
 	}
