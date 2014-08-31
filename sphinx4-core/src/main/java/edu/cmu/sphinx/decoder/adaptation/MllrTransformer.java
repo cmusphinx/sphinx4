@@ -24,13 +24,13 @@ public class MllrTransformer {
 	private ClusteredDensityFileData data;
 
 	public MllrTransformer(Sphinx3Loader loader, int nrOfClusters,
-			StatsCollector collector) {
+			Transform transform) throws Exception {
 		this.loader = loader;
 		this.means = loader.getMeansPool();
 		this.header = "s3\nversion 1.0\nchksum0 no \n      endhdr\n";
 		this.nrOfClusters = nrOfClusters;
-		this.As = collector.getAs();
-		this.Bs = collector.getBs();
+		this.As = transform.getAs();
+		this.Bs = transform.getBs();
 		this.data = new ClusteredDensityFileData(loader, nrOfClusters);
 	}
 
