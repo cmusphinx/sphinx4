@@ -45,7 +45,7 @@ public class ClustersEstimation {
 		if (s3loader == null) {
 			throw new Exception("Sphinx3Loader is not set.");
 		}
-
+		
 		this.variancePool = s3loader.getVariancePool();
 		this.invertVariances();
 		this.init();

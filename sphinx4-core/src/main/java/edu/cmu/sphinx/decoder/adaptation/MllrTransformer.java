@@ -1,5 +1,9 @@
 package edu.cmu.sphinx.decoder.adaptation;
 
+import java.io.IOException;
+
+import edu.cmu.sphinx.decoder.adaptation.clustered.ClusteredDensityFileData;
+import edu.cmu.sphinx.decoder.adaptation.clustered.ClustersTransformer;
 import edu.cmu.sphinx.linguist.acoustic.tiedstate.Sphinx3Loader;
 
 /**
@@ -8,43 +12,30 @@ import edu.cmu.sphinx.linguist.acoustic.tiedstate.Sphinx3Loader;
  * 
  * @author Bogdan Petcu
  */
-public class MllrTransformer extends Transformer {
+public class MllrTransformer {
 
-	private Transform transform;
+	private ClustersTransformer transformer;
 
-	public MllrTransformer(Sphinx3Loader loader, Transform transform) {
-		super(loader);
-		this.transform = transform;
+	public MllrTransformer(Sphinx3Loader loader, Transform transform)
+			throws Exception {
+		float[][][][] As = new float[1][][][];
+		As[0] = transform.getA();
+		float[][][] Bs = new float[1][][];
+		Bs[0] = transform.getB();
+		this.transformer = new ClustersTransformer(loader, 1, As, Bs,
+				new ClusteredDensityFileData(loader, 1));
 	}
 	
-	protected void transformMean() throws Exception {
-		float[] tmean;
-
-		for (int i = 0; i < loader.getNumStates(); i++) {
-
-			for (int j = 0; j < loader.getNumStreams(); j++) {
-				tmean = new float[loader.getVectorLength()[j]];
-
-				for (int k = 0; k < loader.getNumGaussiansPerState(); k++) {
-					for (int l = 0; l < loader.getVectorLength()[j]; l++) {
-						tmean[l] = 0;
-						for (int m = 0; m < loader.getVectorLength()[j]; m++) {
-							tmean[l] += transform.getA()[j][l][m]
-									* loader.getMeansPool()
-											.get(i
-													* loader.getNumGaussiansPerState()
-													+ k)[m];
-						}
-						tmean[l] += transform.getB()[j][l];
-					}
-
-					for (int l = 0; l < loader.getVectorLength()[j]; l++) {
-						this.means
-								.get(i * loader.getNumGaussiansPerState() + k)[l] = tmean[l];
-					}
-				}
-			}
-		}
+	public void createNewMeansFile(String path) throws IOException{
+		transformer.createNewMeansFile(path);
+	}
+	
+	private void adaptMean() throws Exception{
+		transformer.applyTransform();
+	}
+	
+	public void applyTransform() throws Exception {
+		this.adaptMean();
 	}
 
 }
