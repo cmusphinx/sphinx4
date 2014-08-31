@@ -1,12 +1,5 @@
 package edu.cmu.sphinx.decoder.adaptation;
 
-import org.apache.commons.math3.linear.Array2DRowRealMatrix;
-import org.apache.commons.math3.linear.ArrayRealVector;
-import org.apache.commons.math3.linear.DecompositionSolver;
-import org.apache.commons.math3.linear.LUDecomposition;
-import org.apache.commons.math3.linear.RealMatrix;
-import org.apache.commons.math3.linear.RealVector;
-
 import edu.cmu.sphinx.decoder.search.Token;
 import edu.cmu.sphinx.frontend.FloatData;
 import edu.cmu.sphinx.linguist.HMMSearchState;
@@ -23,20 +16,18 @@ import edu.cmu.sphinx.util.LogMath;
  * 
  * @author Bogdan Petcu
  */
-public class StatsCollector {
+public class Stats {
 
 	private ClusteredDensityFileData means;
 	private double[][][][][] regLs;
 	private double[][][][] regRs;
-	private float[][][][] As;
-	private float[][][] Bs;
 	private int nrOfClusters;
 	private Sphinx3Loader s3loader;
 	private Pool<float[]> variancePool;
 	private float varFlor;
 	private LogMath logMath = LogMath.getInstance();
 
-	public StatsCollector(int nMllrClass, Sphinx3Loader loader,
+	public Stats(int nMllrClass, Sphinx3Loader loader,
 			int nrOfClusters) throws Exception {
 		this.s3loader = loader;
 		this.nrOfClusters = nrOfClusters;
@@ -57,9 +48,6 @@ public class StatsCollector {
 		this.regLs = new double[nrOfClusters][][][][];
 		this.regRs = new double[nrOfClusters][][][];
 
-		As = new float[nrOfClusters][][][];
-		Bs = new float[nrOfClusters][][];
-
 		for (int i = 0; i < nrOfClusters; i++) {
 			this.regLs[i] = new double[s3loader.getNumStreams()][][][];
 			this.regRs[i] = new double[s3loader.getNumStreams()][][];
@@ -76,12 +64,12 @@ public class StatsCollector {
 		return this.means;
 	}
 
-	public float[][][][] getAs() {
-		return this.As;
+	public double[][][][][] getRegLs() {
+		return regLs;
 	}
 
-	public float[][][] getBs() {
-		return this.Bs;
+	public double[][][][] getRegRs() {
+		return regRs;
 	}
 
 	/**
@@ -119,7 +107,7 @@ public class StatsCollector {
 	 *            from which the posterior values are computed.
 	 * @return posterior values for all components.
 	 */
-	public float[] computePosterios(float[] componentScores) {
+	private float[] computePosterios(float[] componentScores) {
 		float max;
 		float[] posteriors = componentScores;
 
@@ -217,7 +205,10 @@ public class StatsCollector {
 		} while (token != null);
 	}
 
-	private void fillRegLowerPart() {
+	/**
+	 * Fill lower part of Legetter's set of G matrices.
+	 */
+	public void fillRegLowerPart() {
 		for (int i = 0; i < this.nrOfClusters; i++) {
 			for (int j = 0; j < s3loader.getNumStreams(); j++) {
 				for (int l = 0; l < s3loader.getVectorLength()[j]; l++) {
@@ -230,48 +221,4 @@ public class StatsCollector {
 			}
 		}
 	}
-	
-	/**
-	 * Used for computing the actual transformations (A and B matrices).
-	 * These are stored in As and Bs.
-	 */
-	private void computeMllrTransforms() {
-		int len;
-		DecompositionSolver solver;
-		RealMatrix coef;
-		RealVector vect, ABloc;
-
-		for (int c = 0; c < nrOfClusters; c++) {
-			this.As[c] = new float[s3loader.getNumStreams()][][];
-			this.Bs[c] = new float[s3loader.getNumStreams()][];
-
-			for (int i = 0; i < s3loader.getNumStreams(); i++) {
-				len = s3loader.getVectorLength()[i];
-				this.As[c][i] = new float[len][len];
-				this.Bs[c][i] = new float[len];
-
-				for (int j = 0; j < len; ++j) {
-					coef = new Array2DRowRealMatrix(regLs[c][i][j], false);
-					solver = new LUDecomposition(coef).getSolver();
-					vect = new ArrayRealVector(regRs[c][i][j], false);
-					ABloc = solver.solve(vect);
-
-					for (int k = 0; k < len; ++k) {
-						this.As[c][i][j][k] = (float) ABloc.getEntry(k);
-					}
-
-					this.Bs[c][i][j] = (float) ABloc.getEntry(len);
-				}
-			}
-		}
-	}
-	
-	/**
-	 * Deploys the whole process of MLLR transform estimation.
-	 */
-	public void perform() {
-		this.fillRegLowerPart();
-		this.computeMllrTransforms();
-	}
-
 }
