@@ -5,6 +5,7 @@ import java.io.InputStream;
 import edu.cmu.sphinx.api.Configuration;
 import edu.cmu.sphinx.api.SpeechResult;
 import edu.cmu.sphinx.api.StreamSpeechRecognizer;
+import edu.cmu.sphinx.decoder.adaptation.ClusteredDensityFileData;
 import edu.cmu.sphinx.decoder.adaptation.Stats;
 import edu.cmu.sphinx.decoder.adaptation.MllrTransformer;
 import edu.cmu.sphinx.decoder.adaptation.Transform;
@@ -26,19 +27,23 @@ public class MllrTransformerDemo {
 
 		StreamSpeechRecognizer recognizer = new StreamSpeechRecognizer(
 				configuration);
-
+		
 		InputStream stream = TranscriberDemo.class
-				.getResourceAsStream("/edu/cmu/sphinx/demo/countsCollector/BillGates5Mins.wav");
+				.getResourceAsStream("/edu/cmu/sphinx/demo/countsCollector/DanBarber.wav");
 		recognizer.startRecognition(stream);
 
 		Sphinx3Loader loader = (Sphinx3Loader) recognizer.getLoader();
+		
+		ClusteredDensityFileData cm = new ClusteredDensityFileData(loader, 10);
 
+		Stats stats = new Stats(loader, 10, cm);
+		
+		Transform transform = new Transform(loader, 10);
+		
 		SpeechResult result;
-		Stats stats = new Stats(1, loader, 10);
-
+		
 		while ((result = recognizer.getResult()) != null) {
 			stats.collect(result.getResult());
-
 			System.out.format("Hypothesis: %s\n", result.getHypothesis());
 
 			System.out.println("List of recognized words and their times:");
@@ -55,16 +60,13 @@ public class MllrTransformerDemo {
 		}
 
 		recognizer.stopRecognition();
-
-		Transform transform = new Transform(loader, 10);
 		
 		transform.update(stats);
-
-		MllrTransformer rt = new MllrTransformer(loader, 10, transform);
 		
-		rt.transformMean();
-		rt.createNewMeansFile("/home/bogdanpetcu/ClusteredTest");
-
+		MllrTransformer rt2 = new MllrTransformer(loader, transform, cm);
+		rt2.transformMean();
+		rt2.createNewMeansFile("/home/bogdanpetcu/TESTARE/test10clustere");
+	
 	}
 
 }

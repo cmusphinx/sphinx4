@@ -4,6 +4,7 @@ import edu.cmu.sphinx.decoder.search.Token;
 import edu.cmu.sphinx.frontend.FloatData;
 import edu.cmu.sphinx.linguist.HMMSearchState;
 import edu.cmu.sphinx.linguist.SearchState;
+import edu.cmu.sphinx.linguist.acoustic.tiedstate.Loader;
 import edu.cmu.sphinx.linguist.acoustic.tiedstate.Pool;
 import edu.cmu.sphinx.linguist.acoustic.tiedstate.Sphinx3Loader;
 import edu.cmu.sphinx.result.Result;
@@ -27,11 +28,11 @@ public class Stats {
 	private float varFlor;
 	private LogMath logMath = LogMath.getInstance();
 
-	public Stats(int nMllrClass, Sphinx3Loader loader,
-			int nrOfClusters) throws Exception {
-		this.s3loader = loader;
+	public Stats(Loader loader, int nrOfClusters, ClusteredDensityFileData means)
+			throws Exception {
+		this.s3loader = (Sphinx3Loader) loader;
 		this.nrOfClusters = nrOfClusters;
-		this.means = new ClusteredDensityFileData(loader, nrOfClusters);
+		this.means = means;
 		this.varFlor = (float) 1e-5;
 
 		if (s3loader == null) {
@@ -99,7 +100,7 @@ public class Stats {
 			}
 		}
 	}
-	
+
 	/**
 	 * Computes posterior values for the each component.
 	 * 
@@ -170,19 +171,13 @@ public class Stats {
 					for (int j = 0; j < featureVector.length; j++) {
 						mean = posteriors[i] * featureVector[j];
 						wtMeanVar = mean
-								* s3loader
-										.getVariancePool()
-										.get(mId
-												* s3loader
-														.getNumGaussiansPerState()
-												+ i)[j];
+								* this.variancePool.get(mId
+										* s3loader.getNumGaussiansPerState()
+										+ i)[j];
 						wtDcountVar = dnom
-								* s3loader
-										.getVariancePool()
-										.get(mId
-												* s3loader
-														.getNumGaussiansPerState()
-												+ i)[j];
+								* this.variancePool.get(mId
+										* s3loader.getNumGaussiansPerState()
+										+ i)[j];
 
 						for (int p = 0; p < featureVector.length; p++) {
 							wtDcountVarMean = wtDcountVar * tmean[p];
@@ -221,4 +216,5 @@ public class Stats {
 			}
 		}
 	}
+
 }

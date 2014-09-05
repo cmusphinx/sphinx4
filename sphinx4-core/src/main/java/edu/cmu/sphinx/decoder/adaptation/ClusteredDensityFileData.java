@@ -2,9 +2,7 @@ package edu.cmu.sphinx.decoder.adaptation;
 
 import java.util.ArrayList;
 import java.util.Random;
-
 import org.apache.commons.math3.util.FastMath;
-
 import edu.cmu.sphinx.linguist.acoustic.tiedstate.Pool;
 import edu.cmu.sphinx.linguist.acoustic.tiedstate.Sphinx3Loader;
 
@@ -24,27 +22,34 @@ public class ClusteredDensityFileData {
 	private int numStates;
 	private int numGaussiansPerState;
 
-	public ClusteredDensityFileData(Sphinx3Loader loader, int nrOfClusters) {
+	public ClusteredDensityFileData(Sphinx3Loader loader, int numberOfClusters) {
 		this.initialData = loader.getMeansPool();
-		this.numberOfClusters = nrOfClusters;
+		this.numberOfClusters = numberOfClusters;
 		this.numStates = loader.getNumStates();
 		this.numGaussiansPerState = loader.getNumGaussiansPerState();
 		this.gaussianNumbers = new ArrayList<ArrayList<Integer>>(
 				numberOfClusters);
+
 		for (int i = 0; i < numberOfClusters; i++) {
 			this.gaussianNumbers.add(new ArrayList<Integer>(
 					numGaussiansPerState * numStates));
 		}
-		this.kMeansClustering(15);
+		this.kMeansClustering(30);
 	}
 
 	public ArrayList<ArrayList<Integer>> getGaussianNumbers() {
 		return gaussianNumbers;
 	}
-	
+
+	public int getNumberOfClusters() {
+		return this.numberOfClusters;
+	}
+
 	/**
 	 * Used for accessing the index that is specific to a gaussian.
-	 * @param gaussian provided in a i * numStates + gaussianIndex form.
+	 * 
+	 * @param gaussian
+	 *            provided in a i * numStates + gaussianIndex form.
 	 * @return
 	 */
 	public int getClassIndex(int gaussian) {

@@ -3,7 +3,6 @@ package edu.cmu.sphinx.decoder.adaptation;
 import java.io.DataOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-
 import edu.cmu.sphinx.linguist.acoustic.tiedstate.Pool;
 import edu.cmu.sphinx.linguist.acoustic.tiedstate.Sphinx3Loader;
 import edu.cmu.sphinx.util.Utilities;
@@ -15,23 +14,23 @@ import edu.cmu.sphinx.util.Utilities;
  */
 public class MllrTransformer {
 
-	protected Sphinx3Loader loader;
+	private Sphinx3Loader loader;
 	private String header;
-	protected Pool<float[]> means;
-	private int nrOfClusters;
+	private Pool<float[]> means;
+	private int numberOfClusters;
 	private float[][][][] As;
 	private float[][][] Bs;
 	private ClusteredDensityFileData data;
 
-	public MllrTransformer(Sphinx3Loader loader, int nrOfClusters,
-			Transform transform) throws Exception {
-		this.loader = loader;
+	public MllrTransformer(Sphinx3Loader loader, Transform transform,
+			ClusteredDensityFileData data) throws Exception {
 		this.means = loader.getMeansPool();
+		this.loader = loader;
 		this.header = "s3\nversion 1.0\nchksum0 no \n      endhdr\n";
-		this.nrOfClusters = nrOfClusters;
+		this.numberOfClusters = data.getNumberOfClusters();
 		this.As = transform.getAs();
 		this.Bs = transform.getBs();
-		this.data = new ClusteredDensityFileData(loader, nrOfClusters);
+		this.data = data;
 	}
 
 	public void setHeader(String header) {
@@ -42,7 +41,7 @@ public class MllrTransformer {
 		float[] tmean;
 		int stateIndex, gaussianIndex;
 
-		for (int i = 0; i < this.nrOfClusters; i++) {
+		for (int i = 0; i < this.numberOfClusters; i++) {
 			for (int j : data.getGaussianNumbers().get(i)) {
 				stateIndex = j / loader.getNumGaussiansPerState();
 				gaussianIndex = j % loader.getNumGaussiansPerState();
@@ -53,18 +52,16 @@ public class MllrTransformer {
 					tmean[l] = 0;
 					for (int m = 0; m < loader.getVectorLength()[0]; m++) {
 						tmean[l] += As[i][0][l][m]
-								* loader.getMeansPool()
-										.get(stateIndex
-												* loader.getNumGaussiansPerState()
-												+ gaussianIndex)[m];
+								* means.get(stateIndex
+										* loader.getNumGaussiansPerState()
+										+ gaussianIndex)[m];
 					}
 					tmean[l] += Bs[i][0][l];
 				}
 
 				for (int l = 0; l < loader.getVectorLength()[0]; l++) {
-					this.loader.getMeansPool().get(
-							stateIndex * loader.getNumGaussiansPerState()
-									+ gaussianIndex)[l] = tmean[l];
+					this.means.get(stateIndex
+							* loader.getNumGaussiansPerState() + gaussianIndex)[l] = tmean[l];
 				}
 			}
 		}
