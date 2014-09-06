@@ -5,7 +5,6 @@ import edu.cmu.sphinx.frontend.FloatData;
 import edu.cmu.sphinx.linguist.HMMSearchState;
 import edu.cmu.sphinx.linguist.SearchState;
 import edu.cmu.sphinx.linguist.acoustic.tiedstate.Loader;
-import edu.cmu.sphinx.linguist.acoustic.tiedstate.Pool;
 import edu.cmu.sphinx.linguist.acoustic.tiedstate.Sphinx3Loader;
 import edu.cmu.sphinx.result.Result;
 import edu.cmu.sphinx.util.LogMath;
@@ -23,38 +22,36 @@ public class Stats {
 	private double[][][][][] regLs;
 	private double[][][][] regRs;
 	private int nrOfClusters;
-	private Sphinx3Loader s3loader;
-	private Pool<float[]> variancePool;
+	private Sphinx3Loader loader;
 	private float varFlor;
 	private LogMath logMath = LogMath.getInstance();
 
 	public Stats(Loader loader, int nrOfClusters, ClusteredDensityFileData means)
 			throws Exception {
-		this.s3loader = (Sphinx3Loader) loader;
+		this.loader = (Sphinx3Loader) loader;
 		this.nrOfClusters = nrOfClusters;
 		this.means = means;
 		this.varFlor = (float) 1e-5;
 
-		if (s3loader == null) {
+		if (this.loader == null) {
 			throw new Exception("Sphinx3Loader is not set.");
 		}
 
-		this.variancePool = s3loader.getVariancePool();
 		this.invertVariances();
 		this.init();
 	}
 
 	private void init() {
-		int len = s3loader.getVectorLength()[0];
+		int len = loader.getVectorLength()[0];
 		this.regLs = new double[nrOfClusters][][][][];
 		this.regRs = new double[nrOfClusters][][][];
 
 		for (int i = 0; i < nrOfClusters; i++) {
-			this.regLs[i] = new double[s3loader.getNumStreams()][][][];
-			this.regRs[i] = new double[s3loader.getNumStreams()][][];
+			this.regLs[i] = new double[loader.getNumStreams()][][][];
+			this.regRs[i] = new double[loader.getNumStreams()][][];
 
-			for (int j = 0; j < s3loader.getNumStreams(); j++) {
-				len = s3loader.getVectorLength()[j];
+			for (int j = 0; j < loader.getNumStreams(); j++) {
+				len = loader.getVectorLength()[j];
 				this.regLs[i][j] = new double[len][len + 1][len + 1];
 				this.regRs[i][j] = new double[len][len + 1];
 			}
@@ -78,22 +75,22 @@ public class Stats {
 	 */
 	private void invertVariances() {
 
-		for (int i = 0; i < s3loader.getNumStates(); i++) {
-			for (int k = 0; k < s3loader.getNumGaussiansPerState(); k++) {
-				for (int l = 0; l < s3loader.getVectorLength()[0]; l++) {
-					if (s3loader.getVariancePool().get(
-							i * s3loader.getNumGaussiansPerState() + k)[l] <= 0.) {
-						this.variancePool.get(i
-								* s3loader.getNumGaussiansPerState() + k)[l] = (float) 0.5;
-					} else if (s3loader.getVariancePool().get(
-							i * s3loader.getNumGaussiansPerState() + k)[l] < varFlor) {
-						this.variancePool.get(i
-								* s3loader.getNumGaussiansPerState() + k)[l] = (float) (1. / varFlor);
+		for (int i = 0; i < loader.getNumStates(); i++) {
+			for (int k = 0; k < loader.getNumGaussiansPerState(); k++) {
+				for (int l = 0; l < loader.getVectorLength()[0]; l++) {
+					if (loader.getVariancePool().get(
+							i * loader.getNumGaussiansPerState() + k)[l] <= 0.) {
+						this.loader.getVariancePool().get(i
+								* loader.getNumGaussiansPerState() + k)[l] = (float) 0.5;
+					} else if (loader.getVariancePool().get(
+							i * loader.getNumGaussiansPerState() + k)[l] < varFlor) {
+						this.loader.getVariancePool().get(i
+								* loader.getNumGaussiansPerState() + k)[l] = (float) (1. / varFlor);
 					} else {
-						this.variancePool.get(i
-								* s3loader.getNumGaussiansPerState() + k)[l] = (float) (1. / s3loader
+						this.loader.getVariancePool().get(i
+								* loader.getNumGaussiansPerState() + k)[l] = (float) (1. / loader
 								.getVariancePool().get(
-										i * s3loader.getNumGaussiansPerState()
+										i * loader.getNumGaussiansPerState()
 												+ k)[l]);
 					}
 				}
@@ -158,25 +155,25 @@ public class Stats {
 			featureVector = FloatData.toFloatData(feature).getValues();
 			mId = (int) state.getHMMState().getMixtureId();
 			posteriors = this.computePosterios(componentScore);
-			len = s3loader.getVectorLength()[0];
+			len = loader.getVectorLength()[0];
 
 			for (int i = 0; i < componentScore.length; i++) {
 				cluster = means.getClassIndex(mId
-						* s3loader.getNumGaussiansPerState() + i);
+						* loader.getNumGaussiansPerState() + i);
 				dnom = posteriors[i];
 				if (dnom > 0.) {
-					tmean = s3loader.getMeansPool().get(
-							mId * s3loader.getNumGaussiansPerState() + i);
+					tmean = loader.getMeansPool().get(
+							mId * loader.getNumGaussiansPerState() + i);
 
 					for (int j = 0; j < featureVector.length; j++) {
 						mean = posteriors[i] * featureVector[j];
 						wtMeanVar = mean
-								* this.variancePool.get(mId
-										* s3loader.getNumGaussiansPerState()
+								* loader.getVariancePool().get(mId
+										* loader.getNumGaussiansPerState()
 										+ i)[j];
 						wtDcountVar = dnom
-								* this.variancePool.get(mId
-										* s3loader.getNumGaussiansPerState()
+								* loader.getVariancePool().get(mId
+										* loader.getNumGaussiansPerState()
 										+ i)[j];
 
 						for (int p = 0; p < featureVector.length; p++) {
@@ -205,10 +202,10 @@ public class Stats {
 	 */
 	public void fillRegLowerPart() {
 		for (int i = 0; i < this.nrOfClusters; i++) {
-			for (int j = 0; j < s3loader.getNumStreams(); j++) {
-				for (int l = 0; l < s3loader.getVectorLength()[j]; l++) {
-					for (int p = 0; p <= s3loader.getVectorLength()[j]; p++) {
-						for (int q = p + 1; q <= s3loader.getVectorLength()[j]; q++) {
+			for (int j = 0; j < loader.getNumStreams(); j++) {
+				for (int l = 0; l < loader.getVectorLength()[j]; l++) {
+					for (int p = 0; p <= loader.getVectorLength()[j]; p++) {
+						for (int q = p + 1; q <= loader.getVectorLength()[j]; q++) {
 							regLs[i][j][l][q][p] = regLs[i][j][l][p][q];
 						}
 					}

@@ -29,7 +29,7 @@ public class MllrTransformerDemo {
 				configuration);
 		
 		InputStream stream = TranscriberDemo.class
-				.getResourceAsStream("/edu/cmu/sphinx/demo/countsCollector/DanBarber.wav");
+				.getResourceAsStream("/edu/cmu/sphinx/demo/countsCollector/BillGates5Mins.wav");
 		recognizer.startRecognition(stream);
 
 		Sphinx3Loader loader = (Sphinx3Loader) recognizer.getLoader();
@@ -65,7 +65,7 @@ public class MllrTransformerDemo {
 		
 		MllrTransformer rt2 = new MllrTransformer(loader, transform, cm);
 		rt2.transformMean();
-		rt2.createNewMeansFile("/home/bogdanpetcu/TESTARE/test10clustere");
+		rt2.createNewMeansFile("/home/bogdanpetcu/TESTARE/testBillGates");
 	
 	}
 
