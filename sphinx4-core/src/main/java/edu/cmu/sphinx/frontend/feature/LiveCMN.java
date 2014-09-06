@@ -111,10 +111,13 @@ public class LiveCMN extends BaseDataProcessor {
      */
     private void initMeansSums() {
         int size = -1;
+        
         for (Data data : initialList) {
             if (!(data instanceof DoubleData))
                 continue;
+        
             double[] cepstrum = ((DoubleData) data).getValues();
+            
             // Initialize arrays if needed
             if (size < 0) {
                 size = cepstrum.length;
@@ -127,6 +130,11 @@ public class LiveCMN extends BaseDataProcessor {
             }
             numberFrame++;
         }
+
+        // If we didn't meet any data, do nothing
+        if (size < 0)
+            return;
+
         currentMean = new double[size];
         for (int j = 0; j < size; j++) {
             currentMean[j] = sum[j] / numberFrame;
