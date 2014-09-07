@@ -12,12 +12,9 @@
 package edu.cmu.sphinx.api;
 
 import java.io.IOException;
-
-import edu.cmu.sphinx.result.Result;
-
-import edu.cmu.sphinx.recognizer.Recognizer;
-
 import edu.cmu.sphinx.linguist.acoustic.tiedstate.Loader;
+import edu.cmu.sphinx.recognizer.Recognizer;
+import edu.cmu.sphinx.result.Result;
 
 
 /**
@@ -52,8 +49,8 @@ public class AbstractSpeechRecognizer {
         Result result = recognizer.recognize();
         return null == result ? null : new SpeechResult(result);
     }
-
-    public Loader getLoader() {
-	return (Loader) context.getLoader();
-    }
+    
+	public Loader getLoader() {
+		return (Loader) context.getLoader();
+	}
 }

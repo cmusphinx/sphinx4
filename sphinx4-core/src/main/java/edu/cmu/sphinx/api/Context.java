@@ -21,10 +21,10 @@ import java.net.URL;
 
 import edu.cmu.sphinx.frontend.frequencywarp.MelFrequencyFilterBank2;
 import edu.cmu.sphinx.frontend.util.StreamDataSource;
+import edu.cmu.sphinx.linguist.acoustic.tiedstate.Loader;
 import edu.cmu.sphinx.util.TimeFrame;
 import edu.cmu.sphinx.util.props.Configurable;
 import edu.cmu.sphinx.util.props.ConfigurationManager;
-import edu.cmu.sphinx.linguist.acoustic.tiedstate.Loader;
 
 
 /**
@@ -222,7 +222,7 @@ public class Context {
     public <C extends Configurable> C getInstance(Class<C> clazz) {
         return configurationManager.lookup(clazz);
     }
-
+    
     /**
      * Returns the Loader object used for loading the acoustic model.
      * 
