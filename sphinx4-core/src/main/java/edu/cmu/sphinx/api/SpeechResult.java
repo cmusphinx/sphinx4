@@ -49,7 +49,7 @@ public final class SpeechResult {
     }
 
     /**
-     * Returns string representation of the result.
+     * Returns string representaion of the result.
      */
     public String getHypothesis() {
 	return result.getBestResultNoFiller();
@@ -72,14 +72,5 @@ public final class SpeechResult {
      */
     public Lattice getLattice() {
         return lattice;
-    }
-    
-    /**
-     * Return Result object of current SpeechResult
-     * 
-     * @return Result object stored in this.result
-     */
-    public Result getResult() {
-    	return result;
     }
 }

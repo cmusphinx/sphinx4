@@ -53,17 +53,4 @@ public interface Senone extends Serializable {
      */
     public void dump(String msg);
 
-    /**
-     * Returns the mixture components associated with this Gaussian
-     *
-     * @return the array of mixture components
-     */
-    public MixtureComponent[] getMixtureComponents();
-
-    /**
-     * 
-     * @return the mixture weights vector
-     */
-	public float[] getLogMixtureWeights();
-
 }

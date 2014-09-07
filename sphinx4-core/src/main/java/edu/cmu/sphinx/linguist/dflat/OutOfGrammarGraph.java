@@ -13,10 +13,8 @@ package edu.cmu.sphinx.linguist.dflat;
 
 import edu.cmu.sphinx.decoder.scorer.ScoreProvider;
 import edu.cmu.sphinx.frontend.Data;
-import edu.cmu.sphinx.frontend.FloatData;
 import edu.cmu.sphinx.linguist.*;
 import edu.cmu.sphinx.linguist.acoustic.*;
-import edu.cmu.sphinx.linguist.acoustic.tiedstate.MixtureComponent;
 import edu.cmu.sphinx.linguist.dictionary.Pronunciation;
 import edu.cmu.sphinx.linguist.dictionary.Word;
 import edu.cmu.sphinx.util.LogMath;
@@ -392,20 +390,6 @@ public class OutOfGrammarGraph {
         public float getScore(Data data) {
             return hmmState.getScore(data);
         }
-
-
-		public float[] calculateComponentScore(FloatData features) {
-			MixtureComponent[] mc = this.getHMMState().getMixtureComponents();
-			float[] mw = this.getHMMState().getLogMixtureWeights();
-			float[] featureVector = FloatData.toFloatData(features).getValues();
-			float[] logComponentScore = new float[mc.length];
-
-			for (int i = 0; i < mc.length; i++) {
-				logComponentScore[i] = mc[i].getScore(featureVector) + mw[i];
-			}
-
-			return logComponentScore;
-		}
     }
 
     /** Represents the last branch state in the search graph */

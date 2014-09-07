@@ -60,7 +60,7 @@ public class SenoneHMMState implements HMMState {
      * @return the HMM
      */
     public HMM getHMM() {
-    	return hmm;
+        return hmm;
     }
 
 
@@ -192,17 +192,5 @@ public class SenoneHMMState implements HMMState {
     public String toString() {
         return "HMMS " + hmm + " state " + state;
     }
-
-	public MixtureComponent[] getMixtureComponents() {
-		return senone.getMixtureComponents();
-	}
-
-	public long getMixtureId() {
-		return senone.getID();
-	}
-
-	public float[] getLogMixtureWeights() {
-		return senone.getLogMixtureWeights();
-	}
 }
 

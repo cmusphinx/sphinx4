@@ -12,34 +12,13 @@
 package edu.cmu.sphinx.linguist.aflat;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.logging.Logger;
 
 import edu.cmu.sphinx.decoder.scorer.ScoreProvider;
 import edu.cmu.sphinx.frontend.Data;
-import edu.cmu.sphinx.frontend.FloatData;
-import edu.cmu.sphinx.linguist.HMMSearchState;
-import edu.cmu.sphinx.linguist.Linguist;
-import edu.cmu.sphinx.linguist.SearchGraph;
-import edu.cmu.sphinx.linguist.SearchState;
-import edu.cmu.sphinx.linguist.SearchStateArc;
-import edu.cmu.sphinx.linguist.UnitSearchState;
-import edu.cmu.sphinx.linguist.WordSearchState;
-import edu.cmu.sphinx.linguist.WordSequence;
-import edu.cmu.sphinx.linguist.acoustic.AcousticModel;
-import edu.cmu.sphinx.linguist.acoustic.HMM;
-import edu.cmu.sphinx.linguist.acoustic.HMMPool;
-import edu.cmu.sphinx.linguist.acoustic.HMMPosition;
-import edu.cmu.sphinx.linguist.acoustic.HMMState;
-import edu.cmu.sphinx.linguist.acoustic.HMMStateArc;
-import edu.cmu.sphinx.linguist.acoustic.Unit;
-import edu.cmu.sphinx.linguist.acoustic.UnitManager;
-import edu.cmu.sphinx.linguist.acoustic.tiedstate.MixtureComponent;
+import edu.cmu.sphinx.linguist.*;
+import edu.cmu.sphinx.linguist.acoustic.*;
 import edu.cmu.sphinx.linguist.dictionary.Pronunciation;
 import edu.cmu.sphinx.linguist.dictionary.Word;
 import edu.cmu.sphinx.linguist.language.grammar.Grammar;
@@ -48,12 +27,7 @@ import edu.cmu.sphinx.linguist.language.grammar.GrammarNode;
 import edu.cmu.sphinx.util.LogMath;
 import edu.cmu.sphinx.util.Timer;
 import edu.cmu.sphinx.util.TimerPool;
-import edu.cmu.sphinx.util.props.Configurable;
-import edu.cmu.sphinx.util.props.PropertyException;
-import edu.cmu.sphinx.util.props.PropertySheet;
-import edu.cmu.sphinx.util.props.S4Boolean;
-import edu.cmu.sphinx.util.props.S4Component;
-import edu.cmu.sphinx.util.props.S4Double;
+import edu.cmu.sphinx.util.props.*;
 
 /**
  * A simple form of the linguist. It makes the following simplifying
@@ -166,7 +140,8 @@ public class AFlatLinguist implements Linguist, Configurable {
 	private final SearchStateArc[] EMPTY_ARCS = new SearchStateArc[0];
 
 	public AFlatLinguist(AcousticModel acousticModel, Grammar grammar,
-			UnitManager unitManager, double wordInsertionProbability,
+			UnitManager unitManager,
+			double wordInsertionProbability,
 			double silenceInsertionProbability,
 			double unitInsertionProbability, double fillerInsertionProbability,
 			float languageWeight, boolean addOutOfGrammarBranch,
@@ -205,7 +180,7 @@ public class AFlatLinguist implements Linguist, Configurable {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util
 	 * .props.PropertySheet)
@@ -295,7 +270,7 @@ public class AFlatLinguist implements Linguist, Configurable {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see edu.cmu.sphinx.linguist.Linguist#deallocate()
 	 */
 	public void deallocate() {
@@ -683,8 +658,8 @@ public class AFlatLinguist implements Linguist, Configurable {
 					Pronunciation[] pronunciations = word.getPronunciations();
 					pronunciations = filter(pronunciations, nextBaseID);
 					SearchStateArc[] nextArcs;
-					if (addOutOfGrammarBranch)
-						nextArcs = new SearchStateArc[pronunciations.length + 1];
+					if(addOutOfGrammarBranch)
+						 nextArcs= new SearchStateArc[pronunciations.length + 1];
 					else
 						nextArcs = new SearchStateArc[pronunciations.length];
 
@@ -694,7 +669,7 @@ public class AFlatLinguist implements Linguist, Configurable {
 					}
 					SearchStateArc[] returnState = new SearchStateArc[1];
 					returnState[0] = this;
-					if (addOutOfGrammarBranch) {
+					if(addOutOfGrammarBranch){
 						PhoneLoop pl = new PhoneLoop(acousticModel,
 								logOutOfGrammarBranchProbability,
 								logPhoneInsertionProbability, returnState);
@@ -723,8 +698,8 @@ public class AFlatLinguist implements Linguist, Configurable {
 
 			for (int i = 0; i < nextNodes.length; i++) {
 				GrammarArc arc = nextNodes[i];
-				nextArcs[i] = new GrammarState(arc.getGrammarNode(),
-						arc.getProbability(), lc, nextBaseID);
+				nextArcs[i] = new GrammarState(arc.getGrammarNode(), arc
+						.getProbability(), lc, nextBaseID);
 			}
 			return nextArcs;
 		}
@@ -1448,8 +1423,8 @@ public class AFlatLinguist implements Linguist, Configurable {
 					arcs = new SearchStateArc[next.length];
 					for (int i = 0; i < arcs.length; i++) {
 						arcs[i] = new HMMStateSearchState(fullHMMSearchState,
-								next[i].getHMMState(),
-								next[i].getLogProbability());
+								next[i].getHMMState(), next[i]
+										.getLogProbability());
 					}
 				}
 				cacheSuccessors(arcs);
@@ -1490,20 +1465,6 @@ public class AFlatLinguist implements Linguist, Configurable {
 		public float getScore(Data data) {
 			return hmmState.getScore(data);
 		}
-
-		@Override
-		public float[] calculateComponentScore(FloatData features) {
-			MixtureComponent[] mc = this.getHMMState().getMixtureComponents();
-			float[] mw = this.getHMMState().getLogMixtureWeights();
-			float[] featureVector = FloatData.toFloatData(features).getValues();
-			float[] logComponentScore = new float[mc.length];
-
-			for (int i = 0; i < mc.length; i++) {
-				logComponentScore[i] = mc[i].getScore(featureVector) + mw[i];
-			}
-
-			return logComponentScore;
-		}
 	}
 
 	/** The search graph that is produced by the flat linguist. */
@@ -1511,7 +1472,7 @@ public class AFlatLinguist implements Linguist, Configurable {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see edu.cmu.sphinx.linguist.SearchGraph#getInitialState()
 		 */
 		public SearchState getInitialState() {
@@ -1522,21 +1483,21 @@ public class AFlatLinguist implements Linguist, Configurable {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see edu.cmu.sphinx.linguist.SearchGraph#getNumStateOrder()
 		 */
 		public int getNumStateOrder() {
 			return 5;
 		}
-
+		
 		public boolean getWordTokenFirst() {
-			return true;
+		    return true;
 		}
 	}
 
-	public void startRecognition() {
-	}
+    public void startRecognition() {
+    }
 
-	public void stopRecognition() {
-	}
+    public void stopRecognition() {
+    }
 }

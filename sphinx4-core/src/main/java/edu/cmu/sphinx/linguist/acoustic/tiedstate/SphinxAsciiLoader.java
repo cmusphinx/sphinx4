@@ -89,7 +89,7 @@ public class SphinxAsciiLoader extends Sphinx3Loader {
      *             if an error occurs while loading the data
      */
     @Override
-    public Pool<float[]> loadDensityFile(String path, float floor) throws IOException, URISyntaxException {
+    protected Pool<float[]> loadDensityFile(String path, float floor) throws IOException, URISyntaxException {
         logger.fine("Loading density file from: " + path);
         InputStream inputStream = getDataStream(path);
         if (inputStream == null) {

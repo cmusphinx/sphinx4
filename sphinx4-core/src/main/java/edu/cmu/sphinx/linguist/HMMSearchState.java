@@ -12,7 +12,6 @@
 
 package edu.cmu.sphinx.linguist;
 
-import edu.cmu.sphinx.frontend.FloatData;
 import edu.cmu.sphinx.linguist.acoustic.HMMState;
 
 /** Represents a single HMM state in a language search space */
@@ -24,15 +23,5 @@ public interface HMMSearchState extends SearchState {
      * @return the hmm state
      */
     HMMState getHMMState();
-    
-    /**
-     * 	/**
-	 * Calculates the scores for each component.
-	 *
-	 * @param feature
-	 *            the feature to score
-	 * @return the LogMath log scores for the feature, one for each component
-	 */
-    float[] calculateComponentScore(FloatData features);
 
 }

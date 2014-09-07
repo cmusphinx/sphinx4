@@ -19,10 +19,8 @@ import java.util.logging.Logger;
 
 import edu.cmu.sphinx.decoder.scorer.ScoreProvider;
 import edu.cmu.sphinx.frontend.Data;
-import edu.cmu.sphinx.frontend.FloatData;
 import edu.cmu.sphinx.linguist.*;
 import edu.cmu.sphinx.linguist.acoustic.*;
-import edu.cmu.sphinx.linguist.acoustic.tiedstate.MixtureComponent;
 import edu.cmu.sphinx.linguist.dictionary.Dictionary;
 import edu.cmu.sphinx.linguist.dictionary.Pronunciation;
 import edu.cmu.sphinx.linguist.dictionary.Word;
@@ -1329,20 +1327,6 @@ public class LexTreeLinguist implements Linguist {
         public float getScore(Data data) {
             return hmmState.getScore(data);
         }
-
-
-		public float[] calculateComponentScore(FloatData features) {
-			MixtureComponent[] mc = this.getHMMState().getMixtureComponents();
-			float[] mw = this.getHMMState().getLogMixtureWeights();
-			float[] featureVector = FloatData.toFloatData(features).getValues();
-			float[] logComponentScore = new float[mc.length];
-
-			for (int i = 0; i < mc.length; i++) {
-				logComponentScore[i] = mc[i].getScore(featureVector) + mw[i];
-			}
-
-			return logComponentScore;
-		}
     }
 
     /** Represents a non emitting hmm state */
