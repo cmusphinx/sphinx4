@@ -36,6 +36,10 @@ public class MllrTransformer {
 	public void setHeader(String header) {
 		this.header = header;
 	}
+	
+	public Pool<float[]> getMeans(){
+		return this.means;
+	}
 
 	public void transformMean() {
 		float[] tmean;
