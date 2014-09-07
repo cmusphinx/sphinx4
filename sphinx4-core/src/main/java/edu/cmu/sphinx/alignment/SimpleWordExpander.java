@@ -11,10 +11,22 @@ import java.util.List;
  */
 public class SimpleWordExpander implements WordExpander {
     public List<String> expand(String text) {
-        String clean1 = text.replace("’", "'").replace("--", " ").replace(" - ", " ");
-        String clean2 = clean1.replaceAll("[,.?:!;?()/»_]", "");
-        String clean3 = clean2.toLowerCase();
-        String[] tokens = clean3.split("\\s+");
+
+        text = text.replace('’', '\'');
+        text = text.replace('‘', ' ');
+        text = text.replace('”', ' ');
+        text = text.replace('“', ' ');
+        text = text.replace('»', ' ');
+        text = text.replace('«', ' ');
+        text = text.replace('–', '-');
+        text = text.replace('—', ' ');
+        text = text.replace('…', ' ');
+
+	text = text.replace(" - ", " ");	
+	text = text.replaceAll("[,.?:!;?()/_*%]", " ");
+	text = text.toLowerCase();
+	
+        String[] tokens = text.split("\\s+");
         return Arrays.asList(tokens);
     }
 }

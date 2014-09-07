@@ -136,7 +136,7 @@ public class LongTextAligner {
 
             shifts = new ArrayList<Integer>(shiftSet);
             final Map<Node, Integer> cost = new HashMap<Node, Integer>();
-            PriorityQueue<Node> openSet = new PriorityQueue<Node>(new Comparator<Node>() {
+            PriorityQueue<Node> openSet = new PriorityQueue<Node>(1, new Comparator<Node>() {
                 @Override
                 public int compare(Node o1, Node o2) {
                     return cost.get(o1).compareTo(cost.get(o2));
