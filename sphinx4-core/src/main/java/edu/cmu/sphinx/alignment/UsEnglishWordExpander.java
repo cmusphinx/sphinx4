@@ -10,10 +10,9 @@
  */
 package edu.cmu.sphinx.alignment;
 
-import static com.google.common.collect.Lists.newArrayList;
-import static com.google.common.collect.Maps.newHashMap;
-
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -232,7 +231,7 @@ public class UsEnglishWordExpander implements WordExpander {
      * Here we use a map for constant time matching, instead of using if
      * (A.equals(B) || A.equals(C) || ...) to match Strings
      */
-    private static Map<String, String> kingSectionLikeMap = newHashMap();
+    private static Map<String, String> kingSectionLikeMap = new HashMap<String, String>();
 
     private static final String KING_NAMES = "kingNames";
     private static final String KING_TITLES = "kingTitles";
@@ -322,7 +321,7 @@ public class UsEnglishWordExpander implements WordExpander {
             {"Wyo", "", "wyoming"}, {"PR", "ambiguous", "puerto", "rico"}};
 
     // Again map for constant time searching.
-    private static Map<String, String[]> usStatesMap = newHashMap();
+    private static Map<String, String[]> usStatesMap = new HashMap<String, String[]>();
     static {
         for (int i = 0; i < usStates.length; i++) {
             usStatesMap.put(usStates[i][0], usStates[i]);
@@ -404,7 +403,7 @@ public class UsEnglishWordExpander implements WordExpander {
             tokenToWords(tokenVal);
         }
 
-        List<String> words = newArrayList();
+        List<String> words = new ArrayList<String>();
         for (Item item = utterance.getRelation(Relation.WORD).getHead(); item != null; item =
                 item.getNext()) {
             if (!item.toString().isEmpty() && !item.toString().contains("#")) {

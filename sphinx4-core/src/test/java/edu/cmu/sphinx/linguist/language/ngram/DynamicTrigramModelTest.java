@@ -1,7 +1,6 @@
 package edu.cmu.sphinx.linguist.language.ngram;
 
-import static com.google.common.base.Charsets.UTF_8;
-import static com.google.common.io.Resources.asCharSource;
+
 import static edu.cmu.sphinx.util.LogMath.getLogMath;
 import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -12,13 +11,12 @@ import static org.hamcrest.Matchers.equalTo;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-
-import com.google.common.base.CharMatcher;
-import com.google.common.base.Splitter;
 
 import edu.cmu.sphinx.linguist.WordSequence;
 import edu.cmu.sphinx.linguist.acoustic.UnitManager;
@@ -78,14 +76,13 @@ public class DynamicTrigramModelTest {
             IOException {
         DynamicTrigramModel model = new DynamicTrigramModel(dictionary);
         URL url = getClass().getResource("npr.transcript");
-        List<String> words =
-                Splitter.on(CharMatcher.WHITESPACE)
-                        .trimResults()
-                        .omitEmptyStrings()
-                        .splitToList(
-                                asCharSource(
-                                        new File("../words").toURI().toURL(),
-                                        UTF_8).read());
+        
+        Scanner scanner = new Scanner(new File("../words"));
+        List<String> words = new ArrayList<String>();
+        while (scanner.hasNext()) {
+            words.add(scanner.next());
+        }
+        scanner.close();
         model.setText(words);
         model.allocate();
         url = getClass().getResource("npr.lm");

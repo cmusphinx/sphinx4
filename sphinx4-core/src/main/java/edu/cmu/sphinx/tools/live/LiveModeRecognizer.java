@@ -18,11 +18,10 @@ import java.net.URL;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.google.common.base.Joiner;
-
 import edu.cmu.sphinx.frontend.util.ConcatFileDataSource;
 import edu.cmu.sphinx.recognizer.Recognizer;
 import edu.cmu.sphinx.result.Result;
+import edu.cmu.sphinx.result.WordResult;
 import edu.cmu.sphinx.util.*;
 import edu.cmu.sphinx.util.props.*;
 
@@ -121,7 +120,10 @@ public class LiveModeRecognizer implements Configurable {
             System.out.println("   Sentences: " + numUtterances);
             resultList.add(resultText);
 
-            hypothesisTranscript.write(Joiner.on(' ').join(result.getTimedBestResult(false)));
+            for (WordResult wr : result.getTimedBestResult(false)) {
+                hypothesisTranscript.write(wr.toString());
+                hypothesisTranscript.write(' ');
+            }
             hypothesisTranscript.write('\n');
             hypothesisTranscript.flush();
 

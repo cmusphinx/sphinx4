@@ -1,12 +1,15 @@
 package edu.cmu.sphinx.alignment;
 
-import static com.google.common.base.Joiner.on;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+
+import java.util.List;
 
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+
+import edu.cmu.sphinx.util.Utilities;
 
 public class UsEnglishWordExpanderTest {
 
@@ -61,6 +64,7 @@ public class UsEnglishWordExpanderTest {
 
     @Test(dataProvider = "data")
     public void textToWords(String text, String expanded) {
-        assertThat(on(' ').join(expander.expand(text)), equalTo(expanded));
+        List<String> tokens = expander.expand(text);
+        assertThat(Utilities.join(tokens), equalTo(expanded));
     }
 }

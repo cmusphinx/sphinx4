@@ -10,9 +10,8 @@
  */
 package edu.cmu.sphinx.alignment;
 
-import static com.google.common.collect.Lists.newArrayList;
-import static com.google.common.collect.Maps.newHashMap;
-
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
@@ -187,7 +186,7 @@ public class PathExtractor {
             return new Object[0];
         }
 
-        List<Object> list = newArrayList();
+        List<Object> list = new ArrayList<Object>();
         StringTokenizer tok = new StringTokenizer(path, ":.");
 
         while (tok.hasMoreTokens()) {
@@ -224,7 +223,7 @@ public class PathExtractor {
  * An enumerated type associated with path operations.
  */
 class OpEnum {
-    static private Map<String, OpEnum> map = newHashMap();
+    static private Map<String, OpEnum> map = new HashMap<String, OpEnum>();
 
     public final static OpEnum NEXT = new OpEnum("n");
     public final static OpEnum PREV = new OpEnum("p");

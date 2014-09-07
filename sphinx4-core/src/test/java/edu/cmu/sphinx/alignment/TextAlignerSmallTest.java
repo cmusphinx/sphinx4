@@ -1,26 +1,21 @@
 package edu.cmu.sphinx.alignment;
 
-import static com.google.common.collect.Lists.newArrayList;
-import static com.google.common.io.Resources.asCharSource;
-import static com.google.common.io.Resources.getResource;
 import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 import org.hamcrest.Matcher;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
-import com.google.common.base.Charsets;
-import com.google.common.base.Splitter;
-import com.google.common.io.CharSource;
-import com.google.common.primitives.Ints;
-
+import edu.cmu.sphinx.util.Utilities;
 
 public class TextAlignerSmallTest {
 
@@ -56,15 +51,19 @@ public class TextAlignerSmallTest {
 
     @BeforeClass
     public void setUp() throws IOException {
-        Splitter ws = Splitter.on(' ').trimResults().omitEmptyStrings();
-        URL url = getResource(getClass(), "transcription-small.txt");
-        CharSource source = asCharSource(url, Charsets.UTF_8);
-        aligner = new LongTextAligner(newArrayList(ws.split(source.read())), 2);
+        URL url = getClass().getResource("transcription-small.txt");
+        ArrayList<String> words = new ArrayList<String>();
+        Scanner scanner = new Scanner(url.openStream());
+        while (scanner.hasNext()) {
+            words.add(scanner.next());
+        }
+        scanner.close();
+        aligner = new LongTextAligner(words, 2);
     }
 
     @Test(dataProvider = "words")
     public void align(List<String> words, Matcher<List<Integer>> matcher) {
-        assertThat(Ints.asList(aligner.align(words)), matcher);
+        assertThat(Utilities.asList(aligner.align(words)), matcher);
     }
 
     @Test(enabled=false)

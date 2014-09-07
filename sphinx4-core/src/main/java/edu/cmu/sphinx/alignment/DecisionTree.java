@@ -13,10 +13,9 @@ package edu.cmu.sphinx.alignment;
 import java.io.*;
 import java.net.URL;
 import java.util.StringTokenizer;
+import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Implementation of a Classification and Regression Tree (CART) that is used
@@ -78,8 +77,7 @@ import org.slf4j.LoggerFactory;
  */
 public class DecisionTree {
     /** Logger instance. */
-    private static final Logger logger = LoggerFactory
-            .getLogger(DecisionTree.class);
+    private static final Logger logger = Logger.getLogger(DecisionTree.class.getSimpleName());
     /**
      * Entry in file represents the total number of nodes in the file. This
      * should be at the top of the file. The format should be "TOTAL n" where n
@@ -315,7 +313,7 @@ public class DecisionTree {
             decision = (DecisionNode) cart[nodeIndex];
             nodeIndex = decision.getNextNode(item);
         }
-        logger.debug("LEAF " + cart[nodeIndex].getValue());
+        logger.fine("LEAF " + cart[nodeIndex].getValue());
         return ((LeafNode) cart[nodeIndex]).getValue();
     }
 
@@ -525,7 +523,7 @@ public class DecisionTree {
             } else {
                 ret = qfalse;
             }
-            logger.trace(trace(val, yes, ret));
+            logger.fine(trace(val, yes, ret));
             return ret;
         }
 

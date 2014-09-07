@@ -12,14 +12,9 @@
 
 package edu.cmu.sphinx.linguist;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.collect.Lists.transform;
 import static java.lang.Math.min;
-import static java.util.Arrays.asList;
 
 import java.util.*;
-
-import com.google.common.base.Function;
 
 import edu.cmu.sphinx.linguist.dictionary.Dictionary;
 import edu.cmu.sphinx.linguist.dictionary.Word;
@@ -47,13 +42,11 @@ public final class WordSequence implements Comparable<WordSequence> {
 
     public static WordSequence asWordSequence(final Dictionary dictionary,
             String... words) {
-        Function<String, Word> toWord = new Function<String, Word>() {
-
-            public Word apply(String word) {
-                return dictionary.getWord(word);
-            }
-        };
-        return new WordSequence(transform(asList(words), toWord));
+        Word[] dictWords = new Word[words.length];
+        for (int i = 0; i < words.length; i++) {
+            dictWords[i] = dictionary.getWord(words[i]);
+        }
+        return new WordSequence(dictWords);
     }
 
     private final Word[] words;
@@ -183,7 +176,7 @@ public final class WordSequence implements Comparable<WordSequence> {
      * @return the n-th word in this sequence
      */
     public Word getWord(int n) {
-        checkArgument(n < words.length);
+        assert n < words.length;
         return words[n];
     }
 

@@ -10,15 +10,15 @@
  */
 package edu.cmu.sphinx.alignment;
 
-import static com.google.common.collect.Maps.newLinkedHashMap;
-
 import java.text.DecimalFormat;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
  * Implementation of the FeatureSet interface.
  */
 public class FeatureSet {
+
     private final Map<String, Object> featureMap;
     static DecimalFormat formatter;
 
@@ -26,7 +26,7 @@ public class FeatureSet {
      * Creates a new empty feature set
      */
     public FeatureSet() {
-        featureMap = newLinkedHashMap();
+        featureMap = new LinkedHashMap<String, Object>();
     }
 
     /**

@@ -24,6 +24,7 @@ import edu.cmu.sphinx.util.props.*;
 
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.UnsupportedAudioFileException;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -315,7 +316,11 @@ public class BatchModeRecognizer implements Configurable {
                 if (args.length != 2) {
                     ci.putResponse("Usage: edit component");
                 } else {
-                    ConfigurationManagerUtils.editConfig(cm, args[1]);
+                    try {
+                        ConfigurationManagerUtils.editConfig(cm, args[1]);
+                    } catch (Exception e) {
+                        ci.putResponse("Failed to save " + e);
+                    }
 //                    cm.editConfig(args[1]);
                 }
                 return "";
@@ -331,7 +336,7 @@ public class BatchModeRecognizer implements Configurable {
                 if (args.length != 2) {
                     ci.putResponse("Usage: save filename.xml");
                 } else {
-                    ConfigurationManagerUtils.save(cm, new File(args[1]));
+                      ConfigurationManagerUtils.save(cm, new File(args[1]));
 //                    cm.save(new File(args[1]));
                 }
                 return "";

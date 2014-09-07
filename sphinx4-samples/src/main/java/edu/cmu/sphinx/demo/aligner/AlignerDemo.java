@@ -11,14 +11,11 @@
  */
 package edu.cmu.sphinx.demo.aligner;
 
-import static com.google.common.base.Charsets.UTF_8;
-import static com.google.common.collect.Lists.transform;
-import static com.google.common.io.Files.asCharSource;
-import static edu.cmu.sphinx.result.WordResults.toSpelling;
-
 import java.io.File;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 import edu.cmu.sphinx.alignment.LongTextAligner;
 import edu.cmu.sphinx.api.SpeechAligner;
@@ -52,7 +49,10 @@ public class AlignerDemo {
         String transcript;
         if (args.length > 1) {
             audioUrl = new File(args[0]).toURI().toURL();
-            transcript = asCharSource(new File(args[1]), UTF_8).read();
+            Scanner scanner = new Scanner(new File(args[1]));  
+            scanner.useDelimiter("\\Z");  
+            transcript = scanner.next();
+            scanner.close();
         } else {
             audioUrl = AlignerDemo.class.getResource("10001-90210-01803.wav");
             transcript = TEXT;
@@ -65,8 +65,13 @@ public class AlignerDemo {
                 new SpeechAligner(acousticModelPath, dictionaryPath, g2pPath);
 
         List<WordResult> results = aligner.align(audioUrl, transcript);
+        List<String> stringResults = new ArrayList<String>();
+        for (WordResult wr : results) {
+            stringResults.add(wr.getWord().getSpelling());
+        }
+        
         LongTextAligner textAligner =
-                new LongTextAligner(transform(results, toSpelling()), 1);
+                new LongTextAligner(stringResults, 1);
         List<String> words = aligner.getWordExpander().expand(transcript);
 
         int[] aid = textAligner.align(words);

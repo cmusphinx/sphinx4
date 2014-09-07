@@ -3,12 +3,11 @@ package edu.cmu.sphinx.util.props;
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.util.*;
 import java.util.logging.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import com.google.common.base.Charsets;
 
 import edu.cmu.sphinx.util.SphinxLogFormatter;
 
@@ -279,7 +278,7 @@ public final class ConfigurationManagerUtils {
 
         assert cm != null;
         try {
-            PrintWriter pw = new PrintWriter(new OutputStreamWriter(new FileOutputStream(cmLocation), Charsets.UTF_8));
+            PrintWriter pw = new PrintWriter(new OutputStreamWriter(new FileOutputStream(cmLocation), Charset.forName("UTF-8")));
             String configXML = ConfigurationManagerUtils.toXML(cm);
             pw.print(configXML);
             pw.flush();

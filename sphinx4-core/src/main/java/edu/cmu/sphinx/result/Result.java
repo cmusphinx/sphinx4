@@ -12,7 +12,6 @@
 
 package edu.cmu.sphinx.result;
 
-import static com.google.common.collect.Lists.newArrayList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.reverse;
 
@@ -402,7 +401,7 @@ public class Result {
             token = token.getPredecessor();
         }
 
-        List<WordResult> result = newArrayList();
+        List<WordResult> result = new ArrayList<WordResult>();
         if (token != null) {
             Data prevWordFirstFeature = token.getData();
             Data prevFeature = prevWordFirstFeature;
@@ -446,7 +445,7 @@ public class Result {
         Word word = null;
         Data lastFeature = null;
         Data lastWordFirstFeature = null;
-        List<WordResult> result = newArrayList();
+        List<WordResult> result = new ArrayList<WordResult>();
 
         while (token != null) {
             if (token.isWord()) {

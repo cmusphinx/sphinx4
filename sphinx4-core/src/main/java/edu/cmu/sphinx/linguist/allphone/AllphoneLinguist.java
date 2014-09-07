@@ -22,7 +22,9 @@ public class AllphoneLinguist implements Linguist {
     public final static String PROP_UNIT_MANAGER = "unitManager";
     
     private AcousticModel acousticModel;
+    @SuppressWarnings("unused")
     private UnitManager unitManager;
+    @SuppressWarnings("unused")
     private Logger logger;
     
     public AllphoneLinguist() {    

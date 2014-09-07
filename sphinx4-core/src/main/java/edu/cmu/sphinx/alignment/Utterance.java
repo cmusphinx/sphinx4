@@ -10,9 +10,7 @@
  */
 package edu.cmu.sphinx.alignment;
 
-import static com.google.common.collect.Lists.newArrayList;
-
-import java.util.List;
+import java.util.Iterator;
 
 /**
  * Holds all the data for an utterance to be spoken. It is incrementally
@@ -37,7 +35,7 @@ public class Utterance {
     public Utterance(CharTokenizer tokenizer) {
         features = new FeatureSet();
         relations = new FeatureSet();
-        setTokenList(newArrayList(tokenizer));
+        setTokenList(tokenizer);
     }
 
     /**
@@ -206,9 +204,10 @@ public class Utterance {
      * @param tokenList the tokenList
      *
      */
-    private void setTokenList(List<Token> tokenList) {
+    private void setTokenList(Iterator<Token> tokenizer) {
         Relation relation = createRelation(Relation.TOKEN);
-        for (Token token : tokenList) {
+        while (tokenizer.hasNext()) {
+            Token token = tokenizer.next();
             String tokenWord = token.getWord();
 
             if (tokenWord != null && tokenWord.length() > 0) {

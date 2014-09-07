@@ -14,6 +14,8 @@ package edu.cmu.sphinx.util;
 
 import java.io.*;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /** Provides a set of generic utilities */
@@ -317,6 +319,25 @@ public class Utilities {
                 data[i] = data[i] / sum;
             }
         }
+    }
+
+
+    public static String join(List<String> tokens) {
+        StringBuilder builder = new StringBuilder();
+        for (String token : tokens) {
+            builder.append(token);
+            builder.append(' ');
+        }
+        return builder.toString().trim();
+    }
+
+
+    public static List<Integer> asList(int[] align) {
+        ArrayList<Integer> result = new ArrayList<Integer>(align.length);
+        for (int i : align) {
+            result.add(i);
+        }
+        return result;
     }
 }
 

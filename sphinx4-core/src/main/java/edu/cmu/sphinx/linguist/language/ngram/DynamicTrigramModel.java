@@ -1,18 +1,7 @@
 package edu.cmu.sphinx.linguist.language.ngram;
 
-import static com.google.common.base.Optional.fromNullable;
-import static com.google.common.collect.Lists.transform;
-import static com.google.common.collect.Maps.newHashMap;
-import static com.google.common.collect.Sets.newHashSet;
-import static com.google.common.collect.Sets.newTreeSet;
-import static java.util.Collections.unmodifiableSet;
-
 import java.io.IOException;
 import java.util.*;
-
-import com.google.common.base.Function;
-import com.google.common.collect.HashMultiset;
-import com.google.common.collect.Multiset;
 
 import edu.cmu.sphinx.linguist.WordSequence;
 import edu.cmu.sphinx.linguist.dictionary.Dictionary;
@@ -39,9 +28,9 @@ public class DynamicTrigramModel implements BackoffLanguageModel {
     private Map<WordSequence, Float> logBackoffs;
 
     public DynamicTrigramModel() {
-        vocabulary = newHashSet();
-        logProbs = newHashMap();
-        logBackoffs = newHashMap();
+        vocabulary = new HashSet<String>();
+        logProbs = new HashMap<WordSequence, Float>();
+        logBackoffs = new HashMap<WordSequence, Float>();
     }
 
     public DynamicTrigramModel(Dictionary dictionary) {
@@ -61,43 +50,47 @@ public class DynamicTrigramModel implements BackoffLanguageModel {
         logBackoffs.clear();
 
         vocabulary.addAll(textWords);
-        List<Word> words = transform(textWords, new Function<String, Word>() {
-
-            public Word apply(String word) {
-                return fromNullable(dictionary.getWord(word)).or(Word.UNKNOWN);
+        List<Word> words = new ArrayList<Word>();
+        
+        for (String stringWord : textWords) {
+            Word word = dictionary.getWord(stringWord);
+            if (word == null) {
+                words.add(Word.UNKNOWN);
+            } else {
+                words.add(word);
             }
-        });
+        }
 
-        Multiset<WordSequence> unigrams = HashMultiset.create();
-        Multiset<WordSequence> bigrams = HashMultiset.create();
-        Multiset<WordSequence> trigrams = HashMultiset.create();
+        HashMap<WordSequence, Integer> unigrams = new HashMap<WordSequence, Integer>();
+        HashMap<WordSequence, Integer> bigrams = new HashMap<WordSequence, Integer>();
+        HashMap<WordSequence, Integer> trigrams = new HashMap<WordSequence, Integer>();
 
         if (words.size() > 0)
-            unigrams.add(new WordSequence(words.get(0)));
+            addSequence(unigrams, new WordSequence(words.get(0)));
 
         if (words.size() > 1) {
-            unigrams.add(new WordSequence(words.get(1)));
-            bigrams.add(new WordSequence(words.get(0), words.get(1)));
+            addSequence(unigrams, new WordSequence(words.get(1)));
+            addSequence(bigrams, new WordSequence(words.get(0), words.get(1)));
         }
 
         if (words.size() > 2) {
-            bigrams.add(new WordSequence(words.get(1), words.get(2)));
-            trigrams.add(new WordSequence(words.get(0), words.get(1), words
+            addSequence(bigrams, new WordSequence(words.get(1), words.get(2)));
+            addSequence(trigrams, new WordSequence(words.get(0), words.get(1), words
                     .get(2)));
         }
 
         for (int i = 2; i < words.size(); ++i) {
-            unigrams.add(new WordSequence(words.get(i)));
-            bigrams.add(new WordSequence(words.get(i - 1), words.get(i)));
-            trigrams.add(new WordSequence(words.get(i - 2),
+            addSequence(unigrams, new WordSequence(words.get(i)));
+            addSequence(bigrams, new WordSequence(words.get(i - 1), words.get(i)));
+            addSequence(trigrams, new WordSequence(words.get(i - 2),
                                           words.get(i - 1),
                                           words.get(i)));
         }
 
-        Map<WordSequence, Float> uniprobs = newHashMap();
-        for (Multiset.Entry<WordSequence> e : unigrams.entrySet())
-            uniprobs.put(e.getElement(),
-                         (float) e.getCount() / unigrams.size());
+        Map<WordSequence, Float> uniprobs = new HashMap<WordSequence, Float>();
+        for (Map.Entry<WordSequence, Integer> e : unigrams.entrySet())
+            uniprobs.put(e.getKey(),
+                         (float) e.getValue() / unigrams.size());
 
         LogMath lmath = LogMath.getLogMath();
         float logUnigramWeight = lmath.linearToLog(unigramWeight);
@@ -105,9 +98,9 @@ public class DynamicTrigramModel implements BackoffLanguageModel {
         float logUniformProb = -lmath.linearToLog(uniprobs.size());
         float discount = .5f;
 
-        Set<WordSequence> sorted1grams = newTreeSet(unigrams.elementSet());
+        Set<WordSequence> sorted1grams = new TreeSet<WordSequence>(unigrams.keySet());
         Iterator<WordSequence> iter =
-                newTreeSet(bigrams.elementSet()).iterator();
+                new TreeSet<WordSequence>(bigrams.keySet()).iterator();
         WordSequence ws = iter.hasNext() ? iter.next() : null;
         for (WordSequence unigram : sorted1grams) {
             float p = lmath.linearToLog(uniprobs.get(unigram));
@@ -131,15 +124,15 @@ public class DynamicTrigramModel implements BackoffLanguageModel {
         }
 
         float deflate = 1 - discount;
-        Map<WordSequence, Float> biprobs = newHashMap();
-        for (Multiset.Entry<WordSequence> entry : bigrams.entrySet()) {
-            int unigramCount = unigrams.count(entry.getElement().getOldest());
-            biprobs.put(entry.getElement(),
-                        entry.getCount() * deflate / unigramCount);
+        Map<WordSequence, Float> biprobs = new HashMap<WordSequence, Float>();
+        for (Map.Entry<WordSequence, Integer> entry : bigrams.entrySet()) {
+            int unigramCount = unigrams.get(entry.getKey().getOldest());
+            biprobs.put(entry.getKey(),
+                        entry.getValue() * deflate / unigramCount);
         }
 
-        Set<WordSequence> sorted2grams = newTreeSet(bigrams.elementSet());
-        iter = newTreeSet(trigrams).iterator();
+        Set<WordSequence> sorted2grams = new TreeSet<WordSequence>(bigrams.keySet());
+        iter = new TreeSet<WordSequence>(trigrams.keySet()).iterator();
         ws = iter.hasNext() ? iter.next() : null;
         for (WordSequence biword : sorted2grams) {
             logProbs.put(biword, lmath.linearToLog(biprobs.get(biword)));
@@ -158,10 +151,20 @@ public class DynamicTrigramModel implements BackoffLanguageModel {
             logBackoffs.put(biword, lmath.linearToLog(sum));
         }
 
-        for (Multiset.Entry<WordSequence> e : trigrams.entrySet()) {
-            float p = e.getCount() * deflate;
-            p /= bigrams.count(e.getElement().getOldest());
-            logProbs.put(e.getElement(), lmath.linearToLog(p));
+        for (Map.Entry<WordSequence, Integer> e : trigrams.entrySet()) {
+            float p = e.getValue() * deflate;
+            p /= bigrams.get(e.getKey().getOldest());
+            logProbs.put(e.getKey(), lmath.linearToLog(p));
+        }
+    }
+
+    private void addSequence(HashMap<WordSequence, Integer> grams,
+            WordSequence wordSequence) {
+        Integer count = grams.get(wordSequence);
+        if (count != null) {
+            grams.put(wordSequence, count + 1);
+        } else {
+            grams.put(wordSequence, 1);
         }
     }
 
@@ -173,9 +176,12 @@ public class DynamicTrigramModel implements BackoffLanguageModel {
             return logProbs.get(wordSequence);
         }
         if (wordSequence.size() > 1) {
-            return fromNullable(logBackoffs.get(wordSequence.getOldest()))
-                    .or(LogMath.LOG_ONE) +
-                   getProbability(wordSequence.getNewest());
+            Float backoff = logBackoffs.get(wordSequence.getOldest());
+            if (backoff == null) {
+                return LogMath.LOG_ONE + getProbability(wordSequence.getNewest());
+            } else {
+                return backoff + getProbability(wordSequence.getNewest());
+            }
         }
         return LogMath.LOG_ZERO;
     }
@@ -186,7 +192,7 @@ public class DynamicTrigramModel implements BackoffLanguageModel {
     }
 
     public Set<String> getVocabulary() {
-        return unmodifiableSet(vocabulary);
+        return vocabulary;
     }
 
     public int getMaxDepth() {

@@ -1,17 +1,16 @@
 package edu.cmu.sphinx.alignment;
 
-import static com.google.common.collect.Lists.newArrayList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import com.google.common.primitives.Ints;
-
+import edu.cmu.sphinx.util.Utilities;
 
 public class TextAlignerLargeTest {
 
@@ -21,7 +20,7 @@ public class TextAlignerLargeTest {
     @BeforeClass
     public void setUp() {
         Random rng = new Random(42);
-        database = newArrayList();
+        database = new ArrayList<String>();
         String[] dictionary = new String[] {"foo", "bar", "baz", "quz"};
         for (int i = 0; i < 100000; ++i)
             database.add(dictionary[rng.nextInt(dictionary.length)]);
@@ -34,12 +33,12 @@ public class TextAlignerLargeTest {
         Integer[] ids = new Integer[query.size()];
         for (int i = 0; i < query.size(); ++i)
             ids[i] = 100 + i;
-        assertThat(Ints.asList(aligner.align(query)), contains(ids));
+        assertThat(Utilities.asList(aligner.align(query)), contains(ids));
     }
 
     @Test(invocationTimeOut = 10000, invocationCount = 1, enabled = false)
     public void alignLongSequence() {
         List<String> query = database.subList(1999, 8777);
-        assertThat(Ints.asList(aligner.align(query)), contains(1));
+        assertThat(Utilities.asList(aligner.align(query)), contains(1));
     }
 }

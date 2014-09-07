@@ -1,8 +1,5 @@
 package edu.cmu.sphinx.util.props;
 
-
-import static com.google.common.base.Preconditions.checkArgument;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -183,7 +180,7 @@ public class ConfigurationManager implements Cloneable {
         if (matchPropSheets.isEmpty())
             return null;
 
-        checkArgument(1 == matchPropSheets.size(), "multiple instances exist");
+        assert matchPropSheets.size() == 1;
         return confClass.cast(lookup(matchPropSheets.get(0).getInstanceName()));
     }
 

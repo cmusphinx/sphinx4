@@ -10,19 +10,6 @@
 
 package edu.cmu.sphinx.alignment;
 
-import static com.google.common.base.Functions.forMap;
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Predicates.in;
-import static com.google.common.base.Predicates.not;
-import static com.google.common.collect.Iterables.filter;
-import static com.google.common.collect.Iterables.limit;
-import static com.google.common.collect.Iterables.skip;
-import static com.google.common.collect.Lists.*;
-import static com.google.common.collect.Maps.newHashMap;
-import static com.google.common.collect.Sets.newHashSet;
-import static com.google.common.collect.Sets.newTreeSet;
-import static edu.cmu.sphinx.util.PriorityQueue.newPriorityQueue;
 import static java.lang.Math.abs;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
@@ -31,14 +18,8 @@ import static java.util.Collections.emptyList;
 
 import java.util.*;
 
-import com.google.common.base.Function;
-import com.google.common.base.Joiner;
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Multimap;
-import com.google.common.collect.Range;
-
-import edu.cmu.sphinx.util.PriorityQueue;
-
+import edu.cmu.sphinx.util.Range;
+import edu.cmu.sphinx.util.Utilities;
 
 /**
  *
@@ -98,7 +79,7 @@ public class LongTextAligner {
             }
 
             public List<Node> adjacent() {
-                List<Node> result = newArrayListWithCapacity(3);
+                List<Node> result = new ArrayList<Node>(3);
                 if (queryIndex < indices.size() &&
                     databaseIndex < shifts.size()) {
                     result.add(new Node(queryIndex + 1, databaseIndex + 1));
@@ -139,49 +120,58 @@ public class LongTextAligner {
         private final List<Integer> indices;
         private final List<Node> alignment;
 
-        public Alignment(List<String> query, Range<Integer> range) {
+        public Alignment(List<String> query, Range range) {
             this.query = query;
-            indices = newArrayList();
-            Set<Integer> shiftSet = newTreeSet();
+            indices = new ArrayList<Integer>();
+            Set<Integer> shiftSet = new TreeSet<Integer>();
             for (int i = 0; i < query.size(); ++i) {
-                if (tupleIndex.containsKey(query.get(i)))
+                if (tupleIndex.containsKey(query.get(i))) {
                     indices.add(i);
-                for (Integer shift : tupleIndex.get(query.get(i))) {
-                    if (range.contains(shift))
-                        shiftSet.add(shift);
+                    for (Integer shift : tupleIndex.get(query.get(i))) {
+                        if (range.contains(shift))
+                            shiftSet.add(shift);
+                    }                    
                 }
             }
 
-            shifts = newArrayList(shiftSet);
-
-            Map<Node, Integer> cost = newHashMap();
-            Function<Node, Integer> priority = forMap(cost, Integer.MAX_VALUE);
-            PriorityQueue<Node, Integer> openSet = newPriorityQueue(priority);
-            Collection<Node> closedSet = newHashSet();
-            Map<Node, Node> parents = newHashMap();
+            shifts = new ArrayList<Integer>(shiftSet);
+            final Map<Node, Integer> cost = new HashMap<Node, Integer>();
+            PriorityQueue<Node> openSet = new PriorityQueue<Node>(new Comparator<Node>() {
+                @Override
+                public int compare(Node o1, Node o2) {
+                    return cost.get(o1).compareTo(cost.get(o2));
+                }
+            });
+            Collection<Node> closedSet = new HashSet<Node>();
+            Map<Node, Node> parents = new HashMap<Node, Node>();
 
             Node startNode = new Node(0, 0);
             cost.put(startNode, 0);
-            openSet.insert(startNode);
+            openSet.add(startNode);
 
             while (!openSet.isEmpty()) {
-                Node q = openSet.extractMin();
+                Node q = openSet.poll();
                 if (closedSet.contains(q))
                     continue;
 
                 if (q.isTarget()) {
-                    List<Node> backtrace = newArrayList();
+                    List<Node> backtrace = new ArrayList<Node>();
                     while (parents.containsKey(q)) {
                         if (!q.isBoundary() && q.hasMatch())
                             backtrace.add(q);
                         q = parents.get(q);
                     }
-                    alignment = reverse(backtrace);
+                    alignment = new ArrayList<Node>(backtrace);
+                    Collections.reverse(alignment);
                     return;
                 }
 
                 closedSet.add(q);
-                for (Node nb : filter(q.adjacent(), not(in(closedSet)))) {
+                for (Node nb : q.adjacent()) {
+                    
+                    if (closedSet.contains(nb))
+                        continue;
+                    
                     // FIXME: move to appropriate location
                     int l = abs(indices.size() - shifts.size() - q.queryIndex +
                                 q.databaseIndex) -
@@ -189,11 +179,17 @@ public class LongTextAligner {
                                 nb.queryIndex +
                                 nb.databaseIndex);
 
-                    int oldScore = priority.apply(nb);
-                    int newScore = priority.apply(q) + nb.getValue() - l;
+                    Integer oldScore = cost.get(nb);
+                    Integer qScore = cost.get(q);
+                    if (oldScore == null)
+                        oldScore = Integer.MAX_VALUE;
+                    if (qScore == null)
+                        qScore = Integer.MAX_VALUE;
+                    
+                    int newScore = qScore + nb.getValue() - l;
                     if (newScore < oldScore) {
                         cost.put(nb, newScore);
-                        openSet.insert(nb);
+                        openSet.add(nb);
                         parents.put(nb, q);
                     }
                 }
@@ -207,10 +203,9 @@ public class LongTextAligner {
         }
     }
 
-    private final Joiner joiner;
     private final int tupleSize;
     private final List<String> reftup;
-    private final Multimap<String, Integer> tupleIndex;
+    private final HashMap<String, ArrayList<Integer>> tupleIndex;
     private List<String> refWords;
 
     /**
@@ -222,18 +217,20 @@ public class LongTextAligner {
      * @param tupleSize size of a tuple, must be greater or equal to 1
      */
     public LongTextAligner(List<String> words, int tupleSize) {
-        checkNotNull(words, "word list must not be null");
-        checkArgument(tupleSize > 0, "tuple size must be greater than zero");
+        assert words != null;
+        assert tupleSize > 0;
 
-        joiner = Joiner.on(' ');
         this.tupleSize = tupleSize;
         this.refWords = words;
 
         int offset = 0;
         reftup = getTuples(words);
-        tupleIndex = ArrayListMultimap.create();
-        for (String tuple : reftup)
-            tupleIndex.put(tuple, offset++);
+        tupleIndex = new HashMap<String, ArrayList<Integer>>();
+        for (String tuple : reftup) {
+            ArrayList<Integer> indexes = new ArrayList<Integer>();
+            indexes.add(offset++);
+            tupleIndex.put(tuple, indexes);
+        }
     }
 
     /**
@@ -242,7 +239,7 @@ public class LongTextAligner {
      * @return indices of alignment
      */
     public int[] align(List<String> query) {
-        return align(query, Range.closed(0, refWords.size() - 1));
+        return align(query, new Range(0, refWords.size() - 1));
     }
 
     /**
@@ -250,7 +247,7 @@ public class LongTextAligner {
      *
      * @return indices of alignment
      */
-    public int[] align(List<String> words, Range<Integer> range) {
+    public int[] align(List<String> words, Range range) {
         
         if (range.upperEndpoint() - range.lowerEndpoint() < tupleSize || words.size() < tupleSize) {
             return alignTextSimple(refWords.subList(range.lowerEndpoint(), range.upperEndpoint() + 1), words, range.lowerEndpoint());
@@ -277,12 +274,17 @@ public class LongTextAligner {
      * @param words words
      * @return list of tuples of size {@link #tupleSize}
      */
-    private List<String> getTuples(Iterable<String> words) {
-        List<String> result = newArrayList();
-        LinkedList<String> tuple = newLinkedList(limit(words, tupleSize - 1));
-        for (String word : skip(words, tupleSize - 1)) {
-            tuple.addLast(word);
-            result.add(joiner.join(tuple));
+    private List<String> getTuples(List<String> words) {
+        List<String> result = new ArrayList<String>();
+        LinkedList<String> tuple = new LinkedList<String>();
+        
+        Iterator<String> it = words.iterator();
+        for (int i = 0; i < tupleSize - 1; i++) {
+            tuple.add(it.next());
+        }
+        while (it.hasNext()) {
+            tuple.addLast(it.next());
+            result.add(Utilities.join(tuple));
             tuple.removeFirst();
         }
         return result;

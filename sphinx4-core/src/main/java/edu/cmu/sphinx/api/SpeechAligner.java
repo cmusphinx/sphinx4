@@ -9,25 +9,17 @@
 
 package edu.cmu.sphinx.api;
 
-import static com.google.common.base.Preconditions.checkState;
-import static com.google.common.collect.Iterables.addAll;
-import static com.google.common.collect.Lists.newArrayList;
-import static com.google.common.collect.Lists.transform;
-import static com.google.common.collect.Maps.newTreeMap;
-import static com.google.common.collect.Queues.newArrayDeque;
-import static edu.cmu.sphinx.result.WordResults.toSpelling;
-
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.google.common.collect.Range;
+import java.util.TreeMap;
+import java.util.logging.Logger;
 
 import edu.cmu.sphinx.alignment.LongTextAligner;
 import edu.cmu.sphinx.alignment.UsEnglishWordExpander;
@@ -37,13 +29,14 @@ import edu.cmu.sphinx.linguist.language.ngram.DynamicTrigramModel;
 import edu.cmu.sphinx.recognizer.Recognizer;
 import edu.cmu.sphinx.result.Result;
 import edu.cmu.sphinx.result.WordResult;
+import edu.cmu.sphinx.util.Range;
 import edu.cmu.sphinx.util.TimeFrame;
 
 /**
  * @author Alexander Solovets
  */
 public class SpeechAligner {
-    private final Logger logger = LoggerFactory.getLogger(getClass());
+    private final Logger logger = Logger.getLogger(getClass().getSimpleName());
 
     private static final int TUPLE_SIZE = 3;
 
@@ -105,12 +98,12 @@ public class SpeechAligner {
     public List<WordResult> align(URL audioUrl, List<String> transcript)
             throws IOException {
         LongTextAligner aligner = new LongTextAligner(transcript, TUPLE_SIZE);
-        Map<Integer, WordResult> alignedWords = newTreeMap();
-        Queue<Range<Integer>> ranges = newArrayDeque();
-        Queue<List<String>> texts = newArrayDeque();
-        Queue<TimeFrame> timeFrames = newArrayDeque();
+        Map<Integer, WordResult> alignedWords = new TreeMap<Integer, WordResult>();
+        Queue<Range> ranges = new LinkedList<Range>();
+        Queue<List<String>> texts = new ArrayDeque<List<String>>();
+        Queue<TimeFrame> timeFrames = new ArrayDeque<TimeFrame>();
 
-        ranges.offer(Range.closed(0, transcript.size()));
+        ranges.offer(new Range(0, transcript.size()));
         texts.offer(transcript);
         TimeFrame totalTimeFrame = TimeFrame.INFINITE;
         timeFrames.offer(totalTimeFrame);
@@ -124,12 +117,12 @@ public class SpeechAligner {
             }
 
             while (!texts.isEmpty()) {
-                checkState(texts.size() == ranges.size());
-                checkState(texts.size() == timeFrames.size());
+                assert texts.size() == ranges.size();
+                assert texts.size() == timeFrames.size();
 
                 List<String> text = texts.poll();
                 TimeFrame frame = timeFrames.poll();
-                Range<Integer> range = ranges.poll();
+                Range range = ranges.poll();
 
                 logger.info("Aligning frame " + frame + " to text " + text
                         + " range " + range);
@@ -146,10 +139,10 @@ public class SpeechAligner {
 
                 context.setSpeechSource(audioUrl.openStream(), frame);
 
-                List<WordResult> hypothesis = newArrayList();
+                List<WordResult> hypothesis = new ArrayList<WordResult>();
                 Result result;
                 while (null != (result = recognizer.recognize())) {
-                    addAll(hypothesis, result.getTimedBestResult(false));
+                    hypothesis.addAll(result.getTimedBestResult(false));
                 }
 
                 if (i == 0) {
@@ -159,7 +152,10 @@ public class SpeechAligner {
                     }
                 }
 
-                List<String> words = transform(hypothesis, toSpelling());
+                List<String> words = new ArrayList<String>();
+                for (WordResult wr : hypothesis) {
+                    words.add(wr.getWord().getSpelling());
+                }
                 int[] alignment = aligner.align(words, range);
 
                 List<WordResult> results = hypothesis;
@@ -181,12 +177,12 @@ public class SpeechAligner {
                     timeFrames, lastFrame);
         }
 
-        return newArrayList(alignedWords.values());
+        return new ArrayList<WordResult>(alignedWords.values());
     }
 
     private void scheduleNextAlignment(List<String> transcript,
             Map<Integer, WordResult> alignedWords,
-            Queue<Range<Integer>> ranges, Queue<List<String>> texts,
+            Queue<Range> ranges, Queue<List<String>> texts,
             Queue<TimeFrame> timeFrames, long lastFrame) {
         int prevKey = -1;
         long prevEnd = 0;
@@ -237,7 +233,7 @@ public class SpeechAligner {
 
     private void checkedOffer(List<String> transcript,
             Queue<List<String>> texts, Queue<TimeFrame> timeFrames,
-            Queue<Range<Integer>> ranges, int start, int end, long timeStart,
+            Queue<Range> ranges, int start, int end, long timeStart,
             long timeEnd) {
 
         double wordDensity = ((double) (timeEnd - timeStart)) / (end - start);
@@ -252,7 +248,7 @@ public class SpeechAligner {
 
         texts.offer(transcript.subList(start, end));
         timeFrames.offer(new TimeFrame(timeStart, timeEnd));
-        ranges.offer(Range.closed(start, end - 1));
+        ranges.offer(new Range(start, end - 1));
     }
 
     public WordExpander getWordExpander() {

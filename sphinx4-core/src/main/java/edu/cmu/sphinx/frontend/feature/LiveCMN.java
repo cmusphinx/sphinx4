@@ -12,8 +12,11 @@
 
 package edu.cmu.sphinx.frontend.feature;
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 
 import edu.cmu.sphinx.frontend.*;
 import edu.cmu.sphinx.frontend.endpoint.SpeechEndSignal;
@@ -52,6 +55,8 @@ import edu.cmu.sphinx.util.props.S4Integer;
  * @see BatchCMN
  */
 public class LiveCMN extends BaseDataProcessor {
+    
+    private DecimalFormat formatter = new DecimalFormat("0.00;-0.00", new DecimalFormatSymbols(Locale.US));;
 
     /** The property for the live CMN initial window size. */
     @S4Integer(defaultValue = 200)
@@ -208,6 +213,15 @@ public class LiveCMN extends BaseDataProcessor {
         numberFrame++;
 
         if (numberFrame > cmnShiftWindow) {
+            
+            StringBuilder cmn = new StringBuilder();
+            // calculate the mean first
+            for (int i = 0; i < currentMean.length; i++) {
+                cmn.append (formatter.format(currentMean[i]));
+                cmn.append(' ');
+            }
+            logger.info(cmn.toString());
+            
             updateMeanSumBuffers();
         }
     }

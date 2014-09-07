@@ -17,7 +17,7 @@ import java.util.List;
 
 import org.testng.annotations.Test;
 
-import com.google.common.primitives.Ints;
+import edu.cmu.sphinx.util.Utilities;
 
 public class SpeechAlignerTest {
 
@@ -39,6 +39,6 @@ public class SpeechAlignerTest {
         LongTextAligner aligner = new LongTextAligner(database, 1);
         int[] alignment = aligner.align(query);
 
-        assertThat(Ints.asList(alignment), contains(result));
+        assertThat(Utilities.asList(alignment), contains(result));
     }
 }

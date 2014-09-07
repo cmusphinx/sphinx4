@@ -11,9 +11,6 @@
 
 package edu.cmu.sphinx.util;
 
-import static com.google.common.base.Preconditions.checkState;
-
-
 /**
  * Provides a set of methods for performing simple math in the log domain.
  *
@@ -24,9 +21,6 @@ public final class LogMath {
 
     public static final float LOG_ZERO = -Float.MAX_VALUE;
     public static final float LOG_ONE = 0.f;
-
-    private static final String IMMUTABLE_INSTANCE_ERROR =
-        "Parameters must be set before the class instance is obtained";
 
     // Singeleton instance.
     private static LogMath instance;
@@ -134,7 +128,7 @@ public final class LogMath {
      */
     public static void setLogBase(float logBase) {
         synchronized(LogMath.class) {
-            checkState(null == instance, IMMUTABLE_INSTANCE_ERROR);
+            assert instance == null;
             LogMath.logBase = logBase;
         }
     }
@@ -147,7 +141,7 @@ public final class LogMath {
      */
     public static void setUseTable(boolean useTable) {
         synchronized(LogMath.class) {
-            checkState(null == instance, IMMUTABLE_INSTANCE_ERROR);
+            assert instance == null;
             LogMath.useTable = useTable;
         }
     }

@@ -10,7 +10,6 @@
  */
 package edu.cmu.sphinx.frontend.frequencywarp;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import edu.cmu.sphinx.frontend.*;
 import edu.cmu.sphinx.util.props.*;
 
@@ -184,8 +183,8 @@ public class MelFrequencyFilterBank2 extends BaseDataProcessor {
             double maxFreq)
         throws IllegalArgumentException
     {
-        checkArgument(windowLength > 0, "window length must be positive");
-        checkArgument(numberFilters > 0, "number of filters must be positive");
+        assert windowLength > 0;
+        assert numberFilters > 0;
         // Initialize edges and center freq. These variables will be updated so
         // that the center frequency of a filter is the right edge of the
         // filter to its left, and the left edge of the filter to its right.

@@ -57,7 +57,6 @@ import edu.cmu.sphinx.fst.semiring.TropicalSemiring;
  * 
  * @author Johannes Twiefel, Timo Baumann
  */
-@SuppressWarnings("restriction")
 public class SequiturImport {
 
     @XmlRootElement(name = "fsa")
