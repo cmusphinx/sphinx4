@@ -24,7 +24,7 @@ public class Stats {
 	private int nrOfClusters;
 	private Sphinx3Loader loader;
 	private float varFlor;
-	private LogMath logMath = LogMath.getInstance();
+	private LogMath logMath = LogMath.getLogMath();;
 
 	public Stats(Loader loader, int nrOfClusters, ClusteredDensityFileData means)
 			throws Exception {
