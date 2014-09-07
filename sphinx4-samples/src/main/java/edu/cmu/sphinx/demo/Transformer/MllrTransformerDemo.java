@@ -1,13 +1,16 @@
 package edu.cmu.sphinx.demo.Transformer;
 
+import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 
 import edu.cmu.sphinx.api.Configuration;
 import edu.cmu.sphinx.api.SpeechResult;
 import edu.cmu.sphinx.api.StreamSpeechRecognizer;
 import edu.cmu.sphinx.decoder.adaptation.ClusteredDensityFileData;
-import edu.cmu.sphinx.decoder.adaptation.Stats;
 import edu.cmu.sphinx.decoder.adaptation.MllrTransformer;
+import edu.cmu.sphinx.decoder.adaptation.Stats;
 import edu.cmu.sphinx.decoder.adaptation.Transform;
 import edu.cmu.sphinx.demo.transcriber.TranscriberDemo;
 import edu.cmu.sphinx.linguist.acoustic.tiedstate.Sphinx3Loader;
@@ -27,21 +30,21 @@ public class MllrTransformerDemo {
 
 		StreamSpeechRecognizer recognizer = new StreamSpeechRecognizer(
 				configuration);
-		
+
 		InputStream stream = TranscriberDemo.class
 				.getResourceAsStream("/edu/cmu/sphinx/demo/countsCollector/BillGates5Mins.wav");
 		recognizer.startRecognition(stream);
 
 		Sphinx3Loader loader = (Sphinx3Loader) recognizer.getLoader();
-		
+
 		ClusteredDensityFileData cm = new ClusteredDensityFileData(loader, 10);
 
 		Stats stats = new Stats(loader, 10, cm);
-		
+
 		Transform transform = new Transform(loader, 10);
-		
+
 		SpeechResult result;
-		
+
 		while ((result = recognizer.getResult()) != null) {
 			stats.collect(result.getResult());
 			System.out.format("Hypothesis: %s\n", result.getHypothesis());
@@ -60,13 +63,25 @@ public class MllrTransformerDemo {
 		}
 
 		recognizer.stopRecognition();
-		
+
 		transform.update(stats);
-		
-		MllrTransformer rt2 = new MllrTransformer(loader, transform, cm);
-		rt2.transformMean();
-		rt2.createNewMeansFile("/home/bogdanpetcu/TESTARE/testBillGates");
-	
+
+		MllrTransformer transformer = new MllrTransformer(loader, transform, cm);
+		transformer.transformMean();
+
+		BufferedReader reader = new BufferedReader(new InputStreamReader(
+				System.in));
+		System.out.print("Please enter filepath: ");
+		String fp = null;
+
+		try {
+			fp = reader.readLine();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		transformer.createNewMeansFile(fp);
+
 	}
 
 }
