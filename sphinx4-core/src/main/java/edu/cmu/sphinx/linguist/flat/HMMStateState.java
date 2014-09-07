@@ -14,8 +14,10 @@ package edu.cmu.sphinx.linguist.flat;
 
 import edu.cmu.sphinx.decoder.scorer.ScoreProvider;
 import edu.cmu.sphinx.frontend.Data;
+import edu.cmu.sphinx.frontend.FloatData;
 import edu.cmu.sphinx.linguist.HMMSearchState;
 import edu.cmu.sphinx.linguist.acoustic.HMMState;
+import edu.cmu.sphinx.linguist.acoustic.tiedstate.MixtureComponent;
 
 import java.io.Serializable;
 
@@ -94,6 +96,20 @@ public class HMMStateState extends SentenceHMMState
     public int getOrder() {
         return isEmitting ? 6 : 0;
     }
+
+
+	public float[] calculateComponentScore(FloatData features) {
+		MixtureComponent[] mc = this.getHMMState().getMixtureComponents();
+		float[] mw = this.getHMMState().getLogMixtureWeights();
+		float[] featureVector = FloatData.toFloatData(features).getValues();
+		float[] logComponentScore = new float[mc.length];
+
+		for (int i = 0; i < mc.length; i++) {
+			logComponentScore[i] = mc[i].getScore(featureVector) + mw[i];
+		}
+
+		return logComponentScore;
+	}
 }
 
 
