@@ -13,6 +13,7 @@
 package edu.cmu.sphinx.linguist.acoustic;
 
 import edu.cmu.sphinx.frontend.Data;
+import edu.cmu.sphinx.linguist.acoustic.tiedstate.MixtureComponent;
 
 /** Represents a single state in an HMM */
 public interface HMMState {
@@ -23,8 +24,27 @@ public interface HMMState {
      * @return the HMM
      */
     public HMM getHMM();
-
-
+    
+    /**
+     * Returns the mixture components associated with this Gaussian
+     *
+     * @return the array of mixture components
+     */
+    public MixtureComponent[] getMixtureComponents();
+    
+    /**
+     * Gets the id of the mixture
+     * 
+     * @return the id
+     */
+    public long getMixtureId();
+    
+    /**
+     * 
+     * @return the mixture weights vector
+     */
+    public float[] getLogMixtureWeights();
+    
     /**
      * Gets the state
      *
