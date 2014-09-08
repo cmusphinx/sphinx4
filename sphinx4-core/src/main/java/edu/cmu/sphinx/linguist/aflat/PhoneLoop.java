@@ -17,604 +17,582 @@ import java.util.List;
 
 import edu.cmu.sphinx.decoder.scorer.ScoreProvider;
 import edu.cmu.sphinx.frontend.Data;
-import edu.cmu.sphinx.linguist.*;
-import edu.cmu.sphinx.linguist.acoustic.*;
+import edu.cmu.sphinx.linguist.HMMSearchState;
+import edu.cmu.sphinx.linguist.SearchState;
+import edu.cmu.sphinx.linguist.SearchStateArc;
+import edu.cmu.sphinx.linguist.UnitSearchState;
+import edu.cmu.sphinx.linguist.WordSearchState;
+import edu.cmu.sphinx.linguist.WordSequence;
+import edu.cmu.sphinx.linguist.acoustic.AcousticModel;
+import edu.cmu.sphinx.linguist.acoustic.HMM;
+import edu.cmu.sphinx.linguist.acoustic.HMMPosition;
+import edu.cmu.sphinx.linguist.acoustic.HMMState;
+import edu.cmu.sphinx.linguist.acoustic.HMMStateArc;
+import edu.cmu.sphinx.linguist.acoustic.Unit;
 import edu.cmu.sphinx.linguist.dictionary.Pronunciation;
 import edu.cmu.sphinx.linguist.dictionary.Word;
 import edu.cmu.sphinx.util.LogMath;
 
-
-/** Builds a grammar sub-graph that matches all phones. This is suitable for use as an out-of-grammar detector */
+/**
+ * Builds a grammar sub-graph that matches all phones. This is suitable for use
+ * as an out-of-grammar detector
+ */
 public class PhoneLoop {
 
-    private final AcousticModel acousticModel;
-    private final float logOutOfGrammarBranchProbability;
-    private final float logPhoneInsertionProbability;
-    private final static SearchStateArc[] EMPTY_ARCS = new SearchStateArc[0];
-    private final FirstBranchState fbs;
-    private final LastBranchState lbs;
-    private final UnknownWordState uws;
-    private final SearchStateArc[] lbsArcSet;
-    private final SearchStateArc[] toGrammarSearchState;
+	private final AcousticModel acousticModel;
+	private final float logOutOfGrammarBranchProbability;
+	private final float logPhoneInsertionProbability;
+	private final static SearchStateArc[] EMPTY_ARCS = new SearchStateArc[0];
+	private final FirstBranchState fbs;
+	private final LastBranchState lbs;
+	private final UnknownWordState uws;
+	private final SearchStateArc[] lbsArcSet;
+	private final SearchStateArc[] toGrammarSearchState;
 
+	/**
+	 * Creates an PhoneLoop
+	 *
+	 * @param model
+	 *            the acoustic model probability of branching to this graph
+	 * @param logPhoneInsertionProbability
+	 *            probability of inserting a phone
+	 */
+	public PhoneLoop(AcousticModel model,
+			float logOutOfGrammarBranchProbability,
+			float logPhoneInsertionProbability,
+			SearchStateArc[] toGrammarSearchState) {
+		this.acousticModel = model;
+		this.logOutOfGrammarBranchProbability = logOutOfGrammarBranchProbability;
+		this.logPhoneInsertionProbability = logPhoneInsertionProbability;
+		this.toGrammarSearchState = toGrammarSearchState;
+		fbs = new FirstBranchState();
+		lbs = new LastBranchState();
+		uws = new UnknownWordState();
+		lbsArcSet = new SearchStateArc[1];
+		lbsArcSet[0] = lbs;
+	}
 
-    /**
-     * Creates an PhoneLoop
-     *
-     * @param model                        the acoustic model
-     *                                     probability of branching to this graph
-     * @param logPhoneInsertionProbability probability of inserting a phone
-     */
-    public PhoneLoop(AcousticModel model,
-                             float logOutOfGrammarBranchProbability,
-                             float logPhoneInsertionProbability, SearchStateArc[] toGrammarSearchState) {
-        this.acousticModel = model;
-        this.logOutOfGrammarBranchProbability = logOutOfGrammarBranchProbability;
-        this.logPhoneInsertionProbability = logPhoneInsertionProbability;
-        this.toGrammarSearchState = toGrammarSearchState;
-        fbs = new FirstBranchState();
-        lbs = new LastBranchState();
-        uws = new UnknownWordState();
-        lbsArcSet = new SearchStateArc[1];
-        lbsArcSet[0] = lbs;
-    }
+	/**
+	 * Returns an arc to this out-of-grammar graph
+	 *
+	 * @return an arc to the graph
+	 */
+	public SearchStateArc getPhoneLoop() {
+		return uws;
+	}
 
+	/** Represents the unknown word */
+	class UnknownWordState extends OogSearchState implements WordSearchState {
 
-    /**
-     * Returns an arc to this out-of-grammar graph
-     *
-     * @return an arc to the graph
-     */
-    public SearchStateArc getPhoneLoop() {
-        return uws;
-    }
+		private final SearchStateArc[] successors;
 
+		/** Creates the unknown word state */
+		UnknownWordState() {
+			successors = new SearchStateArc[1];
+			successors[0] = fbs;
+		}
 
-    /** Represents the unknown word */
-    class UnknownWordState extends OogSearchState implements WordSearchState {
+		/**
+		 * Returns the pronunciation for this word
+		 *
+		 * @return the pronunciation
+		 */
+		public Pronunciation getPronunciation() {
+			return Word.UNKNOWN.getPronunciations()[0];
+		}
 
-        private final SearchStateArc[] successors;
+		/**
+		 * Gets the state order for this state
+		 *
+		 * @return the state order
+		 */
+		@Override
+		public int getOrder() {
+			return 1;
+		}
 
+		/**
+		 * Returns the signature for this state
+		 *
+		 * @return the signature
+		 */
+		@Override
+		public String getSignature() {
+			return "oogUNK";
+		}
 
-        /** Creates the unknown word state */
-        UnknownWordState() {
-            successors = new SearchStateArc[1];
-            successors[0] = fbs;
-        }
+		/**
+		 * Gets the successor states for this search graph
+		 *
+		 * @return the successor states
+		 */
+		@Override
+		public SearchStateArc[] getSuccessors() {
+			return successors;
+		}
 
+		/**
+		 * Gets the language probability for transitioning to this state
+		 *
+		 * @return the language probability
+		 */
+		@Override
+		public float getLanguageProbability() {
+			return logOutOfGrammarBranchProbability;
+		}
 
-        /**
-         * Returns the pronunciation for this word
-         *
-         * @return the pronunciation
-         */
-        public Pronunciation getPronunciation() {
-            return Word.UNKNOWN.getPronunciations()[0];
-        }
+		/**
+		 * Returns true if this UnknownWordState indicates the start of a word.
+		 * Returns false if this UnknownWordState indicates the end of a word.
+		 *
+		 * @return true if this UnknownWordState indicates the start of a word,
+		 *         false if this UnknownWordState indicates the end of a word
+		 */
+		public boolean isWordStart() {
+			return true;
+		}
+	}
 
+	/** Represents the first branch state in the grammar */
+	class FirstBranchState extends OogSearchState {
 
-        /**
-         * Gets the state order for this state
-         *
-         * @return the state order
-         */
-        @Override
-        public int getOrder() {
-            return 1;
-        }
+		private final SearchStateArc[] successors;
 
+		/** Creates the first branch state */
+		FirstBranchState() {
+			List<OogHMM> successorList = new ArrayList<OogHMM>();
+			for (Iterator<Unit> i = acousticModel
+					.getContextIndependentUnitIterator(); i.hasNext();) {
+				Unit unit = i.next();
+				if (!unit.isFiller()) {
+					OogHMM hmm = new OogHMM(unit);
+					successorList.add(hmm);
+				}
+			}
+			successors = successorList.toArray(new SearchStateArc[successorList
+					.size()]);
+		}
 
-        /**
-         * Returns the signature for this state
-         *
-         * @return the signature
-         */
-        @Override
-        public String getSignature() {
-            return "oogUNK";
-        }
+		/**
+		 * Gets the state order for this state
+		 *
+		 * @return the state order
+		 */
+		@Override
+		public int getOrder() {
+			return 2;
+		}
 
+		/**
+		 * Returns the signature for this state
+		 *
+		 * @return the signature
+		 */
+		@Override
+		public String getSignature() {
+			return "oogFBS";
+		}
 
-        /**
-         * Gets the successor states for this search graph
-         *
-         * @return the successor states
-         */
-        @Override
-        public SearchStateArc[] getSuccessors() {
-            return successors;
-        }
+		/**
+		 * Gets the successor states for this search graph
+		 *
+		 * @return the successor states
+		 */
+		@Override
+		public SearchStateArc[] getSuccessors() {
+			return successors;
+		}
+	}
 
+	/** Represents an HMM Unit in the search graph */
+	class OogHMM extends OogSearchState implements UnitSearchState {
 
-        /**
-         * Gets the language probability for transitioning to this state
-         *
-         * @return the language probability
-         */
-        @Override
-        public float getLanguageProbability() {
-            return logOutOfGrammarBranchProbability;
-        }
+		private final HMM hmm;
+		private final SearchStateArc[] successors;
 
+		/**
+		 * Creates an HMM unit state
+		 *
+		 * @param unit
+		 *            the unit represented by this state
+		 */
+		OogHMM(Unit unit) {
+			hmm = acousticModel.lookupNearestHMM(unit, HMMPosition.UNDEFINED,
+					false);
+			successors = new SearchStateArc[1];
+			successors[0] = new OogHMMState(hmm.getInitialState(),
+					LogMath.LOG_ONE);
+		}
 
-        /**
-         * Returns true if this UnknownWordState indicates the start of a word. Returns false if this UnknownWordState
-         * indicates the end of a word.
-         *
-         * @return true if this UnknownWordState indicates the start of a word, false if this UnknownWordState indicates
-         *         the end of a word
-         */
-        public boolean isWordStart() {
-            return true;
-        }
-    }
+		/**
+		 * Gets the unit
+		 *
+		 * @return the unit
+		 */
+		public Unit getUnit() {
+			return hmm.getBaseUnit();
+		}
 
-    /** Represents the first branch state in the grammar */
-    class FirstBranchState extends OogSearchState {
+		/**
+		 * Gets the state order for this state
+		 *
+		 * @return the state order
+		 */
+		@Override
+		public int getOrder() {
+			return 3;
+		}
 
-        private final SearchStateArc[] successors;
+		/**
+		 * Returns the signature for this state
+		 *
+		 * @return the signature
+		 */
+		@Override
+		public String getSignature() {
+			return "oogHMM-" + getUnit();
+		}
 
+		/**
+		 * Gets the successor states for this search graph
+		 *
+		 * @return the successor states
+		 */
+		@Override
+		public SearchStateArc[] getSuccessors() {
+			return successors;
+		}
 
-        /** Creates the first branch state */
-        FirstBranchState() {
-            List<OogHMM> successorList = new ArrayList<OogHMM>();
-            for (Iterator<Unit> i = acousticModel.getContextIndependentUnitIterator(); i.hasNext();) {
-                Unit unit = i.next();
-            	if(!unit.isFiller()) {
-            		OogHMM hmm = new OogHMM(unit);
-                    successorList.add(hmm);
-            	}
-            }
-            successors = successorList.toArray(new SearchStateArc[successorList.size()]);
-        }
+		/**
+		 * Gets the insertion probability of entering this state
+		 *
+		 * @return the log probability
+		 */
+		@Override
+		public float getInsertionProbability() {
+			return logPhoneInsertionProbability;
+		}
+	}
 
+	/** Represents a single hmm state in the search graph */
+	class OogHMMState extends OogSearchState implements HMMSearchState,
+			ScoreProvider {
 
-        /**
-         * Gets the state order for this state
-         *
-         * @return the state order
-         */
-        @Override
-        public int getOrder() {
-            return 2;
-        }
+		final HMMState hmmState;
+		final float logProbability;
 
+		/**
+		 * Creates an OogHMMState
+		 *
+		 * @param hmmState
+		 *            the hmm state associated with this search state
+		 * @param logProbability
+		 *            the probability of transitioning to this state
+		 */
+		OogHMMState(HMMState hmmState, float logProbability) {
+			this.hmmState = hmmState;
+			this.logProbability = logProbability;
+		}
 
-        /**
-         * Returns the signature for this state
-         *
-         * @return the signature
-         */
-        @Override
-        public String getSignature() {
-            return "oogFBS";
-        }
+		/**
+		 * Returns the signature for this state
+		 *
+		 * @return the signature
+		 */
+		@Override
+		public String getSignature() {
+			return "oog-" + hmmState;
+		}
 
+		/**
+		 * Returns the hmm state
+		 *
+		 * @return the hmm state
+		 */
+		public HMMState getHMMState() {
+			return hmmState;
+		}
 
-        /**
-         * Gets the successor states for this search graph
-         *
-         * @return the successor states
-         */
-        @Override
-        public SearchStateArc[] getSuccessors() {
-            return successors;
-        }
-    }
+		/**
+		 * Determines if this is an emitting state
+		 *
+		 * @return true if this is an emitting state
+		 */
+		@Override
+		public boolean isEmitting() {
+			return hmmState.isEmitting();
+		}
 
-    /** Represents an HMM Unit in the search graph */
-    class OogHMM extends OogSearchState implements UnitSearchState {
+		/**
+		 * Generate a hashcode for an object
+		 *
+		 * @return the hashcode
+		 */
+		@Override
+		public int hashCode() {
+			return 191 + hmmState.hashCode();
+		}
 
-        private final HMM hmm;
-        private final SearchStateArc[] successors;
+		/**
+		 * Determines if the given object is equal to this object
+		 *
+		 * @param o
+		 *            the object to test
+		 * @return <code>true</code> if the object is equal to this
+		 */
+		@Override
+		public boolean equals(Object o) {
+			if (o == this) {
+				return true;
+			} else if (o instanceof OogHMMState) {
+				OogHMMState other = (OogHMMState) o;
+				return other.hmmState == hmmState;
+			} else {
+				return false;
+			}
+		}
 
+		/**
+		 * Returns the order of this state type among all of the search states
+		 *
+		 * @return the order
+		 */
+		@Override
+		public int getOrder() {
+			return isEmitting() ? 4 : 0;
+		}
 
-        /**
-         * Creates an HMM unit state
-         *
-         * @param unit the unit represented by this state
-         */
-        OogHMM(Unit unit) {
-            hmm = acousticModel.lookupNearestHMM(unit, HMMPosition.UNDEFINED, false);
-            successors = new SearchStateArc[1];
-            successors[0] = new OogHMMState(hmm.getInitialState(), LogMath.LOG_ONE);
-        }
-
-
-        /**
-         * Gets the unit
-         *
-         * @return the unit
-         */
-        public Unit getUnit() {
-            return hmm.getBaseUnit();
-        }
-
-
-        /**
-         * Gets the state order for this state
-         *
-         * @return the state order
-         */
-        @Override
-        public int getOrder() {
-            return 3;
-        }
-
-
-        /**
-         * Returns the signature for this state
-         *
-         * @return the signature
-         */
-        @Override
-        public String getSignature() {
-            return "oogHMM-" + getUnit();
-        }
-
-
-        /**
-         * Gets the successor states for this search graph
-         *
-         * @return the successor states
-         */
-        @Override
-        public SearchStateArc[] getSuccessors() {
-            return successors;
-        }
-
-
-        /**
-         * Gets the insertion probability of entering this state
-         *
-         * @return the log probability
-         */
-        @Override
-        public float getInsertionProbability() {
-            return logPhoneInsertionProbability;
-        }
-    }
-
-    /** Represents a single hmm state in the search graph */
-    class OogHMMState extends OogSearchState implements HMMSearchState,ScoreProvider {
-
-        final HMMState hmmState;
-        final float logProbability;
-
-
-        /**
-         * Creates an OogHMMState
-         *
-         * @param hmmState       the hmm state associated with this search state
-         * @param logProbability the probability of transitioning to this state
-         */
-        OogHMMState(HMMState hmmState, float logProbability) {
-            this.hmmState = hmmState;
-            this.logProbability = logProbability;
-        }
-
-
-        /**
-         * Returns the signature for this state
-         *
-         * @return the signature
-         */
-        @Override
-        public String getSignature() {
-            return "oog-" + hmmState;
-        }
-
-
-        /**
-         * Returns the hmm state
-         *
-         * @return the hmm state
-         */
-        public HMMState getHMMState() {
-            return hmmState;
-        }
-
-
-        /**
-         * Determines if this is an emitting state
-         *
-         * @return true if this is an emitting state
-         */
-        @Override
-        public boolean isEmitting() {
-            return hmmState.isEmitting();
-        }
-
-
-        /**
-         * Generate a hashcode for an object
-         *
-         * @return the hashcode
-         */
-        @Override
-        public int hashCode() {
-            return 191 + hmmState.hashCode();
-        }
-
-
-        /**
-         * Determines if the given object is equal to this object
-         *
-         * @param o the object to test
-         * @return <code>true</code> if the object is equal to this
-         */
-        @Override
-        public boolean equals(Object o) {
-            if (o == this) {
-                return true;
-            } else if (o instanceof OogHMMState) {
-                OogHMMState other = (OogHMMState) o;
-                return other.hmmState == hmmState;
-            } else {
-                return false;
-            }
-        }
-
-
-        /**
-         * Returns the order of this state type among all of the search states
-         *
-         * @return the order
-         */
-        @Override
-        public int getOrder() {
-            return isEmitting() ? 4 : 0;
-        }
-
-
-        /**
-         * Gets the successor states for this search graph
-         *
-         * @return the successor states
-         */
-        @Override
-        public SearchStateArc[] getSuccessors() {
-            if (hmmState.isExitState()) {
-                return lbsArcSet;
-            } else {
-                HMMStateArc[] arcs = hmmState.getSuccessors();
-                SearchStateArc[] successors = new SearchStateArc[arcs.length];
-                for (int i = 0; i < arcs.length; i++) {
-                    successors[i] = new OogHMMState(arcs[i].getHMMState(),
-                            arcs[i].getLogProbability());
-                }
-                return successors;
-            }
-        }
+		/**
+		 * Gets the successor states for this search graph
+		 *
+		 * @return the successor states
+		 */
+		@Override
+		public SearchStateArc[] getSuccessors() {
+			if (hmmState.isExitState()) {
+				return lbsArcSet;
+			} else {
+				HMMStateArc[] arcs = hmmState.getSuccessors();
+				SearchStateArc[] successors = new SearchStateArc[arcs.length];
+				for (int i = 0; i < arcs.length; i++) {
+					successors[i] = new OogHMMState(arcs[i].getHMMState(),
+							arcs[i].getLogProbability());
+				}
+				return successors;
+			}
+		}
 
 		public float getScore(Data feature) {
 			return hmmState.getScore(feature);
 		}
-    }
 
-    /** Represents the last branch state in the search graph */
-    class LastBranchState extends OogSearchState {
+	}
 
-        private final SearchStateArc[] successors;
+	/** Represents the last branch state in the search graph */
+	class LastBranchState extends OogSearchState {
 
+		private final SearchStateArc[] successors;
 
-        /** Creates the last branch state */
-        LastBranchState() {
-            successors = new SearchStateArc[2];
-            successors[0] = fbs;
-            successors[1] = toGrammarSearchState[0];
-        }
+		/** Creates the last branch state */
+		LastBranchState() {
+			successors = new SearchStateArc[2];
+			successors[0] = fbs;
+			successors[1] = toGrammarSearchState[0];
+		}
 
+		/**
+		 * Gets the state order for this state
+		 *
+		 * @return the state order
+		 */
+		@Override
+		public int getOrder() {
+			return 1;
+		}
 
-        /**
-         * Gets the state order for this state
-         *
-         * @return the state order
-         */
-        @Override
-        public int getOrder() {
-            return 1;
-        }
+		/**
+		 * Returns the signature for this state
+		 *
+		 * @return the signature
+		 */
+		@Override
+		public String getSignature() {
+			return "oogLBS";
+		}
 
+		/**
+		 * Gets the successor states for this search graph
+		 *
+		 * @return the successor states
+		 */
+		@Override
+		public SearchStateArc[] getSuccessors() {
+			return successors;
+		}
+	}
 
-        /**
-         * Returns the signature for this state
-         *
-         * @return the signature
-         */
-        @Override
-        public String getSignature() {
-            return "oogLBS";
-        }
+	/** Represents the final state in the search graph */
+	class FinalState extends OogSearchState {
 
+		/**
+		 * Gets the state order for this state
+		 *
+		 * @return the state order
+		 */
+		@Override
+		public int getOrder() {
+			return 2;
+		}
 
-        /**
-         * Gets the successor states for this search graph
-         *
-         * @return the successor states
-         */
-        @Override
-        public SearchStateArc[] getSuccessors() {
-            return successors;
-        }
-    }
+		/**
+		 * Returns the signature for this state
+		 *
+		 * @return the signature
+		 */
+		@Override
+		public String getSignature() {
+			return "oogFinal";
+		}
 
-    /** Represents the final state in the search graph */
-    class FinalState extends OogSearchState {
+		/**
+		 * Determines if this is a final state
+		 *
+		 * @return true if this is a final state
+		 */
+		@Override
+		public boolean isFinal() {
+			return true;
+		}
 
-        /**
-         * Gets the state order for this state
-         *
-         * @return the state order
-         */
-        @Override
-        public int getOrder() {
-            return 2;
-        }
+		/**
+		 * Gets the successor states for this search graph
+		 *
+		 * @return the successor states
+		 */
+		@Override
+		public SearchStateArc[] getSuccessors() {
+			return EMPTY_ARCS;
+		}
+	}
 
+	/** The base search state for this dynamic flat linguist. */
+	abstract class OogSearchState implements SearchState, SearchStateArc {
 
-        /**
-         * Returns the signature for this state
-         *
-         * @return the signature
-         */
-        @Override
-        public String getSignature() {
-            return "oogFinal";
-        }
+		final static int ANY = 0;
 
+		/**
+		 * Gets the set of successors for this state
+		 *
+		 * @return the set of successors
+		 */
+		public abstract SearchStateArc[] getSuccessors();
 
-        /**
-         * Determines if this is a final state
-         *
-         * @return true if this is a final state
-         */
-        @Override
-        public boolean isFinal() {
-            return true;
-        }
+		/**
+		 * Returns a unique string representation of the state. This string is
+		 * suitable (and typically used) for a label for a GDL node
+		 *
+		 * @return the signature
+		 */
+		public abstract String getSignature();
 
+		/**
+		 * Returns the order of this state type among all of the search states
+		 *
+		 * @return the order
+		 */
+		public abstract int getOrder();
 
-        /**
-         * Gets the successor states for this search graph
-         *
-         * @return the successor states
-         */
-        @Override
-        public SearchStateArc[] getSuccessors() {
-            return EMPTY_ARCS;
-        }
-    }
+		/**
+		 * Determines if this state is an emitting state
+		 *
+		 * @return true if this is an emitting state
+		 */
+		public boolean isEmitting() {
+			return false;
+		}
 
-    /** The base search state for this dynamic flat linguist. */
-    abstract class OogSearchState implements SearchState, SearchStateArc {
+		/**
+		 * Determines if this is a final state
+		 *
+		 * @return true if this is a final state
+		 */
+		public boolean isFinal() {
+			return false;
+		}
 
-        final static int ANY = 0;
+		/**
+		 * Returns a lex state associated with the searc state (not applicable
+		 * to this linguist)
+		 *
+		 * @return the lex state (null for this linguist)
+		 */
+		public Object getLexState() {
+			return null;
+		}
 
+		/**
+		 * Returns a well formatted string representation of this state
+		 *
+		 * @return the formatted string
+		 */
+		public String toPrettyString() {
+			return toString();
+		}
 
-        /**
-         * Gets the set of successors for this state
-         *
-         * @return the set of successors
-         */
-        public abstract SearchStateArc[] getSuccessors();
+		/**
+		 * Returns a string representation of this object
+		 *
+		 * @return a string representation
+		 */
+		@Override
+		public String toString() {
+			return getSignature();
+		}
 
+		/**
+		 * Returns the word history for this state (not applicable to this
+		 * linguist)
+		 *
+		 * @return the word history (null for this linguist)
+		 */
+		public WordSequence getWordHistory() {
+			return null;
+		}
 
-        /**
-         * Returns a unique string representation of the state. This string is suitable (and typically used) for a label
-         * for a GDL node
-         *
-         * @return the signature
-         */
-        public abstract String getSignature();
+		/**
+		 * Gets a successor to this search state
+		 *
+		 * @return the sucessor state
+		 */
+		public SearchState getState() {
+			return this;
+		}
 
+		/**
+		 * Gets the composite probability of entering this state
+		 *
+		 * @return the log probability
+		 */
+		public float getProbability() {
+			return getLanguageProbability() + getInsertionProbability();
+		}
 
-        /**
-         * Returns the order of this state type among all of the search states
-         *
-         * @return the order
-         */
-        public abstract int getOrder();
+		/**
+		 * Gets the language probability of entering this state
+		 *
+		 * @return the log probability
+		 */
+		public float getLanguageProbability() {
+			return LogMath.LOG_ONE;
+		}
 
-
-        /**
-         * Determines if this state is an emitting state
-         *
-         * @return true if this is an emitting state
-         */
-        public boolean isEmitting() {
-            return false;
-        }
-
-
-        /**
-         * Determines if this is a final state
-         *
-         * @return true if this is a final state
-         */
-        public boolean isFinal() {
-            return false;
-        }
-
-
-        /**
-         * Returns a lex state associated with the searc state (not applicable to this linguist)
-         *
-         * @return the lex state (null for this linguist)
-         */
-        public Object getLexState() {
-            return null;
-        }
-
-
-        /**
-         * Returns a well formatted string representation of this state
-         *
-         * @return the formatted string
-         */
-        public String toPrettyString() {
-            return toString();
-        }
-
-
-        /**
-         * Returns a string representation of this object
-         *
-         * @return a string representation
-         */
-        @Override
-        public String toString() {
-            return getSignature();
-        }
-
-
-        /**
-         * Returns the word history for this state (not applicable to this linguist)
-         *
-         * @return the word history (null for this linguist)
-         */
-        public WordSequence getWordHistory() {
-            return null;
-        }
-
-
-        /**
-         * Gets a successor to this search state
-         *
-         * @return the sucessor state
-         */
-        public SearchState getState() {
-            return this;
-        }
-
-
-        /**
-         * Gets the composite probability of entering this state
-         *
-         * @return the log probability
-         */
-        public float getProbability() {
-            return getLanguageProbability() + getInsertionProbability();
-        }
-
-
-        /**
-         * Gets the language probability of entering this state
-         *
-         * @return the log probability
-         */
-        public float getLanguageProbability() {
-            return LogMath.LOG_ONE;
-        }
-
-
-        /**
-         * Gets the insertion probability of entering this state
-         *
-         * @return the log probability
-         */
-        public float getInsertionProbability() {
-            return LogMath.LOG_ONE;
-        }
-    }
+		/**
+		 * Gets the insertion probability of entering this state
+		 *
+		 * @return the log probability
+		 */
+		public float getInsertionProbability() {
+			return LogMath.LOG_ONE;
+		}
+	}
 }

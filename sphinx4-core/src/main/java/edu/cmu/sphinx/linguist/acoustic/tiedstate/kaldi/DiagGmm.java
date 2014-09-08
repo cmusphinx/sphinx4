@@ -4,6 +4,7 @@ import java.util.Arrays;
 
 import edu.cmu.sphinx.frontend.Data;
 import edu.cmu.sphinx.frontend.FloatData;
+import edu.cmu.sphinx.linguist.acoustic.tiedstate.MixtureComponent;
 import edu.cmu.sphinx.linguist.acoustic.tiedstate.ScoreCachingSenone;
 import edu.cmu.sphinx.util.LogMath;
 
@@ -97,4 +98,12 @@ public class DiagGmm extends ScoreCachingSenone {
     public void dump(String msg) {
         System.out.format("%s DiagGmm: ID %d\n", msg, id);
     }
+
+	public MixtureComponent[] getMixtureComponents() {
+		return null;
+	}
+
+	public float[] getLogMixtureWeights() {
+		return null;
+	}
 }

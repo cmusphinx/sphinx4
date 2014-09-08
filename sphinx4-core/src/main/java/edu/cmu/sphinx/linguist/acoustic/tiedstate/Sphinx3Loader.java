@@ -169,7 +169,11 @@ public class Sphinx3Loader implements Loader {
     protected Pool<float[]> variancePool;
     protected Pool<float[][]> transitionsPool;
     protected Pool<float[]> mixtureWeightsPool;
-
+	private int numStates;
+	private int numStreams;
+	private int numGaussiansPerState;
+	private int[] vectorLength;
+    
     private Pool<float[][]> meanTransformationMatrixPool;
     private Pool<float[]> meanTransformationVectorPool;
     private Pool<float[][]> varianceTransformationMatrixPool;
@@ -239,8 +243,28 @@ public class Sphinx3Loader implements Loader {
     public Sphinx3Loader() {
 
     }
+    
+    public int getNumStates() {
+		return numStates;
+	}
 
-    public void newProperties(PropertySheet ps) throws PropertyException {
+	public int getNumStreams() {
+		return numStreams;
+	}
+
+	public int getNumGaussiansPerState() {
+		return numGaussiansPerState;
+	}
+
+	public int[] getVectorLength() {
+		return vectorLength;
+	}
+	
+	public String getLocation(){
+		return this.location.getPath();
+	}
+
+	public void newProperties(PropertySheet ps) throws PropertyException {
 
         init(ConfigurationManagerUtils.getResource(PROP_LOCATION, ps),
                 ps.getString(PROP_MODEL), ps.getString(PROP_DATA_LOCATION),
@@ -430,7 +454,7 @@ public class Sphinx3Loader implements Loader {
      * @throws IOException
      *             if an error occurs while loading the data
      */
-    protected Pool<float[]> loadDensityFile(String path, float floor)
+    public Pool<float[]> loadDensityFile(String path, float floor)
             throws IOException, URISyntaxException {
         Properties props = new Properties();
         int blockSize = 0;
@@ -489,6 +513,12 @@ public class Sphinx3Loader implements Loader {
         validateChecksum(dis, doCheckSum);
 
         dis.close();
+        
+        this.numStates = numStates;
+        this.numStreams = numStreams;
+        this.numGaussiansPerState = numGaussiansPerState;
+        this.vectorLength = vectorLength;
+        
         return pool;
     }
 
@@ -504,7 +534,7 @@ public class Sphinx3Loader implements Loader {
      * @throws IOException
      *             on error
      */
-    protected DataInputStream readS3BinaryHeader(String path, Properties props)
+    public DataInputStream readS3BinaryHeader(String path, Properties props)
             throws IOException, URISyntaxException {
 
         InputStream inputStream = getDataStream(path);
@@ -619,7 +649,7 @@ public class Sphinx3Loader implements Loader {
      * @throws IOException
      *             on error
      */
-    protected int readInt(DataInputStream dis) throws IOException {
+    public int readInt(DataInputStream dis) throws IOException {
         int val;
         if (swap) {
             val = Utilities.readLittleEndianInt(dis);
@@ -639,7 +669,7 @@ public class Sphinx3Loader implements Loader {
      * @throws IOException
      *             on error
      */
-    protected float readFloat(DataInputStream dis) throws IOException {
+    public float readFloat(DataInputStream dis) throws IOException {
         int val;
         if (swap) {
             val = Utilities.readLittleEndianInt(dis);
@@ -662,7 +692,7 @@ public class Sphinx3Loader implements Loader {
      * @throws IOException
      *             if an exception occurs
      */
-    protected float[] readFloatArray(DataInputStream dis, int size)
+    public float[] readFloatArray(DataInputStream dis, int size)
             throws IOException {
         float[] data = new float[size];
         for (int i = 0; i < size; i++) {

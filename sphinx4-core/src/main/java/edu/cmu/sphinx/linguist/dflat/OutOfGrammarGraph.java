@@ -11,17 +11,27 @@
  */
 package edu.cmu.sphinx.linguist.dflat;
 
-import edu.cmu.sphinx.decoder.scorer.ScoreProvider;
-import edu.cmu.sphinx.frontend.Data;
-import edu.cmu.sphinx.linguist.*;
-import edu.cmu.sphinx.linguist.acoustic.*;
-import edu.cmu.sphinx.linguist.dictionary.Pronunciation;
-import edu.cmu.sphinx.linguist.dictionary.Word;
-import edu.cmu.sphinx.util.LogMath;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
+import edu.cmu.sphinx.decoder.scorer.ScoreProvider;
+import edu.cmu.sphinx.frontend.Data;
+import edu.cmu.sphinx.linguist.HMMSearchState;
+import edu.cmu.sphinx.linguist.SearchState;
+import edu.cmu.sphinx.linguist.SearchStateArc;
+import edu.cmu.sphinx.linguist.UnitSearchState;
+import edu.cmu.sphinx.linguist.WordSearchState;
+import edu.cmu.sphinx.linguist.WordSequence;
+import edu.cmu.sphinx.linguist.acoustic.AcousticModel;
+import edu.cmu.sphinx.linguist.acoustic.HMM;
+import edu.cmu.sphinx.linguist.acoustic.HMMPosition;
+import edu.cmu.sphinx.linguist.acoustic.HMMState;
+import edu.cmu.sphinx.linguist.acoustic.HMMStateArc;
+import edu.cmu.sphinx.linguist.acoustic.Unit;
+import edu.cmu.sphinx.linguist.dictionary.Pronunciation;
+import edu.cmu.sphinx.linguist.dictionary.Word;
+import edu.cmu.sphinx.util.LogMath;
 
 
 /** Builds a grammar sub-graph that matches all phones. This is suitable for use as an out-of-grammar detector */
@@ -390,6 +400,7 @@ public class OutOfGrammarGraph {
         public float getScore(Data data) {
             return hmmState.getScore(data);
         }
+
     }
 
     /** Represents the last branch state in the search graph */
