@@ -64,11 +64,15 @@ public class DynamicTrigramModel implements BackoffLanguageModel {
         HashMap<WordSequence, Integer> unigrams = new HashMap<WordSequence, Integer>();
         HashMap<WordSequence, Integer> bigrams = new HashMap<WordSequence, Integer>();
         HashMap<WordSequence, Integer> trigrams = new HashMap<WordSequence, Integer>();
-
-        if (words.size() > 0)
+        int wordCount = 0;
+        
+        if (words.size() > 0) {
             addSequence(unigrams, new WordSequence(words.get(0)));
-
+            wordCount++;
+        }
+            
         if (words.size() > 1) {
+            wordCount++;
             addSequence(unigrams, new WordSequence(words.get(1)));
             addSequence(bigrams, new WordSequence(words.get(0), words.get(1)));
         }
@@ -80,6 +84,7 @@ public class DynamicTrigramModel implements BackoffLanguageModel {
         }
 
         for (int i = 2; i < words.size(); ++i) {
+            wordCount++;
             addSequence(unigrams, new WordSequence(words.get(i)));
             addSequence(bigrams, new WordSequence(words.get(i - 1), words.get(i)));
             addSequence(trigrams, new WordSequence(words.get(i - 2),
@@ -88,9 +93,10 @@ public class DynamicTrigramModel implements BackoffLanguageModel {
         }
 
         Map<WordSequence, Float> uniprobs = new HashMap<WordSequence, Float>();
-        for (Map.Entry<WordSequence, Integer> e : unigrams.entrySet())
+        for (Map.Entry<WordSequence, Integer> e : unigrams.entrySet()) {
             uniprobs.put(e.getKey(),
-                         (float) e.getValue() / unigrams.size());
+                         (float) e.getValue() / wordCount);
+        }
 
         LogMath lmath = LogMath.getLogMath();
         float logUnigramWeight = lmath.linearToLog(unigramWeight);
