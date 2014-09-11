@@ -11,7 +11,7 @@ public class Range {
     }
 
     public boolean contains(int shift) {
-        return shift >= start && shift <= end;
+        return shift >= start && shift < end;
     }
 
     public int lowerEndpoint() {

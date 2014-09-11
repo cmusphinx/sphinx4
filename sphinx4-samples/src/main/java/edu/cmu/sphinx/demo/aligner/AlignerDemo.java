@@ -27,7 +27,7 @@ import edu.cmu.sphinx.result.WordResult;
  *
  * <br/>
  * In order to initialize the aligner you need to specify several data files
- * which might be downloaded from the CMUSphinx website. There should be an
+ * which might be available on the CMUSphinx website. There should be an
  * acoustic model for your language, a dictionary, an optional G2P model to
  * convert word strings to pronunciation. <br/>
  * Currently the audio must have specific format (16khz, 16bit, mono), but in
@@ -75,7 +75,7 @@ public class AlignerDemo {
         List<String> words = aligner.getWordExpander().expand(transcript);
 
         int[] aid = textAligner.align(words);
-
+        
         int lastId = -1;
         for (int i = 0; i < aid.length; ++i) {
             if (aid[i] == -1) {

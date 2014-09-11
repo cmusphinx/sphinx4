@@ -124,7 +124,7 @@ public class LongTextAligner {
             this.query = query;
             indices = new ArrayList<Integer>();
             Set<Integer> shiftSet = new TreeSet<Integer>();
-            for (int i = 0; i < query.size(); ++i) {
+            for (int i = 0; i < query.size(); i++) {
                 if (tupleIndex.containsKey(query.get(i))) {
                     indices.add(i);
                     for (Integer shift : tupleIndex.get(query.get(i))) {
@@ -135,6 +135,7 @@ public class LongTextAligner {
             }
 
             shifts = new ArrayList<Integer>(shiftSet);
+
             final Map<Node, Integer> cost = new HashMap<Node, Integer>();
             PriorityQueue<Node> openSet = new PriorityQueue<Node>(1, new Comparator<Node>() {
                 @Override
@@ -225,11 +226,15 @@ public class LongTextAligner {
 
         int offset = 0;
         reftup = getTuples(words);
+
         tupleIndex = new HashMap<String, ArrayList<Integer>>();
         for (String tuple : reftup) {
-            ArrayList<Integer> indexes = new ArrayList<Integer>();
+            ArrayList<Integer> indexes = tupleIndex.get(tuple);
+            if (indexes == null) {
+                indexes = new ArrayList<Integer>();
+                tupleIndex.put(tuple, indexes);
+            }
             indexes.add(offset++);
-            tupleIndex.put(tuple, indexes);
         }
     }
 
@@ -239,7 +244,7 @@ public class LongTextAligner {
      * @return indices of alignment
      */
     public int[] align(List<String> query) {
-        return align(query, new Range(0, refWords.size() - 1));
+        return align(query, new Range(0, refWords.size()));
     }
 
     /**
@@ -250,10 +255,9 @@ public class LongTextAligner {
     public int[] align(List<String> words, Range range) {
         
         if (range.upperEndpoint() - range.lowerEndpoint() < tupleSize || words.size() < tupleSize) {
-            return alignTextSimple(refWords.subList(range.lowerEndpoint(), range.upperEndpoint() + 1), words, range.lowerEndpoint());
+            return alignTextSimple(refWords.subList(range.lowerEndpoint(), range.upperEndpoint()), words, range.lowerEndpoint());
         }
-        
-        
+
         int[] result = new int[words.size()];
         fill(result, -1);
         int lastIndex = 0;
@@ -296,6 +300,7 @@ public class LongTextAligner {
         int m = query.size() + 1;
         int[][] f = new int[n][m];
 
+        f[0][0] = 0;
         for (int i = 1; i < n; ++i) {
             f[i][0] = i;
         }
