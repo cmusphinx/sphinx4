@@ -13,6 +13,8 @@
 package edu.cmu.sphinx.linguist.acoustic.tiedstate;
 
 import edu.cmu.sphinx.util.props.Configurable;
+import edu.cmu.sphinx.decoder.adaptation.ClusteredDensityFileData;
+import edu.cmu.sphinx.decoder.adaptation.Transform;
 import edu.cmu.sphinx.linguist.acoustic.Unit;
 
 import java.io.IOException;
@@ -134,4 +136,9 @@ public interface Loader extends Configurable {
      * Returns the model properties
      */
     public Properties getProperties();
+
+    /**
+     * Apply the transform
+     */
+    public void update(Transform transform, ClusteredDensityFileData clusters);
 }

@@ -11,6 +11,8 @@
  */
 package edu.cmu.sphinx.linguist.acoustic.tiedstate;
 
+import edu.cmu.sphinx.decoder.adaptation.ClusteredDensityFileData;
+import edu.cmu.sphinx.decoder.adaptation.Transform;
 import edu.cmu.sphinx.linguist.acoustic.*;
 import static edu.cmu.sphinx.linguist.acoustic.tiedstate.Pool.Feature.*;
 import edu.cmu.sphinx.util.ExtendedStreamTokenizer;
@@ -169,6 +171,10 @@ public class Sphinx3Loader implements Loader {
     protected Pool<float[]> variancePool;
     protected Pool<float[][]> transitionsPool;
     protected Pool<float[]> mixtureWeightsPool;
+    private int numStates;
+    private int numStreams;
+    private int numGaussiansPerState;
+    private int[] vectorLength;
 
     private Pool<float[][]> meanTransformationMatrixPool;
     private Pool<float[]> meanTransformationVectorPool;
@@ -238,6 +244,26 @@ public class Sphinx3Loader implements Loader {
 
     public Sphinx3Loader() {
 
+    }
+
+    public int getNumStates() {
+        return numStates;
+    }
+
+    public int getNumStreams() {
+        return numStreams;
+    }
+
+    public int getNumGaussiansPerState() {
+        return numGaussiansPerState;
+    }
+
+    public int[] getVectorLength() {
+        return vectorLength;
+    }
+
+    public String getLocation() {
+        return this.location.getPath();
     }
 
     public void newProperties(PropertySheet ps) throws PropertyException {
@@ -430,7 +456,7 @@ public class Sphinx3Loader implements Loader {
      * @throws IOException
      *             if an error occurs while loading the data
      */
-    protected Pool<float[]> loadDensityFile(String path, float floor)
+    public Pool<float[]> loadDensityFile(String path, float floor)
             throws IOException, URISyntaxException {
         Properties props = new Properties();
         int blockSize = 0;
@@ -489,6 +515,12 @@ public class Sphinx3Loader implements Loader {
         validateChecksum(dis, doCheckSum);
 
         dis.close();
+
+        this.numStates = numStates;
+        this.numStreams = numStreams;
+        this.numGaussiansPerState = numGaussiansPerState;
+        this.vectorLength = vectorLength;
+
         return pool;
     }
 
@@ -504,7 +536,7 @@ public class Sphinx3Loader implements Loader {
      * @throws IOException
      *             on error
      */
-    protected DataInputStream readS3BinaryHeader(String path, Properties props)
+    public DataInputStream readS3BinaryHeader(String path, Properties props)
             throws IOException, URISyntaxException {
 
         InputStream inputStream = getDataStream(path);
@@ -619,7 +651,7 @@ public class Sphinx3Loader implements Loader {
      * @throws IOException
      *             on error
      */
-    protected int readInt(DataInputStream dis) throws IOException {
+    public int readInt(DataInputStream dis) throws IOException {
         int val;
         if (swap) {
             val = Utilities.readLittleEndianInt(dis);
@@ -639,7 +671,7 @@ public class Sphinx3Loader implements Loader {
      * @throws IOException
      *             on error
      */
-    protected float readFloat(DataInputStream dis) throws IOException {
+    public float readFloat(DataInputStream dis) throws IOException {
         int val;
         if (swap) {
             val = Utilities.readLittleEndianInt(dis);
@@ -662,7 +694,7 @@ public class Sphinx3Loader implements Loader {
      * @throws IOException
      *             if an exception occurs
      */
-    protected float[] readFloatArray(DataInputStream dis, int size)
+    public float[] readFloatArray(DataInputStream dis, int size)
             throws IOException {
         float[] data = new float[size];
         for (int i = 0; i < size; i++) {
@@ -1157,5 +1189,24 @@ public class Sphinx3Loader implements Loader {
             props.put(tokens[0], tokens[1]);
         }
         return props;
+    }
+
+    @Override
+    public void update(Transform transform, ClusteredDensityFileData clusters) {
+        for (int index = 0; index < meansPool.size(); index++) {
+            int transformClass = clusters.getClassIndex(index);
+            float[] tmean = new float[getVectorLength()[0]];
+            float[] mean = meansPool.get(index);
+
+            for (int l = 0; l < getVectorLength()[0]; l++) {
+                tmean[l] = 0;
+                for (int m = 0; m < getVectorLength()[0]; m++) {
+                    tmean[l] += transform.getAs()[transformClass][0][l][m]
+                            * mean[m];
+                }
+                tmean[l] += transform.getBs()[transformClass][0][l];
+            }
+            System.arraycopy(tmean, 0, mean, 0, tmean.length);
+        }
     }
 }

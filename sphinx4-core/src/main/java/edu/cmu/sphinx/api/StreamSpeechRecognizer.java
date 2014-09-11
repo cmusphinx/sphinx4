@@ -16,7 +16,6 @@ import java.io.InputStream;
 
 import edu.cmu.sphinx.util.TimeFrame;
 
-
 /**
  * Speech recognizer that works with audio resources.
  *

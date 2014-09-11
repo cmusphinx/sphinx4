@@ -13,6 +13,8 @@
  */
 package edu.cmu.sphinx.linguist.acoustic.tiedstate;
 
+import edu.cmu.sphinx.decoder.adaptation.ClusteredDensityFileData;
+import edu.cmu.sphinx.decoder.adaptation.Transform;
 import edu.cmu.sphinx.linguist.acoustic.*;
 import edu.cmu.sphinx.linguist.acoustic.tiedstate.HTK.GMMDiag;
 import edu.cmu.sphinx.linguist.acoustic.tiedstate.HTK.HMMSet;
@@ -937,5 +939,10 @@ public class HTKLoader implements Loader {
             }
             return pool;
         }
+    }
+
+    @Override
+    public void update(Transform transform, ClusteredDensityFileData clusters) {
+        // TODO not implemented yet
     }
 }

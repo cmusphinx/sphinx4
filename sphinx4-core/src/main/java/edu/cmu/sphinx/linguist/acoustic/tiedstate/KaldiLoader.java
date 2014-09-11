@@ -24,6 +24,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+
+import edu.cmu.sphinx.decoder.adaptation.ClusteredDensityFileData;
+import edu.cmu.sphinx.decoder.adaptation.Transform;
 import edu.cmu.sphinx.linguist.acoustic.HMMPosition;
 import edu.cmu.sphinx.linguist.acoustic.Unit;
 import edu.cmu.sphinx.linguist.acoustic.UnitManager;
@@ -282,5 +285,10 @@ public class KaldiLoader implements Loader {
      */
     public float[][] getTransformMatrix() {
         return transform;
+    }
+
+    @Override
+    public void update(Transform transform, ClusteredDensityFileData clusters) {
+        // TODO Not implemented yet
     }
 }

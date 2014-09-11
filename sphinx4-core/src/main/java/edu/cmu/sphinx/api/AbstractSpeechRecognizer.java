@@ -13,9 +13,11 @@ package edu.cmu.sphinx.api;
 
 import java.io.IOException;
 
-import edu.cmu.sphinx.result.Result;
-
+import edu.cmu.sphinx.decoder.adaptation.ClusteredDensityFileData;
+import edu.cmu.sphinx.decoder.adaptation.Stats;
+import edu.cmu.sphinx.decoder.adaptation.Transform;
 import edu.cmu.sphinx.recognizer.Recognizer;
+import edu.cmu.sphinx.result.Result;
 
 
 /**
@@ -25,6 +27,8 @@ public class AbstractSpeechRecognizer {
 
     protected final Context context;
     protected final Recognizer recognizer;
+    
+    protected ClusteredDensityFileData clusters;
 
     protected final SpeechSourceProvider speechSourceProvider;
 
@@ -49,5 +53,16 @@ public class AbstractSpeechRecognizer {
     public SpeechResult getResult() {
         Result result = recognizer.recognize();
         return null == result ? null : new SpeechResult(result);
+    }
+    
+    public Stats createStats(int numClasses) {
+        clusters = new ClusteredDensityFileData(context.getLoader(), numClasses);
+        return new Stats(context.getLoader(), clusters);
+    }
+
+    public void setTransform(Transform transform) {
+        if (clusters != null) {
+            context.getLoader().update(transform, clusters);
+        }
     }
 }

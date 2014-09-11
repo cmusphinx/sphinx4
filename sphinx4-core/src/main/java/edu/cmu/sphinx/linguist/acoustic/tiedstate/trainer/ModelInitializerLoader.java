@@ -12,6 +12,8 @@
 
 package edu.cmu.sphinx.linguist.acoustic.tiedstate.trainer;
 
+import edu.cmu.sphinx.decoder.adaptation.ClusteredDensityFileData;
+import edu.cmu.sphinx.decoder.adaptation.Transform;
 import edu.cmu.sphinx.linguist.acoustic.HMM;
 import edu.cmu.sphinx.linguist.acoustic.HMMPosition;
 import edu.cmu.sphinx.linguist.acoustic.Unit;
@@ -644,5 +646,10 @@ public class ModelInitializerLoader implements Loader {
 
     public Properties getProperties() {
         return new Properties();
+    }
+
+    @Override
+    public void update(Transform transform, ClusteredDensityFileData clusters) {
+        // TODO Not implemented yet   
     }
 }
