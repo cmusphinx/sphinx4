@@ -61,6 +61,7 @@ public interface HMMState {
      */
     public float getScore(Data data);
 
+    public float[] calculateComponentScore(Data data);
 
     /**
      * Determines if this HMMState is an emitting state
