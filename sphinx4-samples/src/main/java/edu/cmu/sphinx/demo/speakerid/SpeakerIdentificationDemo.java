@@ -4,9 +4,15 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 
+import edu.cmu.sphinx.api.Configuration;
+import edu.cmu.sphinx.api.SpeechResult;
+import edu.cmu.sphinx.api.StreamSpeechRecognizer;
+import edu.cmu.sphinx.decoder.adaptation.Stats;
+import edu.cmu.sphinx.decoder.adaptation.Transform;
 import edu.cmu.sphinx.speakerid.Segment;
 import edu.cmu.sphinx.speakerid.SpeakerCluster;
 import edu.cmu.sphinx.speakerid.SpeakerIdentification;
+import edu.cmu.sphinx.util.TimeFrame;
 
 public class SpeakerIdentificationDemo {
 
@@ -20,7 +26,7 @@ public class SpeakerIdentificationDemo {
     }
 
     /**
-     * 
+     *
      * @param speakers
      *            An array of clusters for which it is needed to be printed the
      *            speakers intervals
@@ -38,10 +44,73 @@ public class SpeakerIdentificationDemo {
         }
     }
 
-    public static void main(String[] args) throws IOException {
+    /**
+     * 
+     * @param speakers
+     * 			An array of clusters for which it is needed to get the speakers
+     * 			intervals for decoding with per-speaker adaptation with diarization.
+     * @param url
+     * @throws Exception
+     */
+	public static void DiarizationDecoding(ArrayList<SpeakerCluster> speakers, URL url) throws Exception {
+
+		Configuration configuration = new Configuration();
+
+		// Load model from the jar
+		configuration.setAcousticModelPath("resource:/edu/cmu/sphinx/models/acoustic/wsj");
+		configuration.setDictionaryPath("resource:/edu/cmu/sphinx/models/acoustic/wsj/dict/cmudict.0.6d");
+		configuration.setLanguageModelPath("resource:/edu/cmu/sphinx/models/language/en-us.lm.dmp");
+
+		StreamSpeechRecognizer recognizer =
+				new StreamSpeechRecognizer(configuration);
+
+		TimeFrame t;
+		Stats stats;
+		Transform profile;
+		SpeechResult result;
+
+		for (SpeakerCluster spk : speakers) {
+			ArrayList<Segment> segments = spk.getSpeakerIntervals();
+			for (Segment seg : segments)  {
+
+				long startTime = seg.getStartTime();
+				long endTime   = seg.getStartTime() + seg.getLength();
+				t = new TimeFrame(startTime, endTime);
+
+				stats = recognizer.createStats(1);
+				recognizer.startRecognition(url.openStream(), t);
+
+				boolean resultIsNotNull = false;
+				while ((result = recognizer.getResult()) != null) {
+					stats.collect(result);
+					resultIsNotNull = true;
+				}
+
+				recognizer.stopRecognition();
+
+				if(resultIsNotNull) {
+					// Create and set the SpeakerProfile
+					profile = stats.createTransform();
+					recognizer.setTransform(profile);
+
+					// Decode again with updated SpeakerProfile
+					recognizer.startRecognition(url.openStream(), t);
+					while ((result = recognizer.getResult()) != null) {
+						System.out.format("Hypothesis: %s\n",
+								result.getHypothesis());
+					}
+					recognizer.stopRecognition();
+				}
+			}
+		}
+	}
+
+    public static void main(String[] args) throws Exception {
         SpeakerIdentification sd = new SpeakerIdentification();
         URL url = SpeakerIdentificationDemo.class.getResource("test.wav");
         ArrayList<SpeakerCluster> clusters = sd.cluster(url.openStream());
+
         printSpeakerIntervals(clusters, url.getPath());
+        DiarizationDecoding(clusters, url);
     }
 }

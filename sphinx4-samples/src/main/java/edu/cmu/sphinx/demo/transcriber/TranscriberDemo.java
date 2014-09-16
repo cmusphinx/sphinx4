@@ -12,6 +12,7 @@
 package edu.cmu.sphinx.demo.transcriber;
 
 import java.io.InputStream;
+import java.net.URL;
 
 import edu.cmu.sphinx.api.Configuration;
 import edu.cmu.sphinx.api.SpeechResult;
@@ -94,6 +95,22 @@ public class TranscriberDemo {
                     result.getHypothesis());
         }
         recognizer.stopRecognition();
-        
+
+
+        // Decode again with the loaded transform
+
+        stream = TranscriberDemo.class.getResourceAsStream(
+                "/edu/cmu/sphinx/demo/aligner/10001-90210-01803.wav");
+
+        URL url = TranscriberDemo.class.getResource(
+        		"/edu/cmu/sphinx/demo/transcriber/10001-90210-01803-mllr_matrix");
+        recognizer.loadTransform(url.getFile(), 1);
+
+        recognizer.startRecognition(stream);
+        while ((result = recognizer.getResult()) != null) {
+            System.out.format("Hypothesis: %s\n",
+                    result.getHypothesis());
+        }
+        recognizer.stopRecognition();
     }
 }
