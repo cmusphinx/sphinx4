@@ -180,6 +180,10 @@ public class Token implements Scoreable {
 
         return logTotalScore;
     }
+    
+    public float[] calculateComponentScore(Data feature){
+    	return ((ScoreProvider) searchState).getComponentScore(feature);
+    }
 
 
     /**

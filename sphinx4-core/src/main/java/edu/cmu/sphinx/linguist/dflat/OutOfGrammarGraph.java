@@ -390,6 +390,12 @@ public class OutOfGrammarGraph {
         public float getScore(Data data) {
             return hmmState.getScore(data);
         }
+
+
+		@Override
+		public float[] getComponentScore(Data data) {
+			return hmmState.calculateComponentScore(data);
+		}
     }
 
     /** Represents the last branch state in the search graph */

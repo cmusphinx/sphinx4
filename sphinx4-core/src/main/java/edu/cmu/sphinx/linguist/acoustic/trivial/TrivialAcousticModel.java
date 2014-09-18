@@ -13,6 +13,7 @@
 package edu.cmu.sphinx.linguist.acoustic.trivial;
 
 import edu.cmu.sphinx.frontend.Data;
+import edu.cmu.sphinx.frontend.FloatData;
 import edu.cmu.sphinx.linguist.acoustic.*;
 import edu.cmu.sphinx.linguist.acoustic.tiedstate.MixtureComponent;
 import edu.cmu.sphinx.util.props.PropertyException;
@@ -325,6 +326,10 @@ class TrivialHMMState implements HMMState {
      */
     public float getScore(Data feature) {
         return 0.0f;
+    }
+    
+    public float[] calculateComponentScore(Data feature){
+    	return new float[((FloatData) feature).getValues().length];
     }
 
 

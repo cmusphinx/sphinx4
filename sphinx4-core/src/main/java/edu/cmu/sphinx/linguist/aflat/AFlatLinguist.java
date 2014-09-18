@@ -1465,6 +1465,11 @@ public class AFlatLinguist implements Linguist, Configurable {
 		public float getScore(Data data) {
 			return hmmState.getScore(data);
 		}
+
+		@Override
+		public float[] getComponentScore(Data data) {
+			return hmmState.calculateComponentScore(data);
+		}
 	}
 
 	/** The search graph that is produced by the flat linguist. */

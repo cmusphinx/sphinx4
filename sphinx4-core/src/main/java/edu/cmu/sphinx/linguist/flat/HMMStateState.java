@@ -94,6 +94,12 @@ public class HMMStateState extends SentenceHMMState
     public int getOrder() {
         return isEmitting ? 6 : 0;
     }
+
+
+	@Override
+	public float[] getComponentScore(Data feature) {
+		return hmmState.calculateComponentScore(feature);
+	}
 }
 
 

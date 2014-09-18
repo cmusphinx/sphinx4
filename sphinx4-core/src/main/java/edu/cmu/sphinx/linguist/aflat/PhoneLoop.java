@@ -390,6 +390,12 @@ public class PhoneLoop {
 		public float getScore(Data feature) {
 			return hmmState.getScore(feature);
 		}
+
+
+		@Override
+		public float[] getComponentScore(Data feature) {
+			return hmmState.calculateComponentScore(feature);
+		}
     }
 
     /** Represents the last branch state in the search graph */

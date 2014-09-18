@@ -1437,6 +1437,10 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
         public float getScore(Data data) {
             return hmmState.getScore(data);
         }
+
+		public float[] getComponentScore(Data data) {
+			return hmmState.calculateComponentScore(data);
+		}
     }
 
 
