@@ -65,42 +65,41 @@ public class SpeakerIdentificationDemo {
 				new StreamSpeechRecognizer(configuration);
 
 		TimeFrame t;
-		Stats stats;
-		Transform profile;
 		SpeechResult result;
 
 		for (SpeakerCluster spk : speakers) {
+			Stats stats = recognizer.createStats(1);
 			ArrayList<Segment> segments = spk.getSpeakerIntervals();
-			for (Segment seg : segments)  {
 
+			for (Segment s : segments)  {
+				long startTime = s.getStartTime();
+				long endTime   = s.getStartTime() + s.getLength();
+				t = new TimeFrame(startTime, endTime);
+
+				recognizer.startRecognition(url.openStream(), t);
+				while ((result = recognizer.getResult()) != null) {
+					stats.collect(result);
+				}
+				recognizer.stopRecognition();
+			}
+
+			Transform profile;
+			// Create the Transformation
+			profile = stats.createTransform();
+			recognizer.setTransform(profile);
+
+			for (Segment seg : segments)  {
 				long startTime = seg.getStartTime();
 				long endTime   = seg.getStartTime() + seg.getLength();
 				t = new TimeFrame(startTime, endTime);
 
-				stats = recognizer.createStats(1);
+				// Decode again with updated SpeakerProfile
 				recognizer.startRecognition(url.openStream(), t);
-
-				boolean resultIsNotNull = false;
 				while ((result = recognizer.getResult()) != null) {
-					stats.collect(result);
-					resultIsNotNull = true;
+					System.out.format("Hypothesis: %s\n",
+							result.getHypothesis());
 				}
-
 				recognizer.stopRecognition();
-
-				if(resultIsNotNull) {
-					// Create and set the SpeakerProfile
-					profile = stats.createTransform();
-					recognizer.setTransform(profile);
-
-					// Decode again with updated SpeakerProfile
-					recognizer.startRecognition(url.openStream(), t);
-					while ((result = recognizer.getResult()) != null) {
-						System.out.format("Hypothesis: %s\n",
-								result.getHypothesis());
-					}
-					recognizer.stopRecognition();
-				}
 			}
 		}
 	}
