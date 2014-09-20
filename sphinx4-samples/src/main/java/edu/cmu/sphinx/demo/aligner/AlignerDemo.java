@@ -71,7 +71,7 @@ public class AlignerDemo {
         }
         
         LongTextAligner textAligner =
-                new LongTextAligner(stringResults, 1);
+                new LongTextAligner(stringResults, 2);
         List<String> words = aligner.getWordExpander().expand(transcript);
 
         int[] aid = textAligner.align(words);
