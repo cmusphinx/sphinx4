@@ -92,17 +92,18 @@ public class DynamicTrigramModel implements BackoffLanguageModel {
                                           words.get(i)));
         }
 
+        float discount = .5f;
+        float deflate = 1 - discount;
         Map<WordSequence, Float> uniprobs = new HashMap<WordSequence, Float>();
         for (Map.Entry<WordSequence, Integer> e : unigrams.entrySet()) {
             uniprobs.put(e.getKey(),
-                         (float) e.getValue() / wordCount);
+                         (float) e.getValue() * deflate / wordCount);
         }
 
         LogMath lmath = LogMath.getLogMath();
         float logUnigramWeight = lmath.linearToLog(unigramWeight);
         float invLogUnigramWeight = lmath.linearToLog(1 - unigramWeight);
         float logUniformProb = -lmath.linearToLog(uniprobs.size());
-        float discount = .5f;
 
         Set<WordSequence> sorted1grams = new TreeSet<WordSequence>(unigrams.keySet());
         Iterator<WordSequence> iter =
@@ -129,7 +130,6 @@ public class DynamicTrigramModel implements BackoffLanguageModel {
             logBackoffs.put(unigram, lmath.linearToLog(discount / (1 - sum)));
         }
 
-        float deflate = 1 - discount;
         Map<WordSequence, Float> biprobs = new HashMap<WordSequence, Float>();
         for (Map.Entry<WordSequence, Integer> entry : bigrams.entrySet()) {
             int unigramCount = unigrams.get(entry.getKey().getOldest());
@@ -154,7 +154,7 @@ public class DynamicTrigramModel implements BackoffLanguageModel {
                 }
                 ws = iter.hasNext() ? iter.next() : null;
             }
-            logBackoffs.put(biword, lmath.linearToLog(sum));
+            logBackoffs.put(biword, lmath.linearToLog(discount / (1 - sum)));
         }
 
         for (Map.Entry<WordSequence, Integer> e : trigrams.entrySet()) {
