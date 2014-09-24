@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuite tests="94" failures="0" name="TestSuite" time="11.055" errors="0" skipped="0">
+<testsuite tests="94" failures="0" name="TestSuite" time="8.182" errors="0" skipped="0">
   <properties>
     <property name="java.runtime.name" value="Java(TM) SE Runtime Environment"/>
     <property name="sun.boot.library.path" value="/usr/lib/jvm/java-8-oracle/jre/lib/amd64"/>
@@ -41,7 +41,7 @@
     <property name="java.vm.specification.version" value="1.8"/>
     <property name="sun.arch.data.model" value="64"/>
     <property name="java.home" value="/usr/lib/jvm/java-8-oracle/jre"/>
-    <property name="sun.java.command" value="org.codehaus.plexus.classworlds.launcher.Launcher test"/>
+    <property name="sun.java.command" value="org.codehaus.plexus.classworlds.launcher.Launcher package"/>
     <property name="java.specification.vendor" value="Oracle Corporation"/>
     <property name="user.language" value="en"/>
     <property name="awt.toolkit" value="sun.awt.X11.XToolkit"/>
@@ -59,70 +59,67 @@
     <property name="sun.desktop" value="gnome"/>
     <property name="sun.cpu.isalist" value=""/>
   </properties>
-  <testcase classname="edu.cmu.sphinx.fst.ArcSortTest" name="testArcSort" time="0.011"/>
-  <testcase classname="edu.cmu.sphinx.frontend.AudioDataSourcesTest" name="test8KhzSource" time="0.056"/>
-  <testcase classname="edu.cmu.sphinx.frontend.AudioDataSourcesTest" name="testConcatDataSource" time="0.013"/>
-  <testcase classname="edu.cmu.sphinx.frontend.AudioDataSourcesTest" name="testSimpleFileSources" time="0.025"/>
-  <testcase classname="edu.cmu.sphinx.tools.bandwidth.BandDetectorTest" name="test" time="0.155"/>
-  <testcase classname="edu.cmu.sphinx.linguist.language.grammar.BatchForcedAlignerGrammarTest" name="testForcedAlignerGrammar" time="0.027"/>
-  <testcase classname="edu.cmu.sphinx.util.props.ComponentPropertyTest" name="testDefInstance" time="0.002"/>
-  <testcase classname="edu.cmu.sphinx.fst.ComposeEpsilonTest" name="testCompose" time="0.009"/>
-  <testcase classname="edu.cmu.sphinx.fst.ComposeTest" name="testCompose" time="0.012"/>
-  <testcase classname="edu.cmu.sphinx.util.props.ConfigurationManagerTest" name="testDynamicConfCreation" time="0.01"/>
-  <testcase classname="edu.cmu.sphinx.util.props.ConfigurationManagerTest" name="testDynamicConfiguruationChange" time="0.05"/>
-  <testcase classname="edu.cmu.sphinx.util.props.ConfigurationManagerTest" name="testGetComponentClass" time="0.006"/>
-  <testcase classname="edu.cmu.sphinx.util.props.ConfigurationManagerTest" name="testSerialization" time="0.013"/>
-  <testcase classname="edu.cmu.sphinx.util.props.ConfigurationManagerTest" name="testSerializeDynamicConfiguration" time="0.002"/>
-  <testcase classname="edu.cmu.sphinx.util.props.ConfigurationManagerTest" name="testXmlExtendedConfiguration" time="0.008"/>
-  <testcase classname="edu.cmu.sphinx.fst.ConnectTest" name="testConnect" time="0.005"/>
-  <testcase classname="edu.cmu.sphinx.frontend.DataBlockerTest" name="skipLastSamples on DataBlockerTest" time="0.001"/>
+  <testcase classname="edu.cmu.sphinx.fst.ArcSortTest" name="testArcSort" time="0.012"/>
+  <testcase classname="edu.cmu.sphinx.frontend.AudioDataSourcesTest" name="test8KhzSource" time="0.059"/>
+  <testcase classname="edu.cmu.sphinx.frontend.AudioDataSourcesTest" name="testConcatDataSource" time="0.018"/>
+  <testcase classname="edu.cmu.sphinx.frontend.AudioDataSourcesTest" name="testSimpleFileSources" time="0.023"/>
+  <testcase classname="edu.cmu.sphinx.tools.bandwidth.BandDetectorTest" name="test" time="0.197"/>
+  <testcase classname="edu.cmu.sphinx.linguist.language.grammar.BatchForcedAlignerGrammarTest" name="testForcedAlignerGrammar" time="0.046"/>
+  <testcase classname="edu.cmu.sphinx.util.props.ComponentPropertyTest" name="testDefInstance" time="0.014"/>
+  <testcase classname="edu.cmu.sphinx.fst.ComposeEpsilonTest" name="testCompose" time="0.02"/>
+  <testcase classname="edu.cmu.sphinx.fst.ComposeTest" name="testCompose" time="0.021"/>
+  <testcase classname="edu.cmu.sphinx.util.props.ConfigurationManagerTest" name="testDynamicConfCreation" time="0.013"/>
+  <testcase classname="edu.cmu.sphinx.util.props.ConfigurationManagerTest" name="testDynamicConfiguruationChange" time="0.063"/>
+  <testcase classname="edu.cmu.sphinx.util.props.ConfigurationManagerTest" name="testGetComponentClass" time="0.009"/>
+  <testcase classname="edu.cmu.sphinx.util.props.ConfigurationManagerTest" name="testSerialization" time="0.023"/>
+  <testcase classname="edu.cmu.sphinx.util.props.ConfigurationManagerTest" name="testSerializeDynamicConfiguration" time="0.004"/>
+  <testcase classname="edu.cmu.sphinx.util.props.ConfigurationManagerTest" name="testXmlExtendedConfiguration" time="0.021"/>
+  <testcase classname="edu.cmu.sphinx.fst.ConnectTest" name="testConnect" time="0.009"/>
+  <testcase classname="edu.cmu.sphinx.frontend.DataBlockerTest" name="skipLastSamples on DataBlockerTest" time="0.002"/>
   <testcase classname="edu.cmu.sphinx.frontend.DataBlockerTest" name="testLongInput on DataBlockerTest" time="0"/>
   <testcase classname="edu.cmu.sphinx.frontend.DataBlockerTest" name="testUsualInput on DataBlockerTest" time="0"/>
-  <testcase classname="edu.cmu.sphinx.fst.DeterminizeTest" name="testDeterminize" time="0.004"/>
-  <testcase classname="edu.cmu.sphinx.linguist.dictionary.DictionaryTest" name="testDictionary" time="0.042"/>
-  <testcase classname="edu.cmu.sphinx.linguist.language.ngram.DynamicTrigramModelTest" name="bigramModel" time="0.019"/>
-  <testcase classname="edu.cmu.sphinx.linguist.language.ngram.DynamicTrigramModelTest" name="trigramModel" time="0"/>
+  <testcase classname="edu.cmu.sphinx.fst.DeterminizeTest" name="testDeterminize" time="0.011"/>
+  <testcase classname="edu.cmu.sphinx.linguist.dictionary.DictionaryTest" name="testDictionary" time="0.045"/>
+  <testcase classname="edu.cmu.sphinx.linguist.language.ngram.DynamicTrigramModelTest" name="bigramModel" time="0.024"/>
+  <testcase classname="edu.cmu.sphinx.linguist.language.ngram.DynamicTrigramModelTest" name="trigramModel" time="0.001"/>
   <testcase classname="edu.cmu.sphinx.linguist.language.ngram.DynamicTrigramModelTest" name="unigramModel" time="0.003"/>
   <testcase classname="edu.cmu.sphinx.linguist.language.grammar.FSTGrammarTest" name="testForcedAlignerGrammar" time="0.007"/>
-  <testcase classname="edu.cmu.sphinx.frontend.FrontendElementTest" name="testElement" time="0.145"/>
-  <testcase classname="edu.cmu.sphinx.frontend.FrontendElementTest" name="testElement" time="0.228"/>
-  <testcase classname="edu.cmu.sphinx.frontend.FrontendElementTest" name="testElement" time="0.159"/>
+  <testcase classname="edu.cmu.sphinx.frontend.FrontendElementTest" name="testElement" time="0.184"/>
+  <testcase classname="edu.cmu.sphinx.frontend.FrontendElementTest" name="testElement" time="0.141"/>
+  <testcase classname="edu.cmu.sphinx.frontend.FrontendElementTest" name="testElement" time="0.064"/>
   <testcase classname="edu.cmu.sphinx.frontend.FrontendElementTest" name="testElement" time="0.029"/>
-  <testcase classname="edu.cmu.sphinx.frontend.FrontendElementTest" name="testElement" time="0.032"/>
-  <testcase classname="edu.cmu.sphinx.frontend.FrontendElementTest" name="testElement" time="0.032"/>
-  <testcase classname="edu.cmu.sphinx.frontend.FrontendElementTest" name="testElement" time="0.045"/>
+  <testcase classname="edu.cmu.sphinx.frontend.FrontendElementTest" name="testElement" time="0.031"/>
+  <testcase classname="edu.cmu.sphinx.frontend.FrontendElementTest" name="testElement" time="0.033"/>
+  <testcase classname="edu.cmu.sphinx.frontend.FrontendElementTest" name="testElement" time="0.046"/>
   <testcase classname="edu.cmu.sphinx.fst.ImportTest" name="testConvert" time="0.002"/>
-  <testcase classname="edu.cmu.sphinx.linguist.language.ngram.large.LargeNgramTest" name="testNgram" time="0.02"/>
-  <testcase classname="edu.cmu.sphinx.result.LatticeCompTest" name="testLatticeComp" time="9.486"/>
-  <testcase classname="edu.cmu.sphinx.linguist.acoustic.tiedstate.test.MixtureComponentTest" name="testClone" time="0"/>
-  <testcase classname="edu.cmu.sphinx.linguist.acoustic.tiedstate.test.MixtureComponentTest" name="testUnivariateDensity" time="0"/>
+  <testcase classname="edu.cmu.sphinx.linguist.language.ngram.large.LargeNgramTest" name="testNgram" time="0.026"/>
+  <testcase classname="edu.cmu.sphinx.result.LatticeCompTest" name="testLatticeComp" time="6.833"/>
+  <testcase classname="edu.cmu.sphinx.linguist.acoustic.tiedstate.test.MixtureComponentTest" name="testClone" time="0.001"/>
+  <testcase classname="edu.cmu.sphinx.linguist.acoustic.tiedstate.test.MixtureComponentTest" name="testUnivariateDensity" time="0.001"/>
   <testcase classname="edu.cmu.sphinx.linguist.acoustic.tiedstate.test.MixtureComponentTest" name="testUnivariateMeanTransformation" time="0"/>
-  <testcase classname="edu.cmu.sphinx.fst.NShortestPathsTest" name="testNShortestPaths" time="0.018"/>
-  <testcase classname="edu.cmu.sphinx.frontend.NonSpeechDataFilterTest" name="testMultipleEmptyAndNonemptySegments on NonSpeechDataFilterTest" time="0.003"/>
-  <testcase classname="edu.cmu.sphinx.frontend.NonSpeechDataFilterTest" name="testMultipleSpeechRegionWithoutMerging on NonSpeechDataFilterTest" time="0"/>
+  <testcase classname="edu.cmu.sphinx.fst.NShortestPathsTest" name="testNShortestPaths" time="0.013"/>
+  <testcase classname="edu.cmu.sphinx.frontend.NonSpeechDataFilterTest" name="testMultipleEmptyAndNonemptySegments on NonSpeechDataFilterTest" time="0.002"/>
+  <testcase classname="edu.cmu.sphinx.frontend.NonSpeechDataFilterTest" name="testMultipleSpeechRegionWithoutMerging on NonSpeechDataFilterTest" time="0.001"/>
   <testcase classname="edu.cmu.sphinx.frontend.NonSpeechDataFilterTest" name="testOneSpeechRegion on NonSpeechDataFilterTest" time="0"/>
-  <testcase classname="edu.cmu.sphinx.decoder.search.test.PartitionerTest" name="testPartitionOrders" time="0.076"/>
-  <testcase classname="edu.cmu.sphinx.decoder.search.test.PartitionerTest" name="testPartitionSizes" time="0.015"/>
-  <testcase classname="edu.cmu.sphinx.result.PosteriorTest" name="testPosterior" time="0.001"/>
-  <testcase classname="edu.cmu.sphinx.fst.ProjectTest" name="testProject" time="0.001"/>
+  <testcase classname="edu.cmu.sphinx.decoder.search.test.PartitionerTest" name="testPartitionOrders" time="0.081"/>
+  <testcase classname="edu.cmu.sphinx.decoder.search.test.PartitionerTest" name="testPartitionSizes" time="0.013"/>
+  <testcase classname="edu.cmu.sphinx.result.PosteriorTest" name="testPosterior" time="0"/>
+  <testcase classname="edu.cmu.sphinx.fst.ProjectTest" name="testProject" time="0.002"/>
   <testcase classname="edu.cmu.sphinx.fst.ReverseTest" name="testReverse" time="0.003"/>
-  <testcase classname="edu.cmu.sphinx.fst.RmEpsilonTest" name="testRmEpsilon" time="0.007"/>
-  <testcase classname="edu.cmu.sphinx.alignment.SpeechAlignerTest" name="shouldAlignText" time="0.007"/>
-  <testcase classname="edu.cmu.sphinx.frontend.SpeechMarkerTest" name="testEndWithoutSilence on SpeechMarkerTest" time="0.001"/>
+  <testcase classname="edu.cmu.sphinx.fst.RmEpsilonTest" name="testRmEpsilon" time="0.003"/>
+  <testcase classname="edu.cmu.sphinx.alignment.SpeechAlignerTest" name="shouldAlignText" time="0.005"/>
+  <testcase classname="edu.cmu.sphinx.frontend.SpeechMarkerTest" name="testEndWithoutSilence on SpeechMarkerTest" time="0"/>
   <testcase classname="edu.cmu.sphinx.util.props.TestConfigurable" name="testDynamicConfCreationWithoutDefaultProperty" time="0"/>
   <testcase classname="edu.cmu.sphinx.util.props.TestConfigurable" name="testNullStringProperty" time="0.001"/>
   <testcase classname="edu.cmu.sphinx.util.props.TestConfigurable" name="testPropSheetFromConfigurableInstance" time="0.001"/>
   <testcase classname="edu.cmu.sphinx.alignment.TextAlignerSmallTest" name="align" time="0"/>
   <testcase classname="edu.cmu.sphinx.alignment.TextAlignerSmallTest" name="align" time="0"/>
-  <testcase classname="edu.cmu.sphinx.alignment.TextAlignerSmallTest" name="align" time="0"/>
   <testcase classname="edu.cmu.sphinx.alignment.TextAlignerSmallTest" name="align" time="0.001"/>
-  <testcase classname="edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest" name="textToWords" time="0.007"/>
-  <testcase classname="edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest" name="textToWords" time="0.241"/>
+  <testcase classname="edu.cmu.sphinx.alignment.TextAlignerSmallTest" name="align" time="0.001"/>
+  <testcase classname="edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest" name="textToWords" time="0.006"/>
+  <testcase classname="edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest" name="textToWords" time="0.002"/>
   <testcase classname="edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest" name="textToWords" time="0"/>
-  <testcase classname="edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest" name="textToWords" time="0"/>
-  <testcase classname="edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest" name="textToWords" time="0"/>
-  <testcase classname="edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest" name="textToWords" time="0"/>
-  <testcase classname="edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest" name="textToWords" time="0"/>
+  <testcase classname="edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest" name="textToWords" time="0.001"/>
   <testcase classname="edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest" name="textToWords" time="0"/>
   <testcase classname="edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest" name="textToWords" time="0"/>
   <testcase classname="edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest" name="textToWords" time="0"/>
@@ -133,24 +130,27 @@
   <testcase classname="edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest" name="textToWords" time="0.001"/>
   <testcase classname="edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest" name="textToWords" time="0"/>
   <testcase classname="edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest" name="textToWords" time="0"/>
-  <testcase classname="edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest" name="textToWords" time="0.001"/>
-  <testcase classname="edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest" name="textToWords" time="0.001"/>
-  <testcase classname="edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest" name="textToWords" time="0"/>
-  <testcase classname="edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest" name="textToWords" time="0"/>
-  <testcase classname="edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest" name="textToWords" time="0.001"/>
-  <testcase classname="edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest" name="textToWords" time="0"/>
   <testcase classname="edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest" name="textToWords" time="0"/>
   <testcase classname="edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest" name="textToWords" time="0"/>
   <testcase classname="edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest" name="textToWords" time="0"/>
   <testcase classname="edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest" name="textToWords" time="0"/>
   <testcase classname="edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest" name="textToWords" time="0.001"/>
   <testcase classname="edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest" name="textToWords" time="0"/>
+  <testcase classname="edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest" name="textToWords" time="0.001"/>
+  <testcase classname="edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest" name="textToWords" time="0.003"/>
+  <testcase classname="edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest" name="textToWords" time="0"/>
+  <testcase classname="edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest" name="textToWords" time="0"/>
+  <testcase classname="edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest" name="textToWords" time="0"/>
+  <testcase classname="edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest" name="textToWords" time="0"/>
+  <testcase classname="edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest" name="textToWords" time="0"/>
+  <testcase classname="edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest" name="textToWords" time="0"/>
+  <testcase classname="edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest" name="textToWords" time="0"/>
   <testcase classname="edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest" name="textToWords" time="0"/>
   <testcase classname="edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest" name="textToWords" time="0.001"/>
   <testcase classname="edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest" name="textToWords" time="0"/>
-  <testcase classname="edu.cmu.sphinx.linguist.WordSequenceTest" name="comparison" time="0.005"/>
-  <testcase classname="edu.cmu.sphinx.linguist.WordSequenceTest" name="equals" time="0.002"/>
+  <testcase classname="edu.cmu.sphinx.linguist.WordSequenceTest" name="comparison" time="0.002"/>
+  <testcase classname="edu.cmu.sphinx.linguist.WordSequenceTest" name="equals" time="0.001"/>
   <testcase classname="edu.cmu.sphinx.linguist.WordSequenceTest" name="getNewest" time="0"/>
-  <testcase classname="edu.cmu.sphinx.linguist.WordSequenceTest" name="getOldest" time="0.001"/>
+  <testcase classname="edu.cmu.sphinx.linguist.WordSequenceTest" name="getOldest" time="0"/>
   <testcase classname="edu.cmu.sphinx.linguist.WordSequenceTest" name="unknownWords" time="0"/>
 </testsuite>
