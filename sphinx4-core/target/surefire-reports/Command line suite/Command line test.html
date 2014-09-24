@@ -1,0 +1,549 @@
+<html>
+<head>
+<title>TestNG:  Command line test</title>
+<link href="../testng.css" rel="stylesheet" type="text/css" />
+<link href="../my-testng.css" rel="stylesheet" type="text/css" />
+
+<style type="text/css">
+.log { display: none;} 
+.stack-trace { display: none;} 
+</style>
+<script type="text/javascript">
+<!--
+function flip(e) {
+  current = e.style.display;
+  if (current == 'block') {
+    e.style.display = 'none';
+    return 0;
+  }
+  else {
+    e.style.display = 'block';
+    return 1;
+  }
+}
+
+function toggleBox(szDivId, elem, msg1, msg2)
+{
+  var res = -1;  if (document.getElementById) {
+    res = flip(document.getElementById(szDivId));
+  }
+  else if (document.all) {
+    // this is the way old msie versions work
+    res = flip(document.all[szDivId]);
+  }
+  if(elem) {
+    if(res == 0) elem.innerHTML = msg1; else elem.innerHTML = msg2;
+  }
+
+}
+
+function toggleAllBoxes() {
+  if (document.getElementsByTagName) {
+    d = document.getElementsByTagName('div');
+    for (i = 0; i < d.length; i++) {
+      if (d[i].className == 'log') {
+        flip(d[i]);
+      }
+    }
+  }
+}
+
+// -->
+</script>
+
+</head>
+<body>
+<h2 align='center'>Command line test</h2><table border='1' align="center">
+<tr>
+<td>Tests passed/Failed/Skipped:</td><td>94/0/0</td>
+</tr><tr>
+<td>Started on:</td><td>Wed Sep 24 22:35:23 JST 2014</td>
+</tr>
+<tr><td>Total time:</td><td>11 seconds (11181 ms)</td>
+</tr><tr>
+<td>Included groups:</td><td></td>
+</tr><tr>
+<td>Excluded groups:</td><td></td>
+</tr>
+</table><p/>
+<small><i>(Hover the method name to see the test class name)</i></small><p/>
+<table width='100%' border='1' class='invocation-passed'>
+<tr><td colspan='4' align='center'><b>PASSED TESTS</b></td></tr>
+<tr><td><b>Test method</b></td>
+<td width="30%"><b>Exception</b></td>
+<td width="10%"><b>Time (seconds)</b></td>
+<td><b>Instance</b></td>
+</tr>
+<tr>
+<td title='edu.cmu.sphinx.alignment.TextAlignerSmallTest.align()'><b>align</b><br>Test class: edu.cmu.sphinx.alignment.TextAlignerSmallTest<br>Parameters: [foo, foo], iterable containing [<-1>, <-1>]</td>
+<td></td>
+<td>0</td>
+<td>edu.cmu.sphinx.alignment.TextAlignerSmallTest@3fb6a447</td></tr>
+<tr>
+<td title='edu.cmu.sphinx.alignment.TextAlignerSmallTest.align()'><b>align</b><br>Test class: edu.cmu.sphinx.alignment.TextAlignerSmallTest<br>Parameters: [foo, baz], iterable containing [<2>, <3>]</td>
+<td></td>
+<td>0</td>
+<td>edu.cmu.sphinx.alignment.TextAlignerSmallTest@3fb6a447</td></tr>
+<tr>
+<td title='edu.cmu.sphinx.alignment.TextAlignerSmallTest.align()'><b>align</b><br>Test class: edu.cmu.sphinx.alignment.TextAlignerSmallTest<br>Parameters: [foo, bar, foo, bar, baz, 42], iterable containing [<0>, <1>, <2>, <4>, <5>, <6>]</td>
+<td></td>
+<td>0</td>
+<td>edu.cmu.sphinx.alignment.TextAlignerSmallTest@3fb6a447</td></tr>
+<tr>
+<td title='edu.cmu.sphinx.alignment.TextAlignerSmallTest.align()'><b>align</b><br>Test class: edu.cmu.sphinx.alignment.TextAlignerSmallTest<br>Parameters: [foo, bar, foo, baz, bar], iterable containing [<0>, <1>, <2>, <3>, <4>]</td>
+<td></td>
+<td>0</td>
+<td>edu.cmu.sphinx.alignment.TextAlignerSmallTest@3fb6a447</td></tr>
+<tr>
+<td title='edu.cmu.sphinx.linguist.language.ngram.DynamicTrigramModelTest.bigramModel()'><b>bigramModel</b><br>Test class: edu.cmu.sphinx.linguist.language.ngram.DynamicTrigramModelTest</td>
+<td></td>
+<td>0</td>
+<td>edu.cmu.sphinx.linguist.language.ngram.DynamicTrigramModelTest@60addb54</td></tr>
+<tr>
+<td title='edu.cmu.sphinx.linguist.WordSequenceTest.comparison()'><b>comparison</b><br>Test class: edu.cmu.sphinx.linguist.WordSequenceTest</td>
+<td></td>
+<td>0</td>
+<td>edu.cmu.sphinx.linguist.WordSequenceTest@64616ca2</td></tr>
+<tr>
+<td title='edu.cmu.sphinx.linguist.WordSequenceTest.equals()'><b>equals</b><br>Test class: edu.cmu.sphinx.linguist.WordSequenceTest</td>
+<td></td>
+<td>0</td>
+<td>edu.cmu.sphinx.linguist.WordSequenceTest@64616ca2</td></tr>
+<tr>
+<td title='edu.cmu.sphinx.linguist.WordSequenceTest.getNewest()'><b>getNewest</b><br>Test class: edu.cmu.sphinx.linguist.WordSequenceTest</td>
+<td></td>
+<td>0</td>
+<td>edu.cmu.sphinx.linguist.WordSequenceTest@64616ca2</td></tr>
+<tr>
+<td title='edu.cmu.sphinx.linguist.WordSequenceTest.getOldest()'><b>getOldest</b><br>Test class: edu.cmu.sphinx.linguist.WordSequenceTest</td>
+<td></td>
+<td>0</td>
+<td>edu.cmu.sphinx.linguist.WordSequenceTest@64616ca2</td></tr>
+<tr>
+<td title='edu.cmu.sphinx.alignment.SpeechAlignerTest.shouldAlignText()'><b>shouldAlignText</b><br>Test class: edu.cmu.sphinx.alignment.SpeechAlignerTest</td>
+<td></td>
+<td>0</td>
+<td>edu.cmu.sphinx.alignment.SpeechAlignerTest@2ef9b8bc</td></tr>
+<tr>
+<td title='edu.cmu.sphinx.frontend.DataBlockerTest.skipLastSamples()'><b>skipLastSamples</b><br>Test class: edu.cmu.sphinx.frontend.DataBlockerTest</td>
+<td></td>
+<td>0</td>
+<td>DataBlockerTest</td></tr>
+<tr>
+<td title='edu.cmu.sphinx.tools.bandwidth.BandDetectorTest.test()'><b>test</b><br>Test class: edu.cmu.sphinx.tools.bandwidth.BandDetectorTest</td>
+<td></td>
+<td>0</td>
+<td>edu.cmu.sphinx.tools.bandwidth.BandDetectorTest@3b81a1bc</td></tr>
+<tr>
+<td title='edu.cmu.sphinx.frontend.AudioDataSourcesTest.test8KhzSource()'><b>test8KhzSource</b><br>Test class: edu.cmu.sphinx.frontend.AudioDataSourcesTest</td>
+<td></td>
+<td>0</td>
+<td>edu.cmu.sphinx.frontend.AudioDataSourcesTest@246ae04d</td></tr>
+<tr>
+<td title='edu.cmu.sphinx.fst.ArcSortTest.testArcSort()'><b>testArcSort</b><br>Test class: edu.cmu.sphinx.fst.ArcSortTest</td>
+<td></td>
+<td>0</td>
+<td>edu.cmu.sphinx.fst.ArcSortTest@17550481</td></tr>
+<tr>
+<td title='edu.cmu.sphinx.linguist.acoustic.tiedstate.test.MixtureComponentTest.testClone()'><b>testClone</b><br>Test class: edu.cmu.sphinx.linguist.acoustic.tiedstate.test.MixtureComponentTest</td>
+<td></td>
+<td>0</td>
+<td>edu.cmu.sphinx.linguist.acoustic.tiedstate.test.MixtureComponentTest@62043840</td></tr>
+<tr>
+<td title='edu.cmu.sphinx.fst.ComposeEpsilonTest.testCompose()'><b>testCompose</b><br>Test class: edu.cmu.sphinx.fst.ComposeEpsilonTest</td>
+<td></td>
+<td>0</td>
+<td>edu.cmu.sphinx.fst.ComposeEpsilonTest@5ebec15</td></tr>
+<tr>
+<td title='edu.cmu.sphinx.fst.ComposeTest.testCompose()'><b>testCompose</b><br>Test class: edu.cmu.sphinx.fst.ComposeTest</td>
+<td></td>
+<td>0</td>
+<td>edu.cmu.sphinx.fst.ComposeTest@4e04a765</td></tr>
+<tr>
+<td title='edu.cmu.sphinx.frontend.AudioDataSourcesTest.testConcatDataSource()'><b>testConcatDataSource</b><br>Test class: edu.cmu.sphinx.frontend.AudioDataSourcesTest</td>
+<td></td>
+<td>0</td>
+<td>edu.cmu.sphinx.frontend.AudioDataSourcesTest@246ae04d</td></tr>
+<tr>
+<td title='edu.cmu.sphinx.fst.ConnectTest.testConnect()'><b>testConnect</b><br>Test class: edu.cmu.sphinx.fst.ConnectTest</td>
+<td></td>
+<td>0</td>
+<td>edu.cmu.sphinx.fst.ConnectTest@26ba2a48</td></tr>
+<tr>
+<td title='edu.cmu.sphinx.fst.ImportTest.testConvert()'><b>testConvert</b><br>Test class: edu.cmu.sphinx.fst.ImportTest</td>
+<td></td>
+<td>0</td>
+<td>edu.cmu.sphinx.fst.ImportTest@6fb554cc</td></tr>
+<tr>
+<td title='edu.cmu.sphinx.util.props.ComponentPropertyTest.testDefInstance()'><b>testDefInstance</b><br>Test class: edu.cmu.sphinx.util.props.ComponentPropertyTest</td>
+<td></td>
+<td>0</td>
+<td>edu.cmu.sphinx.util.props.ComponentPropertyTest@4cb2c100</td></tr>
+<tr>
+<td title='edu.cmu.sphinx.fst.DeterminizeTest.testDeterminize()'><b>testDeterminize</b><br>Test class: edu.cmu.sphinx.fst.DeterminizeTest</td>
+<td></td>
+<td>0</td>
+<td>edu.cmu.sphinx.fst.DeterminizeTest@13fee20c</td></tr>
+<tr>
+<td title='edu.cmu.sphinx.linguist.dictionary.DictionaryTest.testDictionary()'><b>testDictionary</b><br>Test class: edu.cmu.sphinx.linguist.dictionary.DictionaryTest</td>
+<td></td>
+<td>0</td>
+<td>edu.cmu.sphinx.linguist.dictionary.DictionaryTest@1324409e</td></tr>
+<tr>
+<td title='edu.cmu.sphinx.util.props.ConfigurationManagerTest.testDynamicConfCreation()'><b>testDynamicConfCreation</b><br>Test class: edu.cmu.sphinx.util.props.ConfigurationManagerTest</td>
+<td></td>
+<td>0</td>
+<td>edu.cmu.sphinx.util.props.ConfigurationManagerTest@380fb434</td></tr>
+<tr>
+<td title='edu.cmu.sphinx.util.props.TestConfigurable.testDynamicConfCreationWithoutDefaultProperty()'><b>testDynamicConfCreationWithoutDefaultProperty</b><br>Test class: edu.cmu.sphinx.util.props.TestConfigurable</td>
+<td></td>
+<td>0</td>
+<td>edu.cmu.sphinx.util.props.TestConfigurable@668bc3d5</td></tr>
+<tr>
+<td title='edu.cmu.sphinx.util.props.ConfigurationManagerTest.testDynamicConfiguruationChange()'><b>testDynamicConfiguruationChange</b><br>Test class: edu.cmu.sphinx.util.props.ConfigurationManagerTest</td>
+<td></td>
+<td>0</td>
+<td>edu.cmu.sphinx.util.props.ConfigurationManagerTest@380fb434</td></tr>
+<tr>
+<td title='edu.cmu.sphinx.frontend.FrontendElementTest.testElement()'><b>testElement</b><br>Test class: edu.cmu.sphinx.frontend.FrontendElementTest<br>Parameters: preempTest, after-preemp.dump</td>
+<td></td>
+<td>0</td>
+<td>edu.cmu.sphinx.frontend.FrontendElementTest@2c6a3f77</td></tr>
+<tr>
+<td title='edu.cmu.sphinx.frontend.FrontendElementTest.testElement()'><b>testElement</b><br>Test class: edu.cmu.sphinx.frontend.FrontendElementTest<br>Parameters: windowTest, after-window.dump</td>
+<td></td>
+<td>0</td>
+<td>edu.cmu.sphinx.frontend.FrontendElementTest@2c6a3f77</td></tr>
+<tr>
+<td title='edu.cmu.sphinx.frontend.FrontendElementTest.testElement()'><b>testElement</b><br>Test class: edu.cmu.sphinx.frontend.FrontendElementTest<br>Parameters: fftTest, after-fft.dump</td>
+<td></td>
+<td>0</td>
+<td>edu.cmu.sphinx.frontend.FrontendElementTest@2c6a3f77</td></tr>
+<tr>
+<td title='edu.cmu.sphinx.frontend.FrontendElementTest.testElement()'><b>testElement</b><br>Test class: edu.cmu.sphinx.frontend.FrontendElementTest<br>Parameters: melTest, after-mel.dump</td>
+<td></td>
+<td>0</td>
+<td>edu.cmu.sphinx.frontend.FrontendElementTest@2c6a3f77</td></tr>
+<tr>
+<td title='edu.cmu.sphinx.frontend.FrontendElementTest.testElement()'><b>testElement</b><br>Test class: edu.cmu.sphinx.frontend.FrontendElementTest<br>Parameters: dctTest, after-dct.dump</td>
+<td></td>
+<td>0</td>
+<td>edu.cmu.sphinx.frontend.FrontendElementTest@2c6a3f77</td></tr>
+<tr>
+<td title='edu.cmu.sphinx.frontend.FrontendElementTest.testElement()'><b>testElement</b><br>Test class: edu.cmu.sphinx.frontend.FrontendElementTest<br>Parameters: cmnTest, after-cmn.dump</td>
+<td></td>
+<td>0</td>
+<td>edu.cmu.sphinx.frontend.FrontendElementTest@2c6a3f77</td></tr>
+<tr>
+<td title='edu.cmu.sphinx.frontend.FrontendElementTest.testElement()'><b>testElement</b><br>Test class: edu.cmu.sphinx.frontend.FrontendElementTest<br>Parameters: feTest, after-feature.dump</td>
+<td></td>
+<td>0</td>
+<td>edu.cmu.sphinx.frontend.FrontendElementTest@2c6a3f77</td></tr>
+<tr>
+<td title='edu.cmu.sphinx.frontend.SpeechMarkerTest.testEndWithoutSilence()'><b>testEndWithoutSilence</b><br>Test class: edu.cmu.sphinx.frontend.SpeechMarkerTest</td>
+<td></td>
+<td>0</td>
+<td>SpeechMarkerTest</td></tr>
+<tr>
+<td title='edu.cmu.sphinx.linguist.language.grammar.BatchForcedAlignerGrammarTest.testForcedAlignerGrammar()'><b>testForcedAlignerGrammar</b><br>Test class: edu.cmu.sphinx.linguist.language.grammar.BatchForcedAlignerGrammarTest</td>
+<td></td>
+<td>0</td>
+<td>edu.cmu.sphinx.linguist.language.grammar.BatchForcedAlignerGrammarTest@180bc464</td></tr>
+<tr>
+<td title='edu.cmu.sphinx.linguist.language.grammar.FSTGrammarTest.testForcedAlignerGrammar()'><b>testForcedAlignerGrammar</b><br>Test class: edu.cmu.sphinx.linguist.language.grammar.FSTGrammarTest</td>
+<td></td>
+<td>0</td>
+<td>edu.cmu.sphinx.linguist.language.grammar.FSTGrammarTest@5d624da6</td></tr>
+<tr>
+<td title='edu.cmu.sphinx.util.props.ConfigurationManagerTest.testGetComponentClass()'><b>testGetComponentClass</b><br>Test class: edu.cmu.sphinx.util.props.ConfigurationManagerTest</td>
+<td></td>
+<td>0</td>
+<td>edu.cmu.sphinx.util.props.ConfigurationManagerTest@380fb434</td></tr>
+<tr>
+<td title='edu.cmu.sphinx.result.LatticeCompTest.testLatticeComp()'><b>testLatticeComp</b><br>Test class: edu.cmu.sphinx.result.LatticeCompTest</td>
+<td></td>
+<td>9</td>
+<td>edu.cmu.sphinx.result.LatticeCompTest@60f82f98</td></tr>
+<tr>
+<td title='edu.cmu.sphinx.frontend.DataBlockerTest.testLongInput()'><b>testLongInput</b><br>Test class: edu.cmu.sphinx.frontend.DataBlockerTest</td>
+<td></td>
+<td>0</td>
+<td>DataBlockerTest</td></tr>
+<tr>
+<td title='edu.cmu.sphinx.frontend.NonSpeechDataFilterTest.testMultipleEmptyAndNonemptySegments()'><b>testMultipleEmptyAndNonemptySegments</b><br>Test class: edu.cmu.sphinx.frontend.NonSpeechDataFilterTest</td>
+<td></td>
+<td>0</td>
+<td>NonSpeechDataFilterTest</td></tr>
+<tr>
+<td title='edu.cmu.sphinx.frontend.NonSpeechDataFilterTest.testMultipleSpeechRegionWithoutMerging()'><b>testMultipleSpeechRegionWithoutMerging</b><br>Test class: edu.cmu.sphinx.frontend.NonSpeechDataFilterTest</td>
+<td></td>
+<td>0</td>
+<td>NonSpeechDataFilterTest</td></tr>
+<tr>
+<td title='edu.cmu.sphinx.fst.NShortestPathsTest.testNShortestPaths()'><b>testNShortestPaths</b><br>Test class: edu.cmu.sphinx.fst.NShortestPathsTest</td>
+<td></td>
+<td>0</td>
+<td>edu.cmu.sphinx.fst.NShortestPathsTest@21bcffb5</td></tr>
+<tr>
+<td title='edu.cmu.sphinx.linguist.language.ngram.large.LargeNgramTest.testNgram()'><b>testNgram</b><br>Test class: edu.cmu.sphinx.linguist.language.ngram.large.LargeNgramTest</td>
+<td></td>
+<td>0</td>
+<td>edu.cmu.sphinx.linguist.language.ngram.large.LargeNgramTest@1e67b872</td></tr>
+<tr>
+<td title='edu.cmu.sphinx.util.props.TestConfigurable.testNullStringProperty()'><b>testNullStringProperty</b><br>Test class: edu.cmu.sphinx.util.props.TestConfigurable</td>
+<td></td>
+<td>0</td>
+<td>edu.cmu.sphinx.util.props.TestConfigurable@668bc3d5</td></tr>
+<tr>
+<td title='edu.cmu.sphinx.frontend.NonSpeechDataFilterTest.testOneSpeechRegion()'><b>testOneSpeechRegion</b><br>Test class: edu.cmu.sphinx.frontend.NonSpeechDataFilterTest</td>
+<td></td>
+<td>0</td>
+<td>NonSpeechDataFilterTest</td></tr>
+<tr>
+<td title='edu.cmu.sphinx.decoder.search.test.PartitionerTest.testPartitionOrders()'><b>testPartitionOrders</b><br>Test class: edu.cmu.sphinx.decoder.search.test.PartitionerTest</td>
+<td></td>
+<td>0</td>
+<td>edu.cmu.sphinx.decoder.search.test.PartitionerTest@735f7ae5</td></tr>
+<tr>
+<td title='edu.cmu.sphinx.decoder.search.test.PartitionerTest.testPartitionSizes()'><b>testPartitionSizes</b><br>Test class: edu.cmu.sphinx.decoder.search.test.PartitionerTest</td>
+<td></td>
+<td>0</td>
+<td>edu.cmu.sphinx.decoder.search.test.PartitionerTest@735f7ae5</td></tr>
+<tr>
+<td title='edu.cmu.sphinx.result.PosteriorTest.testPosterior()'><b>testPosterior</b><br>Test class: edu.cmu.sphinx.result.PosteriorTest</td>
+<td></td>
+<td>0</td>
+<td>edu.cmu.sphinx.result.PosteriorTest@614c5515</td></tr>
+<tr>
+<td title='edu.cmu.sphinx.fst.ProjectTest.testProject()'><b>testProject</b><br>Test class: edu.cmu.sphinx.fst.ProjectTest</td>
+<td></td>
+<td>0</td>
+<td>edu.cmu.sphinx.fst.ProjectTest@5315b42e</td></tr>
+<tr>
+<td title='edu.cmu.sphinx.util.props.TestConfigurable.testPropSheetFromConfigurableInstance()'><b>testPropSheetFromConfigurableInstance</b><br>Test class: edu.cmu.sphinx.util.props.TestConfigurable</td>
+<td></td>
+<td>0</td>
+<td>edu.cmu.sphinx.util.props.TestConfigurable@668bc3d5</td></tr>
+<tr>
+<td title='edu.cmu.sphinx.fst.ReverseTest.testReverse()'><b>testReverse</b><br>Test class: edu.cmu.sphinx.fst.ReverseTest</td>
+<td></td>
+<td>0</td>
+<td>edu.cmu.sphinx.fst.ReverseTest@7a5d012c</td></tr>
+<tr>
+<td title='edu.cmu.sphinx.fst.RmEpsilonTest.testRmEpsilon()'><b>testRmEpsilon</b><br>Test class: edu.cmu.sphinx.fst.RmEpsilonTest</td>
+<td></td>
+<td>0</td>
+<td>edu.cmu.sphinx.fst.RmEpsilonTest@3cda1055</td></tr>
+<tr>
+<td title='edu.cmu.sphinx.util.props.ConfigurationManagerTest.testSerialization()'><b>testSerialization</b><br>Test class: edu.cmu.sphinx.util.props.ConfigurationManagerTest</td>
+<td></td>
+<td>0</td>
+<td>edu.cmu.sphinx.util.props.ConfigurationManagerTest@380fb434</td></tr>
+<tr>
+<td title='edu.cmu.sphinx.util.props.ConfigurationManagerTest.testSerializeDynamicConfiguration()'><b>testSerializeDynamicConfiguration</b><br>Test class: edu.cmu.sphinx.util.props.ConfigurationManagerTest</td>
+<td></td>
+<td>0</td>
+<td>edu.cmu.sphinx.util.props.ConfigurationManagerTest@380fb434</td></tr>
+<tr>
+<td title='edu.cmu.sphinx.frontend.AudioDataSourcesTest.testSimpleFileSources()'><b>testSimpleFileSources</b><br>Test class: edu.cmu.sphinx.frontend.AudioDataSourcesTest</td>
+<td></td>
+<td>0</td>
+<td>edu.cmu.sphinx.frontend.AudioDataSourcesTest@246ae04d</td></tr>
+<tr>
+<td title='edu.cmu.sphinx.linguist.acoustic.tiedstate.test.MixtureComponentTest.testUnivariateDensity()'><b>testUnivariateDensity</b><br>Test class: edu.cmu.sphinx.linguist.acoustic.tiedstate.test.MixtureComponentTest</td>
+<td></td>
+<td>0</td>
+<td>edu.cmu.sphinx.linguist.acoustic.tiedstate.test.MixtureComponentTest@62043840</td></tr>
+<tr>
+<td title='edu.cmu.sphinx.linguist.acoustic.tiedstate.test.MixtureComponentTest.testUnivariateMeanTransformation()'><b>testUnivariateMeanTransformation</b><br>Test class: edu.cmu.sphinx.linguist.acoustic.tiedstate.test.MixtureComponentTest</td>
+<td></td>
+<td>0</td>
+<td>edu.cmu.sphinx.linguist.acoustic.tiedstate.test.MixtureComponentTest@62043840</td></tr>
+<tr>
+<td title='edu.cmu.sphinx.frontend.DataBlockerTest.testUsualInput()'><b>testUsualInput</b><br>Test class: edu.cmu.sphinx.frontend.DataBlockerTest</td>
+<td></td>
+<td>0</td>
+<td>DataBlockerTest</td></tr>
+<tr>
+<td title='edu.cmu.sphinx.util.props.ConfigurationManagerTest.testXmlExtendedConfiguration()'><b>testXmlExtendedConfiguration</b><br>Test class: edu.cmu.sphinx.util.props.ConfigurationManagerTest</td>
+<td></td>
+<td>0</td>
+<td>edu.cmu.sphinx.util.props.ConfigurationManagerTest@380fb434</td></tr>
+<tr>
+<td title='edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest.textToWords()'><b>textToWords</b><br>Test class: edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest<br>Parameters: # . no, $ convertion., . no $ convertion</td>
+<td></td>
+<td>0</td>
+<td>edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest@3f2a3a5</td></tr>
+<tr>
+<td title='edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest.textToWords()'><b>textToWords</b><br>Test class: edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest<br>Parameters: 1, 2 3, one two three</td>
+<td></td>
+<td>0</td>
+<td>edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest@3f2a3a5</td></tr>
+<tr>
+<td title='edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest.textToWords()'><b>textToWords</b><br>Test class: edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest<br>Parameters: the answer is 42,, the answer is forty two</td>
+<td></td>
+<td>0</td>
+<td>edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest@3f2a3a5</td></tr>
+<tr>
+<td title='edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest.textToWords()'><b>textToWords</b><br>Test class: edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest<br>Parameters: 587, five hundred eighty seven</td>
+<td></td>
+<td>0</td>
+<td>edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest@3f2a3a5</td></tr>
+<tr>
+<td title='edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest.textToWords()'><b>textToWords</b><br>Test class: edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest<br>Parameters: 1903, one thousand nine hundred three</td>
+<td></td>
+<td>0</td>
+<td>edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest@3f2a3a5</td></tr>
+<tr>
+<td title='edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest.textToWords()'><b>textToWords</b><br>Test class: edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest<br>Parameters: 12011, twelve thousand eleven</td>
+<td></td>
+<td>0</td>
+<td>edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest@3f2a3a5</td></tr>
+<tr>
+<td title='edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest.textToWords()'><b>textToWords</b><br>Test class: edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest<br>Parameters: 126166, one hundred twenty six thousand one hundred sixty six</td>
+<td></td>
+<td>0</td>
+<td>edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest@3f2a3a5</td></tr>
+<tr>
+<td title='edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest.textToWords()'><b>textToWords</b><br>Test class: edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest<br>Parameters: 9 3/4, nine and three fourth 's</td>
+<td></td>
+<td>0</td>
+<td>edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest@3f2a3a5</td></tr>
+<tr>
+<td title='edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest.textToWords()'><b>textToWords</b><br>Test class: edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest<br>Parameters: October 1st, october first</td>
+<td></td>
+<td>0</td>
+<td>edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest@3f2a3a5</td></tr>
+<tr>
+<td title='edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest.textToWords()'><b>textToWords</b><br>Test class: edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest<br>Parameters: May the 4th be with you, may the fourth be with you</td>
+<td></td>
+<td>0</td>
+<td>edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest@3f2a3a5</td></tr>
+<tr>
+<td title='edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest.textToWords()'><b>textToWords</b><br>Test class: edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest<br>Parameters: 7-11, seven to eleven</td>
+<td></td>
+<td>0</td>
+<td>edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest@3f2a3a5</td></tr>
+<tr>
+<td title='edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest.textToWords()'><b>textToWords</b><br>Test class: edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest<br>Parameters: 12, 35, twelve thirty five</td>
+<td></td>
+<td>0</td>
+<td>edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest@3f2a3a5</td></tr>
+<tr>
+<td title='edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest.textToWords()'><b>textToWords</b><br>Test class: edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest<br>Parameters: 146%, one hundred forty six percent</td>
+<td></td>
+<td>0</td>
+<td>edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest@3f2a3a5</td></tr>
+<tr>
+<td title='edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest.textToWords()'><b>textToWords</b><br>Test class: edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest<br>Parameters: 320'000, three hundred twenty thousand</td>
+<td></td>
+<td>0</td>
+<td>edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest@3f2a3a5</td></tr>
+<tr>
+<td title='edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest.textToWords()'><b>textToWords</b><br>Test class: edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest<br>Parameters: 120,000, one hundred twenty thousand</td>
+<td></td>
+<td>0</td>
+<td>edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest@3f2a3a5</td></tr>
+<tr>
+<td title='edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest.textToWords()'><b>textToWords</b><br>Test class: edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest<br>Parameters: $35,000, thirty five thousand dollars</td>
+<td></td>
+<td>0</td>
+<td>edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest@3f2a3a5</td></tr>
+<tr>
+<td title='edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest.textToWords()'><b>textToWords</b><br>Test class: edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest<br>Parameters: $1000000, one million dollars</td>
+<td></td>
+<td>0</td>
+<td>edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest@3f2a3a5</td></tr>
+<tr>
+<td title='edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest.textToWords()'><b>textToWords</b><br>Test class: edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest<br>Parameters: U.S. economy, u s economy</td>
+<td></td>
+<td>0</td>
+<td>edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest@3f2a3a5</td></tr>
+<tr>
+<td title='edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest.textToWords()'><b>textToWords</b><br>Test class: edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest<br>Parameters: sweet home Greenbow, AL., sweet home greenbow alabama</td>
+<td></td>
+<td>0</td>
+<td>edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest@3f2a3a5</td></tr>
+<tr>
+<td title='edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest.textToWords()'><b>textToWords</b><br>Test class: edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest<br>Parameters: Henry I, henry the first</td>
+<td></td>
+<td>0</td>
+<td>edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest@3f2a3a5</td></tr>
+<tr>
+<td title='edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest.textToWords()'><b>textToWords</b><br>Test class: edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest<br>Parameters: Chapter XVII, chapter seventeen</td>
+<td></td>
+<td>0</td>
+<td>edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest@3f2a3a5</td></tr>
+<tr>
+<td title='edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest.textToWords()'><b>textToWords</b><br>Test class: edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest<br>Parameters: don't, doesn't, won't, can't, don't doesn't won't can't</td>
+<td></td>
+<td>0</td>
+<td>edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest@3f2a3a5</td></tr>
+<tr>
+<td title='edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest.textToWords()'><b>textToWords</b><br>Test class: edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest<br>Parameters: I've we've, i've we've</td>
+<td></td>
+<td>0</td>
+<td>edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest@3f2a3a5</td></tr>
+<tr>
+<td title='edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest.textToWords()'><b>textToWords</b><br>Test class: edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest<br>Parameters: I've we've it's, i've we've it's</td>
+<td></td>
+<td>0</td>
+<td>edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest@3f2a3a5</td></tr>
+<tr>
+<td title='edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest.textToWords()'><b>textToWords</b><br>Test class: edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest<br>Parameters: Classics of 80s, classics of eighties</td>
+<td></td>
+<td>0</td>
+<td>edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest@3f2a3a5</td></tr>
+<tr>
+<td title='edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest.textToWords()'><b>textToWords</b><br>Test class: edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest<br>Parameters: In 1880s, in eighteen eighties</td>
+<td></td>
+<td>0</td>
+<td>edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest@3f2a3a5</td></tr>
+<tr>
+<td title='edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest.textToWords()'><b>textToWords</b><br>Test class: edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest<br>Parameters: Mulholland Dr., mulholland drive</td>
+<td></td>
+<td>0</td>
+<td>edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest@3f2a3a5</td></tr>
+<tr>
+<td title='edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest.textToWords()'><b>textToWords</b><br>Test class: edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest<br>Parameters: dr. Jekyll and Mr. Hyde., doctor jekyll and mister hyde</td>
+<td></td>
+<td>0</td>
+<td>edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest@3f2a3a5</td></tr>
+<tr>
+<td title='edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest.textToWords()'><b>textToWords</b><br>Test class: edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest<br>Parameters: Mr. & Mrs. smith, mister and missus smith</td>
+<td></td>
+<td>0</td>
+<td>edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest@3f2a3a5</td></tr>
+<tr>
+<td title='edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest.textToWords()'><b>textToWords</b><br>Test class: edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest<br>Parameters: St. Louis Cardinals, saint louis cardinals</td>
+<td></td>
+<td>0</td>
+<td>edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest@3f2a3a5</td></tr>
+<tr>
+<td title='edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest.textToWords()'><b>textToWords</b><br>Test class: edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest<br>Parameters: St. Elmo's fire, saint elmo's fire</td>
+<td></td>
+<td>0</td>
+<td>edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest@3f2a3a5</td></tr>
+<tr>
+<td title='edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest.textToWords()'><b>textToWords</b><br>Test class: edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest<br>Parameters: elm st., elm street</td>
+<td></td>
+<td>0</td>
+<td>edu.cmu.sphinx.alignment.UsEnglishWordExpanderTest@3f2a3a5</td></tr>
+<tr>
+<td title='edu.cmu.sphinx.linguist.language.ngram.DynamicTrigramModelTest.trigramModel()'><b>trigramModel</b><br>Test class: edu.cmu.sphinx.linguist.language.ngram.DynamicTrigramModelTest</td>
+<td></td>
+<td>0</td>
+<td>edu.cmu.sphinx.linguist.language.ngram.DynamicTrigramModelTest@60addb54</td></tr>
+<tr>
+<td title='edu.cmu.sphinx.linguist.language.ngram.DynamicTrigramModelTest.unigramModel()'><b>unigramModel</b><br>Test class: edu.cmu.sphinx.linguist.language.ngram.DynamicTrigramModelTest</td>
+<td></td>
+<td>0</td>
+<td>edu.cmu.sphinx.linguist.language.ngram.DynamicTrigramModelTest@60addb54</td></tr>
+<tr>
+<td title='edu.cmu.sphinx.linguist.WordSequenceTest.unknownWords()'><b>unknownWords</b><br>Test class: edu.cmu.sphinx.linguist.WordSequenceTest</td>
+<td></td>
+<td>0</td>
+<td>edu.cmu.sphinx.linguist.WordSequenceTest@64616ca2</td></tr>
+</table><p>
+</body>
+</html>
