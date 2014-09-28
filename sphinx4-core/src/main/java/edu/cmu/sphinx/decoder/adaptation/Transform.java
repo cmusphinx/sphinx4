@@ -1,6 +1,9 @@
 package edu.cmu.sphinx.decoder.adaptation;
 
+import java.io.File;
 import java.io.PrintWriter;
+import java.util.Scanner;
+
 import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.linear.DecompositionSolver;
@@ -113,6 +116,44 @@ public class Transform {
 				}
 			}
 		}
+	}
+
+	/**
+	 * Read the transformation from a file
+	 * @param filePath
+	 * @throws FileNotFoundException
+	 */
+	public void load(String filePath) throws Exception {
+
+		Scanner input = new Scanner(new File(filePath));
+		int numStreams, nMllrClass;
+		int[] vectorLength = new int[1];
+
+		nMllrClass = input.nextInt();
+		numStreams = input.nextInt();
+
+		this.As = new float[1][][][];
+		this.Bs = new float[1][][];
+
+			for(int i = 0; i < numStreams; i++) {
+				vectorLength[i] = input.nextInt();
+
+				int length = vectorLength[i];
+
+				this.As[0] = new float[numStreams][length][length];
+				this.Bs[0] = new float[numStreams][length];
+
+
+				for(int j = 0; j < length; j++) {
+					for(int k = 0; k < length; ++k) {
+						As[0][i][j][k] = input.nextFloat();
+					}
+				}
+
+				for(int j = 0; j < length; j++) {
+					Bs[0][i][j] = input.nextFloat();
+				}
+			}
 	}
 
 	/**
