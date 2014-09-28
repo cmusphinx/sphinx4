@@ -1,0 +1,88 @@
+Speaker Adaptation with MLLR Transformation
+
+Unsupervised speaker adaptation for Sphinx4
+
+For building an improved acoustic model there are two methods. One of them 
+needs to collect data from a speaker and train the acoustic model set. Thus 
+using the speaker's characteristics the recognition will be more accurately. 
+The disadvantage of this method is that it needs a large amount of data to be 
+collected to have a sufficient model accuracy.
+
+The other method, when the amount of data available is small from a new 
+speaker, is to collect them and by using an adaptation technique to adapt the 
+model set to better fit the speaker's characteristics.
+
+The adaptation technique used is MLLR (maximum likelihood linear regression) 
+transform that is applied depending on the available data by generating one or 
+more transformations that reduce the mismatch between
+an initial model set and the adaptation data. There is only one transformation
+when the amount of available data is too small and is called global adaptation 
+transform. The global transform is applied to every Gaussian component in the 
+model set. Otherwise, when the amount of adaptation data is large, the number
+of transformations is increasing and each transformation is applied to a 
+certain cluster of Gaussian components.
+
+To be able to decode with an adapted model there are two important classes that 
+should be imported:
+
+import edu.cmu.sphinx.decoder.adaptation.Stats;
+import edu.cmu.sphinx.decoder.adaptation.Transform;
+
+Stats Class estimates a MLLR transform for each cluster of data and the 
+transform will be applied to the corresponding cluster. You can choose the 
+number of clusters by giving the number as argument to 
+createStats(nrOfClusters) in Stats method. The method will return an object 
+that contains the loaded acoustic model and the number of clusters. This 
+important to collect counts from each Result object because based on them we 
+will perform the estimation of the MLLR transformation. 
+
+Before starting collect counts it is important to have all Gaussians clustered. 
+So, createStats(nrOfClusters) will generate an ClusteredDensityFileData object 
+to prepare the Gaussians. ClusteredDensityFileData class performs the clustering
+using the "k-means" clustering algorithm. The k-means clustering algorithm aims 
+to partition the Gaussians into k clusters in which each Gaussian belongs
+to the cluster with the nearest mean. It is interesting to know that the problem
+of clustering is computationally difficult, so the heuristic used is the 
+Euclidean criterion.
+
+The next step is to collect counts from each Result object and store them 
+separately for each cluster. Here, the matrices regLs and regRs used in 
+computing the transformation are filled. Transform class performs the actual 
+transformation for each cluster. Given the counts previously gathered and the 
+number of clusters, the class will compute the two matrices A (the 
+transformation matrix) B (the bias vector) that are tied across the Gaussians 
+from the corresponding cluster. A Transform object will contain all the 
+transformations computed for an utterance. To use the adapted acoustic model it 
+is necessary to update the Sphinx3Loader which is responsible for
+loading the files from the model. When updating occurs, the acoustic model is 
+already loaded, so setTransform(transform) method will replace the old means 
+with the new ones.
+
+Now, that we have the theoretical part, let’s see the practical part. Here is 
+how you create and use a MLLR transformation:
+
+Stats stats = recognizer.createStats(1);
+recognizer.startRecognition(stream);
+while ((result = recognizer.getResult()) != null) {
+	stats.collect(result);
+}
+recognizer.stopRecognition();
+
+// Transform represents the speech profile
+Transform transform = stats.createTransform();
+recognizer.setTransform(transform);
+
+After setting the transformation to the StreamSpeechRecognizer object,
+the recognizer is ready to decode using the new means. The process
+of recognition is the same as you decode with the general acoustic model.
+When you create and set a transformation is like you create a
+new acoustic model with speaker's characteristics, thus the accuracy
+will be better. 
+
+For further decodings you can store the transformation of a speaker in a file
+by performing store(“FilePath”, 0) in Transform object.
+
+If you have your own transformation known as mllr_matrix previously generated 
+with Sphinx4 or with another program, you can load the file by performing 
+load(“FilePath”) in Transform object and then to set it to an Recognizer object.
+
