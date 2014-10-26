@@ -13,6 +13,9 @@
   <property name="silenceInsertionProbability" value="0.1"/>
   <property name="fillerInsertionProbability" value="1e-2"/>
 
+  <property name="oogProbability" value="1e-30"/>
+  <property name="oogLoopProbability" value="1e-10"/>
+
   <property name="languageWeight" value="12.0"/>
 
   <component name="recognizer" type="edu.cmu.sphinx.recognizer.Recognizer">
@@ -115,6 +118,11 @@
       value="${silenceInsertionProbability}"/>
     <property name="languageWeight" value="${languageWeight}"/>
     <property name="unitManager" value="unitManager"/>
+    
+    <property name="addOutOfGrammarBranch" value="true"/>
+    <property name="outOfGrammarProbability" value="${oogProbability}"/>
+    <property name="phoneInsertionProbability" value="${oogLoopProbability}"/>
+    <property name="phoneLoopAcousticModel" value="acousticModel"/>
   </component>
 
   <component name="lexTreeLinguist"
