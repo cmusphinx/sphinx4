@@ -35,13 +35,13 @@ public class WordResultPath implements Path {
      *
      * @param wordResults the list of WordResults
      */
-    WordResultPath(List<WordResult> wordResults) {
+    public WordResultPath(List<WordResult> wordResults) {
         path.addAll(wordResults);
     }
 
 
     /** Constructs an empty WordResultPath. */
-    WordResultPath() {
+    public WordResultPath() {
     }
 
 
