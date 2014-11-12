@@ -161,7 +161,15 @@ public class Context {
 
     public void setSpeechSource(InputStream stream, TimeFrame timeFrame) {
         getInstance(StreamDataSource.class).setInputStream(stream, timeFrame);
-        setLocalProperty("threadedScorer->frontend", "liveFrontEnd");
+        String scorerComponentName = "";
+        if (configurationManager.getComponentNames().contains("threadedScorer")) {
+        	scorerComponentName = "threadedScorer";
+        } else if (configurationManager.getComponentNames().contains("trivialScorer")) {
+        	scorerComponentName = "trivialScorer";
+        } else {
+        	throw new RuntimeException("There are no scorer component in configuration. 'threadedScorer' or 'trivialScorer' is expected.");
+        }
+        setLocalProperty(scorerComponentName + "->frontend", "liveFrontEnd");
     }
 
     /**
@@ -173,7 +181,15 @@ public class Context {
     public void setSpeechSource(InputStream stream) {
         // TODO: setup stream sample rate and other parameters
         getInstance(StreamDataSource.class).setInputStream(stream);
-        setLocalProperty("threadedScorer->frontend", "liveFrontEnd");
+        String scorerComponentName = "";
+        if (configurationManager.getComponentNames().contains("threadedScorer")) {
+        	scorerComponentName = "threadedScorer";
+        } else if (configurationManager.getComponentNames().contains("trivialScorer")) {
+        	scorerComponentName = "trivialScorer";
+        } else {
+        	throw new RuntimeException("There are no scorer component in configuration. 'threadedScorer' or 'trivialScorer' is expected.");
+        }
+        setLocalProperty(scorerComponentName + "->frontend", "liveFrontEnd");
     }
 
     /**
@@ -182,7 +198,15 @@ public class Context {
      * @see    Context#setSpeechSource(URL)
      */
     public void processBatch() {
-        setLocalProperty("threadedScorer->frontend", "batchFrontEnd");
+        String scorerComponentName = "";
+        if (configurationManager.getComponentNames().contains("threadedScorer")) {
+        	scorerComponentName = "threadedScorer";
+        } else if (configurationManager.getComponentNames().contains("trivialScorer")) {
+        	scorerComponentName = "trivialScorer";
+        } else {
+        	throw new RuntimeException("There are no scorer component in configuration. 'threadedScorer' or 'trivialScorer' is expected.");
+        }
+        setLocalProperty(scorerComponentName + "->frontend", "batchFrontEnd");
     }
 
     /**
