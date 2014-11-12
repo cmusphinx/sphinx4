@@ -176,10 +176,10 @@ public class Sphinx3Loader implements Loader {
     private int numGaussiansPerState;
     private int[] vectorLength;
 
-    private Pool<float[][]> meanTransformationMatrixPool;
-    private Pool<float[]> meanTransformationVectorPool;
-    private Pool<float[][]> varianceTransformationMatrixPool;
-    private Pool<float[]> varianceTransformationVectorPool;
+    protected Pool<float[][]> meanTransformationMatrixPool;
+    protected Pool<float[]> meanTransformationVectorPool;
+    protected Pool<float[][]> varianceTransformationMatrixPool;
+    protected Pool<float[]> varianceTransformationVectorPool;
 
     protected float[][] transformMatrix;
     protected Pool<Senone> senonePool;
@@ -1178,7 +1178,7 @@ public class Sphinx3Loader implements Loader {
         return modelProps;
     }
 
-    private Properties loadModelProps(String path)
+    protected Properties loadModelProps(String path)
             throws MalformedURLException, IOException, URISyntaxException {
         Properties props = new Properties();
         BufferedReader reader = new BufferedReader(new InputStreamReader(

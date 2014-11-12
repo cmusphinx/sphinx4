@@ -30,7 +30,7 @@
     type="edu.cmu.sphinx.decoder.search.SimpleBreadthFirstSearchManager">
     <property name="linguist" value="alignerLinguist"/>
     <property name="pruner" value="trivialPruner"/>
-    <property name="scorer" value="threadedScorer"/>
+    <property name="scorer" value="simpleScorer"/>
     <property name="activeListFactory" value="activeList"/>
   </component>
   
@@ -38,7 +38,7 @@
     type="edu.cmu.sphinx.decoder.search.SimpleBreadthFirstSearchManager">
     <property name="linguist" value="flatLinguist"/>
     <property name="pruner" value="trivialPruner"/>
-    <property name="scorer" value="threadedScorer"/>
+    <property name="scorer" value="simpleScorer"/>
     <property name="activeListFactory" value="activeList"/>
   </component>
 
@@ -46,7 +46,7 @@
     type="edu.cmu.sphinx.decoder.search.WordPruningBreadthFirstSearchManager">
     <property name="linguist" value="lexTreeLinguist"/>
     <property name="pruner" value="trivialPruner"/>
-    <property name="scorer" value="threadedScorer"/>
+    <property name="scorer" value="simpleScorer"/>
     <property name="activeListManager" value="activeListManager"/>
 
     <property name="growSkipInterval" value="0"/>
@@ -91,8 +91,8 @@
   <component name="trivialPruner"
     type="edu.cmu.sphinx.decoder.pruner.SimplePruner"/>
 
-  <component name="threadedScorer"
-    type="edu.cmu.sphinx.decoder.scorer.ThreadedAcousticScorer">
+  <component name="simpleScorer"
+    type="edu.cmu.sphinx.decoder.scorer.SimpleAcousticScorer">
     <property name="frontend" value="liveFrontEnd"/>
   </component>
 

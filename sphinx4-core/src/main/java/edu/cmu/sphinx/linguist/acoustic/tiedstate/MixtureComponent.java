@@ -34,25 +34,24 @@ public class MixtureComponent implements Cloneable, Serializable {
 
     private float[] mean;
     /** Mean after transformed by the adaptation parameters. */
-    private float[] meanTransformed;
+    protected float[] meanTransformed;
     private float[][] meanTransformationMatrix;
     private float[] meanTransformationVector;
     private float[] variance;
     /** Precision is the inverse of the variance. This includes adaptation. */
-    private float[] precisionTransformed;
+    protected float[] precisionTransformed;
     private float[][] varianceTransformationMatrix;
     private float[] varianceTransformationVector;
 
-    private float distFloor;
+    protected float distFloor;
     private float varianceFloor;
 
     public static final float DEFAULT_VAR_FLOOR = 0.0001f; // this also seems to be the default of SphinxTrain
     public static final float DEFAULT_DIST_FLOOR = 0.0f;
 
-    private float logPreComputedGaussianFactor;
-    private LogMath logMath;
-
-
+    protected float logPreComputedGaussianFactor;
+    protected LogMath logMath;
+    
     /**
      * Create a MixtureComponent with the given sub components.
      *
