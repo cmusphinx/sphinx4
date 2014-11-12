@@ -45,6 +45,7 @@ public class TranscriberDemo {
             new StreamSpeechRecognizer(configuration);
         InputStream stream = TranscriberDemo.class.getResourceAsStream(
                 "/edu/cmu/sphinx/demo/aligner/10001-90210-01803.wav");
+        stream.skip(44);
         
         // Simple recognition with generic model
         recognizer.startRecognition(stream);
@@ -72,6 +73,7 @@ public class TranscriberDemo {
  
         stream = TranscriberDemo.class.getResourceAsStream(
                 "/edu/cmu/sphinx/demo/aligner/10001-90210-01803.wav");
+        stream.skip(44);
         
         // Stats class is used to collect speaker-specific data
         Stats stats = recognizer.createStats(1);
@@ -88,6 +90,7 @@ public class TranscriberDemo {
         // Decode again with updated transform
         stream = TranscriberDemo.class.getResourceAsStream(
                 "/edu/cmu/sphinx/demo/aligner/10001-90210-01803.wav");
+        stream.skip(44);
         recognizer.startRecognition(stream);
         while ((result = recognizer.getResult()) != null) {
             System.out.format("Hypothesis: %s\n",

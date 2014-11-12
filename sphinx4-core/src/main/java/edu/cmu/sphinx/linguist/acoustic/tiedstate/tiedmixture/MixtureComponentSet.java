@@ -26,9 +26,6 @@ import edu.cmu.sphinx.util.LogMath;
  */
 public class MixtureComponentSet {
     
-    //TODO make configurable
-    private static final int TOP_GAUSSIAN_NUM = 4;
-    
     private ArrayList<PrunableMixtureComponent[]> components;
     private ArrayList<PrunableMixtureComponent[]> topComponents;
     private int numStreams;
@@ -36,13 +33,13 @@ public class MixtureComponentSet {
     private LogMath logMath;
     private long curFirstSampleNumber;
     
-    public MixtureComponentSet(ArrayList<PrunableMixtureComponent[]> components) {
+    public MixtureComponentSet(ArrayList<PrunableMixtureComponent[]> components, int topGauNum) {
         this.components = components;
         this.numStreams = components.size();
         topComponents = new ArrayList<PrunableMixtureComponent[]>();
         for (int i = 0; i < numStreams; i++) {
-            PrunableMixtureComponent[] featTopComponents = new PrunableMixtureComponent[TOP_GAUSSIAN_NUM];
-            for (int j = 0; j < TOP_GAUSSIAN_NUM; j++)
+            PrunableMixtureComponent[] featTopComponents = new PrunableMixtureComponent[topGauNum];
+            for (int j = 0; j < topGauNum; j++)
                 featTopComponents[j] = components.get(i)[j];
             topComponents.add(featTopComponents);
         }
