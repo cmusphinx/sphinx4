@@ -156,7 +156,8 @@ class Node {
      * the previously added node, otherwise we add this. Also, we record the base unit of the child in the set of right
      * context
      *
-     * @param hmm the hmm to add\n     * @return the node that holds the hmm (new or old)
+     * @param hmm the hmm to add
+     * @return the node that holds the hmm (new or old)
      */
     Node addSuccessor(HMM hmm, float probability) {
         Node child = null;

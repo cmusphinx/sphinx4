@@ -16,7 +16,7 @@ import edu.cmu.sphinx.util.props.PropertySheet;
  * @author Alexander Solovets
  *
  */
-public class DynamicTrigramModel implements BackoffLanguageModel {
+public class DynamicTrigramModel implements LanguageModel {
 
     private Dictionary dictionary;
     private final Set<String> vocabulary;
@@ -207,9 +207,5 @@ public class DynamicTrigramModel implements BackoffLanguageModel {
 
     public void setText(List<String> textWords) {
         this.textWords = textWords;
-    }
-
-    public ProbDepth getProbDepth(WordSequence wordSequence) {
-        return new ProbDepth(getProbability(wordSequence), maxDepth);
     }
 }

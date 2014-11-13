@@ -38,7 +38,7 @@ import edu.cmu.sphinx.util.props.PropertySheet;
  * 10 base.
  */
 
-public class SimpleNGramModel implements BackoffLanguageModel {
+public class SimpleNGramModel implements LanguageModel {
 
     // ----------------------------
     // Configuration data
@@ -161,13 +161,6 @@ public class SimpleNGramModel implements BackoffLanguageModel {
         // + logProbability + " "
         // + logMath.logToLinear(logProbability));
         return logProbability;
-    }
-
-    /**
-     * Dummy implementation for backoff
-     */
-    public ProbDepth getProbDepth(WordSequence sequence) {
-        return new ProbDepth(getProbability(sequence), desiredMaxDepth);
     }
 
     /**

@@ -537,8 +537,7 @@ public class WordPruningBreadthFirstSearchManager extends TokenSearchManager {
      * @return the best token
      */
     protected Token getBestToken(SearchState state) {
-        Object key = getStateKey(state);
-        return bestTokenMap.get(key);
+        return bestTokenMap.get(state);
     }
 
 
@@ -549,36 +548,9 @@ public class WordPruningBreadthFirstSearchManager extends TokenSearchManager {
      * @param state the state
      */
     protected void setBestToken(Token token, SearchState state) {
-        Object key = getStateKey(state);
-        bestTokenMap.put(key, token);
-    }
-
-    /**
-     * Returns the state key for the given state. This key is used
-     * to store bestToken into the bestToken map. All tokens with 
-     * the same key are basically shared. This method adds flexibility in
-     * search. 
-     * 
-     * For example this key will allow HMM states that have identical word 
-     * histories and are in the same HMM state to be treated equivalently. 
-     * When used  as the best token key, only the best scoring token with a 
-     * given word history survives per HMM. 
-     * <pre>
-     *   boolean equal = hmmSearchState.getLexState().equals(
-     *          other.hmmSearchState.getLexState())
-     *          && hmmSearchState.getWordHistory().equals(
-     *          other.hmmSearchState.getWordHistory());                       
-     * </pre>
-     * 
-     * @param state
-     *            the state to get the key for
-     * @return the key for the given state
-     */
-    protected Object getStateKey(SearchState state) {
-        return state;
+        bestTokenMap.put(state, token);
     }
     
-
     /** Checks that the given two states are in legitimate order.
      * @param fromState
      * @param toState*/
