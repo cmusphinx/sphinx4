@@ -77,6 +77,13 @@ public class Sphinx3PTMLoader extends Sphinx3Loader {
     }
     
     /**
+     * Getter for senone id to CI phone id convert arrays
+     */
+    public int[] getSenone2Ci() {
+        return senone2ci;
+    }
+    
+    /**
      * Loads the AcousticModel from a directory in the file system.
      * 
      * @param modelDef

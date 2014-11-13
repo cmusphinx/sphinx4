@@ -46,13 +46,8 @@ public class SetBasedGaussianMixture extends GaussianMixture {
      */
     @Override
     public float[] calculateComponentScore(Data feature) {
-        if (feature instanceof DoubleData)
-            System.err.println("DoubleData conversion required on mixture level!");
-
-        float[] featureVector = FloatData.toFloatData(feature).getValues();
-
-        return mixtureComponentSet.calculateComponentScore(featureVector, logMixtureWeights);
-       }
+        return mixtureComponentSet.calculateComponentScore(feature, logMixtureWeights);
+    }
     
     @Override
     public MixtureComponent[] getMixtureComponents() {

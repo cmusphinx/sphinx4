@@ -1197,16 +1197,18 @@ public class Sphinx3Loader implements Loader {
             int transformClass = clusters.getClassIndex(index);
             float[] tmean = new float[getVectorLength()[0]];
             float[] mean = meansPool.get(index);
-
-            for (int l = 0; l < getVectorLength()[0]; l++) {
-                tmean[l] = 0;
-                for (int m = 0; m < getVectorLength()[0]; m++) {
-                    tmean[l] += transform.getAs()[transformClass][0][l][m]
-                            * mean[m];
+            
+            for (int i = 0; i < numStreams; i++) {
+                for (int l = 0; l < getVectorLength()[i]; l++) {
+                    tmean[l] = 0;
+                    for (int m = 0; m < getVectorLength()[i]; m++) {
+                        tmean[l] += transform.getAs()[transformClass][i][l][m]
+                                * mean[m];
+                    }
+                    tmean[l] += transform.getBs()[transformClass][i][l];
                 }
-                tmean[l] += transform.getBs()[transformClass][0][l];
+                System.arraycopy(tmean, 0, mean, 0, tmean.length);
             }
-            System.arraycopy(tmean, 0, mean, 0, tmean.length);
         }
     }
 }

@@ -7,6 +7,7 @@ import edu.cmu.sphinx.linguist.HMMSearchState;
 import edu.cmu.sphinx.linguist.SearchState;
 import edu.cmu.sphinx.linguist.acoustic.tiedstate.Loader;
 import edu.cmu.sphinx.linguist.acoustic.tiedstate.Sphinx3Loader;
+import edu.cmu.sphinx.linguist.acoustic.tiedstate.tiedmixture.Sphinx3PTMLoader;
 import edu.cmu.sphinx.util.LogMath;
 
 /**
@@ -74,15 +75,15 @@ public class Stats {
 				for (int l = 0; l < loader.getVectorLength()[0]; l++) {
 					if (loader.getVariancePool().get(
 							i * loader.getNumGaussiansPerState() + k)[l] <= 0.) {
-						this.loader.getVariancePool().get(i
-								* loader.getNumGaussiansPerState() + k)[l] = (float) 0.5;
+						this.loader.getVariancePool().get(
+								i * loader.getNumGaussiansPerState() + k)[l] = (float) 0.5;
 					} else if (loader.getVariancePool().get(
 							i * loader.getNumGaussiansPerState() + k)[l] < varFlor) {
-						this.loader.getVariancePool().get(i
-								* loader.getNumGaussiansPerState() + k)[l] = (float) (1. / varFlor);
+						this.loader.getVariancePool().get(
+								i * loader.getNumGaussiansPerState() + k)[l] = (float) (1. / varFlor);
 					} else {
-						this.loader.getVariancePool().get(i
-								* loader.getNumGaussiansPerState() + k)[l] = (float) (1. / loader
+						this.loader.getVariancePool().get(
+								i * loader.getNumGaussiansPerState() + k)[l] = (float) (1. / loader
 								.getVariancePool().get(
 										i * loader.getNumGaussiansPerState()
 												+ k)[l]);
@@ -128,8 +129,10 @@ public class Stats {
 	public void collect(SpeechResult result) throws Exception {
 		Token token = result.getResult().getBestToken();
 		float[] componentScore, featureVector, posteriors, tmean;
+		int[] len;
 		float dnom, wtMeanVar, wtDcountVar, wtDcountVarMean, mean;
-		int mId, len, cluster;
+		int mId, cluster;
+		int numStreams, gauPerState;
 
 		if (token == null)
 			throw new Exception("Best token not found!");
@@ -145,46 +148,58 @@ public class Stats {
 
 			componentScore = token.calculateComponentScore(feature);
 			featureVector = FloatData.toFloatData(feature).getValues();
-			mId = (int) ((HMMSearchState)token.getSearchState()).getHMMState().getMixtureId();
+			mId = (int) ((HMMSearchState) token.getSearchState()).getHMMState()
+					.getMixtureId();
+			if (loader instanceof Sphinx3PTMLoader)
+				// use CI phone ID for tied mixture model
+				mId = ((Sphinx3PTMLoader) loader).getSenone2Ci()[mId];
 			posteriors = this.computePosterios(componentScore);
-			len = loader.getVectorLength()[0];
+			len = loader.getVectorLength();
+			numStreams = loader.getNumStreams();
+			gauPerState = loader.getNumGaussiansPerState();
+			int featVectorStartIdx = 0;
 
-			for (int i = 0; i < componentScore.length; i++) {
-				cluster = means.getClassIndex(mId
-						* loader.getNumGaussiansPerState() + i);
-				dnom = posteriors[i];
-				if (dnom > 0.) {
-					tmean = loader.getMeansPool().get(
-							mId * loader.getNumGaussiansPerState() + i);
+			for (int i = 0; i < numStreams; i++) {
+				for (int j = 0; j < gauPerState; j++) {
 
-					for (int j = 0; j < featureVector.length; j++) {
-						mean = posteriors[i] * featureVector[j];
-						wtMeanVar = mean
-								* loader.getVariancePool().get(mId
-										* loader.getNumGaussiansPerState()
-										+ i)[j];
-						wtDcountVar = dnom
-								* loader.getVariancePool().get(mId
-										* loader.getNumGaussiansPerState()
-										+ i)[j];
+					cluster = means.getClassIndex(mId * numStreams
+							* gauPerState + i * gauPerState + j);
+					dnom = posteriors[i * gauPerState + j];
+					if (dnom > 0.) {
+						tmean = loader.getMeansPool().get(
+								mId * numStreams * gauPerState + i
+										* gauPerState + j);
 
-						for (int p = 0; p < featureVector.length; p++) {
-							wtDcountVarMean = wtDcountVar * tmean[p];
+						for (int k = 0; k < len[i]; k++) {
+							mean = posteriors[i * gauPerState + j]
+									* featureVector[k + featVectorStartIdx];
+							wtMeanVar = mean
+									* loader.getVariancePool().get(
+											mId * numStreams * gauPerState + i
+													* gauPerState + j)[k];
+							wtDcountVar = dnom
+									* loader.getVariancePool().get(
+											mId * numStreams * gauPerState + i
+													* gauPerState + j)[k];
 
-							for (int q = p; q < featureVector.length; q++) {
-								regLs[cluster][0][j][p][q] += wtDcountVarMean
-										* tmean[q];
+							for (int p = 0; p < len[i]; p++) {
+								wtDcountVarMean = wtDcountVar * tmean[p];
+
+								for (int q = p; q < len[i]; q++) {
+									regLs[cluster][i][k][p][q] += wtDcountVarMean
+											* tmean[q];
+								}
+								regLs[cluster][i][k][p][len[i]] += wtDcountVarMean;
+								regRs[cluster][i][k][p] += wtMeanVar * tmean[p];
 							}
-							regLs[cluster][0][j][p][len] += wtDcountVarMean;
-							regRs[cluster][0][j][p] += wtMeanVar * tmean[p];
-						}
-						regLs[cluster][0][j][len][len] += wtDcountVar;
-						regRs[cluster][0][j][len] += wtMeanVar;
+							regLs[cluster][i][k][len[i]][len[i]] += wtDcountVar;
+							regRs[cluster][i][k][len[i]] += wtMeanVar;
 
+						}
 					}
 				}
+				featVectorStartIdx += len[i];
 			}
-
 			token = token.getPredecessor();
 		} while (token != null);
 	}

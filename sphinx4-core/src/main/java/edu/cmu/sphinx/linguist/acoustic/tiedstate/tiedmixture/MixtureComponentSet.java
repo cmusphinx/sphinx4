@@ -31,7 +31,8 @@ public class MixtureComponentSet {
     private int numStreams;
     private int gaussianPerStream;
     private LogMath logMath;
-    private long curFirstSampleNumber;
+    private long topGauCalcSampleNumber;
+    private long allGauCalcSampleNumber;
     
     public MixtureComponentSet(ArrayList<PrunableMixtureComponent[]> components, int topGauNum) {
         this.components = components;
@@ -45,7 +46,8 @@ public class MixtureComponentSet {
         }
         gaussianPerStream = components.get(0).length;
         logMath = LogMath.getLogMath();
-        curFirstSampleNumber = -1;
+        topGauCalcSampleNumber = -1;
+        allGauCalcSampleNumber = -1;
     }
     
     private float applyWeights(float[] logMixtureWeights) {
@@ -117,24 +119,42 @@ public class MixtureComponentSet {
             System.err.println("DoubleData conversion required on mixture level!");
         
         long firstSampleNumber = FloatData.toFloatData(feature).getFirstSampleNumber();
-        if (firstSampleNumber != curFirstSampleNumber) {
+        if (firstSampleNumber != topGauCalcSampleNumber) {
             float[] featureVector = FloatData.toFloatData(feature).getValues();
             updateScores(featureVector);
-            curFirstSampleNumber = firstSampleNumber;
+            topGauCalcSampleNumber = firstSampleNumber;
         }
         
         return applyWeights(logMixtureWeights);
     }
     
-    public float[] calculateComponentScore(float[] featureVector, float[] logMixtureWeights) {
+    public float[] calculateComponentScore(Data feature, float[] logMixtureWeights) {
+        if (feature instanceof DoubleData)
+            System.err.println("DoubleData conversion required on mixture level!");
+        
+        long firstSampleNumber = FloatData.toFloatData(feature).getFirstSampleNumber();
+        if (allGauCalcSampleNumber != firstSampleNumber) {
+            //need to update scores in all components
+            float[] featureVector = FloatData.toFloatData(feature).getValues();
+            int step = featureVector.length / numStreams;
+            float[] streamVector = new float[step];
+            for (int i = 0; i < numStreams; i++) {
+                System.arraycopy(featureVector, i * step, streamVector, 0, step);
+                for (PrunableMixtureComponent component : components.get(i)) {
+                    if (topGauCalcSampleNumber == firstSampleNumber && isInTopComponents(topComponents.get(i), component))
+                        //no need to update
+                        continue;
+                    component.updateScore(streamVector);
+                }
+            }
+            allGauCalcSampleNumber = firstSampleNumber;
+        }
+        
         float[] scores = new float[size()];
-        int step = featureVector.length / numStreams;
         int scoreIdx = 0;
-        float[] streamVector = new float[step];
         for (int i = 0; i < numStreams; i++) {
-            System.arraycopy(featureVector, i * step, streamVector, 0, step);
-            for (int j = 0; j < components.get(i).length; j++) {
-                scores[scoreIdx] = components.get(i)[j].getScore(streamVector) + logMixtureWeights[scoreIdx];
+            for (PrunableMixtureComponent component : components.get(i)) {
+                scores[scoreIdx] = component.getStoredScore() + logMixtureWeights[scoreIdx];
                 scoreIdx++;
             }
         }
