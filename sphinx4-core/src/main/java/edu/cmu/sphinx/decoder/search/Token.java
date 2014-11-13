@@ -40,24 +40,17 @@ public class Token implements Scoreable {
     private static final DecimalFormat scoreFmt = new DecimalFormat("0.0000000E00");
     private static final DecimalFormat numFmt = new DecimalFormat("0000");
 
-    private final Token predecessor;
+    private Token predecessor;
 
-    private final float logLanguageScore;
+    private float logLanguageScore;
     private float logTotalScore;
     private float logInsertionScore;
     private float logAcousticScore;
     
-    private final SearchState searchState;
+    private SearchState searchState;
 
-    private int location;
-    private final int frameNumber;
+    private int frameNumber;
     private Data myData;
-
-    /**
-     * A collection of arbitrary properties assigned to this token. This field becomes lazy initialized to reduce
-     * memory footprint.
-     */
-    private HashMap<String, Object> tokenProps;
 
     /**
      * Internal constructor for a token. Used by classes Token, CombineToken, ParallelToken
@@ -80,7 +73,6 @@ public class Token implements Scoreable {
         this.logInsertionScore = logInsertionScore;
         this.logLanguageScore = logLanguageScore;
         this.frameNumber = frameNumber;
-        this.location = -1;
         curCount++;
     }
 
@@ -294,7 +286,7 @@ public class Token implements Scoreable {
             scoreFmt.format(getScore()) + ' ' +
             scoreFmt.format(getAcousticScore()) + ' ' +
             scoreFmt.format(getLanguageScore()) + ' ' +
-            getSearchState() + (tokenProps == null ? "" : " " + tokenProps);
+            getSearchState();
     }
 
 
@@ -439,27 +431,6 @@ public class Token implements Scoreable {
 
 
     /**
-     * Returns the location of this Token in the ActiveList. In the HeapActiveList implementation, it is the index of
-     * the Token in the array backing the heap.
-     *
-     * @return the location of this Token in the ActiveList
-     */
-    public final int getLocation() {
-        return location;
-    }
-
-
-    /**
-     * Sets the location of this Token in the ActiveList.
-     *
-     * @param location the location of this Token
-     */
-    public final void setLocation(int location) {
-        this.location = location;
-    }
-
-
-    /**
      * Determines if this branch is valid
      *
      * @return true if the token and its predecessors are valid
@@ -488,16 +459,14 @@ public class Token implements Scoreable {
         return numFmt;
     }
 
-
-    /**
-     * Returns the application object
-     *
-     * @return the application object
-     */
-    public synchronized Map<String, Object> getTokenProps() {
-        if (tokenProps == null)
-            tokenProps = new HashMap<String, Object>();
-
-        return tokenProps;
+    public void update(Token predecessor, SearchState nextState,
+            float logEntryScore, float insertionProbability,
+            float languageProbability, int currentFrameNumber) {
+        this.predecessor = predecessor;
+        this.searchState = nextState;
+        this.logTotalScore = logEntryScore;
+        this.logInsertionScore = insertionProbability;
+        this.logLanguageScore = languageProbability;
+        this.frameNumber = currentFrameNumber;
     }
 }

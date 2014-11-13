@@ -146,19 +146,6 @@ public class SimpleActiveListManager implements ActiveListManager {
 
 
     /**
-     * Replaces an old token with a new token
-     *
-     * @param oldToken the token to replace (or null in which case, replace works like add).
-     * @param newToken the new token to be placed in the list.
-     */
-    public void replace(Token oldToken, Token newToken) {
-        ActiveList activeList = findListFor(oldToken);
-        assert activeList != null;
-        activeList.replace(oldToken, newToken);
-    }
-
-
-    /**
      * Returns the emitting ActiveList from the manager
      *
      * @return the emitting ActiveList

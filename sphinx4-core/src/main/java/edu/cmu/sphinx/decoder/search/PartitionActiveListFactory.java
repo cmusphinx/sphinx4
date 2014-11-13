@@ -104,7 +104,6 @@ public class PartitionActiveListFactory extends ActiveListFactory {
         public void add(Token token) {
             if (size < tokenList.length) {
                 tokenList[size] = token;
-                token.setLocation(size);
                 size++;
             } else {
                 // token array too small, double the capacity
@@ -122,33 +121,7 @@ public class PartitionActiveListFactory extends ActiveListFactory {
             tokenList = Arrays.copyOf(tokenList, tokenList.length * 2);
         }
 
-
-        /**
-         * Replaces an old token with a new token
-         *
-         * @param oldToken the token to replace (or null in which case, replace works like add).
-         * @param newToken the new token to be placed in the list.
-         */
-        public void replace(Token oldToken, Token newToken) {
-            if (oldToken != null) {
-                int location = oldToken.getLocation();
-                // check to see if the old token is still in the list
-                if (location != -1 && tokenList[location] == oldToken) {
-                    tokenList[location] = newToken;
-                    newToken.setLocation(location);
-                    oldToken.setLocation(-1);
-                } else {
-                    add(newToken);
-                }
-            } else {
-                add(newToken);
-            }
-            if (bestToken == null || newToken.getScore() > bestToken.getScore()) {
-                bestToken = newToken;
-            }
-        }
-
-
+        
         /**
          * Purges excess members. Remove all nodes that fall below the relativeBeamWidth
          *

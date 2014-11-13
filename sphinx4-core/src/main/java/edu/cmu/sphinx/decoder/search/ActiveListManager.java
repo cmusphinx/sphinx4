@@ -40,15 +40,6 @@ public interface ActiveListManager extends Configurable {
 
 
     /**
-     * Replaces an old token with a new token
-     *
-     * @param oldToken the token to replace (or null in which case, replace works like add).
-     * @param newToken the new token to be placed in the list.
-     */
-    public void replace(Token oldToken, Token newToken);
-
-
-    /**
      * Returns an Iterator of all the non-emitting ActiveLists. The iteration order is the same as the search state
      * order.
      *

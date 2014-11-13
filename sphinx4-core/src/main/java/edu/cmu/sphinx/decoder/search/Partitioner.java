@@ -133,7 +133,6 @@ public class Partitioner {
 
     private void setToken(Token[] list, int index, Token token) {
         list[index] = token;
-        token.setLocation(index);
     }
 
     /**

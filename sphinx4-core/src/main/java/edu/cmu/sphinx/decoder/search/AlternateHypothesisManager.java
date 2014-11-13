@@ -80,20 +80,6 @@ public class AlternateHypothesisManager {
         }
     }
 
-
-    /**
-     * Change the successor from one token to another
-     *
-     * @param newSuccessor the new successor token
-     * @param oldSuccessor the old successor token
-     */
-    public void changeSuccessor(Token newSuccessor, Token oldSuccessor) {
-        List<Token> list = viterbiLoserMap.get(oldSuccessor);
-        viterbiLoserMap.put(newSuccessor, list);
-        viterbiLoserMap.remove(oldSuccessor);
-    }
-
-
 	public boolean hasAlternatePredecessors(Token token) {
 		return viterbiLoserMap.containsKey(token);
 	}

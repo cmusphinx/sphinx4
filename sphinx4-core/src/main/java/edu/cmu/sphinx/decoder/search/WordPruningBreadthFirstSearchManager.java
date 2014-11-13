@@ -629,26 +629,26 @@ public class WordPruningBreadthFirstSearchManager extends TokenSearchManager {
             boolean firstToken = bestToken == null;
 
             if (firstToken || bestToken.getScore() < logEntryScore) {
-                Token newBestToken = new Token(predecessor, nextState,
+                if (firstToken) {
+                    Token newBestToken = new Token(predecessor, nextState,
                         logEntryScore, 
                         arc.getInsertionProbability(),
                         arc.getLanguageProbability(), 
                         currentFrameNumber);
-                tokensCreated.value++;
-
-                setBestToken(newBestToken, nextState);
-                if (firstToken) {
-                    activeListAdd(newBestToken);
+                        tokensCreated.value++;
+                        setBestToken(newBestToken, nextState);
+                        activeListAdd(newBestToken);
                 } else {
-//                    System.out.println("Replacing " + bestToken + " with " + newBestToken);
-                    activeListReplace(bestToken, newBestToken);
-                    if (buildWordLattice && newBestToken.isWord()) {
-
-                        // Move predecessors of bestToken to precede
-                        // newBestToken, bestToken will be garbage collected.
-                        loserManager.changeSuccessor(newBestToken, bestToken);
-                        loserManager.addAlternatePredecessor(newBestToken,
-                                bestToken.getPredecessor());
+//                  System.out.println("Replacing " + bestToken + " with " + newBestToken);
+                    Token oldPredecessor = bestToken.getPredecessor();
+                    bestToken.update(predecessor, nextState,
+                        logEntryScore, 
+                        arc.getInsertionProbability(),
+                        arc.getLanguageProbability(), 
+                        currentFrameNumber);
+                    if (buildWordLattice && bestToken.isWord()) {
+                        loserManager.addAlternatePredecessor(bestToken,
+                                oldPredecessor);
                     }
                 }
             } else {
@@ -688,12 +688,6 @@ public class WordPruningBreadthFirstSearchManager extends TokenSearchManager {
     protected void activeListAdd(Token token) {
         activeListManager.add(token);
     }
-
-
-    protected void activeListReplace(Token old, Token newToken) {
-        activeListManager.replace(old, newToken);
-    }
-
 
     /**
      * Determine if the given token should be expanded

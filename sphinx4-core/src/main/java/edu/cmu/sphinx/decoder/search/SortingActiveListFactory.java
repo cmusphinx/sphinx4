@@ -98,41 +98,11 @@ public class SortingActiveListFactory extends ActiveListFactory {
          * @param token the token to add
          */
         public void add(Token token) {
-            token.setLocation(tokenList.size());
             tokenList.add(token);
             if (bestToken == null || token.getScore() > bestToken.getScore()) {
                 bestToken = token;
             }
         }
-
-
-        /**
-         * Replaces an old token with a new token
-         *
-         * @param oldToken the token to replace (or null in which case, replace works like add).
-         * @param newToken the new token to be placed in the list.
-         */
-        public void replace(Token oldToken, Token newToken) {
-            if (oldToken != null) {
-                int location = oldToken.getLocation();
-                // just a sanity check:
-                if (tokenList.get(location) != oldToken) {
-                    System.out.println("SortingActiveList: replace " + oldToken
-                            + " not where it should have been.  New "
-                            + newToken + " location is " + location + " found "
-                            + tokenList.get(location));
-                }
-                tokenList.set(location, newToken);
-                newToken.setLocation(location);
-                if (bestToken == null
-                        || newToken.getScore() > bestToken.getScore()) {
-                    bestToken = newToken;
-                }
-            } else {
-                add(newToken);
-            }
-        }
-
 
         /**
          * Purges excess members. Reduce the size of the token list to the absoluteBeamWidth

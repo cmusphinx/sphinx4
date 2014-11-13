@@ -476,14 +476,16 @@ public class SimpleBreadthFirstSearchManager extends TokenSearchManager {
             }
             Token predecessor = getResultListPredecessor(token);
             Token bestToken = getBestToken(nextState);
-            boolean firstToken = bestToken == null;
-            if (firstToken || bestToken.getScore() <= logEntryScore) {
+            
+            if (bestToken == null) {        
                 Token newToken = new Token(predecessor, nextState, logEntryScore,
                         arc.getInsertionProbability(),
                         arc.getLanguageProbability(), 
                         currentFrameNumber);
                 tokensCreated.value++;
                 setBestToken(newToken, nextState);
+                activeList.add(newToken);
+                
                 if (!newToken.isEmitting()) {
                     // if not emitting, check to see if we've already visited
                     // this state during this frame. Expand the token only if we
@@ -494,16 +496,17 @@ public class SimpleBreadthFirstSearchManager extends TokenSearchManager {
                     if (!isVisited(newToken)) {
                         collectSuccessorTokens(newToken);
                     }
-                } else {
-                    if (firstToken) {
-                        activeList.add(newToken);
-                    } else {
-                        activeList.replace(bestToken, newToken);
-                        viterbiPruned.value++;
-                    }
                 }
             } else {
-                viterbiPruned.value++;
+                if (bestToken.getScore() <= logEntryScore) {
+                    bestToken.update(predecessor, nextState, logEntryScore,
+                            arc.getInsertionProbability(),
+                            arc.getLanguageProbability(), 
+                            currentFrameNumber);
+                    viterbiPruned.value++;
+                } else {
+                    viterbiPruned.value++;
+                }
             }
         }
     }
