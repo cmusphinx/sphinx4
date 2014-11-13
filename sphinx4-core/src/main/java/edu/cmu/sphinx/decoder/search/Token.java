@@ -46,7 +46,6 @@ public class Token implements Scoreable {
     private float logTotalScore;
     private float logInsertionScore;
     private float logAcousticScore;
-    private float logWorkingScore;
     
     private final SearchState searchState;
 
@@ -197,28 +196,6 @@ public class Token implements Scoreable {
         logAcousticScore -= maxLogScore;
         return logTotalScore;
     }
-
-
-    /**
-     * Gets the working score. The working score is used to maintain non-final
-     * scores during the search. Some search algorithms such as bushderby use
-     * the working score
-     * 
-     * @return the working score (in logMath log base)
-     */
-    public float getWorkingScore() {
-        return logWorkingScore;
-    }
-
-    /**
-     * Sets the working score for this token
-     *
-     * @param logScore the working score (in logMath log base)
-     */
-    public void setWorkingScore(float logScore) {
-        logWorkingScore = logScore;
-    }
-
 
     /**
      * Sets the score for this token

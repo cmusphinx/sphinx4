@@ -405,14 +405,12 @@ public class WordPruningBreadthFirstSearchManager extends TokenSearchManager {
                 if (score > bestScore) {
                     bestScore = score;
                 }
-                t.setWorkingScore(score);
             }
             float relativeBeamThreshold = bestScore + relativeBeamWidth;
-
             for (Token t : activeList) {
-                if (t.getWorkingScore() >= relativeBeamThreshold) {
+                if (t.getScore() + t.getAcousticScore()
+                        * acousticLookaheadFrames > relativeBeamThreshold)
                     collectSuccessorTokens(t);
-                }
             }
             growTimer.stop();
         } else {
