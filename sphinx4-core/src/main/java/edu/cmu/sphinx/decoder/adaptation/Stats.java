@@ -97,22 +97,27 @@ public class Stats {
 	 * 
 	 * @param componentScores
 	 *            from which the posterior values are computed.
+	 * @param numStreams
+	 *            Number of feature streams
 	 * @return posterior values for all components.
 	 */
-	private float[] computePosterios(float[] componentScores) {
-		float max;
-		float[] posteriors = componentScores;
-
-		max = posteriors[0];
-
-		for (int i = 1; i < componentScores.length; i++) {
-			if (posteriors[i] > max) {
-				max = posteriors[i];
+	private float[] computePosterios(float[] componentScores, int numStreams) {
+		float[] posteriors = componentScores; 
+		
+		int step = componentScores.length / numStreams;
+		int startIdx = 0;
+		for (int i = 0; i < numStreams; i++) {
+			float max = posteriors[startIdx];
+			for (int j = startIdx + 1; j < startIdx + step; j++) {
+				if (posteriors[j] > max) {
+					max = posteriors[j];
+				}
 			}
-		}
 
-		for (int i = 0; i < componentScores.length; i++) {
-			posteriors[i] = (float) logMath.logToLinear(posteriors[i] - max);
+			for (int j = startIdx; j < startIdx + step; j++) {
+				posteriors[j] = (float) logMath.logToLinear(posteriors[j] - max);
+			}
+			startIdx += step;
 		}
 
 		return posteriors;
@@ -152,10 +157,10 @@ public class Stats {
 			if (loader instanceof Sphinx3Loader && ((Sphinx3Loader) loader).hasTiedMixtures())
 				// use CI phone ID for tied mixture model
 				mId = ((Sphinx3Loader) loader).getSenone2Ci()[mId];
-			posteriors = this.computePosterios(componentScore);
 			len = loader.getVectorLength();
 			numStreams = loader.getNumStreams();
 			gauPerState = loader.getNumGaussiansPerState();
+			posteriors = this.computePosterios(componentScore, numStreams);
 			int featVectorStartIdx = 0;
 
 			for (int i = 0; i < numStreams; i++) {
