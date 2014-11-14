@@ -32,21 +32,21 @@ public class SphinxAsciiLoader extends Sphinx3Loader {
 
     public SphinxAsciiLoader(URL location, String model, String dataLocation,
             UnitManager unitManager, float distFloor, float mixtureWeightFloor,
-            float varianceFloor, boolean useCDUnits)
+            float varianceFloor, int topGauNum, boolean useCDUnits)
     {
-        init(location, model, dataLocation, unitManager, distFloor, mixtureWeightFloor, varianceFloor, useCDUnits,
-                Logger.getLogger(getClass().getName()));
+        init(location, model, dataLocation, unitManager, distFloor, mixtureWeightFloor, varianceFloor, topGauNum, 
+                useCDUnits, Logger.getLogger(getClass().getName()));
     }
 
     public SphinxAsciiLoader(String location, String model,
             String dataLocation, UnitManager unitManager,
             float distFloor, float mixtureWeightFloor, float varianceFloor,
-            boolean useCDUnits)
+            int topGauNum, boolean useCDUnits)
         throws MalformedURLException, ClassNotFoundException
     {
         init(ConfigurationManagerUtils.resourceToURL(location), model,
                 dataLocation, unitManager, distFloor,
-                mixtureWeightFloor, varianceFloor, useCDUnits, Logger.getLogger(getClass().getName()));
+                mixtureWeightFloor, varianceFloor, topGauNum, useCDUnits, Logger.getLogger(getClass().getName()));
     }
 
     public SphinxAsciiLoader() {

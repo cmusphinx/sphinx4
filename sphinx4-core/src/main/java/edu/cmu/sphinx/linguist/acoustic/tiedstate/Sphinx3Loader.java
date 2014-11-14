@@ -14,6 +14,9 @@ package edu.cmu.sphinx.linguist.acoustic.tiedstate;
 import edu.cmu.sphinx.decoder.adaptation.ClusteredDensityFileData;
 import edu.cmu.sphinx.decoder.adaptation.Transform;
 import edu.cmu.sphinx.linguist.acoustic.*;
+import edu.cmu.sphinx.linguist.acoustic.tiedstate.tiedmixture.MixtureComponentSet;
+import edu.cmu.sphinx.linguist.acoustic.tiedstate.tiedmixture.PrunableMixtureComponent;
+import edu.cmu.sphinx.linguist.acoustic.tiedstate.tiedmixture.SetBasedGaussianMixture;
 import static edu.cmu.sphinx.linguist.acoustic.tiedstate.Pool.Feature.*;
 import edu.cmu.sphinx.util.ExtendedStreamTokenizer;
 import edu.cmu.sphinx.util.LogMath;
@@ -25,6 +28,7 @@ import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -155,6 +159,12 @@ public class Sphinx3Loader implements Loader {
      */
     @S4Double(defaultValue = 1e-7f)
     public final static String PROP_MW_FLOOR = "mixtureWeightFloor";
+    
+    /**
+     * Number of top Gaussians to use in scoring
+     */
+    @S4Integer(defaultValue = 4)
+    public final static String PROP_TOPN = "topGaussiansNum";
 
     protected final static String FILLER = "filler";
     protected final static String SILENCE_CIPHONE = "SIL";
@@ -173,8 +183,10 @@ public class Sphinx3Loader implements Loader {
     protected Pool<float[]> mixtureWeightsPool;
     private int numStates;
     private int numStreams;
+    private int numBase;
     private int numGaussiansPerState;
     private int[] vectorLength;
+    private int[] senone2ci;
 
     protected Pool<float[][]> meanTransformationMatrixPool;
     protected Pool<float[]> meanTransformationVectorPool;
@@ -204,32 +216,33 @@ public class Sphinx3Loader implements Loader {
     protected float distFloor;
     protected float mixtureWeightFloor;
     protected float varianceFloor;
+    private int topGauNum;
     protected boolean useCDUnits;
     private boolean loaded;
 
     public Sphinx3Loader(URL location, String model, String dataLocation,
             UnitManager unitManager, float distFloor, float mixtureWeightFloor,
-            float varianceFloor, boolean useCDUnits) {
+            float varianceFloor, int topGauNum, boolean useCDUnits) {
 
         init(location, model, dataLocation, unitManager, distFloor,
-                mixtureWeightFloor, varianceFloor, useCDUnits,
+                mixtureWeightFloor, varianceFloor, topGauNum, useCDUnits,
                 Logger.getLogger(getClass().getName()));
     }
 
     public Sphinx3Loader(String location, String model, String dataLocation,
             UnitManager unitManager, float distFloor, float mixtureWeightFloor,
-            float varianceFloor, boolean useCDUnits)
+            float varianceFloor, int topGauNum, boolean useCDUnits)
             throws MalformedURLException, ClassNotFoundException {
 
         init(ConfigurationManagerUtils.resourceToURL(location), model,
                 dataLocation, unitManager, distFloor, mixtureWeightFloor,
-                varianceFloor, useCDUnits,
+                varianceFloor, topGauNum, useCDUnits,
                 Logger.getLogger(getClass().getName()));
     }
 
     protected void init(URL location, String model, String dataLocatoin,
             UnitManager unitManager, float distFloor, float mixtureWeightFloor,
-            float varianceFloor, boolean useCDUnits, Logger logger) {
+            float varianceFloor, int topGauNum, boolean useCDUnits, Logger logger) {
         logMath = LogMath.getLogMath();
         this.location = location;
         this.logger = logger;
@@ -239,6 +252,7 @@ public class Sphinx3Loader implements Loader {
         this.distFloor = distFloor;
         this.mixtureWeightFloor = mixtureWeightFloor;
         this.varianceFloor = varianceFloor;
+        this.topGauNum = topGauNum;
         this.useCDUnits = useCDUnits;
     }
 
@@ -261,9 +275,18 @@ public class Sphinx3Loader implements Loader {
     public int[] getVectorLength() {
         return vectorLength;
     }
+    
+    public int[] getSenone2Ci() {
+        return senone2ci;
+    }
 
     public String getLocation() {
         return this.location.getPath();
+    }
+    
+    public boolean hasTiedMixtures() {
+        String modelType = modelProps.getProperty("-model", "cont");
+        return modelType.equals("ptm");
     }
 
     public void newProperties(PropertySheet ps) throws PropertyException {
@@ -273,6 +296,7 @@ public class Sphinx3Loader implements Loader {
                 (UnitManager) ps.getComponent(PROP_UNIT_MANAGER),
                 ps.getFloat(PROP_MC_FLOOR), ps.getFloat(PROP_MW_FLOOR),
                 ps.getFloat(PROP_VARIANCE_FLOOR),
+                ps.getInt(PROP_TOPN),
                 ps.getBoolean(PROP_USE_CD_UNITS), ps.getLogger());
     }
 
@@ -363,8 +387,17 @@ public class Sphinx3Loader implements Loader {
                 + "transition_matrices");
         transformMatrix = loadTransformMatrix(dataLocation
                 + "feature_transform");
-
-        senonePool = createSenonePool(distFloor, varianceFloor);
+        modelProps = loadModelProps(dataLocation + "feat.params");
+        
+        if (hasTiedMixtures()) {
+            //create senone to CI mapping
+            getSenoneToCIPhone();
+            //create tied senone pool
+            senonePool = createTiedSenonePool(distFloor, varianceFloor);
+        } else {
+            //create regular senone poll
+            senonePool = createSenonePool(distFloor, varianceFloor);
+        }
 
         // load the HMM modelDef file
         InputStream modelStream = getDataStream(this.model);
@@ -372,14 +405,70 @@ public class Sphinx3Loader implements Loader {
             throw new IOException("can't find modelDef " + this.model);
         }
         loadHMMPool(useCDUnits, modelStream, this.model);
-
-        modelProps = loadModelProps(dataLocation + "feat.params");
     }
 
     public Map<String, Unit> getContextIndependentUnits() {
         return contextIndependentUnits;
     }
+    
+    /**
+     * Creates senone to CI phone mapping, reading model definition file
+     */
+    private void getSenoneToCIPhone() throws IOException, URISyntaxException {
+        InputStream inputStream = getDataStream(model);
+        if (inputStream == null) {
+            throw new IOException("can't find modelDef " + model);
+        }
+        ExtendedStreamTokenizer est = new ExtendedStreamTokenizer(inputStream,
+                '#', false);
 
+        logger.fine("Loading HMM file from: " + model);
+
+        est.expectString(MODEL_VERSION);
+
+        numBase = est.getInt("numBase");
+        est.expectString("n_base");
+
+        int numTri = est.getInt("numTri");
+        est.expectString("n_tri");
+
+        int numStateMap = est.getInt("numStateMap");
+        est.expectString("n_state_map");
+
+        int numTiedState = est.getInt("numTiedState");
+        est.expectString("n_tied_state");
+
+        senone2ci = new int[numTiedState];
+
+        est.getInt("numContextIndependentTiedState");
+        est.expectString("n_tied_ci_state");
+
+        int numTiedTransitionMatrices = est.getInt("numTiedTransitionMatrices");
+        est.expectString("n_tied_tmat");
+
+        int numStatePerHMM = numStateMap / (numTri + numBase);
+
+        assert numTiedState == mixtureWeightsPool.getFeature(NUM_SENONES, 0);
+        assert numTiedTransitionMatrices == transitionsPool.size();
+
+        // Load the base phones
+        for (int i = 0; i < numBase + numTri; i++) {
+            //TODO name this magic const somehow
+            for (int j = 0; j < 5; j++)
+                est.getString();
+            int tmat = est.getInt("tmat");
+
+            for (int j = 0; j < numStatePerHMM - 1; j++) {
+                senone2ci[est.getInt("j")] = tmat;
+            }
+            est.expectString("N");
+
+            assert tmat < numTiedTransitionMatrices;
+        }
+
+        est.close();
+    }
+    
     /**
      * Creates the senone pool from the rest of the pools.
      * 
@@ -437,6 +526,71 @@ public class Sphinx3Loader implements Loader {
 
             Senone senone = new GaussianMixture(mixtureWeightsPool.get(i),
                     mixtureComponents, i);
+            pool.put(i, senone);
+        }
+        return pool;
+    }
+    
+    /**
+     * Creates the tied senone pool from the rest of the pools.
+     * 
+     * @param distFloor
+     *            the lowest allowed score
+     * @param varianceFloor
+     *            the lowest allowed variance
+     * @return the senone pool
+     */
+    private Pool<Senone> createTiedSenonePool(float distFloor, float varianceFloor) {
+        Pool<Senone> pool = new Pool<Senone>("senones");
+        int numMixtureWeights = mixtureWeightsPool.size();
+
+        int numMeans = meansPool.size();
+        int numVariances = variancePool.size();
+        int numGaussiansPerState = mixtureWeightsPool.getFeature(NUM_GAUSSIANS_PER_STATE, 0);
+        int numSenones = mixtureWeightsPool.getFeature(NUM_SENONES, 0);
+        int numStreams = mixtureWeightsPool.getFeature(NUM_STREAMS, 0);
+
+        logger.fine("Senones " + numSenones);
+        logger.fine("Gaussians Per State " + numGaussiansPerState);
+        logger.fine("MixtureWeights " + numMixtureWeights);
+        logger.fine("Means " + numMeans);
+        logger.fine("Variances " + numVariances);
+
+        assert numGaussiansPerState > 0;
+        assert numMixtureWeights == numSenones;
+        assert numVariances == numBase * numGaussiansPerState * numStreams;
+        assert numMeans == numBase * numGaussiansPerState * numStreams;
+
+        float[][] meansTransformationMatrix = meanTransformationMatrixPool == null ? null
+                : meanTransformationMatrixPool.get(0);
+        float[] meansTransformationVector = meanTransformationVectorPool == null ? null
+                : meanTransformationVectorPool.get(0);
+        float[][] varianceTransformationMatrix = varianceTransformationMatrixPool == null ? null
+                : varianceTransformationMatrixPool.get(0);
+        float[] varianceTransformationVector = varianceTransformationVectorPool == null ? null
+                : varianceTransformationVectorPool.get(0);
+        
+        MixtureComponentSet[] phoneticTiedMixtures = new MixtureComponentSet[numBase];
+        for (int i = 0; i < numBase; i++) {
+            ArrayList<PrunableMixtureComponent[]> mixtureComponents = new ArrayList<PrunableMixtureComponent[]>();
+            for (int j = 0; j < numStreams; j++) {
+            	PrunableMixtureComponent[] featMixtureComponents = new PrunableMixtureComponent[numGaussiansPerState];
+                for (int k = 0; k < numGaussiansPerState; k++) {
+                	int whichGaussian = i * numGaussiansPerState * numStreams + j * numGaussiansPerState + k;
+                	featMixtureComponents[k] = new PrunableMixtureComponent(
+                            meansPool.get(whichGaussian),
+                            meansTransformationMatrix, meansTransformationVector,
+                            variancePool.get(whichGaussian),
+                            varianceTransformationMatrix,
+                            varianceTransformationVector, distFloor, varianceFloor, k);
+                }
+                mixtureComponents.add(featMixtureComponents);
+            }
+            phoneticTiedMixtures[i] = new MixtureComponentSet(mixtureComponents, topGauNum);
+        }
+        
+        for (int i = 0; i < numSenones; i++) {
+            Senone senone = new SetBasedGaussianMixture(mixtureWeightsPool.get(i), phoneticTiedMixtures[senone2ci[i]], i);
             pool.put(i, senone);
         }
         return pool;

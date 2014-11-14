@@ -7,7 +7,6 @@ import edu.cmu.sphinx.linguist.HMMSearchState;
 import edu.cmu.sphinx.linguist.SearchState;
 import edu.cmu.sphinx.linguist.acoustic.tiedstate.Loader;
 import edu.cmu.sphinx.linguist.acoustic.tiedstate.Sphinx3Loader;
-import edu.cmu.sphinx.linguist.acoustic.tiedstate.tiedmixture.Sphinx3PTMLoader;
 import edu.cmu.sphinx.util.LogMath;
 
 /**
@@ -150,9 +149,9 @@ public class Stats {
 			featureVector = FloatData.toFloatData(feature).getValues();
 			mId = (int) ((HMMSearchState) token.getSearchState()).getHMMState()
 					.getMixtureId();
-			if (loader instanceof Sphinx3PTMLoader)
+			if (loader instanceof Sphinx3Loader && ((Sphinx3Loader) loader).hasTiedMixtures())
 				// use CI phone ID for tied mixture model
-				mId = ((Sphinx3PTMLoader) loader).getSenone2Ci()[mId];
+				mId = ((Sphinx3Loader) loader).getSenone2Ci()[mId];
 			posteriors = this.computePosterios(componentScore);
 			len = loader.getVectorLength();
 			numStreams = loader.getNumStreams();
