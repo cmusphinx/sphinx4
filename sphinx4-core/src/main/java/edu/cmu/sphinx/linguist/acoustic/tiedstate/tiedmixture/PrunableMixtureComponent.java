@@ -42,9 +42,6 @@ public class PrunableMixtureComponent extends MixtureComponent {
         // Convert to the appropriate base.
         val = logMath.lnToLog(val);
 
-        // Add the precomputed factor, with the appropriate sign.
-        val -= logPreComputedGaussianFactor;
-
         // TODO: Need to use mean and variance transforms here
 
         if (Float.isNaN(val)) {
@@ -61,7 +58,7 @@ public class PrunableMixtureComponent extends MixtureComponent {
     
     public boolean isTopComponent(float[] feature, float threshold) {
 
-        float logDval = 0.0f;
+        float logDval = logPreComputedGaussianFactor;
 
         // First, compute the argument of the exponential function in
         // the definition of the Gaussian, then convert it to the
@@ -81,7 +78,7 @@ public class PrunableMixtureComponent extends MixtureComponent {
     
     public void updateScore(float[] feature) {
         
-        float logDval = 0.0f;
+        float logDval = logPreComputedGaussianFactor;
 
         // First, compute the argument of the exponential function in
         // the definition of the Gaussian, then convert it to the

@@ -178,8 +178,7 @@ public class MixtureComponent implements Cloneable, Serializable {
      * @return the score, in log, for the given feature
      */
     public float getScore(float[] feature) {
-        // float logVal = 0.0f;
-        float logDval = 0.0f;
+        float logDval = logPreComputedGaussianFactor;
 
         // First, compute the argument of the exponential function in
         // the definition of the Gaussian, then convert it to the
@@ -197,9 +196,6 @@ public class MixtureComponent implements Cloneable, Serializable {
 
         // Convert to the appropriate base.
         logDval = logMath.lnToLog(logDval);
-
-        // Add the precomputed factor, with the appropriate sign.
-        logDval -= logPreComputedGaussianFactor;
 
         // System.out.println("MC: getscore " + logDval);
 
@@ -229,14 +225,14 @@ public class MixtureComponent implements Cloneable, Serializable {
      * @return the precomputed distance
      */
     public float precomputeDistance() {
-        float logPreComputedGaussianFactor = 0.0f; // = log(1.0)
+        double logPreComputedGaussianFactor = 0.0; // = log(1.0)
         // Compute the product of the elements in the Covariance
         // matrix's main diagonal. Covariance matrix is assumed
         // diagonal - independent dimensions. In log, the product
         // becomes a summation.
         for (int i = 0; i < variance.length; i++) {
             logPreComputedGaussianFactor +=
-                    logMath.linearToLog(precisionTransformed[i] * -2);
+                    Math.log(precisionTransformed[i] * -2);
             //	     variance[i] = 1.0f / (variance[i] * 2.0f);
         }
 
@@ -248,11 +244,11 @@ public class MixtureComponent implements Cloneable, Serializable {
         // The covariance matrix's dimension becomes a multiplicative
         // factor in log scale.
         logPreComputedGaussianFactor =
-                logMath.linearToLog(2.0 * Math.PI) * variance.length
+                Math.log(2.0 * Math.PI) * variance.length
                         - logPreComputedGaussianFactor;
 
         // The sqrt above is a 0.5 multiplicative factor in log scale.
-        return logPreComputedGaussianFactor * 0.5f;
+        return -(float)logPreComputedGaussianFactor * 0.5f;
     }
 
 
