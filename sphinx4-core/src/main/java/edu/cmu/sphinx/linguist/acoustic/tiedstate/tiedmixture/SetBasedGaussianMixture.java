@@ -11,8 +11,6 @@
 package edu.cmu.sphinx.linguist.acoustic.tiedstate.tiedmixture;
 
 import edu.cmu.sphinx.frontend.Data;
-import edu.cmu.sphinx.frontend.DoubleData;
-import edu.cmu.sphinx.frontend.FloatData;
 import edu.cmu.sphinx.linguist.acoustic.tiedstate.GaussianMixture;
 import edu.cmu.sphinx.linguist.acoustic.tiedstate.MixtureComponent;
 
