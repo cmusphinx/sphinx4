@@ -161,10 +161,6 @@ public class AutoCepstrum extends BaseDataProcessor {
                                       Denoise.class.getField("MU_T")
                                               .getAnnotation(S4Double.class)
                                               .defaultValue(),
-                                      Denoise.class
-                                              .getField("EXCITATION_THRESHOLD")
-                                              .getAnnotation(S4Double.class)
-                                              .defaultValue(),
                                       Denoise.class.getField("MAX_GAIN")
                                               .getAnnotation(S4Double.class)
                                               .defaultValue(),

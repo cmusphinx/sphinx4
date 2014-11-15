@@ -46,7 +46,7 @@ public class Denoise extends BaseDataProcessor {
     public final static String LAMBDA_POWER = "lambdaPower";
     double lambdaPower;
 
-    @S4Double(defaultValue = 0.999)
+    @S4Double(defaultValue = 0.995)
     public final static String LAMBDA_A = "lambdaA";
     double lambdaA;
 
@@ -62,10 +62,6 @@ public class Denoise extends BaseDataProcessor {
     public final static String MU_T = "muT";
     double muT;
 
-    @S4Double(defaultValue = 2.0)
-    public final static String EXCITATION_THRESHOLD = "excitationThreshold";
-    double excitationThreshold;
-
     @S4Double(defaultValue = 20.0)
     public final static String MAX_GAIN = "maxGain";
     double maxGain;
@@ -77,14 +73,13 @@ public class Denoise extends BaseDataProcessor {
     final static double EPS = 1e-10;
 
     public Denoise(double lambdaPower, double lambdaA, double lambdaB,
-            double lambdaT, double muT, double excitationThreshold,
+            double lambdaT, double muT,
             double maxGain, int smoothWindow) {
         this.lambdaPower = lambdaPower;
         this.lambdaA = lambdaA;
         this.lambdaB = lambdaB;
         this.lambdaT = lambdaT;
         this.muT = muT;
-        this.excitationThreshold = excitationThreshold;
         this.maxGain = maxGain;
         this.smoothWindow = smoothWindow;
     }
@@ -107,7 +102,6 @@ public class Denoise extends BaseDataProcessor {
         lambdaB = ps.getDouble(LAMBDA_B);
         lambdaT = ps.getDouble(LAMBDA_T);
         muT = ps.getDouble(MU_T);
-        excitationThreshold = ps.getDouble(EXCITATION_THRESHOLD);
         maxGain = ps.getDouble(MAX_GAIN);
         smoothWindow = ps.getInt(SMOOTH_WINDOW);
     }
@@ -181,8 +175,6 @@ public class Denoise extends BaseDataProcessor {
     private void powerBoosting(double[] signal) {
         for (int i = 0; i < signal.length; i++) {
             if (signal[i] < floor[i])
-                signal[i] = floor[i];
-            if (signal[i] < excitationThreshold * noise[i])
                 signal[i] = floor[i];
         }
     }
