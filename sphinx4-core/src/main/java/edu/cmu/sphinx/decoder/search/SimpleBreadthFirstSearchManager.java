@@ -475,8 +475,26 @@ public class SimpleBreadthFirstSearchManager extends TokenSearchManager {
                 }
             }
             Token predecessor = getResultListPredecessor(token);
-            Token bestToken = getBestToken(nextState);
             
+            // if not emitting, check to see if we've already visited
+            // this state during this frame. Expand the token only if we
+            // haven't visited it already. This prevents the search
+            // from getting stuck in a loop of states with no
+            // intervening emitting nodes. This can happen with nasty
+            // jsgf grammars such as ((foo*)*)*
+            if (!nextState.isEmitting()) {
+                Token newToken = new Token(predecessor, nextState, logEntryScore,
+                        arc.getInsertionProbability(),
+                        arc.getLanguageProbability(), 
+                        currentFrameNumber);
+                tokensCreated.value++;
+                if (!isVisited(newToken)) {
+                    collectSuccessorTokens(newToken);
+                }
+                continue;
+            }
+            
+            Token bestToken = getBestToken(nextState);
             if (bestToken == null) {        
                 Token newToken = new Token(predecessor, nextState, logEntryScore,
                         arc.getInsertionProbability(),
@@ -485,18 +503,6 @@ public class SimpleBreadthFirstSearchManager extends TokenSearchManager {
                 tokensCreated.value++;
                 setBestToken(newToken, nextState);
                 activeList.add(newToken);
-                
-                if (!newToken.isEmitting()) {
-                    // if not emitting, check to see if we've already visited
-                    // this state during this frame. Expand the token only if we
-                    // haven't visited it already. This prevents the search
-                    // from getting stuck in a loop of states with no
-                    // intervening emitting nodes. This can happen with nasty
-                    // jsgf grammars such as ((foo*)*)*
-                    if (!isVisited(newToken)) {
-                        collectSuccessorTokens(newToken);
-                    }
-                }
             } else {
                 if (bestToken.getScore() <= logEntryScore) {
                     bestToken.update(predecessor, nextState, logEntryScore,
