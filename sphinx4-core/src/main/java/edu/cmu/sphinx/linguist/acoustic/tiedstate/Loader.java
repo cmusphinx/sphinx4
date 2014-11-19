@@ -78,7 +78,7 @@ public interface Loader extends Configurable {
      *
      * @return the pool
      */
-    public Pool<float[]> getMixtureWeightPool();
+    public GaussianWeights getMixtureWeights();
 
     /**
      * Gets the transition matrix pool.

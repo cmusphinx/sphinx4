@@ -62,7 +62,7 @@ public class SphinxAsciiLoader extends Sphinx3Loader {
 
         meansPool = loadDensityFile(dataLocation + "means.ascii", -Float.MAX_VALUE);
         variancePool = loadDensityFile(dataLocation + "variances.ascii", varianceFloor);
-        mixtureWeightsPool = loadMixtureWeights(dataLocation + "mixture_weights.ascii", mixtureWeightFloor);
+        mixtureWeights = loadMixtureWeights(dataLocation + "mixture_weights.ascii", mixtureWeightFloor);
         transitionsPool = loadTransitionMatrices(dataLocation + "transition_matrices.ascii");
 
         senonePool = createSenonePool(distFloor, varianceFloor);
@@ -145,40 +145,37 @@ public class SphinxAsciiLoader extends Sphinx3Loader {
      *             if an error occurs while loading the data
      */
     @Override
-    protected Pool<float[]> loadMixtureWeights(String path, float floor) throws IOException, URISyntaxException {
+    protected GaussianWeights loadMixtureWeights(String path, float floor) throws IOException, URISyntaxException {
         logger.fine("Loading mixture weights from: " + path);
         InputStream inputStream = getDataStream(path);
         if (inputStream == null) {
             throw new FileNotFoundException("Error trying to read file " + path);
         }
 
-        Pool<float[]> pool = new Pool<float[]>(path);
         ExtendedStreamTokenizer est = new ExtendedStreamTokenizer(inputStream, '#', false);
         est.expectString("mixw");
         int numStates = est.getInt("numStates");
         int numStreams = est.getInt("numStreams");
         int numGaussiansPerState = est.getInt("numGaussiansPerState");
-        pool.setFeature(NUM_SENONES, numStates);
-        pool.setFeature(NUM_STREAMS, numStreams);
-        pool.setFeature(NUM_GAUSSIANS_PER_STATE, numGaussiansPerState);
+        GaussianWeights mixtureWeights = new GaussianWeights(path, numStates, numGaussiansPerState, numStreams);
         for (int i = 0; i < numStates; i++) {
             est.expectString("mixw");
             est.expectString("[" + i);
             est.expectString("0]");
             // float total = est.getFloat("total");
-            float[] logMixtureWeight = new float[numGaussiansPerState];
+            float[] gauMixtureWeight = new float[numGaussiansPerState];
             for (int j = 0; j < numGaussiansPerState; j++) {
                 float val = est.getFloat("mixwVal");
                 if (val < floor) {
                     val = floor;
                 }
-                logMixtureWeight[j] = val;
+                gauMixtureWeight[j] = val;
             }
-            LogMath.getLogMath().linearToLog(logMixtureWeight);
-            pool.put(i, logMixtureWeight);
+            LogMath.getLogMath().linearToLog(gauMixtureWeight);
+            mixtureWeights.put(i, 0, gauMixtureWeight);
         }
         est.close();
-        return pool;
+        return mixtureWeights;
     }
 
     /**

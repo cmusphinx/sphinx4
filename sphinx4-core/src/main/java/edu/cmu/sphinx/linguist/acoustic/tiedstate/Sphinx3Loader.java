@@ -180,7 +180,7 @@ public class Sphinx3Loader implements Loader {
     protected Pool<float[]> meansPool;
     protected Pool<float[]> variancePool;
     protected Pool<float[][]> transitionsPool;
-    protected Pool<float[]> mixtureWeightsPool;
+    protected GaussianWeights mixtureWeights;
     private int numStates;
     private int numStreams;
     private int numBase;
@@ -359,8 +359,8 @@ public class Sphinx3Loader implements Loader {
      * 
      * @return the mixtureWeightsPool
      */
-    protected Pool<float[]> getMixtureWeightsPool() {
-        return mixtureWeightsPool;
+    protected GaussianWeights getMixtureWeightsPool() {
+        return mixtureWeights;
     }
 
     /**
@@ -381,7 +381,7 @@ public class Sphinx3Loader implements Loader {
         meansPool = loadDensityFile(dataLocation + "means", -Float.MAX_VALUE);
         variancePool = loadDensityFile(dataLocation + "variances",
                 varianceFloor);
-        mixtureWeightsPool = loadMixtureWeights(dataLocation
+        mixtureWeights = loadMixtureWeights(dataLocation
                 + "mixture_weights", mixtureWeightFloor);
         transitionsPool = loadTransitionMatrices(dataLocation
                 + "transition_matrices");
@@ -448,7 +448,7 @@ public class Sphinx3Loader implements Loader {
 
         int numStatePerHMM = numStateMap / (numTri + numBase);
 
-        assert numTiedState == mixtureWeightsPool.getFeature(NUM_SENONES, 0);
+        assert numTiedState == mixtureWeights.getStatesNum();
         assert numTiedTransitionMatrices == transitionsPool.size();
 
         // Load the base phones
@@ -480,24 +480,20 @@ public class Sphinx3Loader implements Loader {
      */
     protected Pool<Senone> createSenonePool(float distFloor, float varianceFloor) {
         Pool<Senone> pool = new Pool<Senone>("senones");
-        int numMixtureWeights = mixtureWeightsPool.size();
-
+        
         int numMeans = meansPool.size();
         int numVariances = variancePool.size();
-        int numGaussiansPerSenone = mixtureWeightsPool.getFeature(
-                NUM_GAUSSIANS_PER_STATE, 0);
-        int numSenones = mixtureWeightsPool.getFeature(NUM_SENONES, 0);
-        int numStreams = mixtureWeightsPool.getFeature(NUM_STREAMS, 0);
+        int numGaussiansPerSenone = mixtureWeights.getGauPerState();
+        int numSenones = mixtureWeights.getStatesNum();
+        int numStreams = mixtureWeights.getStreamsNum();
         int whichGaussian = 0;
 
         logger.fine("Senones " + numSenones);
         logger.fine("Gaussians Per Senone " + numGaussiansPerSenone);
-        logger.fine("MixtureWeights " + numMixtureWeights);
         logger.fine("Means " + numMeans);
         logger.fine("Variances " + numVariances);
 
         assert numGaussiansPerSenone > 0;
-        assert numMixtureWeights == numSenones;
         assert numVariances == numSenones * numGaussiansPerSenone;
         assert numMeans == numSenones * numGaussiansPerSenone;
 
@@ -524,8 +520,7 @@ public class Sphinx3Loader implements Loader {
                 whichGaussian++;
             }
 
-            Senone senone = new GaussianMixture(mixtureWeightsPool.get(i),
-                    mixtureComponents, i);
+            Senone senone = new GaussianMixture(mixtureWeights, mixtureComponents, i);
             pool.put(i, senone);
         }
         return pool;
@@ -542,22 +537,19 @@ public class Sphinx3Loader implements Loader {
      */
     private Pool<Senone> createTiedSenonePool(float distFloor, float varianceFloor) {
         Pool<Senone> pool = new Pool<Senone>("senones");
-        int numMixtureWeights = mixtureWeightsPool.size();
 
         int numMeans = meansPool.size();
         int numVariances = variancePool.size();
-        int numGaussiansPerState = mixtureWeightsPool.getFeature(NUM_GAUSSIANS_PER_STATE, 0);
-        int numSenones = mixtureWeightsPool.getFeature(NUM_SENONES, 0);
-        int numStreams = mixtureWeightsPool.getFeature(NUM_STREAMS, 0);
+        int numGaussiansPerState = mixtureWeights.getGauPerState();
+        int numSenones = mixtureWeights.getStatesNum();
+        int numStreams = mixtureWeights.getStreamsNum();
 
         logger.fine("Senones " + numSenones);
         logger.fine("Gaussians Per State " + numGaussiansPerState);
-        logger.fine("MixtureWeights " + numMixtureWeights);
         logger.fine("Means " + numMeans);
         logger.fine("Variances " + numVariances);
 
         assert numGaussiansPerState > 0;
-        assert numMixtureWeights == numSenones;
         assert numVariances == numBase * numGaussiansPerState * numStreams;
         assert numMeans == numBase * numGaussiansPerState * numStreams;
 
@@ -590,7 +582,7 @@ public class Sphinx3Loader implements Loader {
         }
         
         for (int i = 0; i < numSenones; i++) {
-            Senone senone = new SetBasedGaussianMixture(mixtureWeightsPool.get(i), phoneticTiedMixtures[senone2ci[i]], i);
+            Senone senone = new SetBasedGaussianMixture(mixtureWeights, phoneticTiedMixtures[senone2ci[i]], i);
             pool.put(i, senone);
         }
         return pool;
@@ -902,7 +894,7 @@ public class Sphinx3Loader implements Loader {
 
         int numStatePerHMM = numStateMap / (numTri + numBase);
 
-        assert numTiedState == mixtureWeightsPool.getFeature(NUM_SENONES, 0);
+        assert numTiedState == mixtureWeights.getStatesNum();
         assert numTiedTransitionMatrices == transitionsPool.size();
 
         // Load the base phones
@@ -1072,7 +1064,7 @@ public class Sphinx3Loader implements Loader {
      * @throws IOException
      *             if an error occurs while loading the data
      */
-    protected Pool<float[]> loadMixtureWeights(String path, float floor)
+    protected GaussianWeights loadMixtureWeights(String path, float floor)
             throws IOException, URISyntaxException {
         logger.fine("Loading mixture weights from: " + path);
 
@@ -1090,12 +1082,11 @@ public class Sphinx3Loader implements Loader {
         boolean doCheckSum = (checksum != null && checksum.equals("yes"));
         resetChecksum();
 
-        Pool<float[]> pool = new Pool<float[]>(path);
-
         int numStates = readInt(dis);
         int numStreams = readInt(dis);
         int numGaussiansPerState = readInt(dis);
         int numValues = readInt(dis);
+        GaussianWeights mixtureWeights = new GaussianWeights(path, numStates, numGaussiansPerState, numStreams);
 
         logger.fine("Number of states " + numStates);
         logger.fine("Number of streams " + numStreams);
@@ -1103,43 +1094,21 @@ public class Sphinx3Loader implements Loader {
 
         assert numValues == numStates * numStreams * numGaussiansPerState;
 
-        pool.setFeature(NUM_SENONES, numStates);
-        pool.setFeature(NUM_STREAMS, numStreams);
-        pool.setFeature(NUM_GAUSSIANS_PER_STATE, numGaussiansPerState);
-
-        if (numStreams != 1) {
             for (int i = 0; i < numStates; i++) {
-                float[] logMixtureWeight = new float[numGaussiansPerState
-                        * numStreams];
                 for (int j = 0; j < numStreams; j++) {
                     float[] logStreamMixtureWeight = readFloatArray(dis,
                             numGaussiansPerState);
                     Utilities.normalize(logStreamMixtureWeight);
                     Utilities.floorData(logStreamMixtureWeight, floor);
                     logMath.linearToLog(logStreamMixtureWeight);
-                    System.arraycopy(logStreamMixtureWeight, 0,
-                            logMixtureWeight, numGaussiansPerState * j,
-                            numGaussiansPerState);
+                    mixtureWeights.put(i, j, logStreamMixtureWeight);
                 }
-                pool.put(i, logMixtureWeight);
             }
-        } else {
-            for (int i = 0; i < numStates; i++) {
-                float[] logMixtureWeight = readFloatArray(dis,
-                        numGaussiansPerState);
-                Utilities.normalize(logMixtureWeight);
-                Utilities.floorData(logMixtureWeight, floor);
-                logMath.linearToLog(logMixtureWeight);
-                pool.put(i, logMixtureWeight);
-
-            }
-
-        }
 
         validateChecksum(dis, doCheckSum);
 
         dis.close();
-        return pool;
+        return mixtureWeights;
     }
 
     /**
@@ -1277,8 +1246,8 @@ public class Sphinx3Loader implements Loader {
         return varianceTransformationVectorPool;
     }
 
-    public Pool<float[]> getMixtureWeightPool() {
-        return mixtureWeightsPool;
+    public GaussianWeights getMixtureWeights() {
+        return mixtureWeights;
     }
 
     public Pool<float[][]> getTransitionMatrixPool() {
@@ -1321,7 +1290,7 @@ public class Sphinx3Loader implements Loader {
         if (varianceTransformationVectorPool != null)
             varianceTransformationVectorPool.logInfo(logger);
 
-        mixtureWeightsPool.logInfo(logger);
+        mixtureWeights.logInfo(logger);
         senonePool.logInfo(logger);
         logger.info("Context Independent Unit Entries: "
                 + contextIndependentUnits.size());

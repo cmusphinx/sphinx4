@@ -130,7 +130,7 @@ public class HTKLoader implements Loader {
     private Pool<float[]> meanTransformationVectorPool;
     private Pool<float[][]> varianceTransformationMatrixPool;
     private Pool<float[]> varianceTransformationVectorPool;
-    private Pool<float[]> mixtureWeightsPool;
+    private GaussianWeights mixtureWeights;
     private Pool<Senone> senonePool;
     private Map<String, Unit> contextIndependentUnits;
     private HMMManager hmmManager;
@@ -273,7 +273,7 @@ public class HTKLoader implements Loader {
 
         meansPool = htkmods.htkMeans(MMFname);
         variancePool = htkmods.htkVars(MMFname, varianceFloor);
-        mixtureWeightsPool = htkmods.htkWeights(MMFname, mixtureWeightFloor);
+        mixtureWeights = htkmods.htkWeights(MMFname, mixtureWeightFloor);
         matrixPool = htkmods.htkTrans(MMFname);
 
         // senonePool represents the set of the emitting states
@@ -295,25 +295,21 @@ public class HTKLoader implements Loader {
      */
     private Pool<Senone> createSenonePool(float distFloor, float varianceFloor) {
         Pool<Senone> pool = new Pool<Senone>("senones");
-        int numMixtureWeights = mixtureWeightsPool.size();
 
         int numMeans = meansPool.size();
         int numVariances = variancePool.size();
         // TODO: remove this variable to allow different number of states per
         // HMM
-        int numGaussiansPerSenone = mixtureWeightsPool.getFeature(
-                NUM_GAUSSIANS_PER_STATE, 0);
-        int numSenones = mixtureWeightsPool.getFeature(NUM_SENONES, 0);
+        int numGaussiansPerSenone = mixtureWeights.getGauPerState();
+        int numSenones = mixtureWeights.getStatesNum();
         int whichGaussian = 0;
 
         logger.fine("NG " + numGaussiansPerSenone);
         logger.fine("NS " + numSenones);
-        logger.fine("NMIX " + numMixtureWeights);
         logger.fine("NMNS " + numMeans);
         logger.fine("NMNS " + numVariances);
 
         assert numGaussiansPerSenone > 0;
-        assert numMixtureWeights == numSenones;
         assert numVariances == numSenones * numGaussiansPerSenone;
         assert numMeans == numSenones * numGaussiansPerSenone;
         
@@ -342,8 +338,7 @@ public class HTKLoader implements Loader {
                 whichGaussian++;
             }
 
-            Senone senone = new GaussianMixture(mixtureWeightsPool
-                    .get(i), mixtureComponents, i);
+            Senone senone = new GaussianMixture(mixtureWeights, mixtureComponents, i);
 
             pool.put(i, senone);
         }
@@ -739,8 +734,8 @@ public class HTKLoader implements Loader {
         return varianceTransformationVectorPool;
     }
 
-    public Pool<float[]> getMixtureWeightPool() {
-        return mixtureWeightsPool;
+    public GaussianWeights getMixtureWeights() {
+        return mixtureWeights;
     }
 
     public Pool<float[][]> getTransitionMatrixPool() {
@@ -873,14 +868,11 @@ public class HTKLoader implements Loader {
             return pool;
         }
 
-        public Pool<float[]> htkWeights(String path, float floor) {
-            Pool<float[]> pool = new Pool<float[]>(path);
+        public GaussianWeights htkWeights(String path, float floor) {
             int numStates = getNumStates();
             int numStreams = 1;
             int numGaussiansPerState = getGMMSize();
-            pool.setFeature(NUM_SENONES, numStates);
-            pool.setFeature(NUM_STREAMS, numStreams);
-            pool.setFeature(NUM_GAUSSIANS_PER_STATE, numGaussiansPerState);
+            GaussianWeights mixtureWeights = new GaussianWeights(path, numStates, numGaussiansPerState, numStreams);
             for (int i = 0; i < numStates; i++) {
                 GMMDiag gmm = hmmsHTK.gmms.get(i);
                 float[] logWeights = new float[numGaussiansPerState];
@@ -891,9 +883,9 @@ public class HTKLoader implements Loader {
                 logMath.linearToLog(logWeights);
                 // the order of the weights is the order in the HMMSet.gmms
                 // vector which is the order of appearance in the MMF file
-                pool.put(i, logWeights);
+                mixtureWeights.put(i, 0, logWeights);
             }
-            return pool;
+            return mixtureWeights;
         }
 
         public Pool<float[][]> htkTrans(String path) {

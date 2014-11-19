@@ -76,7 +76,7 @@ public class Sphinx3Saver implements Saver {
     private Pool<float[]> meanTransformationVectorPool;
     private Pool<float[][]> varianceTransformationMatrixPool;
     private Pool<float[]> varianceTransformationVectorPool;
-    private Pool<float[]> mixtureWeightsPool;
+    private GaussianWeights mixtureWeights;
 
     private Pool<Senone> senonePool;
     private int vectorLength;
@@ -121,7 +121,7 @@ public class Sphinx3Saver implements Saver {
         hmmManager = loader.getHMMManager();
         meansPool = loader.getMeansPool();
         variancePool = loader.getVariancePool();
-        mixtureWeightsPool = loader.getMixtureWeightPool();
+        mixtureWeights = loader.getMixtureWeights();
         matrixPool = loader.getTransitionMatrixPool();
         senonePool = loader.getSenonePool();
         contextIndependentUnits = new LinkedHashMap<String, Unit> ();
@@ -179,13 +179,13 @@ public class Sphinx3Saver implements Saver {
             saveDensityFileBinary(meansPool, dataDir + "means", true);
             // From now on, append to previous file
             saveDensityFileBinary(variancePool, dataDir + "variances", true);
-            saveMixtureWeightsBinary(mixtureWeightsPool, dataDir + "mixture_weights", true);
+            saveMixtureWeightsBinary(mixtureWeights, dataDir + "mixture_weights", true);
             saveTransitionMatricesBinary(matrixPool, dataDir + "transition_matrices", true);
 
         } else {
             saveDensityFileAscii(meansPool, dataDir + "means.ascii", true);
             saveDensityFileAscii(variancePool, dataDir + "variances.ascii", true);
-            saveMixtureWeightsAscii(mixtureWeightsPool, dataDir + "mixture_weights.ascii", true);
+            saveMixtureWeightsAscii(mixtureWeights, dataDir + "mixture_weights.ascii", true);
             saveTransitionMatricesAscii(matrixPool, dataDir + "transition_matrices.ascii", true);
         }
 
@@ -451,7 +451,7 @@ public class Sphinx3Saver implements Saver {
         pw.println(numBase + " n_base");
         pw.println(numTri + " n_tri");
         pw.println(numStateMap + " n_state_map");
-        int numTiedState = mixtureWeightsPool.getFeature(NUM_SENONES, 0);
+        int numTiedState = mixtureWeights.getStatesNum();
         pw.println(numTiedState + " n_tied_state");
         pw.println(numContextIndependentTiedState + " n_tied_ci_state");
         int numTiedTransitionMatrices = numBase;
@@ -551,13 +551,13 @@ public class Sphinx3Saver implements Saver {
     /**
      * Saves the mixture weights
      *
-     * @param pool   the mixture weight pool
+     * @param mixtureWeights   guassian weights holder
      * @param path   the path to the mixture weight file
      * @param append is true, the file will be appended, useful if saving to a ZIP or JAR file
      * @throws FileNotFoundException if a file cannot be found
      * @throws IOException           if an error occurs while saving the data
      */
-    private void saveMixtureWeightsAscii(Pool<float[]> pool, String path, boolean append)
+    private void saveMixtureWeightsAscii(GaussianWeights mixtureWeights, String path, boolean append)
             throws FileNotFoundException, IOException {
         logger.info("Saving mixture weights to: ");
         logger.info(path);
@@ -569,29 +569,30 @@ public class Sphinx3Saver implements Saver {
         PrintWriter pw = new PrintWriter(outputStream, true);
 
         pw.print("mixw ");
-        int numStates = pool.getFeature(NUM_SENONES, -1);
+        int numStates = mixtureWeights.getStatesNum();
         pw.print(numStates + " ");
-        int numStreams = pool.getFeature(NUM_STREAMS, -1);
+        int numStreams = mixtureWeights.getStreamsNum();
         pw.print(numStreams + " ");
-        int numGaussiansPerState = pool.getFeature(NUM_GAUSSIANS_PER_STATE, -1);
+        int numGaussiansPerState = mixtureWeights.getGauPerState();
         pw.println(numGaussiansPerState);
 
         for (int i = 0; i < numStates; i++) {
-            pw.print("mixw [" + i + " 0] ");
-            float[] mixtureWeight = new float[numGaussiansPerState];
-            float[] logMixtureWeight = pool.get(i);
-            logMath.logToLinear(logMixtureWeight, mixtureWeight);
-
-            float sum = 0.0f;
-            for (int j = 0; j < numGaussiansPerState; j++) {
-                sum += mixtureWeight[j];
+            for (int j = 0; j < numStreams; j++) {
+                pw.print("mixw [" + i + " " + j + "] ");
+                float[] mixtureWeight = new float[numGaussiansPerState];
+                float[] logMixtureWeight = new float[numGaussiansPerState];
+                for (int k = 0; k < numGaussiansPerState; k++)
+                    logMixtureWeight[k] = mixtureWeights.get(i, j, k);
+                logMath.logToLinear(logMixtureWeight, mixtureWeight);
+                float sum = 0.0f;
+                for (int k = 0; k < numGaussiansPerState; k++)
+                    sum += mixtureWeight[k];
+                pw.println(sum);
+                pw.print("\n\t");
+                for (int k = 0; k < numGaussiansPerState; k++)
+                    pw.print(" " + mixtureWeight[k]);
+                pw.println();
             }
-            pw.println(sum);
-            pw.print("\n\t");
-            for (int j = 0; j < numGaussiansPerState; j++) {
-                pw.print(" " + mixtureWeight[j]);
-            }
-            pw.println();
         }
         outputStream.close();
     }
@@ -599,14 +600,13 @@ public class Sphinx3Saver implements Saver {
     /**
      * Saves the mixture weights (Binary)
      *
-     * @param pool   the mixture weight pool
+     * @param mixtureWeights   gaussian weights holder
      * @param path   the path to the mixture weight file
      * @param append is true, the file will be appended, useful if saving to a ZIP or JAR file
-     * @return a pool of mixture weights
      * @throws FileNotFoundException if a file cannot be found
      * @throws IOException           if an error occurs while saving the data
      */
-    private void saveMixtureWeightsBinary(Pool<float[]> pool, String path, boolean append)
+    private void saveMixtureWeightsBinary(GaussianWeights mixtureWeights, String path, boolean append)
             throws FileNotFoundException, IOException {
         logger.info("Saving mixture weights to: ");
         logger.info(path);
@@ -620,9 +620,9 @@ public class Sphinx3Saver implements Saver {
 
         DataOutputStream dos = writeS3BinaryHeader(location, path, props, append);
 
-        int numStates = pool.getFeature(NUM_SENONES, -1);
-        int numStreams = pool.getFeature(NUM_STREAMS, -1);
-        int numGaussiansPerState = pool.getFeature(NUM_GAUSSIANS_PER_STATE, -1);
+        int numStates = mixtureWeights.getStatesNum();
+        int numStreams = mixtureWeights.getStreamsNum();
+        int numGaussiansPerState = mixtureWeights.getGauPerState();
 
         writeInt(dos, numStates);
         writeInt(dos, numStreams);
@@ -632,13 +632,16 @@ public class Sphinx3Saver implements Saver {
 
         int rawLength = numGaussiansPerState * numStates * numStreams;
         writeInt(dos, rawLength);
-
+        
         for (int i = 0; i < numStates; i++) {
-            float[] mixtureWeight = new float[numGaussiansPerState];
-            float[] logMixtureWeight = pool.get(i);
-            logMath.logToLinear(logMixtureWeight, mixtureWeight);
-
-            writeFloatArray(dos, mixtureWeight);
+            for (int j = 0; j < numStreams; j++) {
+                float[] mixtureWeight = new float[numGaussiansPerState];
+                float[] logMixtureWeight = new float[numGaussiansPerState];
+                for (int k = 0; k < numGaussiansPerState; k++)
+                    logMixtureWeight[k] = mixtureWeights.get(i, j, k);
+                logMath.logToLinear(logMixtureWeight, mixtureWeight);
+                writeFloatArray(dos, mixtureWeight);
+            }
         }
         if (doCheckSum) {
             assert doCheckSum = false : "Checksum not supported";
@@ -827,7 +830,7 @@ public class Sphinx3Saver implements Saver {
         meanTransformationVectorPool.logInfo(logger);
         varianceTransformationMatrixPool.logInfo(logger);
         varianceTransformationVectorPool.logInfo(logger);
-        mixtureWeightsPool.logInfo(logger);
+        mixtureWeights.logInfo(logger);
         senonePool.logInfo(logger);
         logger.info("Context Independent Unit Entries: " + contextIndependentUnits.size());
         hmmManager.logInfo(logger);

@@ -30,7 +30,7 @@ class HMMPoolManager {
     private Pool<float[]> meansPool;
     private Pool<float[]> variancePool;
     private Pool<float[][]> matrixPool;
-    private Pool<float[]> mixtureWeightsPool;
+    private GaussianWeights mixtureWeights;
     
     private Pool<Buffer> meansBufferPool;
     private Pool<Buffer> varianceBufferPool;
@@ -61,7 +61,7 @@ class HMMPoolManager {
         indexMap = new HashMap<Object, Integer>();
         meansPool = loader.getMeansPool();
         variancePool = loader.getVariancePool();
-        mixtureWeightsPool = loader.getMixtureWeightPool();
+        mixtureWeights = loader.getMixtureWeights();
         matrixPool = loader.getTransitionMatrixPool();
         senonePool = loader.getSenonePool();
 
@@ -94,7 +94,7 @@ class HMMPoolManager {
         meansBufferPool = create1DPoolBuffer(meansPool, false);
         varianceBufferPool = create1DPoolBuffer(variancePool, false);
         matrixBufferPool = create2DPoolBuffer(matrixPool, true);
-        mixtureWeightsBufferPool = create1DPoolBuffer(mixtureWeightsPool, true);
+        mixtureWeightsBufferPool = createWeightsPoolBuffer(mixtureWeights);
     }
 
 
@@ -110,7 +110,22 @@ class HMMPoolManager {
         }
         return bufferPool;
     }
-
+    
+    private Pool<Buffer> createWeightsPoolBuffer(GaussianWeights mixtureWeights) {
+         Pool<Buffer> bufferPool = new Pool<Buffer>(mixtureWeights.getName());
+         int statesNum = mixtureWeights.getStatesNum();
+         int streamsNum = mixtureWeights.getStreamsNum();
+         int gauPerState = mixtureWeights.getGauPerState();
+         for (int i = 0; i < streamsNum; i++) {
+             for (int j = 0; j < statesNum; j++) {
+                 int id = i * statesNum + j;
+                 Buffer buffer = new Buffer(gauPerState, true, id);
+                 bufferPool.put(id, buffer);
+             }
+         }
+         return bufferPool;
+    }
+    
     /** Create buffers for a given pool. */
     private Pool<Buffer[]> create2DPoolBuffer(Pool<float[][]> pool, boolean isLog) {
         Pool<Buffer[]> bufferPool = new Pool<Buffer[]>(pool.getName());
@@ -251,8 +266,7 @@ class HMMPoolManager {
             }
         } else {
             Buffer buffer = mixtureWeightsBufferPool.get(senone);
-            float[] mixw = mixtureWeightsPool.get(senone);
-            for (int i = 0; i < mixw.length; i++) {
+            for (int i = 0; i < mixtureWeights.getGauPerState(); i++) {
                 float prob = score.getComponentGamma()[i];
                 prob -= currentLogLikelihood;
                 buffer.logAccumulate(prob, i, logMath);
@@ -515,16 +529,20 @@ class HMMPoolManager {
 
     /** Update the mixture weights. */
     private void updateMixtureWeights() {
-        assert mixtureWeightsPool.size() == mixtureWeightsBufferPool.size();
-        for (int i = 0; i < mixtureWeightsPool.size(); i++) {
-            float[] mixtureWeights = mixtureWeightsPool.get(i);
-            Buffer buffer = mixtureWeightsBufferPool.get(i);
-            if (buffer.wasUsed()) {
-                if (buffer.logFloor(logMixtureWeightFloor)) {
-                    buffer.logNormalizeToSum(logMath);
+        int statesNum = mixtureWeights.getStatesNum();
+        int streamsNum = mixtureWeights.getStreamsNum();
+        assert statesNum * streamsNum == mixtureWeightsBufferPool.size();
+        for (int i = 0; i < streamsNum; i++) {
+            for (int j = 0; j < statesNum; j++) {
+                int id = i * statesNum + j;
+                Buffer buffer = mixtureWeightsBufferPool.get(id);
+                if (buffer.wasUsed()) {
+                    if (buffer.logFloor(logMixtureWeightFloor)) {
+                        buffer.logNormalizeToSum(logMath);
+                    }
+                    float[] mixtureWeightsBuffer = buffer.getValues();
+                    mixtureWeights.put(j, i, mixtureWeightsBuffer);
                 }
-                float[] mixtureWeightsBuffer = buffer.getValues();
-                copyVector(mixtureWeightsBuffer, mixtureWeights);
             }
         }
     }

@@ -14,7 +14,6 @@ package edu.cmu.sphinx.linguist.acoustic.tiedstate.trainer;
 
 import edu.cmu.sphinx.linguist.acoustic.*;
 import edu.cmu.sphinx.linguist.acoustic.tiedstate.*;
-import static edu.cmu.sphinx.linguist.acoustic.tiedstate.Pool.Feature.*;
 import edu.cmu.sphinx.util.ExtendedStreamTokenizer;
 import edu.cmu.sphinx.util.LogMath;
 import edu.cmu.sphinx.util.StreamFactory;
@@ -87,10 +86,10 @@ class Sphinx4Loader extends Sphinx3Loader {
 
         HMMManager hmmManager = super.getHmmManager();
         Pool<float[][]> matrixPool = super.getMatrixPool();
-        Pool<float[]> mixtureWeightsPool = super.getMixtureWeightsPool();
+        GaussianWeights mixtureWeights = super.getMixtureWeights();
         Map<String, Unit> contextIndependentUnits = super.getContextIndependentUnits();
 
-        assert numTiedState == mixtureWeightsPool.getFeature(NUM_SENONES, 0);
+        assert numTiedState == mixtureWeights.getStatesNum();
         assert numTiedTransitionMatrices == matrixPool.size();
 
         // Load the base phones

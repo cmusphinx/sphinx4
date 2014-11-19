@@ -269,7 +269,7 @@ public class KaldiLoader implements Loader {
     /**
      * Not implemented.
      */
-    public Pool<float[]> getMixtureWeightPool() {
+    public GaussianWeights getMixtureWeights() {
         return null;
     }
 

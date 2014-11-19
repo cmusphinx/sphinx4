@@ -55,7 +55,7 @@ public class ModelInitializerLoader implements Loader {
     private Pool<float[]> meanTransformationVectorPool;
     private Pool<float[][]> varianceTransformationMatrixPool;
     private Pool<float[]> varianceTransformationVectorPool;
-    private Pool<float[]> mixtureWeightsPool;
+    private GaussianWeights mixtureWeights;
 
     private Pool<Senone> senonePool;
     private int vectorLength = 39;
@@ -196,7 +196,7 @@ public class ModelInitializerLoader implements Loader {
       assert numVariances == numSenones * numGaussiansPerSenone;
       assert numMeans == numSenones * numGaussiansPerSenone;
       */
-        int numGaussiansPerSenone = mixtureWeightsPool.getFeature(NUM_GAUSSIANS_PER_STATE, 0);
+        int numGaussiansPerSenone = mixtureWeights.getGauPerState();
         assert numGaussiansPerSenone > 0;
         for (int state : stateID) {
             MixtureComponent[] mixtureComponents = new MixtureComponent[numGaussiansPerSenone];
@@ -213,7 +213,7 @@ public class ModelInitializerLoader implements Loader {
                     varianceFloor);
             }
 
-            Senone senone = new GaussianMixture(mixtureWeightsPool.get(state), mixtureComponents, state);
+            Senone senone = new GaussianMixture(mixtureWeights, mixtureComponents, state);
 
             pool.put(state, senone);
         }
@@ -320,7 +320,6 @@ public class ModelInitializerLoader implements Loader {
         // Initialize the pools we'll need.
         meansPool = new Pool<float[]>("means");
         variancePool = new Pool<float[]>("variances");
-        mixtureWeightsPool = new Pool<float[]>("mixtureweights");
         matrixPool = new Pool<float[][]>("transitionmatrices");
         senonePool = new Pool<Senone>("senones");
 
@@ -354,7 +353,8 @@ public class ModelInitializerLoader implements Loader {
 
         // stateIndex contains the absolute state index, that is, a
         // unique index in the senone pool.
-        for (int stateIndex = 0, unitCount = 0; ;) {
+        int stateIndex, unitCount;
+        for (stateIndex = 0, unitCount = 0; ;) {
             String phone = est.getString();
             if (est.isEOF()) {
                 break;
@@ -386,9 +386,6 @@ public class ModelInitializerLoader implements Loader {
             // Variances
             addModelToDensityPool(variancePool, stid, numStreams, numGaussiansPerState);
 
-            // Mixture weights
-            addModelToMixtureWeightPool(mixtureWeightsPool, stid, numStreams, numGaussiansPerState, mixtureWeightFloor);
-
             // Transition matrix
             addModelToTransitionMatrixPool(matrixPool, unitCount, stid.length, transitionProbabilityFloor, tmatSkip);
 
@@ -406,6 +403,8 @@ public class ModelInitializerLoader implements Loader {
             hmmManager.put(hmm);
             unitCount++;
         }
+        // Mixture weights - all at once
+        mixtureWeights = initMixtureWeights(stateIndex, numStreams, numGaussiansPerState, mixtureWeightFloor);
 
         // If we want to use this code to load sizes/create models for
         // CD units, we need to find another way of establishing the
@@ -436,48 +435,27 @@ public class ModelInitializerLoader implements Loader {
     /**
      * Adds model to the mixture weights
      *
-     * @param pool                 the pool to add models to
-     * @param stateID              vector containing state ids for hmm
+     * @param numStates            the number of states
      * @param numStreams           the number of streams
      * @param numGaussiansPerState the number of Gaussians per state
      * @param floor                the minimum mixture weight allowed
-     * @throws IOException if an error occurs while loading the data
+     * @return mixtureWeights      the gaussian weights holder
      */
-    private void addModelToMixtureWeightPool(Pool<float[]> pool, int[] stateID,
-                                             int numStreams, int numGaussiansPerState, float floor)
-            throws IOException {
-
-        int numStates = stateID.length;
-
-        assert pool != null;
-
-        int numInPool = pool.getFeature(NUM_SENONES, 0);
-        pool.setFeature(NUM_SENONES, numStates + numInPool);
-        numInPool = pool.getFeature(NUM_STREAMS, -1);
-        if (numInPool == -1) {
-            pool.setFeature(NUM_STREAMS, numStreams);
-        } else {
-            assert numInPool == numStreams;
-        }
-        numInPool = pool.getFeature(NUM_GAUSSIANS_PER_STATE, -1);
-        if (numInPool == -1) {
-            pool.setFeature(NUM_GAUSSIANS_PER_STATE, numGaussiansPerState);
-        } else {
-            assert numInPool == numGaussiansPerState;
-        }
+    private GaussianWeights initMixtureWeights(int numStates, int numStreams, int numGaussiansPerState, float floor) {
 
         // TODO: allow any number for numStreams
         assert numStreams == 1;
+        GaussianWeights mixtureWeights = new GaussianWeights("mixtureweights", numStates, numGaussiansPerState, numStreams);
         for (int i = 0; i < numStates; i++) {
-            int state = stateID[i];
             float[] logMixtureWeight = new float[numGaussiansPerState];
             // Initialize the weights with the same value, e.g. floor
             floorData(logMixtureWeight, floor);
             // Normalize, so the numbers are not all too low
             normalize(logMixtureWeight);
             logMath.linearToLog(logMixtureWeight);
-            pool.put(state, logMixtureWeight);
+            mixtureWeights.put(i, 0, logMixtureWeight);
         }
+        return mixtureWeights;
     }
 
     /**
@@ -600,8 +578,8 @@ public class ModelInitializerLoader implements Loader {
         return varianceTransformationVectorPool;
     }
 
-    public Pool<float[]> getMixtureWeightPool() {
-        return mixtureWeightsPool;
+    public GaussianWeights getMixtureWeights() {
+        return mixtureWeights;
     }
 
     public Pool<float[][]> getTransitionMatrixPool() {
@@ -638,7 +616,7 @@ public class ModelInitializerLoader implements Loader {
         meanTransformationVectorPool.logInfo(logger);
         varianceTransformationMatrixPool.logInfo(logger);
         varianceTransformationVectorPool.logInfo(logger);
-        mixtureWeightsPool.logInfo(logger);
+        mixtureWeights.logInfo(logger);
         senonePool.logInfo(logger);
         logger.info("Context Independent Unit Entries: " + contextIndependentUnits.size());
         hmmManager.logInfo(logger);

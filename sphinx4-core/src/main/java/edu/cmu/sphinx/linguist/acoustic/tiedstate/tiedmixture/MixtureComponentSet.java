@@ -19,7 +19,6 @@ import edu.cmu.sphinx.frontend.Data;
 import edu.cmu.sphinx.frontend.DoubleData;
 import edu.cmu.sphinx.frontend.FloatData;
 import edu.cmu.sphinx.linguist.acoustic.tiedstate.MixtureComponent;
-import edu.cmu.sphinx.util.LogMath;
 
 /**
  * MixtureComponentsSet - phonetically tied set of gaussians
@@ -29,14 +28,16 @@ public class MixtureComponentSet {
     private ArrayList<PrunableMixtureComponent[]> components;
     private ArrayList<PrunableMixtureComponent[]> topComponents;
     private int numStreams;
-    private int gaussianPerStream;
-    private LogMath logMath;
+    private int topGauNum;
+    private int gauNum;
     private long topGauCalcSampleNumber;
-    private long allGauCalcSampleNumber;
+    private long gauCalcSampleNumber;
     
     public MixtureComponentSet(ArrayList<PrunableMixtureComponent[]> components, int topGauNum) {
         this.components = components;
         this.numStreams = components.size();
+        this.topGauNum = topGauNum;
+        this.gauNum = components.get(0).length;
         topComponents = new ArrayList<PrunableMixtureComponent[]>();
         for (int i = 0; i < numStreams; i++) {
             PrunableMixtureComponent[] featTopComponents = new PrunableMixtureComponent[topGauNum];
@@ -44,24 +45,8 @@ public class MixtureComponentSet {
                 featTopComponents[j] = components.get(i)[j];
             topComponents.add(featTopComponents);
         }
-        gaussianPerStream = components.get(0).length;
-        logMath = LogMath.getLogMath();
         topGauCalcSampleNumber = -1;
-        allGauCalcSampleNumber = -1;
-    }
-    
-    private float applyWeights(float[] logMixtureWeights) {
-        float ascore = 0;
-        for (int i = 0; i < numStreams; i++) {
-            float logTotal = LogMath.LOG_ZERO;
-            PrunableMixtureComponent[] featTopComponents = topComponents.get(i);
-            for (PrunableMixtureComponent component : featTopComponents) {
-                logTotal = logMath.addAsLinear(logTotal,
-                        component.getStoredScore() + logMixtureWeights[gaussianPerStream * i + component.getId()]);
-            }
-            ascore += logTotal;
-        }
-        return ascore;
+        gauCalcSampleNumber = -1;
     }
     
     private void insertTopComponent(PrunableMixtureComponent[] topComponents, PrunableMixtureComponent component) {
@@ -86,7 +71,7 @@ public class MixtureComponentSet {
         return false;
     }
     
-    private void updateScores(float[] featureVector) {
+    private void updateTopScores(float[] featureVector) {
         int step = featureVector.length / numStreams;        
         
         float[] streamVector = new float[step];
@@ -113,7 +98,7 @@ public class MixtureComponentSet {
         }
     }
     
-    public float calculateScore(Data feature, float[] logMixtureWeights) {
+    public void updateTopScores(Data feature) {
         
         if (feature instanceof DoubleData)
             System.err.println("DoubleData conversion required on mixture level!");
@@ -121,44 +106,56 @@ public class MixtureComponentSet {
         long firstSampleNumber = FloatData.toFloatData(feature).getFirstSampleNumber();
         if (firstSampleNumber != topGauCalcSampleNumber) {
             float[] featureVector = FloatData.toFloatData(feature).getValues();
-            updateScores(featureVector);
+            updateTopScores(featureVector);
             topGauCalcSampleNumber = firstSampleNumber;
         }
-        
-        return applyWeights(logMixtureWeights);
     }
     
-    public float[] calculateComponentScore(Data feature, float[] logMixtureWeights) {
+    private void updateScores(float[] featureVector) {
+        int step = featureVector.length / numStreams;
+        float[] streamVector = new float[step];
+        for (int i = 0; i < numStreams; i++) {
+            System.arraycopy(featureVector, i * step, streamVector, 0, step);
+            for (PrunableMixtureComponent component : components.get(i)) {
+                component.updateScore(streamVector);
+            }
+        }
+    }
+    
+    public void updateScores(Data feature) {
         if (feature instanceof DoubleData)
             System.err.println("DoubleData conversion required on mixture level!");
         
         long firstSampleNumber = FloatData.toFloatData(feature).getFirstSampleNumber();
-        if (allGauCalcSampleNumber != firstSampleNumber) {
-            //need to update scores in all components
+        if (gauCalcSampleNumber != firstSampleNumber) {
             float[] featureVector = FloatData.toFloatData(feature).getValues();
-            int step = featureVector.length / numStreams;
-            float[] streamVector = new float[step];
-            for (int i = 0; i < numStreams; i++) {
-                System.arraycopy(featureVector, i * step, streamVector, 0, step);
-                for (PrunableMixtureComponent component : components.get(i)) {
-                    if (topGauCalcSampleNumber == firstSampleNumber && isInTopComponents(topComponents.get(i), component))
-                        //no need to update
-                        continue;
-                    component.updateScore(streamVector);
-                }
-            }
-            allGauCalcSampleNumber = firstSampleNumber;
+            updateScores(featureVector);
+            gauCalcSampleNumber = firstSampleNumber;
         }
-        
-        float[] scores = new float[size()];
-        int scoreIdx = 0;
-        for (int i = 0; i < numStreams; i++) {
-            for (PrunableMixtureComponent component : components.get(i)) {
-                scores[scoreIdx] = component.getStoredScore() + logMixtureWeights[scoreIdx];
-                scoreIdx++;
-            }
-        }
-        return scores;
+    }
+    
+    public int getTopGauNum() {
+        return topGauNum;
+    }
+    
+    public int getGauNum() {
+        return gauNum;
+    }
+    
+    public float getTopGauScore(int streamId, int topGauId) {
+        return topComponents.get(streamId)[topGauId].getStoredScore();
+    }
+    
+    public int getTopGauId(int streamId, int topGauId) {
+        return topComponents.get(streamId)[topGauId].getId();
+    }
+    
+    public float getGauScore(int streamId, int topGauId) {
+        return components.get(streamId)[topGauId].getStoredScore();
+    }
+    
+    public int getGauId(int streamId, int topGauId) {
+        return components.get(streamId)[topGauId].getId();
     }
     
     private <T> T[] concatenate (T[] A, T[] B) {

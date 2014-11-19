@@ -12,7 +12,9 @@ package edu.cmu.sphinx.linguist.acoustic.tiedstate.tiedmixture;
 
 import edu.cmu.sphinx.frontend.Data;
 import edu.cmu.sphinx.linguist.acoustic.tiedstate.GaussianMixture;
+import edu.cmu.sphinx.linguist.acoustic.tiedstate.GaussianWeights;
 import edu.cmu.sphinx.linguist.acoustic.tiedstate.MixtureComponent;
+import edu.cmu.sphinx.util.LogMath;
 
 /**
  * Represents gaussian mixture that is based on provided mixture component set
@@ -25,15 +27,24 @@ public class SetBasedGaussianMixture extends GaussianMixture {
 
     private MixtureComponentSet mixtureComponentSet;
     
-    public SetBasedGaussianMixture(float[] logMixtureWeights,
-            MixtureComponentSet mixtureComponentSet, long id) {
-        super(logMixtureWeights, null, id);
+    public SetBasedGaussianMixture(GaussianWeights mixtureWeights,
+            MixtureComponentSet mixtureComponentSet, int id) {
+        super(mixtureWeights, null, id);
         this.mixtureComponentSet = mixtureComponentSet;
     }
     
     @Override
     public float calculateScore(Data feature) {
-        return mixtureComponentSet.calculateScore(feature, logMixtureWeights);
+        mixtureComponentSet.updateTopScores(feature);
+        float ascore = 0;
+        for (int i = 0; i < mixtureWeights.getStreamsNum(); i++) {
+            float logTotal = LogMath.LOG_ZERO;
+            for (int j = 0; j < mixtureComponentSet.getTopGauNum(); j++) {
+                logTotal = logMath.addAsLinear(logTotal, mixtureComponentSet.getTopGauScore(i, j) + mixtureWeights.get(id, i, mixtureComponentSet.getTopGauId(i, j)));
+            }
+            ascore += logTotal;
+        }
+        return ascore;
     }
 
     /**
@@ -44,7 +55,15 @@ public class SetBasedGaussianMixture extends GaussianMixture {
      */
     @Override
     public float[] calculateComponentScore(Data feature) {
-        return mixtureComponentSet.calculateComponentScore(feature, logMixtureWeights);
+        mixtureComponentSet.updateScores(feature);
+        float[] scores = new float[mixtureComponentSet.size()];
+        int scoreIdx = 0;
+        for (int i = 0; i < mixtureWeights.getStreamsNum(); i++) {
+            for (int j = 0; j < mixtureComponentSet.getGauNum(); j++) {
+                scores[scoreIdx++] = mixtureComponentSet.getGauScore(i, j) + mixtureWeights.get(id, i, mixtureComponentSet.getGauId(i, j));
+            }
+        }
+        return scores;
     }
     
     @Override
