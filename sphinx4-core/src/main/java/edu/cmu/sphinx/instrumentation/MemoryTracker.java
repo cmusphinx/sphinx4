@@ -23,6 +23,8 @@ import java.text.DecimalFormat;
 
 /** Monitors a recognizer for memory usage */
 public class MemoryTracker
+        extends
+        ConfigurableAdapter
         implements
         ResultListener,
         StateListener,
@@ -54,6 +56,7 @@ public class MemoryTracker
 
     public MemoryTracker(Recognizer recognizer, boolean showSummary, boolean showDetails) {
         initRecognizer(recognizer);
+        initLogger();
         this.showSummary = showSummary;
         this.showDetails = showDetails;
     }
@@ -68,6 +71,7 @@ public class MemoryTracker
     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
     */
     public void newProperties(PropertySheet ps) throws PropertyException {
+        super.newProperties(ps);
         Recognizer newRecognizer = (Recognizer) ps.getComponent(
                 PROP_RECOGNIZER);
         initRecognizer(newRecognizer);
@@ -116,9 +120,9 @@ public class MemoryTracker
                 / numMemoryStats;
 
         if (show) {
-            System.out.println("   Mem  Total: " + memFormat.format(totalMem)
+            logger.info("   Mem  Total: " + memFormat.format(totalMem)
                     + "  " + "Free: " + memFormat.format(freeMem));
-            System.out.println("   Used: This: " + memFormat.format(usedMem) + "  "
+            logger.info("   Used: This: " + memFormat.format(usedMem) + "  "
                     + "Avg: " + memFormat.format(avgMemoryUsed) + "  " + "Max: "
                     + memFormat.format(maxMemoryUsed));
         }

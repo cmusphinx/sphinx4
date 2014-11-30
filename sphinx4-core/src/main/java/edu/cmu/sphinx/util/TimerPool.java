@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.WeakHashMap;
+import java.util.logging.Logger;
 
 /**
  * Keeps references to a list of timers which can be referenced by a key-pair consisting of an owner and a timer name.
@@ -58,33 +59,34 @@ public class TimerPool {
     }
 
 
-    /** Dump all timers */
-    public static void dumpAll() {
-        showTimesShortTitle();
+    /** Dump all timers 
+     * @param logger */
+    public static void dumpAll(Logger logger) {
+        showTimesShortTitle(logger);
 
         for (List<Timer> timers : weakRefTimerPool.values()) {
             for (Timer timer : timers) {
-                timer.dump();
+                timer.dump(logger);
             }
         }
     }
 
 
-    /** Shows the timing stats title. */
-    private static void showTimesShortTitle() {
+    /** Shows the timing stats title. 
+     * @param logger */
+    private static void showTimesShortTitle(Logger logger) {
         String title = "Timers";
         String titleBar =
                 "# ----------------------------- " + title +
                         "----------------------------------------------------------- ";
-        System.out.println(Utilities.pad(titleBar, 78));
-        System.out.print(Utilities.pad("# Name", 20) + ' ');
-        System.out.print(Utilities.pad("Count", 8));
-        System.out.print(Utilities.pad("CurTime", 10));
-        System.out.print(Utilities.pad("MinTime", 10));
-        System.out.print(Utilities.pad("MaxTime", 10));
-        System.out.print(Utilities.pad("AvgTime", 10));
-        System.out.print(Utilities.pad("TotTime", 10));
-        System.out.println();
+        logger.info(Utilities.pad(titleBar, 78));
+        logger.info(Utilities.pad("# Name", 20) + ' '
+         + Utilities.pad("Count", 8)
+         + Utilities.pad("CurTime", 10)
+         + Utilities.pad("MinTime", 10)
+         + Utilities.pad("MaxTime", 10)
+         + Utilities.pad("AvgTime", 10)
+         + Utilities.pad("TotTime", 10));
     }
 
 

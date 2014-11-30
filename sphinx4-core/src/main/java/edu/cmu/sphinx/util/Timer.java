@@ -13,6 +13,7 @@
 package edu.cmu.sphinx.util;
 
 import java.text.DecimalFormat;
+import java.util.logging.Logger;
 
 /**
  * Keeps track of execution times. This class provides methods that can be used for timing processes. The process to be
@@ -118,7 +119,7 @@ public class Timer {
      * @param verbose if <code>true</code>, print out details from this run; otherwise, don't print the details
      * @return the duration since start in milliseconds
      */
-    public long stop(boolean verbose) {
+    public long stop() {
         if (startTime == 0L) {
             notReliable = true;        // stop called, but start never called
             System.out.println
@@ -134,22 +135,13 @@ public class Timer {
         }
         count++;
         sum += curTime;
-        if (verbose) {
-            dump();
-        }
         return curTime;
     }
 
 
-    /** Stops the timer. */
-    public void stop() {
-        stop(false);
-    }
-
-
     /** Dump the timer. Shows the timer details. */
-    public void dump() {
-        showTimesShort();
+    public void dump(Logger logger) {
+        showTimesShort(logger);
     }
 
 
@@ -228,8 +220,9 @@ public class Timer {
     }
 
 
-    /** Shows brief timing statistics . */
-    private void showTimesShort() {
+    /** Shows brief timing statistics . 
+     * @param logger */
+    private void showTimesShort(Logger logger) {
         double avgTime = 0.0;
 
         if (count == 0) {
@@ -241,17 +234,15 @@ public class Timer {
         }
 
         if (notReliable) {
-            System.out.print(Utilities.pad(name, 20) + ' ');
-            System.out.println("Not reliable.");
+            logger.info(Utilities.pad(name, 20) + ' ' + "Not reliable.");
         } else {
-            System.out.print(Utilities.pad(name, 20) + ' ');
-            System.out.print(Utilities.pad(String.valueOf(count), 8));
-            System.out.print(fmtTime(curTime));
-            System.out.print(fmtTime(minTime));
-            System.out.print(fmtTime(maxTime));
-            System.out.print(fmtTime(avgTime));
-            System.out.print(fmtTime(sum / 1000.0));
-            System.out.println();
+            logger.info(Utilities.pad(name, 20) + ' ' 
+                    + Utilities.pad(String.valueOf(count), 8)
+                    + fmtTime(curTime)
+                    + fmtTime(minTime)
+                    + fmtTime(maxTime)
+                    + fmtTime(avgTime)
+                    + fmtTime(sum / 1000.0));
         }
     }
 }

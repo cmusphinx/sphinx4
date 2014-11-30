@@ -35,7 +35,7 @@ public class LinguistTimer {
 
 
     /**
-     * Creats a LinguistTimer
+     * Creates a LinguistTimer
      *
      * @param linguist the linguist to time
      * @param details  if true print out details
@@ -86,7 +86,6 @@ public class LinguistTimer {
                 }
             }
             linguist.stopRecognition();
-            frameTimer.dump();
         }
         totalTimer.stop();
         System.out.println(" MaxSuccessors : " + maxSuccessors);
@@ -94,7 +93,6 @@ public class LinguistTimer {
         System.out.println(" TotalEmitting : " + totalEmittingStates);
         System.out.println("   NonEmitting : " + totalNonEmittingStates);
         System.out.println("  Final States : " + totalFinalStates);
-        TimerPool.dumpAll();
     }
 
 

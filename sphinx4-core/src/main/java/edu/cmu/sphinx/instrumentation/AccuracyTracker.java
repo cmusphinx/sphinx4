@@ -22,6 +22,8 @@ import edu.cmu.sphinx.util.props.*;
 
 /** Tracks and reports recognition accuracy */
 abstract public class AccuracyTracker
+        extends
+        ConfigurableAdapter
         implements
         ResultListener,
         Resetable,
@@ -69,6 +71,7 @@ abstract public class AccuracyTracker
     public AccuracyTracker(Recognizer recognizer, boolean showSummary, boolean showDetails, boolean showResults, boolean showAlignedResults, boolean showRawResults) {
 
         initRecognizer(recognizer);
+        initLogger();
 
         this.showSummary = showSummary;
         this.showDetails = showDetails;
@@ -90,7 +93,7 @@ abstract public class AccuracyTracker
     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
     */
     public void newProperties(PropertySheet ps) throws PropertyException {
-
+        super.newProperties(ps);
         initRecognizer((Recognizer) ps.getComponent(PROP_RECOGNIZER));
 
         showSummary = ps.getBoolean(PROP_SHOW_SUMMARY);
@@ -156,12 +159,10 @@ abstract public class AccuracyTracker
      */
     protected void showDetails(String rawText) {
         if (showDetails) {
-            System.out.println();
             aligner.printSentenceSummary();
             if (showRaw) {
-                System.out.println("RAW     " + rawText);
+                logger.info("RAW     " + rawText);
             }
-            System.out.println();
             aligner.printTotalSummary();
         }
     }
@@ -177,7 +178,7 @@ abstract public class AccuracyTracker
     public void statusChanged(Recognizer.State status) {
         if (status == State.DEALLOCATED) {
             if (showSummary) {
-                System.out.println("\n# --------------- Summary statistics ---------");
+                logger.info("\n# --------------- Summary statistics ---------");
                 aligner.printTotalSummary();
             }
         }

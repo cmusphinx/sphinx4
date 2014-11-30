@@ -8,7 +8,7 @@ import java.util.logging.Logger;
  *
  * @author Holger Brandl
  */
-public abstract class ConfigurableAdapter implements Configurable{
+public abstract class ConfigurableAdapter implements Configurable {
 
     private String name;
     protected Logger logger;

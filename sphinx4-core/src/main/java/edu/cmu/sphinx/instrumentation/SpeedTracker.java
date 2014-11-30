@@ -13,6 +13,8 @@
 package edu.cmu.sphinx.instrumentation;
 
 import edu.cmu.sphinx.frontend.*;
+import edu.cmu.sphinx.frontend.endpoint.SpeechEndSignal;
+import edu.cmu.sphinx.frontend.endpoint.SpeechStartSignal;
 import edu.cmu.sphinx.recognizer.Recognizer;
 import edu.cmu.sphinx.recognizer.Recognizer.State;
 import edu.cmu.sphinx.recognizer.StateListener;
@@ -25,6 +27,8 @@ import java.text.DecimalFormat;
 
 /** Monitors a recognizer for speed */
 public class SpeedTracker
+        extends
+        ConfigurableAdapter
         implements
         ResultListener,
         Resetable,
@@ -63,10 +67,12 @@ public class SpeedTracker
     private String name;
     private Recognizer recognizer;
     private FrontEnd frontEnd;
+
     private boolean showSummary;
     private boolean showDetails;
     private boolean showTimers;
     private long startTime;
+    private long audioStartTime;
     private float audioTime;
     private float processingTime;
     private float totalAudioTime;
@@ -80,6 +86,7 @@ public class SpeedTracker
 
 
     public SpeedTracker(Recognizer recognizer, FrontEnd frontEnd, boolean showSummary, boolean showDetails, boolean showResponseTime, boolean showTimers) {
+        initLogger();
         initRecognizer(recognizer);
         initFrontEnd(frontEnd);
         this.showSummary = showSummary;
@@ -97,6 +104,7 @@ public class SpeedTracker
     * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
     */
     public void newProperties(PropertySheet ps) throws PropertyException {
+        super.newProperties(ps);
         initRecognizer((Recognizer) ps.getComponent(PROP_RECOGNIZER));
         initFrontEnd((FrontEnd) ps.getComponent(PROP_FRONTEND));
         showSummary = ps.getBoolean(PROP_SHOW_SUMMARY);
@@ -160,10 +168,10 @@ public class SpeedTracker
 
     /** Shows the audio usage data */
     protected void showAudioUsage() {
-        System.out.print("   This  Time Audio: " + timeFormat.format(audioTime)
-                + 's');
-        System.out.print("  Proc: " + timeFormat.format(processingTime) + 's');
-        System.out.println("  Speed: " + timeFormat.format(getSpeed())
+        logger.info("   This  Time Audio: " + timeFormat.format(audioTime)
+                + "s"
+                + "  Proc: " + timeFormat.format(processingTime) + "s"
+                + "  Speed: " + timeFormat.format(getSpeed())
                 + " X real time");
         showAudioSummary();
     }
@@ -171,17 +179,16 @@ public class SpeedTracker
 
     /** Shows the audio summary data */
     protected void showAudioSummary() {
-        System.out.print("   Total Time Audio: "
-                + timeFormat.format(totalAudioTime) + 's');
-        System.out.print("  Proc: " + timeFormat.format(totalProcessingTime)
-                + 's');
-        System.out.println("  Speed: "
+        logger.info("   Total Time Audio: "
+                + timeFormat.format(totalAudioTime) + "s"
+                + "  Proc: " + timeFormat.format(totalProcessingTime)
+                + "s "
                 + timeFormat.format(getCumulativeSpeed()) + " X real time");
 
         if (showResponseTime) {
             float avgResponseTime =
                     (float) totalResponseTime / (numUtteranceStart * 1000);
-            System.out.println
+            logger.info
                     ("   Response Time:  Avg: " + avgResponseTime + 's' +
                             "  Max: " + ((float) maxResponseTime / 1000) +
                             "s  Min: " + ((float) minResponseTime / 1000) + 's');
@@ -231,9 +238,10 @@ public class SpeedTracker
     * @see edu.cmu.sphinx.frontend.SignalListener#signalOccurred(edu.cmu.sphinx.frontend.Signal)
     */
     public void signalOccurred(Signal signal) {
-        if (signal instanceof DataStartSignal) {
+         if (signal instanceof SpeechStartSignal || signal instanceof DataStartSignal) {
             startTime = getTime();
-            long responseTime = (System.currentTimeMillis() - signal.getTime());
+            audioStartTime = signal.getTime();
+            long responseTime = startTime - audioStartTime;
             totalResponseTime += responseTime;
             if (responseTime > maxResponseTime) {
                 maxResponseTime = responseTime;
@@ -242,9 +250,8 @@ public class SpeedTracker
                 minResponseTime = responseTime;
             }
             numUtteranceStart++;
-        } else if (signal instanceof DataEndSignal) {
-            DataEndSignal endSignal = (DataEndSignal) signal;
-            audioTime = endSignal.getDuration() / 1000f;
+        } else if (signal instanceof SpeechEndSignal || signal instanceof DataEndSignal) {
+            audioTime = (signal.getTime() - audioStartTime) / 1000f;
         }
     }
 
@@ -262,13 +269,13 @@ public class SpeedTracker
     public void statusChanged(Recognizer.State status) {
         if (status == State.ALLOCATED) {
             if (showTimers) {
-                TimerPool.dumpAll();
+                TimerPool.dumpAll(logger);
             }
         }
 
         if (status == State.DEALLOCATING) {
             if (showTimers) {
-                TimerPool.dumpAll();
+                TimerPool.dumpAll(logger);
             }
         }
 

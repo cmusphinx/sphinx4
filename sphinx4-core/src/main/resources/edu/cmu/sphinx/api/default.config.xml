@@ -20,6 +20,10 @@
 
   <component name="recognizer" type="edu.cmu.sphinx.recognizer.Recognizer">
     <property name="decoder" value="decoder"/>
+    <propertylist name="monitors">
+      <item>speedTracker</item>
+      <item>memoryTracker</item>
+    </propertylist>
   </component>
 
   <component name="decoder" type="edu.cmu.sphinx.decoder.Decoder">
@@ -303,6 +307,18 @@
   <component name="confidenceScorer"
     type="edu.cmu.sphinx.result.MAPConfidenceScorer">
     <property name="languageWeight" value="${languageWeight}"/>
+  </component>
+
+  <component name="speedTracker"
+    type="edu.cmu.sphinx.instrumentation.SpeedTracker">
+    <property name="showTimers" value="true"/>
+    <property name="frontend" value="liveFrontEnd"/>
+    <property name="recognizer" value="recognizer"/>
+  </component>
+                                          
+  <component name="memoryTracker"
+    type="edu.cmu.sphinx.instrumentation.MemoryTracker">
+    <property name="recognizer" value="recognizer"/>
   </component>
 
 </config>
