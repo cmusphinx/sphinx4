@@ -34,6 +34,14 @@
     <property name="activeListFactory" value="activeList"/>
   </component>
   
+  <component name="allphoneSearchManager"
+    type="edu.cmu.sphinx.decoder.search.SimpleBreadthFirstSearchManager">
+    <property name="linguist" value="allphoneLinguist"/>
+    <property name="pruner" value="trivialPruner"/>
+    <property name="scorer" value="trivialScorer"/>
+    <property name="activeListFactory" value="activeList"/>
+  </component>
+  
   <component name="simpleSearchManager"
     type="edu.cmu.sphinx.decoder.search.SimpleBreadthFirstSearchManager">
     <property name="linguist" value="flatLinguist"/>
@@ -106,6 +114,11 @@
       value="${silenceInsertionProbability}"/>
     <property name="languageWeight" value="${languageWeight}"/>
     <property name="unitManager" value="unitManager"/>    
+  </component>
+  
+  <component name="allphoneLinguist"
+    type="edu.cmu.sphinx.linguist.allphone.AllphoneLinguist">
+    <property name="acousticModel" value="acousticModel"/>
   </component>
   
   <component name="flatLinguist"

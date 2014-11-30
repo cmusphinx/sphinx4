@@ -37,7 +37,7 @@ public class Pronunciation {
      * @param wordClassification the classification for this word
      * @param probability        the probability of this pronunciation occurring
      */
-    protected Pronunciation(Unit[] units,
+    public Pronunciation(Unit[] units,
                   String tag,
                   WordClassification wordClassification,
                   float probability) {
@@ -81,7 +81,7 @@ public class Pronunciation {
      *
      * @param word the Word this Pronunciation represents
      */
-    protected void setWord(Word word) {
+    public void setWord(Word word) {
         if (this.word == null) {
             this.word = word;
         } else {

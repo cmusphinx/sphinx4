@@ -1,8 +1,7 @@
 package edu.cmu.sphinx.linguist.allphone;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-
+import edu.cmu.sphinx.decoder.scorer.ScoreProvider;
+import edu.cmu.sphinx.frontend.Data;
 import edu.cmu.sphinx.linguist.SearchState;
 import edu.cmu.sphinx.linguist.SearchStateArc;
 import edu.cmu.sphinx.linguist.WordSequence;
@@ -12,7 +11,7 @@ import edu.cmu.sphinx.linguist.acoustic.HMMStateArc;
 import edu.cmu.sphinx.linguist.acoustic.Unit;
 import edu.cmu.sphinx.util.LogMath;
 
-public class PhoneHmmSearchState implements SearchState, SearchStateArc {
+public class PhoneHmmSearchState implements SearchState, SearchStateArc, ScoreProvider {
 
     private Unit unit;
     private HMMState state;
@@ -25,11 +24,11 @@ public class PhoneHmmSearchState implements SearchState, SearchStateArc {
     }
 
     public SearchState getState() {
-        return null;
+        return this;
     }
 
     public float getProbability() {
-        return LogMath.LOG_ONE;
+        return getLanguageProbability() + getInsertionProbability();
     }
 
     public float getLanguageProbability() {
@@ -45,12 +44,9 @@ public class PhoneHmmSearchState implements SearchState, SearchStateArc {
      * */
     public SearchStateArc[] getSuccessors() {
         if (state.isExitState()) {
-            ArrayList<SearchStateArc> result = new ArrayList<SearchStateArc>();
-            Iterator<Unit> iter = acousticModel.getContextIndependentUnitIterator();
-            while( iter.hasNext()) {
-                result.add(new PhoneSearchState(iter.next(), acousticModel));
-            }
-            return result.toArray(new SearchStateArc[result.size()]);
+            SearchStateArc[] result = new SearchStateArc[1];
+            result[0] = new PhoneNonEmittingSearchState(unit, acousticModel);
+            return result;
         } else {
             HMMStateArc successors[] = state.getSuccessors();
             SearchStateArc[] results = new SearchStateArc[successors.length];
@@ -66,7 +62,7 @@ public class PhoneHmmSearchState implements SearchState, SearchStateArc {
     }
 
     public boolean isFinal() {
-        return true;
+        return false;
     }
 
     public String toPrettyString() {
@@ -87,5 +83,29 @@ public class PhoneHmmSearchState implements SearchState, SearchStateArc {
 
     public int getOrder() {
         return 1;
+    }
+
+    @Override
+    public float getScore(Data data) {
+        return state.getScore(data);
+    }
+
+    @Override
+    public float[] getComponentScore(Data feature) {
+        return state.calculateComponentScore(feature);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof PhoneHmmSearchState))
+            return false;
+        boolean haveSameBaseId = ((PhoneHmmSearchState)obj).unit.getBaseID() == unit.getBaseID();
+        boolean haveSameHmmState = ((PhoneHmmSearchState)obj).state.getState() == state.getState();
+        return haveSameBaseId && haveSameHmmState;
+    }
+
+    @Override
+    public int hashCode() {
+        return unit.getBaseID() * 37 + state.getState();
     }
 }
