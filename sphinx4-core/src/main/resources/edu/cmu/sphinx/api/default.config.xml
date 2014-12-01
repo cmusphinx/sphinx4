@@ -242,20 +242,6 @@
     </propertylist>
   </component>
 
-  <component name="batchFrontEnd" type="edu.cmu.sphinx.frontend.FrontEnd">
-    <propertylist name="pipeline">
-      <item>dataSource </item>
-      <item>dataBlocker </item>
-      <item>preemphasizer </item>
-      <item>windower </item>
-      <item>fft </item>
-      <item>autoCepstrum </item>
-      <item>liveCMN </item>
-      <item>featureExtraction </item>
-      <item>featureTransform </item>
-    </propertylist>
-  </component>
-
   <component name="dataSource"
     type="edu.cmu.sphinx.frontend.util.StreamDataSource"/>
 

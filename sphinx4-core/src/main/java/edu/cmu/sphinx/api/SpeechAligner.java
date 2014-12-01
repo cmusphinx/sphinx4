@@ -113,7 +113,6 @@ public class SpeechAligner {
             if (i == 3) {
                 context.setLocalProperty("decoder->searchManager",
                         "alignerSearchManager");
-                context.processBatch();
             }
 
             while (!texts.isEmpty()) {

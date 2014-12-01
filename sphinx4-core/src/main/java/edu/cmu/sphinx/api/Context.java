@@ -193,23 +193,6 @@ public class Context {
     }
 
     /**
-     * Sets batch frontend to process whole file.
-     *
-     * @see    Context#setSpeechSource(URL)
-     */
-    public void processBatch() {
-        String scorerComponentName = "";
-        if (configurationManager.getComponentNames().contains("threadedScorer")) {
-        	scorerComponentName = "threadedScorer";
-        } else if (configurationManager.getComponentNames().contains("trivialScorer")) {
-        	scorerComponentName = "trivialScorer";
-        } else {
-        	throw new RuntimeException("There are no scorer component in configuration. 'threadedScorer' or 'trivialScorer' is expected.");
-        }
-        setLocalProperty(scorerComponentName + "->frontend", "batchFrontEnd");
-    }
-
-    /**
      * Sets property within a "component" tag in configuration.
      *
      * Use this method to alter "value" property of a "property" tag inside a
