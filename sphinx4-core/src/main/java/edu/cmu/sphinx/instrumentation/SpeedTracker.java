@@ -250,8 +250,10 @@ public class SpeedTracker
                 minResponseTime = responseTime;
             }
             numUtteranceStart++;
-        } else if (signal instanceof SpeechEndSignal || signal instanceof DataEndSignal) {
+        } else if (signal instanceof SpeechEndSignal) {
             audioTime = (signal.getTime() - audioStartTime) / 1000f;
+        } else if (signal instanceof DataEndSignal) {
+            audioTime = (((DataEndSignal) signal).getDuration() - audioStartTime) / 1000f;
         }
     }
 
