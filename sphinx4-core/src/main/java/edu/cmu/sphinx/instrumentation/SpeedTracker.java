@@ -253,7 +253,7 @@ public class SpeedTracker
         } else if (signal instanceof SpeechEndSignal) {
             audioTime = (signal.getTime() - audioStartTime) / 1000f;
         } else if (signal instanceof DataEndSignal) {
-            audioTime = (((DataEndSignal) signal).getDuration() - audioStartTime) / 1000f;
+            audioTime = ((DataEndSignal) signal).getDuration() / 1000f;
         }
     }
 
