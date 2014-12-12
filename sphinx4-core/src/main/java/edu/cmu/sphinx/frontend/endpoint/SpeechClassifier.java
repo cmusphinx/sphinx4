@@ -63,9 +63,12 @@ public class SpeechClassifier extends AbstractVoiceActivityDetector {
 
     protected final double averageNumber = 1;
     protected double adjustment;
-    protected double level;               // average signal level
-    protected double background;          // background signal level
-    protected double minSignal;           // minimum valid signal level
+    /** average signal level. */
+    protected double level;
+    /** background signal level. */
+    protected double background;
+    /** minimum valid signal level. */
+    protected double minSignal;
     protected double threshold;
     protected float frameLengthSec;
     protected boolean isSpeech;
@@ -149,7 +152,6 @@ public class SpeechClassifier extends AbstractVoiceActivityDetector {
      */
     protected SpeechClassifiedData classify(DoubleData audio) {
         double current = logRootMeanSquare(audio.getValues());
-        // System.out.println("current: " + current);
         isSpeech = false;
         if (current >= minSignal) {
             level = ((level * averageNumber) + current) / (averageNumber + 1);
