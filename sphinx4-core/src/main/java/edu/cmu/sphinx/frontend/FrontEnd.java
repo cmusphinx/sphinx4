@@ -13,11 +13,16 @@
 
 package edu.cmu.sphinx.frontend;
 
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+
+import edu.cmu.sphinx.util.Timer;
+import edu.cmu.sphinx.util.TimerPool;
+import edu.cmu.sphinx.util.Utilities;
 import edu.cmu.sphinx.util.props.PropertyException;
 import edu.cmu.sphinx.util.props.PropertySheet;
 import edu.cmu.sphinx.util.props.S4ComponentList;
-
-import java.util.*;
 
 /**
  * FrontEnd is a wrapper class for the chain of front end processors. It provides methods for manipulating and
@@ -136,6 +141,7 @@ public class FrontEnd extends BaseDataProcessor {
     // Configuration data
     // -----------------------------
     private List<DataProcessor> frontEndList;
+    private Timer timer;
 
     private DataProcessor first;
     private DataProcessor last;
@@ -162,6 +168,8 @@ public class FrontEnd extends BaseDataProcessor {
     }
 
     private void init() {
+        this.timer = TimerPool.getTimer(this, Utilities.getReadable(getName()));
+        
         last = null;
         for (DataProcessor dp : frontEndList) {
             assert dp != null;
@@ -216,13 +224,14 @@ public class FrontEnd extends BaseDataProcessor {
      */
     @Override
     public Data getData() throws DataProcessingException {
+        timer.start();
         Data data = last.getData();
 
         // fire the signal listeners if its a signal
         if (data instanceof Signal) {
             fireSignalListeners((Signal) data);
         }
-
+        timer.stop();
         return data;
     }
 

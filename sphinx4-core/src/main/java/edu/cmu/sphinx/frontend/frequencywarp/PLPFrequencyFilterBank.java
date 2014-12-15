@@ -238,16 +238,11 @@ public class PLPFrequencyFilterBank extends BaseDataProcessor {
     public Data getData() throws DataProcessingException {
 
         Data input = getPredecessor().getData();
-
-        getTimer().start();
-
         if (input != null) {
             if (input instanceof DoubleData) {
                 input = process((DoubleData) input);
             }
         }
-
-        getTimer().stop();
 
         return input;
     }

@@ -713,7 +713,6 @@ public class Microphone extends BaseDataProcessor {
      */
     @Override
     public Data getData() throws DataProcessingException {
-        getTimer().start();
 
         Data output = null;
 
@@ -727,10 +726,6 @@ public class Microphone extends BaseDataProcessor {
                 utteranceEndReached = true;
             }
         }
-
-        getTimer().stop();
-
-        // signalCheck(output);
         return output;
     }
 

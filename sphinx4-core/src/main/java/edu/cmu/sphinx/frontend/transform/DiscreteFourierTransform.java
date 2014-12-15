@@ -268,8 +268,6 @@ public class DiscreteFourierTransform extends BaseDataProcessor {
 
         Data input = getPredecessor().getData();
 
-        getTimer().start();
-
         if ((input != null) && (input instanceof DoubleData)) {
             DoubleData data = (DoubleData) input;
             if (!isNumberFftPointsSet) {
@@ -304,8 +302,6 @@ public class DiscreteFourierTransform extends BaseDataProcessor {
         // this -, we should have created a cepstrum frame with
         // whatever data came last, even if we had less than
         // window size of data.
-
-        getTimer().stop();
 
         return input;
     }

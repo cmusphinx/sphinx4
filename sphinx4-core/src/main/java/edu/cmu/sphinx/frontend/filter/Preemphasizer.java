@@ -80,7 +80,6 @@ public class Preemphasizer extends BaseDataProcessor {
     @Override
     public Data getData() throws DataProcessingException {
         Data input = getPredecessor().getData();
-        getTimer().start();
         if (input != null) {
             if (input instanceof DoubleData) {
                 applyPreemphasis(((DoubleData) input).getValues());
@@ -88,7 +87,6 @@ public class Preemphasizer extends BaseDataProcessor {
                 prior = 0;
             }
         }
-        getTimer().stop();
         return input;
     }
 

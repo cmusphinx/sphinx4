@@ -135,15 +135,12 @@ public class RandomSampleRepeater extends BaseDataProcessor {
         if (input instanceof DataStartSignal)
             prepareForNewStream();
 
-        getTimer().start();
-
         if (input != null && maxRepeatedMs != 0) {
             if (input instanceof DoubleData || input instanceof FloatData) {
                 input = process(input);
             }
         }
 
-        getTimer().stop();
         return input;
     }
 

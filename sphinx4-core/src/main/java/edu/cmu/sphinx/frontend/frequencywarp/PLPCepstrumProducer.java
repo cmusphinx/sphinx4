@@ -130,15 +130,11 @@ public class PLPCepstrumProducer extends BaseDataProcessor {
         Data input = getPredecessor().getData();
         Data output = input;
 
-        getTimer().start();
-
         if (input != null) {
             if (input instanceof DoubleData) {
                 output = process((DoubleData) input);
             }
         }
-
-        getTimer().stop();
 
         return output;
     }

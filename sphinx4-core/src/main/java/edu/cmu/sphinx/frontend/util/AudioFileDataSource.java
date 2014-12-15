@@ -210,7 +210,6 @@ public class AudioFileDataSource extends BaseDataProcessor {
      */
     @Override
     public Data getData() throws DataProcessingException {
-        getTimer().start();
         Data output = null;
         if (streamEndReached) {
             if (!utteranceEndSent) {
@@ -235,7 +234,6 @@ public class AudioFileDataSource extends BaseDataProcessor {
                 }
             }
         }
-        getTimer().stop();
         return output;
     }
 

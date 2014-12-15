@@ -218,7 +218,6 @@ public abstract class AbstractFeatureExtractor extends BaseDataProcessor {
      * @param totalFeatures the number of Features that will be produced
      */
     private void computeFeatures(int totalFeatures) {
-        getTimer().start();
         if (totalFeatures == 1) {
             computeFeature();
         } else {
@@ -227,7 +226,6 @@ public abstract class AbstractFeatureExtractor extends BaseDataProcessor {
                 computeFeature();
             }
         }
-        getTimer().stop();
     }
 
 

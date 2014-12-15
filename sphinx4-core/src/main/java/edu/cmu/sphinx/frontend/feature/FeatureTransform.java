@@ -94,7 +94,6 @@ public class FeatureTransform extends BaseDataProcessor {
             throw new IllegalArgumentException("dimenstion mismatch");
 
         float[] result = new float[transform.length];
-        getTimer().start();
 
         for (int i = 0; i < transform.length; ++i) {
             for (int j = 0; j < features.length; ++j)
@@ -105,8 +104,6 @@ public class FeatureTransform extends BaseDataProcessor {
             for (int i = 0; i < transform.length; ++i)
                 result[i] += transform[i][features.length];
         }
-
-        getTimer().stop();
 
         return new FloatData(result,
                              floatData.getSampleRate(),

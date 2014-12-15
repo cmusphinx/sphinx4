@@ -159,7 +159,6 @@ public class LiveCMN extends BaseDataProcessor {
     public Data getData() throws DataProcessingException {
 
         Data input, output;
-        getTimer().start();
 
         if (initialList == null) {
             initialList = new LinkedList<Data>();
@@ -182,7 +181,6 @@ public class LiveCMN extends BaseDataProcessor {
         }
 
         normalize(output);
-        getTimer().stop();
         return output;
     }
 

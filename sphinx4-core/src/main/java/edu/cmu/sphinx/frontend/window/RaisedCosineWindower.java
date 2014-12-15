@@ -153,8 +153,6 @@ public class RaisedCosineWindower extends BaseDataProcessor {
         if (outputQueue.isEmpty()) {
             Data input = getPredecessor().getData();
 
-            getTimer().start();
-
             if (input != null) {
                 if (input instanceof DoubleData) {
                     DoubleData data = (DoubleData) input;
@@ -195,8 +193,6 @@ public class RaisedCosineWindower extends BaseDataProcessor {
                     outputQueue.add(input);
                 }
             }
-
-            getTimer().stop();
         }
 
         if (!outputQueue.isEmpty()) {

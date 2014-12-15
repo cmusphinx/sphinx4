@@ -17,7 +17,6 @@ import static edu.cmu.sphinx.util.props.ConfigurationManagerUtils.setProperty;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
-import java.net.URL;
 
 import edu.cmu.sphinx.frontend.frequencywarp.MelFrequencyFilterBank2;
 import edu.cmu.sphinx.frontend.util.StreamDataSource;
