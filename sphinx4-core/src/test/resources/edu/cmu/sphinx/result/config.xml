@@ -2,11 +2,11 @@
 
 <config>        
 
-    <property name="absoluteBeamWidth"  value="500"/>
+    <property name="absoluteBeamWidth"  value="10000"/>
     <property name="relativeBeamWidth"  value="1E-80"/>
-    <property name="absoluteWordBeamWidth" value="20"/>
+    <property name="absoluteWordBeamWidth" value="100"/>
     <property name="relativeWordBeamWidth" value="1E-60"/>
-    <property name="wordInsertionProbability" value="1E-16"/>
+    <property name="wordInsertionProbability" value="0.2"/>
     <property name="languageWeight" value="7.0"/>
     <property name="silenceInsertionProbability" value=".1"/>
     <property name="frontend" value="mfcFrontEnd"/>
@@ -33,7 +33,7 @@
     type="edu.cmu.sphinx.decoder.search.WordPruningBreadthFirstSearchManager">
         <property name="linguist" value="lexTreeLinguist"/>
         <property name="pruner" value="trivialPruner"/>
-        <property name="scorer" value="threadedScorer"/>
+        <property name="scorer" value="scorer"/>
         <property name="activeListManager" value="activeListManager"/>
         <property name="growSkipInterval" value="0"/>
         <property name="checkStateOrder" value="false"/>
@@ -76,14 +76,14 @@
     <component name="trivialPruner" 
                type="edu.cmu.sphinx.decoder.pruner.SimplePruner"/>
     
-    <component name="threadedScorer" 
-               type="edu.cmu.sphinx.decoder.scorer.ThreadedAcousticScorer">
+    <component name="scorer" 
+               type="edu.cmu.sphinx.decoder.scorer.SimpleAcousticScorer">
         <property name="frontend" value="${frontend}"/>
     </component>
     
     <component name="lexTreeLinguist" 
                type="edu.cmu.sphinx.linguist.lextree.LexTreeLinguist">
-        <property name="acousticModel" value="wsj"/>
+        <property name="acousticModel" value="acousticModel"/>
         <property name="languageModel" value="trigramModel"/>
         <property name="dictionary" value="dictionary"/>
         <property name="addFillerWords" value="false"/>
@@ -102,9 +102,9 @@
     <component name="dictionary" 
         type="edu.cmu.sphinx.linguist.dictionary.FastDictionary">
         <property name="dictionaryPath"
-                  value="resource:/edu/cmu/sphinx/models/acoustic/wsj/dict/cmudict.0.6d"/>
+                  value="resource:/edu/cmu/sphinx/models/en-us/cmudict-en-us.dict"/>
         <property name="fillerPath" 
-	          value="resource:/edu/cmu/sphinx/models/acoustic/wsj/noisedict"/>
+	          value="resource:/edu/cmu/sphinx/models/en-us/en-us/noisedict"/>
         <property name="addSilEndingPronunciation" value="false"/>
         <property name="wordReplacement" value="&lt;sil&gt;"/>
         <property name="unitManager" value="unitManager"/>
@@ -118,15 +118,15 @@
         <property name="unigramWeight" value=".7"/>
     </component>
     
-    <component name="wsj"
+    <component name="acousticModel"
                type="edu.cmu.sphinx.linguist.acoustic.tiedstate.TiedStateAcousticModel">
-        <property name="loader" value="wsjLoader"/>
+        <property name="loader" value="loader"/>
         <property name="unitManager" value="unitManager"/>
     </component>
 
-    <component name="wsjLoader" type="edu.cmu.sphinx.linguist.acoustic.tiedstate.Sphinx3Loader">
+    <component name="loader" type="edu.cmu.sphinx.linguist.acoustic.tiedstate.Sphinx3Loader">
         <property name="unitManager" value="unitManager"/>
-        <property name="location" value="resource:/edu/cmu/sphinx/models/acoustic/wsj"/>
+        <property name="location" value="resource:/edu/cmu/sphinx/models/en-us/en-us"/>
     </component>
 
     <component name="unitManager" 

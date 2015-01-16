@@ -4,10 +4,10 @@
 
   <property name="logLevel" value="INFO"/>
 
-  <property name="absoluteBeamWidth"  value="30000"/>
-  <property name="relativeBeamWidth"  value="1e-80"/>
-  <property name="absoluteWordBeamWidth"  value="300"/>
-  <property name="relativeWordBeamWidth"  value="1e-60"/>
+  <property name="absoluteBeamWidth"  value="20000"/>
+  <property name="relativeBeamWidth"  value="1e-60"/>
+  <property name="absoluteWordBeamWidth"  value="200"/>
+  <property name="relativeWordBeamWidth"  value="1e-40"/>
 
   <property name="wordInsertionProbability" value="0.1"/>
   <property name="silenceInsertionProbability" value="0.1"/>
@@ -220,6 +220,7 @@
     type="edu.cmu.sphinx.linguist.acoustic.tiedstate.Sphinx3Loader">
     <property name="unitManager" value="unitManager"/>
     <property name="location" value=""/>
+    <property name="topGaussiansNum" value="4"/>
   </component>
 
   <component name="unitManager"

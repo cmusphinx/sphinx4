@@ -26,9 +26,9 @@ public class DictionaryTest {
     @Test
     public void testDictionary() throws IOException {
         URL dictUrl = getClass()
-                .getResource("/edu/cmu/sphinx/models/acoustic/wsj/dict/digits.dict");
+                .getResource("/edu/cmu/sphinx/models/en-us/cmudict-en-us.dict");
         URL noiseDictUrl = getClass()
-                .getResource("/edu/cmu/sphinx/models/acoustic/wsj/noisedict");
+                .getResource("/edu/cmu/sphinx/models/en-us/en-us/noisedict");
 
         Dictionary dictionary = new FullDictionary(dictUrl,
                                                    noiseDictUrl,
@@ -43,11 +43,11 @@ public class DictionaryTest {
 
         assertThat(word.getPronunciations(), arrayWithSize(2));
         assertThat(word.getPronunciations()[0].toString(),
-                   equalTo("one(HH W AH N )"));
-        assertThat(word.getPronunciations()[1].toString(),
                    equalTo("one(W AH N )"));
+        assertThat(word.getPronunciations()[1].toString(),
+                   equalTo("one(HH W AH N )"));
 
-        word = dictionary.getWord("something");
+        word = dictionary.getWord("something_missing");
         assertThat(word, nullValue());
 
         assertThat(dictionary.getSentenceStartWord().getSpelling(),
@@ -56,6 +56,6 @@ public class DictionaryTest {
                    equalTo("</s>"));
         assertThat(dictionary.getSilenceWord().getSpelling(), equalTo("<sil>"));
 
-        assertThat(dictionary.getFillerWords(), arrayWithSize(12));
+        assertThat(dictionary.getFillerWords(), arrayWithSize(5));
     }
 }

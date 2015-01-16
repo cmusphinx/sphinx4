@@ -21,7 +21,7 @@ public class FSTGrammarTest {
     public void testForcedAlignerGrammar() throws IOException, URISyntaxException {
         URL dictionaryUrl = getClass().getResource("FSTGrammarTest.dic");
         URL noisedictUrl = getClass()
-                .getResource("/edu/cmu/sphinx/models/acoustic/wsj/noisedict");
+                .getResource("/edu/cmu/sphinx/models/en-us/en-us/noisedict");
 
         Dictionary dictionary = new FastDictionary(dictionaryUrl,
                                                    noisedictUrl,

@@ -64,11 +64,11 @@ public class SpeakerIdentificationDemo {
 
         // Load model from the jar
         configuration
-                .setAcousticModelPath("resource:/edu/cmu/sphinx/models/acoustic/wsj");
+                .setAcousticModelPath("resource:/edu/cmu/sphinx/models/en-us/en-us");
         configuration
-                .setDictionaryPath("resource:/edu/cmu/sphinx/models/acoustic/wsj/dict/cmudict.0.6d");
+                .setDictionaryPath("resource:/edu/cmu/sphinx/models/en-us/cmudict-en-us.dict");
         configuration
-                .setLanguageModelPath("resource:/edu/cmu/sphinx/models/language/en-us.lm.dmp");
+                .setLanguageModelPath("resource:/edu/cmu/sphinx/models/en-us/en-us.lm.dmp");
 
         StreamSpeechRecognizer recognizer = new StreamSpeechRecognizer(
                 configuration);

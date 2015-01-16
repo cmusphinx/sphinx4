@@ -91,20 +91,6 @@ import java.util.logging.Logger;
  * </pre>
  * <p/>
  * <p>
- * So the configuration to load this model should look like
- * 
- * <pre>
- *  &lt;component name="wsjLoader" type="edu.cmu.sphinx.linguist.acoustic.tiedstate.Sphinx3Loader"&gt;
- *     &lt;property name="logMath" value="logMath"/&gt;
- *        &lt;property name="unitManager" value="unitManager"/&gt;
- *        &lt;property name="location" value="resource:/WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz"/&gt;
- *        &lt;property name="modelDefinition" value="etc/WSJ_clean_13dCep_16k_40mel_130Hz_6800Hz.4000.mdef"/&gt;
- *        &lt;property name="dataLocation" value="cd_continuous_8gau/"/&gt;
- *    &lt;/component&gt;
- * </pre>
- * 
- * </p>
- * <p>
  * For more details on using SphinxTrain models in sphinx4, see <a
  * href="../../../../../../../doc/UsingSphinxTrainModels.html">documentation</a>
  * </p>

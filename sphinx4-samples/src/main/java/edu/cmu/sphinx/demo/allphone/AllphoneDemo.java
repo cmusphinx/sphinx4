@@ -32,13 +32,13 @@ public class AllphoneDemo {
 
         // Load model from the jar
         configuration
-                .setAcousticModelPath("resource:/edu/cmu/sphinx/models/acoustic/wsj");
+                .setAcousticModelPath("resource:/edu/cmu/sphinx/models/en-us/en-us");
 
         // You can also load model from folder
         // configuration.setAcousticModelPath("file:en-us");
 
         configuration
-                .setDictionaryPath("resource:/edu/cmu/sphinx/models/acoustic/wsj/dict/cmudict.0.6d");
+                .setDictionaryPath("resource:/edu/cmu/sphinx/models/en-us/cmudict-en-us.dict");
         Context context = new Context(configuration);
         context.setLocalProperty("decoder->searchManager", "allphoneSearchManager");
         Recognizer recognizer = context.getInstance(Recognizer.class);
