@@ -50,6 +50,9 @@ public class AbstractSpeechRecognizer {
 
     /**
      * Returns result of the recognition.
+     * 
+     * @return recognition result or {@code null} if there is no result, e.g., because the
+     * 			microphone or input stream has been closed 
      */
     public SpeechResult getResult() {
         Result result = recognizer.recognize();
