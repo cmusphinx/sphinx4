@@ -83,9 +83,6 @@ public class LatticeRescorer {
     }
 
     public void rescore() {
-
-        lattice.removeFillers();
-
         rescoreEdges();
     }
 }

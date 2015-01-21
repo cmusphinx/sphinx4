@@ -15,13 +15,9 @@ import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.text.DecimalFormat;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.ListIterator;
 import java.util.StringTokenizer;
-
-import edu.cmu.sphinx.result.ConfusionSet;
-import edu.cmu.sphinx.result.Sausage;
 
 /**
  * Implements a portion of the NIST align/scoring algorithm to compare a reference string to a hypothesis string.  It
@@ -242,90 +238,6 @@ public class NISTAlign {
         return (insertions + deletions + substitutions) == 0;
     }
 
-
-    /**
-     * Performs the NIST alignment on the reference string and sausage. Thinks
-     * that there is a match if a single word in confusion network matches.
-     *
-     * @param reference  the reference string
-     * @param hypothesis the hypothesis sausage
-     * @return true if the reference and hypothesis match
-     */
-    public boolean alignSausage (String reference, Sausage hypothesis) {
-        int annotationIndex;
-
-        // Save the original strings for future reference.
-        //
-        rawReference = reference;
-        rawHypothesis = hypothesis.toString();
-
-        // Strip the annotation off the reference string and
-        // save it.
-        //
-        annotationIndex = rawReference.indexOf('(');
-        if (annotationIndex != -1) {
-            referenceAnnotation = rawReference.substring(annotationIndex);
-            referenceItems = toList(rawReference.substring(0, annotationIndex));
-        } else {
-            referenceAnnotation = null;
-            referenceItems = toList(rawReference);
-        }
-
-        hypothesisItems = new LinkedList<Object>();
-        for (Iterator<ConfusionSet> it = hypothesis.iterator(); it.hasNext();) {
-            hypothesisItems.add(it.next());
-        }
-        
-        // Reset the counts for this sentence.
-        //
-        substitutions = 0;
-        insertions = 0;
-        deletions = 0;
-
-        // Turn the list of reference and hypothesis words into two
-        // aligned lists of strings.  This has the side effect of
-        // creating alignedReferenceWords and alignedHypothesisWords.
-        //
-        alignWords(backtrace(createBacktraceTable(referenceItems,
-                hypothesisItems, new  Comparator () {
-                    public boolean isSimilar(Object refObject, Object hypObject) {
-                        if (refObject instanceof String && hypObject instanceof ConfusionSet) {
-                            String ref = (String)refObject;
-                            ConfusionSet set = (ConfusionSet)hypObject;
-                            if (set.containsWord(ref)) {
-                                return true;
-                            }
-                        }
-                        return false;
-                    }          
-        })), new StringRenderer() {
-            
-            public String getRef(Object ref, Object hyp) {
-                return (String)ref;
-            }
-            
-            public String getHyp(Object refObject, Object hypObject) {
-                String ref = (String)refObject;
-                ConfusionSet set = (ConfusionSet)hypObject;
-                if (set.containsWord(ref))
-                     return ref;
-                String res = set.getBestHypothesis().toString();
-                return res;
-            }
-        });
-
-        // Compute the number of correct words in the hypothesis.
-        //
-        correct = alignedReferenceWords.size()
-                - (insertions + deletions + substitutions);
-
-        // Update the totals that are kept over the lifetime of this
-        // class.
-        //
-        updateTotals();
-
-        return (insertions + deletions + substitutions) == 0;
-    }
 
     /**
      * Returns the reference string.  This string will be filtered (all spurious whitespace removed and annotation

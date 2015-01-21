@@ -35,7 +35,8 @@ public final class SpeechResult {
     public SpeechResult(Result result) {
         this.result = result;
         lattice = new Lattice(result);
-        new LatticeOptimizer(lattice).optimize();
+//        new LatticeOptimizer(lattice).optimize();
+        lattice.computeNodePosteriors(1.0f);
     }
 
     /**
@@ -45,7 +46,7 @@ public final class SpeechResult {
      * @return words that form the result
      */
     public List<WordResult> getWords() {
-        return result.getTimedBestResult(true);
+        return lattice.getWordResultPath();
     }
 
     /**

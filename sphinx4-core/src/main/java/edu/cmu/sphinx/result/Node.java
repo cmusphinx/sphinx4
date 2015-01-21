@@ -13,6 +13,7 @@ package edu.cmu.sphinx.result;
 
 import edu.cmu.sphinx.linguist.dictionary.Word;
 import edu.cmu.sphinx.util.LogMath;
+import edu.cmu.sphinx.util.TimeFrame;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -42,9 +43,8 @@ public class Node {
 
     private String id;
     private Word word;
-    // TODO: use TimeFrame
-    private int beginTime = -1;
-    private int endTime = -1;
+    private long beginTime = -1;
+    private long endTime = -1;
     private List<Edge> enteringEdges;
     private List<Edge> leavingEdges;
     private double forwardScore;
@@ -69,7 +69,7 @@ public class Node {
      * @param beginTime the start time of the word
      * @param endTime   the end time of the word
      */
-    protected Node(Word word, int beginTime, int endTime) {
+    protected Node(Word word, long beginTime, long endTime) {
         this(getNextNodeId(), word, beginTime, endTime);
     }
 
@@ -82,7 +82,7 @@ public class Node {
      * @param beginTime
      * @param endTime
      */
-    protected Node(String id, Word word, int beginTime, int endTime) {
+    protected Node(String id, Word word, long beginTime, long endTime) {
         this.id = id;
         this.word = word;
         this.beginTime = beginTime;
@@ -305,7 +305,7 @@ public class Node {
      *
      * @return the begin frame number, or -1 if the frame number is unknown
      */
-    public int getBeginTime() {
+    public long getBeginTime() {
         if (beginTime == -1) {
             calculateBeginTime();
         }
@@ -334,7 +334,7 @@ public class Node {
      *
      * @return the end time, or -1 if the frame number if is unknown
      */
-    public int getEndTime() {
+    public long getEndTime() {
         return endTime;
     }
 
@@ -352,6 +352,16 @@ public class Node {
                     getBeginTime() + ").");
         }
         this.endTime = endTime;
+    }
+
+
+    /**
+     * Returns TimeFrame of the Node
+     * 
+     * @return TimeFrame
+     */
+    public TimeFrame getTimeFrame() {
+        return new TimeFrame(getBeginTime(), getEndTime());
     }
 
 

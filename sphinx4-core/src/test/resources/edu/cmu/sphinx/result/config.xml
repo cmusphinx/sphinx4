@@ -220,10 +220,5 @@
                type="edu.cmu.sphinx.instrumentation.ConfigMonitor">
         <property name="showConfig" value="false"/>
     </component>
-    
-    <component name="confidenceScorer"
-               type="edu.cmu.sphinx.result.MAPConfidenceScorer">
-        <property name="languageWeight" value="${languageWeight}"/>
-    </component>
 
 </config>

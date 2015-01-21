@@ -1,7 +1,5 @@
 /*
-* Copyright 1999-2013 Carnegie Mellon University.
-* Portions Copyright 2002 Sun Microsystems, Inc.
-* Portions Copyright 2002 Mitsubishi Electric Research Laboratories.
+* Copyright 1999-2015 Carnegie Mellon University.
 * All Rights Reserved.  Use is subject to license terms.
 *
 * See the file "license.terms" for information on usage and
@@ -27,23 +25,8 @@ public class WordResult {
 
     private final Word word;
     private final TimeFrame timeFrame;
-
     private final double score;
     private final double confidence;
-
-    /**
-     * Construct a word result from a string and a confidence score.
-     *
-     * @param w the word
-     * @param confidence the confidence for this word
-     */
-    public WordResult(String w, double confidence) {
-        Pronunciation[] pros = {Pronunciation.UNKNOWN};
-        word = new Word(w, pros, false);
-        timeFrame = TimeFrame.NULL;
-        this.confidence = confidence;
-        this.score = LogMath.LOG_ZERO;
-    }
 
     /**
      * Construct a word result with full information.
@@ -51,16 +34,14 @@ public class WordResult {
      * @param w the word object to store
      * @param timeFrame time frame
      * @param ef word end time
-     * @param score score of the word
-     * @param confidence confidence (posterior) of the word
+     * @param posterior of the word
      */
-    public WordResult(Word w, TimeFrame timeFrame,
-            double score, double confidence)
+    public WordResult(Word w, TimeFrame timeFrame, double score, double posterior)
     {
         this.word = w;
         this.timeFrame = timeFrame;
         this.score = score;
-        this.confidence = confidence;
+        this.confidence = posterior;
     }
 
     /**
@@ -69,21 +50,16 @@ public class WordResult {
      * This does not use the posterior stored in the Node object, just its
      * word, start and end.
      *
-     * TODO: score is currently set to zero
-     *
      * @param node the node to extract information from
-     * @param confidence the confidence (posterior) to assign
      */
-    public WordResult(Node node, double confidence) {
+    public WordResult(Node node) {
         this(node.getWord(),
-             new TimeFrame(node.getBeginTime(), node.getEndTime()),
-             LogMath.LOG_ZERO, confidence);
+             new TimeFrame(node.getBeginTime(), node.getEndTime()), 
+             LogMath.LOG_ZERO, node.getPosterior());
     }
 
     /**
-     * Gets the total score for this word.
-     *
-     * @return the score for the word (in LogMath log base)
+     * Returns total score for this WirdResult in log domain
      */
     public double getScore() {
         return score;
@@ -139,6 +115,6 @@ public class WordResult {
 
     @Override
     public String toString() {
-        return String.format("{%s, %f, [%s]}", word, confidence, timeFrame);
+        return String.format("{%s, %.3f, [%s]}", word, LogMath.getLogMath().logToLinear((float)getConfidence()), timeFrame);
     }
 }

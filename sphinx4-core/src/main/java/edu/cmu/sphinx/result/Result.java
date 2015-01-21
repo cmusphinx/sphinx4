@@ -530,4 +530,14 @@ public class Result {
     public String getReferenceText() {
         return reference;
     }
+
+    /**
+     * Getter for wordTokenFirst flag
+     * 
+     * @return true if word tokens goes first, before data tokens 
+     */
+    public boolean getWordTokenFirst() {
+        return wordTokenFirst;
+    }
+
 }

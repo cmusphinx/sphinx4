@@ -11,15 +11,32 @@
  */
 package edu.cmu.sphinx.result;
 
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.LineNumberReader;
+import java.io.PrintWriter;
+import java.io.Writer;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Map;
+import java.util.Set;
+import java.util.StringTokenizer;
+
 import edu.cmu.sphinx.decoder.search.AlternateHypothesisManager;
 import edu.cmu.sphinx.decoder.search.Token;
-import edu.cmu.sphinx.linguist.WordSearchState;
+import edu.cmu.sphinx.frontend.Data;
+import edu.cmu.sphinx.frontend.FloatData;
 import edu.cmu.sphinx.linguist.dictionary.Pronunciation;
 import edu.cmu.sphinx.linguist.dictionary.Word;
 import edu.cmu.sphinx.util.LogMath;
-
-import java.io.*;
-import java.util.*;
+import edu.cmu.sphinx.util.TimeFrame;
 
 /**
  * <p/>
@@ -92,6 +109,7 @@ public class Lattice {
     protected Map<String, Node> nodes;
     protected double logBase;
     protected LogMath logMath;
+    private boolean wordTokenFirst;
     private Set<Token> visitedWordTokens;
     private AlternateHypothesisManager loserManager;
 
@@ -114,6 +132,7 @@ public class Lattice {
     public Lattice(Result result) {
         this();
         visitedWordTokens = new HashSet<Token>();
+        wordTokenFirst = result.getWordTokenFirst();
         loserManager = result.getAlternateHypothesisManager();
         if (loserManager != null) {
             loserManager.purge();
@@ -137,6 +156,73 @@ public class Lattice {
         }
     }
 
+    private TimeFrame getTimeFrameWordTokenFirst(Token token) {
+        TimeFrame capTimeFrame = new TimeFrame(0, 0);
+
+        if (token.getWord().isSentenceStartWord() || token.getWord().isSentenceEndWord())
+            return capTimeFrame;
+
+        Data prevWordFirstFeature = token.getData();
+        Data prevFeature = prevWordFirstFeature;
+        Token dataToken = token.getPredecessor();
+
+        while (dataToken != null) {
+            if (dataToken.isWord()) {
+                return new TimeFrame(((FloatData) prevFeature)
+                                            .getCollectTime(),
+                                    ((FloatData) prevWordFirstFeature)
+                                            .getCollectTime());
+            }
+            Data feature = dataToken.getData();
+            if (feature != null) {
+                prevFeature = feature;
+            }
+            dataToken = dataToken.getPredecessor();
+        }
+        return capTimeFrame;
+    }
+
+    private TimeFrame getTimeFrameWordTokenLast(Token token) {
+        TimeFrame capTimeFrame = new TimeFrame(0, 0);
+
+        if (token.getWord().isSentenceStartWord() || token.getWord().isSentenceEndWord())
+            return capTimeFrame;
+
+        Word word = null;
+        Data lastFeature = null;
+        Data lastWordFirstFeature = null;
+        Token dataToken = token;
+        while (dataToken != null) {
+            if (dataToken.isWord()) {
+                if (word != null && lastFeature != null) {
+                    return new TimeFrame(((FloatData) lastFeature).getCollectTime(),
+                                     ((FloatData) lastWordFirstFeature).getCollectTime());
+                }
+                word = dataToken.getWord();
+            }
+            Data feature = dataToken.getData();
+            if (feature != null) {
+                lastFeature = feature;
+                if (lastWordFirstFeature == null) {
+                    lastWordFirstFeature = lastFeature;
+                    lastFeature = null;
+                }
+            }
+            dataToken = dataToken.getPredecessor();
+        }
+        if (lastWordFirstFeature != null && lastFeature != null)
+            return new TimeFrame(((FloatData) lastFeature).getCollectTime(),
+                             ((FloatData) lastWordFirstFeature).getCollectTime());
+        return capTimeFrame;
+    }
+
+    private TimeFrame getTimeFrame(Token token) {
+        if (wordTokenFirst)
+            return getTimeFrameWordTokenFirst(token);
+        else
+            return getTimeFrameWordTokenLast(token);
+    }
+
 
     /**
      * Returns the node corresponding to the given word token.
@@ -150,20 +236,9 @@ public class Lattice {
         }
         Node node = nodes.get(getNodeID(token));
         if (node == null) {
-            WordSearchState wordState =
-                    (WordSearchState) token.getSearchState();
-
-            int startFrame = -1;
-            int endFrame = -1;
-
-            if (wordState.isWordStart()) {
-                startFrame = token.getFrameNumber();
-            } else {
-                endFrame = token.getFrameNumber();
-            }
-
+            TimeFrame timeFrame = getTimeFrame(token);
             node = new Node(getNodeID(token), token.getWord(),
-                    startFrame, endFrame);
+                    timeFrame.getStart(), timeFrame.getEnd());
             addNode(node);
         }
         return node;
@@ -338,21 +413,6 @@ public class Lattice {
         return e;
     }
 
-
-    /**
-     * Add a Node that represents the theory that a given word was spoken over a given period of time.
-     *
-     * @param word
-     * @param beginTime
-     * @param endTime
-     * @return the new Node
-     */
-    public Node addNode(Word word, int beginTime, int endTime) {
-        Node n = new Node(word, beginTime, endTime);
-        addNode(n);
-        return n;
-    }
-
     /**
      * Add a Node with a given ID that represents the theory that a given word was spoken over a given period of time.
      * This method is used when loading Lattices from .LAT files.
@@ -362,7 +422,7 @@ public class Lattice {
      * @param endTime
      * @return the new Node
      */
-    protected Node addNode(String id, Word word, int beginTime, int endTime) {
+    protected Node addNode(String id, Word word, long beginTime, long endTime) {
         Node n = new Node(id, word, beginTime, endTime);
         addNode(n);
         return n;
@@ -378,25 +438,9 @@ public class Lattice {
      * @param endTime
      * @return the new Node
      */
-    public Node addNode(String id, String word, int beginTime, int endTime) {
+    public Node addNode(String id, String word, long beginTime, long endTime) {
         Word w = new Word(word, new Pronunciation[0], false);
         return addNode(id, w, beginTime, endTime);
-    }
-
-
-    /**
-     * Add a Node corresponding to a Token from the result Token tree. Usually, the Token should reference a search
-     * state that is a WordSearchState, although other Tokens may be used for debugging.
-     *
-     * @param token
-     * @return the new Node
-     */
-    protected Node addNode(Token token, int beginTime, int endTime) {
-        assert (token.getSearchState() instanceof WordSearchState);
-        Word word = ((WordSearchState) (token.getSearchState()))
-                .getPronunciation().getWord();
-        return addNode(Integer.toString(token.hashCode()),
-                word, beginTime, endTime);
     }
 
 
@@ -951,6 +995,25 @@ public class Lattice {
 
 
     /**
+     * Retrieves the list of WordResult from this lattice. Only works once computeNodePosteriors has been called.
+     * 
+     * @return list of WordResult
+     */
+    public List<WordResult> getWordResultPath() {
+    	List<Node> path = getViterbiPath();
+//        double normalizationFactor = terminalNode.getForwardScore();
+//        double score = terminalNode.getViterbiScore();
+//        double prob = score - normalizationFactor;
+        LinkedList<WordResult> wordResults = new LinkedList<WordResult>();
+        for (Node node : path) {
+            if (node.getWord().isSentenceStartWord() || node.getWord().isSentenceEndWord())
+                continue;
+            wordResults.add(new WordResult(node));
+        }
+        return wordResults;
+    }
+
+	/**
      * Computes the score of an edge. It multiplies on adjustment since language model
      * score is already scaled by language model weight in linguist.
      *
@@ -1039,13 +1102,4 @@ public class Lattice {
         return node.getWord().getSpelling().equals("<sil>");
     }
 
-    
-    public void removeFillers() {
-        for (Node node : sortNodes()) {
-            if (isFillerNode(node)) {
-                removeNodeAndCrossConnectEdges(node);
-                assert checkConsistency();
-            }
-        }
-    }
 }

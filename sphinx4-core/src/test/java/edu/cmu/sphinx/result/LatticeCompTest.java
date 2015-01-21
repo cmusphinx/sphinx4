@@ -14,12 +14,15 @@ import static org.testng.Assert.assertTrue;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.Collection;
+import java.util.Iterator;
 
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
 import org.testng.annotations.Test;
 
+import edu.cmu.sphinx.result.*;
 import edu.cmu.sphinx.frontend.util.StreamDataSource;
 import edu.cmu.sphinx.recognizer.Recognizer;
 import edu.cmu.sphinx.util.props.ConfigurationManager;
@@ -67,6 +70,30 @@ public class LatticeCompTest {
         dataSource.setInputStream(getAudioInputStream(audioFileURL));
         Lattice allLattice = new Lattice(recognizer.recognize());
 
-        assertTrue(lattice.isEquivalent(allLattice));
+        Collection<Node> latNodes = lattice.getNodes();
+        Collection<Node> otherLatNodes = allLattice.getNodes();
+        Iterator<Node> it = latNodes.iterator();
+        boolean latticesAreEquivalent = true;
+        while (it.hasNext()) {
+            Node node = it.next();
+            Iterator<Node> otherIt = otherLatNodes.iterator();
+            boolean hasEquivalentNode = false;
+            while (otherIt.hasNext()) {
+                Node otherNode = otherIt.next();
+                boolean nodesAreEquivalent = node.getWord().getSpelling().equals(otherNode.getWord().getSpelling()) &&
+                                             node.getEnteringEdges().size() == otherNode.getEnteringEdges().size() &&
+                                             node.getLeavingEdges().size() == otherNode.getLeavingEdges().size();
+                if (nodesAreEquivalent) {
+                    hasEquivalentNode = true;
+                    break;
+                }
+            }
+            
+            if (!hasEquivalentNode) {
+                latticesAreEquivalent = false;
+                break;
+            }
+        }
+        assertTrue(latticesAreEquivalent);
     }
 }

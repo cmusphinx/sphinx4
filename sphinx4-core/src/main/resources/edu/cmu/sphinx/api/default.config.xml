@@ -291,11 +291,6 @@
     <property name="loader" value="acousticModelLoader"/>
   </component>
 
-  <component name="confidenceScorer"
-    type="edu.cmu.sphinx.result.MAPConfidenceScorer">
-    <property name="languageWeight" value="${languageWeight}"/>
-  </component>
-
   <component name="speedTracker"
     type="edu.cmu.sphinx.instrumentation.SpeedTracker">
     <property name="showTimers" value="true"/>

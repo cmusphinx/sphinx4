@@ -59,8 +59,6 @@ public class LatticeGrammar extends Grammar {
             return createGrammarNode("<s>");
         }
         
-        lattice.removeFillers();
-        
         GrammarNode firstNode = null;
         HashMap<Node, GrammarNode> nodeMap = new HashMap<Node, GrammarNode>();
         for (Node n : lattice.getNodes()) { 
