@@ -59,7 +59,7 @@ public class Edge {
 
         String from = tokens.nextToken();
         String to = tokens.nextToken();
-        int score = Integer.parseInt(tokens.nextToken());
+        double score = Double.parseDouble(tokens.nextToken());
 
         Node fromNode = lattice.getNode(from);
         if (fromNode == null) {

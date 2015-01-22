@@ -45,12 +45,13 @@ public class LatticeRescorer {
     private void rescoreEdges() {
         for (Edge edge : lattice.edges) {
 
-            if (lattice.isFillerNode(edge.getToNode()))
+            float maxProb = LogMath.LOG_ZERO;
+            if (lattice.isFillerNode(edge.getToNode())) {
+                edge.setLMScore(maxProb);
                 continue;
+            }
 
             List<String> paths = allPathsTo("", edge, depth);
-
-            float minProb = LogMath.LOG_ZERO;
             for (String path : paths) {
                 List<Word> wordList = new LinkedList<Word>();
                 for (String pathWord : path.split(" ")) {
@@ -60,23 +61,27 @@ public class LatticeRescorer {
 
                 WordSequence seq = new WordSequence(wordList);
                 float prob = model.getProbability(seq) * languageWeigth;
-                if (minProb < prob)
-                    minProb = prob;
+                if (maxProb < prob)
+                    maxProb = prob;
             }
-            edge.setLMScore(minProb);
+            edge.setLMScore(maxProb);
         }
     }
 
     protected List<String> allPathsTo(String path, Edge edge, int currentDepth) {
         List<String> l = new LinkedList<String>();
-        String p = edge.getFromNode().getWord().toString() + ' ' + path;
+        String p = path;
+        boolean isFiller = lattice.isFillerNode(edge.getFromNode());
+        if (!isFiller)
+            p = edge.getFromNode().getWord().toString() + ' ' + p;
 
         if (currentDepth == 2
                 || edge.getFromNode().equals(lattice.getInitialNode())) {
             l.add(p);
         } else {
+            int decrement = isFiller ? 0 : 1;
             for (Edge e : edge.getFromNode().getEnteringEdges()) {
-                l.addAll(allPathsTo(p, e, currentDepth - 1));
+                l.addAll(allPathsTo(p, e, currentDepth - decrement));
             }
         }
         return l;

@@ -360,6 +360,7 @@ public class Lattice {
      * @param fileName
      */
     public Lattice(String fileName) {
+        this();
         try {
             System.err.println("Loading from " + fileName);
 
@@ -1096,7 +1097,10 @@ public class Lattice {
     
 
     boolean isFillerNode(Node node) {
-        return node.getWord().getSpelling().equals("<sil>");
+        Word word = node.getWord();
+        if (word.isSentenceStartWord() || word.isSentenceEndWord())
+            return false;
+        return word.isFiller();
     }
 
 }
