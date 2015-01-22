@@ -1000,10 +1000,7 @@ public class Lattice {
      * @return list of WordResult
      */
     public List<WordResult> getWordResultPath() {
-    	List<Node> path = getViterbiPath();
-//        double normalizationFactor = terminalNode.getForwardScore();
-//        double score = terminalNode.getViterbiScore();
-//        double prob = score - normalizationFactor;
+        List<Node> path = getViterbiPath();
         LinkedList<WordResult> wordResults = new LinkedList<WordResult>();
         for (Node node : path) {
             if (node.getWord().isSentenceStartWord() || node.getWord().isSentenceEndWord())

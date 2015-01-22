@@ -131,7 +131,7 @@ public class LatticeOptimizer {
                  */
                 assert e != e2;
                 if (equivalentNodesForward(e.getToNode(), e2.getToNode())) {
-                    mergeNodesAndEdgesForward(n, e, e2);
+                    mergeNodesAndEdgesForward(e, e2);
                     return true;
                 }
             }
@@ -178,40 +178,42 @@ public class LatticeOptimizer {
      * @param e1
      * @param e2
      */
-    protected void mergeNodesAndEdgesForward(Node n, Edge e1, Edge e2) {
-        assert lattice.hasNode(n);
+    protected void mergeNodesAndEdgesForward(Edge e1, Edge e2) {
+        assert lattice.hasNode(e1.getFromNode());
         assert lattice.hasEdge(e1);
         assert lattice.hasEdge(e2);
-
-        assert e1.getFromNode() == n;
-        assert e2.getFromNode() == n;
+        assert e1.getFromNode() == e2.getFromNode();
 
         Node n1 = e1.getToNode();
         Node n2 = e2.getToNode();
 
-        assert n1.hasEquivalentEnteringEdges(n1);
+        assert n1.hasEquivalentEnteringEdges(n2);
         assert n1.getWord().equals(n2.getWord());
-
-        // merge the scores of e1 and e2 into e1
-        e1.setAcousticScore(mergeAcousticScores
-                (e1.getAcousticScore(), e2.getAcousticScore()));
-        e1.setLMScore(mergeLanguageScores(e1.getLMScore(),
-                e2.getLMScore()));
+        
+        for (Edge edge : n2.getEnteringEdges()) {
+            Edge anotherEdge = n1.getEdgeFromNode(edge.getFromNode());
+            assert anotherEdge != null;
+            anotherEdge.setAcousticScore
+                    (mergeAcousticScores(edge.getAcousticScore(), 
+                            anotherEdge.getAcousticScore()));
+            anotherEdge.setLMScore(mergeLanguageScores(edge.getLMScore(),
+                    anotherEdge.getLMScore()));
+        }
 
         // add n2's edges to n1
-        for (Edge e : n2.getLeavingEdges()) {
-            e2 = n1.getEdgeToNode(e.getToNode());
-            if (e2 == null) {
-                lattice.addEdge(n1, e.getToNode(),
-                        e.getAcousticScore(), e.getLMScore());
+        for (Edge edge : n2.getLeavingEdges()) {
+            Edge anotherEdge = n1.getEdgeToNode(edge.getToNode());
+            if (anotherEdge == null) {
+                lattice.addEdge(n1, edge.getToNode(),
+                        edge.getAcousticScore(), edge.getLMScore());
             } else {
                 // if we got here then n1 and n2 had edges to the same node
                 // choose the edge with best score
-                e2.setAcousticScore
-                        (mergeAcousticScores
-                                (e.getAcousticScore(), e2.getAcousticScore()));
-                e2.setLMScore(mergeLanguageScores(e.getLMScore(),
-                        e2.getLMScore()));
+                anotherEdge.setAcousticScore
+                        (mergeAcousticScores(edge.getAcousticScore(), 
+                                anotherEdge.getAcousticScore()));
+                anotherEdge.setLMScore(mergeLanguageScores(edge.getLMScore(),
+                        anotherEdge.getLMScore()));
             }
         }
 
@@ -284,7 +286,7 @@ public class LatticeOptimizer {
                 assert e != e2;
                 if (equivalentNodesBackward(e.getFromNode(),
                         e2.getFromNode())) {
-                    mergeNodesAndEdgesBackward(n, e, e2);
+                    mergeNodesAndEdgesBackward(e, e2);
                     return true;
                 }
             }
@@ -344,13 +346,11 @@ public class LatticeOptimizer {
      * @param e1
      * @param e2
      */
-    protected void mergeNodesAndEdgesBackward(Node n, Edge e1, Edge e2) {
-        assert lattice.hasNode(n);
+    protected void mergeNodesAndEdgesBackward(Edge e1, Edge e2) {
+        assert lattice.hasNode(e1.getToNode());
         assert lattice.hasEdge(e1);
         assert lattice.hasEdge(e2);
-
-        assert e1.getToNode() == n;
-        assert e2.getToNode() == n;
+        assert e1.getToNode() == e2.getToNode();
 
         Node n1 = e1.getFromNode();
         Node n2 = e2.getFromNode();
@@ -358,26 +358,30 @@ public class LatticeOptimizer {
         assert n1.hasEquivalentLeavingEdges(n2);
         assert n1.getWord().equals(n2.getWord());
 
-        // merge the scores of e1 and e2 into e1
-        e1.setAcousticScore(mergeAcousticScores(e1.getAcousticScore(),
-                e2.getAcousticScore()));
-        e1.setLMScore(mergeLanguageScores(e1.getLMScore(),
-                e2.getLMScore()));
+        for (Edge edge : n2.getLeavingEdges()) {
+            Edge anotherEdge = n1.getEdgeToNode(edge.getToNode());
+            assert anotherEdge != null;
+            anotherEdge.setAcousticScore
+                    (mergeAcousticScores(edge.getAcousticScore(), 
+                            anotherEdge.getAcousticScore()));
+            anotherEdge.setLMScore(mergeLanguageScores(edge.getLMScore(), 
+                    anotherEdge.getLMScore()));
+        }
 
         // add n2's "from" edges to n1
-        for (Edge e : n2.getEnteringEdges()) {
-            e2 = n1.getEdgeFromNode(e.getFromNode());
-            if (e2 == null) {
-                lattice.addEdge(e.getFromNode(), n1,
-                        e.getAcousticScore(), e.getLMScore());
+        for (Edge edge : n2.getEnteringEdges()) {
+            Edge anotherEdge = n1.getEdgeFromNode(edge.getFromNode());
+            if (anotherEdge == null) {
+                lattice.addEdge(edge.getFromNode(), n1,
+                        edge.getAcousticScore(), edge.getLMScore());
             } else {
                 // if we got here then n1 and n2 had edges from the same node
                 // choose the edge with best score
-                e2.setAcousticScore
-                        (mergeAcousticScores(e.getAcousticScore(),
-                                e2.getAcousticScore()));
-                e2.setLMScore(mergeLanguageScores(e.getLMScore(),
-                        e2.getLMScore()));
+                anotherEdge.setAcousticScore
+                        (mergeAcousticScores(edge.getAcousticScore(),
+                                anotherEdge.getAcousticScore()));
+                anotherEdge.setLMScore(mergeLanguageScores(edge.getLMScore(),
+                        anotherEdge.getLMScore()));
             }
         }
 
