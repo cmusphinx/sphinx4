@@ -59,7 +59,8 @@ public class Edge {
 
         String from = tokens.nextToken();
         String to = tokens.nextToken();
-        double score = Double.parseDouble(tokens.nextToken());
+        double aScore = Double.parseDouble(tokens.nextToken());
+        double lmScore = Double.parseDouble(tokens.nextToken());
 
         Node fromNode = lattice.getNode(from);
         if (fromNode == null) {
@@ -71,7 +72,7 @@ public class Edge {
             throw new Error("Edge toNode \"" + to + "\" does not exist");
         }
 
-        lattice.addEdge(fromNode, toNode, score, 0.0);
+        lattice.addEdge(fromNode, toNode, aScore, lmScore);
     }
 
 
