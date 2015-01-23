@@ -1,31 +1,32 @@
 package edu.cmu.sphinx.linguist.allphone;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import edu.cmu.sphinx.linguist.SearchStateArc;
 import edu.cmu.sphinx.linguist.WordSearchState;
-import edu.cmu.sphinx.linguist.acoustic.AcousticModel;
-import edu.cmu.sphinx.linguist.acoustic.HMMPosition;
-import edu.cmu.sphinx.linguist.acoustic.HMMState;
+import edu.cmu.sphinx.linguist.acoustic.HMM;
+import edu.cmu.sphinx.linguist.acoustic.LeftRightContext;
 import edu.cmu.sphinx.linguist.acoustic.Unit;
+import edu.cmu.sphinx.linguist.acoustic.UnitManager;
 import edu.cmu.sphinx.linguist.dictionary.Pronunciation;
 import edu.cmu.sphinx.linguist.dictionary.Word;
+import edu.cmu.sphinx.util.LogMath;
 
 public class PhoneWordSearchState extends PhoneNonEmittingSearchState implements WordSearchState {
     
-    public PhoneWordSearchState(Unit unit, AcousticModel model) {
-        super(unit, model);
+    public PhoneWordSearchState(Unit unit, AllphoneLinguist linguist, float insertionProb, float languageProb) {
+        super(unit, linguist, insertionProb, languageProb);
     }
     
     public SearchStateArc[] getSuccessors() {
         ArrayList<SearchStateArc> result = new ArrayList<SearchStateArc>();
-        Iterator<Unit> iter = acousticModel.getContextIndependentUnitIterator();
-        while( iter.hasNext()) {
-            Unit ciUnit = iter.next();
-            HMMState hmmState = acousticModel.lookupNearestHMM(ciUnit, HMMPosition.UNDEFINED, true).getInitialState();
-            result.add(new PhoneHmmSearchState(ciUnit, hmmState, acousticModel));
-        }
+        Unit rc = UnitManager.SILENCE;
+        Unit base = unit.getBaseUnit();
+        if (unit.isContextDependent())
+            rc = ((LeftRightContext)unit.getContext()).getRightContext()[0];
+        ArrayList<HMM> successors = linguist.useContextDependentPhones() ? linguist.getCDSuccessors(base, rc) : linguist.getCISuccessors();
+        for (HMM successor : successors)
+            result.add(new PhoneHmmSearchState(successor.getInitialState(), linguist, linguist.getPhoneInsertionProb(), LogMath.LOG_ONE));
         return result.toArray(new SearchStateArc[result.size()]);
     }
 
@@ -46,17 +47,22 @@ public class PhoneWordSearchState extends PhoneNonEmittingSearchState implements
     public boolean isWordStart() {
         return false;
     }
-    
+
+    public int getOrder() {
+        return 1;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (!(obj instanceof PhoneWordSearchState))
             return false;
         boolean haveSameBaseId = ((PhoneWordSearchState)obj).unit.getBaseID() == unit.getBaseID();
-        return haveSameBaseId;
+        boolean haveSameContex = ((PhoneWordSearchState)obj).unit.getContext().equals(unit.getContext());
+        return haveSameBaseId && haveSameContex;
     }
     
     @Override
     public int hashCode() {
-        return unit.getBaseID() * 37;
+    	return unit.getContext().hashCode() * 91 + unit.getBaseID();
     }
 }

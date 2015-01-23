@@ -154,7 +154,7 @@ public class Context {
             throw new IllegalArgumentException(
                 "Unknown format extension: " + path);
         }
-        setLocalProperty("decoder->searchManager", "wordPruningSearchManager");
+        //search manager for LVCSR is set by deafult
     }
 
 

@@ -36,12 +36,21 @@ public interface AcousticScorer extends Configurable {
     public void stopRecognition();
 
     /**
-     * Scores the given set of states
+     * Scores the given set of states over previously stored acoustic data if any or a new one
      *
      * @param scorableList a list containing Scoreable objects to be scored
      * @return the best scoring scoreable, or null if there are no more frames to score
      */
     public Data calculateScores(List<? extends Scoreable> scorableList);
+    
+    /**
+     * Scores the given set of states over previously acoustic data from frontend
+     * and stores latter in the queue
+     *
+     * @param scorableList a list containing Scoreable objects to be scored
+     * @return the best scoring scoreable, or null if there are no more frames to score
+     */
+    public Data calculateScoresAndStoreData(List<? extends Scoreable> scorableList);
 
 }
 

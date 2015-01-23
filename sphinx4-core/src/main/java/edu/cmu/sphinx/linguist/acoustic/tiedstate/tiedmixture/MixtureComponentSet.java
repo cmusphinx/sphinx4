@@ -14,6 +14,7 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.LinkedList;
 
 import edu.cmu.sphinx.frontend.Data;
 import edu.cmu.sphinx.frontend.DoubleData;
@@ -25,12 +26,16 @@ import edu.cmu.sphinx.linguist.acoustic.tiedstate.MixtureComponent;
  */
 public class MixtureComponentSet {
     
+    private int scoresQueueLen;
+    private boolean toStoreScore;
+    private LinkedList<MixtureComponentSetScores> storedScores;
+    MixtureComponentSetScores curScores;
+
     private ArrayList<PrunableMixtureComponent[]> components;
     private ArrayList<PrunableMixtureComponent[]> topComponents;
     private int numStreams;
     private int topGauNum;
     private int gauNum;
-    private long topGauCalcSampleNumber;
     private long gauCalcSampleNumber;
     
     public MixtureComponentSet(ArrayList<PrunableMixtureComponent[]> components, int topGauNum) {
@@ -45,8 +50,41 @@ public class MixtureComponentSet {
                 featTopComponents[j] = components.get(i)[j];
             topComponents.add(featTopComponents);
         }
-        topGauCalcSampleNumber = -1;
         gauCalcSampleNumber = -1;
+        toStoreScore = false;
+        storedScores = new LinkedList<MixtureComponentSetScores>();
+        curScores = null;
+    }
+    
+    private void storeScores(MixtureComponentSetScores scores) {
+        storedScores.add(scores);
+        while(storedScores.size() > scoresQueueLen)
+            storedScores.poll();
+    }
+    
+    private MixtureComponentSetScores getStoredScores(long frameFirstSample) {
+        if (storedScores.isEmpty())
+            return null;
+        if (storedScores.peekLast().getFrameStartSample() < frameFirstSample)
+            //new frame
+            return null;
+        for (MixtureComponentSetScores scores : storedScores) {
+            if (scores.getFrameStartSample() == frameFirstSample)
+                return scores;
+        }
+        //Failed to find score. Seems it wasn't calculated yet
+        return null;
+    }
+    
+    private MixtureComponentSetScores createFromTopGau(long firstFrameSample) {
+        MixtureComponentSetScores scores = new MixtureComponentSetScores(numStreams, topGauNum, firstFrameSample);
+        for (int i = 0; i < numStreams; i++) {
+            for (int j = 0; j < topGauNum; j++) {
+                scores.setScore(i, j, topComponents.get(i)[j].getStoredScore());
+                scores.setGauId(i, j, topComponents.get(i)[j].getId());
+            }
+        }
+        return scores;
     }
     
     private void insertTopComponent(PrunableMixtureComponent[] topComponents, PrunableMixtureComponent component) {
@@ -104,11 +142,21 @@ public class MixtureComponentSet {
             System.err.println("DoubleData conversion required on mixture level!");
         
         long firstSampleNumber = FloatData.toFloatData(feature).getFirstSampleNumber();
-        if (firstSampleNumber != topGauCalcSampleNumber) {
-            float[] featureVector = FloatData.toFloatData(feature).getValues();
-            updateTopScores(featureVector);
-            topGauCalcSampleNumber = firstSampleNumber;
+        if (toStoreScore) {
+            curScores = getStoredScores(firstSampleNumber);
+        } else {
+            if (curScores != null && curScores.getFrameStartSample() != firstSampleNumber)
+                curScores = null;
         }
+        if (curScores != null)
+            //component scores for this frame was already calculated
+            return;
+        float[] featureVector = FloatData.toFloatData(feature).getValues();
+        updateTopScores(featureVector);
+        //store just calculated score in list
+        curScores = createFromTopGau(firstSampleNumber);
+        if (toStoreScore)
+            storeScores(curScores);
     }
     
     private void updateScores(float[] featureVector) {
@@ -134,6 +182,22 @@ public class MixtureComponentSet {
         }
     }
     
+    /**
+     * Should be called on each new utterance to scores for old frames
+     */
+    public void clearStoredScores() {
+        storedScores.clear();
+    }
+    
+    /**
+     * How long scores for previous frames should be stored.
+     * For fast match this value is lookahead_window_length + 1)
+     */
+    public void setScoreQueueLength(int scoresQueueLen) {
+        toStoreScore = scoresQueueLen > 0;
+        this.scoresQueueLen = scoresQueueLen;
+    }
+    
     public int getTopGauNum() {
         return topGauNum;
     }
@@ -143,11 +207,11 @@ public class MixtureComponentSet {
     }
     
     public float getTopGauScore(int streamId, int topGauId) {
-        return topComponents.get(streamId)[topGauId].getStoredScore();
+        return curScores.getScore(streamId, topGauId);
     }
     
     public int getTopGauId(int streamId, int topGauId) {
-        return topComponents.get(streamId)[topGauId].getId();
+        return curScores.getGauId(streamId, topGauId);
     }
     
     public float getGauScore(int streamId, int topGauId) {

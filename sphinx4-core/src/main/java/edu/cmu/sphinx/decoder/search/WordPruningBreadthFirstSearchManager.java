@@ -110,47 +110,47 @@ public class WordPruningBreadthFirstSearchManager extends TokenSearchManager {
     // -----------------------------------
     // Configured Subcomponents
     // -----------------------------------
-    private Linguist linguist; // Provides grammar/language info
-    private Pruner pruner; // used to prune the active list
-    private AcousticScorer scorer; // used to score the active list
+    protected Linguist linguist; // Provides grammar/language info
+    protected Pruner pruner; // used to prune the active list
+    protected AcousticScorer scorer; // used to score the active list
     private ActiveListManager activeListManager;
-    private LogMath logMath;
+    protected LogMath logMath;
 
     // -----------------------------------
     // Configuration data
     // -----------------------------------
-    private Logger logger;
-    private boolean showTokenCount;
-    private boolean checkStateOrder;
+    protected Logger logger;
+    protected boolean showTokenCount;
+    protected boolean checkStateOrder;
     private int growSkipInterval;
-    private float relativeBeamWidth;
-    private float acousticLookaheadFrames;
+    protected float relativeBeamWidth;
+    protected float acousticLookaheadFrames;
     private int maxLatticeEdges = 100;
 
     // -----------------------------------
     // Instrumentation
     // -----------------------------------
-    private Timer scoreTimer;
-    private Timer pruneTimer;
-    private Timer growTimer;
-    private StatisticsVariable totalTokensScored;
-    private StatisticsVariable curTokensScored;
-    private StatisticsVariable tokensCreated;
+    protected Timer scoreTimer;
+    protected Timer pruneTimer;
+    protected Timer growTimer;
+    protected StatisticsVariable totalTokensScored;
+    protected StatisticsVariable curTokensScored;
+    protected StatisticsVariable tokensCreated;
     private long tokenSum;
     private int tokenCount;
 
     // -----------------------------------
     // Working data
     // -----------------------------------
-    private int currentFrameNumber; // the current frame number
+    protected int currentFrameNumber; // the current frame number
     protected ActiveList activeList; // the list of active tokens
-    private List<Token> resultList; // the current set of results
+    protected List<Token> resultList; // the current set of results
     protected Map<SearchState, Token> bestTokenMap;
-    private AlternateHypothesisManager loserManager;
+    protected AlternateHypothesisManager loserManager;
     private int numStateOrder;
     // private TokenTracker tokenTracker;
     // private TokenTypeTracker tokenTypeTracker;
-    private boolean streamEnd;
+    protected boolean streamEnd;
 
     /**
      * 
@@ -301,7 +301,7 @@ public class WordPruningBreadthFirstSearchManager extends TokenSearchManager {
         return result;
     }
 
-    private boolean recognize() {
+    protected boolean recognize() {
 
         activeList = activeListManager.getEmittingList();
         boolean more = scoreTokens();
@@ -518,7 +518,7 @@ public class WordPruningBreadthFirstSearchManager extends TokenSearchManager {
      * @param activeList
      *            the active list of states
      */
-    private void monitorStates(ActiveList activeList) {
+    protected void monitorStates(ActiveList activeList) {
 
         tokenSum += activeList.size();
         tokenCount++;
@@ -564,7 +564,7 @@ public class WordPruningBreadthFirstSearchManager extends TokenSearchManager {
      * @param fromState
      * @param toState
      */
-    private void checkStateOrder(SearchState fromState, SearchState toState) {
+    protected void checkStateOrder(SearchState fromState, SearchState toState) {
         if (fromState.getOrder() == numStateOrder - 1) {
             return;
         }
@@ -665,7 +665,7 @@ public class WordPruningBreadthFirstSearchManager extends TokenSearchManager {
      * @param t
      * @return true if we've visited the search state since the last frame
      */
-    private boolean isVisited(Token t) {
+    protected boolean isVisited(Token t) {
         SearchState curState = t.getSearchState();
 
         t = t.getPredecessor();
@@ -699,7 +699,7 @@ public class WordPruningBreadthFirstSearchManager extends TokenSearchManager {
      * Counts all the tokens in the active list (and displays them). This is an
      * expensive operation.
      */
-    private void showTokenCount() {
+    protected void showTokenCount() {
         Set<Token> tokenSet = new HashSet<Token>();
 
         for (Token token : activeList) {

@@ -27,7 +27,7 @@
   </component>
 
   <component name="decoder" type="edu.cmu.sphinx.decoder.Decoder">
-    <property name="searchManager" value="wordPruningSearchManager"/>
+    <property name="searchManager" value="wordPruningLookaheadSearchManager"/>
   </component>
 
   <component name="alignerSearchManager"
@@ -70,10 +70,38 @@
     <property name="relativeBeamWidth" value="${relativeBeamWidth}"/>
   </component>
 
+  <component name="wordPruningLookaheadSearchManager"
+    type="edu.cmu.sphinx.decoder.search.WordPruningBreadthFirstLookaheadSearchManager">
+    <property name="linguist" value="lexTreeLinguist"/>
+    <property name="fastmatchLinguist" value="allphoneLinguist"/>
+    <property name="loader" value="acousticModelLoader"/>
+    <property name="pruner" value="trivialPruner"/>
+    <property name="scorer" value="trivialScorer"/>
+    <property name="activeListManager" value="activeListManager"/>
+    <property name="fastmatchActiveListFactory" value="fastmatchActiveList"/>
+
+    <property name="growSkipInterval" value="0"/>
+    <property name="lookaheadWindow" value="5"/>
+
+    <property name="buildWordLattice" value="true"/>
+    <property name="keepAllTokens" value="true"/>
+
+    <property name="lookaheadPenaltyWeight" value="8.0"/>
+    <property name="acousticLookaheadFrames" value="1.7"/>
+    <property name="relativeBeamWidth" value="${relativeBeamWidth}"/>
+    <property name="fastmatchRelativePhoneBeamWidth" value="1e-12"/>
+  </component>
+
   <component name="activeList"
     type="edu.cmu.sphinx.decoder.search.PartitionActiveListFactory">
     <property name="absoluteBeamWidth" value="${absoluteBeamWidth}"/>
     <property name="relativeBeamWidth" value="${relativeBeamWidth}"/>
+  </component>
+  
+  <component name="fastmatchActiveList"
+    type="edu.cmu.sphinx.decoder.search.PartitionActiveListFactory">
+    <property name="absoluteBeamWidth" value="${absoluteBeamWidth}"/>
+    <property name="relativeBeamWidth" value="1e-12"/>
   </component>
 
   <component name="activeListManager"
@@ -123,6 +151,8 @@
   <component name="allphoneLinguist"
     type="edu.cmu.sphinx.linguist.allphone.AllphoneLinguist">
     <property name="acousticModel" value="acousticModel"/>
+    <property name="useContextDependentPhones" value="false"/>
+    <property name="phoneInsertionProbability" value="0.05"/>
   </component>
   
   <component name="flatLinguist"

@@ -2,22 +2,22 @@ package edu.cmu.sphinx.linguist.allphone;
 
 import edu.cmu.sphinx.linguist.SearchGraph;
 import edu.cmu.sphinx.linguist.SearchState;
-import edu.cmu.sphinx.linguist.acoustic.AcousticModel;
 import edu.cmu.sphinx.linguist.acoustic.HMMPosition;
 import edu.cmu.sphinx.linguist.acoustic.HMMState;
 import edu.cmu.sphinx.linguist.acoustic.UnitManager;
+import edu.cmu.sphinx.util.LogMath;
 
 public class AllphoneSearchGraph implements SearchGraph {
 
-    private AcousticModel acousticModel;
+    private AllphoneLinguist linguist;
     
-    public AllphoneSearchGraph(AcousticModel model) {
-        this.acousticModel = model;
+    public AllphoneSearchGraph(AllphoneLinguist linguist) {
+        this.linguist = linguist;
     }
     
     public SearchState getInitialState() {
-        HMMState silHmmState = acousticModel.lookupNearestHMM(UnitManager.SILENCE, HMMPosition.UNDEFINED, true).getInitialState();
-        return new PhoneHmmSearchState(UnitManager.SILENCE, silHmmState, acousticModel);
+        HMMState silHmmState = linguist.getAcousticModel().lookupNearestHMM(UnitManager.SILENCE, HMMPosition.UNDEFINED, true).getInitialState();
+        return new PhoneHmmSearchState(silHmmState, linguist, LogMath.LOG_ONE, LogMath.LOG_ONE);
     }
 
     public int getNumStateOrder() {

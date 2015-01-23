@@ -11,6 +11,7 @@ import edu.cmu.sphinx.util.props.PropertySheet;
 import edu.cmu.sphinx.util.props.S4Component;
 
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -36,8 +37,9 @@ public class SimpleAcousticScorer extends ConfigurableAdapter implements Acousti
      */
     @S4Component(type = ScoreNormalizer.class, mandatory = false)
     public final static String SCORE_NORMALIZER = "scoreNormalizer";
-    private ScoreNormalizer scoreNormalizer;
+    protected ScoreNormalizer scoreNormalizer;
 
+    private LinkedList<Data> storedData;
     private Boolean useSpeechSignals;
 
     @Override
@@ -45,6 +47,7 @@ public class SimpleAcousticScorer extends ConfigurableAdapter implements Acousti
         super.newProperties(ps);
         this.frontEnd = (BaseDataProcessor) ps.getComponent(FEATURE_FRONTEND);
         this.scoreNormalizer = (ScoreNormalizer) ps.getComponent(SCORE_NORMALIZER);
+        storedData = new LinkedList<Data>();
     }
 
     /**
@@ -56,9 +59,10 @@ public class SimpleAcousticScorer extends ConfigurableAdapter implements Acousti
         initLogger();
         this.frontEnd = frontEnd;
         this.scoreNormalizer = scoreNormalizer;
+        storedData = new LinkedList<Data>();
     }
 
-    public SimpleAcousticScorer() {
+    public SimpleAcousticScorer() {    	
     }
 
     /**
@@ -70,33 +74,63 @@ public class SimpleAcousticScorer extends ConfigurableAdapter implements Acousti
     public Data calculateScores(List<? extends Scoreable> scoreableList) {
     	try {
             Data data;
-            while ((data = getNextData()) instanceof Signal) {
-                if (data instanceof SpeechEndSignal || data instanceof DataEndSignal) {
-                    return data;
-                }
+            if (storedData.isEmpty()) {
+	            while ((data = getNextData()) instanceof Signal)
+	                if (data instanceof SpeechEndSignal || data instanceof DataEndSignal)
+	                	break;
+	            if (data == null)
+	            	return null;
+            } else {
+            	data = storedData.poll();
             }
-
-            if (data == null || scoreableList.isEmpty())
-            	return null;
             
-            // convert the data to FloatData if not yet done
-            if (data instanceof DoubleData)
-                data = DataUtil.DoubleData2FloatData((DoubleData) data);
-
-            Scoreable bestToken = doScoring(scoreableList, data);
-
-            // apply optional score normalization
-            if (scoreNormalizer != null && bestToken instanceof Token)
-                bestToken = scoreNormalizer.normalize(scoreableList, bestToken);
-
-            return bestToken;
+           return calculateScoresForData(scoreableList, data);
         } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
     }
+    
+	public Data calculateScoresAndStoreData(List<? extends Scoreable> scoreableList) {
+    	try {
+            Data data;
+	        while ((data = getNextData()) instanceof Signal)
+	            if (data instanceof SpeechEndSignal || data instanceof DataEndSignal)
+	                break;
+	        if (data == null)
+	            return null;
+            
+	        storedData.add(data);
+	        
+	        return calculateScoresForData(scoreableList, data);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+	}
+	
+	protected Data calculateScoresForData(List<? extends Scoreable> scoreableList, Data data) throws Exception {
+        if (data instanceof SpeechEndSignal || data instanceof DataEndSignal) {
+        	return data;
+        }
+        
+        if (scoreableList.isEmpty())
+        	return null;
+        
+        // convert the data to FloatData if not yet done
+        if (data instanceof DoubleData)
+            data = DataUtil.DoubleData2FloatData((DoubleData) data);
 
-    private Data getNextData() {
+        Scoreable bestToken = doScoring(scoreableList, data);
+
+        // apply optional score normalization
+        if (scoreNormalizer != null && bestToken instanceof Token)
+            bestToken = scoreNormalizer.normalize(scoreableList, bestToken);
+
+        return bestToken;
+	}
+
+    protected Data getNextData() {
         Data data = frontEnd.getData();
 
         // reconfigure the scorer for the coming data stream
@@ -123,7 +157,8 @@ public class SimpleAcousticScorer extends ConfigurableAdapter implements Acousti
     }
 
     public void startRecognition() {
-        if (useSpeechSignals == null) {
+    	storedData.clear();
+    	if (useSpeechSignals == null) {
             Data firstData = getNextData();
             if (firstData == null)
         	    return;
@@ -175,4 +210,5 @@ public class SimpleAcousticScorer extends ConfigurableAdapter implements Acousti
 
     public void deallocate() {
     }
+
 }

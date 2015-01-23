@@ -618,6 +618,7 @@ public class BatchModeRecognizer implements Configurable {
             } else {
                 bmr.decode(batchFile);
             }
+            System.out.println("Tokens created: " + StatisticsVariable.getStatisticsVariable("totalTokensScored").value);
             /*
            } catch (IOException ioe) {
                System.err.println("I/O error: \n");

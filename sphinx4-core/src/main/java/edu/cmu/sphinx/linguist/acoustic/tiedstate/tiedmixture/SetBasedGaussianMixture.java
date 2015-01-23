@@ -24,7 +24,7 @@ import edu.cmu.sphinx.util.LogMath;
 
 @SuppressWarnings("serial")
 public class SetBasedGaussianMixture extends GaussianMixture {
-
+	
     private MixtureComponentSet mixtureComponentSet;
     
     public SetBasedGaussianMixture(GaussianWeights mixtureWeights,
@@ -32,15 +32,17 @@ public class SetBasedGaussianMixture extends GaussianMixture {
         super(mixtureWeights, null, id);
         this.mixtureComponentSet = mixtureComponentSet;
     }
-    
+
     @Override
-    public float calculateScore(Data feature) {
+    public float calculateScore(Data feature) { 
         mixtureComponentSet.updateTopScores(feature);
         float ascore = 0;
         for (int i = 0; i < mixtureWeights.getStreamsNum(); i++) {
             float logTotal = LogMath.LOG_ZERO;
             for (int j = 0; j < mixtureComponentSet.getTopGauNum(); j++) {
-                logTotal = logMath.addAsLinear(logTotal, mixtureComponentSet.getTopGauScore(i, j) + mixtureWeights.get(id, i, mixtureComponentSet.getTopGauId(i, j)));
+                float gauScore = mixtureComponentSet.getTopGauScore(i, j);
+                int gauId = mixtureComponentSet.getTopGauId(i, j);
+                logTotal = logMath.addAsLinear(logTotal, gauScore + mixtureWeights.get(id, i, gauId));
             }
             ascore += logTotal;
         }
