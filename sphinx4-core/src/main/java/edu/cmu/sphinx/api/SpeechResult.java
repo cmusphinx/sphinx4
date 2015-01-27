@@ -12,6 +12,7 @@
 package edu.cmu.sphinx.api;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 
 import edu.cmu.sphinx.recognizer.Recognizer;
@@ -34,9 +35,12 @@ public final class SpeechResult {
      */
     public SpeechResult(Result result) {
         this.result = result;
-        lattice = new Lattice(result);
-        new LatticeOptimizer(lattice).optimize();
-        lattice.computeNodePosteriors(1.0f);
+        if (result.toCreateLattice()) {
+            lattice = new Lattice(result);
+            new LatticeOptimizer(lattice).optimize();
+            lattice.computeNodePosteriors(1.0f);
+        } else
+            lattice = null;
     }
 
     /**
@@ -46,7 +50,7 @@ public final class SpeechResult {
      * @return words that form the result
      */
     public List<WordResult> getWords() {
-        return lattice.getWordResultPath();
+        return lattice != null ? lattice.getWordResultPath() : result.getTimedBestResult(false);
     }
 
     /**
@@ -63,6 +67,8 @@ public final class SpeechResult {
      * @return   {@link Collection} of several best hypothesis
      */
     public Collection<String> getNbest(int n) {
+        if (lattice == null)
+            return new HashSet<String>();
         return new Nbest(lattice).getNbest(n);
     }
 

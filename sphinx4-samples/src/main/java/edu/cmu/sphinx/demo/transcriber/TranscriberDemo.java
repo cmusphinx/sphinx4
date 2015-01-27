@@ -65,8 +65,6 @@ public class TranscriberDemo {
             for (String s : result.getNbest(3))
                 System.out.println(s);
 
-            System.out.println("Lattice contains "
-                    + result.getLattice().getNodes().size() + " nodes");
         }
         recognizer.stopRecognition();
 

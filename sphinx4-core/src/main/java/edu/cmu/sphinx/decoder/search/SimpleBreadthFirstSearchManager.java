@@ -226,7 +226,7 @@ public class SimpleBreadthFirstSearchManager extends TokenSearchManager {
             // Now create the result using the fixed active-list.
             if (!streamEnd)
            		result =
-                    new Result(fixedList, resultList, currentFrameNumber, done);
+                    new Result(fixedList, resultList, currentFrameNumber, done, false);
         }
 
         if (showTokenCount) {

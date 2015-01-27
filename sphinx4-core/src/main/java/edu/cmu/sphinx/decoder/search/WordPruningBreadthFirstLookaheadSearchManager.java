@@ -191,7 +191,7 @@ public class WordPruningBreadthFirstLookaheadSearchManager extends WordPruningBr
 
         if (!streamEnd) {
             result = new Result(loserManager, activeList, resultList, currentFrameNumber, done, linguist.getSearchGraph()
-                    .getWordTokenFirst());
+                    .getWordTokenFirst(), true);
         }
 
         // tokenTypeTracker.show();

@@ -48,6 +48,7 @@ public class Result {
     private final int currentFrameNumber;
     private String reference;
     private final LogMath logMath;
+    private final boolean toCreateLattice;
 
 
     /**
@@ -60,8 +61,8 @@ public class Result {
      */
     public Result(AlternateHypothesisManager alternateHypothesisManager,
             ActiveList activeList, List<Token> resultList, int frameNumber,
-            boolean isFinal, boolean wordTokenFirst) {
-        this(activeList, resultList, frameNumber, isFinal);
+            boolean isFinal, boolean wordTokenFirst, boolean toCreateLattice) {
+        this(activeList, resultList, frameNumber, isFinal, toCreateLattice);
         this.alternateHypothesisManager = alternateHypothesisManager;
         this.wordTokenFirst = wordTokenFirst;
     }
@@ -77,11 +78,12 @@ public class Result {
      *        speech segment has been decoded.
      */
     public Result(ActiveList activeList, List<Token> resultList,
-            int frameNumber, boolean isFinal) {
+            int frameNumber, boolean isFinal, boolean toCreateLattice) {
         this.activeList = activeList;
         this.resultList = resultList;
         this.currentFrameNumber = frameNumber;
         this.isFinal = isFinal;
+        this.toCreateLattice = toCreateLattice;
         logMath = LogMath.getLogMath();
     }
 
@@ -95,6 +97,14 @@ public class Result {
      */
     public boolean isFinal() {
         return isFinal;
+    }
+
+    /**
+     * Checks if it justified to build lattice for this result
+     * @return true if lattice created from this result can provide confidence scores and n-best list
+     */
+    public boolean toCreateLattice() {
+        return toCreateLattice;
     }
 
     /**

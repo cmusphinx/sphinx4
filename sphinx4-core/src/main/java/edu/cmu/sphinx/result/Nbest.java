@@ -52,7 +52,6 @@ public class Nbest {
     }
 
     public Collection<String> getNbest(int n) {
-        lattice.computeNodePosteriors(1.0f);
         HashSet<String> result = new HashSet<String>();
         BoundedPriorityQueue<NBestPath> queue =
             new BoundedPriorityQueue<Nbest.NBestPath>(n);
