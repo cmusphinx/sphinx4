@@ -1,0 +1,135 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+
+<title>Sphinx-4 - A speech recognizer written entirely in the
+	Java(TM) programming language</title>
+
+<style type="text/css">
+pre {
+	font-size: medium;
+	background: #f0f8ff;
+	padding: 2mm;
+	border-style: ridge;
+	color: teal
+}
+
+code {
+	font-size: medium;
+	color: teal
+}
+
+s4keyword {
+	color: red;
+	font-weight: bold
+}
+</style>
+
+</head>
+
+<body style="background-color: white;">
+
+	<h2>General Information about Sphinx-4</h2>
+
+	<ul>
+		<li><a id="what_is_sphinx4"><b>Introduction</b></a>
+
+			<p>
+				Sphinx-4 is a state-of-the-art speech recognition system written
+				entirely in the Java<sup>TM</sup> programming language. It was
+				created via a joint collaboration between the Sphinx group at
+				Carnegie Mellon University, Sun Microsystems Laboratories,
+				Mitsubishi Electric Research Labs (MERL), and Hewlett Packard (HP),
+				with contributions from the University of California at Santa Cruz
+				(UCSC) and the Massachusetts Institute of Technology (MIT).
+			</p>
+
+			<p>Sphinx-4 started out as a port of Sphinx-3 to the Java
+				programming language, but evolved into a recognizer designed to be
+				much more flexible than Sphinx-3, thus becoming an excellent
+				platform for speech research.</p></li>
+
+		<li><a id="capabilities"><b>Capabilities</b></a>
+
+			<p>Live mode and batch mode speech recognizers, capable of
+				recognizing discrete and continuous speech.</p>
+
+			<p>Speech aligner for aligning speech to text.</p>
+
+			<p>Various tools to work with the speech including the tools to
+				display spectograms, detect silence and extract features</p></li>
+
+		<li><a id="speed_and_accuracy"><b>Performance</b></a>
+
+			<p>Sphinx-4 is a very flexible system capable of performing many
+				different types of recognition tasks. As such, it is difficult to
+				characterize the performance and accuracy of Sphinx-4 with just a
+				few simple numbers such as speed and accuracy. Instead, we regularly
+				run regression tests on Sphinx-4 to determine how it performs under
+				a variety of tasks fro simple grammar recognition to large
+				vocabulary speech recognition</p></li>
+	</ul>
+
+	<h2>Installation</h2>
+
+	<a id="download_and_install"><b>Required Software</b></a>
+
+	<p>
+		Sphinx-4 has been built and tested on the Solaris <sup>TM</sup>
+		Operating Environment, Mac OS X, Linux and Win32 operating systems.
+		Running, building, and testing Sphinx-4 requires additional software.
+		Before you start, you will need the following software available on
+		your machine.
+	</p>
+
+	<ul>
+		<li><b>Java SE 6 Development Kit</b> or better. Go to <a
+			href="http://java.sun.com">java.sun.com</a>, and select "J2SE" from
+			popular downloads. At the time of writing, the latest release version
+			is JDK 6 Update 14, which is the one we recommend.</li>
+	</ul>
+
+	<ul>
+		<li><b>Apache maven</b> or better, available at <a
+			href="http://maven.apache.org">maven.apache.org</a>. The site has a
+			manual with instructions on how to download, install, and use ant.
+			You will only need ant if you wish to build Sphinx-4 from the source
+			distribution.</li>
+
+		<li><b>Subversion (svn)</b>, but only if you want to interact
+			directly with the svn tree (which we recommend). The canonical places
+			to get it is <a href="http://subversion.tigris.org/">subversion.tigris.org</a>.
+			If you are using Windows, your best choice is to install <a
+			href="http://cygwin.com">cygwin</a>, which will give you a linux-like
+			environment in a command prompt window. Make sure to choose "svn"
+			when you install cygwin.</li>
+	</ul>
+
+	<h2>
+		<a id="demos">Demos</a>
+	</h2>
+
+	<p>Sphinx-4 contains a number of demo programs. You can find them
+		in sphinx4-samples package.</p>
+
+	<ul>
+
+		<li>Transcriber - transcribe speech file</li>
+
+		<li>Dialog - interact with the user commands</li>
+
+		<li>Aligner - align speech to text</li>
+
+	</ul>
+
+	<h2>Sphinx-4 in Detail</h2>
+
+	<p>
+		<a id="whitepaper"><b>Sphinx-4 Whitepaper</b></a> <a
+			href="doc/Sphinx4_Whitepaper_2003.pdf">Sphinx-4: A Flexible Open
+			Source Framework for Speech Recognition</a> describes the framework and
+		implementation of Sphinx-4 from a speech-technologist's perspective.
+		Please read this if you'd like to extend Sphinx-4.
+	</p>
+
+</body>
+</html>

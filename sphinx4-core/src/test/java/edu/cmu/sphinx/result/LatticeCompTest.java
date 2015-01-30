@@ -22,7 +22,6 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 
 import org.testng.annotations.Test;
 
-import edu.cmu.sphinx.result.*;
 import edu.cmu.sphinx.frontend.util.StreamDataSource;
 import edu.cmu.sphinx.recognizer.Recognizer;
 import edu.cmu.sphinx.util.props.ConfigurationManager;
