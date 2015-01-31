@@ -160,15 +160,7 @@ public class Context {
 
     public void setSpeechSource(InputStream stream, TimeFrame timeFrame) {
         getInstance(StreamDataSource.class).setInputStream(stream, timeFrame);
-        String scorerComponentName = "";
-        if (configurationManager.getComponentNames().contains("threadedScorer")) {
-        	scorerComponentName = "threadedScorer";
-        } else if (configurationManager.getComponentNames().contains("trivialScorer")) {
-        	scorerComponentName = "trivialScorer";
-        } else {
-        	throw new RuntimeException("There are no scorer component in configuration. 'threadedScorer' or 'trivialScorer' is expected.");
-        }
-        setLocalProperty(scorerComponentName + "->frontend", "liveFrontEnd");
+        setLocalProperty("trivialScorer->frontend", "liveFrontEnd");
     }
 
     /**
@@ -178,17 +170,8 @@ public class Context {
      * @see           Context#useMicrophone()
      */
     public void setSpeechSource(InputStream stream) {
-        // TODO: setup stream sample rate and other parameters
         getInstance(StreamDataSource.class).setInputStream(stream);
-        String scorerComponentName = "";
-        if (configurationManager.getComponentNames().contains("threadedScorer")) {
-        	scorerComponentName = "threadedScorer";
-        } else if (configurationManager.getComponentNames().contains("trivialScorer")) {
-        	scorerComponentName = "trivialScorer";
-        } else {
-        	throw new RuntimeException("There are no scorer component in configuration. 'threadedScorer' or 'trivialScorer' is expected.");
-        }
-        setLocalProperty(scorerComponentName + "->frontend", "liveFrontEnd");
+        setLocalProperty("trivialScorer->frontend", "liveFrontEnd");
     }
 
     /**

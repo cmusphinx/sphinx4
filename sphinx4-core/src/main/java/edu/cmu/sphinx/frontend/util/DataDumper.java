@@ -19,13 +19,8 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Locale;
 
-
 /** Dumps the data */
 public class DataDumper extends BaseDataProcessor {
-
-    /** The property that specifies whether data dumping is enabled */
-    @S4Boolean(defaultValue = true)
-    public final static String PROP_ENABLE = "enable";
 
     /** The property that specifies the format of the output. */
     @S4String(defaultValue = "0.00000E00;-0.00000E00")
@@ -38,38 +33,36 @@ public class DataDumper extends BaseDataProcessor {
     // --------------------------
     // Configuration data
     // --------------------------
-    private boolean enable;
     private boolean outputSignals;
     private DecimalFormat formatter;
 
-    public DataDumper( boolean enable, String format, boolean outputSignals ) {
+    public DataDumper(String format, boolean outputSignals) {
         initLogger();
         this.formatter = new DecimalFormat(format, new DecimalFormatSymbols(Locale.US));
         this.outputSignals = outputSignals;
-        this.enable = enable;
     }
 
     public DataDumper() {
 
     }
-    
+
     /*
-    * (non-Javadoc)
-    *
-    * @see edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util.props.PropertySheet)
-    */
+     * (non-Javadoc)
+     * 
+     * @see
+     * edu.cmu.sphinx.util.props.Configurable#newProperties(edu.cmu.sphinx.util
+     * .props.PropertySheet)
+     */
     @Override
     public void newProperties(PropertySheet ps) throws PropertyException {
         super.newProperties(ps);
-        
+
         logger = ps.getLogger();
 
-        enable = ps.getBoolean(PROP_ENABLE);
         String format = ps.getString(PROP_OUTPUT_FORMAT);
         formatter = new DecimalFormat(format, new DecimalFormatSymbols(Locale.US));
         outputSignals = ps.getBoolean(PROP_OUTPUT_SIGNALS);
     }
-
 
     /** Constructs a DataDumper */
     @Override
@@ -77,32 +70,33 @@ public class DataDumper extends BaseDataProcessor {
         super.initialize();
     }
 
-
     /**
-     * Reads and returns the next Data object from this DataProcessor, return null if there is no more audio data.
-     *
+     * Reads and returns the next Data object from this DataProcessor, return
+     * null if there is no more audio data.
+     * 
      * @return the next Data or <code>null</code> if none is available
-     * @throws DataProcessingException if there is a data processing error
+     * @throws DataProcessingException
+     *             if there is a data processing error
      */
     @Override
     public Data getData() throws DataProcessingException {
         Data input = getPredecessor().getData();
-        if (enable) {
-            dumpData(input);
-        }
+        dumpData(input);
+
         return input;
     }
 
-
     /**
      * Dumps the given input data
-     *
-     * @param input the data to dump
+     * 
+     * @param input
+     *            the data to dump
      */
     private void dumpData(Data input) {
-        logger.finer("dumping data...");
-        
-        if (input instanceof Signal) {
+
+        if (input == null) {
+            System.out.println("Data: null");
+        } else if (input instanceof Signal) {
             if (outputSignals) {
                 System.out.println("Signal: " + input);
             }
@@ -119,9 +113,9 @@ public class DataDumper extends BaseDataProcessor {
             double[] values = dd.getValues();
             System.out.print("Frame ");
             if (dd.isSpeech())
-            	System.out.print('*');
+                System.out.print('*');
             else
-            	System.out.print(' ');
+                System.out.print(' ');
             System.out.print(" " + values.length);
             for (double val : values) {
                 System.out.print(' ' + formatter.format(val));

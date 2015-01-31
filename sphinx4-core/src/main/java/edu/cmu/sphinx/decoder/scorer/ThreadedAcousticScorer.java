@@ -165,7 +165,7 @@ public class ThreadedAcousticScorer extends SimpleAcousticScorer {
     }
 
     @Override
-    protected <T extends Scoreable> T doScoring(List<T> scoreableList, final Data data) throws Exception {
+    protected <T extends Scoreable> T doScoring(List<T> scoreableList, final Data data) {
         if (numThreads > 1) {
             int totalSize = scoreableList.size();
             int jobSize = Math.max((totalSize + numThreads - 1) / numThreads, minScoreablesPerThread);
@@ -183,11 +183,11 @@ public class ThreadedAcousticScorer extends SimpleAcousticScorer {
 
                 List<T> finalists = new ArrayList<T>(tasks.size());
        
-                for (Future<T> result : executorService.invokeAll(tasks))
-                    finalists.add(result.get());
-       
-                if (finalists.size() == 0) {
-                    throw new DataProcessingException("No scoring jobs ended");
+                try {
+                    for (Future<T> result : executorService.invokeAll(tasks))
+                        finalists.add(result.get());
+                } catch (Exception e) {
+                    throw new DataProcessingException("No scoring jobs ended", e);
                 }
                 
                 return Collections.min(finalists, Scoreable.COMPARATOR);

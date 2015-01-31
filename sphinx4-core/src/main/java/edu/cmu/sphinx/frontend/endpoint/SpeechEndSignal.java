@@ -16,7 +16,6 @@ package edu.cmu.sphinx.frontend.endpoint;
 import edu.cmu.sphinx.frontend.Signal;
 
 /** A signal that indicates the end of speech. */
-@SuppressWarnings("serial")
 public class SpeechEndSignal extends Signal {
 
     /** Constructs a SpeechEndSignal. */

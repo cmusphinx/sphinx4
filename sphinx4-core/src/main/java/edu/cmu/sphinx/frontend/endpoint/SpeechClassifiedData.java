@@ -18,7 +18,6 @@ import edu.cmu.sphinx.frontend.DoubleData;
 
 
 /** A container for DoubleData class that indicates whether the contained DoubleData is speech or not. */
-@SuppressWarnings("serial")
 public class SpeechClassifiedData implements Data {
 
     private boolean isSpeech;

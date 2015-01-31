@@ -70,9 +70,17 @@ public class FrontendElementTest {
         BufferedReader br = new BufferedReader(reader);
         String line;
         
+        // To dump data next time
+//        while (true) {
+//            Data data = frontend.getData();
+//            if (data == null)
+//                    break;
+//        }  
+//        if (false)
+        
         while (null != (line = br.readLine())) {
             Data data = frontend.getData();
-
+            
             if (line.startsWith("DataStartSignal"))
                 assertThat(data, instanceOf(DataStartSignal.class));
             if (line.startsWith("DataEndSignal"))

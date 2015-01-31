@@ -9,7 +9,6 @@
             <item>dataBlocker</item>
             <item>speechClassifier</item>
             <item>speechMarker</item>
-            <item>nonSpeechDataFilter</item>
             <item>wavWriter</item>
         </propertylist>
     </component>
@@ -20,13 +19,10 @@
 
     <component name="speechClassifier" type="edu.cmu.sphinx.frontend.endpoint.SpeechClassifier"/>
     
-    <component name="nonSpeechDataFilter" 
-               type="edu.cmu.sphinx.frontend.endpoint.NonSpeechDataFilter"/>
-
     <component name="speechMarker" type="edu.cmu.sphinx.frontend.endpoint.SpeechMarker">
     	<property name="speechLeader" value="200"/>
     	<property name="speechTrailer" value="200"/>
- 	</component>
+    </component>
  	
     <component name="wavWriter" type="edu.cmu.sphinx.frontend.util.WavWriter">
 		<property name="outFilePattern" value="test-seg000000"/>

@@ -27,7 +27,6 @@ import edu.cmu.sphinx.util.props.ConfigurationManagerUtils;
  */
 public class ScorerTests {
 
-    @SuppressWarnings("serial")
     Scoreable testToken = new Token(null, 0.f, 0.f, 0.f, 0.f) {
 
         @Override
@@ -77,7 +76,7 @@ public class ScorerTests {
 
     private DataBufferProcessor createDummyFrontEnd() {
         DataBufferProcessor bufferProc = ConfigurationManager.getInstance(DataBufferProcessor.class);
-        bufferProc.processDataFrame(new DataStartSignal(16000, true));
+        bufferProc.processDataFrame(new DataStartSignal(16000));
 
         for (DoubleData doubleData : RandomDataProcessor.createFeatVectors(5, 16000, 0, 39, 10))
             bufferProc.processDataFrame(doubleData);

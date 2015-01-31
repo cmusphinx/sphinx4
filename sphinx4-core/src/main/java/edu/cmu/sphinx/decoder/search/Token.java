@@ -32,7 +32,6 @@ import java.util.*;
  * <p/>
  * All scores are maintained in LogMath log base
  */
-@SuppressWarnings("serial")
 public class Token implements Scoreable {
 
     private static int curCount;

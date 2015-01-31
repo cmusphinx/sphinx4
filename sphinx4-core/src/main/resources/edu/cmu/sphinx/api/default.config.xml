@@ -262,7 +262,6 @@
       <item>dataBlocker </item>
       <item>speechClassifier </item>
       <item>speechMarker </item>
-      <item>nonSpeechDataFilter </item>
       <item>preemphasizer </item>
       <item>windower </item>
       <item>fft </item>
@@ -278,17 +277,15 @@
 
   <component name="dataBlocker" type="edu.cmu.sphinx.frontend.DataBlocker"/>
 
+  <component name="dataDumper" type="edu.cmu.sphinx.frontend.util.DataDumper"/>
+
   <component name="speechClassifier"
     type="edu.cmu.sphinx.frontend.endpoint.SpeechClassifier">
     <property name="threshold" value="13" />
   </component>
 
-  <component name="nonSpeechDataFilter"
-    type="edu.cmu.sphinx.frontend.endpoint.NonSpeechDataFilter"/>
-
   <component name="speechMarker"
     type="edu.cmu.sphinx.frontend.endpoint.SpeechMarker" >
-    <property name="speechTrailer" value="50"/>
   </component>
 
   <component name="preemphasizer"

@@ -20,26 +20,9 @@ package edu.cmu.sphinx.frontend;
  * @see DataProcessor
  * @see Signal
  */
-@SuppressWarnings("serial")
 public class DataStartSignal extends Signal {
 
     private final int sampleRate;
-    /**
-     * A constant that is attached to all DataStartSignal passing this component. This allows subsequent
-     * <code>DataProcessor</code>s (like the <code>Scorer</code>) to adapt their processing behavior.
-     */
-    public static final String SPEECH_TAGGED_FEATURE_STREAM = "vadTaggedFeatureStream";
-
-
-    /**
-     * Constructs a DataStartSignal.
-     *
-     * @param sampleRate The sampling rate of the started data stream.
-     */
-    public DataStartSignal(int sampleRate) {
-        this(sampleRate, System.currentTimeMillis());
-    }
-
 
     /**
      * Constructs a DataStartSignal at the given time.
@@ -48,37 +31,19 @@ public class DataStartSignal extends Signal {
      * @param time       the time this DataStartSignal is created
      */
     public DataStartSignal(int sampleRate, long time) {
-        this(sampleRate, time, false);
-    }
-
-
-    /**
-     * Constructs a DataStartSignal at the given time.
-     *
-     * @param sampleRate  the sampling rate of the started data stream.
-     * @param tagAsVadStream <code>true</code> if this feature stream will contain vad-signals
-     */
-    public DataStartSignal(int sampleRate, boolean tagAsVadStream) {
-        this(sampleRate, System.currentTimeMillis(), tagAsVadStream);
-    }
-
-
-    /**
-     * Constructs a DataStartSignal at the given time.
-     *
-     * @param sampleRate  the sampling rate of the started data stream.
-     * @param time        the time this DataStartSignal is created
-     * @param tagAsVadStream <code>true</code> if this feature stream will contain vad-signals
-     */
-    public DataStartSignal(int sampleRate, long time, boolean tagAsVadStream) {
         super(time);
         this.sampleRate = sampleRate;
-
-        if (tagAsVadStream) {
-            this.getProps().put(SPEECH_TAGGED_FEATURE_STREAM, tagAsVadStream);
-        }
     }
 
+    /**
+     * Constructs a DataStartSignal at the given time.
+     *
+     * @param sampleRate  the sampling rate of the started data stream.
+     * @param tagAsVadStream <code>true</code> if this feature stream will contain vad-signals
+     */
+    public DataStartSignal(int sampleRate) {
+        this(sampleRate, System.currentTimeMillis());
+    }
 
     /**
      * Returns the string "DataStartSignal".
@@ -94,16 +59,5 @@ public class DataStartSignal extends Signal {
     /** @return the sampling rate of the started data stream. */
     public int getSampleRate() {
         return sampleRate;
-    }
-
-
-
-    public static void tagAsVadStream(DataStartSignal dsSignal) {
-        dsSignal.getProps().put(DataStartSignal.SPEECH_TAGGED_FEATURE_STREAM, true);
-    }
-
-
-    public static void untagAsVadStream(DataStartSignal dsSignal) {
-        dsSignal.getProps().remove(DataStartSignal.SPEECH_TAGGED_FEATURE_STREAM);
     }
 }

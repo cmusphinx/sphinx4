@@ -18,7 +18,6 @@ import edu.cmu.sphinx.util.MatrixUtils;
  *
  * @see Data
  */
-@SuppressWarnings("serial")
 public class FloatData implements Data, Cloneable {
 
     private final float[] values;

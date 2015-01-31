@@ -13,8 +13,6 @@
 
 package edu.cmu.sphinx.frontend;
 
-import java.io.Serializable;
-
 /**
  * Implements the interface for all Data objects that passes between
  * DataProcessors.
@@ -25,6 +23,6 @@ import java.io.Serializable;
  * @see Data
  * @see FrontEnd
  */
-public interface Data extends Serializable {
+public interface Data {
 
 }
