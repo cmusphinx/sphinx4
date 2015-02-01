@@ -142,6 +142,7 @@ public class SpeechMarker extends BaseDataProcessor {
                 break;
 
             if (data instanceof DataStartSignal) {
+                reset();
                 outputQueue.add(data);
                 break;
             }
