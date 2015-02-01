@@ -161,7 +161,7 @@ public class SpeechAligner {
 
                 logger.info("Decoding result is " + results);
 
-                dumpAlignment(transcript, alignment, results);
+                // dumpAlignment(transcript, alignment, results);
 
                 for (int j = 0; j < alignment.length; j++) {
                     if (alignment[j] != -1) {

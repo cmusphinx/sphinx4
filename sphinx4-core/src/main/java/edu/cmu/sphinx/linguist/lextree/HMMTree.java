@@ -22,7 +22,6 @@ import edu.cmu.sphinx.linguist.dictionary.Pronunciation;
 import edu.cmu.sphinx.linguist.dictionary.Word;
 import edu.cmu.sphinx.linguist.language.ngram.LanguageModel;
 import edu.cmu.sphinx.util.LogMath;
-import edu.cmu.sphinx.util.TimerPool;
 import edu.cmu.sphinx.util.Utilities;
 
 import java.util.*;
@@ -712,10 +711,7 @@ class HMMTree {
         this.languageWeight = languageWeight;
         
         logger = Logger.getLogger(HMMTree.class.getSimpleName());
-
-        TimerPool.getTimer(this,"Create HMM Tree").start();
         compile();
-        TimerPool.getTimer(this,"Create HMM Tree").stop();
     }
 
 
