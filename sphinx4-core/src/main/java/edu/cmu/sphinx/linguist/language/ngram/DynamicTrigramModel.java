@@ -52,6 +52,7 @@ public class DynamicTrigramModel implements LanguageModel {
         vocabulary.addAll(textWords);
         List<Word> words = new ArrayList<Word>();
         
+        words.add(dictionary.getSentenceStartWord());
         for (String stringWord : textWords) {
             Word word = dictionary.getWord(stringWord);
             if (word == null) {
@@ -60,6 +61,7 @@ public class DynamicTrigramModel implements LanguageModel {
                 words.add(word);
             }
         }
+        words.add(dictionary.getSentenceEndWord());        
 
         HashMap<WordSequence, Integer> unigrams = new HashMap<WordSequence, Integer>();
         HashMap<WordSequence, Integer> bigrams = new HashMap<WordSequence, Integer>();
@@ -75,12 +77,6 @@ public class DynamicTrigramModel implements LanguageModel {
             wordCount++;
             addSequence(unigrams, new WordSequence(words.get(1)));
             addSequence(bigrams, new WordSequence(words.get(0), words.get(1)));
-        }
-
-        if (words.size() > 2) {
-            addSequence(bigrams, new WordSequence(words.get(1), words.get(2)));
-            addSequence(trigrams, new WordSequence(words.get(0), words.get(1), words
-                    .get(2)));
         }
 
         for (int i = 2; i < words.size(); ++i) {
@@ -178,18 +174,20 @@ public class DynamicTrigramModel implements LanguageModel {
     }
 
     public float getProbability(WordSequence wordSequence) {
+        float prob;
         if (logProbs.containsKey(wordSequence)) {
-            return logProbs.get(wordSequence);
-        }
-        if (wordSequence.size() > 1) {
+            prob = logProbs.get(wordSequence);
+        } else if (wordSequence.size() > 1) {
             Float backoff = logBackoffs.get(wordSequence.getOldest());
             if (backoff == null) {
-                return LogMath.LOG_ONE + getProbability(wordSequence.getNewest());
+                prob = LogMath.LOG_ONE + getProbability(wordSequence.getNewest());
             } else {
-                return backoff + getProbability(wordSequence.getNewest());
+                prob = backoff + getProbability(wordSequence.getNewest());
             }
+        } else {
+            prob = LogMath.LOG_ZERO;
         }
-        return LogMath.LOG_ZERO;
+        return prob;
     }
 
     public float getSmear(WordSequence wordSequence) {

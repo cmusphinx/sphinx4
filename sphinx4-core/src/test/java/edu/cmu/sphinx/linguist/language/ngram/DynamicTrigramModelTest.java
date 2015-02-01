@@ -51,7 +51,7 @@ public class DynamicTrigramModelTest {
         model.allocate();
         assertThat(model.getVocabulary(), contains("one"));
         assertThat(model.getProbability(new WordSequence(dictionary
-                .getWord("one"))), equalTo(getLogMath().linearToLog(1)));
+                .getWord("one"))), equalTo(getLogMath().linearToLog(1.0/3)));
     }
 
     @Test
