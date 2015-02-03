@@ -395,6 +395,94 @@ public class Lattice {
         }
     }
 
+    public static Lattice readSlf(String fileName) throws IOException {
+        Lattice lattice = new Lattice();
+        LineNumberReader in = new LineNumberReader(new FileReader(fileName));
+        String line;
+        boolean readingNodes = false;
+        boolean readingEdges = false;
+        int startIdx = 0;
+        int endIdx = 1;
+        double lmscale = 9.5;
+        while ((line = in.readLine()) != null) {
+            if (line.contains("Node definitions")) {
+                readingEdges = false;
+                readingNodes = true;
+                continue;
+            }
+            if (line.contains("Link definitions")) {
+                readingEdges = true;
+                readingNodes = false;
+                continue;
+            }
+            if (line.startsWith("#"))
+                //skip commented line
+                continue;
+            if (readingNodes) {
+                //reading node info, format:
+                //I=id   t=start_time_sec   W=word_transcription
+                String[] parts = line.split("\\s+");
+                if (parts.length != 3 || !parts[0].startsWith("I=") || !parts[1].startsWith("t=") || !parts[2].startsWith("W=")) {
+                    in.close();
+                    throw new IOException("Unknown node definition: " + line);
+                }
+                int idx = Integer.parseInt(parts[0].substring(2));
+                //convert to milliseconds inplace
+                long beginTime = (long)(Double.parseDouble(parts[1].substring(2)) * 1000);
+                String wordStr = parts[2].substring(2);
+                boolean isFiller = false;
+                if (idx == startIdx || wordStr.equals("!ENTER")) { 
+                    wordStr = "<s>";
+                    isFiller = true;
+                }
+                if (idx == endIdx || wordStr.equals("!EXIT")) {
+                    wordStr = "</s>";
+                    isFiller = true;
+                }
+                if (wordStr.equals("!NULL")) {
+                    wordStr = "<sil>";
+                    isFiller = true;
+                }
+                if (wordStr.startsWith("["))
+                    isFiller = true;
+                Word word = new Word(wordStr, new Pronunciation[0], isFiller);
+                Node node = lattice.addNode(Integer.toString(idx), word, beginTime, -1);
+                if (wordStr.equals("<s>"))
+                    lattice.setInitialNode(node);
+                if (wordStr.equals("</s>"))
+                    lattice.setTerminalNode(node);
+            } else if (readingEdges) {
+                //reading edge info, format:
+                //J=id   S=from_node   E=to_node   a=acoustic_score   l=language_score
+                String[] parts = line.split("\\s+");
+                if (parts.length != 5 || !parts[1].startsWith("S=") || !parts[2].startsWith("E=") 
+                        || !parts[3].startsWith("a=") || !parts[4].startsWith("l=")) {
+                    in.close();
+                    throw new IOException("Unknown edge definition: " + line);
+                }
+                String fromId = parts[1].substring(2);
+                String toId = parts[2].substring(2);
+                double ascore = Double.parseDouble(parts[3].substring(2));
+                double lscore = Double.parseDouble(parts[4].substring(2)) * lmscale;
+                lattice.addEdge(lattice.nodes.get(fromId), lattice.nodes.get(toId), ascore, lscore);
+            } else {
+                //reading header here if needed
+                if (line.startsWith("start="))
+                    startIdx = Integer.parseInt(line.replace("start=", ""));
+                if (line.startsWith("end="))
+                    endIdx = Integer.parseInt(line.replace("end=", ""));
+                if (line.startsWith("lmscale="))
+                    lmscale = Double.parseDouble(line.replace("lmscale=", ""));
+            }
+        }
+        for (Node node : lattice.nodes.values())
+            //calculate end time of nodes depending successors begin time
+            for (Edge edge : node.getLeavingEdges())
+                if (node.getEndTime() < 0 || node.getEndTime() > edge.getToNode().getBeginTime())
+                    node.setEndTime(edge.getToNode().getBeginTime());
+        in.close();
+        return lattice;
+    }
 
     /**
      * Add an edge from fromNode to toNode.  This method creates the Edge object and does all the connecting
@@ -641,7 +729,7 @@ public class Lattice {
          nodeIdMap.put(terminalNode.getId(), 1);
 
          int count=2;
-         w.write("#\n# Nodes definitions.\n#\n");
+         w.write("#\n# Node definitions.\n#\n");
          for(Node node:nodes.values()){
               if (nodeIdMap.containsKey(node.getId())) {
                   w.write("I=" + nodeIdMap.get(node.getId()));
@@ -653,7 +741,7 @@ public class Lattice {
               w.write("    t="+(node.getBeginTime()*1.0/1000));
               String spelling = node.getWord().getSpelling();
               if (spelling.startsWith("<"))
-            	    spelling = "!NULL";
+                    spelling = "!NULL";
               w.write("    W=" + spelling);
               w.write("\n");
          }

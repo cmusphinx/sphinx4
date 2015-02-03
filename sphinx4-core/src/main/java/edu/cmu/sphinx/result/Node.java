@@ -11,6 +11,7 @@
  */
 package edu.cmu.sphinx.result;
 
+import edu.cmu.sphinx.linguist.dictionary.Pronunciation;
 import edu.cmu.sphinx.linguist.dictionary.Word;
 import edu.cmu.sphinx.util.LogMath;
 import edu.cmu.sphinx.util.TimeFrame;
@@ -319,7 +320,7 @@ public class Node {
      *
      * @param beginTime the frame number when the word began
      */
-    public void setBeginTime(int beginTime) {
+    public void setBeginTime(long beginTime) {
         if (beginTime > getEndTime()) {
             throw new Error("Attempting to set a begin time (" + beginTime +
                     ") that is later than the end time (" +
@@ -345,7 +346,7 @@ public class Node {
      *
      * @param endTime the frame number when the word ended
      */
-    public void setEndTime(int endTime) {
+    public void setEndTime(long endTime) {
         if (getBeginTime() > endTime) {
             throw new Error("Attempting to set an end time (" + endTime +
                     ") that is earlier than the start time (" +
@@ -417,7 +418,8 @@ public class Node {
     void dump(PrintWriter f) throws IOException {
         f.println("node: " + id + ' ' + word.getSpelling() +
                 //" a:" + getForwardProb() + " b:" + getBackwardProb()
-                " p:" + getPosterior());
+                //" p:" + getPosterior());
+                ' ' + getBeginTime() + ' ' + getEndTime());
     }
 
 
@@ -431,8 +433,11 @@ public class Node {
 
         String id = tokens.nextToken();
         String label = tokens.nextToken();
+        long beginTime = Long.parseLong(tokens.nextToken());
+        long endTime = Long.parseLong(tokens.nextToken());
 
-        lattice.addNode(id, label, 0, 0);
+        Word word = new Word(label, new Pronunciation[0], label.startsWith("<") || label.startsWith("["));
+        lattice.addNode(id, word, beginTime, endTime);
     }
 
 
