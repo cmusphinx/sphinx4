@@ -4,19 +4,24 @@
 
   <property name="logLevel" value="INFO"/>
 
-  <property name="absoluteBeamWidth"  value="20000"/>
-  <property name="relativeBeamWidth"  value="1e-60"/>
-  <property name="absoluteWordBeamWidth"  value="200"/>
-  <property name="relativeWordBeamWidth"  value="1e-40"/>
+  <property name="absoluteBeamWidth"  value="15000"/>
+  <property name="relativeBeamWidth"  value="1e-50"/>
+  <property name="absoluteWordBeamWidth"  value="150"/>
+  <property name="relativeWordBeamWidth"  value="1e-30"/>
 
   <property name="wordInsertionProbability" value="0.1"/>
   <property name="silenceInsertionProbability" value="0.1"/>
   <property name="fillerInsertionProbability" value="1e-2"/>
 
+  <property name="phoneticLookaheadWindow" value="5"/>
+  <property name="phoneticLookaheadWeight" value="8"/>
+  <property name="acousticLookaheadWeight" value="1.7"/>
+  <property name="phoneticBeam" value="1e-12"/>
+
   <property name="oogProbability" value="1e-30"/>
   <property name="oogLoopProbability" value="1e-10"/>
 
-  <property name="languageWeight" value="12.0"/>
+  <property name="languageWeight" value="8.0"/>
 
   <component name="recognizer" type="edu.cmu.sphinx.recognizer.Recognizer">
     <property name="decoder" value="decoder"/>
@@ -66,7 +71,7 @@
     <property name="buildWordLattice" value="true"/>
     <property name="keepAllTokens" value="true"/>
 
-    <property name="acousticLookaheadFrames" value="1.7"/>
+    <property name="acousticLookaheadFrames" value="${acousticLookaheadWeight}"/>
     <property name="relativeBeamWidth" value="${relativeBeamWidth}"/>
   </component>
 
@@ -81,15 +86,13 @@
     <property name="fastmatchActiveListFactory" value="fastmatchActiveList"/>
 
     <property name="growSkipInterval" value="0"/>
-    <property name="lookaheadWindow" value="5"/>
-
     <property name="buildWordLattice" value="true"/>
     <property name="keepAllTokens" value="true"/>
 
-    <property name="lookaheadPenaltyWeight" value="8.0"/>
-    <property name="acousticLookaheadFrames" value="1.7"/>
+    <property name="lookaheadWindow" value="${phoneticLookaheadWindow}"/>
+    <property name="lookaheadPenaltyWeight" value="${phoneticLookaheadWeight}"/>
+    <property name="acousticLookaheadFrames" value="${acousticLookaheadWeight}"/>
     <property name="relativeBeamWidth" value="${relativeBeamWidth}"/>
-    <property name="fastmatchRelativePhoneBeamWidth" value="1e-12"/>
   </component>
 
   <component name="activeList"
@@ -101,7 +104,7 @@
   <component name="fastmatchActiveList"
     type="edu.cmu.sphinx.decoder.search.PartitionActiveListFactory">
     <property name="absoluteBeamWidth" value="${absoluteBeamWidth}"/>
-    <property name="relativeBeamWidth" value="1e-12"/>
+    <property name="relativeBeamWidth" value="${phoneticBeam}"/>
   </component>
 
   <component name="activeListManager"

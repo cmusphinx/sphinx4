@@ -403,24 +403,24 @@ public class WordPruningBreadthFirstSearchManager extends TokenSearchManager {
      * lookahead based upon the rate of change in the current acoustic score.
      */
     protected void growEmittingBranches() {
-        if (acousticLookaheadFrames > 0F) {
-            growTimer.start();
-            float bestScore = -Float.MAX_VALUE;
-            for (Token t : activeList) {
-                float score = t.getScore() + t.getAcousticScore() * acousticLookaheadFrames;
-                if (score > bestScore) {
-                    bestScore = score;
-                }
-            }
-            float relativeBeamThreshold = bestScore + relativeBeamWidth;
-            for (Token t : activeList) {
-                if (t.getScore() + t.getAcousticScore() * acousticLookaheadFrames > relativeBeamThreshold)
-                    collectSuccessorTokens(t);
-            }
-            growTimer.stop();
-        } else {
+        if (acousticLookaheadFrames <= 0.0f) {
             growBranches();
+            return;
         }
+        growTimer.start();
+        float bestScore = -Float.MAX_VALUE;
+        for (Token t : activeList) {
+            float score = t.getScore() + t.getAcousticScore() * acousticLookaheadFrames;
+            if (score > bestScore) {
+                bestScore = score;
+            }
+        }
+        float relativeBeamThreshold = bestScore + relativeBeamWidth;
+        for (Token t : activeList) {
+            if (t.getScore() + t.getAcousticScore() * acousticLookaheadFrames > relativeBeamThreshold)
+                collectSuccessorTokens(t);
+        }
+        growTimer.stop();
     }
 
     /**

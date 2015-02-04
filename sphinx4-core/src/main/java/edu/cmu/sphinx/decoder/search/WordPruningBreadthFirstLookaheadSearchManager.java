@@ -39,8 +39,8 @@ import edu.cmu.sphinx.util.props.S4Double;
 import edu.cmu.sphinx.util.props.S4Integer;
 
 /**
- * Provides the breadth first search with fast match heuristic included
- * to reduce amount of tokens created. 
+ * Provides the breadth first search with fast match heuristic included to
+ * reduce amount of tokens created.
  * <p/>
  * All scores and probabilities are maintained in the log math log domain.
  */
@@ -51,27 +51,23 @@ public class WordPruningBreadthFirstLookaheadSearchManager extends WordPruningBr
     @S4Component(type = Loader.class)
     public final static String PROP_LOADER = "loader";
 
-    /** The property that defines the name of the linguist to be used for fast match. */
+    /**
+     * The property that defines the name of the linguist to be used for fast
+     * match.
+     */
     @S4Component(type = Linguist.class)
     public final static String PROP_FASTMATCH_LINGUIST = "fastmatchLinguist";
-    
+
     /** The property that defines the type active list factory for fast match */
     @S4Component(type = ActiveListFactory.class)
     public final static String PROP_FM_ACTIVE_LIST_FACTORY = "fastmatchActiveListFactory";
-    
+
     @S4Double(defaultValue = 1.0)
     public final static String PROP_LOOKAHEAD_PENALTY_WEIGHT = "lookaheadPenaltyWeight";
 
     /**
-     * The property that sets the minimum score relative to the maximum score in the phone list for pruning. Words with a
-     * score less than relativeBeamWidth * maximumScore will be pruned from the list
-     */
-    @S4Double(defaultValue = 1e-12)
-    public final static String PROP_FM_RELATIVE_PHONE_BEAM_WIDTH = "fastmatchRelativePhoneBeamWidth";
-
-    /**
-     * The property that controls size of lookahead window.
-     * Acceptable values are in range [1..10].
+     * The property that controls size of lookahead window. Acceptable values
+     * are in range [1..10].
      */
     @S4Integer(defaultValue = 5)
     public final static String PROP_LOOKAHEAD_WINDOW = "lookaheadWindow";
@@ -88,15 +84,16 @@ public class WordPruningBreadthFirstLookaheadSearchManager extends WordPruningBr
     // -----------------------------------
     private int lookaheadWindow;
     private float lookaheadWeight;
-    private float logFastmatchRelativePhoneBeamWidth;
     private HashMap<Integer, Float> penalties;
     private LinkedList<FrameCiScores> ciScores;
-    
+
     // -----------------------------------
     // Working data
     // -----------------------------------
-    private int currentFastMatchFrameNumber; // the current frame number for lookahead matching
-    protected ActiveList fastmatchActiveList; // the list of active tokens for fast match
+    private int currentFastMatchFrameNumber; // the current frame number for
+                                             // lookahead matching
+    protected ActiveList fastmatchActiveList; // the list of active tokens for
+                                              // fast match
     protected Map<SearchState, Token> fastMatchBestTokenMap;
     private boolean fastmatchStreamEnd;
 
@@ -115,26 +112,27 @@ public class WordPruningBreadthFirstLookaheadSearchManager extends WordPruningBr
      * @param acousticLookaheadFrames
      * @param keepAllTokens
      */
-    public WordPruningBreadthFirstLookaheadSearchManager(Linguist linguist, Linguist fastmatchLinguist, Loader loader, Pruner pruner, AcousticScorer scorer,
-            ActiveListManager activeListManager, ActiveListFactory fastmatchActiveListFactory, boolean showTokenCount, double relativeWordBeamWidth, double fastmatchRelativePhoneBeamWidth, 
-            int growSkipInterval, boolean checkStateOrder, boolean buildWordLattice, int lookaheadWindow, float lookaheadWeight, int maxLatticeEdges, float acousticLookaheadFrames,
-            boolean keepAllTokens) {
+    public WordPruningBreadthFirstLookaheadSearchManager(Linguist linguist, Linguist fastmatchLinguist, Loader loader,
+            Pruner pruner, AcousticScorer scorer, ActiveListManager activeListManager,
+            ActiveListFactory fastmatchActiveListFactory, boolean showTokenCount, double relativeWordBeamWidth,
+            int growSkipInterval, boolean checkStateOrder, boolean buildWordLattice, int lookaheadWindow, float lookaheadWeight,
+            int maxLatticeEdges, float acousticLookaheadFrames, boolean keepAllTokens) {
 
         super(linguist, pruner, scorer, activeListManager, showTokenCount, relativeWordBeamWidth, growSkipInterval,
                 checkStateOrder, buildWordLattice, maxLatticeEdges, acousticLookaheadFrames, keepAllTokens);
-        
+
         this.loader = loader;
         this.fastmatchLinguist = fastmatchLinguist;
         this.fastmatchActiveListFactory = fastmatchActiveListFactory;
         this.lookaheadWindow = lookaheadWindow;
         this.lookaheadWeight = lookaheadWeight;
         if (lookaheadWindow < 1 || lookaheadWindow > 10)
-            throw new IllegalArgumentException("Unsupported lookahead window size: " + lookaheadWindow + ". Value in range [1..10] is expected");
-        this.logFastmatchRelativePhoneBeamWidth = logMath.linearToLog(fastmatchRelativePhoneBeamWidth);
+            throw new IllegalArgumentException("Unsupported lookahead window size: " + lookaheadWindow
+                    + ". Value in range [1..10] is expected");
         this.ciScores = new LinkedList<FrameCiScores>();
         this.penalties = new HashMap<Integer, Float>();
         if (loader instanceof Sphinx3Loader && ((Sphinx3Loader) loader).hasTiedMixtures())
-            ((Sphinx3Loader) loader).setGauScoresQueueLength(lookaheadWindow + 2);        
+            ((Sphinx3Loader) loader).setGauScoresQueueLength(lookaheadWindow + 2);
     }
 
     public WordPruningBreadthFirstLookaheadSearchManager() {
@@ -158,14 +156,12 @@ public class WordPruningBreadthFirstLookaheadSearchManager extends WordPruningBr
         lookaheadWindow = ps.getInt(PROP_LOOKAHEAD_WINDOW);
         lookaheadWeight = ps.getFloat(PROP_LOOKAHEAD_PENALTY_WEIGHT);
         if (lookaheadWindow < 1 || lookaheadWindow > 10)
-            throw new PropertyException(WordPruningBreadthFirstLookaheadSearchManager.class.getName(), PROP_LOOKAHEAD_WINDOW, 
-                "Unsupported lookahead window size: " + lookaheadWindow + ". Value in range [1..10] is expected");
-        double fastmatchRelativePhoneBeamWidth = ps.getDouble(PROP_FM_RELATIVE_PHONE_BEAM_WIDTH);
-        this.logFastmatchRelativePhoneBeamWidth = logMath.linearToLog(fastmatchRelativePhoneBeamWidth);
+            throw new PropertyException(WordPruningBreadthFirstLookaheadSearchManager.class.getName(), PROP_LOOKAHEAD_WINDOW,
+                    "Unsupported lookahead window size: " + lookaheadWindow + ". Value in range [1..10] is expected");
         ciScores = new LinkedList<FrameCiScores>();
         penalties = new HashMap<Integer, Float>();
         if (loader instanceof Sphinx3Loader && ((Sphinx3Loader) loader).hasTiedMixtures())
-            ((Sphinx3Loader) loader).setGauScoresQueueLength(lookaheadWindow + 2); 
+            ((Sphinx3Loader) loader).setGauScoresQueueLength(lookaheadWindow + 2);
     }
 
     /**
@@ -183,10 +179,10 @@ public class WordPruningBreadthFirstLookaheadSearchManager extends WordPruningBr
 
         for (int i = 0; i < nFrames && !done; i++) {
             if (!fastmatchStreamEnd)
-            	fastMatchRecognize();
+                fastMatchRecognize();
             penalties.clear();
             ciScores.poll();
-        	done = recognize();
+            done = recognize();
         }
 
         if (!streamEnd) {
@@ -200,16 +196,16 @@ public class WordPruningBreadthFirstLookaheadSearchManager extends WordPruningBr
         }
         return result;
     }
-    
+
     private void fastMatchRecognize() {
-    	boolean more = scoreFastMatchTokens();
-    	
-    	if (more) {
-    		pruneFastMatchBranches();
-    		currentFastMatchFrameNumber++;
-    		createFastMatchBestTokenMap();
-    		growFastmatchBranches();
-    	}
+        boolean more = scoreFastMatchTokens();
+
+        if (more) {
+            pruneFastMatchBranches();
+            currentFastMatchFrameNumber++;
+            createFastMatchBestTokenMap();
+            growFastmatchBranches();
+        }
     }
 
     /**
@@ -228,91 +224,63 @@ public class WordPruningBreadthFirstLookaheadSearchManager extends WordPruningBr
      * GrammarNodeToken
      */
     @Override
-    protected void localStart() {	
-    	currentFastMatchFrameNumber = 0;
+    protected void localStart() {
+        currentFastMatchFrameNumber = 0;
         if (loader instanceof Sphinx3Loader && ((Sphinx3Loader) loader).hasTiedMixtures())
             ((Sphinx3Loader) loader).clearGauScores();
-    	//prepare fast match active list
-    	fastmatchActiveList = fastmatchActiveListFactory.newInstance();
+        // prepare fast match active list
+        fastmatchActiveList = fastmatchActiveListFactory.newInstance();
         SearchState fmInitState = fastmatchLinguist.getSearchGraph().getInitialState();
         fastmatchActiveList.add(new Token(fmInitState, currentFastMatchFrameNumber));
         createFastMatchBestTokenMap();
         growFastmatchBranches();
         fastmatchStreamEnd = false;
         for (int i = 0; (i < lookaheadWindow - 1) && !fastmatchStreamEnd; i++)
-        	fastMatchRecognize();
-        
+            fastMatchRecognize();
+
         super.localStart();
     }
-    
+
     /**
-     * Goes through the fast match active list of tokens and expands each token, 
-     * finding the set of successor tokens until all the successor tokens are emitting tokens.
+     * Goes through the fast match active list of tokens and expands each token,
+     * finding the set of successor tokens until all the successor tokens are
+     * emitting tokens.
      */
     protected void growFastmatchBranches() {
         growTimer.start();
         ActiveList oldActiveList = fastmatchActiveList;
         fastmatchActiveList = fastmatchActiveListFactory.newInstance();
         float fastmathThreshold = oldActiveList.getBeamThreshold();
-        float fastmatchWordThreshold = oldActiveList.getBestScore() + logFastmatchRelativePhoneBeamWidth;
-        //TODO more precise range of baseIds, remove magic number
+        // TODO more precise range of baseIds, remove magic number
         float[] frameCiScores = new float[100];
+
         Arrays.fill(frameCiScores, -Float.MAX_VALUE);
         float frameMaxCiScore = -Float.MAX_VALUE;
         for (Token token : oldActiveList) {
-        	float tokenScore = token.getScore();
-        	if (tokenScore < fastmathThreshold)
-        		continue;
-            if (token.getSearchState() instanceof WordSearchState && token.getScore() < fastmatchWordThreshold)
+            float tokenScore = token.getScore();
+            if (tokenScore < fastmathThreshold)
                 continue;
-            //filling max ci scores array that will be used in general search token score composing
-        	if (token.getSearchState() instanceof PhoneHmmSearchState) {
-            	int baseId = ((PhoneHmmSearchState)token.getSearchState()).getBaseId();
-            	if (frameCiScores[baseId] < tokenScore)
-            		frameCiScores[baseId] = tokenScore;
-            	if (frameMaxCiScore < tokenScore)
-            		frameMaxCiScore = tokenScore;
+            // filling max ci scores array that will be used in general search
+            // token score composing
+            if (token.getSearchState() instanceof PhoneHmmSearchState) {
+                int baseId = ((PhoneHmmSearchState) token.getSearchState()).getBaseId();
+                if (frameCiScores[baseId] < tokenScore)
+                    frameCiScores[baseId] = tokenScore;
+                if (frameMaxCiScore < tokenScore)
+                    frameMaxCiScore = tokenScore;
             }
-        	collectFastMatchSuccessorTokens(token);
+            collectFastMatchSuccessorTokens(token);
         }
         ciScores.add(new FrameCiScores(frameCiScores, frameMaxCiScore));
         growTimer.stop();
     }
-    
-    @Override
-    protected void growEmittingBranches() {
-    	if (acousticLookaheadFrames > 0F) {
-    		growTimer.start();
-    		float bestScore = -Float.MAX_VALUE;
-    		for (Token t : activeList) {
-    			float score = t.getScore() + t.getAcousticScore() * acousticLookaheadFrames;
-    			if (score > bestScore) {
-    				bestScore = score;
-    			}
-    		}
-    		float relativeBeamThreshold = bestScore + relativeBeamWidth;
-    		for (Token t : activeList) {
-    		Float penalty = 0.0f;
-    		if (t.getSearchState() instanceof LexTreeHMMState) {
-    			int baseId = ((LexTreeHMMState)t.getSearchState()).getHMMState().getHMM().getBaseUnit().getBaseID();
-    			if ((penalty = penalties.get(baseId)) == null)
-    				penalty = updateLookaheadPenalty(baseId);
-    		}
-    		if (t.getScore() + t.getAcousticScore() * acousticLookaheadFrames + penalty * lookaheadWeight / 3 > relativeBeamThreshold)
-    			collectSuccessorTokens(t);
-    		}
-    		growTimer.stop();
-    	} else {
-    		growBranches();
-    	}
-	}
-    
+
     protected boolean scoreFastMatchTokens() {
-    	boolean moreTokens;
+        boolean moreTokens;
         scoreTimer.start();
         Data data = scorer.calculateScoresAndStoreData(fastmatchActiveList.getTokens());
         scoreTimer.stop();
-        
+
         Token bestToken = null;
         if (data instanceof Token) {
             bestToken = (Token) data;
@@ -322,7 +290,7 @@ public class WordPruningBreadthFirstLookaheadSearchManager extends WordPruningBr
 
         moreTokens = (bestToken != null);
         fastmatchActiveList.setBestToken(bestToken);
-        
+
         // monitorWords(activeList);
         monitorStates(fastmatchActiveList);
 
@@ -330,10 +298,9 @@ public class WordPruningBreadthFirstLookaheadSearchManager extends WordPruningBr
 
         curTokensScored.value += fastmatchActiveList.size();
         totalTokensScored.value += fastmatchActiveList.size();
-    	
+
         return moreTokens;
     }
-
 
     /** Removes unpromising branches from the fast match active list */
     protected void pruneFastMatchBranches() {
@@ -341,15 +308,15 @@ public class WordPruningBreadthFirstLookaheadSearchManager extends WordPruningBr
         fastmatchActiveList = pruner.prune(fastmatchActiveList);
         pruneTimer.stop();
     }
-    
+
     protected Token getFastMatchBestToken(SearchState state) {
-    	return fastMatchBestTokenMap.get(state);
+        return fastMatchBestTokenMap.get(state);
     }
 
     protected void setFastMatchBestToken(Token token, SearchState state) {
-    	fastMatchBestTokenMap.put(state, token);
+        fastMatchBestTokenMap.put(state, token);
     }
-    
+
     protected void collectFastMatchSuccessorTokens(Token token) {
         SearchState state = token.getSearchState();
         SearchStateArc[] arcs = state.getSuccessors();
@@ -367,7 +334,7 @@ public class WordPruningBreadthFirstLookaheadSearchManager extends WordPruningBr
             // these come in log(), multiply gets converted to add
             float logEntryScore = token.getScore() + arc.getProbability();
             Token predecessor = getResultListPredecessor(token);
-            
+
             // if not emitting, check to see if we've already visited
             // this state during this frame. Expand the token only if we
             // haven't visited it already. This prevents the search
@@ -375,37 +342,31 @@ public class WordPruningBreadthFirstLookaheadSearchManager extends WordPruningBr
             // intervening emitting nodes. This can happen with nasty
             // jsgf grammars such as ((foo*)*)*
             if (!nextState.isEmitting()) {
-                Token newToken = new Token(predecessor, nextState, logEntryScore,
-                        arc.getInsertionProbability(),
-                        arc.getLanguageProbability(), 
-                        currentFastMatchFrameNumber);
+                Token newToken = new Token(predecessor, nextState, logEntryScore, arc.getInsertionProbability(),
+                        arc.getLanguageProbability(), currentFastMatchFrameNumber);
                 tokensCreated.value++;
                 if (!isVisited(newToken)) {
-                	collectFastMatchSuccessorTokens(newToken);
+                    collectFastMatchSuccessorTokens(newToken);
                 }
                 continue;
             }
-            
+
             Token bestToken = getFastMatchBestToken(nextState);
-            if (bestToken == null) {        
-                Token newToken = new Token(predecessor, nextState, logEntryScore,
-                        arc.getInsertionProbability(),
-                        arc.getLanguageProbability(), 
-                        currentFastMatchFrameNumber);
+            if (bestToken == null) {
+                Token newToken = new Token(predecessor, nextState, logEntryScore, arc.getInsertionProbability(),
+                        arc.getLanguageProbability(), currentFastMatchFrameNumber);
                 tokensCreated.value++;
                 setFastMatchBestToken(newToken, nextState);
                 fastmatchActiveList.add(newToken);
             } else {
                 if (bestToken.getScore() <= logEntryScore) {
-                    bestToken.update(predecessor, nextState, logEntryScore,
-                            arc.getInsertionProbability(),
-                            arc.getLanguageProbability(), 
-                            currentFastMatchFrameNumber);
+                    bestToken.update(predecessor, nextState, logEntryScore, arc.getInsertionProbability(),
+                            arc.getLanguageProbability(), currentFastMatchFrameNumber);
                 }
             }
         }
     }
-    
+
     /**
      * Collects the next set of emitting tokens from a token and accumulates
      * them in the active or result lists
@@ -439,7 +400,7 @@ public class WordPruningBreadthFirstLookaheadSearchManager extends WordPruningBr
         if (!token.isEmitting() && (keepAllTokens && isVisited(token))) {
             return;
         }
-        
+
         SearchState state = token.getSearchState();
         SearchStateArc[] arcs = state.getSuccessors();
         Token predecessor = getResultListPredecessor(token);
@@ -455,24 +416,23 @@ public class WordPruningBreadthFirstLookaheadSearchManager extends WordPruningBr
 
         float tokenScore = token.getScore();
         float beamThreshold = activeList.getBeamThreshold();
-        boolean stateProducesPhoneHmms = state instanceof LexTreeNonEmittingHMMState 
-                                         || state instanceof LexTreeWordState
-                                         || state instanceof LexTreeEndUnitState;
+        boolean stateProducesPhoneHmms = state instanceof LexTreeNonEmittingHMMState || state instanceof LexTreeWordState
+                || state instanceof LexTreeEndUnitState;
         for (SearchStateArc arc : arcs) {
             SearchState nextState = arc.getState();
 
-            //prune states using lookahead heuristics
+            // prune states using lookahead heuristics
             if (stateProducesPhoneHmms) {
-            	if (nextState instanceof LexTreeHMMState) {
-            		Float penalty;
-            		int baseId = ((LexTreeHMMState)nextState).getHMMState().getHMM().getBaseUnit().getBaseID();
-            		if ((penalty = penalties.get(baseId)) == null)
-            		    penalty = updateLookaheadPenalty(baseId);
-            		if ((tokenScore + lookaheadWeight * penalty) < beamThreshold)
-            			continue;
-            	}
+                if (nextState instanceof LexTreeHMMState) {
+                    Float penalty;
+                    int baseId = ((LexTreeHMMState) nextState).getHMMState().getHMM().getBaseUnit().getBaseID();
+                    if ((penalty = penalties.get(baseId)) == null)
+                        penalty = updateLookaheadPenalty(baseId);
+                    if ((tokenScore + lookaheadWeight * penalty) < beamThreshold)
+                        continue;
+                }
             }
-            
+
             if (checkStateOrder) {
                 checkStateOrder(state, nextState);
             }
@@ -480,7 +440,7 @@ public class WordPruningBreadthFirstLookaheadSearchManager extends WordPruningBr
             // We're actually multiplying the variables, but since
             // these come in log(), multiply gets converted to add
             float logEntryScore = tokenScore + arc.getProbability();
-            
+
             Token bestToken = getBestToken(nextState);
 
             if (bestToken == null) {
@@ -505,28 +465,28 @@ public class WordPruningBreadthFirstLookaheadSearchManager extends WordPruningBr
             }
         }
     }
-    
+
     private Float updateLookaheadPenalty(int baseId) {
-    	if (ciScores.isEmpty())
-    		return 0.0f;
-    	float penalty = -Float.MAX_VALUE;
-    	for (FrameCiScores frameCiScores : ciScores) {
-    		float diff = frameCiScores.scores[baseId] - frameCiScores.maxScore;
-    		if (diff > penalty)
-    			penalty = diff;
-    	}
-    	penalties.put(baseId, penalty);
-    	return penalty;
+        if (ciScores.isEmpty())
+            return 0.0f;
+        float penalty = -Float.MAX_VALUE;
+        for (FrameCiScores frameCiScores : ciScores) {
+            float diff = frameCiScores.scores[baseId] - frameCiScores.maxScore;
+            if (diff > penalty)
+                penalty = diff;
+        }
+        penalties.put(baseId, penalty);
+        return penalty;
     }
-    
+
     private class FrameCiScores {
-    	public final float[] scores;
-    	public final float maxScore;
-    	
-    	public FrameCiScores(float[] scores, float maxScore) {
-    		this.scores = scores;
-    		this.maxScore = maxScore;
-    	}
+        public final float[] scores;
+        public final float maxScore;
+
+        public FrameCiScores(float[] scores, float maxScore) {
+            this.scores = scores;
+            this.maxScore = maxScore;
+        }
     }
 
 }
