@@ -4,17 +4,17 @@
 
   <property name="logLevel" value="INFO"/>
 
-  <property name="absoluteBeamWidth"  value="15000"/>
-  <property name="relativeBeamWidth"  value="1e-50"/>
-  <property name="absoluteWordBeamWidth"  value="150"/>
-  <property name="relativeWordBeamWidth"  value="1e-30"/>
+  <property name="absoluteBeamWidth"  value="20000"/>
+  <property name="relativeBeamWidth"  value="1e-60"/>
+  <property name="absoluteWordBeamWidth"  value="200"/>
+  <property name="relativeWordBeamWidth"  value="1e-40"/>
 
   <property name="wordInsertionProbability" value="0.1"/>
   <property name="silenceInsertionProbability" value="0.1"/>
   <property name="fillerInsertionProbability" value="1e-2"/>
 
   <property name="phoneticLookaheadWindow" value="5"/>
-  <property name="phoneticLookaheadWeight" value="8"/>
+  <property name="phoneticLookaheadWeight" value="6"/>
   <property name="acousticLookaheadWeight" value="1.7"/>
   <property name="phoneticBeam" value="1e-12"/>
 
