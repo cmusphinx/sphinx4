@@ -27,7 +27,7 @@ public class Decoder extends AbstractDecoder {
     }
 
     /** The property for the number of features to recognize at once. */
-    @S4Integer(defaultValue = 100000)
+    @S4Integer(defaultValue = Integer.MAX_VALUE)
     public final static String PROP_FEATURE_BLOCK_SIZE = "featureBlockSize";
     private int featureBlockSize;
 

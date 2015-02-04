@@ -39,6 +39,7 @@ public class SpeechAligner {
     private final Logger logger = Logger.getLogger(getClass().getSimpleName());
 
     private static final int TUPLE_SIZE = 3;
+    private static final int MIN_LM_ALIGN_SIZE = 20;
 
     private final Context context;
     private final Recognizer recognizer;
@@ -122,6 +123,11 @@ public class SpeechAligner {
                 List<String> text = texts.poll();
                 TimeFrame frame = timeFrames.poll();
                 Range range = ranges.poll();
+
+        	// Don't align short texts with LM
+                if (i < 3 && text.size() < MIN_LM_ALIGN_SIZE) {
+                    continue;
+		}		                                                                    
 
                 logger.info("Aligning frame " + frame + " to text " + text
                         + " range " + range);
