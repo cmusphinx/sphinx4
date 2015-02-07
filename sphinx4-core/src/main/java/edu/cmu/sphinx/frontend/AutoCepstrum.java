@@ -144,8 +144,8 @@ public class AutoCepstrum extends BaseDataProcessor {
 
             selectedDataProcessors.add(filterBank);
 
-            if ((featParams.get("-remove_noise") != null)
-                    && (featParams.get("-remove_noise").equals("yes"))) {
+            if ((featParams.get("-remove_noise") == null)
+                    || (featParams.get("-remove_noise").equals("yes"))) {
                 denoise = new Denoise(Denoise.class.getField("LAMBDA_POWER")
                                               .getAnnotation(S4Double.class)
                                               .defaultValue(),
