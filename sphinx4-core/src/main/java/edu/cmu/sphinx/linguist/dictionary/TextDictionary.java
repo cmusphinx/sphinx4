@@ -212,8 +212,8 @@ public class TextDictionary implements Dictionary {
     }
 
     /**
-     * Loads the given sphinx3 style simple dictionary from the given
-     * InputStream. The InputStream is assumed to contain ASCII data.
+     * Loads the given simple dictionary from the given InputStream. The
+     * InputStream is assumed to contain ASCII data.
      * 
      * @param inputStream
      *            the InputStream of the dictionary
@@ -228,45 +228,45 @@ public class TextDictionary implements Dictionary {
         String line;
 
         while ((line = br.readLine()) != null) {
-            if (!line.isEmpty()) {
-                int spaceIndex = line.indexOf(' ');
-                int spaceIndexTab = line.indexOf('\t');
-                if (spaceIndex == -1) {
-                    // Case where there's no blank character
-                    spaceIndex = spaceIndexTab;
-                } else if ((spaceIndexTab >= 0) && (spaceIndexTab < spaceIndex)) {
-                    // Case where there's a blank and a tab, but the tab
-                    // precedes the blank
-                    spaceIndex = spaceIndexTab;
-                }
-                // TODO: throw an exception if spaceIndex == -1 ?
-                if (spaceIndex == -1) {
-                    throw new Error("Error loading word: " + line);
-                }
-                String word = line.substring(0, spaceIndex);
-                word = word.toLowerCase();
-                // Add numeric index if the word is repeating.
-                if (dictionary.containsKey(word)) {
-                    int index = 2;
-                    String wordWithIdx;
-                    do {
-                        wordWithIdx = String.format("%s(%d)", word, index++);
-                    } while (dictionary.containsKey(wordWithIdx));
-                    word = wordWithIdx;
-                }
+            line = line.trim();
+            if (line.isEmpty()) {
+                continue;
+            }
+            int spaceIndex = getSpaceIndex(line);
+            if (spaceIndex < 0) {
+                throw new Error("Error loading word: " + line);
+            }
+            String word = line.substring(0, spaceIndex);
 
-                if (isFillerDict) {
-                    dictionary.put(word, (FILLER_TAG + line));
-                    fillerWords.add(word);
-                } else {
-                    dictionary.put(word, line);
-                }
+            // Add numeric index if the word is repeating.
+            if (dictionary.containsKey(word)) {
+                int index = 2;
+                String wordWithIdx;
+                do {
+                    wordWithIdx = String.format("%s(%d)", word, index++);
+                } while (dictionary.containsKey(wordWithIdx));
+                word = wordWithIdx;
+            }
+
+            if (isFillerDict) {
+                dictionary.put(word, (FILLER_TAG + line));
+                fillerWords.add(word);
+            } else {
+                dictionary.put(word, line);
             }
         }
 
         br.close();
         isr.close();
         inputStream.close();
+    }
+
+    private int getSpaceIndex(String line) {
+        for (int i = 0; i < line.length(); i++) {
+            if (line.charAt(i) == ' ' || line.charAt(i) == '\t')
+                return i;
+        }
+        return -1;
     }
 
     /**
@@ -321,7 +321,6 @@ public class TextDictionary implements Dictionary {
      * @see edu.cmu.sphinx.linguist.dictionary.Word
      */
     public Word getWord(String text) {
-        text = text.toLowerCase();
         Word wordObject = wordDictionary.get(text);
 
         if (wordObject != null) {

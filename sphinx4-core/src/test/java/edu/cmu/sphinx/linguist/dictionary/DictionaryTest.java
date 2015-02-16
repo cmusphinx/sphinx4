@@ -8,6 +8,7 @@
  */
 package edu.cmu.sphinx.linguist.dictionary;
 
+import static org.testng.AssertJUnit.assertTrue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.arrayWithSize;
 import static org.hamcrest.Matchers.equalTo;
@@ -55,4 +56,25 @@ public class DictionaryTest {
 
         assertThat(dictionary.getFillerWords(), arrayWithSize(5));
     }
+    
+    @Test
+    public void testBadDictionary() throws IOException {
+        URL dictUrl = getClass()
+                .getResource("/edu/cmu/sphinx/linguist/dictionary/bad.dict");
+        URL noiseDictUrl = getClass()
+                .getResource("/edu/cmu/sphinx/models/en-us/en-us/noisedict");
+
+        Dictionary dictionary = new TextDictionary(dictUrl,
+                                                   noiseDictUrl,
+                                                   null,
+                                                   null,
+                                                   new UnitManager());
+        boolean failed = false;
+        try {
+            dictionary.allocate();
+        } catch (Error e) {
+            failed = true;
+        }
+        assertTrue(failed);
+   }
 }
