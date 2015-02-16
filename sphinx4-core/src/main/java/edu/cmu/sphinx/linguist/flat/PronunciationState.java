@@ -31,7 +31,7 @@ public class PronunciationState extends SentenceHMMState implements        WordS
     public PronunciationState(WordState parent, int which) {
         super("P", parent, which);
 
-        pronunciation = parent.getWord().getPronunciations(null)[which];
+        pronunciation = parent.getWord().getPronunciations()[which];
     }
 
 

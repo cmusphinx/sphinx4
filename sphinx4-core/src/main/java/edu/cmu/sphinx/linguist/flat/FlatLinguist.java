@@ -590,7 +590,7 @@ public class FlatLinguist implements Linguist, Configurable {
                 } else {
 //                    int maxSize = getRightContextSize();
                     Word word = node.getWord();
-                    Pronunciation[] prons = word.getPronunciations(null);
+                    Pronunciation[] prons = word.getPronunciations();
                     for (Pronunciation pron : prons) {
                         UnitContext startingContext = getStartingContext(pron);
                         startingContexts.add(startingContext);
@@ -625,7 +625,7 @@ public class FlatLinguist implements Linguist, Configurable {
             if (!node.isEmpty()) {
                 int maxSize = getLeftContextSize();
                 Word word = node.getWord();
-                Pronunciation[] prons = word.getPronunciations(null);
+                Pronunciation[] prons = word.getPronunciations();
                 for (Pronunciation pron : prons) {
                     Unit[] units = pron.getUnits();
                     int size = units.length;
@@ -861,7 +861,7 @@ public class FlatLinguist implements Linguist, Configurable {
         private void expandWord(UnitContext leftContext) {
             Word word = node.getWord();
             T("  Expanding word " + word + " for lc " + leftContext);
-            Pronunciation[] pronunciations = word.getPronunciations(null);
+            Pronunciation[] pronunciations = word.getPronunciations();
             for (int i = 0; i < pronunciations.length; i++) {
                 expandPronunciation(leftContext, pronunciations[i], i);
             }
@@ -1231,7 +1231,7 @@ public class FlatLinguist implements Linguist, Configurable {
                 // word, then each pronunciation gets 1/3 of the total
                 // probability.
                 if (spreadWordProbabilitiesAcrossPronunciations && !gstate.getNode().isEmpty()) {
-                    int numPronunciations = gstate.getNode().getWord().getPronunciations(null).length;
+                    int numPronunciations = gstate.getNode().getWord().getPronunciations().length;
                     probability -= logMath.linearToLog(numPronunciations);
                 }
                 float fprob = probability;

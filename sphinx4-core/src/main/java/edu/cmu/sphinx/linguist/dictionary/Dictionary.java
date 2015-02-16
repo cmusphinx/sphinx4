@@ -13,7 +13,6 @@ package edu.cmu.sphinx.linguist.dictionary;
 
 import edu.cmu.sphinx.linguist.acoustic.UnitManager;
 import edu.cmu.sphinx.util.props.Configurable;
-import edu.cmu.sphinx.util.props.S4Boolean;
 import edu.cmu.sphinx.util.props.S4Component;
 import edu.cmu.sphinx.util.props.S4Integer;
 import edu.cmu.sphinx.util.props.S4String;
@@ -48,34 +47,12 @@ public interface Dictionary extends Configurable {
     /** The property for the filler dictionary file path. */
     @S4String
     public static final String PROP_FILLER_DICTIONARY = "fillerPath";
-
-    /** The property that specifies whether to add a duplicate SIL-ending pronunciation. */
-    @S4Boolean(defaultValue = false)
-    public static final String PROP_ADD_SIL_ENDING_PRONUNCIATION = "addSilEndingPronunciation";
-
     /**
      * The property that specifies the word to substitute when a lookup fails to find the word in the
      * dictionary. If this is not set, no substitute is performed.
      */
     @S4String(mandatory = false)
     public static final String PROP_WORD_REPLACEMENT = "wordReplacement";
-
-    /**
-     * The property that specifies whether the dictionary should return null if a word is not found in
-     * the dictionary, or whether it should throw an error. If true, a null is returned for words that are not found in
-     * the dictionary (and the 'PROP_WORD_REPLACEMENT' property is not set).
-     */
-    @S4Boolean(defaultValue = false)
-    public static final String PROP_ALLOW_MISSING_WORDS = "allowMissingWords";
-
-    /**
-     * The property that specifies whether the Dictionary.getWord() method should return a Word object even if the
-     * word does not exist in the dictionary. If this property is true, and property allowMissingWords is also true, the
-     * method will return a Word, but the Word will have null Pronunciations. Otherwise, the method will return null.
-     * This property is usually only used for testing purposes.
-     */
-    @S4Boolean(defaultValue = false)
-    public static final String PROP_CREATE_MISSING_WORDS = "createMissingWords";
 
     /** The property that defines the name of the unit manager that is used to convert strings to Unit objects */
     @S4Component(type = UnitManager.class, defaultClass = UnitManager.class)
@@ -102,7 +79,7 @@ public interface Dictionary extends Configurable {
 
     /**
      * Returns a Word object based on the spelling and its classification. The behavior of this method is also affected
-     * by the properties wordReplacement, allowMissingWords, and createMissingWords.
+     * by the properties wordReplacement and g2pModel
      *
      * @param text the spelling of the word of interest.
      * @return a Word object
@@ -133,15 +110,6 @@ public interface Dictionary extends Configurable {
      * @return the silence word
      */
     public Word getSilenceWord();
-
-
-    /**
-     * Returns the set of all possible word classifications for this dictionary.
-     *
-     * @return the set of all possible word classifications
-     */
-    public WordClassification[] getPossibleWordClassifications();
-
 
     /**
      * Gets the set of all filler words in the dictionary

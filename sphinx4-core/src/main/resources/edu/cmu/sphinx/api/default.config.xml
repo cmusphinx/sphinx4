@@ -235,11 +235,9 @@
   </component>
 
   <component name="dictionary"
-    type="edu.cmu.sphinx.linguist.dictionary.FastDictionary">
+    type="edu.cmu.sphinx.linguist.dictionary.TextDictionary">
     <property name="dictionaryPath" value=""/>
     <property name="fillerPath" value=""/>
-    <property name="addSilEndingPronunciation" value="false"/>
-    <property name="allowMissingWords" value="false"/>
     <property name="unitManager" value="unitManager"/>
   </component>
 

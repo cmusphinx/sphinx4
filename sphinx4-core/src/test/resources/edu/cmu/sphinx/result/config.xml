@@ -100,7 +100,7 @@
     </component>    
     
     <component name="dictionary" 
-        type="edu.cmu.sphinx.linguist.dictionary.FastDictionary">
+        type="edu.cmu.sphinx.linguist.dictionary.TextDictionary">
         <property name="dictionaryPath"
                   value="resource:/edu/cmu/sphinx/models/en-us/cmudict-en-us.dict"/>
         <property name="fillerPath" 

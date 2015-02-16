@@ -38,7 +38,7 @@ public class PhoneWordSearchState extends PhoneNonEmittingSearchState implements
     public Pronunciation getPronunciation() {
         Unit[] pronUnits = new Unit[1];
         pronUnits[0] = unit;
-        Pronunciation p = new Pronunciation(pronUnits, "", null, 1.0f);
+        Pronunciation p = new Pronunciation(pronUnits, "", 1.0f);
         p.setWord(new Word(unit.getName(), null, false));
         return p;
     }

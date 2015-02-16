@@ -11,11 +11,11 @@
     </component>
     
     <component name="dictionary"
-          type="edu.cmu.sphinx.linguist.dictionary.FastDictionary">
+          type="edu.cmu.sphinx.linguist.dictionary.TextDictionary">
         <property name="dictionaryPath"
-	 			  value="resource:/WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz/dict/cmudict.0.6d"/>
+	 			  value="resource:/edu/cmu/sphinx/models/en-us/cmudict-en-us.dict"/>
         <property name="fillerPath" 
-	 			  value="resource:/WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz/noisedict"/>
+	 			  value="resource:/edu/cmu/sphinx/models/en-us/en-us/noisedict"/>
         <property name="unitManager" value="unitManager"/>
     </component>
 

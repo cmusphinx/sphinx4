@@ -5,7 +5,6 @@ package edu.cmu.sphinx.linguist.language.classes;
 
 import edu.cmu.sphinx.linguist.dictionary.Dictionary;
 import edu.cmu.sphinx.linguist.dictionary.Word;
-import edu.cmu.sphinx.linguist.dictionary.WordClassification;
 import edu.cmu.sphinx.util.props.PropertyException;
 import edu.cmu.sphinx.util.props.PropertySheet;
 import edu.cmu.sphinx.util.props.S4Component;
@@ -87,13 +86,6 @@ public class ClassPresentingDictionary implements Dictionary {
      */
     public Word getSilenceWord() {
         return wordDictionary.getSilenceWord();
-    }
-
-    /* (non-Javadoc)
-     * @see edu.cmu.sphinx.linguist.dictionary.Dictionary#getPossibleWordClassifications()
-     */
-    public WordClassification[] getPossibleWordClassifications() {
-        return wordDictionary.getPossibleWordClassifications();
     }
 
     /* (non-Javadoc)

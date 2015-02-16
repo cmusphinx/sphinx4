@@ -20,7 +20,7 @@ import org.testng.annotations.Test;
 
 import edu.cmu.sphinx.linguist.acoustic.UnitManager;
 import edu.cmu.sphinx.linguist.dictionary.Dictionary;
-import edu.cmu.sphinx.linguist.dictionary.FastDictionary;
+import edu.cmu.sphinx.linguist.dictionary.TextDictionary;
 
 
 public class BatchForcedAlignerGrammarTest {
@@ -33,13 +33,10 @@ public class BatchForcedAlignerGrammarTest {
         URL noisedictUrl = getClass()
                 .getResource("/edu/cmu/sphinx/models/en-us/en-us/noisedict");
 
-        Dictionary dictionary = new FastDictionary(dictionaryUrl,
+        Dictionary dictionary = new TextDictionary(dictionaryUrl,
                                                    noisedictUrl,
                                                    null,
-                                                   false,
                                                    null,
-                                                   false,
-                                                   false,
                                                    new UnitManager());
 
         URL url = getClass().getResource("BatchForcedAlignerGrammarTest.utts");

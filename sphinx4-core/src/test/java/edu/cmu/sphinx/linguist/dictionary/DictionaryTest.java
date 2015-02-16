@@ -30,13 +30,10 @@ public class DictionaryTest {
         URL noiseDictUrl = getClass()
                 .getResource("/edu/cmu/sphinx/models/en-us/en-us/noisedict");
 
-        Dictionary dictionary = new FullDictionary(dictUrl,
+        Dictionary dictionary = new TextDictionary(dictUrl,
                                                    noiseDictUrl,
                                                    null,
-                                                   false,
                                                    null,
-                                                   false,
-                                                   false,
                                                    new UnitManager());
         dictionary.allocate();
         Word word = dictionary.getWord("one");

@@ -13,11 +13,11 @@
 package edu.cmu.sphinx.trainer;
 
 import edu.cmu.sphinx.linguist.acoustic.Unit;
-import edu.cmu.sphinx.linguist.dictionary.FullDictionary;
+import edu.cmu.sphinx.linguist.dictionary.TextDictionary;
 import edu.cmu.sphinx.linguist.dictionary.Pronunciation;
 
 /** Dummy trainer dictionary. */
-public class TrainerDictionary extends FullDictionary {
+public class TrainerDictionary extends TextDictionary {
 
     static final String UTTERANCE_BEGIN_SYMBOL = "<s>";
     static final String UTTERANCE_END_SYMBOL = "</s>";
@@ -52,7 +52,7 @@ public class TrainerDictionary extends FullDictionary {
             }
         }
         pronunciations
-                = getWord(wordWithoutParentheses).getPronunciations(null);
+                = getWord(wordWithoutParentheses).getPronunciations();
         if (pronunciations == null) {
             System.out.println("Pronunciation not found for word " +
                     wordWithoutParentheses);

@@ -61,11 +61,10 @@ public class ScorerTests {
             scorer.allocate();
             scorer.startRecognition();
 
-//          Assert.assertTrue(dummyFrontEnd.getBufferSize() < (startBufferSize - 100));
-
             List<Scoreable> dummyTokens = Arrays.asList(testToken);
+            for (int i = 0; i < 100; i++)
+                scorer.calculateScores(dummyTokens);
 
-            scorer.calculateScores(dummyTokens);
             Assert.assertTrue(dummyFrontEnd.getBufferSize() < (startBufferSize - 100));
 
             scorer.stopRecognition();

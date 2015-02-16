@@ -62,8 +62,6 @@ public class SpeechAligner {
 
         context = new Context(configuration);
         if (g2pPath != null) {
-            context.setLocalProperty("dictionary->allowMissingWords", "true");
-            context.setLocalProperty("dictionary->createMissingWords", "true");
             context.setLocalProperty("dictionary->g2pModelPath", g2pPath);
             context.setLocalProperty("dictionary->g2pMaxPron", "2");
         }

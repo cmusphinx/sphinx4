@@ -17,7 +17,7 @@ import edu.cmu.sphinx.util.TimeFrame;
 public class SpeakerIdentificationDemo {
 
     /**
-     * Returns string version of the given time in miliseconds
+     * Returns string version of the given time in milliseconds
      * 
      * @param seconds
      * @return time in format mm:ss

@@ -83,21 +83,6 @@ public class Word implements Comparable<Word> {
     /**
      * Retrieves the pronunciations of this word
      *
-     * @param wordClassification the classification of the word (typically part
-     *        of speech classification) or null if all word classifications are
-     *        acceptable. The word classification must be one of the set
-     *        returned by
-     *        <code>Dictionary.getPossibleWordClassifications</code>
-     * @return the pronunciations of this word
-     */
-    public Pronunciation[] getPronunciations(
-            WordClassification wordClassification) {
-        return pronunciations;
-    }
-
-    /**
-     * Retrieves the pronunciations of this word
-     *
      * @return the pronunciations of this word
      */
     public Pronunciation[] getPronunciations() {

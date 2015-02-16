@@ -34,15 +34,14 @@ import java.util.logging.Logger;
 
 /**
  * Creates a dictionary by quickly reading in an ASCII-based Sphinx-3 format
- * dictionary. It is called the FastDictionary because the loading is fast. When
- * loaded the dictionary just loads each line of the dictionary into the hash
- * table, assuming that most words are not going to be used. Only when a word is
- * actually used is its pronunciations massaged into an array of pronunciations.
+ * dictionary. When loaded the dictionary just loads each line of the dictionary
+ * into the hash table, assuming that most words are not going to be used. Only
+ * when a word is actually used is its pronunciations massaged into an array of
+ * pronunciations.
  * <p/>
- * The format of the ASCII dictionary that it explains is the same as the
- * {@link FullDictionary FullDictionary}, i.e., the word, followed by spaces or
- * tab, followed by the pronunciation(s). For example, a digits dictionary will
- * look like:
+ * The format of the ASCII dictionary is the word, followed by spaces or tab,
+ * followed by the pronunciation(s). For example, a digits dictionary will look
+ * like:
  * <p/>
  * 
  * <pre>
@@ -66,21 +65,23 @@ import java.util.logging.Logger;
  * each.
  */
 
-public class FastDictionary implements Dictionary {
+public class TextDictionary implements Dictionary {
 
     // -------------------------------
     // Configuration data
     // --------------------------------
     protected Logger logger;
-    private boolean addSilEndingPronunciation;
-    private boolean allowMissingWords;
-    private boolean createMissingWords;
-    private String wordReplacement;
+
     protected URL wordDictionaryFile;
     protected URL fillerDictionaryFile;
+    protected List<URL> addendaUrlList;
+
+    // Replacement to use if word is missing
+    private String wordReplacement;
+
+    // G2P model to use if word replacement is not specified and word is missing
     protected URL g2pModelFile;
     protected int g2pMaxPron = 0;
-    protected List<URL> addendaUrlList;
 
     protected UnitManager unitManager;
 
@@ -95,56 +96,32 @@ public class FastDictionary implements Dictionary {
     protected Set<String> fillerWords;
     protected boolean allocated;
 
-    public FastDictionary(String wordDictionaryFile,
-            String fillerDictionaryFile, List<URL> addendaUrlList,
-            boolean addSilEndingPronunciation, String wordReplacement,
-            boolean allowMissingWords, boolean createMissingWords,
-            UnitManager unitManager) throws MalformedURLException,
+    public TextDictionary(String wordDictionaryFile, String fillerDictionaryFile, List<URL> addendaUrlList,
+            boolean addSilEndingPronunciation, String wordReplacement, UnitManager unitManager) throws MalformedURLException,
             ClassNotFoundException {
-        this(ConfigurationManagerUtils.resourceToURL(wordDictionaryFile),
-             ConfigurationManagerUtils.resourceToURL(fillerDictionaryFile),
-             addendaUrlList,
-             addSilEndingPronunciation,
-             wordReplacement,
-             allowMissingWords,
-             createMissingWords,
-             unitManager);
+        this(ConfigurationManagerUtils.resourceToURL(wordDictionaryFile), ConfigurationManagerUtils
+                .resourceToURL(fillerDictionaryFile), addendaUrlList, wordReplacement, unitManager);
     }
 
-    public FastDictionary(URL wordDictionaryFile, URL fillerDictionaryFile,
-            List<URL> addendaUrlList, boolean addSilEndingPronunciation,
-            String wordReplacement, boolean allowMissingWords,
-            boolean createMissingWords, UnitManager unitManager) {
+    public TextDictionary(URL wordDictionaryFile, URL fillerDictionaryFile, List<URL> addendaUrlList, String wordReplacement,
+            UnitManager unitManager) {
         this.logger = Logger.getLogger(getClass().getName());
 
         this.wordDictionaryFile = wordDictionaryFile;
         this.fillerDictionaryFile = fillerDictionaryFile;
         this.addendaUrlList = addendaUrlList;
-        this.addSilEndingPronunciation = addSilEndingPronunciation;
         this.wordReplacement = wordReplacement;
-        this.allowMissingWords = allowMissingWords;
-        this.createMissingWords = createMissingWords;
         this.unitManager = unitManager;
     }
 
-    public FastDictionary(URL wordDictionaryFile, URL fillerDictionaryFile,
-            List<URL> addendaUrlList, boolean addSilEndingPronunciation,
-            String wordReplacement, boolean allowMissingWords,
-            boolean createMissingWords, UnitManager unitManager,
-            URL g2pModelFile, int g2pMaxPron) {
-        this(wordDictionaryFile,
-             fillerDictionaryFile,
-             addendaUrlList,
-             addSilEndingPronunciation,
-             wordReplacement,
-             allowMissingWords,
-             createMissingWords,
-             unitManager);
+    public TextDictionary(URL wordDictionaryFile, URL fillerDictionaryFile, List<URL> addendaUrlList,
+            boolean addSilEndingPronunciation, String wordReplacement, UnitManager unitManager, URL g2pModelFile, int g2pMaxPron) {
+        this(wordDictionaryFile, fillerDictionaryFile, addendaUrlList, wordReplacement, unitManager);
         this.g2pModelFile = g2pModelFile;
         this.g2pMaxPron = g2pMaxPron;
     }
 
-    public FastDictionary() {
+    public TextDictionary() {
 
     }
 
@@ -159,19 +136,12 @@ public class FastDictionary implements Dictionary {
     public void newProperties(PropertySheet ps) throws PropertyException {
         logger = ps.getLogger();
 
-        wordDictionaryFile = ConfigurationManagerUtils
-                .getResource(PROP_DICTIONARY, ps);
-        fillerDictionaryFile = ConfigurationManagerUtils
-                .getResource(PROP_FILLER_DICTIONARY, ps);
+        wordDictionaryFile = ConfigurationManagerUtils.getResource(PROP_DICTIONARY, ps);
+        fillerDictionaryFile = ConfigurationManagerUtils.getResource(PROP_FILLER_DICTIONARY, ps);
         addendaUrlList = ps.getResourceList(PROP_ADDENDA);
-        addSilEndingPronunciation = ps
-                .getBoolean(PROP_ADD_SIL_ENDING_PRONUNCIATION);
         wordReplacement = ps.getString(Dictionary.PROP_WORD_REPLACEMENT);
-        allowMissingWords = ps.getBoolean(Dictionary.PROP_ALLOW_MISSING_WORDS);
-        createMissingWords = ps.getBoolean(PROP_CREATE_MISSING_WORDS);
         unitManager = (UnitManager) ps.getComponent(PROP_UNIT_MANAGER);
-        g2pModelFile = ConfigurationManagerUtils
-                .getResource(PROP_G2P_MODEL_PATH, ps);
+        g2pModelFile = ConfigurationManagerUtils.getResource(PROP_G2P_MODEL_PATH, ps);
         g2pMaxPron = ps.getInt(PROP_G2P_MAX_PRONUNCIATIONS);
     }
 
@@ -215,8 +185,7 @@ public class FastDictionary implements Dictionary {
 
             loadCustomDictionaries(addendaUrlList);
 
-            logger.info("Loading filler dictionary from: "
-                    + fillerDictionaryFile);
+            logger.info("Loading filler dictionary from: " + fillerDictionaryFile);
 
             loadDictionary(fillerDictionaryFile.openStream(), true);
 
@@ -253,8 +222,7 @@ public class FastDictionary implements Dictionary {
      * @throws java.io.IOException
      *             if there is an error reading the dictionary
      */
-    protected void loadDictionary(InputStream inputStream, boolean isFillerDict)
-            throws IOException {
+    protected void loadDictionary(InputStream inputStream, boolean isFillerDict) throws IOException {
         InputStreamReader isr = new InputStreamReader(inputStream);
         BufferedReader br = new BufferedReader(isr);
         String line;
@@ -345,7 +313,7 @@ public class FastDictionary implements Dictionary {
     /**
      * Returns a Word object based on the spelling and its classification. The
      * behavior of this method is also affected by the properties
-     * wordReplacement, allowMissingWords, and createMissingWords.
+     * wordReplacement and g2pModel
      * 
      * @param text
      *            the spelling of the word of interest.
@@ -362,53 +330,41 @@ public class FastDictionary implements Dictionary {
 
         String word = dictionary.get(text);
         if (word == null) { // deal with 'not found' case
-            logger.info("The dictionary is missing a phonetic transcription for the word '"
-                    + text + "'");
+            logger.info("The dictionary is missing a phonetic transcription for the word '" + text + "'");
             if (wordReplacement != null) {
                 wordObject = getWord(wordReplacement);
-            } else if (allowMissingWords) {
-                if (createMissingWords) {
-                    if (g2pModelFile != null
-                            && !g2pModelFile.getPath().equals("")) {
-                        logger.info("Generating phonetic transcription(s) for the word '"
-                                + text + "' using g2p model");
-                        ArrayList<Path> paths = g2pDecoder
-                                .phoneticize(text, g2pMaxPron);
-                        List<Pronunciation> pronunciations = new LinkedList<Pronunciation>();
-                        for (Path p : paths) {
-                            int unitCount = p.getPath().size();
-                            ArrayList<Unit> units = new ArrayList<Unit>(unitCount);
-                            for (String token : p.getPath()) {
-                                units.add(getCIUnit(token, false));
-                            }
-                            if (units.size() == 0) {
-                                units.add(UnitManager.SILENCE);
-                            }
-                            pronunciations.add(new Pronunciation(units));
-                            if (addSilEndingPronunciation) {
-                                units.add(UnitManager.SILENCE);
-                                pronunciations.add(new Pronunciation(units));
-                            }
-                        }
-                        Pronunciation[] pronunciationsArray = pronunciations
-                                .toArray(new Pronunciation[pronunciations
-                                        .size()]);
-                        wordObject = createWord(text,
-                                                pronunciationsArray,
-                                                false);
-                        for (Pronunciation pronunciation : pronunciationsArray) {
-                            pronunciation.setWord(wordObject);
-                        }
-                        wordDictionary.put(text, wordObject);
-                    } else {
-                        wordObject = createWord(text, null, false);
-                    }
-                }
+            } else if (g2pModelFile != null && !g2pModelFile.getPath().equals("")) {
+                logger.info("Generating phonetic transcription(s) for the word '" + text + "' using g2p model");
+                wordObject = extractPronunciation(text);
+                wordDictionary.put(text, wordObject);
             }
         } else { // first lookup for this string
             wordObject = processEntry(text);
         }
 
+        return wordObject;
+    }
+
+    private Word extractPronunciation(String text) {
+        Word wordObject;
+        ArrayList<Path> paths = g2pDecoder.phoneticize(text, g2pMaxPron);
+        List<Pronunciation> pronunciations = new LinkedList<Pronunciation>();
+        for (Path p : paths) {
+            int unitCount = p.getPath().size();
+            ArrayList<Unit> units = new ArrayList<Unit>(unitCount);
+            for (String token : p.getPath()) {
+                units.add(getCIUnit(token, false));
+            }
+            if (units.size() == 0) {
+                units.add(UnitManager.SILENCE);
+            }
+            pronunciations.add(new Pronunciation(units));
+        }
+        Pronunciation[] pronunciationsArray = pronunciations.toArray(new Pronunciation[pronunciations.size()]);
+        wordObject = createWord(text, pronunciationsArray, false);
+        for (Pronunciation pronunciation : pronunciationsArray) {
+            pronunciation.setWord(wordObject);
+        }
         return wordObject;
     }
 
@@ -424,9 +380,7 @@ public class FastDictionary implements Dictionary {
      *            if <code>true</code> this is a filler word
      * @return the word
      */
-    private Word createWord(String text,
-                            Pronunciation[] pronunciation,
-                            boolean isFiller) {
+    private Word createWord(String text, Pronunciation[] pronunciation, boolean isFiller) {
         Word word = new Word(text, pronunciation, isFiller);
         dictionary.put(text, word.toString());
         return word;
@@ -464,15 +418,10 @@ public class FastDictionary implements Dictionary {
                     units.add(getCIUnit(unitName, isFiller));
                 }
                 pronunciations.add(new Pronunciation(units));
-                if (!isFiller && addSilEndingPronunciation) {
-                    units.add(UnitManager.SILENCE);
-                    pronunciations.add(new Pronunciation(units));
-                }
             }
         } while (line != null);
 
-        Pronunciation[] pronunciationsArray = pronunciations
-                .toArray(new Pronunciation[pronunciations.size()]);
+        Pronunciation[] pronunciationsArray = pronunciations.toArray(new Pronunciation[pronunciations.size()]);
         Word wordObject = createWord(word, pronunciationsArray, isFiller);
 
         for (Pronunciation pronunciation : pronunciationsArray) {
@@ -484,23 +433,13 @@ public class FastDictionary implements Dictionary {
     }
 
     /**
-     * Returns the set of all possible word classifications for this dictionary.
-     * 
-     * @return the set of all possible word classifications
-     */
-    public WordClassification[] getPossibleWordClassifications() {
-        return null;
-    }
-
-    /**
-     * Returns a string representation of this FastDictionary in alphabetical
+     * Returns a string representation of this TextDictionary in alphabetical
      * order.
      * 
-     * @return a string representation of this FastDictionary
+     * @return a string representation of this dictionary
      */
     @Override
     public String toString() {
-
         SortedMap<String, String> sorted = new TreeMap<String, String>(dictionary);
         StringBuilder result = new StringBuilder();
 
