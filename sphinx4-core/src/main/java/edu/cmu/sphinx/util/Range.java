@@ -21,5 +21,8 @@ public class Range {
     public int upperEndpoint() {
         return end;
     }
-
+    
+    public String toString() {
+	return String.format("[%d, %d]", start, end);
+    }
 }
