@@ -8,11 +8,13 @@
  * redistribution of this file, and for a DISCLAIMER OF ALL
  * WARRANTIES.
  */
-package edu.cmu.sphinx.alignment;
+package edu.cmu.sphinx.alignment.tokenizer;
 
 import java.io.IOException;
 import java.io.Reader;
 import java.util.Iterator;
+
+import edu.cmu.sphinx.alignment.Token;
 
 /**
  * Implements the tokenizer interface. Breaks an input sequence of characters

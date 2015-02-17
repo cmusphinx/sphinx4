@@ -72,8 +72,9 @@ public class AlignerDemo {
         
         LongTextAligner textAligner =
                 new LongTextAligner(stringResults, 2);
-        List<String> words = aligner.getWordExpander().expand(transcript);
-
+        List<String> sentences = aligner.getTokenizer().expand(transcript);
+        List<String> words = aligner.sentenceToWords(sentences);
+        
         int[] aid = textAligner.align(words);
         
         int lastId = -1;

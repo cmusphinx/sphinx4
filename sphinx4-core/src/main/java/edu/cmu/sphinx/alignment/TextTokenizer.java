@@ -12,10 +12,14 @@ package edu.cmu.sphinx.alignment;
 
 import java.util.List;
 
-/**
- *
- * @author Alexander Solovets
- */
-public interface WordExpander {
+public interface TextTokenizer {
+    
+    
+    /**
+     * Cleans the text and returns the list of lines
+     * 
+     * @param Input text 
+     * @return a list of lines in the text.
+     */
     List<String> expand(String text);
 }

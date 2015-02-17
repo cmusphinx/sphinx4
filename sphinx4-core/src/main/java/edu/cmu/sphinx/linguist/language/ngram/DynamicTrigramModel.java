@@ -12,9 +12,9 @@ import edu.cmu.sphinx.util.props.PropertySheet;
 
 /**
  * 3-gram language model that can change its content at runtime.
- *
+ * 
  * @author Alexander Solovets
- *
+ * 
  */
 public class DynamicTrigramModel implements LanguageModel {
 
@@ -23,7 +23,7 @@ public class DynamicTrigramModel implements LanguageModel {
     private int maxDepth;
     private float unigramWeight;
 
-    private List<String> textWords;
+    private List<String> sentences;
     private Map<WordSequence, Float> logProbs;
     private Map<WordSequence, Float> logBackoffs;
 
@@ -48,52 +48,50 @@ public class DynamicTrigramModel implements LanguageModel {
         vocabulary.clear();
         logProbs.clear();
         logBackoffs.clear();
-
-        vocabulary.addAll(textWords);
-        List<Word> words = new ArrayList<Word>();
-        
-        words.add(dictionary.getSentenceStartWord());
-        for (String stringWord : textWords) {
-            Word word = dictionary.getWord(stringWord);
-            if (word == null) {
-                words.add(Word.UNKNOWN);
-            } else {
-                words.add(word);
-            }
-        }
-        words.add(dictionary.getSentenceEndWord());        
-
         HashMap<WordSequence, Integer> unigrams = new HashMap<WordSequence, Integer>();
         HashMap<WordSequence, Integer> bigrams = new HashMap<WordSequence, Integer>();
         HashMap<WordSequence, Integer> trigrams = new HashMap<WordSequence, Integer>();
         int wordCount = 0;
-        
-        if (words.size() > 0) {
-            addSequence(unigrams, new WordSequence(words.get(0)));
-            wordCount++;
-        }
-            
-        if (words.size() > 1) {
-            wordCount++;
-            addSequence(unigrams, new WordSequence(words.get(1)));
-            addSequence(bigrams, new WordSequence(words.get(0), words.get(1)));
-        }
 
-        for (int i = 2; i < words.size(); ++i) {
-            wordCount++;
-            addSequence(unigrams, new WordSequence(words.get(i)));
-            addSequence(bigrams, new WordSequence(words.get(i - 1), words.get(i)));
-            addSequence(trigrams, new WordSequence(words.get(i - 2),
-                                          words.get(i - 1),
-                                          words.get(i)));
+        for (String sentence : sentences) {
+            String[] textWords = sentence.split("\\s+");
+            List<Word> words = new ArrayList<Word>();
+            words.add(dictionary.getSentenceStartWord());
+            for (String wordString : textWords) {
+                vocabulary.add(wordString);
+                Word word = dictionary.getWord(wordString);
+                if (word == null) {
+                    words.add(Word.UNKNOWN);
+                } else {
+                    words.add(word);
+                }
+            }
+            words.add(dictionary.getSentenceEndWord());
+
+            if (words.size() > 0) {
+                addSequence(unigrams, new WordSequence(words.get(0)));
+                wordCount++;
+            }
+
+            if (words.size() > 1) {
+                wordCount++;
+                addSequence(unigrams, new WordSequence(words.get(1)));
+                addSequence(bigrams, new WordSequence(words.get(0), words.get(1)));
+            }
+
+            for (int i = 2; i < words.size(); ++i) {
+                wordCount++;
+                addSequence(unigrams, new WordSequence(words.get(i)));
+                addSequence(bigrams, new WordSequence(words.get(i - 1), words.get(i)));
+                addSequence(trigrams, new WordSequence(words.get(i - 2), words.get(i - 1), words.get(i)));
+            }
         }
 
         float discount = .5f;
         float deflate = 1 - discount;
         Map<WordSequence, Float> uniprobs = new HashMap<WordSequence, Float>();
         for (Map.Entry<WordSequence, Integer> e : unigrams.entrySet()) {
-            uniprobs.put(e.getKey(),
-                         (float) e.getValue() * deflate / wordCount);
+            uniprobs.put(e.getKey(), (float) e.getValue() * deflate / wordCount);
         }
 
         LogMath lmath = LogMath.getLogMath();
@@ -102,8 +100,7 @@ public class DynamicTrigramModel implements LanguageModel {
         float logUniformProb = -lmath.linearToLog(uniprobs.size());
 
         Set<WordSequence> sorted1grams = new TreeSet<WordSequence>(unigrams.keySet());
-        Iterator<WordSequence> iter =
-                new TreeSet<WordSequence>(bigrams.keySet()).iterator();
+        Iterator<WordSequence> iter = new TreeSet<WordSequence>(bigrams.keySet()).iterator();
         WordSequence ws = iter.hasNext() ? iter.next() : null;
         for (WordSequence unigram : sorted1grams) {
             float p = lmath.linearToLog(uniprobs.get(unigram));
@@ -129,8 +126,7 @@ public class DynamicTrigramModel implements LanguageModel {
         Map<WordSequence, Float> biprobs = new HashMap<WordSequence, Float>();
         for (Map.Entry<WordSequence, Integer> entry : bigrams.entrySet()) {
             int unigramCount = unigrams.get(entry.getKey().getOldest());
-            biprobs.put(entry.getKey(),
-                        entry.getValue() * deflate / unigramCount);
+            biprobs.put(entry.getKey(), entry.getValue() * deflate / unigramCount);
         }
 
         Set<WordSequence> sorted2grams = new TreeSet<WordSequence>(bigrams.keySet());
@@ -160,8 +156,7 @@ public class DynamicTrigramModel implements LanguageModel {
         }
     }
 
-    private void addSequence(HashMap<WordSequence, Integer> grams,
-            WordSequence wordSequence) {
+    private void addSequence(HashMap<WordSequence, Integer> grams, WordSequence wordSequence) {
         Integer count = grams.get(wordSequence);
         if (count != null) {
             grams.put(wordSequence, count + 1);
@@ -203,7 +198,7 @@ public class DynamicTrigramModel implements LanguageModel {
         return maxDepth;
     }
 
-    public void setText(List<String> textWords) {
-        this.textWords = textWords;
+    public void setText(List<String> sentences) {
+        this.sentences = sentences;
     }
 }

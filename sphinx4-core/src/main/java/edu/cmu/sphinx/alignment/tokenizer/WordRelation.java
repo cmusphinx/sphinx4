@@ -8,7 +8,9 @@
  * redistribution of this file, and for a DISCLAIMER OF ALL
  * WARRANTIES.
  */
-package edu.cmu.sphinx.alignment;
+package edu.cmu.sphinx.alignment.tokenizer;
+
+import edu.cmu.sphinx.alignment.USEnglishTokenizer;
 
 /**
  * Helper class to add words and breaks into a Relation object.
@@ -16,9 +18,9 @@ package edu.cmu.sphinx.alignment;
 public class WordRelation {
 
     private Relation relation;
-    private UsEnglishWordExpander tokenToWords;
+    private USEnglishTokenizer tokenToWords;
 
-    private WordRelation(Relation parentRelation, UsEnglishWordExpander tokenToWords) {
+    private WordRelation(Relation parentRelation, USEnglishTokenizer tokenToWords) {
         this.relation = parentRelation;
         this.tokenToWords = tokenToWords;
     }
@@ -32,7 +34,7 @@ public class WordRelation {
      * @return a WordRelation object
      */
     public static WordRelation createWordRelation(Utterance utterance,
-            UsEnglishWordExpander tokenToWords) {
+            USEnglishTokenizer tokenToWords) {
         Relation relation = utterance.createRelation(Relation.WORD);
         return new WordRelation(relation, tokenToWords);
     }

@@ -50,11 +50,11 @@ public class UsEnglishWordExpanderTest {
                     {"St. Elmo's fire", "saint elmo's fire"},
                     {"elm st.", "elm street"},};
 
-    private WordExpander expander;
+    private TextTokenizer expander;
 
     @BeforeMethod
     public void setupMethod() {
-        expander = new UsEnglishWordExpander();
+        expander = new USEnglishTokenizer();
     }
 
     @DataProvider(name = "data")

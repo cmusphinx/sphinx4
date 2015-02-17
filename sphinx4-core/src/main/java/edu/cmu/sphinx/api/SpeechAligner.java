@@ -22,8 +22,8 @@ import java.util.TreeMap;
 import java.util.logging.Logger;
 
 import edu.cmu.sphinx.alignment.LongTextAligner;
-import edu.cmu.sphinx.alignment.UsEnglishWordExpander;
-import edu.cmu.sphinx.alignment.WordExpander;
+import edu.cmu.sphinx.alignment.SimpleTokenizer;
+import edu.cmu.sphinx.alignment.TextTokenizer;
 import edu.cmu.sphinx.linguist.language.grammar.AlignerGrammar;
 import edu.cmu.sphinx.linguist.language.ngram.DynamicTrigramModel;
 import edu.cmu.sphinx.recognizer.Recognizer;
@@ -32,21 +32,17 @@ import edu.cmu.sphinx.result.WordResult;
 import edu.cmu.sphinx.util.Range;
 import edu.cmu.sphinx.util.TimeFrame;
 
-/**
- * @author Alexander Solovets
- */
 public class SpeechAligner {
     private final Logger logger = Logger.getLogger(getClass().getSimpleName());
 
     private static final int TUPLE_SIZE = 3;
-    private static final int MIN_LM_ALIGN_SIZE = 20;
 
     private final Context context;
     private final Recognizer recognizer;
     private final AlignerGrammar grammar;
     private final DynamicTrigramModel languageModel;
 
-    private WordExpander wordExpander;
+    private TextTokenizer tokenizer;
 
     public SpeechAligner(String amPath, String dictPath, String g2pPath) throws MalformedURLException, IOException {
         Configuration configuration = new Configuration();
@@ -62,11 +58,11 @@ public class SpeechAligner {
         recognizer = context.getInstance(Recognizer.class);
         grammar = context.getInstance(AlignerGrammar.class);
         languageModel = context.getInstance(DynamicTrigramModel.class);
-        setWordExpander(new UsEnglishWordExpander());
+        setTokenizer(new SimpleTokenizer());
     }
 
     public List<WordResult> align(URL audioUrl, String transcript) throws IOException {
-        return align(audioUrl, getWordExpander().expand(transcript));
+        return align(audioUrl, getTokenizer().expand(transcript));
     }
 
     /**
@@ -77,7 +73,10 @@ public class SpeechAligner {
      * @return
      * @throws IOException
      */
-    public List<WordResult> align(URL audioUrl, List<String> transcript) throws IOException {
+    public List<WordResult> align(URL audioUrl, List<String> sentenceTranscript) throws IOException {
+        
+        List<String> transcript = sentenceToWords(sentenceTranscript);
+
         LongTextAligner aligner = new LongTextAligner(transcript, TUPLE_SIZE);
         Map<Integer, WordResult> alignedWords = new TreeMap<Integer, WordResult>();
         Queue<Range> ranges = new LinkedList<Range>();
@@ -90,8 +89,10 @@ public class SpeechAligner {
         timeFrames.offer(totalTimeFrame);
         long lastFrame = TimeFrame.INFINITE.getEnd();
 
+        languageModel.setText(sentenceTranscript);
+        
         for (int i = 0; i < 4; ++i) {
-            if (i == 3) {
+            if (i == 1) {
                 context.setLocalProperty("decoder->searchManager", "alignerSearchManager");
             }
 
@@ -103,20 +104,12 @@ public class SpeechAligner {
                 TimeFrame frame = timeFrames.poll();
                 Range range = ranges.poll();
 
-                // Don't align short texts with LM
-                if (i < 3 && text.size() < MIN_LM_ALIGN_SIZE) {
-                    continue;
-                }
 
                 logger.info("Aligning frame " + frame + " to text " + text + " range " + range);
 
-                if (i < 3) {
-                    languageModel.setText(text);
-                }
-
                 recognizer.allocate();
 
-                if (i == 3) {
+                if (i >= 1) {
                     grammar.setWords(text);
                 }
 
@@ -163,6 +156,17 @@ public class SpeechAligner {
         return new ArrayList<WordResult>(alignedWords.values());
     }
 
+    public List<String> sentenceToWords(List<String> sentenceTranscript) {
+        ArrayList<String> transcript = new ArrayList<String>();
+        for (String sentence : sentenceTranscript) {
+            String[] words = sentence.split("\\s+");
+            for (String word : words) {
+                transcript.add(word);
+            }
+        }
+        return transcript;
+    }
+
     private void dumpAlignmentStats(List<String> transcript, int[] alignment, List<WordResult> results) {
         int insertions = 0;
         int deletions = 0;
@@ -205,8 +209,7 @@ public class SpeechAligner {
         }
     }
 
-    @SuppressWarnings("unused")
-    private void dumpAlignment(List<String> transcript, int[] alignment, List<WordResult> results) {
+    public void dumpAlignment(List<String> transcript, int[] alignment, List<WordResult> results) {
         logger.info("Alignment");
         int[] aid = alignment;
         int lastId = -1;
@@ -249,11 +252,11 @@ public class SpeechAligner {
         ranges.offer(new Range(start, end - 1));
     }
 
-    public WordExpander getWordExpander() {
-        return wordExpander;
+    public TextTokenizer getTokenizer() {
+        return tokenizer;
     }
 
-    public void setWordExpander(WordExpander wordExpander) {
-        this.wordExpander = wordExpander;
+    public void setTokenizer(TextTokenizer wordExpander) {
+        this.tokenizer = wordExpander;
     }
 }

@@ -8,14 +8,16 @@
  * redistribution of this file, and for a DISCLAIMER OF ALL
  * WARRANTIES.
  */
-package edu.cmu.sphinx.alignment;
+package edu.cmu.sphinx.alignment.tokenizer;
+
+import edu.cmu.sphinx.alignment.USEnglishTokenizer;
 
 
 
 /**
  * Represents an ordered set of {@link Item}s and their associated children. A
  * relation has a name and a list of items, and is added to an
- * {@link Utterance} via an {@link UsEnglishWordExpander}.
+ * {@link Utterance} via an {@link USEnglishTokenizer}.
  */
 public class Relation {
     private String name;

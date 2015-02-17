@@ -8,7 +8,8 @@
  * redistribution of this file, and for a DISCLAIMER OF ALL
  * WARRANTIES.
  */
-package edu.cmu.sphinx.alignment;
+package edu.cmu.sphinx.alignment.tokenizer;
+
 
 /**
  * Expands Strings containing digits characters into a list of words

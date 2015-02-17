@@ -8,9 +8,11 @@
  * redistribution of this file, and for a DISCLAIMER OF ALL
  * WARRANTIES.
  */
-package edu.cmu.sphinx.alignment;
+package edu.cmu.sphinx.alignment.tokenizer;
 
 import java.util.Iterator;
+
+import edu.cmu.sphinx.alignment.Token;
 
 /**
  * Holds all the data for an utterance to be spoken. It is incrementally

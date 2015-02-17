@@ -18,6 +18,18 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import edu.cmu.sphinx.alignment.tokenizer.CharTokenizer;
+import edu.cmu.sphinx.alignment.tokenizer.DecisionTree;
+import edu.cmu.sphinx.alignment.tokenizer.FeatureSet;
+import edu.cmu.sphinx.alignment.tokenizer.Item;
+import edu.cmu.sphinx.alignment.tokenizer.NumberExpander;
+import edu.cmu.sphinx.alignment.tokenizer.PrefixFSM;
+import edu.cmu.sphinx.alignment.tokenizer.PronounceableFSM;
+import edu.cmu.sphinx.alignment.tokenizer.Relation;
+import edu.cmu.sphinx.alignment.tokenizer.SuffixFSM;
+import edu.cmu.sphinx.alignment.tokenizer.Utterance;
+import edu.cmu.sphinx.alignment.tokenizer.WordRelation;
+
 /**
  * Provides the definitions for US English whitespace, punctuations,
  * prepunctuation, and postpunctuation symbols. It also contains a set of
@@ -167,7 +179,7 @@ class UsEnglish {
  * lang/usenglish/us_text.c
  * </code>
  */
-public class UsEnglishWordExpander implements WordExpander {
+public class USEnglishTokenizer implements TextTokenizer {
     // Patterns for regular expression matching
     private static final Pattern alphabetPattern;
     private static final Pattern commaIntPattern;
@@ -345,7 +357,7 @@ public class UsEnglishWordExpander implements WordExpander {
      *
      * @param usNumbersCART the cart to use to classify numbers
      */
-    public UsEnglishWordExpander() {
+    public USEnglishTokenizer() {
         try {
             cart = new DecisionTree(getClass().getResource("nums_cart.txt"));
             prefixFSM =
