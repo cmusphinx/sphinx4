@@ -19,6 +19,7 @@ public class SimpleTokenizer implements TextTokenizer {
         text = text.replace('‘', ' ');
         text = text.replace('”', ' ');
         text = text.replace('“', ' ');
+        text = text.replace('"', ' ');
         text = text.replace('»', ' ');
         text = text.replace('«', ' ');
         text = text.replace('–', '-');

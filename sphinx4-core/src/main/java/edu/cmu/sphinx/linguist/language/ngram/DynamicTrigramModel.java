@@ -58,6 +58,9 @@ public class DynamicTrigramModel implements LanguageModel {
             List<Word> words = new ArrayList<Word>();
             words.add(dictionary.getSentenceStartWord());
             for (String wordString : textWords) {
+        	if (wordString.length() == 0) {
+        	    continue;
+        	}
                 vocabulary.add(wordString);
                 Word word = dictionary.getWord(wordString);
                 if (word == null) {

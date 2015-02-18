@@ -161,7 +161,8 @@ public class SpeechAligner {
         for (String sentence : sentenceTranscript) {
             String[] words = sentence.split("\\s+");
             for (String word : words) {
-                transcript.add(word);
+        	if (word.length() > 0)
+    	            transcript.add(word);
             }
         }
         return transcript;
