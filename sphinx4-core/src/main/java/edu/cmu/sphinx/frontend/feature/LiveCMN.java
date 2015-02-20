@@ -64,7 +64,7 @@ public class LiveCMN extends BaseDataProcessor {
     private int initialCmnWindow;
     
     /** The property for the live CMN window size. */
-    @S4Integer(defaultValue = 100)
+    @S4Integer(defaultValue = 300)
     public static final String PROP_CMN_WINDOW = "cmnWindow";
     private int cmnWindow;
 
@@ -72,7 +72,7 @@ public class LiveCMN extends BaseDataProcessor {
      * The property for the CMN shifting window. The shifting window specifies
      * how many cepstrum after which we re-calculate the cepstral mean.
      */
-    @S4Integer(defaultValue = 160)
+    @S4Integer(defaultValue = 400)
     public static final String PROP_CMN_SHIFT_WINDOW = "shiftWindow";
     private int cmnShiftWindow; // # of Cepstrum to recalculate mean
 
@@ -122,18 +122,21 @@ public class LiveCMN extends BaseDataProcessor {
                 continue;
         
             double[] cepstrum = ((DoubleData) data).getValues();
-            
+
             // Initialize arrays if needed
             if (size < 0) {
                 size = cepstrum.length;
                 sum = new double[size];
                 numberFrame = 0;
             }
-            // Process
-            for (int j = 0; j < size; j++) {
-                sum[j] += cepstrum[j];
+
+            // Accumulate cepstrum, avoid counting zero energy in CMN
+            if (cepstrum[0] >= 0) {
+                for (int j = 0; j < size; j++) {
+                    sum[j] += cepstrum[j];
+                }
+                numberFrame++;
             }
-            numberFrame++;
         }
 
         // If we didn't meet any data, do nothing
@@ -203,12 +206,18 @@ public class LiveCMN extends BaseDataProcessor {
                     + ") not equal sum array length (" + sum.length + ')');
         }
 
+        // Accumulate cepstrum, avoid counting zero energy in CMN
+        if (cepstrum[0] >= 0) {
+            for (int j = 0; j < cepstrum.length; j++) {
+                sum[j] += cepstrum[j];
+            }
+            numberFrame++;
+        }
+        
+        // Subtract current mean
         for (int j = 0; j < cepstrum.length; j++) {
-            sum[j] += cepstrum[j];
             cepstrum[j] -= currentMean[j];
         }
-
-        numberFrame++;
 
         if (numberFrame > cmnShiftWindow) {
             

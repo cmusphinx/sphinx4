@@ -124,7 +124,6 @@ public class BatchCMN extends BaseDataProcessor {
             input = getPredecessor().getData();
             if (input != null) {
                 if (input instanceof DoubleData) {
-                    numberDataCepstra++;
                     double[] cepstrumData = ((DoubleData) input).getValues();
                     if (sums == null) {
                         sums = new double[cepstrumData.length];
@@ -136,10 +135,14 @@ public class BatchCMN extends BaseDataProcessor {
                                             cepstrumData.length);
                         }
                     }
-                    // add the cepstrum data to the sums
-                    for (int j = 0; j < cepstrumData.length; j++) {
-                        sums[j] += cepstrumData[j];
+                    if (cepstrumData[0] >= 0) {
+                        // add the cepstrum data to the sums
+                        for (int j = 0; j < cepstrumData.length; j++) {
+                            sums[j] += cepstrumData[j];
+                        }
+                        numberDataCepstra++;
                     }
+
                     cepstraList.add(input);
 
                 } else if (input instanceof DataEndSignal || input instanceof SpeechEndSignal) {
