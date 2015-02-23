@@ -326,16 +326,16 @@ public class FSTGrammar extends Grammar {
                     if (word2.equals(",")) {
                         node = createGrammarNode(id, false);
                     } else {
-                        node = createGrammarNode(id, word2.toLowerCase());
+                        node = createGrammarNode(id, word2);
                     }
                     nodes.put(nodeName, node);
                 } else {
                     if (!word2.equals(",")) {
                         /*
-                         * if (!word2.toLowerCase().equals(getWord(node))) {
+                         * if (!word2.equals(getWord(node))) {
                          * System.out.println(node + ": " + word2 + ' ' + getWord(node)); }
                          */
-                        assert (word2.toLowerCase().equals(getWord(node)));
+                        assert (word2.equals(getWord(node)));
                     }
                 }
             }

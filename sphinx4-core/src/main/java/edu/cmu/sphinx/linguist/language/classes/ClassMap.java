@@ -121,9 +121,9 @@ public class ClassMap implements Configurable {
                 throw new IOException("corrupt word to class def: " + line + "; "
                         + st.countTokens());
             }
-            String className = st.nextToken().toLowerCase();
+            String className = st.nextToken();
             float linearProb = Float.parseFloat(st.nextToken());
-            String word = st.nextToken().toLowerCase();
+            String word = st.nextToken();
             if (logger.isLoggable(Level.FINE)) {
                 logger.fine(word + " --> " + className + " " + linearProb);
             }

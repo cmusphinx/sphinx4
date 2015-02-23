@@ -43,7 +43,7 @@ public class AlignerGrammar extends Grammar {
         tokens.clear();
         for (String word : words) {
             if (!word.isEmpty()) {
-                tokens.add(word.toLowerCase());
+                tokens.add(word);
             }
         }
         createGrammar();
@@ -60,7 +60,7 @@ public class AlignerGrammar extends Grammar {
 
         GrammarNode prevNode = initialNode;
         for (final String word : tokens) {
-            final GrammarNode wordNode = createGrammarNode(word.toLowerCase());
+            final GrammarNode wordNode = createGrammarNode(word);
             final GrammarNode alternativeNode = createGrammarNode(false);
             final GrammarNode exitNode = createGrammarNode(false);
             prevNode.add(wordNode, LogMath.LOG_ONE);

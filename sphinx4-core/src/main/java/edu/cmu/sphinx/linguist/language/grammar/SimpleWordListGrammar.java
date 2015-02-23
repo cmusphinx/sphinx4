@@ -106,7 +106,6 @@ public class SimpleWordListGrammar extends Grammar implements Configurable {
         while (!tok.isEOF()) {
             String word;
             while ((word = tok.getString()) != null) {
-                word = word.toLowerCase();
                 GrammarNode wordNode = createGrammarNode(word);
                 wordGrammarNodes.add(wordNode);
             }

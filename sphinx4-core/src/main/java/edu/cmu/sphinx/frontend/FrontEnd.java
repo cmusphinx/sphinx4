@@ -168,7 +168,7 @@ public class FrontEnd extends BaseDataProcessor {
     }
 
     private void init() {
-        this.timer = TimerPool.getTimer(this, Utilities.getReadable(getName()));
+        this.timer = TimerPool.getTimer(this, "Frontend");
         
         last = null;
         for (DataProcessor dp : frontEndList) {

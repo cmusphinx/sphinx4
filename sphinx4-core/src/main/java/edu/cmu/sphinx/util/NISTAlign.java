@@ -897,7 +897,7 @@ public class NISTAlign {
         LinkedList<Object> list = new LinkedList<Object>();
         StringTokenizer st = new StringTokenizer(s.trim());
         while (st.hasMoreTokens()) {
-            String token = st.nextToken().toLowerCase();
+            String token = st.nextToken();
             list.add(token);
         }
         return list;
