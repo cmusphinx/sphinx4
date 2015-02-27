@@ -170,13 +170,16 @@ public class SimpleAcousticScorer extends ConfigurableAdapter implements Acousti
      * @throws Exception
      */
     protected <T extends Scoreable> T doScoring(List<T> scoreableList, Data data) {
-        Iterator<T> i = scoreableList.iterator();
-        T best = i.next();
-        best.calculateScore(data);
-        while (i.hasNext()) {
-            T scoreable = i.next();
-            if (scoreable.calculateScore(data) > best.getScore())
-                best = scoreable;
+
+        T best = null;
+        float bestScore = -Float.MAX_VALUE;
+
+        for (T item : scoreableList) {
+    	    item.calculateScore(data);
+    	    if (item.getScore() > bestScore) {
+    		bestScore = item.getScore();
+    		best = item;
+    	    }
         }
         return best;
     }
