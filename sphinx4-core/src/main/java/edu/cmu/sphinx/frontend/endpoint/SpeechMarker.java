@@ -17,7 +17,7 @@ import edu.cmu.sphinx.util.props.PropertyException;
 import edu.cmu.sphinx.util.props.PropertySheet;
 import edu.cmu.sphinx.util.props.S4Integer;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 
 /**
  * Converts a stream of SpeechClassifiedData objects, marked as speech and
@@ -74,8 +74,8 @@ public class SpeechMarker extends BaseDataProcessor {
     public static final String PROP_SPEECH_LEADER = "speechLeader";
     private int speechLeader;
 
-    private ArrayList<Data> inputQueue; // Audio objects are added to the end
-    private ArrayList<Data> outputQueue; // Audio objects are added to the end
+    private LinkedList<Data> inputQueue; // Audio objects are added to the end
+    private LinkedList<Data> outputQueue; // Audio objects are added to the end
     private boolean inSpeech;
     private int speechCount;
     private int silenceCount;
@@ -121,8 +121,8 @@ public class SpeechMarker extends BaseDataProcessor {
         startSpeechFrames = startSpeechTime / 10;
         endSilenceFrames = endSilenceTime / 10;
         speechLeaderFrames = speechLeader / 10;
-        this.inputQueue = new ArrayList<Data>();
-        this.outputQueue = new ArrayList<Data>();
+        this.inputQueue = new LinkedList<Data>();
+        this.outputQueue = new LinkedList<Data>();
     }
 
     /**
@@ -170,6 +170,9 @@ public class SpeechMarker extends BaseDataProcessor {
                     outputQueue.add(data);
                 } else {
                     inputQueue.add(data);
+                    if (inputQueue.size() > startSpeechFrames + speechLeaderFrames) {
+                        inputQueue.remove(0);
+                    }
                 }
 
                 if (!inSpeech && speechCount == startSpeechFrames) {
