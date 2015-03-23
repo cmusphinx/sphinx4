@@ -22,7 +22,7 @@ public final class LogMath {
     public static final float LOG_ZERO = -Float.MAX_VALUE;
     public static final float LOG_ONE = 0.f;
 
-    // Singeleton instance.
+    // Singleton instance.
     private static LogMath instance;
     private static float logBase = 1.0001f;
     private static boolean useTable = true;
@@ -31,21 +31,10 @@ public final class LogMath {
     private float inverseNaturalLogBase;
 
     private float theAddTable[];
-    private float maxLogValue;
-    private float minLogValue;
 
     private LogMath() {
         naturalLogBase = (float) Math.log(logBase);
         inverseNaturalLogBase = 1.0f / naturalLogBase;
-        // When converting a number from/to linear, we need to make
-        // sure it's within certain limits to prevent it from
-        // underflowing/overflowing.
-        // We compute the max value by computing the log of the max
-        // value that a float can contain.
-        maxLogValue = linearToLog(Double.MAX_VALUE);
-        // We compute the min value by computing the log of the min
-        // (absolute) value that a float can hold.
-        minLogValue = linearToLog(Double.MIN_VALUE);
         if (useTable) {
             // Now create the addTable table.
             // summation needed in the loop
@@ -210,25 +199,16 @@ public final class LogMath {
      * @throws IllegalArgumentException
      */
     private float addTable(float index) throws IllegalArgumentException {
-        if (useTable) {
             // int intIndex = (int) Math.rint(index);
             int intIndex = (int) (index + 0.5);
             // When adding two numbers, the highest one should be
             // preserved, and therefore the difference should always
             // be positive.
-            if (0 <= intIndex) {
-                if (intIndex < theAddTable.length) {
-                    return theAddTable[intIndex];
-                } else {
-                    return 0.0f;
-                }
+            if (intIndex < theAddTable.length) {
+                return theAddTable[intIndex];
             } else {
-                throw new IllegalArgumentException("addTable index has "
-                        + "to be negative");
+                return 0.0f;
             }
-        } else {
-            return addTableActualComputation(index);
-        }
     }
 
     /**
@@ -279,14 +259,6 @@ public final class LogMath {
     //
     public static float logToLog(float logSource, float sourceBase,
                                  float resultBase) throws IllegalArgumentException {
-        if ((sourceBase <= 0) || (resultBase <= 0)) {
-            throw new IllegalArgumentException("Trying to take log of "
-                    + " non-positive number: " + sourceBase + " or "
-                    + resultBase);
-        }
-        if (logSource == LOG_ZERO) {
-            return LOG_ZERO;
-        }
         float lnSourceBase = (float) Math.log(sourceBase);
         float lnResultBase = (float) Math.log(resultBase);
         return (logSource * lnSourceBase / lnResultBase);
@@ -298,9 +270,6 @@ public final class LogMath {
      * @param logSource the number in base Math.E to convert
      */
     public final float lnToLog(float logSource) {
-        if (logSource == LOG_ZERO) {
-            return LOG_ZERO;
-        }
         return (logSource * inverseNaturalLogBase);
     }
 
@@ -310,9 +279,6 @@ public final class LogMath {
      * @param logSource the number in base Math.E to convert
      */
     public final float log10ToLog(float logSource) {
-        if (logSource == LOG_ZERO) {
-            return LOG_ZERO;
-        }
         return logToLog(logSource, 10.0f, logBase);
     }
 
@@ -322,9 +288,6 @@ public final class LogMath {
      * @param logSource the number to convert to base Math.E
      */
     public final float logToLn(float logSource) {
-        if (logSource == LOG_ZERO) {
-            return LOG_ZERO;
-        }
         return logSource * naturalLogBase;
     }
 
@@ -338,26 +301,7 @@ public final class LogMath {
      */
     public final float linearToLog(double linearValue)
             throws IllegalArgumentException {
-        double returnValue;
-        if (linearValue < 0.0) {
-            throw new IllegalArgumentException(
-                    "linearToLog: param must be >= 0: " + linearValue);
-        } else if (linearValue == 0.0) {
-            // [EBG] Shouldn't the comparison above be something like
-            // linearValue < "epsilon"? Is it ever going to be 0.0?
-            return LOG_ZERO;
-        } else {
-            returnValue = Math.log(linearValue) * inverseNaturalLogBase;
-            if (returnValue > Float.MAX_VALUE) {
-                return Float.MAX_VALUE;
-            } else {
-                if (returnValue < -Float.MAX_VALUE) {
-                    return -Float.MAX_VALUE;
-                } else {
-                    return (float) returnValue;
-                }
-            }
-        }
+           return (float)Math.log(linearValue) * inverseNaturalLogBase;
     }
 
     /**
@@ -367,16 +311,7 @@ public final class LogMath {
      * @return the value in the linear scale
      */
     public final double logToLinear(float logValue) {
-        // return Math.pow(logBase, logValue);
-        double returnValue;
-        if (logValue < minLogValue) {
-            returnValue = 0.0;
-        } else if (logValue > maxLogValue) {
-            returnValue = Double.MAX_VALUE;
-        } else {
-            returnValue = Math.exp(logToLn(logValue));
-        }
-        return returnValue;
+        return Math.exp(logToLn(logValue));
     }
 
     /** Returns the actual log base. */
