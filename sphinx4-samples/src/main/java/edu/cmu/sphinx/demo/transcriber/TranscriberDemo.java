@@ -11,8 +11,6 @@
 
 package edu.cmu.sphinx.demo.transcriber;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.InputStream;
 
 import edu.cmu.sphinx.api.Configuration;
@@ -38,7 +36,7 @@ public class TranscriberDemo {
                 .setAcousticModelPath("resource:/edu/cmu/sphinx/models/en-us/en-us");
 
         // You can also load model from folder
-//        configuration.setAcousticModelPath("file:en-us");
+        // configuration.setAcousticModelPath("file:en-us");
 
         configuration
                 .setDictionaryPath("resource:/edu/cmu/sphinx/models/en-us/cmudict-en-us.dict");
@@ -47,7 +45,8 @@ public class TranscriberDemo {
 
         StreamSpeechRecognizer recognizer = new StreamSpeechRecognizer(
                 configuration);
-        InputStream stream = new FileInputStream(new File("10001-90210-01803.wav"));
+        InputStream stream = TranscriberDemo.class
+                .getResourceAsStream("/edu/cmu/sphinx/demo/aligner/10001-90210-01803.wav");
         stream.skip(44);
 
         // Simple recognition with generic model
@@ -68,5 +67,34 @@ public class TranscriberDemo {
 
         }
         recognizer.stopRecognition();
+
+        // Live adaptation to speaker with speaker profiles
+
+        stream = TranscriberDemo.class
+                .getResourceAsStream("/edu/cmu/sphinx/demo/aligner/10001-90210-01803.wav");
+        stream.skip(44);
+
+        // Stats class is used to collect speaker-specific data
+        Stats stats = recognizer.createStats(1);
+        recognizer.startRecognition(stream);
+        while ((result = recognizer.getResult()) != null) {
+            stats.collect(result);
+        }
+        recognizer.stopRecognition();
+
+        // Transform represents the speech profile
+        Transform transform = stats.createTransform();
+        recognizer.setTransform(transform);
+
+        // Decode again with updated transform
+        stream = TranscriberDemo.class
+                .getResourceAsStream("/edu/cmu/sphinx/demo/aligner/10001-90210-01803.wav");
+        stream.skip(44);
+        recognizer.startRecognition(stream);
+        while ((result = recognizer.getResult()) != null) {
+            System.out.format("Hypothesis: %s\n", result.getHypothesis());
+        }
+        recognizer.stopRecognition();
+
     }
 }

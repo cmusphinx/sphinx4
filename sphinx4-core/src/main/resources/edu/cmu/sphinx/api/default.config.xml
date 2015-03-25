@@ -96,13 +96,13 @@
   </component>
 
   <component name="activeList"
-    type="edu.cmu.sphinx.decoder.search.NewPartitionActiveListFactory">
+    type="edu.cmu.sphinx.decoder.search.PartitionActiveListFactory">
     <property name="absoluteBeamWidth" value="${absoluteBeamWidth}"/>
     <property name="relativeBeamWidth" value="${relativeBeamWidth}"/>
   </component>
   
   <component name="fastmatchActiveList"
-    type="edu.cmu.sphinx.decoder.search.NewPartitionActiveListFactory">
+    type="edu.cmu.sphinx.decoder.search.PartitionActiveListFactory">
     <property name="absoluteBeamWidth" value="${absoluteBeamWidth}"/>
     <property name="relativeBeamWidth" value="${phoneticBeam}"/>
   </component>
@@ -120,13 +120,13 @@
   </component>
 
   <component name="standardActiveListFactory"
-    type="edu.cmu.sphinx.decoder.search.NewPartitionActiveListFactory">
+    type="edu.cmu.sphinx.decoder.search.PartitionActiveListFactory">
     <property name="absoluteBeamWidth" value="${absoluteBeamWidth}"/>
     <property name="relativeBeamWidth" value="${relativeBeamWidth}"/>
   </component>
 
   <component name="wordActiveListFactory"
-    type="edu.cmu.sphinx.decoder.search.NewPartitionActiveListFactory">
+    type="edu.cmu.sphinx.decoder.search.PartitionActiveListFactory">
     <property name="absoluteBeamWidth" value="${absoluteWordBeamWidth}"/>
     <property name="relativeBeamWidth" value="${relativeWordBeamWidth}"/>
   </component>
