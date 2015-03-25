@@ -1,18 +1,4 @@
 Sphinx-4 Speech Recognition System
-
--------------------------------------------------------------------
-
-Copyright 1999-2015 Carnegie Mellon University.
-Portions Copyright 2006-2008 Sun Microsystems, Inc.
-Portions Copyright 2006-2008 Mitsubishi Electric Research Laboratories.
-Portions Copyright 2013-2015 Alpha Cephei, Inc.
-
-All Rights Reserved.  Use is subject to license terms.
-
-See the file "license.terms" for information on usage and
-redistribution of this file, and for a DISCLAIMER OF ALL
-WARRANTIES.
-
 -------------------------------------------------------------------
 
 Sphinx-4 is a state-of-the-art, speaker-independent, continuous speech
