@@ -47,15 +47,15 @@ public class LatticeOptimizer {
         //System.err.println("***");
         //lattice.dumpAllPaths();
         //System.err.println("***");
-
+        System.out.println("!!!!!!!!!!!!!!!!!!!!!!!! " + lattice.getNodes().size());
         optimizeForward();
 
         //System.err.println("***");
         //lattice.dumpAllPaths();
         //System.err.println("***");
-
+        System.out.println("!!!!!!!!!!!!!!!!!!!!!!!! " + lattice.getNodes().size());
         optimizeBackward();
-
+        System.out.println("!!!!!!!!!!!!!!!!!!!!!!!! " + lattice.getNodes().size());
         //System.err.println("***");
         //lattice.dumpAllPaths();
         //System.err.println("***");

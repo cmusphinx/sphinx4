@@ -88,12 +88,9 @@ public class Node {
         this.word = word;
         this.beginTime = beginTime;
         this.endTime = endTime;
-        if (endTime != -1) {
-            if (beginTime > endTime) {
-                throw new Error("Begin time (" + beginTime +
-                        ") later than end time (" + endTime + ')');
-            }
-        }
+        
+        assert beginTime <= endTime || endTime < 0;
+
         this.forwardScore = LogMath.LOG_ZERO;
         this.backwardScore = LogMath.LOG_ZERO;
         this.posterior = LogMath.LOG_ZERO;
@@ -321,11 +318,7 @@ public class Node {
      * @param beginTime the frame number when the word began
      */
     public void setBeginTime(long beginTime) {
-        if (beginTime > getEndTime()) {
-            throw new Error("Attempting to set a begin time (" + beginTime +
-                    ") that is later than the end time (" +
-                    getEndTime() + ").");
-        }
+        assert beginTime <= endTime;
         this.beginTime = beginTime;
     }
 
@@ -347,11 +340,7 @@ public class Node {
      * @param endTime the frame number when the word ended
      */
     public void setEndTime(long endTime) {
-        if (getBeginTime() > endTime) {
-            throw new Error("Attempting to set an end time (" + endTime +
-                    ") that is earlier than the start time (" +
-                    getBeginTime() + ").");
-        }
+        assert beginTime <= endTime;
         this.endTime = endTime;
     }
 
