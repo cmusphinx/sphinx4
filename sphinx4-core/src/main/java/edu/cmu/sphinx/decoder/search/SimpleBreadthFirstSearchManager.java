@@ -95,6 +95,7 @@ public class SimpleBreadthFirstSearchManager extends TokenSearchManager {
     private Pruner pruner; // used to prune the active list
     private AcousticScorer scorer; // used to score the active list
     protected int currentFrameNumber; // the current frame number
+    protected long currentCollectTime; // the current frame number
     protected ActiveList activeList; // the list of active tokens
     protected List<Token> resultList; // the current set of results
     protected LogMath logMath;
@@ -226,7 +227,7 @@ public class SimpleBreadthFirstSearchManager extends TokenSearchManager {
             // Now create the result using the fixed active-list.
             if (!streamEnd)
            		result =
-                    new Result(fixedList, resultList, currentFrameNumber, done, false);
+                    new Result(fixedList, resultList, currentFrameNumber, done, linguist.getSearchGraph().getWordTokenFirst(), false);
         }
 
         if (showTokenCount) {
@@ -300,7 +301,7 @@ public class SimpleBreadthFirstSearchManager extends TokenSearchManager {
         curTokensScored.value = 0;
         ActiveList newActiveList = activeListFactory.newInstance();
         SearchState state = linguist.getSearchGraph().getInitialState();
-        newActiveList.add(new Token(state, currentFrameNumber));
+        newActiveList.add(new Token(state, -1));
         activeList = newActiveList;
 
         growBranches();
@@ -363,6 +364,7 @@ public class SimpleBreadthFirstSearchManager extends TokenSearchManager {
         
         if (bestToken != null) {
             hasMoreFrames = true;
+            currentCollectTime = bestToken.getCollectTime();
             activeList.setBestToken(bestToken);
         }
 
@@ -486,7 +488,7 @@ public class SimpleBreadthFirstSearchManager extends TokenSearchManager {
                 Token newToken = new Token(predecessor, nextState, logEntryScore,
                         arc.getInsertionProbability(),
                         arc.getLanguageProbability(), 
-                        currentFrameNumber);
+                        currentCollectTime);
                 tokensCreated.value++;
                 if (!isVisited(newToken)) {
                     collectSuccessorTokens(newToken);
@@ -508,7 +510,7 @@ public class SimpleBreadthFirstSearchManager extends TokenSearchManager {
                     bestToken.update(predecessor, nextState, logEntryScore,
                             arc.getInsertionProbability(),
                             arc.getLanguageProbability(), 
-                            currentFrameNumber);
+                            currentCollectTime);
                     viterbiPruned.value++;
                 } else {
                     viterbiPruned.value++;

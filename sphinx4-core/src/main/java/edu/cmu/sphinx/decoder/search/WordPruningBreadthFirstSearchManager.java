@@ -143,6 +143,7 @@ public class WordPruningBreadthFirstSearchManager extends TokenSearchManager {
     // Working data
     // -----------------------------------
     protected int currentFrameNumber; // the current frame number
+    protected long currentCollectTime; // the current frame number
     protected ActiveList activeList; // the list of active tokens
     protected List<Token> resultList; // the current set of results
     protected Map<SearchState, Token> bestTokenMap;
@@ -290,7 +291,7 @@ public class WordPruningBreadthFirstSearchManager extends TokenSearchManager {
         }
 
         if (!streamEnd) {
-            result = new Result(loserManager, activeList, resultList, currentFrameNumber, done, linguist.getSearchGraph()
+            result = new Result(loserManager, activeList, resultList, currentCollectTime, done, linguist.getSearchGraph()
                     .getWordTokenFirst(), true);
         }
 
@@ -363,7 +364,7 @@ public class WordPruningBreadthFirstSearchManager extends TokenSearchManager {
         SearchState state = searchGraph.getInitialState();
 
         activeList = activeListManager.getEmittingList();
-        activeList.add(new Token(state, currentFrameNumber));
+        activeList.add(new Token(state, -1));
 
         clearCollectors();
 
@@ -457,6 +458,10 @@ public class WordPruningBreadthFirstSearchManager extends TokenSearchManager {
             streamEnd = true;
         }
 
+        if (bestToken != null) {
+            currentCollectTime = bestToken.getCollectTime();
+        }
+        
         moreTokens = (bestToken != null);
         activeList.setBestToken(bestToken);
 
@@ -637,7 +642,7 @@ public class WordPruningBreadthFirstSearchManager extends TokenSearchManager {
 
             if (bestToken == null) {
                 Token newBestToken = new Token(predecessor, nextState, logEntryScore, arc.getInsertionProbability(),
-                        arc.getLanguageProbability(), currentFrameNumber);
+                        arc.getLanguageProbability(), currentCollectTime);
                 tokensCreated.value++;
                 setBestToken(newBestToken, nextState);
                 activeListAdd(newBestToken);
@@ -646,7 +651,7 @@ public class WordPruningBreadthFirstSearchManager extends TokenSearchManager {
                 // newBestToken);
                 Token oldPredecessor = bestToken.getPredecessor();
                 bestToken.update(predecessor, nextState, logEntryScore, arc.getInsertionProbability(),
-                        arc.getLanguageProbability(), currentFrameNumber);
+                        arc.getLanguageProbability(), currentCollectTime);
                 if (buildWordLattice && nextState instanceof WordSearchState) {
                     loserManager.addAlternatePredecessor(bestToken, oldPredecessor);
                 }

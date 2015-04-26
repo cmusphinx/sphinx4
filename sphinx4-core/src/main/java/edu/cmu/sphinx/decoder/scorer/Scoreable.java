@@ -65,11 +65,4 @@ public interface Scoreable extends Data {
      */
     public float normalizeScore(float maxScore);
 
-
-    /**
-     * Returns the frame number that this Scoreable should be scored against.
-     *
-     * @return the frame number that this Scoreable should be scored against.
-     */
-    public int getFrameNumber();
 }

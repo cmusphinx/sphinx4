@@ -9,9 +9,10 @@
 
 package edu.cmu.sphinx.result;
 
+import java.util.Locale;
+
 import edu.cmu.sphinx.linguist.dictionary.Pronunciation;
 import edu.cmu.sphinx.linguist.dictionary.Word;
-
 import edu.cmu.sphinx.util.LogMath;
 import edu.cmu.sphinx.util.TimeFrame;
 
@@ -115,6 +116,6 @@ public class WordResult {
 
     @Override
     public String toString() {
-        return String.format("{%s, %.3f, [%s]}", word, LogMath.getLogMath().logToLinear((float)getConfidence()), timeFrame);
+        return String.format(Locale.US, "{%s, %.3f, [%s]}", word, LogMath.getLogMath().logToLinear((float)getConfidence()), timeFrame);
     }
 }

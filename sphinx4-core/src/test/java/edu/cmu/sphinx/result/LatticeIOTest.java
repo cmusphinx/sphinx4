@@ -7,32 +7,27 @@
 
 package edu.cmu.sphinx.result;
 
-import static edu.cmu.sphinx.util.props.ConfigurationManagerUtils.setProperty;
-import static javax.sound.sampled.AudioSystem.getAudioInputStream;
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.net.URL;
+import java.io.InputStream;
 import java.util.Iterator;
 
-import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.Test;
 import org.testng.Assert;
 
-import edu.cmu.sphinx.frontend.util.StreamDataSource;
-import edu.cmu.sphinx.recognizer.Recognizer;
+import edu.cmu.sphinx.api.Configuration;
+import edu.cmu.sphinx.api.SpeechResult;
+import edu.cmu.sphinx.api.StreamSpeechRecognizer;
 import edu.cmu.sphinx.result.Lattice;
 import edu.cmu.sphinx.result.WordResult;
-import edu.cmu.sphinx.util.props.ConfigurationManager;
-
 
 /**
- * Compares the lattices after recognition and loaded from file
- * for LAT and HTK format
+ * Compares the lattices after recognition and loaded from file for LAT and HTK
+ * format
  */
 public class LatticeIOTest {
 
@@ -57,31 +52,30 @@ public class LatticeIOTest {
      * @throws UnsupportedAudioFileException
      */
     @Test
-    public void testLatticeIO() throws UnsupportedAudioFileException,
-            IOException {
-        // TODO: make an integration test, too heavy to be a unit test
-        URL audioFileURL = getClass().getResource("green.wav");
-        URL configURL = getClass().getResource("config.xml");
-        URL lm = getClass().getResource("hellongram.trigram.lm");
+    public void testLatticeIO() throws UnsupportedAudioFileException, IOException {
+        Configuration configuration = new Configuration();
 
-        ConfigurationManager cm = new ConfigurationManager(configURL);
-        setProperty(cm, "trigramModel", "location", lm.toString());
+        // Load model from the jar
+        configuration.setAcousticModelPath("resource:/edu/cmu/sphinx/models/en-us/en-us");
+        configuration.setDictionaryPath("resource:/edu/cmu/sphinx/models/en-us/cmudict-en-us.dict");
+        configuration.setLanguageModelPath("resource:/edu/cmu/sphinx/models/en-us/en-us.lm.dmp");
 
-        Recognizer recognizer = cm.lookup("recognizer");
-        StreamDataSource dataSource = cm.lookup(StreamDataSource.class);
+        StreamSpeechRecognizer recognizer = new StreamSpeechRecognizer(configuration);
+        InputStream stream = getClass().getResourceAsStream("green.wav");
+        stream.skip(44);
 
-        AudioInputStream ais = getAudioInputStream(audioFileURL);
-        dataSource.setInputStream(ais);
+        // Simple recognition with generic model
+        recognizer.startRecognition(stream);
+        SpeechResult result = recognizer.getResult();
+        Lattice lattice = result.getLattice();
 
-        recognizer.allocate();
-        Lattice lattice = new Lattice(recognizer.recognize());
-        new LatticeOptimizer(lattice).optimize();
-        lattice.computeNodePosteriors(1.0f);
         lattice.dump(latFile.getAbsolutePath());
         lattice.dumpSlf(new FileWriter(slfFile));
+
         Lattice latLattice = new Lattice(latFile.getAbsolutePath());
         latLattice.computeNodePosteriors(1.0f);
         Lattice slfLattice = Lattice.readSlf(slfFile.getAbsolutePath());
+
         slfLattice.computeNodePosteriors(1.0f);
         Iterator<WordResult> latIt = lattice.getWordResultPath().iterator();
         Iterator<WordResult> latLatIt = latLattice.getWordResultPath().iterator();

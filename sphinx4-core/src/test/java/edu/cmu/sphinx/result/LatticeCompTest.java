@@ -8,28 +8,23 @@
 
 package edu.cmu.sphinx.result;
 
-import static edu.cmu.sphinx.util.props.ConfigurationManagerUtils.setProperty;
-import static javax.sound.sampled.AudioSystem.getAudioInputStream;
-import static org.testng.Assert.assertTrue;
-
+import static org.testng.AssertJUnit.assertTrue;
 import java.io.IOException;
-import java.net.URL;
+import java.io.InputStream;
 import java.util.Collection;
 import java.util.Iterator;
 
-import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
 import org.testng.annotations.Test;
 
-import edu.cmu.sphinx.frontend.util.StreamDataSource;
-import edu.cmu.sphinx.recognizer.Recognizer;
-import edu.cmu.sphinx.util.props.ConfigurationManager;
-
+import edu.cmu.sphinx.api.Configuration;
+import edu.cmu.sphinx.api.SpeechResult;
+import edu.cmu.sphinx.api.StreamSpeechRecognizer;
 
 /**
- * Compares the lattices generated when the LexTreeLinguist flag
- * 'keepAllTokens' is turned on/off.
+ * Compares the lattices generated when the LexTreeLinguist flag 'keepAllTokens'
+ * is turned on/off.
  */
 public class LatticeCompTest {
 
@@ -40,37 +35,31 @@ public class LatticeCompTest {
      * @throws UnsupportedAudioFileException
      */
     @Test
-    public void testLatticeComp() throws UnsupportedAudioFileException,
-            IOException {
-        // TODO: make an integration test, too heavy to be a unit test
-        URL audioFileURL = getClass().getResource("green.wav");
-        URL configURL = getClass().getResource("config.xml");
-        URL lm = getClass().getResource("hellongram.trigram.lm");
+    public void testLatticeComp() throws UnsupportedAudioFileException, IOException {
 
-        ConfigurationManager cm = new ConfigurationManager(configURL);
-        setProperty(cm, "trigramModel", "location", lm.toString());
+        Configuration configuration = new Configuration();
 
-        Recognizer recognizer = cm.lookup("recognizer");
-        StreamDataSource dataSource = cm.lookup(StreamDataSource.class);
+        // Load model from the jar
+        configuration.setAcousticModelPath("resource:/edu/cmu/sphinx/models/en-us/en-us");
+        configuration.setDictionaryPath("resource:/edu/cmu/sphinx/models/en-us/cmudict-en-us.dict");
+        configuration.setLanguageModelPath("resource:/edu/cmu/sphinx/models/en-us/en-us.lm.dmp");
+        // configuration.setLanguageModelPath("resource:/edu/cmu/sphinx/result/hellongram.trigram.lm");
 
-        AudioInputStream ais = getAudioInputStream(audioFileURL);
-        dataSource.setInputStream(ais);
+        StreamSpeechRecognizer recognizer = new StreamSpeechRecognizer(configuration);
+        InputStream stream = LatticeCompTest.class.getResourceAsStream("green.wav");
+        stream.skip(44);
 
-        recognizer.allocate();
-        Lattice lattice = new Lattice(recognizer.recognize());
+        // Simple recognition with generic model
+        recognizer.startRecognition(stream);
+        SpeechResult result = recognizer.getResult();
+        Lattice lattice = result.getLattice();
 
-        cm = new ConfigurationManager(configURL);
-        setProperty(cm, "keepAllTokens", "true");
-        setProperty(cm, "trigramModel", "location", lm.toString());
+        Lattice otherLattice = Lattice.readSlf(getClass().getResourceAsStream("correct.slf"));
 
-        recognizer = cm.lookup("recognizer");
-        recognizer.allocate();
-        dataSource = cm.lookup(StreamDataSource.class);
-        dataSource.setInputStream(getAudioInputStream(audioFileURL));
-        Lattice allLattice = new Lattice(recognizer.recognize());
+        assert (lattice.isEquivalent(lattice));
 
         Collection<Node> latNodes = lattice.getNodes();
-        Collection<Node> otherLatNodes = allLattice.getNodes();
+        Collection<Node> otherLatNodes = otherLattice.getNodes();
         Iterator<Node> it = latNodes.iterator();
         boolean latticesAreEquivalent = true;
         while (it.hasNext()) {
@@ -79,20 +68,21 @@ public class LatticeCompTest {
             boolean hasEquivalentNode = false;
             while (otherIt.hasNext()) {
                 Node otherNode = otherIt.next();
-                boolean nodesAreEquivalent = node.getWord().getSpelling().equals(otherNode.getWord().getSpelling()) &&
-                                             node.getEnteringEdges().size() == otherNode.getEnteringEdges().size() &&
-                                             node.getLeavingEdges().size() == otherNode.getLeavingEdges().size();
+                boolean nodesAreEquivalent = node.getWord().getSpelling().equals(otherNode.getWord().getSpelling())
+                        && node.getEnteringEdges().size() == otherNode.getEnteringEdges().size()
+                        && node.getLeavingEdges().size() == otherNode.getLeavingEdges().size();
                 if (nodesAreEquivalent) {
                     hasEquivalentNode = true;
                     break;
                 }
             }
-            
+
             if (!hasEquivalentNode) {
                 latticesAreEquivalent = false;
                 break;
             }
         }
         assertTrue(latticesAreEquivalent);
+
     }
 }

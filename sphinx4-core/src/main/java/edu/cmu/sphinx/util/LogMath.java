@@ -176,6 +176,7 @@ public final class LogMath {
      * @param index the index into the addTable
      * @return the value pointed to by index
      */
+    @SuppressWarnings("unused")
     private float addTableActualComputation(float index) {
         double logInnerSummation;
         // Negate index, since the derivation of this formula implies

@@ -15,6 +15,7 @@ package edu.cmu.sphinx.decoder.search;
 import edu.cmu.sphinx.decoder.scorer.Scoreable;
 import edu.cmu.sphinx.decoder.scorer.ScoreProvider;
 import edu.cmu.sphinx.frontend.Data;
+import edu.cmu.sphinx.frontend.FloatData;
 import edu.cmu.sphinx.linguist.HMMSearchState;
 import edu.cmu.sphinx.linguist.SearchState;
 import edu.cmu.sphinx.linguist.UnitSearchState;
@@ -48,8 +49,8 @@ public class Token implements Scoreable {
     
     private SearchState searchState;
 
-    private int frameNumber;
-    private Data myData;
+    private long collectTime;
+    private Data data;
 
     /**
      * Internal constructor for a token. Used by classes Token, CombineToken, ParallelToken
@@ -65,13 +66,13 @@ public class Token implements Scoreable {
                  float logTotalScore,
                  float logInsertionScore,
                  float logLanguageScore,                 
-                 int frameNumber) {
+                 long collectTime) {
         this.predecessor = predecessor;
         this.searchState = state;
         this.logTotalScore = logTotalScore;
         this.logInsertionScore = logInsertionScore;
         this.logLanguageScore = logLanguageScore;
-        this.frameNumber = frameNumber;
+        this.collectTime = collectTime;
         curCount++;
     }
 
@@ -80,10 +81,10 @@ public class Token implements Scoreable {
      * Creates the initial token with the given word history depth
      *
      * @param state       the SearchState associated with this token
-     * @param frameNumber the frame number for this token
+     * @param collectTime collection time of this token
      */
-    public Token(SearchState state, int frameNumber) {
-        this(null, state, 0.0f, 0.0f, 0.0f, frameNumber);
+    public Token(SearchState state, long collectTime) {
+        this(null, state, 0.0f, 0.0f, 0.0f, collectTime);
     }
 
 
@@ -115,21 +116,22 @@ public class Token implements Scoreable {
 
 
     /**
-     * Returns the frame number for this token. Note that for tokens that are associated with non-emitting states, the
-     * frame number represents the next frame number.  For emitting states, the frame number represents the current
-     * frame number.
-     *
-     * @return the frame number for this token
+     * Collect time is different from frame number because some frames might be skipped in silence detector
+     * 
+     * @return collection time in milliseconds
      */
-    public int getFrameNumber() {
-        return frameNumber;
+    public long getCollectTime() {
+        return collectTime;
     }
 
 
     /** Sets the feature for this Token.
      * @param data*/
     public void setData(Data data) {
-        myData = data;
+        this.data = data;
+        if (data instanceof FloatData) {
+            collectTime = ((FloatData)data).getCollectTime();
+        }
     }
 
 
@@ -139,7 +141,7 @@ public class Token implements Scoreable {
      * @return the feature for this Token
      */
     public Data getData() {
-        return myData;
+        return data;
     }
 
 
@@ -281,7 +283,7 @@ public class Token implements Scoreable {
     @Override
     public String toString() {
         return
-            numFmt.format(getFrameNumber()) + ' ' +
+            numFmt.format(getCollectTime()) + ' ' +
             scoreFmt.format(getScore()) + ' ' +
             scoreFmt.format(getAcousticScore()) + ' ' +
             scoreFmt.format(getLanguageScore()) + ' ' +
@@ -460,12 +462,12 @@ public class Token implements Scoreable {
 
     public void update(Token predecessor, SearchState nextState,
             float logEntryScore, float insertionProbability,
-            float languageProbability, int currentFrameNumber) {
+            float languageProbability, long collectTime) {
         this.predecessor = predecessor;
         this.searchState = nextState;
         this.logTotalScore = logEntryScore;
         this.logInsertionScore = insertionProbability;
         this.logLanguageScore = languageProbability;
-        this.frameNumber = currentFrameNumber;
+        this.collectTime = collectTime;
     }
 }

@@ -11,9 +11,12 @@
  */
 package edu.cmu.sphinx.result;
 
+import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.io.PrintWriter;
 import java.io.Writer;
@@ -395,9 +398,9 @@ public class Lattice {
         }
     }
 
-    public static Lattice readSlf(String fileName) throws IOException {
+    public static Lattice readSlf(InputStream stream) throws NumberFormatException, IOException {
         Lattice lattice = new Lattice();
-        LineNumberReader in = new LineNumberReader(new FileReader(fileName));
+        LineNumberReader in = new LineNumberReader(new InputStreamReader(stream));
         String line;
         boolean readingNodes = false;
         boolean readingEdges = false;
@@ -480,8 +483,14 @@ public class Lattice {
             for (Edge edge : node.getLeavingEdges())
                 if (node.getEndTime() < 0 || node.getEndTime() > edge.getToNode().getBeginTime())
                     node.setEndTime(edge.getToNode().getBeginTime());
-        in.close();
         return lattice;
+    }
+    
+    public static Lattice readSlf(String fileName) throws IOException {
+        FileInputStream stream = new FileInputStream(fileName);
+        Lattice result = readSlf(stream);
+        stream.close();
+        return result;
     }
 
     /**

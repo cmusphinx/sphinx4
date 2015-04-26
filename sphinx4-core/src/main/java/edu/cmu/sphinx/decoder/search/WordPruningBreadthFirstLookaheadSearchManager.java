@@ -186,7 +186,7 @@ public class WordPruningBreadthFirstLookaheadSearchManager extends WordPruningBr
         }
 
         if (!streamEnd) {
-            result = new Result(loserManager, activeList, resultList, currentFrameNumber, done, linguist.getSearchGraph()
+            result = new Result(loserManager, activeList, resultList, currentCollectTime, done, linguist.getSearchGraph()
                     .getWordTokenFirst(), true);
         }
 
@@ -445,7 +445,7 @@ public class WordPruningBreadthFirstLookaheadSearchManager extends WordPruningBr
 
             if (bestToken == null) {
                 Token newBestToken = new Token(predecessor, nextState, logEntryScore, arc.getInsertionProbability(),
-                        arc.getLanguageProbability(), currentFrameNumber);
+                        arc.getLanguageProbability(), currentCollectTime);
                 tokensCreated.value++;
                 setBestToken(newBestToken, nextState);
                 activeListAdd(newBestToken);
@@ -454,7 +454,7 @@ public class WordPruningBreadthFirstLookaheadSearchManager extends WordPruningBr
                 // newBestToken);
                 Token oldPredecessor = bestToken.getPredecessor();
                 bestToken.update(predecessor, nextState, logEntryScore, arc.getInsertionProbability(),
-                        arc.getLanguageProbability(), currentFrameNumber);
+                        arc.getLanguageProbability(), currentCollectTime);
                 if (buildWordLattice && nextState instanceof WordSearchState) {
                     loserManager.addAlternatePredecessor(bestToken, oldPredecessor);
                 }

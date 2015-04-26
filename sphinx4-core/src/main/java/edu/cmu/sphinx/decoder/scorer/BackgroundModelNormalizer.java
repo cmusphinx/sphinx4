@@ -54,8 +54,6 @@ public class BackgroundModelNormalizer implements ScoreNormalizer {
 
         Token normToken = activeListProvider.getActiveList().getBestToken();
 
-        assert bestToken.getFrameNumber() == normToken.getFrameNumber() - 1 : "frame numbers should be equal for a meaningful normalization";
-
         float normScore = normToken.getScore();
 
         for (Scoreable scoreable : scoreableList) {

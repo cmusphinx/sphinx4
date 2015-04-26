@@ -9,7 +9,6 @@ import edu.cmu.sphinx.util.props.PropertyException;
 import edu.cmu.sphinx.util.props.PropertySheet;
 import edu.cmu.sphinx.util.props.S4Component;
 
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 

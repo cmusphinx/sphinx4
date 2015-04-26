@@ -352,15 +352,15 @@ public class BatchNISTRecognizer extends BatchModeRecognizer {
     }
 
 
-    private int dumpBestPath(DataOutputStream out, CTLUtterance utt, Token token) throws IOException {
+    private long dumpBestPath(DataOutputStream out, CTLUtterance utt, Token token) throws IOException {
 
         if (token == null) return 0;
 
         Token pred = token.getPredecessor();
-        int startFrame = dumpBestPath(out, utt, pred);
+        long startFrame = dumpBestPath(out, utt, pred);
         if (token.isWord()) {
 
-            int endFrame = token.getFrameNumber();
+            long endFrame = token.getCollectTime();
 
             WordSearchState wordState = (WordSearchState) token.getSearchState();
             Word word = wordState.getPronunciation().getWord();
