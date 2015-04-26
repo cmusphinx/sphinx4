@@ -151,14 +151,14 @@ public class PLPFrequencyFilterBank extends BaseDataProcessor {
     /**
      * This function return the equal loudness preemphasis factor at any frequency. The preemphasis function is given
      * by
-     * <p/>
+     * <p>
      * E(w) = f^4 / (f^2 + 1.6e5) ^ 2 * (f^2 + 1.44e6) / (f^2 + 9.61e6)
-     * <p/>
+     * <p>
      * This is more modern one from HTK, for some reason it's preferred over old variant, and 
      * it doesn't require conversion to radians
-     * <p/>
+     * <p>
      * E(w) = (w^2+56.8e6)*w^4/((w^2+6.3e6)^2(w^2+0.38e9)(w^6+9.58e26))
-     * <p/>
+     * <p>
      * where w is frequency in radians/second
      * @param freq
      */

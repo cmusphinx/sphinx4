@@ -36,7 +36,7 @@ import java.util.*;
  * The path to the file is defined by the {@link #PROP_PATH PROP_PATH} property. If the {@link #PROP_LOOP PROP_LOOP}
  * property is true, the grammar created will be a looping grammar. Using the above digits grammar example, setting
  * PROP_LOOP to true will make it a connected-digits grammar.
- * <p/>
+ * <p>
  * All probabilities are maintained in LogMath log base.
  */
 public class SimpleWordListGrammar extends Grammar implements Configurable {

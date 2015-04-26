@@ -27,7 +27,7 @@ public class DoubleData extends OVector implements Data {
     /**
      * Constructs a new <code>Data</code> object with values only. All other internal fields like
      * sampling rate etc. are initialized to -1.
-     * @param values
+     * @param values source values
      */
     public DoubleData(double[] values) {
         super(values);

@@ -97,7 +97,7 @@ public class SocketCommandClient {
 
 
     /**
-     * Enable/disable SO_TIMEOUT with the specified timeout, in milliseconds. The timeout must be > 0. A timeout of zero
+     * Enable/disable SO_TIMEOUT with the specified timeout, in milliseconds. The timeout must be &gt; 0. A timeout of zero
      * is interpreted as an infinite timeout.
      *
      * @param millisecs the timeout in milliseconds

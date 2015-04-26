@@ -19,17 +19,17 @@ import edu.cmu.sphinx.util.props.*;
  * corresponding to the result of filtering the input spectrum through an
  * individual filter. Therefore, the length of the output array is equal to the
  * number of filters created.
- * <p/>
+ * <p>
  * The triangular mel-filters in the filter bank are placed in the frequency
  * axis so that each filter's center frequency follows the mel scale, in such a
  * way that the filter bank mimics the critical band, which represents
  * different perceptual effect at different frequency bands. Additionally, the
  * edges are placed so that they coincide with the center frequencies in
  * adjacent filters. Pictorially, the filter bank looks like:
- * <p/>
- * <img src="doc-files/melfilterbank.jpg"> <br>
+ * <p>
+ * <img alt="Mel filter bank" src="doc-files/melfilterbank.jpg"> <br>
  * <center><b>Figure 1: A Mel-filter bank. </b> </center>
- * <p/>
+ * <p>
  * As you might notice in the above figure, the distance at the base from the
  * center to the left edge is different from the center to the right edge.
  * Since the center frequencies follow the mel-frequency scale, which is a
@@ -38,9 +38,9 @@ import edu.cmu.sphinx.util.props.*;
  * inferred from the figure, filtering with the mel scale emphasizes the lower
  * frequencies. A common model for the relation between frequencies in mel and
  * linear scales is as follows:
- * <p/>
+ * <p>
  * <code>melFrequency = 2595 * log(1 + linearFrequency/700)</code>
- * <p/>
+ * <p>
  * The constants that define the filterbank are the number of filters, the
  * minimum frequency, and the maximum frequency. The minimum and maximum
  * frequencies determine the frequency range spanned by the filterbank. These
@@ -51,13 +51,13 @@ import edu.cmu.sphinx.util.props.*;
  * frequency should be higher than about 100Hz, since there is no speech
  * information below it. Furthermore, by setting the minimum frequency above
  * 50/60Hz, we get rid of the hum resulting from the AC power, if present.
- * <p/>
+ * <p>
  * The maximum frequency has to be lower than the Nyquist frequency, that is,
  * half the sampling rate. Furthermore, there is not much information above
  * 6800Hz that can be used for improving separation between models.
  * Particularly for very noisy channels, maximum frequency of around 5000Hz may
  * help cut off the noise.
- * <p/>
+ * <p>
  * Typical values for the constants defining the filter bank are:
  * <table width="80%" border="1">
  * <tr>
@@ -85,7 +85,7 @@ import edu.cmu.sphinx.util.props.*;
  * <td>3500</td>
  * </tr>
  * </table>
- * <p/>
+ * <p>
  * Davis and Mermelstein showed that Mel-frequency cepstral coefficients
  * present robust characteristics that are good for speech recognition. For
  * details, see Davis and Mermelstein, <i>Comparison of Parametric

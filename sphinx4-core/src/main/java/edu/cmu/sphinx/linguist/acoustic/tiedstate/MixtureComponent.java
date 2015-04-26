@@ -23,7 +23,7 @@ import java.util.Arrays;
  * shared by a number of {@link GaussianMixture GaussianMixtures}, these elements should not be
  * written to. The GaussianMixture defines a single probability density function along with a set of
  * adaptation parameters.
- * <p/>
+ * <p>
  * Note that all scores and weights are in LogMath log base
  */
 // TODO: Since many of the subcomponents of a MixtureComponent are shared, are 
@@ -149,7 +149,7 @@ public class MixtureComponent implements Cloneable, Serializable {
 
     /**
      * Calculate the score for this mixture against the given feature.
-     * <p/>
+     * <p>
      * Note: The support of <code>DoubleData</code>-features would require an array conversion to
      * float[]. Because getScore might be invoked with very high frequency, features are restricted
      * to be <code>FloatData</code>s.
@@ -165,9 +165,9 @@ public class MixtureComponent implements Cloneable, Serializable {
     /**
      * Calculate the score for this mixture against the given feature. We model the output
      * distributions using a mixture of Gaussians, therefore the current implementation is simply
-     * the computation of a multi-dimensional Gaussian. <p/> <p><b>Normal(x) = exp{-0.5 * (x-m)' *
+     * the computation of a multi-dimensional Gaussian. <p> <b>Normal(x) = exp{-0.5 * (x-m)' *
      * inv(Var) * (x-m)} / {sqrt((2 * PI) ^ N) * det(Var))}</b></p>
-     * <p/>
+     * <p>
      * where <b>x</b> and <b>m</b> are the incoming cepstra and mean vector respectively,
      * <b>Var</b> is the Covariance matrix, <b>det()</b> is the determinant of a matrix,
      * <b>inv()</b> is its inverse, <b>exp</b> is the exponential operator, <b>x'</b> is the
@@ -219,8 +219,9 @@ public class MixtureComponent implements Cloneable, Serializable {
      * computation can be carried out in advance. Specifically, the factor containing only variance
      * in the Gaussian can be computed in advance, keeping in mind that the the determinant of the
      * covariance matrix, for the degenerate case of a mixture with independent components - only
-     * the diagonal elements are non-zero - is simply the product of the diagonal elements. <p/>
-     * We're computing the expression: <p/> <p><b>{sqrt((2 * PI) ^ N) * det(Var))}</b></p>
+     * the diagonal elements are non-zero - is simply the product of the diagonal elements. <p>
+     * We're computing the expression: 
+     * <pre>{sqrt((2 * PI) ^ N) * det(Var))}</pre>
      *
      * @return the precomputed distance
      */

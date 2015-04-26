@@ -12,12 +12,10 @@ import java.util.Arrays;
 /**
  * Computes the linear predictive model using the Levinson-Durbin algorithm. Linear prediction assumes that a signal can
  * be model as a linear combination of previous samples, that is, the current sample x[i] can be modeled as:
- * <p/>
  * <pre> x[i] = a[0] + a[1] * x[i - 1] + a[2] * x[i - 2] + ... </pre>
- * <p/>
  * The summation on the right hand side of the equation involves a finite number of terms. The number of previous
  * samples used is the order of the linear prediction.
- * <p/>
+ * <p>
  * This class also provides a method to compute LPC cepstra, that is, the cepstra computed from LPC coefficients, as
  * well as a method to compute the bilinear transformation of the LPC
  */
@@ -124,8 +122,8 @@ public class LinearPredictor {
     /**
      * Computes LPC Cepstra from the AR predictor parameters and alpha using a recursion invented by Oppenheim et al.
      * The literature shows the optimal value of cepstral order to be:
-     * <p/>
-     * <pre>0.75 * LPCorder <= ceporder <= 1.25 * LPCorder</pre>
+     *
+     * <pre>0.75 * LPCorder &lt;= ceporder &lt;= 1.25 * LPCorder</pre>
      *
      * @param ceporder is the order of the LPC cepstral vector to be computed.
      * @return LPC cepstra

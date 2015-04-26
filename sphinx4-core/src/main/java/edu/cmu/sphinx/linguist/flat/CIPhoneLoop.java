@@ -28,7 +28,7 @@ import java.util.Map;
  * Constructs a loop of all the context-independent phones. This loop is used in the static flat linguist for detecting
  * out-of-grammar utterances. A 'phoneInsertionProbability' will be added to the score each time a new phone is entered.
  * To obtain the all-phone search graph loop, simply called the method {@link #getSearchGraph() getSearchGraph}.
- * <p/>
+ * <p>
  * For futher details of this approach cf. 'Modeling Out-of-vocabulary Words for Robust Speech Recognition', Brazzi,
  * 2000, Proc. ICSLP
  */

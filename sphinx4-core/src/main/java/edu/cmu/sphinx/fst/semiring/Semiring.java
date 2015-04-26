@@ -18,7 +18,7 @@ import java.io.Serializable;
 /**
  * Abstract semiring class.
  * 
- * @author "John Salatas <jsalatas@users.sourceforge.net>"
+ * @author "John Salatas"
  * 
  */
 public abstract class Semiring implements Serializable {
@@ -28,36 +28,20 @@ public abstract class Semiring implements Serializable {
     // significant decimal digits in floating point numbers
     protected static final int accuracy = 5;
 
-    /**
-     * Semiring's plus operation
-     */
+
     public abstract float plus(float w1, float w2);
 
     public abstract float reverse(float w1);
 
-    /**
-     * Semiring's times operation
-     */
     public abstract float times(float w1, float w2);
 
-    /**
-     * Semiring's divide operation
-     */
+
     public abstract float divide(float w1, float w2);
 
-    /**
-     * Semiring's zero element
-     */
     public abstract float zero();
 
-    /**
-     * Semiring's one element
-     */
     public abstract float one();
 
-    /**
-     * Checks if a value is a valid one the semiring
-     */
     public abstract boolean isMember(float w);
 
     /*
@@ -89,7 +73,7 @@ public abstract class Semiring implements Serializable {
     /**
      * NATURAL ORDER
      * 
-     * By definition: a <= b iff a + b = a
+     * By definition: a &lt;= b iff a + b = a
      * 
      * The natural order is a negative partial order iff the semiring is
      * idempotent. It is trivially monotonic for plus. It is left (resp. right)
@@ -102,6 +86,8 @@ public abstract class Semiring implements Serializable {
      * 
      * We define the strict version of this order below.
      * 
+     * @param w1: first operand
+     * @param w2: second operand
      */
     public boolean naturalLess(float w1, float w2) {
         return (plus(w1, w2) == w1) && (w1 != w2);

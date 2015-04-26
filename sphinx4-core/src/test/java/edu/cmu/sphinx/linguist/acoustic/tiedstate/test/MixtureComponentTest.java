@@ -25,9 +25,9 @@ import edu.cmu.sphinx.linguist.acoustic.tiedstate.MixtureComponent;
 import edu.cmu.sphinx.util.LogMath;
 
 /**
- * Some tests which test the functionality of <code>MixtureComponentt</code>s.
- * <p/>
- * Currently testing is restricted to univariate gaussians. It should be extended to test highdimensional gaussians as
+ * Some tests which test the functionality of <code>MixtureComponent</code>.
+ * <p>
+ * Currently testing is restricted to univariate gaussians. It should be extended to test high-dimensional gaussians as
  * well.
  */
 public class MixtureComponentTest {

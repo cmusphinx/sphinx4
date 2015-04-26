@@ -12,7 +12,7 @@ import edu.cmu.sphinx.util.ReferenceSource;
 
 /**
  * Concatenates a list of audio files as one continuous audio stream.
- * <p/>
+ * <p>
  * A {@link edu.cmu.sphinx.frontend.DataStartSignal DataStartSignal} will be
  * placed before the start of the first file, and a
  * {@link edu.cmu.sphinx.frontend.DataEndSignal DataEndSignal} after the last

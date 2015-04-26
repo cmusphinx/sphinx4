@@ -31,7 +31,7 @@ import edu.cmu.sphinx.fst.utils.Pair;
  * See: M. Mohri, "Weighted automata algorithms", Handbook of Weighted Automata.
  * Springer, pp. 213-250, 2009.
  * 
- * @author John Salatas <jsalatas@users.sourceforge.net>
+ * @author John Salatas
  */
 
 public class Compose {

@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import edu.cmu.sphinx.fst.semiring.Semiring;
 
 /**
- * @author John Salatas <jsalatas@users.sourceforge.net>
+ * @author John Salatas
  */
 public class Path {
     // the path
@@ -32,6 +32,8 @@ public class Path {
 
     /**
      * Create a Path instance with specified path and semiring elements
+     * @param path word list to create path from
+     * @param semiring the semiring to use
      */
     public Path(ArrayList<String> path, Semiring semiring) {
         this.path = path;
@@ -41,6 +43,7 @@ public class Path {
 
     /**
      * Create a Path instance with specified semiring element
+     * @param semiring semiring to use
      */
     public Path(Semiring semiring) {
         this(new ArrayList<String>(), semiring);
@@ -48,6 +51,7 @@ public class Path {
 
     /**
      * Get the path
+     * @return word path
      */
     public ArrayList<String> getPath() {
         return path;
@@ -55,6 +59,7 @@ public class Path {
 
     /**
      * Get the paths' cost
+     * @return path cost
      */
     public float getCost() {
         return cost;
@@ -62,13 +67,15 @@ public class Path {
 
     /**
      * Set the paths' cost
+     * @param cost to set
      */
     public void setCost(float cost) {
         this.cost = cost;
     }
 
     /**
-     * Get the paths
+     * Set the path
+     * @param path set from list of word
      */
     public void setPath(ArrayList<String> path) {
         this.path = path;

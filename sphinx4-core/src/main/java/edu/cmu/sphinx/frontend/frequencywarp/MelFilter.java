@@ -17,7 +17,7 @@ package edu.cmu.sphinx.frontend.frequencywarp;
 /**
  * Defines a triangular mel-filter. The {@link edu.cmu.sphinx.frontend.frequencywarp.MelFrequencyFilterBank} creates
  * mel-filters and filters spectrum data using the method {@link #filterOutput(double[]) filterOutput}.
- * <p/>
+ * <p>
  * A mel-filter is a triangular shaped bandpass filter.  When a mel-filter is constructed, the parameters
  * <code>leftEdge</code>, <code>rightEdge</code>, <code>centerFreq</code>, <code>initialFreq</code>, and
  * <code>deltaFreq</code> are given to the {@link MelFilter Constructor}. The first three arguments to the constructor,
@@ -27,10 +27,10 @@ package edu.cmu.sphinx.frontend.frequencywarp;
  * being the frequency axis. The last two arguments, <code>initialFreq</code> and <code>deltaFreq</code>, identify the
  * first frequency bin that falls inside this filter and the spacing between successive frequency bins. All frequencies
  * here are considered in a linear scale.
- * <p/>
+ * <p>
  * Figure 1 below shows pictorially what the other parameters mean.
- * <p/>
- * <img src="doc-files/melfilter.jpg"> <br><center><b>Figure 1: A triangular mel-filter.</b></center>
+ * <p>
+ * <img alt="Mel filter" src="doc-files/melfilter.jpg"> <br><center><b>Figure 1: A triangular mel-filter.</b></center>
  *
  * @see MelFrequencyFilterBank
  */
@@ -43,7 +43,7 @@ public class MelFilter {
 
     /**
      * Constructs a filter from the parameters.
-     * <p/>
+     * <p>
      * In the current implementation, the filter is a bandpass filter with a triangular shape.  We're given the left and
      * right edges and the center frequency, so we can determine the right and left slopes, which could be not only
      * asymmetric but completely different. We're also given the initial frequency, which may or may not coincide with

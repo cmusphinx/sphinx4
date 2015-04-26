@@ -21,7 +21,7 @@ import java.util.logging.Level;
 
 /**
  * An acoustic model saver that saves sphinx3 ascii data.
- * <p/>
+ * <p>
  * Mixture weights and transition probabilities are saved in linear scale.
  */
 class Sphinx4Saver extends Sphinx3Saver {

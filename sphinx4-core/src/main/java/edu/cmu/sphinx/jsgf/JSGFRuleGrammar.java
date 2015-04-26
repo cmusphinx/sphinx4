@@ -32,7 +32,7 @@ import edu.cmu.sphinx.jsgf.rule.JSGFRuleToken;
 /**
  * @author Paul Lamere
  * @author Peter Wolf
- * @author Francisco Aguilera <falven@uw.edu>
+ * @author Francisco Aguilera
  */
 public class JSGFRuleGrammar {
 
@@ -86,7 +86,9 @@ public class JSGFRuleGrammar {
         this.manager = manager;
     }
 
-    /** Add the Grammar comment. */
+    /** Add the Grammar comment. 
+     * @param comment text for comment
+     **/
     public void addGrammarDocComment(String comment) {
         grammarDocComment = comment;
     }
@@ -103,12 +105,18 @@ public class JSGFRuleGrammar {
         }
     }
 
-    /** Add a new import comment. */
+    /** Add a new import comment. 
+     * @param imp import name
+     * @param comment comment to add
+     **/
     public void addImportDocComment(JSGFRuleName imp, String comment) {
         importDocComments.put(imp.toString(), comment);
     }
 
-    /** Add a new RuleGrammar comment. */
+    /** Add a new RuleGrammar comment. 
+     * @param rname rule doc name
+     * @param comment comment to add
+     **/
     public void addRuleDocComment(String rname, String comment) {
         ruleDocComments.put(rname, comment);
     }
@@ -116,6 +124,8 @@ public class JSGFRuleGrammar {
     /**
      * add a sample sentence to the list of sample sentences that go with the
      * specified rule
+     * @param ruleName name of the rule
+     * @param sample sample sentence
      */
     public void addSampleSentence(String ruleName, String sample) {
         JSGFRuleState state = rules.get(ruleName);
@@ -135,12 +145,17 @@ public class JSGFRuleGrammar {
         rules.remove(getKnownRule(ruleName).ruleName);
     }
 
-    /** Retrieve the Grammar comment. */
+    /** Retrieve the Grammar comment.
+     * @return comment 
+     **/
     public String getGrammarDocComment() {
         return grammarDocComment;
     }
 
-    /** Retrieve an import comment. */
+    /** Retrieve an import comment.
+     * @param imp rule name
+     * @return stored comment
+     **/
     public String getImportDocComment(JSGFRuleName imp) {
         return importDocComments.getProperty(imp.toString(), null);
     }
@@ -148,6 +163,8 @@ public class JSGFRuleGrammar {
     /**
      * Returns the jsgf tags associated to the given rule. Cf.
      * jsgf-specification for details.
+     * @param ruleName name of the rule
+     * @return list of tags
      */
     public Collection<String> getJSGFTags(String ruleName) {
         return ruleTags.get(ruleName);
@@ -156,6 +173,8 @@ public class JSGFRuleGrammar {
     /**
      * Gets the Rule with the given name after it has been stripped, or throws
      * an Exception if it is unknown.
+     * @param ruleName name of the rule
+     * @return rule object
      */
     private JSGFRule getKnownRule(String ruleName) {
         JSGFRuleState state = rules.get(ruleName);
@@ -174,6 +193,7 @@ public class JSGFRuleGrammar {
      * 
      * @param ruleName
      *            the name of the rule.
+     * @return rule object.
      */
     public JSGFRule getRule(String ruleName) {
         JSGFRuleState state = rules.get(ruleName);
@@ -183,7 +203,10 @@ public class JSGFRuleGrammar {
         return state.rule;
     }
 
-    /** Retrieve a RuleGrammar comment. */
+    /** Retrieve a RuleGrammar comment. 
+     * @param rname name of the comment
+     * @return comment text
+     **/
     public String getRuleDocComment(String rname) {
         return ruleDocComments.getProperty(rname, null);
     }
@@ -193,6 +216,7 @@ public class JSGFRuleGrammar {
      * 
      * @param ruleName
      *            the name of the rule.
+     * @return if rule is public
      */
     public boolean isRulePublic(String ruleName) throws IllegalArgumentException {
         JSGFRuleState state = rules.get(ruleName);
@@ -202,12 +226,16 @@ public class JSGFRuleGrammar {
         return state.isPublic;
     }
 
-    /** List the current imports. */
+    /** List the current imports. 
+     * @return the list of rule names for imports
+     **/
     public List<JSGFRuleName> getImports() {
         return imports;
     }
 
-    /** List the names of all rules define in this Grammar. */
+    /** List the names of all rules define in this Grammar.
+     * @return the list of rule names.
+     **/
     public Set<String> getRuleNames() {
         return rules.keySet();
     }
@@ -218,7 +246,7 @@ public class JSGFRuleGrammar {
      * @param importName
      *            the name of the rule(s) to remove.
      */
-    public void removeImport(JSGFRuleName importName) throws IllegalArgumentException {
+    public void removeImport(JSGFRuleName importName) {
         if (imports.contains(importName)) {
             imports.remove(importName);
         }
@@ -229,6 +257,8 @@ public class JSGFRuleGrammar {
      * 
      * @param ruleName
      *            the name of the rule.
+     * @return rule name object
+     * @throws JSGFGrammarException an exception occured
      */
     public JSGFRuleName resolve(JSGFRuleName ruleName) throws JSGFGrammarException {
         // System.out.println ("Resolving " + ruleName);
@@ -376,7 +406,9 @@ public class JSGFRuleGrammar {
         }
     }
 
-    /** Resolve and link up all rule references contained in all rules. */
+    /** Resolve and link up all rule references contained in all rules.
+     * @throws JSGFGrammarException an exception occured
+     **/
     public void resolveAllRules() throws JSGFGrammarException {
         StringBuilder b = new StringBuilder();
 
@@ -397,7 +429,9 @@ public class JSGFRuleGrammar {
         }
     }
 
-    /** Resolve the given rule. */
+    /** Resolve the given rule. 
+     * @param r rule to resolve
+     **/
     protected void resolveRule(JSGFRule r) throws JSGFGrammarException {
 
         if (r instanceof JSGFRuleToken) {

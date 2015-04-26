@@ -30,7 +30,7 @@ import java.util.logging.Level;
 
 /**
  * an acoustic model loader that loads sphinx3 ascii data
- * <p/>
+ * <p>
  * Mixture weights and transition probabilities are maintained in logMath log base,
  */
 class Sphinx4Loader extends Sphinx3Loader {

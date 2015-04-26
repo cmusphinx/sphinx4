@@ -30,7 +30,7 @@ import edu.cmu.sphinx.fst.utils.Utils;
  * Provides the required functionality in order to convert from/to openfst's
  * text format
  * 
- * @author John Salatas <jsalatas@users.sourceforge.net>
+ * @author John Salatas
  */
 public class Convert {
 
@@ -51,7 +51,7 @@ public class Convert {
      *            the fst to export
      * @param basename
      *            the files' base name
-     * @throws IOException
+     * @throws IOException IO went wrong
      */
     public static void export(Fst fst, String basename) throws IOException {
         exportSymbols(fst.getIsyms(), basename + ".input.syms");
@@ -66,7 +66,7 @@ public class Convert {
      *            the fst to export
      * @param filename
      *            the openfst's fst.txt filename
-     * @throws IOException
+     * @throws IOException IO went wrong
      */
     private static void exportFst(Fst fst, String filename) throws IOException {
         FileWriter file;
@@ -116,7 +116,7 @@ public class Convert {
      *            the symbols' map
      * @param filename
      *            the the openfst's symbols filename
-     * @throws IOException
+     * @throws IOException IO went wrong
      */
     private static void exportSymbols(String[] syms, String filename)
             throws IOException {
@@ -141,8 +141,8 @@ public class Convert {
      * @param filename
      *            the symbols' filename
      * @return HashMap containing the imported string-to-id mapping
-     * @throws IOException
-     * @throws NumberFormatException
+     * @throws IOException IO went wrong
+     * @throws NumberFormatException import failed due to input data format
      */
     private static HashMap<String, Integer> importSymbols(String filename)
             throws NumberFormatException, IOException {
@@ -178,8 +178,9 @@ public class Convert {
      *            the files' base name
      * @param semiring
      *            the fst's semiring
-     * @throws IOException
-     * @throws NumberFormatException
+     * @return imported FST
+     * @throws IOException IO went wrong
+     * @throws NumberFormatException load failed due to data format issues
      */
     public static Fst importFst(String basename, Semiring semiring)
             throws NumberFormatException, IOException {

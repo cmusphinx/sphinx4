@@ -18,7 +18,7 @@ import edu.cmu.sphinx.fst.operations.NShortestPaths;
 import edu.cmu.sphinx.fst.semiring.TropicalSemiring;
 
 /**
- * @author John Salatas <jsalatas@users.sourceforge.net>
+ * @author John Salatas
  * 
  */
 public class NShortestPathsTest {

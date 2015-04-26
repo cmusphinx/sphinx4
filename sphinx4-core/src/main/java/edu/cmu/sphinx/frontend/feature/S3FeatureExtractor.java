@@ -18,12 +18,11 @@ import edu.cmu.sphinx.frontend.*;
  * the double delta (a.k.a. delta delta) is the second order derivative of the original cepstrum. They help model the
  * speech signal dynamics. The output data is a {@link FloatData} object with a float array of size three times the
  * original cepstrum.
- * <p/>
- * <p/>
+ * <p>
  * The format of the outputted feature is:
- * <p/>
+ * <p>
  * 12 cepstra (c[1] through c[12]) <br>followed by delta cepstra (delta c[1] through delta c[12]) <br>followed by c[0],
- * delta c[0] <br>followed by delta delta c[0] through delta delta c[12] </p>
+ * delta c[0] <br>followed by delta delta c[0] through delta delta c[12]
  */
 public class S3FeatureExtractor extends AbstractFeatureExtractor {
 

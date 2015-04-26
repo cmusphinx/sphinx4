@@ -21,22 +21,22 @@ import edu.cmu.sphinx.util.props.*;
  * Filters an input power spectrum through a bank of number of mel-filters. The output is an array of filtered values,
  * typically called mel-spectrum, each corresponding to the result of filtering the input spectrum through an individual
  * filter. Therefore, the length of the output array is equal to the number of filters created.
- * <p/>
+ * <p>
  * The triangular mel-filters in the filter bank are placed in the frequency axis so that each filter's center frequency
  * follows the mel scale, in such a way that the filter bank mimics the critical band, which represents different
  * perceptual effect at different frequency bands. Additionally, the edges are placed so that they coincide with the
  * center frequencies in adjacent filters. Pictorially, the filter bank looks like:
- * <p/>
- * <img src="doc-files/melfilterbank.jpg"> <br> <center><b>Figure 1: A Mel-filter bank. </b> </center>
- * <p/>
+ * <p>
+ * <img alt="Filterbank" src="doc-files/melfilterbank.jpg"> <br> <center><b>Figure 1: A Mel-filter bank. </b> </center>
+ * <p>
  * As you might notice in the above figure, the distance at the base from the center to the left edge is different from
  * the center to the right edge. Since the center frequencies follow the mel-frequency scale, which is a non-linear
  * scale that models the non-linear human hearing behavior, the mel filter bank corresponds to a warping of the
  * frequency axis. As can be inferred from the figure, filtering with the mel scale emphasizes the lower frequencies. A
  * common model for the relation between frequencies in mel and linear scales is as follows:
- * <p/>
+ * <p>
  * <code>melFrequency = 2595 * log(1 + linearFrequency/700)</code>
- * <p/>
+ * <p>
  * The constants that define the filterbank are the number of filters, the minimum frequency, and the maximum frequency.
  * The minimum and maximum frequencies determine the frequency range spanned by the filterbank. These frequencies depend
  * on the channel and the sampling frequency that you are using. For telephone speech, since the telephone channel
@@ -44,17 +44,17 @@ import edu.cmu.sphinx.util.props.*;
  * would waste bandwidth. For clean speech, the minimum frequency should be higher than about 100Hz, since there is no
  * speech information below it. Furthermore, by setting the minimum frequency above 50/60Hz, we get rid of the hum
  * resulting from the AC power, if present.
- * <p/>
+ * <p>
  * The maximum frequency has to be lower than the Nyquist frequency, that is, half the sampling rate. Furthermore, there
  * is not much information above 6800Hz that can be used for improving separation between models. Particularly for very
  * noisy channels, maximum frequency of around 5000Hz may help cut off the noise.
- * <p/>
- * Typical values for the constants defining the filter bank are: <table width="80%" border="1"> <tr> <td><b>Sample rate
+ * <p>
+ * Typical values for the constants defining the filter bank are: <table summary="Filterbank Values" width="80%" border="1"> <tr> <td><b>Sample rate
  * (Hz) </b></td> <td><b>16000 </b></td> <td><b>11025 </b></td> <td><b>8000 </b></td> </tr> <tr> <td>{@link
  * #PROP_NUMBER_FILTERS numberFilters}</td> <td>40</td> <td>36</td> <td>31</td> </tr> <tr> <td>{@link #PROP_MIN_FREQ
  * minimumFrequency}(Hz)</td> <td>130</td> <td>130</td> <td>200</td> </tr> <tr> <td>{@link #PROP_MAX_FREQ
  * maximumFrequency}(Hz)</td> <td>6800</td> <td>5400</td> <td>3500</td> </tr> </table>
- * <p/>
+ * <p>
  * Davis and Mermelstein showed that Mel-frequency cepstral coefficients present robust characteristics that are good
  * for speech recognition. For details, see Davis and Mermelstein, <i>Comparison of Parametric Representations for
  * Monosyllable Word Recognition in Continuously Spoken Sentences, IEEE Transactions on Acoustic, Speech and Signal
@@ -124,7 +124,7 @@ public class MelFrequencyFilterBank extends BaseDataProcessor {
 
     /**
      * Compute mel frequency from linear frequency.
-     * <p/>
+     * <p>
      * Since we don't have <code>log10()</code>, we have to compute it using natural log: <b>log10(x) = ln(x) / ln(10)
      * </b>
      *

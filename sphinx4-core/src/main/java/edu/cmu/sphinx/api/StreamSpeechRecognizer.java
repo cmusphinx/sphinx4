@@ -27,6 +27,7 @@ public class StreamSpeechRecognizer extends AbstractSpeechRecognizer {
      * Constructs new stream recognizer.
      *
      * @param configuration configuration
+     * @throws IOException error occured during model load
      */
     public StreamSpeechRecognizer(Configuration configuration)
         throws IOException
@@ -43,8 +44,9 @@ public class StreamSpeechRecognizer extends AbstractSpeechRecognizer {
      *
      * Starts recognition process and optionally clears previous data.
      *
-     * @param clear clear cached microphone data
-     * @see         StreamSpeechRecognizer#stopRecognition()
+     * @param stream input stream to process
+     * @param timeFrame time range of the stream to process
+     * @see StreamSpeechRecognizer#stopRecognition()
      */
     public void startRecognition(InputStream stream, TimeFrame timeFrame) {
         recognizer.allocate();
@@ -56,7 +58,7 @@ public class StreamSpeechRecognizer extends AbstractSpeechRecognizer {
      *
      * Recognition process is paused until the next call to startRecognition.
      *
-     * @see StreamSpeechRecognizer#startRecognition(boolean)
+     * @see StreamSpeechRecognizer#startRecognition(InputStream, TimeFrame)
      */
     public void stopRecognition() {
         recognizer.deallocate();

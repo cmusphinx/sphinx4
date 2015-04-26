@@ -48,8 +48,8 @@ public abstract class ActiveListFactory implements Configurable {
 
     /**
      * 
-     * @param absoluteBeamWidth
-     * @param relativeBeamWidth
+     * @param absoluteBeamWidth beam for absolute pruning
+     * @param relativeBeamWidth beam for relative pruning
      */
     public ActiveListFactory(int absoluteBeamWidth,double relativeBeamWidth){
         logMath = LogMath.getLogMath();

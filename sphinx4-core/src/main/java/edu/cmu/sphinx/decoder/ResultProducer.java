@@ -21,11 +21,13 @@ import edu.cmu.sphinx.util.props.Configurable;
 public interface ResultProducer extends Configurable {
 
     /** Registers a new listener for <code>Result</code>.
-     * @param resultListener*/
+     * @param resultListener listener to add
+     */
     void addResultListener(ResultListener resultListener);
 
 
     /** Removes a listener from this <code>ResultProducer</code>-instance.
-     * @param resultListener*/
+     * @param resultListener listener to remove
+     */
     void removeResultListener(ResultListener resultListener);
 }

@@ -30,8 +30,6 @@ import edu.cmu.sphinx.linguist.language.grammar.GrammarNode;
 
 /**
  * Grammar for GrXML W3C Standard
- * @author shmyrev
- *
  */
 public class GrXMLGrammar extends JSGFGrammar {
 
@@ -64,8 +62,8 @@ public class GrXMLGrammar extends JSGFGrammar {
      * Commit changes to all loaded grammars and all changes of grammar since
      * the last commitChange
      * 
-     * @throws JSGFGrammarParseException
-     * @throws JSGFGrammarException
+     * @throws JSGFGrammarParseException parse exception occured
+     * @throws JSGFGrammarException other exception occured
      */
     @Override
     public void commitChanges() throws IOException, JSGFGrammarParseException,

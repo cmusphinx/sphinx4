@@ -18,7 +18,7 @@ import edu.cmu.sphinx.linguist.SearchStateArc;
 /**
  * Represents a transition in a sentence HMM. Each transition is described by the next state and the associated acoustic
  * and language probability for the transition.
- * <p/>
+ * <p>
  * All probabilities are in the LogMath log domain
  */
 public class SentenceHMMStateArc implements SearchStateArc {
@@ -95,7 +95,7 @@ public class SentenceHMMStateArc implements SearchStateArc {
 
     /**
      * For backwards compatibility
-     * <p/>
+     * <p>
      * Returns the next state as a SentenceHMSMtate
      *
      * @return the next state

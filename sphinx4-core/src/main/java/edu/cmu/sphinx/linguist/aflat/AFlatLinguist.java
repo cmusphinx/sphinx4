@@ -37,10 +37,10 @@ import edu.cmu.sphinx.util.props.*;
  * grammar states attached). 5) Only valid transitions (matching contexts) are
  * allowed 6) No tree organization of units 7) Branching grammar states are
  * allowed
- * <p/>
+ * <p>
  * This is a dynamic version of the flat linguist that is more efficient in
  * terms of startup time and overall footprint
- * <p/>
+ * <p>
  * Note that all probabilities are maintained in the log math domain
  */
 
@@ -235,7 +235,7 @@ public class AFlatLinguist implements Linguist, Configurable {
 	 *
 	 * @param ps
 	 *            the PropertySheet from which to obtain the acoustic model
-	 * @throws edu.cmu.sphinx.util.props.PropertyException
+	 * @throws PropertyException something went wrong
 	 */
 	protected void setupAcousticModel(PropertySheet ps)
 			throws PropertyException {
@@ -259,7 +259,7 @@ public class AFlatLinguist implements Linguist, Configurable {
 	/**
 	 * Allocates the acoustic model.
 	 *
-	 * @throws java.io.IOException
+	 * @throws java.io.IOException loading failed
 	 */
 	protected void allocateAcousticModel() throws IOException {
 		acousticModel.allocate();

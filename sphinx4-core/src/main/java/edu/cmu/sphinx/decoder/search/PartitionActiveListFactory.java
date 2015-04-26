@@ -25,8 +25,8 @@ public class PartitionActiveListFactory extends ActiveListFactory {
 
     /**
      * 
-     * @param absoluteBeamWidth
-     * @param relativeBeamWidth
+     * @param absoluteBeamWidth beam for absolute pruning
+     * @param relativeBeamWidth beam for relative pruning
      */
     public PartitionActiveListFactory(int absoluteBeamWidth, double relativeBeamWidth) {
         super(absoluteBeamWidth, relativeBeamWidth);
@@ -64,9 +64,9 @@ public class PartitionActiveListFactory extends ActiveListFactory {
      * list, and then chopping the list up with the absolute beam width. The
      * expected run time of this partitioning algorithm is O(n), instead of O(n log n) 
      * for merge sort.
-     * <p/>
+     * <p>
      * This class is not thread safe and should only be used by a single thread.
-     * <p/>
+     * <p>
      * Note that all scores are maintained in the LogMath log base.
      */
     class PartitionActiveList implements ActiveList {
@@ -82,8 +82,9 @@ public class PartitionActiveListFactory extends ActiveListFactory {
 
 
         /** Creates an empty active list
-         * @param absoluteBeamWidth
-         * @param logRelativeBeamWidth*/
+         * @param absoluteBeamWidth beam for absolute pruning
+         * @param logRelativeBeamWidth beam for relative pruning
+         */
         public PartitionActiveList(int absoluteBeamWidth,
                                    float logRelativeBeamWidth) {
             this.absoluteBeamWidth = absoluteBeamWidth;

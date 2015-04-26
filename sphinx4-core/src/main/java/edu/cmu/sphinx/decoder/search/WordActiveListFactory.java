@@ -41,11 +41,11 @@ public class WordActiveListFactory extends ActiveListFactory {
     private int maxFiller;
 
     /**
-     * 
-     * @param absoluteBeamWidth
-     * @param relativeBeamWidth
-     * @param maxPathsPerWord
-     * @param maxFiller
+     * Create factory for word active list
+     * @param absoluteBeamWidth beam for absolute pruning
+     * @param relativeBeamWidth beam for relative pruning
+     * @param maxPathsPerWord maximum number of path to keep per word
+     * @param maxFiller maximum number of fillers
      */
     public WordActiveListFactory(int absoluteBeamWidth,
             double relativeBeamWidth, int maxPathsPerWord, int maxFiller )
@@ -86,8 +86,8 @@ public class WordActiveListFactory extends ActiveListFactory {
 
     /**
      * An active list that manages words. Guarantees only one version of a word.
-     * <p/>
-     * <p/>
+     * <p>
+     * <p>
      * Note that all scores are maintained in the LogMath log domain
      */
     class WordActiveList implements ActiveList {

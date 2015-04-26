@@ -25,7 +25,7 @@ import edu.cmu.sphinx.util.props.S4Integer;
  * user defined width. Additionally a insertion of can be enforced at the beginning of the stream.
  *
  * The purpose of this component is to randomize data to blow a small set of data up to a larger one.
- * <p/>
+ * <p>
  * This component should be put into the processing chain AFTER the SpeechClassifier or BEFORE a DataBlocker. The reason
  * for that is, that the current implementation generates blocks with different lengths which would affect the results
  * of the SpeechClassifier.

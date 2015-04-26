@@ -34,7 +34,7 @@ public class WordResult {
      *
      * @param w the word object to store
      * @param timeFrame time frame
-     * @param ef word end time
+     * @param score acoustic score of the word
      * @param posterior of the word
      */
     public WordResult(Word w, TimeFrame timeFrame, double score, double posterior)

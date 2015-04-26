@@ -36,7 +36,7 @@ import edu.cmu.sphinx.fst.semiring.Semiring;
  * "Semiring Framework and Algorithms for Shortest-Distance Problems", Journal
  * of Automata, Languages and Combinatorics, 7(3), pp. 321-350, 2002.
  * 
- * @author John Salatas <jsalatas@users.sourceforge.net>
+ * @author John Salatas
  * 
  */
 public class NShortestPaths {

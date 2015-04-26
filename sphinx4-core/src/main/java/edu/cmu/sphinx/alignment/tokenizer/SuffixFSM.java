@@ -20,6 +20,8 @@ public class SuffixFSM extends PronounceableFSM {
 
     /**
      * Constructs a SuffixFSM.
+     * @param url suffix of FSM
+     * @throws IOException if loading failed
      */
     public SuffixFSM(URL url) throws IOException {
         super(url, false);

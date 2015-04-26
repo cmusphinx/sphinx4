@@ -23,10 +23,8 @@ import java.util.LinkedList;
  * Converts a stream of SpeechClassifiedData objects, marked as speech and
  * non-speech, and mark out the regions that are considered speech. This is done
  * by inserting SPEECH_START and SPEECH_END signals into the stream.
- * <p/>
  * <p>
  * The algorithm for inserting the two signals is as follows.
- * <p/>
  * <p>
  * The algorithm is always in one of two states: 'in-speech' and
  * 'out-of-speech'. If 'out-of-speech', it will read in audio until we hit audio
@@ -34,7 +32,6 @@ import java.util.LinkedList;
  * <i>continuous</i> speech, we consider that speech has started, and insert a
  * SPEECH_START at 'speechLeader' time before speech first started. The state of
  * the algorithm changes to 'in-speech'.
- * <p/>
  * <p>
  * Now consider the case when the algorithm is in 'in-speech' state. If it read
  * an audio that is speech, it is scheduled for output. If the audio is

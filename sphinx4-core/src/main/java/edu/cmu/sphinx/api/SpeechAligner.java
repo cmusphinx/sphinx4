@@ -66,11 +66,11 @@ public class SpeechAligner {
     }
 
     /**
-     * TOOD: fill
+     * Align audio to sentence transcript
      * 
-     * @param audioFile
-     * @param transcript
-     * @return
+     * @param audioUrl audio file URL to process
+     * @param sentenceTranscript cleaned transcript
+     * @return List of aligned words with timings
      * @throws IOException
      */
     public List<WordResult> align(URL audioUrl, List<String> sentenceTranscript) throws IOException {

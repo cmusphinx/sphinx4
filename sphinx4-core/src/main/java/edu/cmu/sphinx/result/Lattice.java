@@ -40,11 +40,11 @@ import edu.cmu.sphinx.util.LogMath;
 import edu.cmu.sphinx.util.TimeFrame;
 
 /**
- * <p/>
+ * <p>
  * Provides recognition lattice results. Lattices are created from
  * {@link edu.cmu.sphinx.result.Result Results} which can be partial or final.
  * </p>
- * <p/>
+ * <p>
  * Lattices describe all theories considered by the Recognizer that have not
  * been pruned out. Lattices are a directed graph containing
  * {@link edu.cmu.sphinx.result.Node Nodes} and
@@ -54,7 +54,7 @@ import edu.cmu.sphinx.util.TimeFrame;
  * transcript is the sequence of Nodes though the Lattice with the best scoring
  * path. Lattices are a useful tool for analyzing "alternate results".
  * </p>
- * <p/>
+ * <p>
  * A Lattice can be created from a Result that has a full token tree (with its
  * corresponding AlternativeHypothesisManager). Currently, only the
  * {@link edu.cmu.sphinx.decoder.search.WordPruningBreadthFirstSearchManager}
@@ -68,7 +68,7 @@ import edu.cmu.sphinx.util.TimeFrame;
  * {@link edu.cmu.sphinx.decoder.search.WordPruningBreadthFirstSearchManager}.
  * </i>
  * </p>
- * <p/>
+ * <p>
  * Lattices can also be created from a collapsed
  * {@link edu.cmu.sphinx.decoder.search.Token} tree and its
  * AlternativeHypothesisManager. This is what 'collapsed' means. Normally,
@@ -80,7 +80,7 @@ import edu.cmu.sphinx.util.TimeFrame;
  * <pre>
  * W - U - H - H - H - H - U - H - H - H - H - W
  * </pre>
- * <p/>
+ * <p>
  * Usually, HMM tokens contains acoustic scores, and word tokens contains
  * language scores. If we want to know the total acoustic and language scores
  * between any two words, it is unnecessary to keep around the unit and HMM
@@ -91,7 +91,7 @@ import edu.cmu.sphinx.util.TimeFrame;
  * <pre>
  * W - P - W
  * </pre>
- * <p/>
+ * <p>
  * where 'P' is a token that represents the path between the two words, and P
  * contains the acoustic and language scores between the two words. It is this
  * type of collapsed token tree that the Lattice class is expecting. Normally,
@@ -111,7 +111,7 @@ import edu.cmu.sphinx.util.TimeFrame;
  *                            \
  *                             "dog" - P - &lt;/s&gt;
  * </pre>
- * <p/>
+ * <p>
  * When a Lattice is constructed from a Result, the above collapsed token tree
  * together with the alternate hypothesis of "all" instead of "a", will be
  * converted into a Lattice that looks like the following:
@@ -123,7 +123,7 @@ import edu.cmu.sphinx.util.TimeFrame;
  *     \     /        \     /
  *      "all"          "dog"
  * </pre>
- * <p/>
+ * <p>
  * Initially, a lattice can have redundant nodes, i.e., nodes referring to the
  * same word and that originate from the same parent node. These nodes can be
  * collapsed using the {@link LatticeOptimizer}.
@@ -150,7 +150,7 @@ public class Lattice {
 
     /**
      * Create a Lattice from a Result.
-     * <p/>
+     * <p>
      * The Lattice is created from the Token tree referenced by the Result. The
      * Lattice is then optimized to all collapse equivalent paths.
      * 
@@ -795,14 +795,14 @@ public class Lattice {
 
     /**
      * Remove a Node and cross connect all Nodes with Edges to it.
-     * <p/>
+     * <p>
      * For example given
-     * <p/>
-     * Nodes A, B, X, M, N Edges A-->X, B-->X, X-->M, X-->N
-     * <p/>
+     * <p>
+     * Nodes A, B, X, M, N Edges A--&gt;X, B--&gt;X, X--&gt;M, X--&gt;N
+     * <p>
      * Removing and cross connecting X would result in
-     * <p/>
-     * Nodes A, B, M, N Edges A-->M, A-->N, B-->M, B-->N
+     * <p>
+     * Nodes A, B, M, N Edges A--&gt;M, A--&gt;N, B--&gt;M, B--&gt;N
      * 
      * @param n
      */
@@ -819,7 +819,7 @@ public class Lattice {
     }
 
     /**
-     * Get the initialNode for this Lattice. This corresponds usually to the <s>
+     * Get the initialNode for this Lattice. This corresponds usually to the &lt;s&gt;
      * symbol
      * 
      * @return the initial Node
@@ -829,7 +829,7 @@ public class Lattice {
     }
 
     /**
-     * Set the initialNode for this Lattice. This corresponds usually to the <s>
+     * Set the initialNode for this Lattice. This corresponds usually to the &lt;s&gt;
      * symbol
      * 
      * @param p_initialNode
@@ -840,7 +840,7 @@ public class Lattice {
 
     /**
      * Get the terminalNode for this Lattice. This corresponds usually to the
-     * </s> symbol
+     * &lt;/s&gt; symbol
      * 
      * @return the initial Node
      */
@@ -850,7 +850,7 @@ public class Lattice {
 
     /**
      * Set the terminalNode for this Lattice. This corresponds usually to the
-     * </s> symbol
+     * &lt;/s&gt; symbol
      * 
      * @param p_terminalNode
      */
@@ -955,7 +955,7 @@ public class Lattice {
      * the probability that this node occurs on any path through the lattice.
      * Uses a forward-backward algorithm specific to the nature of non-looping
      * left-to-right lattice structures.
-     * <p/>
+     * <p>
      * Node posteriors can be retrieved by calling getPosterior() on Node
      * objects.
      * 
@@ -972,7 +972,7 @@ public class Lattice {
      * the probability that this node occurs on any path through the lattice.
      * Uses a forward-backward algorithm specific to the nature of non-looping
      * left-to-right lattice structures.
-     * <p/>
+     * <p>
      * Node posteriors can be retrieved by calling getPosterior() on Node
      * objects.
      * 

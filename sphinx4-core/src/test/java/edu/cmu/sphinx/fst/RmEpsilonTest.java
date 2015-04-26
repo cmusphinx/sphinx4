@@ -26,7 +26,7 @@ import edu.cmu.sphinx.fst.semiring.ProbabilitySemiring;
 
 
 /**
- * @author John Salatas <jsalatas@users.sourceforge.net>
+ * @author John Salatas
  * 
  */
 public class RmEpsilonTest {

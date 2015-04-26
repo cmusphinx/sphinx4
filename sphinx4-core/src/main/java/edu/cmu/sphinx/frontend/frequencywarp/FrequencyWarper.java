@@ -25,7 +25,7 @@ public class FrequencyWarper {
 
     /**
      * Default null constructor. No fields to be initialized.
-     * <p/>
+     * <p>
      * Compute Bark frequency from linear frequency in Hertz. The function is: bark = 6.0*log(hertz/600 +
      * sqrt((hertz/600)^2 + 1))
      *

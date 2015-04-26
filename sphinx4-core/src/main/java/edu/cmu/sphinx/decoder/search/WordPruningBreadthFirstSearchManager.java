@@ -35,7 +35,7 @@ import java.util.logging.Logger;
  * should call initialize before recognition begins, and repeatedly call
  * <code> recognize </code> until Result.isFinal() returns true. Once a final
  * result has been obtained, <code> stopRecognition </code> should be called.
- * <p/>
+ * <p>
  * All scores and probabilities are maintained in the log math log domain.
  */
 
@@ -152,21 +152,20 @@ public class WordPruningBreadthFirstSearchManager extends TokenSearchManager {
     // private TokenTracker tokenTracker;
     // private TokenTypeTracker tokenTypeTracker;
     protected boolean streamEnd;
-
     /**
-     * 
-     * @param linguist
-     * @param pruner
-     * @param scorer
-     * @param activeListManager
-     * @param showTokenCount
-     * @param relativeWordBeamWidth
-     * @param growSkipInterval
-     * @param checkStateOrder
-     * @param buildWordLattice
-     * @param maxLatticeEdges
-     * @param acousticLookaheadFrames
-     * @param keepAllTokens
+     * Creates a pruning manager withs separate lists for tokens
+     * @param linguist a linguist for search space
+     * @param pruner pruner to drop tokens
+     * @param scorer scorer to estimate token probability
+     * @param activeListManager active list manager to store tokens
+     * @param showTokenCount show count during decoding
+     * @param relativeWordBeamWidth relative beam for lookahead pruning
+     * @param growSkipInterval skip interval for grown
+     * @param checkStateOrder check order of states during growth
+     * @param buildWordLattice build a lattice during decoding
+     * @param maxLatticeEdges max edges to keep in lattice
+     * @param acousticLookaheadFrames frames to do lookahead
+     * @param keepAllTokens keep tokens including emitting tokens
      */
     public WordPruningBreadthFirstSearchManager(Linguist linguist, Pruner pruner, AcousticScorer scorer,
             ActiveListManager activeListManager, boolean showTokenCount, double relativeWordBeamWidth, int growSkipInterval,
@@ -566,8 +565,8 @@ public class WordPruningBreadthFirstSearchManager extends TokenSearchManager {
     /**
      * Checks that the given two states are in legitimate order.
      * 
-     * @param fromState
-     * @param toState
+     * @param fromState parent state
+     * @param toState child state
      */
     protected void checkStateOrder(SearchState fromState, SearchState toState) {
         if (fromState.getOrder() == numStateOrder - 1) {

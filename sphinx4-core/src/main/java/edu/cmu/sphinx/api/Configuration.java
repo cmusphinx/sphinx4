@@ -33,7 +33,7 @@ public class Configuration {
     private boolean useGrammar = false;
 
     /**
-     * Returns path to acoustic model.
+     * @return path to acoustic model
      */
     public String getAcousticModelPath() {
         return acousticModelPath;
@@ -41,13 +41,14 @@ public class Configuration {
 
     /**
      * Sets path to acoustic model.
+     * @param acousticModelPath URL of the acoustic model
      */
     public void setAcousticModelPath(String acousticModelPath) {
         this.acousticModelPath = acousticModelPath;
     }
 
     /**
-     * Returns path to dictionary.
+     * @return path to dictionary.
      */
     public String getDictionaryPath() {
         return dictionaryPath;
@@ -55,13 +56,14 @@ public class Configuration {
 
     /**
      * Sets path to dictionary.
+     * @param dictionaryPath URL of the dictionary
      */
     public void setDictionaryPath(String dictionaryPath) {
         this.dictionaryPath = dictionaryPath;
     }
 
     /**
-     * Returns path to language model.
+     * @return path to the language model
      */
     public String getLanguageModelPath() {
         return languageModelPath;
@@ -69,13 +71,14 @@ public class Configuration {
 
     /**
      * Sets paths to language model resource.
+     * @param languageModelPath URL of the language model
      */
     public void setLanguageModelPath(String languageModelPath) {
         this.languageModelPath = languageModelPath;
     }
 
     /**
-     * Returns path to grammar resources.
+     * @return grammar path
      */
     public String getGrammarPath() {
         return grammarPath;
@@ -83,13 +86,14 @@ public class Configuration {
 
     /**
      * Sets path to grammar resources.
+     * @param grammarPath URL of the grammar
      */
     public void setGrammarPath(String grammarPath) {
         this.grammarPath = grammarPath;
     }
 
     /**
-     * Returns grammar name.
+     * @return grammar name
      */
     public String getGrammarName() {
         return grammarName;
@@ -97,13 +101,14 @@ public class Configuration {
 
     /**
      * Sets grammar name if fixed grammar is used.
+     * @param grammarName of the grammar
      */
     public void setGrammarName(String grammarName) {
         this.grammarName = grammarName;
     }
 
     /**
-     * Returns whether fixed grammar should be used instead of language model.
+     * @return whether fixed grammar should be used instead of language model.
      */
     public boolean getUseGrammar() {
         return useGrammar;
@@ -111,13 +116,14 @@ public class Configuration {
 
     /**
      * Sets whether fixed grammar should be used instead of language model.
+     * @param useGrammar to use grammar or language model
      */
     public void setUseGrammar(boolean useGrammar) {
         this.useGrammar = useGrammar;
     }
 
     /**
-     * Returns the config sample rate.
+     * @return the configured sample rate.
      */
     public int getSampleRate() {
         return sampleRate;
@@ -125,6 +131,7 @@ public class Configuration {
 
     /**
      * Sets sample rate for the input stream.
+     * @param sampleRate sample rate in Hertz
      */
     public void setSampleRate(int sampleRate) {
         this.sampleRate = sampleRate;

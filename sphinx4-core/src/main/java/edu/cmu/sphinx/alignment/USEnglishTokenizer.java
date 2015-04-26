@@ -354,8 +354,6 @@ public class USEnglishTokenizer implements TextTokenizer {
     /**
      * Constructs a default USTokenWordProcessor. It uses the USEnglish regular
      * expression set (USEngRegExp) by default.
-     *
-     * @param usNumbersCART the cart to use to classify numbers
      */
     public USEnglishTokenizer() {
         try {
@@ -379,12 +377,10 @@ public class USEnglishTokenizer implements TextTokenizer {
     }
 
     /**
-     * process the utterance
+     * Process the utterance
      *
-     * @param utterance the utterance contain the tokens
-     *
-     * @throws ProcessException if an IOException is thrown during the
-     *         processing of the utterance
+     * @param text the utterance containing the tokens
+     * @return the list of tokens
      */
     public List<String> expand(String text) {
         

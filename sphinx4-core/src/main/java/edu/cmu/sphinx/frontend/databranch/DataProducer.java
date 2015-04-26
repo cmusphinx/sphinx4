@@ -6,11 +6,13 @@ import edu.cmu.sphinx.util.props.Configurable;
 public interface DataProducer extends Configurable {
 
     /** Registers a new listener for <code>Data</code>s.
-     * @param l*/
+     * @param l listener to add
+     */
     void addDataListener(DataListener l);
 
 
-    /** Unregisters a listener fors <code>Data</code>s.
-     * @param l*/
+    /** Unregisters a listener for <code>Data</code>s.
+     * @param l listener to remove
+     */
     void removeDataListener(DataListener l);
 }

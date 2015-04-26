@@ -30,7 +30,7 @@ import java.util.List;
  * An AudioFileDataSource generates a stream of audio data from a given audio file. All required information concerning
  * the audio format are read directly from the file . One would need to call {@link #setAudioFile(java.io.File,String)}
  * to set the input file, and call {@link #getData} to obtain the Data frames.
- * <p/>
+ * <p>
  * Using JavaSound as backend this class is able to handle all sound files supported by JavaSound. Beside the built-in
  * support for .wav, .au and .aiff. Using plugins (cf.  http://www.jsresources.org/ ) it can be extended to support
  * .ogg, .mp3, .speex and others.
@@ -329,7 +329,8 @@ public class AudioFileDataSource extends BaseDataProcessor {
 
 
     /** Adds a new listener for new file events.
-     * @param l*/
+     * @param l listener to add
+     */
     public void addNewFileListener(AudioFileProcessListener l) {
         if (l == null)
             return;
@@ -339,7 +340,8 @@ public class AudioFileDataSource extends BaseDataProcessor {
 
 
     /** Removes a listener for new file events.
-     * @param l*/
+     * @param l listener to remove
+     */
     public void removeNewFileListener(AudioFileProcessListener l) {
         if (l == null)
             return;

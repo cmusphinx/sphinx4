@@ -92,9 +92,6 @@ public class JSGFParser implements JSGFParserConstants {
         }
     }
 
-    /**
-     * newGrammarFromJSGF - Once JavaCC supports Readers we will change this
-     */
     public static JSGFRuleGrammar newGrammarFromJSGF(InputStream i, JSGFRuleGrammarFactory factory) throws JSGFGrammarParseException
     {
         JSGFRuleGrammar grammar = null;
@@ -113,9 +110,6 @@ public class JSGFParser implements JSGFParserConstants {
         }
     }
 
-    /**
-     * newGrammarFromJSGF - Once JavaCC supports Readers we will change this
-     */
     public static JSGFRuleGrammar newGrammarFromJSGF(Reader i, JSGFRuleGrammarFactory factory) throws JSGFGrammarParseException
     {
         JSGFRuleGrammar grammar = null;
@@ -223,9 +217,6 @@ public class JSGFParser implements JSGFParserConstants {
         return new JSGFEncoding(ver, enc, loc);
     }
 
-    /**
-     * newGrammarFromURL
-     */
     public static JSGFRuleGrammar newGrammarFromJSGF(URL url, JSGFRuleGrammarFactory factory) throws JSGFGrammarParseException, IOException
     {
         Reader reader;
@@ -241,9 +232,6 @@ public class JSGFParser implements JSGFParserConstants {
         return newGrammarFromJSGF(reader, factory);
     }
 
-    /**
-     * ruleForJSGF
-     */
     public static JSGFRule ruleForJSGF(String text) {
         JSGFRule r = null;
         try {
@@ -259,9 +247,6 @@ public class JSGFParser implements JSGFParserConstants {
         return r;
     }
 
-    /**
-    * extract @keywords from documentation comments
-    */
     static void extractKeywords(JSGFRuleGrammar grammar, String rname, String comment) {
         int i = 0;
         while ((i = comment.indexOf("@example ", i) + 9) > 9) {
@@ -852,12 +837,10 @@ final public JSGFRuleName importRef() throws ParseException {
     return false;
   }
 
-  /** Generated Token Manager. */
   public JSGFParserTokenManager token_source;
   JavaCharStream jj_input_stream;
-  /** Current token. */
+
   public Token token;
-  /** Next token. */
   public Token jj_nt;
   private int jj_ntk;
   private Token jj_scanpos, jj_lastpos;
@@ -880,11 +863,9 @@ final public JSGFRuleName importRef() throws ParseException {
   private boolean jj_rescan = false;
   private int jj_gc = 0;
 
-  /** Constructor with InputStream. */
   public JSGFParser(java.io.InputStream stream) {
      this(stream, null);
   }
-  /** Constructor with InputStream and supplied encoding */
   public JSGFParser(java.io.InputStream stream, String encoding) {
     try { jj_input_stream = new JavaCharStream(stream, encoding, 1, 1); } catch(java.io.UnsupportedEncodingException e) { throw new RuntimeException(e); }
     token_source = new JSGFParserTokenManager(jj_input_stream);
@@ -895,11 +876,9 @@ final public JSGFRuleName importRef() throws ParseException {
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
-  /** Reinitialize. */
   public void ReInit(java.io.InputStream stream) {
      ReInit(stream, null);
   }
-  /** Reinitialize. */
   public void ReInit(java.io.InputStream stream, String encoding) {
     try { jj_input_stream.ReInit(stream, encoding, 1, 1); } catch(java.io.UnsupportedEncodingException e) { throw new RuntimeException(e); }
     token_source.ReInit(jj_input_stream);
@@ -910,7 +889,6 @@ final public JSGFRuleName importRef() throws ParseException {
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
-  /** Constructor. */
   public JSGFParser(java.io.Reader stream) {
     jj_input_stream = new JavaCharStream(stream, 1, 1);
     token_source = new JSGFParserTokenManager(jj_input_stream);
@@ -921,7 +899,6 @@ final public JSGFRuleName importRef() throws ParseException {
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
-  /** Reinitialize. */
   public void ReInit(java.io.Reader stream) {
     jj_input_stream.ReInit(stream, 1, 1);
     token_source.ReInit(jj_input_stream);
@@ -932,7 +909,6 @@ final public JSGFRuleName importRef() throws ParseException {
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
-  /** Constructor with generated Token Manager. */
   public JSGFParser(JSGFParserTokenManager tm) {
     token_source = tm;
     token = new Token();
@@ -942,7 +918,6 @@ final public JSGFRuleName importRef() throws ParseException {
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
-  /** Reinitialize. */
   public void ReInit(JSGFParserTokenManager tm) {
     token_source = tm;
     token = new Token();
@@ -1001,7 +976,6 @@ static private final class LookaheadSuccess extends java.lang.Error { }
   }
 
 
-/** Get the next Token. */
   final public Token getNextToken() {
     if (token.next != null) token = token.next;
     else token = token.next = token_source.getNextToken();
@@ -1010,7 +984,6 @@ static private final class LookaheadSuccess extends java.lang.Error { }
     return token;
   }
 
-/** Get the specific Token. */
   final public Token getToken(int index) {
     Token t = token;
     for (int i = 0; i < index; i++) {
@@ -1058,7 +1031,6 @@ static private final class LookaheadSuccess extends java.lang.Error { }
     }
   }
 
-  /** Generate ParseException. */
   public ParseException generateParseException() {
     jj_expentries.clear();
     boolean[] la1tokens = new boolean[40];
@@ -1095,11 +1067,9 @@ static private final class LookaheadSuccess extends java.lang.Error { }
     return new ParseException(token, exptokseq, tokenImage);
   }
 
-  /** Enable tracing. */
   final public void enable_tracing() {
   }
 
-  /** Disable tracing. */
   final public void disable_tracing() {
   }
 

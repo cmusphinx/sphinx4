@@ -28,7 +28,7 @@ import java.util.Arrays;
  * double array returned by <code>Data.getValues()</code>. For negative energy value, a "-" will be printed out. The
  * plots look like the following, one line per cepstrum. The energy value for that particular cepstrum is printed at the
  * end of the line.
- * <p/>
+ * <p>
  * <code> <br>+......7 <br>+......7 <br>Cepstrum: SPEECH_START <br>+......7 <br>+.......8 <br>+......7 <br>+.......8
  * <br>+.......8 <br>+........9 <br>+............14 <br>+...........13 <br>+...........13 <br>+...........13
  * <br>+.............15 <br>+.............15 <br>+..............16 <br>+..............16 <br>+..............16

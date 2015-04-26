@@ -31,8 +31,7 @@ public class Utterance {
     /**
      * Creates an utterance with the given set of tokenized text.
      *
-     * @param voice the voice associated with the utterance
-     * @param tokenList the list of tokens for this utterance
+     * @param tokenizer tokenizer to use for utterance.
      */
     public Utterance(CharTokenizer tokenizer) {
         features = new FeatureSet();

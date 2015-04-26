@@ -16,7 +16,7 @@ package edu.cmu.sphinx.fst.semiring;
 /**
  * Tropical semiring implementation.
  * 
- * @author "John Salatas <jsalatas@users.sourceforge.net>"
+ * @author "John Salatas"
  * 
  */
 public class TropicalSemiring extends Semiring {

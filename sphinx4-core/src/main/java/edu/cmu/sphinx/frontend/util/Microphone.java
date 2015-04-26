@@ -23,10 +23,10 @@ import java.util.logging.Level;
 
 
 /**
- * <p/> A Microphone captures audio data from the system's underlying audio input systems. Converts these audio data
+ * <p> A Microphone captures audio data from the system's underlying audio input systems. Converts these audio data
  * into Data objects. When the method <code>startRecording()</code> is called, a new thread will be created and used to
  * capture audio, and will stop when <code>stopRecording()</code> is called. Calling <code>getData()</code> returns the
- * captured audio data as Data objects. </p> <p/> This Microphone will attempt to obtain an audio device with the format
+ * captured audio data as Data objects. </p> <p> This Microphone will attempt to obtain an audio device with the format
  * specified in the configuration. If such a device with that format cannot be obtained, it will try to obtain a device
  * with an audio format that has a higher sample rate than the configured sample rate, while the other parameters of the
  * format (i.e., sample size, endianness, sign, and channel) remain the same. If, again, no such device can be obtained,

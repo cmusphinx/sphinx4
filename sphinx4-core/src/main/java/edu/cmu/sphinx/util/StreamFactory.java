@@ -38,15 +38,15 @@ public class StreamFactory {
      * Returns an appropriate InputStream of the given file in the given URL location. The location can be a plain
      * directory or a ZIP file (these are the only two supported at this point). The <code>resolve</code> method is
      * called to resolve whether "location" refers to a ZIP file or a directory.
-     * <p/>
+     * <p>
      * Suppose you want the InputStream to the file "dict/dictionary.txt" in the ZIP file
      * "file:/lab/speech/sphinx4/data/wsj.zip". You will do: <code> StreamFactory.getInputStream(
      * "file:/lab/speech/sphinx4/data/wsj.zip", "dict/dictionary.txt"); </code>
-     * <p/>
+     * <p>
      * Suppose you want the InputStream to the file "dict/dictionary.txt" in the directory
      * "file:/lab/speech/sphinx4/data/wsj", you will do: <code> StreamFactory.getInputStream(
      * "file:/lab/speech/sphinx4/data/wsj", "dict/dictionary.txt"); </code>
-     * <p/>
+     * <p>
      * The <code>StreamFactory.resolve()</code> method is called to resolve whether "location" refers to a ZIP file or a
      * directory.
      *
@@ -71,11 +71,11 @@ public class StreamFactory {
      * According to the given data format, returns an appropriate InputStream of the given file in the given URL
      * location. The location can be a plain directory or a JAR or ZIP file (these are the only ones supported at this
      * point).
-     * <p/>
+     * <p>
      * Suppose you want the InputStream to the file "dict/dictionary.txt" in the ZIP file
      * "file:/lab/speech/sphinx4/data/wsj.zip". You will do: <code> StreamFactory.getInputStream(StreamFactory.ZIP_FILE,
      * "file:/lab/speech/sphinx4/data/wsj.zip", "dict/dictionary.txt"); </code>
-     * <p/>
+     * <p>
      * Suppose you want the InputStream to the file "dict/dictionary.txt" in the directory
      * "file:/lab/speech/sphinx4/data/wsj", you will do: <code> StreamFactory.getInputStream(StreamFactory.DIRECTORY,
      * "file:/lab/speech/sphinx4/data/wsj", "dict/dictionary.txt"); </code>
@@ -147,15 +147,15 @@ public class StreamFactory {
      * directory or a ZIP file (these are the only two supported at this point).  The <code>resolve</code> method is
      * called to resolve whether "location" refers to a ZIP file or a directory. If saving to a zip or jar, the file can
      * be appended or overwritten. If saving to a directory, files are always overwritten.
-     * <p/>
+     * <p>
      * Suppose you want the OutputStream to the file "dict/dictionary.txt" in the ZIP file
      * "file:/lab/speech/sphinx4/data/wsj.zip". You will do: <code> StreamFactory.getOutputStream(
      * "file:/lab/speech/sphinx4/data/wsj.zip", "dict/dictionary.txt", true); </code>
-     * <p/>
+     * <p>
      * Suppose you want the OutputStream to the file "dict/dictionary.txt" in the directory
      * "file:/lab/speech/sphinx4/data/wsj", you will do: <code> StreamFactory.getOutputStream(
      * "file:/lab/speech/sphinx4/data/wsj", "dict/dictionary.txt", false); </code>
-     * <p/>
+     * <p>
      * The <code>StreamFactory.resolve()</code> method is called to resolve whether "location" refers to a ZIP file or a
      * directory.
      *
@@ -183,11 +183,11 @@ public class StreamFactory {
      * location.  The location can be a plain directory or a JAR or ZIP file (these are the only ones supported at this
      * point). If saving to a zip or jar, the file can be appended or overwritten. If saving to a directory, files are
      * always overwritten.
-     * <p/>
+     * <p>
      * Suppose you want the OutputStream to the file "dict/dictionary.txt" in the ZIP file
      * "file:/lab/speech/sphinx4/data/wsj.zip". You will do: <code> StreamFactory.getOutputStream(StreamFactory.ZIP_FILE,
      * "file:/lab/speech/sphinx4/data/wsj.zip", "dict/dictionary.txt", true); </code>
-     * <p/>
+     * <p>
      * Suppose you want the OutputStream to the file "dict/dictionary.txt" in the directory
      * "file:/lab/speech/sphinx4/data/wsj", you will do: <code> StreamFactory.getOutputStream(StreamFactory.DIRECTORY,
      * "file:/lab/speech/sphinx4/data/wsj", "dict/dictionary.txt", false); </code>
@@ -254,15 +254,15 @@ public class StreamFactory {
      * directory or a ZIP file (these are the only two supported at this point).  The <code>resolve</code> method is
      * called to resolve whether "location" refers to a ZIP file or a directory. Files are overwritten, which may be
      * risky for ZIP of JAR files.
-     * <p/>
+     * <p>
      * Suppose you want the OutputStream to the file "dict/dictionary.txt" in the ZIP file
      * "file:/lab/speech/sphinx4/data/wsj.zip". You will do: <code> StreamFactory.getOutputStream(
      * "file:/lab/speech/sphinx4/data/wsj.zip", "dict/dictionary.txt"); </code>
-     * <p/>
+     * <p>
      * Suppose you want the OutputStream to the file "dict/dictionary.txt" in the directory
      * "file:/lab/speech/sphinx4/data/wsj", you will do: <code> StreamFactory.getOutputStream(
      * "file:/lab/speech/sphinx4/data/wsj", "dict/dictionary.txt"); </code>
-     * <p/>
+     * <p>
      * The <code>StreamFactory.resolve()</code> method is called to resolve whether "location" refers to a ZIP file or a
      * directory.
      *
@@ -287,11 +287,11 @@ public class StreamFactory {
      * According to the given data format, returns an appropriate OutputStream of the given file in the given URL
      * location.  The location can be a plain directory or a JAR or ZIP file (these are the only ones supported at this
      * point). Files are always overwritten, which can be risky for ZIP or JAR files.
-     * <p/>
+     * <p>
      * Suppose you want the OutputStream to the file "dict/dictionary.txt" in the ZIP file
      * "file:/lab/speech/sphinx4/data/wsj.zip". You will do: <code> StreamFactory.getOutputStream(StreamFactory.ZIP_FILE,
      * "file:/lab/speech/sphinx4/data/wsj.zip", "dict/dictionary.txt"); </code>
-     * <p/>
+     * <p>
      * Suppose you want the OutputStream to the file "dict/dictionary.txt" in the directory
      * "file:/lab/speech/sphinx4/data/wsj", you will do: <code> StreamFactory.getOutputStream(StreamFactory.DIRECTORY,
      * "file:/lab/speech/sphinx4/data/wsj", "dict/dictionary.txt"); </code>

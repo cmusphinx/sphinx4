@@ -24,7 +24,7 @@ import java.util.logging.Logger;
 
 /**
  * A list of ActiveLists. Different token types are placed in different lists.
- * <p/>
+ * <p>
  * This class is not thread safe and should only be used by a single thread.
  */
 public class SimpleActiveListManager implements ActiveListManager {
@@ -51,9 +51,9 @@ public class SimpleActiveListManager implements ActiveListManager {
 
 
     /**
-     * 
-     * @param activeListFactories
-     * @param checkPriorLists
+     * Create a simple list manager
+     * @param activeListFactories factories
+     * @param checkPriorLists check prior lists during operation
      */
     public SimpleActiveListManager(List<ActiveListFactory> activeListFactories, boolean checkPriorLists) {
         this.logger = Logger.getLogger( getClass().getName() );

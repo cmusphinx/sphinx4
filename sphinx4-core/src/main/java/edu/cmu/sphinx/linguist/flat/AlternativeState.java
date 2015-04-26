@@ -23,8 +23,9 @@ public class AlternativeState extends SentenceHMMState
         implements Serializable {
 
     /** Creates a WordState
-
- * @param which*/
+      * @param parent parent item 
+      * @param which state number
+      **/
     public AlternativeState(GrammarState parent, int which) {
         super("A", parent, which);
     }

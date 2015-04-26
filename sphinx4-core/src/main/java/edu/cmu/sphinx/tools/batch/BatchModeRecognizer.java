@@ -46,7 +46,7 @@ import java.util.logging.Logger;
  * that in the ideal situation, the audio format of the data should be passed
  * into the StreamDataSource, so that no extra configuration is needed. This
  * will be fixed in future releases.
- * <p/>
+ * <p>
  * To run this BatchModeRecognizer:
  * 
  * <pre>
@@ -61,7 +61,7 @@ import java.util.logging.Logger;
  * Configuration Management</a>. For information about the batch file, refer to
  * the <a href="../../../../../../index.html#batch_files"> batch file
  * description</a>.
- * <p/>
+ * <p>
  * This class will send recognition results to the logger if the log level is
  * set to INFO.
  */
@@ -87,7 +87,7 @@ public class BatchModeRecognizer implements Configurable {
 
     /**
      * The property for the total number of batch jobs the decoding run is being divided into.
-     * <p/>
+     * <p>
      * The BatchDecoder supports running a subset of a batch. This allows a test to be distributed among several
      * machines.
      */

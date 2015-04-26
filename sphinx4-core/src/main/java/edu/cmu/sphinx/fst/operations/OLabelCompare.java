@@ -21,7 +21,7 @@ import edu.cmu.sphinx.fst.Arc;
  * Comparator used in {@link edu.cmu.sphinx.fst.operations.ArcSort} for sorting
  * based on output labels
  * 
- * @author John Salatas <jsalatas@users.sourceforge.net>
+ * @author John Salatas
  */
 public class OLabelCompare implements Comparator<Arc> {
 

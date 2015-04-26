@@ -23,11 +23,7 @@ import edu.cmu.sphinx.frontend.*;
  */
 public class ConcatFeatureExtractor extends AbstractFeatureExtractor {
 
-    /**
-     *
-     * @param window
-     */
-    public ConcatFeatureExtractor( int window ) {
+    public ConcatFeatureExtractor(int window) {
         super(window);
     }
 

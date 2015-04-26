@@ -38,16 +38,15 @@ public class PLPFilter {
 
     /**
      * Constructs a PLP filter around a given center frequency.
-     * <p/>
+     * <p>
      * Defines a filter according to the following equation, defined piecewise (all frequencies in the equation are Bark
      * frequencies):
-     * <p/>
      * <pre>
-     * Filter(f) = 0 if f < -2.5 <br>
-     *           = 10^(-(f+0.5)) if -2.5 <= f <= -0.5 <br>
-     *           = 1  if -0.5 <= f <= 0.5 <br>
-     *           = 10^(2.5(f-0.5)) if 0.5 <= f <= 1.3 <br>
-     *           = 0 if f > 1.3 <br>
+     * Filter(f) = 0 if f &lt; -2.5 <br>
+     *           = 10^(-(f+0.5)) if -2.5 &lt;= f &lt;= -0.5 <br>
+     *           = 1  if -0.5 &lt;= f &lt;= 0.5 <br>
+     *           = 10^(2.5(f-0.5)) if 0.5 &lt;= f &lt;= 1.3 <br>
+     *           = 0 if f &gt; 1.3 <br>
      * </pre>
      * The current implementation assumes that the calling routine passes in an array of frequencies, one for each of
      * the DFT points in the spectrum of the frame of speech to be filtered. This is used in conjunction with a
@@ -56,7 +55,7 @@ public class PLPFilter {
      * @param DFTFrequenciesInHz is a double array containing the frequencies in Hertz corresponding to each of the DFT
      *                           points in the spectrum of the signal to be filtered.
      * @param centerFreqInHz     is the filter's center frequency
-     * @throws IllegalArgumentException
+     * @throws IllegalArgumentException if center frequency is wrong
      */
 
 

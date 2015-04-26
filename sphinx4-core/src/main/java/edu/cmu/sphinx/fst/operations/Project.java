@@ -11,7 +11,7 @@ import edu.cmu.sphinx.fst.State;
 /**
  * Project operation. 
  * 
- * @author John Salatas <jsalatas@users.sourceforge.net>
+ * @author John Salatas
  * 
  */
 public class Project {
@@ -25,9 +25,8 @@ public class Project {
      * Projects an fst onto its domain or range by either copying each arc's
      * input label to its output label or vice versa.
      * 
-     * 
-     * @param fst
-     * @param pType
+     * @param fst fst to modify
+     * @param pType type of the projection
      */
     public static void apply(Fst fst, ProjectType pType) {
         if (pType == ProjectType.INPUT) {

@@ -24,7 +24,7 @@ public class PropertySheet implements Cloneable {
 
     /**
      * Maps the names of the component properties to their (possibly unresolved) values.
-     * <p/>
+     * <p>
      * Example: <code>frontend</code> to <code>${myFrontEnd}</code>
      */
     private Map<String, Object> rawProps = new HashMap<String, Object>();
@@ -792,7 +792,7 @@ public class PropertySheet implements Cloneable {
      * Returns a logger to use for this configurable component. The logger can be configured with the property:
      * 'logLevel' - The default logLevel value is defined (within the xml configuration file by the global property
      * 'defaultLogLevel' (which defaults to WARNING).
-     * <p/>
+     * <p>
      * implementation note: the logger became configured within the constructor of the parenting configuration manager.
      *
      * @return the logger for this component

@@ -49,7 +49,6 @@ public class NetworkLanguageModel implements LanguageModel {
      * @param location URL of the file with vocabulary (only needed for 1-stage
      *        model)
      * @param maxDepth depth of the model
-     * @param logMath logMath
      */
     public NetworkLanguageModel(String host, int port, URL location,
             int maxDepth) {

@@ -24,14 +24,15 @@ import edu.cmu.sphinx.result.WordResult;
 /**
  * This class demonstrates how to align audio to existing transcription and
  * receive word timestamps.
- *
- * <br/>
+ * <br>
  * In order to initialize the aligner you need to specify several data files
  * which might be available on the CMUSphinx website. There should be an
  * acoustic model for your language, a dictionary, an optional G2P model to
- * convert word strings to pronunciation. <br/>
+ * convert word strings to pronunciation. 
+ * <br>
  * Currently the audio must have specific format (16khz, 16bit, mono), but in
- * the future other formats will be supported. <br/>
+ * the future other formats will be supported. 
+ * <br>
  * Text should be a clean text in lower case. It should be cleaned from
  * punctuation marks, numbers and other non-speakable things. In the future
  * automatic cleanup will be supported.

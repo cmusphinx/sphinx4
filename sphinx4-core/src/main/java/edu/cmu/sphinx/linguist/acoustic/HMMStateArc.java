@@ -15,7 +15,7 @@ package edu.cmu.sphinx.linguist.acoustic;
 
 /**
  * Represents a transition to single state in an HMM
- * <p/>
+ * <p>
  * All probabilities are maintained in linear base
  */
 public class HMMStateArc {

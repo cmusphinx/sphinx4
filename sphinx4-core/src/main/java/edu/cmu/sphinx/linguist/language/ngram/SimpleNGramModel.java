@@ -32,7 +32,7 @@ import edu.cmu.sphinx.util.props.PropertySheet;
 /**
  * An ASCII ARPA language model loader. This loader makes no attempt to
  * optimize storage, so it can only load very small language models
- * <p/>
+ * <p>
  * Note that all probabilities in the grammar are stored in LogMath log base
  * format. Language Probabilities in the language model file are stored in log
  * 10 base.

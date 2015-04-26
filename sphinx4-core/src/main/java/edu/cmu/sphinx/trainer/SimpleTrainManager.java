@@ -92,7 +92,7 @@ public class SimpleTrainManager implements TrainManager {
 
     /**
      * Copy the model.
-     * <p/>
+     * <p>
      * This method copies to model set, possibly to a new location and new format. This is useful if one wants to
      * convert from binary to ascii and vice versa, or from a directory structure to a JAR file. If only one model is
      * used, then name can be null.

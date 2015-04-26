@@ -10,7 +10,6 @@ package edu.cmu.sphinx.result;
 
 import static org.testng.AssertJUnit.assertTrue;
 
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
@@ -44,7 +43,6 @@ public class LatticeCompTest {
         // Load model from the jar
         configuration.setAcousticModelPath("resource:/edu/cmu/sphinx/models/en-us/en-us");
         configuration.setDictionaryPath("resource:/edu/cmu/sphinx/models/en-us/cmudict-en-us.dict");
-        //configuration.setLanguageModelPath("resource:/edu/cmu/sphinx/models/en-us/en-us.lm.dmp");
         configuration.setLanguageModelPath("resource:/edu/cmu/sphinx/result/hellongram.trigram.lm");
 
         StreamSpeechRecognizer recognizer = new StreamSpeechRecognizer(configuration);
@@ -56,7 +54,6 @@ public class LatticeCompTest {
         SpeechResult result = recognizer.getResult();
         Lattice lattice = result.getLattice();
 
-        lattice.dumpSlf(new FileWriter("test.slf"));
         Lattice otherLattice = Lattice.readSlf(getClass().getResourceAsStream("correct.slf"));
 
         Collection<Node> latNodes = lattice.getNodes();

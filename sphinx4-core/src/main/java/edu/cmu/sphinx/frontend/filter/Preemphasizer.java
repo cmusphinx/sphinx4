@@ -19,20 +19,20 @@ import edu.cmu.sphinx.util.props.*;
  * Implements a high-pass filter that compensates for attenuation in the audio data. Speech signals have an attenuation
  * (a decrease in intensity of a signal) of 20 dB/dec. It increases the relative magnitude of the higher frequencies
  * with respect to the lower frequencies.
- * <p/>
+ * <p>
  * The Preemphasizer takes a {@link Data}object that usually represents audio data as input, and outputs the same {@link
  * Data}object, but with preemphasis applied. For each value X[i] in the input Data object X, the following formula is
  * applied to obtain the output Data object Y:
- * <p/>
+ * <p>
  * <code> Y[i] = X[i] - (X[i-1] * preemphasisFactor) </code>
- * <p/>
+ * <p>
  * where 'i' denotes time.
- * <p/>
+ * <p>
  * The preemphasis factor has a value defined by the field {@link #PROP_PREEMPHASIS_FACTOR} of 0.97. A common value for
  * this factor is something around 0.97.
- * <p/>
+ * <p>
  * Other {@link Data}objects are passed along unchanged through this Preemphasizer.
- * <p/>
+ * <p>
  * The Preemphasizer emphasizes the high frequency components, because they usually contain much less energy than lower
  * frequency components, even though they are still important for speech recognition. It is a high-pass filter because
  * it allows the high frequency components to "pass through", while weakening or filtering out the low frequency

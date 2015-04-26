@@ -26,7 +26,7 @@ import edu.cmu.sphinx.util.props.S4String;
 
 /**
  * Trains models given a set of audio files.
- * <p/>
+ * <p>
  * At this point, a very simple file that helps us debug the code.
  */
 public class Trainer implements Configurable {

@@ -31,7 +31,7 @@ import edu.cmu.sphinx.util.TimeFrame;
  * Provides recognition results. Results can be partial or final. A result
  * should not be modified before it is a final result. Note that a result may
  * not contain all possible information.
- * <p/>
+ * <p>
  * The following methods are not yet defined but should be:
  * 
  * <pre>
@@ -57,8 +57,8 @@ public class Result {
      *            the active list associated with this result
      * @param resultList
      *            the result list associated with this result
-     * @param frameNumber
-     *            the frame number for this result.
+     * @param collectTime
+     *            token time in a stream.
      * @param isFinal
      *            if true, the result is a final result
      */
@@ -75,8 +75,8 @@ public class Result {
      *            the active list associated with this result
      * @param resultList
      *            the result list associated with this result
-     * @param frameNumber
-     *            the frame number for this result.
+     * @param collectTime
+     *            token collect time in a stream.
      * @param isFinal
      *            if true, the result is a final result. This means that the
      *            last frame in the speech segment has been decoded.
@@ -127,7 +127,7 @@ public class Result {
      * or active <code>Token</code> objects that represents the leaf nodes of
      * all active branches in the result (sometimes referred to as the
      * 'lattice').
-     * <p/>
+     * <p>
      * The lattice is live and may be modified by a SearchManager during a
      * recognition. Once the Result is final, the lattice is fixed and will no
      * longer be modified by the SearchManager. Applications can modify the
@@ -146,7 +146,7 @@ public class Result {
      * or more result <code>Token</code> objects that represents the leaf nodes
      * of all final branches in the result (sometimes referred to as the
      * 'lattice').
-     * <p/>
+     * <p>
      * The lattice is live and may be modified by a SearchManager during a
      * recognition. Once the Result is final, the lattice is fixed and will no
      * longer be modified by the SearchManager. Applications can modify the
@@ -399,8 +399,6 @@ public class Result {
      * 
      * @param withFillers
      *            true if we want filler words included, false otherwise
-     * @param wordTokenFirst
-     *            true if the word tokens come before other types of tokens
      * @return the string of words
      */
     public List<WordResult> getTimedBestResult(boolean withFillers) {

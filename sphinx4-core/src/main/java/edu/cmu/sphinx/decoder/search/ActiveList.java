@@ -17,7 +17,7 @@ import edu.cmu.sphinx.util.props.*;
 
 /**
  * An active list is maintained as a sorted list
- * <p/>
+ * <p>
  * Note that all scores are represented in LogMath logbase
  */
 public interface ActiveList extends Iterable<Token> {

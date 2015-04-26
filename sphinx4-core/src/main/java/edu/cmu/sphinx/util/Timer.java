@@ -20,7 +20,7 @@ import java.util.logging.Logger;
  * timed should be bracketed by calls to timer.start() and timer.stop().  Repeated operations can be timed more than
  * once. The timer will report the minimum, maximum, average and last time executed for all start/stop pairs when the
  * timer.dump is called.
- * <p/>
+ * <p>
  * Timer instances can be obtained from a global cache implemented in {@code TimerPool}.
  *
  * @see TimerPool
@@ -116,7 +116,6 @@ public class Timer {
     /**
      * Stops the timer.
      *
-     * @param verbose if <code>true</code>, print out details from this run; otherwise, don't print the details
      * @return the duration since start in milliseconds
      */
     public long stop() {
@@ -139,7 +138,10 @@ public class Timer {
     }
 
 
-    /** Dump the timer. Shows the timer details. */
+    /** 
+     * Dump the timer. Shows the timer details. 
+     * @param logger to use for dump
+     */
     public void dump(Logger logger) {
         showTimesShort(logger);
     }

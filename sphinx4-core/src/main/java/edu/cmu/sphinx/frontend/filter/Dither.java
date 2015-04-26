@@ -25,8 +25,8 @@ import java.util.Random;
 /**
  * Implements a dither for the incoming packet. A small amount of random noise is added
  * to the signal to avoid floating point errors and prevent the energy from
- * being zero. <p/> Other {@link Data} objects are passed along unchanged through
- * this Dither processor. <p/> See also {@link EnergyFilter}, an alternative to Dither.
+ * being zero. <p> Other {@link Data} objects are passed along unchanged through
+ * this Dither processor. <p> See also {@link EnergyFilter}, an alternative to Dither.
  */
 public class Dither extends BaseDataProcessor {
 

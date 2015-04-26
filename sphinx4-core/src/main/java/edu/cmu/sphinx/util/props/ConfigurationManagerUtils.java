@@ -184,7 +184,7 @@ public final class ConfigurationManagerUtils {
     /**
      * This method will automatically rename all components of <code>subCM</code> for which there is component named the
      * same in the <code>baseCM</code> .
-     * <p/>
+     * <p>
      * Note: This is required when merging two system configurations into one.
      *
      * @return A map which maps all renamed component names to their new names.
@@ -214,7 +214,7 @@ public final class ConfigurationManagerUtils {
 
     /**
      * converts a configuration manager instance into a xml-string .
-     * <p/>
+     * <p>
      * Note: This methods will not instantiate configurables.
      */
     public static String toXML(ConfigurationManager cm) {
@@ -341,7 +341,7 @@ public final class ConfigurationManagerUtils {
     /**
      * Applies the system properties to the raw property map. System properties should be of the form
      * compName[paramName]=paramValue
-     * <p/>
+     * <p>
      * List types cannot currently be set from system properties.
      *
      * @param rawMap the map of raw property values
@@ -578,9 +578,9 @@ public final class ConfigurationManagerUtils {
 
     /**
      * Attempts to set the value of an arbitrary component-property. If the property-name is ambiguous  with respect to
-     * the given <code>ConfiguratioManager</code> an extended syntax (componentName->propName) can be used to access the
+     * the given <code>ConfiguratioManager</code> an extended syntax (componentName-&gt;propName) can be used to access the
      * property.
-     * <p/>
+     * <p>
      * Beside component properties it is also possible to modify the class of a configurable, but this is only allowed if
      * the configurable under question has not been instantiated yet. Furthermore the user has to ensure to set all
      * mandatory component properties.

@@ -25,7 +25,7 @@ import java.util.concurrent.*;
 
 /**
  * An acoustic scorer that breaks the scoring up into a configurable number of separate threads.
- * <p/>
+ * <p>
  * All scores are maintained in LogMath log base
  */
 public class ThreadedAcousticScorer extends SimpleAcousticScorer {
@@ -44,7 +44,7 @@ public class ThreadedAcousticScorer extends SimpleAcousticScorer {
      * property is true, then this value is combined with the number of available processors on the system. If you want
      * to have one thread per CPU available to score states, set the NUM_THREADS property to 0 and the isCpuRelative to
      * true. If you want exactly one thread to process scores set NUM_THREADS to 1 and isCpuRelative to false.
-     * <p/>
+     * <p>
      * If the value is 1 isCpuRelative is false no additional thread will be instantiated, and all computation will be
      * done in the calling thread itself. The default value is 0.
      */
@@ -93,7 +93,7 @@ public class ThreadedAcousticScorer extends SimpleAcousticScorer {
      *            the NUM_THREADS property to 0 and the isCpuRelative to true.
      *            If you want exactly one thread to process scores set
      *            NUM_THREADS to 1 and isCpuRelative to false.
-     *            <p/>
+     *            <p>
      *            If the value is 1 isCpuRelative is false no additional thread
      *            will be instantiated, and all computation will be done in the
      *            calling thread itself. The default value is 0.

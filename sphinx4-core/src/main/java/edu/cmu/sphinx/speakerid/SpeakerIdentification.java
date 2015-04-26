@@ -30,7 +30,7 @@ import edu.cmu.sphinx.util.props.ConfigurationManager;
  * Provides method for detecting the number of speakers from a given input file
  * 
  */
-public class SpeakerIdentification implements Identification {
+public class SpeakerIdentification {
 
     public final String FRONTEND_NAME = "plpFrontEnd";
 

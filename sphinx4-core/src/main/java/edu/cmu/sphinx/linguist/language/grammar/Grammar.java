@@ -30,7 +30,7 @@ import edu.cmu.sphinx.util.props.*;
  * getInitialNode} will return the first node of the grammar graph. To traverse the grammar graph, one should call
  * GrammarNode.getSuccessors, which will return an array of GrammarArcs, from which you can reach the neighboring
  * GrammarNodes.
- * <p/>
+ * <p>
  * Note that all grammar probabilities are maintained in LogMath log domain.
  */
 
@@ -102,7 +102,8 @@ public abstract class Grammar implements Configurable, GrammarInterface {
 
 
     /** Create the grammar
-     * @throws java.io.IOException*/
+     * @throws java.io.IOException if IO went wrong
+     **/
     public void allocate() throws IOException {
         dictionary.allocate();
         newGrammar();
@@ -275,7 +276,8 @@ public abstract class Grammar implements Configurable, GrammarInterface {
 
 
     /** Dumps the grammar
-     * @param name*/
+     * @param name name of the file to dump to
+     **/
     public void dumpGrammar(String name) {
         getInitialNode().dumpDot(name);
     }
@@ -321,6 +323,7 @@ public abstract class Grammar implements Configurable, GrammarInterface {
      * Create class from reference text (not implemented).
      *
      * @param bogusText dummy variable
+     * @return created grammar node
      * @throws NoSuchMethodException if called with reference sentence
      */
     protected GrammarNode createGrammar(String bogusText)
@@ -345,6 +348,7 @@ public abstract class Grammar implements Configurable, GrammarInterface {
      *
      * @param identity the id for this node
      * @param alts     the set of alternative word lists for this GrammarNode
+     * @return created grammar node
      */
     protected GrammarNode createGrammarNode(int identity, String[][] alts) {
         GrammarNode node;
@@ -375,6 +379,7 @@ public abstract class Grammar implements Configurable, GrammarInterface {
      * created. The grammar id is automatically assigned
      *
      * @param word the word for this grammar node
+     * @return created grammar node
      */
 
     protected GrammarNode createGrammarNode(String word) {
@@ -400,6 +405,7 @@ public abstract class Grammar implements Configurable, GrammarInterface {
      *
      * @param identity the id for this node
      * @param word     the word for this grammar node
+     * @return created grammar node
      */
     protected GrammarNode createGrammarNode(int identity, String word) {
         GrammarNode node;

@@ -30,7 +30,7 @@ import java.util.*;
 /**
  * Represents a single state in the recognition trellis. Subclasses of a token are used to represent the various
  * emitting state.
- * <p/>
+ * <p>
  * All scores are maintained in LogMath log base
  */
 public class Token implements Scoreable {
@@ -58,8 +58,9 @@ public class Token implements Scoreable {
      * @param predecessor             the predecessor for this token
      * @param state                   the SentenceHMMState associated with this token
      * @param logTotalScore           the total entry score for this token (in LogMath log base)
+     * @param logInsertionScore       the insertion score associated with this token (in LogMath log base)
      * @param logLanguageScore        the language score associated with this token (in LogMath log base)
-     * @param frameNumber             the frame number associated with this token
+     * @param collectTime             the frame collection time
      */
     public Token(Token predecessor,
                  SearchState state,
@@ -91,9 +92,11 @@ public class Token implements Scoreable {
     /**
      * Creates a Token with the given acoustic and language scores and predecessor.
      *
+     * @param predecessor previous token
+     * @param logTotalScore total score
      * @param logAcousticScore the log acoustic score
+     * @param logInsertionScore the log insertion score
      * @param logLanguageScore the log language score
-     * @param predecessor      the predecessor Token
      */
     public Token(Token predecessor,
                  float logTotalScore, 
@@ -126,7 +129,8 @@ public class Token implements Scoreable {
 
 
     /** Sets the feature for this Token.
-     * @param data*/
+     * @param data features
+     */
     public void setData(Data data) {
         this.data = data;
         if (data instanceof FloatData) {

@@ -20,34 +20,34 @@ import java.util.logging.Logger;
 /**
  * Copyright 1999-2002 Carnegie Mellon University. Portions Copyright 2002 Sun Microsystems, Inc. Portions Copyright
  * 2002 Mitsubishi Electric Research Laboratories. All Rights Reserved.  Use is subject to license terms.
- * <p/>
+ * <p>
  * See the file "license.terms" for information on usage and redistribution of this file, and for a DISCLAIMER OF ALL
  * WARRANTIES.
- * <p/>
+ * <p>
  * User: Peter Wolf Date: Nov 10, 2005 Time: 2:42:06 PM Copyright 2005, Peter Wolf
- * <p/>
+ * <p>
  * Runs a NIST corpus as used by the GALE project.  The inputs are a CTL file, and a REF file.  The output is a CTM
  * file.
- * <p/>
+ * <p>
  * A CTL file contains a list of utterances to decode. The format is
- * <p/>
- * <utterance file> <start offset> <end offset> <utterance name>
- * <p/>
- * The <utterance file> is a base to which the property "dataDirectory" is prepended, and ".raw" is appended.  The
+ * <p>
+ * &lt;utterance file&gt; &lt;start offset&gt; &lt;end offset&gt; &lt;utterance name&gt;
+ * <p>
+ * The &lt;utterance file&gt; is a base to which the property "dataDirectory" is prepended, and ".raw" is appended.  The
  * utterance file should be raw PCM that agrees with the "bitsPerSample", "channelCount", "samplesPerSecond", and
  * "framesPerSecond" properties.
- * <p/>
- * The <start offset> and <end offset> are specified in frames, where
- * <p/>
+ * <p>
+ * The &lt;start offset&gt; and &lt;end offset&gt; are specified in frames, where
+ * <p>
  * bytesPerFrame = (bitsPerSample/8)*channelCount*samplesPerSecond/framesPerSecond
- * <p/>
- * The <utterance name> should be a unique string.  For example "<utterance file>_<start offset>_<end offset>".
- * <p/>
+ * <p>
+ * The &lt;utterance name&gt; should be a unique string.  For example "&lt;utterance file&gt;_&lt;start offset&gt;_&lt;end offset&gt;".
+ * <p>
  * A REF file contains the correct transcripts of the utterances specified in the CTL file.  Each line should be of the
  * form
- * <p/>
- * <ASCII transcript> (<utterance name>)
- * <p/>
+ * <p>
+ * &lt;ASCII transcript&gt; (&lt;utterance name&gt;)
+ * <p>
  * The output is a "processed" CTM file.  It is used by the NIST tools to compute the performance on the copus.  The
  * format is not documented because it is currently a hack to get the Dry Run going.  We need to think more about it. If
  * you want to use this tool talk to Peter Wolf, or Arthur Chan.

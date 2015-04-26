@@ -12,7 +12,7 @@ import java.util.List;
 
 /**
  * A FIFO-buffer for <code>Data</code>-elements.
- * <p/>
+ * <p>
  * <code>Data</code>s are inserted to the buffer using the <code>processDataFrame</code>-method.
  */
 public class DataBufferProcessor extends BaseDataProcessor implements DataListener {
@@ -55,7 +55,7 @@ public class DataBufferProcessor extends BaseDataProcessor implements DataListen
      * feature-pull-chain.
      * @param waitTime The time in milliseconds which will be waited between two attempts to read a data element from the buffer when
      * being in <code>waitIfEmpty</code>-mode
-     * @param listeners
+     * @param listeners listeners to get notified
      */
     public DataBufferProcessor(int maxBufferSize, boolean waitIfEmpty, int waitTime, List<? extends Configurable> listeners) {
         initLogger();
@@ -149,7 +149,8 @@ public class DataBufferProcessor extends BaseDataProcessor implements DataListen
 
 
     /** Adds a new listener.
-     * @param l*/
+     * @param l listener to add
+     */
     public void addDataListener(DataListener l) {
         if (l == null)
             return;
@@ -159,7 +160,8 @@ public class DataBufferProcessor extends BaseDataProcessor implements DataListen
 
 
     /** Removes a listener.
-     * @param l*/
+     * @param l listener to remove
+     */
     public void removeDataListener(DataListener l) {
         if (l == null)
             return;

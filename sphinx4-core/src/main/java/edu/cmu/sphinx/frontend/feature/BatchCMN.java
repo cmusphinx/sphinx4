@@ -27,7 +27,7 @@ import java.util.*;
  *
  * Its goal is to reduce the distortion caused by the transmission channel.  The output is mean normalized cepstral
  * data.
- * <p/>
+ * <p>
  * The CMN processing subtracts the mean from all the {@link Data} objects between a {@link
  * edu.cmu.sphinx.frontend.DataStartSignal} and a {@link DataEndSignal} or between a {@link
  * edu.cmu.sphinx.frontend.endpoint.SpeechStartSignal} and a {@link SpeechEndSignal}.  BatchCMN will read in all the {@link Data}
@@ -35,7 +35,7 @@ import java.util.*;
  * only produce an output after reading all the incoming data for the utterance. As a result, this process can introduce
  * a significant processing delay, which is acceptable for batch processing, but not for live mode. In the latter case,
  * one should use the {@link LiveCMN}.
- * <p/>
+ * <p>
  * CMN is a technique used to reduce distortions that are introduced by the transfer function of the transmission
  * channel (e.g., the microphone). Using a transmission channel to transmit the input speech translates to multiplying
  * the spectrum of the input speech with the transfer function of the channel (the distortion).  Since the cepstrum is

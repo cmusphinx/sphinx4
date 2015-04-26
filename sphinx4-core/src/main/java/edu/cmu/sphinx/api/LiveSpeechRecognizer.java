@@ -27,6 +27,7 @@ public class LiveSpeechRecognizer extends AbstractSpeechRecognizer {
      * Constructs new live recognition object.
      *
      * @param configuration common configuration
+     * @throws IOException if model IO went wrong
      */
     public LiveSpeechRecognizer(Configuration configuration) throws IOException
     {

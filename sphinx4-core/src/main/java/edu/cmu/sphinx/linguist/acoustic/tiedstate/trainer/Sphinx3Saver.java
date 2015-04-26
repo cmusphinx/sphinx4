@@ -29,7 +29,7 @@ import java.util.logging.Logger;
 
 /**
  * An acoustic model saver that saves sphinx3 ascii data.
- * <p/>
+ * <p>
  * Mixture weights and transition probabilities are saved in linear scale.
  */
 public class Sphinx3Saver implements Saver {
@@ -724,8 +724,6 @@ public class Sphinx3Saver implements Saver {
      * @param pool   the transition matrices pool
      * @param path   the path to the transitions matrices
      * @param append is true, the file will be appended, useful if saving to a ZIP or JAR file
-     * @return a pool of transition matrices
-     * @throws FileNotFoundException if a file cannot be found
      * @throws IOException           if an error occurs while saving the data
      */
     protected void saveTransitionMatricesBinary(Pool<float[][]> pool, String path, boolean append)

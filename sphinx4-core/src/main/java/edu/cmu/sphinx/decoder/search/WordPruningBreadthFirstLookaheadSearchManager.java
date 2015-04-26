@@ -41,7 +41,7 @@ import edu.cmu.sphinx.util.props.S4Integer;
 /**
  * Provides the breadth first search with fast match heuristic included to
  * reduce amount of tokens created.
- * <p/>
+ * <p>
  * All scores and probabilities are maintained in the log math log domain.
  */
 
@@ -98,19 +98,21 @@ public class WordPruningBreadthFirstLookaheadSearchManager extends WordPruningBr
     private boolean fastmatchStreamEnd;
 
     /**
-     * 
-     * @param linguist
-     * @param pruner
-     * @param scorer
-     * @param activeListManager
-     * @param showTokenCount
-     * @param relativeWordBeamWidth
-     * @param growSkipInterval
-     * @param checkStateOrder
-     * @param buildWordLattice
-     * @param maxLatticeEdges
-     * @param acousticLookaheadFrames
-     * @param keepAllTokens
+     * Creates a pruning manager with lookahead
+     * @param linguist a linguist for search space
+     * @param pruner pruner to drop tokens
+     * @param scorer scorer to estimate token probability
+     * @param activeListManager active list manager to store tokens
+     * @param showTokenCount show count during decoding
+     * @param relativeWordBeamWidth relative beam for lookahead pruning
+     * @param growSkipInterval skip interval for grown
+     * @param checkStateOrder check order of states during growth
+     * @param buildWordLattice build a lattice during decoding
+     * @param maxLatticeEdges max edges to keep in lattice
+     * @param acousticLookaheadFrames frames to do lookahead
+     * @param keepAllTokens keep tokens including emitting tokens
+     * @param lookaheadWindow window for lookahead
+     * @param lookaheadWeight weight for lookahead pruning
      */
     public WordPruningBreadthFirstLookaheadSearchManager(Linguist linguist, Linguist fastmatchLinguist, Loader loader,
             Pruner pruner, AcousticScorer scorer, ActiveListManager activeListManager,

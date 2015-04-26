@@ -21,9 +21,9 @@ import java.util.Collection;
  * Represents a composite senone. A composite senone consists of a set of all possible {@link Senone senones} for a
  * given state. CompositeSenones are used when the exact context of a senone is not known. The CompositeSenone
  * represents all the possible senones.
- * <p/>
+ * <p>
  * This class currently only needs to be public for testing purposes.
- * <p/>
+ * <p>
  * Note that all scores are maintained in LogMath log base
  */
 

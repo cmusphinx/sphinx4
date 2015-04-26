@@ -20,7 +20,7 @@ import edu.cmu.sphinx.util.LogMath;
 /**
  * Represents a concrete implementation of a simple {@link Senone senone}. A simple senone is a set of probability
  * density functions implemented as a Gaussian mixture.
- * <p/>
+ * <p>
  * All scores and weights are maintained in LogMath log base.
  */
 
@@ -39,8 +39,9 @@ public class GaussianMixture extends ScoreCachingSenone {
     /**
      * Creates a new senone from the given components.
      *
-     * @param logMixtureWeights the mixture weights for this senone in LogMath log base
+     * @param mixtureWeights the mixture weights for this senone in LogMath log base
      * @param mixtureComponents the mixture components for this senone
+     * @param id id of the mixture
      */
     public GaussianMixture(GaussianWeights mixtureWeights,
                            MixtureComponent[] mixtureComponents, int id) {
@@ -186,6 +187,7 @@ public class GaussianMixture extends ScoreCachingSenone {
     }
 
     /**
+     * @param index of the component
      * @return the (log-scaled) mixture weight of the component density
      * <code>index</code> */
     public float getLogComponentWeight(int index) {

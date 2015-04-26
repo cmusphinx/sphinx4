@@ -19,7 +19,7 @@ import java.util.StringTokenizer;
 
 /**
  * Creates a grammar from a reference sentence. It is a constrained grammar that represents the sentence only.
- * <p/>
+ * <p>
  * Note that all grammar probabilities are maintained in the LogMath log base
  */
 
@@ -60,10 +60,12 @@ public class ForcedAlignerGrammar extends Grammar {
      * Create a branch of the grammar that corresponds to a transcript.  For each word create a node, and link the nodes
      * with arcs.  The branch is connected to the initial node iNode, and the final node fNode.
      *
+     * @param iNode initial node
+     * @param fNode final node
+     * @param transcript transcript
      * @return the first node of this branch
-     * @throws NoSuchMethodException
      */
-    protected GrammarNode createForcedAlignerGrammar(GrammarNode iNode, GrammarNode fNode, String transcript) throws NoSuchMethodException {
+    protected GrammarNode createForcedAlignerGrammar(GrammarNode iNode, GrammarNode fNode, String transcript) {
         final float logArcProbability = LogMath.LOG_ONE;
 
         StringTokenizer tok = new StringTokenizer(transcript);

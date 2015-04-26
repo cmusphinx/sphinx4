@@ -37,52 +37,38 @@ public class LatticeOptimizer {
     /**
      * Code for optimizing Lattices.  An optimal lattice has all the same paths as the original, but with fewer nodes
      * and edges
-     * <p/>
+     * <p>
      * Note that these methods are all in Lattice so that it is easy to change the definition of "equivalent" nodes and
      * edges.  For example, an equivalent node might have the same word, but start or end at a different time.
-     * <p/>
+     * <p>
      * To experiment with other definitions of equivalent, just create a superclass of Lattice.
      */
     public void optimize() {
-        //System.err.println("***");
-        //lattice.dumpAllPaths();
-        //System.err.println("***");
-        System.out.println("!!!!!!!!!!!!!!!!!!!!!!!! " + lattice.getNodes().size());
         optimizeForward();
-
-        //System.err.println("***");
-        //lattice.dumpAllPaths();
-        //System.err.println("***");
-        System.out.println("!!!!!!!!!!!!!!!!!!!!!!!! " + lattice.getNodes().size());
         optimizeBackward();
-        System.out.println("!!!!!!!!!!!!!!!!!!!!!!!! " + lattice.getNodes().size());
-        //System.err.println("***");
-        //lattice.dumpAllPaths();
-        //System.err.println("***");
-
     }
 
 
     /**
      * Make the Lattice deterministic, so that no node has multiple outgoing edges to equivalent nodes.
-     * <p/>
+     * <p>
      * Given two edges from the same node to two equivalent nodes, replace with one edge to one node with outgoing edges
      * that are a union of the outgoing edges of the old two nodes.
-     * <p/>
-     * A --> B --> C \--> B' --> Y
-     * <p/>
+     * <p>
+     * A --&gt; B --&gt; C \--&gt; B' --&gt; Y
+     * <p>
      * where B and B' are equivalent.
-     * <p/>
+     * <p>
      * is replaced with
-     * <p/>
-     * A --> B" --> C \--> Y
-     * <p/>
+     * <p>
+     * A --&gt; B" --&gt; C \--&gt; Y
+     * <p>
      * where B" is the merge of B and B'
-     * <p/>
+     * <p>
      * Note that equivalent nodes must have the same incomming edges. For example
-     * <p/>
-     * A --> B \ \ X --> B'
-     * <p/>
+     * <p>
+     * A --&gt; B \ \ X --&gt; B'
+     * <p>
      * B and B' would not be equivalent because the incomming edges are different
      */
     protected void optimizeForward() {
@@ -108,12 +94,12 @@ public class LatticeOptimizer {
     /**
      * Look for 2 "to" edges to equivalent nodes.  Replace the edges with one edge to one node that is a merge of the
      * equivalent nodes
-     * <p/>
+     * <p>
      * nodes are equivalent if they have equivalent from edges, and the same label
-     * <p/>
+     * <p>
      * merged nodes have a union of "from" and "to" edges
      *
-     * @param n
+     * @param n node
      * @return true if Node n required an optimize forward
      */
     protected boolean optimizeNodeForward(Node n) {
@@ -147,8 +133,8 @@ public class LatticeOptimizer {
      * nodes are equivalent forward if they have "from" edges from the same nodes, and have equivalent labels (Token,
      * start/end times)
      *
-     * @param n1
-     * @param n2
+     * @param n1 first node
+     * @param n2 second node
      * @return true if n1 and n2 are "equivalent forwards"
      */
     protected boolean equivalentNodesForward(Node n1, Node n2) {
@@ -168,15 +154,14 @@ public class LatticeOptimizer {
 
     /**
      * given edges e1 and e2 from node n to nodes n1 and n2
-     * <p/>
+     * <p>
      * merge e1 and e2, that is, merge the scores of e1 and e2 create n' that is a merge of n1 and n2 add n' add edge e'
      * from n to n'
-     * <p/>
+     * <p>
      * remove n1 and n2 and all associated edges
      *
-     * @param n
-     * @param e1
-     * @param e2
+     * @param e1 first edge
+     * @param e2 second edge
      */
     protected void mergeNodesAndEdgesForward(Edge e1, Edge e2) {
         assert lattice.hasNode(e1.getFromNode());
@@ -224,24 +209,24 @@ public class LatticeOptimizer {
 
     /**
      * Minimize the Lattice deterministic, so that no node has multiple incoming edges from equivalent nodes.
-     * <p/>
+     * <p>
      * Given two edges from equivalent nodes to a single nodes, replace with one edge from one node with incoming edges
      * that are a union of the incoming edges of the old two nodes.
-     * <p/>
-     * A --> B --> C X --> B' --/
-     * <p/>
+     * <p>
+     * A --&gt; B --&gt; C X --&gt; B' --/
+     * <p>
      * where B and B' are equivalent.
-     * <p/>
+     * <p>
      * is replaced with
-     * <p/>
-     * A --> B" --> C X --/
-     * <p/>
+     * <p>
+     * A --&gt; B" --&gt; C X --/
+     * <p>
      * where B" is the merge of B and B'
-     * <p/>
+     * <p>
      * Note that equivalent nodes must have the same outgoing edges. For example
-     * <p/>
-     * A --> X \ \ \ A' --> B
-     * <p/>
+     * <p>
+     * A --&gt; X \ \ \ A' --&gt; B
+     * <p>
      * A and A' would not be equivalent because the outgoing edges are different
      */
     protected void optimizeBackward() {
@@ -302,8 +287,8 @@ public class LatticeOptimizer {
      * nodes are equivalent backward if they have "to" edges to the same nodes, and have equivalent labels (Token,
      * start/end times)
      *
-     * @param n1
-     * @param n2
+     * @param n1 first node
+     * @param n2 second node
      * @return true if n1 and n2 are "equivalent backwards"
      */
     protected boolean equivalentNodesBackward(Node n1, Node n2) {
@@ -323,8 +308,8 @@ public class LatticeOptimizer {
     /**
      * Is the contents of these Node equivalent?
      *
-     * @param n1
-     * @param n2
+     * @param n1 first node
+     * @param n2 second node
      * @return true if n1 and n2 have "equivalent labels"
      */
     protected boolean equivalentNodeLabels(Node n1, Node n2) {
@@ -336,15 +321,14 @@ public class LatticeOptimizer {
 
     /**
      * given edges e1 and e2 to node n from nodes n1 and n2
-     * <p/>
+     * <p>
      * merge e1 and e2, that is, merge the scores of e1 and e2 create n' that is a merge of n1 and n2 add n' add edge e'
      * from n' to n
-     * <p/>
+     * <p>
      * remove n1 and n2 and all associated edges
      *
-     * @param n
-     * @param e1
-     * @param e2
+     * @param e1 first edge
+     * @param e2 second edge
      */
     protected void mergeNodesAndEdgesBackward(Edge e1, Edge e2) {
         assert lattice.hasNode(e1.getToNode());
@@ -390,7 +374,7 @@ public class LatticeOptimizer {
     }
 
 
-    /** Remove all Nodes that have no Edges to them (but not <s>) */
+    /** Remove all Nodes that have no Edges to them (but not &lt;s&gt;) */
     protected void removeHangingNodes() {
         for (Node n : lattice.getCopyOfNodes()) {
             if (lattice.hasNode(n)) {

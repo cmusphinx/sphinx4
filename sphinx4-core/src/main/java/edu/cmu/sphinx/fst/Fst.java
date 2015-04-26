@@ -34,7 +34,7 @@ import edu.cmu.sphinx.fst.semiring.Semiring;
  * Holds an ArrayList of {@link edu.cmu.sphinx.fst.State} objects allowing
  * additions/deletions.
  * 
- * @author John Salatas <jsalatas@users.sourceforge.net>
+ * @author John Salatas
  */
 public class Fst {
 
@@ -86,6 +86,7 @@ public class Fst {
 
     /**
      * Get the initial states
+     * @return the initial state
      */
     public State getStart() {
         return start;
@@ -93,6 +94,8 @@ public class Fst {
 
     /**
      * Get the semiring
+     * @return 
+     *           used semiring
      */
     public Semiring getSemiring() {
         return semiring;
@@ -120,6 +123,7 @@ public class Fst {
 
     /**
      * Get the number of states in the fst
+     * @return number of states
      */
     public int getNumStates() {
         return this.states.size();
@@ -142,6 +146,7 @@ public class Fst {
 
     /**
      * Get the input symbols' array
+     * @return array of input symbols
      */
     public String[] getIsyms() {
         return isyms;
@@ -159,6 +164,7 @@ public class Fst {
 
     /**
      * Get the output symbols' array
+     * @return array fo output symbols
      */
     public String[] getOsyms() {
         return osyms;
@@ -237,7 +243,7 @@ public class Fst {
      * 
      * @param filename
      *            the binary model filename
-     * @throws IOException
+     * @throws IOException if IO went wrong
      */
     public void saveModel(String filename) throws IOException {
         FileOutputStream fos = new FileOutputStream(filename);
@@ -257,8 +263,8 @@ public class Fst {
      *            the ObjectInputStream. It should be already be initialized by
      *            the caller.
      * @return the deserialized symbol map
-     * @throws IOException
-     * @throws ClassNotFoundException
+     * @throws IOException if IO went wrong
+     * @throws ClassNotFoundException if serialization went wrong
      */
     protected static String[] readStringMap(ObjectInputStream in)
             throws IOException, ClassNotFoundException {
@@ -330,8 +336,9 @@ public class Fst {
      * 
      * @param filename
      *            the binary model filename
-     * @throws IOException
-     * @throws ClassNotFoundException
+     * @return deserialized FST
+     * @throws IOException io IO went wrong
+     * @throws ClassNotFoundException if serialization went wrong
      */
     public static Fst loadModel(String filename) throws IOException,
             ClassNotFoundException {

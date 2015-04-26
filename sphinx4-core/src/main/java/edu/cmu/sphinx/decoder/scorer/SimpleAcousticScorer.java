@@ -74,7 +74,6 @@ public class SimpleAcousticScorer extends ConfigurableAdapter implements Acousti
      *            A list containing scoreable objects to be scored
      * @return The best scoring scoreable, or <code>null</code> if there are no
      *         more features to score
-     * @throws Exception
      */
     public Data calculateScores(List<? extends Scoreable> scoreableList) {
         Data data;
@@ -166,7 +165,6 @@ public class SimpleAcousticScorer extends ConfigurableAdapter implements Acousti
      *            The <code>Data</code>-object to be used for scoring.
      * @return the best scoring <code>Scoreable</code> or <code>null</code> if
      *         the list of scoreables was empty.
-     * @throws Exception
      */
     protected <T extends Scoreable> T doScoring(List<T> scoreableList, Data data) {
 

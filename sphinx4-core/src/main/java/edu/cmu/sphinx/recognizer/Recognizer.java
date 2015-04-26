@@ -26,8 +26,7 @@ import java.util.List;
 
 /**
  * The Sphinx-4 recognizer. This is the main entry point for Sphinx-4. Typical usage of a recognizer is like so:
- * <p/>
- * <pre><code>
+ * <code>
  *  public void recognizeDigits() {
  *      URL digitsConfig = new URL("file:./digits.xml");
  *      ConfigurationManager cm = new ConfigurationManager(digitsConfig);
@@ -35,21 +34,19 @@ import java.util.List;
  *          = (Recognizer) cm.lookup("digitsRecognizer");
  *      boolean done = false;
  *      Result result;
- * <p/>
+ *
  *      sphinxDigitsRecognizer.allocate();
- * <p/>
- *     // echo spoken digits, quit when 'nine' is spoken
- * <p/>
+ *
+ *      // echo spoken digits, quit when 'nine' is spoken
+ *
  *      while (!done) {
  *           result = sphinxDigitsRecognizer.recognize();
  *           System.out.println(&quot;Result: &quot; + result);
  *           done = result.toString().equals(&quot;nine&quot;);
  *      }
- * <p/>
  *      sphinxDigitsRecognizer.deallocate();
  *   }
- * </code></pre>
- * <p/>
+ * </code>
  * Note that some Recognizer methods may throw an IllegalStateException if the recognizer is not in the proper state
  */
 public class Recognizer implements Configurable, ResultProducer {

@@ -12,8 +12,8 @@ public class FrontEndUtils {
 
 
     /** Returns a the next <code>DataProcessor</code> of type <code>predecClass</code> which precedes <code>dp</code>
-     * @param dp
-     * @param predecClass
+     * @param dp data processor
+     * @param predecClass predecessor class
      */
     public static <T extends DataProcessor> T getFrontEndProcessor(DataProcessor dp, Class<T> predecClass) {
         while (!predecClass.isInstance(dp)) {

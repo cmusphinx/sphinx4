@@ -19,7 +19,7 @@ import java.util.HashMap;
 /**
  * Several general use utility functions needed by the fst framework
  * 
- * @author John Salatas <jsalatas@users.sourceforge.net>
+ * @author John Salatas
  */
 public class Utils {
 
@@ -88,10 +88,10 @@ public class Utils {
     }
 
     /**
-     * Convert a HashMap<String, Integer> to Strings array
+     * Convert a HashMap to string array
      * 
      * @param syms the input HashMap
-     * @return the Strings array
+     * @return the strings array
      */
     public static String[] toStringArray(HashMap<String, Integer> syms) {
         String[] res = new String[syms.size()];

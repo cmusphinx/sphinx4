@@ -33,13 +33,12 @@ import edu.cmu.sphinx.util.props.S4Integer;
  * there is no delay introduced by LiveCMN in general. The only real issue is an
  * initial CMN estimation, for that some amount of frames are read initially
  * and cmn estimation is calculated from them.
- * <p/>
+ * <p>
  * The properties that affect this processor are defined by the fields
  * {@link #PROP_INITIAL_CMN_WINDOW}, {@link #PROP_CMN_WINDOW}, and
  * {@link #PROP_CMN_SHIFT_WINDOW}. Please follow the link
  * "Constant Field Values" below to see the actual name of the Sphinx
  * properties.
- * <p/>
  * <p>
  * The mean of all the input cepstrum so far is not reestimated for each
  * cepstrum. This mean is recalculated after every
@@ -50,7 +49,6 @@ import edu.cmu.sphinx.util.props.S4Integer;
  * <pre>
  * cmnWindow/(cmnWindow + number of frames since the last recalculation)
  * </pre>
- * <p/>
  * 
  * @see BatchCMN
  */

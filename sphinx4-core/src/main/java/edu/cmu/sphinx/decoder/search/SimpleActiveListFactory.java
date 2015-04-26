@@ -24,10 +24,9 @@ import java.util.List;
 public class SimpleActiveListFactory extends ActiveListFactory {
 
     /**
-     * 
-     * @param absoluteBeamWidth
-     * @param relativeBeamWidth
-     * @param logMath
+     * Creates factory for simple active lists
+     * @param absoluteBeamWidth absolute pruning beam
+     * @param relativeBeamWidth relative pruning beam
      */
     public SimpleActiveListFactory(int absoluteBeamWidth,
             double relativeBeamWidth)
@@ -64,9 +63,9 @@ public class SimpleActiveListFactory extends ActiveListFactory {
     /**
      * An active list that tries to be simple and correct. This type of active list will be slow, but should exhibit
      * correct behavior. Faster versions of the ActiveList exist (HeapActiveList, TreeActiveList).
-     * <p/>
+     * <p>
      * This class is not thread safe and should only be used by a single thread.
-     * <p/>
+     * <p>
      * Note that all scores are maintained in the LogMath log domain
      */
     class SimpleActiveList implements ActiveList {

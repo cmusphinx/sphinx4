@@ -23,7 +23,7 @@ import java.util.*;
 /**
  * Loads a grammar from a file representing a finite-state transducer (FST) in the 'ARPA' grammar format. The ARPA FST
  * format is like so (the explanation of the format is below): <br>
- * <p/>
+ * <p>
  * <pre>
  *  I 2
  *  F 0 2.30259
@@ -53,9 +53,9 @@ import java.util.*;
  *  T 7 0 , , 0.454282
  *  T 7 4 wood wood 1.28093
  *   </pre>
- * <p/>
+ * <p>
  * <b>Key: </b>
- * <p/>
+ * <p>
  * <pre>
  *  I - initial node, so &quot;I 2&quot; means node 2 is the initial node
  *  F - final node, e.g., &quot;F 0 2.30259&quot; means that node 0 is a final node,
@@ -67,33 +67,25 @@ import java.util.*;
  *  a backoff transition, and the output is null (epsilon in
  *  the picture), and the machine is now in the null node.
  *   </pre>
- * <p/>
- * <p/>
+ * <p>
  * Probabilities read in from the FST file are in negative natural log format and are converted to the internal logMath
  * log base.
- * <p/>
+ * <p>
  * As the FST file is read in, a Grammar object that is structurally equivalent to the FST is created. The steps of
- * converting the FST file to a Grammar object are: <ol>
- * <p/>
+ * converting the FST file to a Grammar object are: 
+ * <ol>
  * <li><b>Create all the Grammar nodes </b> <br> Go through the entire FST file and for each word transition, take the
  * destination node ID and create a grammar node using that ID. These nodes are kept in a hashmap to make sure they
  * are created once for each ID. Therefore, we get one word per grammar node.</li>
- * <p/>
- * <br>
- * <p/>
  * <li><b>Create an end node for each Grammar node </b> <br> This is end node is used for backoff transitions into the
  * Grammar node, so that it will not go through the word itself, but instead go directly to the end of the word.
  * Moreover, we also add an <b>optional </b> silence node between the grammar node and its end node. The result of this
  * step on each grammar node (show in Figure 1 below as the circle with "word") is as follows. The end node is the empty
- * circle at the far right: <br> <img src="doc-files/fst-end-node.jpg"> <br> <b>Figure 1: Addition of end node and the
+ * circle at the far right: <br> <img alt="Fst end node" src="doc-files/fst-end-node.jpg"> <br> <b>Figure 1: Addition of end node and the
  * <i>optional </i> silence. </b> </li>
- * <p/>
- * <br>
- * <p/>
  * <li><b>Create the transitions </b> <br> Read through the entire FST file, and for each line indicating a transition,
  * connect up the corresponding Grammar nodes. Backoff transitions and null transitions (i.e., the ones that do not
  * output a word) will be linked to the end node of a grammar node.</li>
- * <p/>
  * </ol>
  */
 

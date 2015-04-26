@@ -166,7 +166,7 @@ public class ConfigurationManager implements Cloneable {
     /**
      * Returns a <code>Configurable</code> instance of a given type <code>C</code>, if such a component (or a derived
      * one) is registered to this <code>ConfigurationManager</code> instance, and there is one and only match.
-     * <p/>
+     * <p>
      * This is a convenience method that allows to access a system configuration without knowing the instance names of
      * registered components.
      *

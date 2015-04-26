@@ -37,7 +37,7 @@ import java.util.logging.Logger;
 
 /**
  * an acoustic model loader that initializes models
- * <p/>
+ * <p>
  * Mixture weights and transition probabilities are maintained in logMath log base,
  */
 public class ModelInitializerLoader implements Loader {

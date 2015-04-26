@@ -16,18 +16,18 @@ import java.util.List;
 /**
  * Copyright 1999-2002 Carnegie Mellon University. Portions Copyright 2002 Sun Microsystems, Inc. Portions Copyright
  * 2002 Mitsubishi Electric Research Laboratories. All Rights Reserved.  Use is subject to license terms.
- * <p/>
+ * <p>
  * See the file "license.terms" for information on usage and redistribution of this file, and for a DISCLAIMER OF ALL
  * WARRANTIES.
- * <p/>
+ * <p>
  * User: Peter Wolf Date: Jan 9, 2006 Time: 5:35:54 PM
- * <p/>
+ * <p>
  * Utility for generating word segmentation by forced alignment
- * <p/>
+ * <p>
  * Given a CTL file that specifies a series of audio and coresponding correct transcripts, this utility creates a
  * trivial grammar from the transcript, and runs the recognizer on the utterance.  The output is words with beginning
  * and end times.
- * <p/>
+ * <p>
  * See BatchNISTRecognizer for more information about the format of CTL and audio files.
  */
 

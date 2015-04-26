@@ -24,9 +24,8 @@ import java.util.List;
  */
 public class SortingActiveListFactory extends ActiveListFactory {
     /**
-     * @param absoluteBeamWidth
-     * @param relativeBeamWidth
-     * @param logMath
+     * @param absoluteBeamWidth absolute pruning beam
+     * @param relativeBeamWidth relative pruning beam
      */
     public SortingActiveListFactory(int absoluteBeamWidth,
             double relativeBeamWidth)
@@ -63,9 +62,9 @@ public class SortingActiveListFactory extends ActiveListFactory {
     /**
      * An active list that tries to be simple and correct. This type of active list will be slow, but should exhibit
      * correct behavior. Faster versions of the ActiveList exist (HeapActiveList, TreeActiveList).
-     * <p/>
+     * <p>
      * This class is not thread safe and should only be used by a single thread.
-     * <p/>
+     * <p>
      * Note that all scores are maintained in the LogMath log base.
      */
 
@@ -80,9 +79,12 @@ public class SortingActiveListFactory extends ActiveListFactory {
         private List<Token> tokenList;
 
 
-        /** Creates an empty active list
-         * @param absoluteBeamWidth
-         * @param logRelativeBeamWidth*/
+        /** 
+         * Creates an empty active list
+         * 
+         * @param absoluteBeamWidth beam for absolute pruning
+         * @param logRelativeBeamWidth beam for relative pruning
+         */
         public SortingActiveList(int absoluteBeamWidth, float logRelativeBeamWidth) {
             this.absoluteBeamWidth = absoluteBeamWidth;
             this.logRelativeBeamWidth = logRelativeBeamWidth;

@@ -15,7 +15,7 @@ package edu.cmu.sphinx.result;
 
 /**
  * Represents a path of words through the recognition result lattice.
- * <p/>
+ * <p>
  * All scores are maintained in the logMath log domain
  */
 public interface Path {

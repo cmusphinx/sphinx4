@@ -19,17 +19,17 @@ import edu.cmu.sphinx.frontend.*;
  * speech signal dynamics. The output data is a {@link FloatData} object with a float array of size three times the
  * original cepstrum, formed by the concatenation of cepstra, delta cepstra, and double delta cepstra. The output is the
  * feature vector used by the decoder. Figure 1 shows the arrangement of the output feature data array:
- * <p/>
- * <img src="doc-files/feature.jpg"> <br> <b>Figure 1: Layout of the returned features. </b>
- * <p/>
+ * <p>
+ * <img alt="Layout of features" src="doc-files/feature.jpg"> <br> <b>Figure 1: Layout of the returned features. </b>
+ * <p>
  * Suppose that the original cepstrum has a length of N, the first N elements of the feature are just the original
  * cepstrum, the second N elements are the delta of the cepstrum, and the last N elements are the double delta of the
  * cepstrum.
- * <p/>
+ * <p>
  * Figure 2 below shows pictorially the computation of the delta and double delta of a cepstrum vector, using the last 3
- * cepstra and the next 3 cepstra. <img src="doc-files/deltas.jpg"> <br> <b>Figure 2: Delta and double delta vector
+ * cepstra and the next 3 cepstra. <img alt="Delta computation" src="doc-files/deltas.jpg"> <br> <b>Figure 2: Delta and double delta vector
  * computation. </b>
- * <p/>
+ * <p>
  * Referring to Figure 2, the delta is computed by subtracting the cepstrum that is two frames behind of the current
  * cepstrum from the cepstrum that is two frames ahead of the current cepstrum. The computation of the double delta is
  * similar. It is computed by subtracting the delta cepstrum one time frame behind from the delta cepstrum one time
@@ -38,11 +38,7 @@ import edu.cmu.sphinx.frontend.*;
  */
 public class DeltasFeatureExtractor extends AbstractFeatureExtractor {
 
-    /**
-     *
-     * @param window
-     */
-    public DeltasFeatureExtractor( int window ) {
+    public DeltasFeatureExtractor(int window) {
         super(window);
     }
 

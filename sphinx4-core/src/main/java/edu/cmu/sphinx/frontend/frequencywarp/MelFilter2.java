@@ -36,7 +36,7 @@ import static java.util.Arrays.copyOfRange;
  *
  * Figure 1 below shows pictorially what the other parameters mean.
  *
- * <img src="doc-files/melfilter.jpg"> <br>
+ * <img alt="Mel filter" src="doc-files/melfilter.jpg"> <br>
  * <center><b>Figure 1: A triangular mel-filter.</b></center>
  * 
  * @see MelFrequencyFilterBank2

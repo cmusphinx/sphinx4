@@ -134,7 +134,8 @@ public class Item {
     /**
      * Adds the given item as a daughter to this item.
      *
-     * @param item the new daughter
+     * @param item for the new daughter
+     * @return created item
      */
     public Item addDaughter(Item item) {
         Item newItem;
@@ -225,6 +226,7 @@ public class Item {
      * neither exist than a String "0" is returned.
      *
      * @param pathAndFeature the path to follow
+     * @return created object
      */
     public Object findFeature(String pathAndFeature) {
         int lastDot;

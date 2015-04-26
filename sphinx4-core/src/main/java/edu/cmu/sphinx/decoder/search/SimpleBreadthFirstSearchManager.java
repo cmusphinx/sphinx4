@@ -34,10 +34,10 @@ import java.io.IOException;
  * Provides the breadth first search. To perform recognition an application should call initialize before recognition
  * begins, and repeatedly call <code> recognize </code> until Result.isFinal() returns true. Once a final result has
  * been obtained, <code> terminate </code> should be called.
- * <p/>
- * <p/>
+ * <p>
+ * <p>
  * All scores and probabilities are maintained in the log math log domain.
- * <p/>
+ * <p>
  * For information about breadth first search please refer to "Spoken Language Processing", X. Huang, PTR
  */
 
@@ -138,15 +138,16 @@ public class SimpleBreadthFirstSearchManager extends TokenSearchManager {
     }
 
     /**
+     * Creates a manager for simple search
      * 
-     * @param linguist
-     * @param pruner
-     * @param scorer
-     * @param activeListFactory
-     * @param showTokenCount
-     * @param relativeWordBeamWidth
-     * @param growSkipInterval
-     * @param wantEntryPruning
+     * @param linguist linguist to configure search space
+     * @param pruner pruner to prune extra paths
+     * @param scorer scorer to estimate token probability
+     * @param activeListFactory factory for list of tokens
+     * @param showTokenCount show count of the tokens during decoding
+     * @param relativeWordBeamWidth relative pruning beam for lookahead
+     * @param growSkipInterval interval to skip growth step
+     * @param wantEntryPruning entry pruning
      */
     public SimpleBreadthFirstSearchManager(Linguist linguist, Pruner pruner,
                                            AcousticScorer scorer, ActiveListFactory activeListFactory,

@@ -57,11 +57,11 @@ public abstract class AbstractDecoder implements ResultProducer, Configurable {
     }
 
     /**
-     *
-     * @param searchManager
-     * @param fireNonFinalResults
-     * @param autoAllocate
-     * @param resultListeners
+     * Abstract decoder to implement live and batch recognizers
+     * @param searchManager search manager to use
+     * @param fireNonFinalResults to fire result during decoding
+     * @param autoAllocate automatic allocate all components
+     * @param resultListeners listeners to get noification
      */
     public AbstractDecoder(SearchManager searchManager, boolean fireNonFinalResults, boolean autoAllocate, List<ResultListener> resultListeners) {
         String name = getClass().getName();

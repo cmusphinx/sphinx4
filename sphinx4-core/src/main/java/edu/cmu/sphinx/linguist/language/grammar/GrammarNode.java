@@ -25,7 +25,7 @@ import java.util.*;
  * Represents a grammar node in a grammar. A {@link Grammar grammar} is represented as a graph of grammar nodes and
  * {@link GrammarArc arcs}. A grammar node usually represents a word or words, but it can also be a transition point or
  * simply silence.
- * <p/>
+ * <p>
  * Note that all probabilities are maintained in the LogMath log base
  */
 

@@ -40,7 +40,7 @@ import java.util.regex.Pattern;
  * <ul>
  * <li>&lt; - the feature is less than value
  * <li>=- the feature is equal to the value
- * <li>>- the feature is greater than the value
+ * <li>&gt;- the feature is greater than the value
  * <li>MATCHES - the feature matches the regular expression stored in value
  * <li>IN - [[[TODO: still guessing because none of the CART's in Flite seem to
  * use IN]]] the value is in the list defined by the feature.
@@ -50,7 +50,7 @@ import java.util.regex.Pattern;
  * [[[TODO: provide support for the IN operator.]]]
  *
  * <p>
- * For &lt; and >, this CART coerces the value and feature to float's. For =,
+ * For &lt; and &gt;, this CART coerces the value and feature to float's. For =,
  * this CART coerces the value and feature to string and checks for string
  * equality. For MATCHES, this CART uses the value as a regular expression and
  * compares the obtained feature to that.

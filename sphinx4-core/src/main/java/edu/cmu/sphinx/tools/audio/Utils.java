@@ -102,7 +102,7 @@ public class Utils {
      * @param format    the audio format
      * @param byteArray the byte array
      * @return a short
-     * @throws java.lang.ArrayIndexOutOfBoundsException
+     * @throws java.lang.ArrayIndexOutOfBoundsException if index goes out of bounds
      *
      */
     public static short bytesToShort(AudioFormat format,

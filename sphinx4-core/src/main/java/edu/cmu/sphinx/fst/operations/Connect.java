@@ -24,7 +24,7 @@ import edu.cmu.sphinx.fst.semiring.Semiring;
 /**
  * Connect operation.
  * 
- * @author John Salatas <jsalatas@users.sourceforge.net>
+ * @author John Salatas
  * 
  */
 public class Connect {

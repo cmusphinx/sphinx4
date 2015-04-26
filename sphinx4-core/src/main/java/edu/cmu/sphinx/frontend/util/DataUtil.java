@@ -75,7 +75,7 @@ public class DataUtil {
      * @param offset    which byte to start from
      * @param length    how many bytes to convert
      * @return a short array, or <code>null</code> if byteArray is of zero length
-     * @throws java.lang.ArrayIndexOutOfBoundsException
+     * @throws java.lang.ArrayIndexOutOfBoundsException if index goes out of bounds
      *
      */
     public static short[] byteToShortArray
@@ -112,7 +112,7 @@ public class DataUtil {
      * @param bytesPerValue the number of bytes per value
      * @param signedData    whether the data is signed
      * @return a double array, or <code>null</code> if byteArray is of zero length
-     * @throws java.lang.ArrayIndexOutOfBoundsException
+     * @throws java.lang.ArrayIndexOutOfBoundsException if index goes out of bounds
      *
      */
     public static double[] bytesToValues(byte[] byteArray,
@@ -161,7 +161,7 @@ public class DataUtil {
      * @param bytesPerValue the number of bytes per value
      * @param signedData    whether the data is signed
      * @return a double array, or <code>null</code> if byteArray is of zero length
-     * @throws java.lang.ArrayIndexOutOfBoundsException
+     * @throws java.lang.ArrayIndexOutOfBoundsException if index goes out of bounds
      *
      */
     public static double[] littleEndianBytesToValues(byte[] data,
@@ -209,7 +209,7 @@ public class DataUtil {
      * @param byteArray the byte array
      * @param offset    where to start
      * @return a short
-     * @throws java.lang.ArrayIndexOutOfBoundsException
+     * @throws java.lang.ArrayIndexOutOfBoundsException if index goes out of bounds
      *
      */
     public static short bytesToShort(byte[] byteArray, int offset)
@@ -241,7 +241,7 @@ public class DataUtil {
      * Returns the given double array as a string. The string will be in the form:
      * <pre>data.length data[0] data[1] ... data[data.length-1]</pre>where
      * <code>data[i]</code>.
-     * <p/>
+     * <p>
      * The doubles can be written as decimal, hexadecimal, or scientific notation. In decimal notation, it is formatted
      * by the method <code>Util.formatDouble(data[i], 10, 5)</code>. Use the System property
      * <code>"frontend.util.dumpformat"</code> to control the dump format (permitted values are "decimal",
@@ -287,7 +287,7 @@ public class DataUtil {
     /**
      * Returns the given float array as a string. The string is of the form:
      * <pre>data.length data[0] data[1] ... data[data.length-1]</pre>
-     * <p/>
+     * <p>
      * The floats can be written as decimal, hexadecimal, or scientific notation. In decimal notation, it is formatted
      * by the method <code>Util.formatDouble(data[i], 10, 5)</code>. Use the System property
      * <code>"frontend.util.dumpformat"</code> to control the dump format (permitted values are "decimal",
@@ -413,7 +413,7 @@ public class DataUtil {
      * Returns a native audio format that has the same encoding, endianness and sample size as the given format, and a
      * sample rate that is larger than the given sample rate.
      *
-     * @param format
+     * @param format format for the data
      * @return a suitable native audio format
      */
     public static AudioFormat getNativeAudioFormat(AudioFormat format) {
@@ -472,7 +472,7 @@ public class DataUtil {
 
 
     /** Converts DoubleData object to FloatDatas.
-     * @param data
+     * @param data data to convert
      */
     public static DoubleData FloatData2DoubleData(FloatData data) {
         int numSamples = data.getValues().length;
@@ -482,14 +482,13 @@ public class DataUtil {
         for (int i = 0; i < values.length; i++) {
             doubleData[i] = values[i];
         }
-//      System.arraycopy(data.getValues(), 0, doubleData, 0, numSamples); 
 
         return new DoubleData(doubleData, data.getSampleRate(), data.getFirstSampleNumber());
     }
 
 
     /** Converts FloatData object to DoubleData.
-     *  @param data
+     *  @param data data to convert
      */
     public static FloatData DoubleData2FloatData(DoubleData data) {
         int numSamples = data.getValues().length;
@@ -499,7 +498,6 @@ public class DataUtil {
         for (int i = 0; i < values.length; i++) {
             floatData[i] = (float) values[i];
         }
-//        System.arraycopy(data.getValues(), 0, floatData, 0, numSamples);
 
         return new FloatData(floatData, data.getSampleRate(), data.getFirstSampleNumber());
     }

@@ -14,4 +14,9 @@
   <packaging>jar</packaging>
 
   <name>Sphinx4 models</name>
+
+  <properties>
+    <maven.javadoc.skip>true</maven.javadoc.skip>
+  </properties>
+
 </project>

@@ -31,7 +31,7 @@ import java.util.Map;
  * window boundaries. These events would not be well represented if the windows were juxtaposed. <p> The number of
  * resulting windows depends on the {@link #PROP_WINDOW_SIZE_MS window size} and the {@link #PROP_WINDOW_SHIFT_MS window
  * shift} (commonly known as frame shift in speech world). Figure 1 shows the relationship between the original data
- * stream, the window size, the window shift, and the windows returned. <p> <img src="doc-files/framing.jpg">
+ * stream, the window size, the window shift, and the windows returned. <p> <img alt="Framing" src="doc-files/framing.jpg">
  * <br><b>Figure 1: Relationship between original data, window size, window shift, and the windows returned.</b> <p> The
  * raised cosine windowing function will be applied to each such window. Since the {@link #getData()} method returns a
  * window, and multiple windows are created for each Data object, this is a 1-to-many processor. Also note that the
@@ -46,7 +46,7 @@ import java.util.Map;
  * window. A value of 0.5 results in the Hanning window. And a value of 0 results in the Rectangular window. The default
  * for this system is the Hamming window, with alpha 0.46 !). Figure 2 below shows the Hamming window function (a =
  * 0.46), using our default window size of 25.625 ms and assuming a sample rate of 16kHz, thus yielding 410 samples per
- * window. <p> <img src="doc-files/hamming-window.gif"> <br><b>Figure 2: The Hamming window function.</b>
+ * window. <p> <img alt="Hamming window" src="doc-files/hamming-window.gif"> <br><b>Figure 2: The Hamming window function.</b>
  *
  * @see Data
  */

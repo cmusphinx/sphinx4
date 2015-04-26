@@ -23,7 +23,7 @@ public class SplitEventMap extends EventMapWithKey {
      * Constructs new event map.
      *
      * @param key     key to split on
-     * @param values yes values
+     * @param values  values
      * @param yesMap  event map for "yes" answer
      * @param noMap   eventMap for no answer
      */

@@ -201,7 +201,7 @@ public class WavWriter extends BaseDataProcessor {
      * into a double, and becomes the next element in the double array. The size of the returned array is
      * (length/bytesPerValue). Currently, only 1 byte (8-bit) or 2 bytes (16-bit) samples are supported.
      *
-     * @param values
+     * @param values source values
      * @param bytesPerValue the number of bytes per value
      * @param signedData    whether the data is signed
      * @return a double array, or <code>null</code> if byteArray is of zero length

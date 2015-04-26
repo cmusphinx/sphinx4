@@ -22,7 +22,7 @@ import java.util.*;
  * Applies cepstral variance normalization (CVN), so that each coefficient
  * will have unit variance. You need to put this element after the means
  * normalizer in frontend pipeline.
- * <p/>
+ * <p>
  * CVN is sited to improve the stability of the decoding with the additive
  * noise, so it might be useful in some situations.
  *

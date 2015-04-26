@@ -17,7 +17,7 @@ import edu.cmu.sphinx.linguist.acoustic.Unit;
 
 /**
  * Contains statistics about a frame.
- * <p/>
+ * <p>
  * Note that all scores are maintained in LogMath log base
  */
 public abstract class FrameStatistics {

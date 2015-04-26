@@ -35,9 +35,9 @@ import java.util.logging.Logger;
  * initial/final grammar state are in the graph (no word, alternative or grammar states attached). 5) Only valid
  * transitions (matching contexts) are allowed 6) No tree organization of units 7) Branching grammar states are
  * allowed
- * <p/>
+ * <p>
  * This is a dynamic version of the flat linguist that is more efficient in terms of startup time and overall footprint
- * <p/>
+ * <p>
  * Note that all probabilities are maintained in the log math domain
  */
 

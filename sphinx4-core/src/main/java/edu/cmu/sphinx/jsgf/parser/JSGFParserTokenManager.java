@@ -18,14 +18,12 @@ import edu.cmu.sphinx.jsgf.JSGFRuleGrammarFactory;
 import edu.cmu.sphinx.jsgf.JSGFRuleGrammarManager;
 import edu.cmu.sphinx.jsgf.JSGFGrammarParseException;
 
-/** Token Manager. */
 @SuppressWarnings("all")
 public class JSGFParserTokenManager implements JSGFParserConstants
 {
 
-  /** Debug output. */
   public  java.io.PrintStream debugStream = System.out;
-  /** Set debug output. */
+
   public  void setDebugStream(java.io.PrintStream ds) { debugStream = ds; }
 private final int jjStopStringLiteralDfa_0(int pos, long active0)
 {
@@ -935,14 +933,12 @@ private static final boolean jjCanMove_1(int hiByte, int i1, int i2, long l1, lo
    }
 }
 
-/** Token literal values. */
 public static final String[] jjstrLiteralImages = {
 "", null, null, null, null, null, null, null, null, null, null, null, null, 
 "\147\162\141\155\155\141\162", "\151\155\160\157\162\164", "\160\165\142\154\151\143", null, null, null, null, 
 null, null, null, null, null, null, "\73", "\126\61\56\60", "\74", "\56", "\52", 
 "\76", "\75", "\174", "\57", "\53", "\50", "\51", "\133", "\135", };
 
-/** Lexer state names. */
 public static final String[] lexStateNames = {
    "DEFAULT",
    "IN_SINGLE_LINE_COMMENT",
@@ -950,7 +946,6 @@ public static final String[] lexStateNames = {
    "IN_MULTI_LINE_COMMENT",
 };
 
-/** Lex State array. */
 public static final int[] jjnewLexState = {
    -1, -1, -1, -1, -1, -1, 1, 2, 3, 0, 0, 0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 
    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 
@@ -975,20 +970,18 @@ private StringBuilder image = jjimage;
 private int jjimageLen;
 private int lengthOfMatch;
 protected char curChar;
-/** Constructor. */
+
 public JSGFParserTokenManager(JavaCharStream stream){
    if (JavaCharStream.staticFlag)
       throw new Error("ERROR: Cannot use a static CharStream class with a non-static lexical analyzer.");
    input_stream = stream;
 }
 
-/** Constructor. */
 public JSGFParserTokenManager(JavaCharStream stream, int lexState){
    this(stream);
    SwitchTo(lexState);
 }
 
-/** Reinitialise parser. */
 public void ReInit(JavaCharStream stream)
 {
    jjmatchedPos = jjnewStateCnt = 0;
@@ -1004,14 +997,12 @@ private void ReInitRounds()
       jjrounds[i] = 0x80000000;
 }
 
-/** Reinitialise parser. */
 public void ReInit(JavaCharStream stream, int lexState)
 {
    ReInit(stream);
    SwitchTo(lexState);
 }
 
-/** Switch to specified lex state. */
 public void SwitchTo(int lexState)
 {
    if (lexState >= 4 || lexState < 0)
@@ -1063,7 +1054,6 @@ int jjround;
 int jjmatchedPos;
 int jjmatchedKind;
 
-/** Get the next Token. */
 public Token getNextToken() 
 {
   Token specialToken = null;

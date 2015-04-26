@@ -19,7 +19,7 @@ import edu.cmu.sphinx.fst.semiring.Semiring;
  * Holds a fixed size array of {@link edu.cmu.sphinx.fst.ImmutableState} objects
  * not allowing additions/deletions
  * 
- * @author John Salatas <jsalatas@users.sourceforge.net>
+ * @author John Salatas
  */
 public class ImmutableFst extends Fst {
 
@@ -155,8 +155,9 @@ public class ImmutableFst extends Fst {
      * @param inputStream
      *            the InputStream. It should be already be initialized by the
      *            caller.
-     * @throws IOException
-     * @throws ClassNotFoundException
+     * @return Immutable FST structure
+     * @throws IOException IO went wrong
+     * @throws ClassNotFoundException serialization had issues
      */
     public static ImmutableFst loadModel(InputStream inputStream)
             throws IOException, ClassNotFoundException {
@@ -179,6 +180,7 @@ public class ImmutableFst extends Fst {
      * 
      * @param filename
      *            the binary model filename
+     * @return loaded FST
      */
     public static ImmutableFst loadModel(String filename) {
         ImmutableFst obj;

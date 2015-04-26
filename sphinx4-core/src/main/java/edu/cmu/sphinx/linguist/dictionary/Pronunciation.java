@@ -122,7 +122,7 @@ public class Pronunciation {
      * probable. All probabilities for particular word sum to 1.0.
      *
      * @return the probability of this pronunciation as a value between 0 and 1.0.
-     *         <p/>
+     *         <p>
      *         TODO: FIX Note that probabilities are currently maintained in the linear domain (unlike just about
      *         everything else)
      */

@@ -15,7 +15,7 @@ package edu.cmu.sphinx.fst.semiring;
 /**
  * Probability semiring implementation.
  * 
- * @author "John Salatas <jsalatas@users.sourceforge.net>"
+ * @author "John Salatas"
  * 
  */
 public class ProbabilitySemiring extends Semiring {

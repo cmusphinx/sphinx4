@@ -46,7 +46,9 @@ public class Transform {
     /**
      * Writes the transformation to file in a format that could further be used
      * in Sphinx3 and Sphinx4.
-     * 
+     *
+     * @param filePath path to store transform matrix
+     * @param index index of transform to store 
      */
     public void store(String filePath, int index) throws Exception {
         PrintWriter writer = new PrintWriter(filePath, "UTF-8");
@@ -121,8 +123,8 @@ public class Transform {
     /**
      * Read the transformation from a file
      * 
-     * @param filePath
-     * @throws FileNotFoundException
+     * @param filePath file path to load transform
+     * @throws Exception if something went wrong
      */
     public void load(String filePath) throws Exception {
 

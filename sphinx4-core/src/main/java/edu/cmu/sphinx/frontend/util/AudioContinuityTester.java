@@ -6,7 +6,7 @@ import edu.cmu.sphinx.frontend.*;
  * {@code FrontEnd} element that asserts the audio-stream to be continuous. This is often a mandatory property for
  * frontend setups. The component operates on the acoustic data level and needs to plugged into the frontend
  * before the actual feature extraction starts.
- * <p/>
+ * <p>
  * This component can help to debug new VAD implementations, where it has been shown that data-blocks easily get lost.
  *
  * @author Holger Brandl

@@ -24,7 +24,7 @@ import edu.cmu.sphinx.fst.operations.ProjectType;
 import edu.cmu.sphinx.fst.semiring.TropicalSemiring;
 
 /**
- * @author John Salatas <jsalatas@users.sourceforge.net>
+ * @author John Salatas
  * 
  */
 public class ProjectTest {

@@ -64,6 +64,8 @@ public class PathExtractor {
 
     /**
      * Creates a path for the given feature.
+     * @param pathAndFeature string to use
+     * @param wantFeature do we need features
      */
     public PathExtractor(String pathAndFeature, boolean wantFeature) {
         this.pathAndFeature = pathAndFeature;

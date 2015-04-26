@@ -30,23 +30,23 @@ import java.util.Random;
  * <pre>edu.cmu.sphinx.frontend.util.ConcatFileDataSource.silenceFile</pre>
  * to a audio file for silence. By default, no silence is added. Moreover, one can also specify how many files to skip
  * for every file read.
- * <p/>
+ * <p>
  * You can also specify the name of a transcript file to write the transcription to. The transcription will be written
  * in HUB-4 style. A sample HUB-4 transcript looks like:
  * <pre>
- * bn99en_1 1 peter_jennings 0.806084 7.079850 <o,f4,male> Tonight this
+ * bn99en_1 1 peter_jennings 0.806084 7.079850 &lt;o,f4,male&gt; Tonight this
  * Thursday big pressure on the Clinton administration to do something about
  * the latest killing in Yugoslavia
- * bn99en_1 1 peter_jennings 7.079850 14.007608 <o,fx,male> Airline passengers
+ * bn99en_1 1 peter_jennings 7.079850 14.007608 &lt;o,fx,male&gt; Airline passengers
  * and outrageous behavior at thirty thousand feet What can an airline do
  * ...
- * bn99en_1 1 inter_segment_gap 23.097000 28.647000 <o,fx,>
+ * bn99en_1 1 inter_segment_gap 23.097000 28.647000 &lt;o,fx,&gt;
  * ...
  * </pre>
  * The format of each line is:
  * <pre>
  * test_set_name category speaker_name start_time_in_seconds
- * end_time_in_seconds <category,hub4_focus_conditions,speaker_sex> transcript
+ * end_time_in_seconds &lt;category,hub4_focus_conditions,speaker_sex&gt; transcript
  * </pre>
  * In our example above,
  * <pre>

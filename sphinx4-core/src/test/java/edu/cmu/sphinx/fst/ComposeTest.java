@@ -28,7 +28,7 @@ import edu.cmu.sphinx.fst.semiring.TropicalSemiring;
  * "Weighted Automata Algorithms", Handbook of Weighted Automata,
  * Springer-Verlag, 2009, pp. 213–254.
  * 
- * @author John Salatas <jsalatas@users.sourceforge.net>
+ * @author John Salatas
  */
 public class ComposeTest {
 

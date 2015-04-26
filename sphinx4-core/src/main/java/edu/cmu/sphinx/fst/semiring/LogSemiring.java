@@ -16,7 +16,7 @@ package edu.cmu.sphinx.fst.semiring;
 /**
  * Log semiring implementation.
  * 
- * @author John Salatas <jsalatas@users.sourceforge.net>
+ * @author John Salatas
  * 
  */
 public class LogSemiring extends Semiring {

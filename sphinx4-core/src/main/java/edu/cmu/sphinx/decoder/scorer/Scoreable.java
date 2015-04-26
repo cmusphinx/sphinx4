@@ -60,7 +60,7 @@ public interface Scoreable extends Data {
     /**
      * Normalizes a previously calculated score
      *
-     * @param maxScore
+     * @param maxScore maximum score to use for norm
      * @return the normalized score
      */
     public float normalizeScore(float maxScore);

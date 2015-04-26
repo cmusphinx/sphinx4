@@ -18,7 +18,7 @@ import edu.cmu.sphinx.util.LogMath;
 
 /**
  * Represents gaussian mixture that is based on provided mixture component set
- * <p/>
+ * <p>
  * All scores and weights are maintained in LogMath log base.
  */
 

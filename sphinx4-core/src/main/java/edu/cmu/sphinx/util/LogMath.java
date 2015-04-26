@@ -107,13 +107,11 @@ public final class LogMath {
 
     /**
      * Sets log base.
-     *
+     * <p>
      * According to forum discussions a value between 1.00001 and 1.0004 should
      * be used for speech recognition. Going above 1.0005 will probably hurt.
      *
-     * @param logbase Log base
-     *
-     * @throws IllegalStateException if LogMath instance has been already got
+     * @param logBase Log base
      */
     public static void setLogBase(float logBase) {
         synchronized(LogMath.class) {
@@ -136,12 +134,12 @@ public final class LogMath {
     }
 
     /**
-     * Returns the summation of two numbers when the arguments and the result are in log. <p/> <p/> That is, it returns
-     * log(a + b) given log(a) and log(b) </p> <p/> <p/> This method makes use of the equality: </p> <p/> <p/> <b>log(a
-     * + b) = log(a) + log (1 + exp(log(b) - log(a))) </b> </p> <p/> <p/> which is derived from: </p> <p/> <p/> <b>a + b
-     * = a * (1 + (b / a)) </b> </p> <p/> <p/> which in turns makes use of: </p> <p/> <p/> <b>b / a = exp (log(b) -
-     * log(a)) </b> </p> <p/> <p/> Important to notice that <code>subtractAsLinear(a, b)</code> is *not* the same as
-     * <code>addAsLinear(a, -b)</code>, since we're in the log domain, and -b is in fact the inverse. </p> <p/> <p/> No
+     * Returns the summation of two numbers when the arguments and the result are in log. <p>  That is, it returns
+     * log(a + b) given log(a) and log(b) </p> <p>  This method makes use of the equality: </p> <p>  <b>log(a
+     * + b) = log(a) + log (1 + exp(log(b) - log(a))) </b> </p> <p>  which is derived from: </p> <p>  <b>a + b
+     * = a * (1 + (b / a)) </b> </p> <p>  which in turns makes use of: </p> <p>  <b>b / a = exp (log(b) -
+     * log(a)) </b> </p> <p>  Important to notice that <code>subtractAsLinear(a, b)</code> is *not* the same as
+     * <code>addAsLinear(a, -b)</code>, since we're in the log domain, and -b is in fact the inverse. </p> <p>  No
      * underflow/overflow check is performed. </p>
      *
      * @param logVal1 value in log domain (i.e. log(val1)) to add
@@ -166,9 +164,9 @@ public final class LogMath {
 
     /**
      * Method used by add() internally. It returns the difference between the highest number and the total summation of
-     * two numbers. <p/> Considering the expression (in which we assume natural log) <p/> <p/> <b>log(a + b) = log(a) +
+     * two numbers. <p> Considering the expression (in which we assume natural log) <p>  <b>log(a + b) = log(a) +
      * log(1 + exp(log(b) - log(a))) </b> </p>
-     * <p/>
+     * <p>
      * the current function returns the second term of the right hand side of the equality above, generalized for the
      * case of any log base. This function can be constructed as a table, if table lookup is faster than actual
      * computation.
@@ -189,9 +187,9 @@ public final class LogMath {
 
     /**
      * Method used by add() internally. It returns the difference between the highest number and the total summation of
-     * two numbers. <p/> Considering the expression (in which we assume natural log) <p/> <p/> <b>log(a + b) = log(a) +
+     * two numbers. <p> Considering the expression (in which we assume natural log) <p>  <b>log(a + b) = log(a) +
      * log(1 + exp(log(b) - log(a))) </b> </p>
-     * <p/>
+     * <p>
      * the current function returns the second term of the right hand side of the equality above, generalized for the
      * case of any log base. This function is constructed as a table lookup.
      *
@@ -213,17 +211,17 @@ public final class LogMath {
     }
 
     /**
-     * Returns the difference between two numbers when the arguments and the result are in log. <p/> <p/> That is, it
-     * returns log(a - b) given log(a) and log(b) </p> <p/> <p/> Implementation is less efficient than add(), since
+     * Returns the difference between two numbers when the arguments and the result are in log. <p>  That is, it
+     * returns log(a - b) given log(a) and log(b) </p> <p>  Implementation is less efficient than add(), since
      * we're less likely to use this function, provided for completeness. Notice however that the result only makes
      * sense if the minuend is higher than the subtrahend. Otherwise, we should return the log of a negative number.
-     * </p> <p/> <p/> It implements the subtraction as: </p> <p/> <p/> <b>log(a - b) = log(a) + log(1 - exp(log(b) -
-     * log(a))) </b> </p> <p/> <p/> No need to check for underflow/overflow. </p>
+     * </p> <p>  It implements the subtraction as: </p> <p>  <b>log(a - b) = log(a) + log(1 - exp(log(b) -
+     * log(a))) </b> </p> <p>  No need to check for underflow/overflow. </p>
      *
      * @param logMinuend    value in log domain (i.e. log(minuend)) to be subtracted from
      * @param logSubtrahend value in log domain (i.e. log(subtrahend)) that is being subtracted
      * @return difference between minuend and the subtrahend in the log domain
-     * @throws IllegalArgumentException <p/> This is a very slow way to do this, but this method should rarely be used.
+     * @throws IllegalArgumentException <p> This is a very slow way to do this, but this method should rarely be used.
      *                                  </p>
      */
     public final float subtractAsLinear(float logMinuend, float logSubtrahend)
@@ -242,9 +240,9 @@ public final class LogMath {
     /**
      * Converts the source, which is assumed to be a log value whose base is sourceBase, to a log value whose base is
      * resultBase. Possible values for both the source and result bases include Math.E, 10.0, LogMath.getLogBase(). If a
-     * source or result base is not supported, an IllegalArgumentException will be thrown. <p/> <p/> It takes advantage
-     * of the relation: </p> <p/> <p/> <b>log_a(b) = log_c(b) / lob_c(a) </b> </p> <p/> <p/> or: </p> <p/> <p/>
-     * <b>log_a(b) = log_c(b) * lob_a(c) </b> </p> <p/> <p/> where <b>log_a(b) </b> is logarithm of <b>b </b> base <b>a
+     * source or result base is not supported, an IllegalArgumentException will be thrown. <p>  It takes advantage
+     * of the relation: </p> <p>  <b>log_a(b) = log_c(b) / lob_c(a) </b> </p> <p>  or: </p> <p> 
+     * <b>log_a(b) = log_c(b) * lob_a(c) </b> </p> <p>  where <b>log_a(b) </b> is logarithm of <b>b </b> base <b>a
      * </b> etc. </p>
      *
      * @param logSource  log value whose base is sourceBase

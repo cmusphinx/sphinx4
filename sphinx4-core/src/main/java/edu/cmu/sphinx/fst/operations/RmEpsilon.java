@@ -23,7 +23,7 @@ import edu.cmu.sphinx.fst.semiring.Semiring;
 /**
  * Remove epsilon operation.
  * 
- * @author John Salatas <jsalatas@users.sourceforge.net>
+ * @author John Salatas
  * 
  */
 public class RmEpsilon {

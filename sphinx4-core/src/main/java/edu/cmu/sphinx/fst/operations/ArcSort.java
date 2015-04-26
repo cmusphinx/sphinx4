@@ -22,7 +22,7 @@ import edu.cmu.sphinx.fst.State;
 /**
  * ArcSort operation.
  * 
- * @author John Salatas <jsalatas@users.sourceforge.net>
+ * @author John Salatas
  */
 public class ArcSort {
     /**

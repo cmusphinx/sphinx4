@@ -22,10 +22,14 @@ import edu.cmu.sphinx.util.props.Configurable;
  * initialize} method. (Note, however, that it is not always the case that a
  * DataProcessor belongs to a particular pipeline. For example, the {@link
  * edu.cmu.sphinx.frontend.util.Microphone Microphone}class is a DataProcessor,
- * but it usually does not belong to any particular pipeline.  <p/> Each
+ * but it usually does not belong to any particular pipeline.  
+ * <p> 
+ * Each
  * DataProcessor usually have a predecessor as well. This is the previous
  * DataProcessor in the pipeline. Again, not all DataProcessors have
- * predecessors.  <p/> Calling {@link #getData() getData}will return the
+ * predecessors.  
+ * <p>
+ * Calling {@link #getData() getData}will return the
  * processed Data object.
  */
 public interface DataProcessor extends Configurable {

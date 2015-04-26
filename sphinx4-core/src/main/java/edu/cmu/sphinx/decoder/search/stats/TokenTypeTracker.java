@@ -9,7 +9,7 @@ import edu.cmu.sphinx.linguist.acoustic.HMM;
 
 /**
  * A tool for tracking the types tokens created and placed in the beam
- * <p/>
+ * <p>
  * TODO: Develop a mechanism  for adding trackers such as these in a more general fashion.
  */
 public class TokenTypeTracker {

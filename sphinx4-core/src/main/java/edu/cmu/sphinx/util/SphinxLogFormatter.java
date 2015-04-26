@@ -22,10 +22,10 @@ import java.util.logging.LogRecord;
  * Provides a log formatter for use with CMU Sphinx. This formatter generates
  * nicer looking console messages than the default formatter. To use the
  * formatter, set the property
- * <p/>
+ * <p>
  * java.util.logging.ConsoleHandler.formatter to
  * edu.cmu.sphinx.util.SphinxLogFormatter
- * <p/>
+ * <p>
  * This is typically done in a custom loger.properties file
  */
 public class SphinxLogFormatter extends Formatter {

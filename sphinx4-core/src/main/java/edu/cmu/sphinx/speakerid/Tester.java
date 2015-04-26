@@ -126,10 +126,10 @@ public class Tester {
      * @param repeatFactor
      *            number of times the input should be repeated
      */
-    public static void testRepeatedSpeakerIdentification(int vectorSize, int vectorCount, int speakersCount,
+    public static void testRepeatedSpeakerIdentification(int vectorSize, int vectorsCount, int speakersCount,
             int repeatFactor) {
         ArrayList<float[]> lst = new ArrayList<float[]>();
-        ArrayList<float[]> aux = generateDistinctSpeakers(vectorSize, vectorCount, speakersCount);
+        ArrayList<float[]> aux = generateDistinctSpeakers(vectorSize, vectorsCount, speakersCount);
         for (int i = 0; i < repeatFactor; i++)
             lst.addAll(aux);
         printIntervals(new SpeakerIdentification().cluster(lst));

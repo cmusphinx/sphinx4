@@ -19,7 +19,7 @@ package edu.cmu.sphinx.fst.utils;
  * http://stackoverflow.com/questions/521171/a-java-collection-of-value
  * -pairs-tuples
  * 
- * @author John Salatas <jsalatas@users.sourceforge.net>
+ * @author John Salatas
  * 
  */
 public class Pair<L, R> {
@@ -38,30 +38,18 @@ public class Pair<L, R> {
         this.right = right;
     }
 
-    /**
-     * Set the left element of the Pair
-     */
     public void setLeft(L left) {
         this.left = left;
     }
 
-    /**
-     * Set the right element of the Pair
-     */
     public void setRight(R right) {
         this.right = right;
     }
 
-    /**
-     * Get the left element of the Pair
-     */
     public L getLeft() {
         return left;
     }
 
-    /**
-     * Get the right element of the Pair
-     */
     public R getRight() {
         return right;
     }

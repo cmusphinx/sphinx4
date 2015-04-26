@@ -20,7 +20,7 @@ import edu.cmu.sphinx.fst.utils.Pair;
  * See: M. Mohri, "Finite-State Transducers in Language and Speech Processing",
  * Computational Linguistics, 23:2, 1997.
  * 
- * @author John Salatas <jsalatas@users.sourceforge.net>
+ * @author John Salatas
  * 
  */
 public class Determinize {

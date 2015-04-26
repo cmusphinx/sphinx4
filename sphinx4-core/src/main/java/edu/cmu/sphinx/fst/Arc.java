@@ -17,7 +17,7 @@ package edu.cmu.sphinx.fst;
  * The fst's arc implementation.
  * 
  * 
- * @author John Salatas <jsalatas@users.sourceforge.net>
+ * @author John Salatas
  */
 public class Arc {
 
@@ -56,6 +56,7 @@ public class Arc {
 
     /**
      * Get the arc's weight
+     * @return arc weight
      */
     public float getWeight() {
         return weight;
@@ -63,6 +64,7 @@ public class Arc {
 
     /**
      * Set the arc's weight
+     * @param weight arc weight
      */
     public void setWeight(float weight) {
         this.weight = weight;
@@ -70,6 +72,7 @@ public class Arc {
 
     /**
      * Get the input label's id
+     * @return label id
      */
     public int getIlabel() {
         return iLabel;
@@ -86,6 +89,7 @@ public class Arc {
 
     /**
      * Get the output label's id
+     * @return output label id
      */
     public int getOlabel() {
         return oLabel;
@@ -102,6 +106,7 @@ public class Arc {
 
     /**
      * Get the next state
+     * @return next state
      */
     public State getNextState() {
         return nextState;

@@ -23,7 +23,7 @@ import java.util.Comparator;
  * Holds its outgoing {@link edu.cmu.sphinx.fst.Arc} objects in an ArrayList
  * allowing additions/deletions
  * 
- * @author John Salatas <jsalatas@users.sourceforge.net>
+ * @author John Salatas
  */
 public class State {
 
@@ -71,6 +71,7 @@ public class State {
 
     /**
      * Shorts the arc's ArrayList based on the provided Comparator
+     * @param cmp comparator
      */
     public void arcSort(Comparator<Arc> cmp) {
         Collections.sort(arcs, cmp);
@@ -78,6 +79,7 @@ public class State {
 
     /**
      * Get the state's final Weight
+     * @return final weight
      */
     public float getFinalWeight() {
         return fnlWeight;
@@ -103,6 +105,7 @@ public class State {
 
     /**
      * Get the state's id
+     * @return state id
      */
     public int getId() {
         return id;
@@ -110,6 +113,7 @@ public class State {
 
     /**
      * Get the number of outgoing arcs
+     * @return number of arcs
      */
     public int getNumArcs() {
         return this.arcs.size();

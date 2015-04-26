@@ -43,7 +43,7 @@ import edu.cmu.sphinx.fst.utils.Utils;
 /**
  * The grapheme-to-phoneme (g2p) decoder
  * 
- * @author John Salatas <jsalatas@users.sourceforge.net>
+ * @author John Salatas
  */
 public class G2PConverter {
 
@@ -79,8 +79,7 @@ public class G2PConverter {
      * 
      * @param g2pModelUrl
      *            the URL of the serialized model
-     * @throws IOException
-     * @throws ClassNotFoundException 
+     * @throws IOException when model is not loaded
      */
     public G2PConverter(URL g2pModelUrl) throws IOException {
         try {
@@ -165,7 +164,7 @@ public class G2PConverter {
     /**
      * Phoneticize a word
      * 
-     * @param entry
+     * @param word
      *            the word to phoneticize
      * @param nbest
      *            the number of distinct pronunciations to return

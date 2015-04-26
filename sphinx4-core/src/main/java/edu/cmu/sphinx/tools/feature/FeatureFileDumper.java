@@ -29,7 +29,7 @@ import java.util.logging.Logger;
  * This program takes in an audio file, does frontend signal processing to it,
  * and then dumps the resulting Feature into a separate file. Also it can
  * process a list of files at once.
- * <p/>
+ * <p>
  * Available options:
  * <ul>
  * <li>-config configFile - the XML configuration file</li>

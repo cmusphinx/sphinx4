@@ -22,13 +22,13 @@ import java.io.PrintWriter;
 import java.util.*;
 
 /**
- * <p/>
+ * <p>
  * A node is part of Lattices, representing the theory that a word was spoken over a given period of time. A node also
  * has a set of entering and leaving {@link edu.cmu.sphinx.result.Edge edges}, connecting it to other nodes. One can get
  * and set the beginning and end frames of the word via the getBeginTime and getEndTime methods. When setting these
  * times, the beginning time must be earlier or equal to the end time, otherwise an error will be thrown. </p>
- * <p/>
- * <p/>
+ * <p>
+ * <p>
  * The posterior probability of any word in a word lattice is the probability that the node representing that word
  * occurs on any path through the lattice. It is usually computed as the ratio of the total likelihood scores of all
  * paths through the lattice that pass through the node, to the total likelihood score of all paths through the lattice.

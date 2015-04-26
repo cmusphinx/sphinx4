@@ -17,7 +17,7 @@ import java.util.Comparator;
 
 /**
  * Comparator for {@link edu.cmu.sphinx.linguist.g2p.Path} object based on its cost
- * @author John Salatas <jsalatas@users.sourceforge.net>
+ * @author John Salatas
  */
 public class PathComparator implements Comparator<Path> {
 
