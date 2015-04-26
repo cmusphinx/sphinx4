@@ -50,7 +50,7 @@ public class FlatInitializerLearner implements Learner {
      * Sets the learner to use a utterance.
      *
      * @param utterance the utterance
-     * @throws IOException
+     * @throws IOException if error occured
      */
     public void setUtterance(Utterance utterance) throws IOException {
         String file = utterance.toString();
@@ -64,7 +64,7 @@ public class FlatInitializerLearner implements Learner {
      * Returns a single frame of speech.
      *
      * @return a feature frame
-     * @throws IOException
+     * @throws IOException if error occured
      */
     private boolean getFeature() {
         try {
@@ -114,7 +114,7 @@ public class FlatInitializerLearner implements Learner {
      *
      * @param utterance the current utterance
      * @param graph     the current utterance graph
-     * @throws IOException
+     * @throws IOException if IO went wrong
      */
     public void initializeComputation(Utterance utterance,
                                       UtteranceGraph graph) throws IOException {

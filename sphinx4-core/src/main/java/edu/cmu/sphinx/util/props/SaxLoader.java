@@ -36,8 +36,8 @@ public class SaxLoader {
      *
      * @param url              the location to load
      * @param globalProperties the map of global properties
-     * @param initRPD
-     * @param replaceDuplicates
+     * @param initRPD init raw property data
+     * @param replaceDuplicates replace duplicates
      */
     public SaxLoader(URL url, Map<String, String> globalProperties, Map<String, RawPropertyData> initRPD, boolean replaceDuplicates) {
         this.url = url;

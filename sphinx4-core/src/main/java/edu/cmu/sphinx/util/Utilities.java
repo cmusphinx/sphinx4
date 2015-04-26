@@ -189,6 +189,7 @@ public class Utilities {
      *
      * @param filename the cepstra file name
      * @return true if the given binary cepstra file is big-endian
+     * @throws IOException if something went wrong
      */
     public static boolean isCepstraFileBigEndian(String filename)
             throws IOException {
@@ -207,6 +208,7 @@ public class Utilities {
      *
      * @param dataStream the DataInputStream to read from
      * @return a float
+     * @throws IOException if something went wrong
      */
     public static float readLittleEndianFloat(DataInputStream dataStream)
             throws IOException {
@@ -219,6 +221,7 @@ public class Utilities {
      *
      * @param dataStream the DataInputStream to read from
      * @return an integer
+     * @throws IOException if something went wrong
      */
     public static int readLittleEndianInt(DataInputStream dataStream)
             throws IOException {
@@ -232,6 +235,7 @@ public class Utilities {
      * little-endian, and vice-versa.
      *
      * @param integer the integer to swap
+     * @return swapped integer
      */
     public static int swapInteger(int integer) {
         return (((0x000000ff & integer) << 24) |
@@ -246,6 +250,7 @@ public class Utilities {
      * and vice-versa.
      *
      * @param floatValue the float to swap
+     * @return swapped float
      */
     public static float swapFloat(float floatValue) {
         return Float.intBitsToFloat

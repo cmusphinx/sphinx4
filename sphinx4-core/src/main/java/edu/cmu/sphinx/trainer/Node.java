@@ -181,6 +181,7 @@ public class Node {
     /**
      * Method to check the type of a node.
      *
+     * @param type to compare to
      * @return if true, this node is of the type specified
      */
     public boolean isType(String type) {

@@ -59,7 +59,7 @@ import edu.cmu.sphinx.util.props.*;
  * help cut off the noise.
  * <p>
  * Typical values for the constants defining the filter bank are:
- * <table width="80%" border="1">
+ * <table summary="Filter bank params" width="80%" border="1">
  * <tr>
  * <td><b>Sample rate (Hz) </b></td>
  * <td><b>16000 </b></td>

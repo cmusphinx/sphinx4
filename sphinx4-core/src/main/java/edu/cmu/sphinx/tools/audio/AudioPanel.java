@@ -89,7 +89,10 @@ public class AudioPanel extends JPanel
     }
 
 
-    /** Sets the labels to be used when drawing this panel. */
+    /** Sets the labels to be used when drawing this panel.
+      * @param labelTimes label times
+      * @param labels labels
+      */
     public void setLabels(float[] labelTimes, String[] labels) {
         this.labelTimes = labelTimes;
         this.labels = labels;
@@ -97,7 +100,9 @@ public class AudioPanel extends JPanel
     }
 
 
-    /** Sets the zoom, adjusting the scroll bar in the process. */
+    /** Sets the zoom, adjusting the scroll bar in the process. 
+      * @param zoom float zoom
+      */
     protected void zoomSet(float zoom) {
         xScale = originalXScale * zoom;
         int width = (int) (audio.getAudioData().length * xScale);

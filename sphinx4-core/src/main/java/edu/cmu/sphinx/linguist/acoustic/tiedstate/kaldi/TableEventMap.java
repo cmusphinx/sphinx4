@@ -12,6 +12,7 @@ public class TableEventMap extends EventMapWithKey {
      * Constructs new table event map.
      *
      * @param key key to split on
+     * @param table event map
      */
     public TableEventMap(int key, List<EventMap> table) {
         super(key);

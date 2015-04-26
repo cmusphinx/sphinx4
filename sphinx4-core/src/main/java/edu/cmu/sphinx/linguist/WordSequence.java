@@ -237,6 +237,8 @@ public final class WordSequence implements Comparable<WordSequence> {
     }
 
     /**
+     * @param startIndex start index
+     * @param stopIndex stop index
      * @return a subsequence with both <code>startIndex</code> and
      *         <code>stopIndex</code> exclusive.
      */

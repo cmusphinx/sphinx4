@@ -60,7 +60,7 @@ public class WordResult {
     }
 
     /**
-     * Returns total score for this WirdResult in log domain
+     * @return total score for this WirdResult in log domain
      */
     public double getScore() {
         return score;
@@ -99,7 +99,7 @@ public class WordResult {
     }
 
     /**
-     * Gets time frame for the word
+     * @return time frame for the word
      */
     public TimeFrame getTimeFrame() {
         return timeFrame;

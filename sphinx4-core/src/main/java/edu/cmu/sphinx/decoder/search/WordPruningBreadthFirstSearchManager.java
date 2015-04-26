@@ -152,6 +152,7 @@ public class WordPruningBreadthFirstSearchManager extends TokenSearchManager {
     // private TokenTracker tokenTracker;
     // private TokenTypeTracker tokenTypeTracker;
     protected boolean streamEnd;
+
     /**
      * Creates a pruning manager withs separate lists for tokens
      * @param linguist a linguist for search space
@@ -666,7 +667,7 @@ public class WordPruningBreadthFirstSearchManager extends TokenSearchManager {
      * Determines whether or not we've visited the state associated with this
      * token since the previous frame.
      * 
-     * @param t
+     * @param t token to check
      * @return true if we've visited the search state since the last frame
      */
     protected boolean isVisited(Token t) {

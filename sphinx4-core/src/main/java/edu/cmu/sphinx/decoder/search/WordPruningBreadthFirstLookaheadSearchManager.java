@@ -58,8 +58,8 @@ public class WordPruningBreadthFirstLookaheadSearchManager extends WordPruningBr
     @S4Component(type = Linguist.class)
     public final static String PROP_FASTMATCH_LINGUIST = "fastmatchLinguist";
 
-    /** The property that defines the type active list factory for fast match */
     @S4Component(type = ActiveListFactory.class)
+    /** The property that defines the type active list factory for fast match */
     public final static String PROP_FM_ACTIVE_LIST_FACTORY = "fastmatchActiveListFactory";
 
     @S4Double(defaultValue = 1.0)
@@ -100,9 +100,12 @@ public class WordPruningBreadthFirstLookaheadSearchManager extends WordPruningBr
     /**
      * Creates a pruning manager with lookahead
      * @param linguist a linguist for search space
+     * @param fastmatchLinguist a linguist for fast search space
      * @param pruner pruner to drop tokens
+     * @param loader model loader
      * @param scorer scorer to estimate token probability
      * @param activeListManager active list manager to store tokens
+     * @param fastmatchActiveListFactory fast match active list factor to store phoneloop tokens
      * @param showTokenCount show count during decoding
      * @param relativeWordBeamWidth relative beam for lookahead pruning
      * @param growSkipInterval skip interval for grown

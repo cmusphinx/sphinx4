@@ -83,6 +83,8 @@ public class SpeakerCluster {
      * 
      * We may need a delay parameter to this function because the segments may
      * not be exactly consecutive
+     *
+     * @return a list of segments for speaker
      */
     public ArrayList<Segment> getSpeakerIntervals() {
         Iterator<Segment> it = segmentSet.iterator();

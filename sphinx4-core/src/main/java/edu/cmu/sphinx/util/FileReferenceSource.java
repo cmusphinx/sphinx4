@@ -27,6 +27,7 @@ public class FileReferenceSource implements ReferenceSource {
      * Constructs a ReferenceSource from a reference file.
      *
      * @param file the reference file
+     * @throws IOException if something went wrong
      */
     public FileReferenceSource(String file) throws IOException {
         references = new LinkedList<String>();

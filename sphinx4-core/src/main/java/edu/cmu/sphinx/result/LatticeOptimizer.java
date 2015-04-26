@@ -27,7 +27,7 @@ public class LatticeOptimizer {
     /**
      * Create a new Lattice optimizer
      *
-     * @param lattice
+     * @param lattice lattice to optimize
      */
     public LatticeOptimizer(Lattice lattice) {
         this.lattice = lattice;
@@ -254,7 +254,7 @@ public class LatticeOptimizer {
      * of the equivalent nodes Nodes are equivalent if they have equivalent to edges, and the same label. Merged nodes
      * have a union of entering and leaving edges
      *
-     * @param n
+     * @param n node
      * @return true if Node n required optimizing backwards
      */
     protected boolean optimizeNodeBackward(Node n) {
@@ -422,19 +422,4 @@ public class LatticeOptimizer {
         return Math.max(score1, score2);
     }
 
-
-    /**
-     * Self test for LatticeOptimizer
-     *
-     * @param args
-     */
-    public static void main(String[] args) {
-        Lattice lattice = new Lattice(args[0]);
-
-        LatticeOptimizer optimizer = new LatticeOptimizer(lattice);
-
-        optimizer.optimize();
-
-        lattice.dump(args[1]);
-    }
 }

@@ -198,6 +198,8 @@ public class BatchModeRecognizer implements Configurable {
 
     /**
      * Decodes the batch of audio files
+     * @param batchFile file with list of files to decode
+     * @throws IOException if IO went wrong
      */
     public void decode(String batchFile) throws IOException {
         BatchItem batchItem;

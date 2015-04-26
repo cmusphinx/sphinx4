@@ -31,12 +31,17 @@ public class JSGFRuleGrammarManager {
 		grammars.remove(name);
 	}
 	
-	/** Add a grammar to the grammar list. */
+	/** Add a grammar to the grammar list. 
+	 * @param grammar to store
+	 **/
 	protected void storeGrammar(JSGFRuleGrammar grammar) {
 		grammars.put(grammar.getName(), grammar);
 	}
 
-	/** Retrieve a grammar from the grammar list. */
+	/** Retrieve a grammar from the grammar list.
+	 * @param name grammar name to load
+	 * @return grammar object
+	 */
 	public JSGFRuleGrammar retrieveGrammar(String name) {
 		// System.out.println ("Looking for grammar " + name);
 		// for (String key : grammars.keySet()) {

@@ -42,6 +42,7 @@ public final class ConfigurationManagerUtils {
      * Validates that only annotated property names have been used to setup this instance of {@code
      * edu.cmu.sphinx.util.props.ConfigurationManager}.
      *
+     * @param cm Configuration manager
      * @return {@code true} if it is a valid configuration.
      */
     public boolean validateConfiguration(ConfigurationManager cm) {
@@ -128,6 +129,7 @@ public final class ConfigurationManagerUtils {
 
      /**
      * Configure the logger
+     * @param cm Configuration manager
      */
     public static void configureLogger(ConfigurationManager cm) {
 
@@ -159,6 +161,7 @@ public final class ConfigurationManagerUtils {
 
     /**
      * Configures a logger to use the sphinx4-log-formatter.
+     * @param logger logger to configure
      */
     public static void configureLogger(Logger logger) {
 
@@ -187,6 +190,8 @@ public final class ConfigurationManagerUtils {
      * <p>
      * Note: This is required when merging two system configurations into one.
      *
+     * @param baseCM base configuration manager
+     * @param subCM other configuration manager
      * @return A map which maps all renamed component names to their new names.
      */
     public static Map<String, String> fixDuplicateNames(ConfigurationManager baseCM, ConfigurationManager subCM) {
@@ -213,9 +218,11 @@ public final class ConfigurationManagerUtils {
 
 
     /**
-     * converts a configuration manager instance into a xml-string .
-     * <p>
+     * Converts a configuration manager instance into a xml-string .
      * Note: This methods will not instantiate configurables.
+     *
+     * @param cm configuration manager
+     * @return xml representation
      */
     public static String toXML(ConfigurationManager cm) {
         StringBuilder sb = new StringBuilder();
@@ -291,6 +298,7 @@ public final class ConfigurationManagerUtils {
 
     /**
      * Shows the current configuration
+     * @param cm configuration manager
      */
     public static void showConfig(ConfigurationManager cm) {
         System.out.println(" ============ config ============= ");
@@ -303,10 +311,11 @@ public final class ConfigurationManagerUtils {
     /**
      * Show the configuration for the component with the given name
      *
+     * @param cm configuration manager
      * @param name the component name
      */
     public static void showConfig(ConfigurationManager cm, String name) {
-//        Symbol symbol = cm.getsymbolTable.get(name);
+	// Symbol symbol = cm.getsymbolTable.get(name);
 
         if (!cm.getComponentNames().contains(name)) {
             System.out.println("No component: " + name);
@@ -482,6 +491,8 @@ public final class ConfigurationManagerUtils {
 
 
     /**
+     * @param derived derived class
+     * @param parent parent class
      * @return <code>true</code> if <code>aClass</code> is either equal to <code>poosibleParent</code>, a subclass of
      *         it, or implements it if <code>possibleParent</code> is an interface.
      */
@@ -522,6 +533,8 @@ public final class ConfigurationManagerUtils {
      * Why do we need this method? The reason is, that we would like to avoid this method to be part of the
      * <code>PropertySheet</code>-API. In some circumstances it is nevertheless required to get access to the managing
      * <code>ConfigurationManager</code>.
+     * @param ps Property sheet
+     * @return the new configuration manager
      */
     public static ConfigurationManager getPropertyManager(PropertySheet ps) {
         return ps.getPropertyManager();
@@ -530,6 +543,9 @@ public final class ConfigurationManagerUtils {
 
     /**
      * Returns a map of all component-properties of this config-manager (including their associated property-sheets.
+     * 
+     * @param cm configuration manager
+     * @return map with properties
      */
     public static Map<String, List<PropertySheet>> listAllsPropNames(ConfigurationManager cm) {
         Map<String, List<PropertySheet>> allProps = new HashMap<String, List<PropertySheet>>();
@@ -584,6 +600,9 @@ public final class ConfigurationManagerUtils {
      * Beside component properties it is also possible to modify the class of a configurable, but this is only allowed if
      * the configurable under question has not been instantiated yet. Furthermore the user has to ensure to set all
      * mandatory component properties.
+     * @param cm configuration manager
+     * @param propName property to set
+     * @param propValue value to set
      */
     public static void setProperty(ConfigurationManager cm, String propName, String propValue) {
         assert propValue != null;
@@ -678,6 +697,9 @@ public final class ConfigurationManagerUtils {
 
     /**
      * Returns the not yet instantiated components registered to this configuration manager.
+     * 
+     * @param cm configuration manager
+     * @return collection of instantiated components
      */
     public static Collection<String> getNonInstaniatedComps(ConfigurationManager cm) {
         Collection<String> nonInstComponents = new ArrayList<String>();

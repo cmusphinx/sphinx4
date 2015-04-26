@@ -49,7 +49,7 @@ public class State {
     /**
      * Constructor specifying the state's final weight
      * 
-     * @param fnlWeight
+     * @param fnlWeight final weight
      */
     public State(float fnlWeight) {
         this();
@@ -60,7 +60,7 @@ public class State {
      * Constructor specifying the initial capacity of the arc's ArrayList (this
      * is an optimization used in various operations)
      * 
-     * @param initialNumArcs
+     * @param initialNumArcs number of arcs
      */
     public State(int initialNumArcs) {
         this.initialNumArcs = initialNumArcs;

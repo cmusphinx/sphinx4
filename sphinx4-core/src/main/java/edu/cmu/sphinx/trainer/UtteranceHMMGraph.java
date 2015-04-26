@@ -18,15 +18,12 @@ import edu.cmu.sphinx.linguist.acoustic.UnitManager;
 /** Defines the Utterance Graph. */
 public class UtteranceHMMGraph extends Graph implements UtteranceGraph {
 
-    /** Constructor for class UtteranceHMMGraph. */
     public UtteranceHMMGraph(String context, Utterance utterance, AcousticModel acousticModel, UnitManager unitManager) {
         super();
 
         Graph transcriptGraph;
         for (utterance.startTranscriptIterator();
              utterance.hasMoreTranscripts();) {
-            /* The transcript object has a pointer to its own dictionary
-            */
             Transcript transcript = utterance.nextTranscript();
             transcriptGraph = new TranscriptHMMGraph(context, transcript,
                     acousticModel, unitManager);
@@ -37,13 +34,13 @@ public class UtteranceHMMGraph extends Graph implements UtteranceGraph {
 
     /**
      * Add a transcript graph to the current utterance graph.
+     * Implementation requires a single transcript per
+     * utterance. The copy will fail if the current utterance
+     * graph is not empty.
      *
      * @param transcriptGraph the transcript graph
      */
     public void add(Graph transcriptGraph) {
-        // Implementation requires a single transcript per
-        // utterance. The copy will fail if the current utterance
-        // graph is not empty.
         copyGraph(transcriptGraph);
     }
 

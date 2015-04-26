@@ -82,7 +82,7 @@ public class AudioTool {
     private static ActionListener recordListener;
 
 
-    /** Dumps the information about a line. */
+    /* Dumps the information about a line. */
     private static void dumpLineInfo(String indent,
                                      Line.Info[] lineInfo) {
         int numDumped = 0;
@@ -109,7 +109,7 @@ public class AudioTool {
     }
 
 
-    /** Lists all the available audio devices. */
+    /* Lists all the available audio devices. */
     private static void dumpMixers() {
         Mixer.Info[] mixerInfo = AudioSystem.getMixerInfo();
 
@@ -129,7 +129,7 @@ public class AudioTool {
     }
 
 
-    /** Gets a filename. */
+    /* Gets a filename. */
     static public void getFilename(String title, int type) {
         int returnVal;
 
@@ -150,8 +150,6 @@ public class AudioTool {
     }
 
 
-    /**
-     */
     static public void populateAudio(String filename) {
         try {
             AudioData newAudio = Utils.readAudioFile(filename);
@@ -173,8 +171,6 @@ public class AudioTool {
     }
 
 
-    /**
-     */
     static public void getAudioFromFile(String filename) throws IOException {
         /* Supports alignment data.  The format of the alignment file
          * is as follows:
@@ -214,7 +210,7 @@ public class AudioTool {
     }
 
 
-    /** Gets the audio that's in the recorder.  This should only be called after recorder.stopRecording is called. */
+    /* Gets the audio that's in the recorder.  This should only be called after recorder.stopRecording is called. */
     static private short[] getRecordedAudio(Microphone recorder) {
         short[] shorts = new short[0];
         int sampleRate = 8000;
@@ -254,7 +250,7 @@ public class AudioTool {
     }
 
 
-    /** Zoom the panels according to the zoom scale. */
+    /* Zoom the panels according to the zoom scale. */
     private static void zoomPanels() {
         if (audioPanel != null) {
             audioPanel.zoomSet(zoom);
@@ -268,28 +264,24 @@ public class AudioTool {
     }
 
 
-    /** Zoom in. */
     private static void zoomIn() {
         zoom *= 2.0f;
         zoomPanels();
     }
 
 
-    /** Zoom out. */
     private static void zoomOut() {
         zoom /= 2.0f;
         zoomPanels();
     }
 
 
-    /** Reset zoom size. */
     private static void zoomReset() {
         zoom = 1.0f;
         zoomPanels();
     }
 
 
-    /** Creates the menu bar. */
     private static void createMenuBar(JFrame jframe) {
         JMenuBar menuBar = new JMenuBar();
         jframe.setJMenuBar(menuBar);
@@ -453,8 +445,7 @@ public class AudioTool {
 
     /**
      * Create the Panel where all the buttons are.
-     *
-     * @return a Panel with buttons on it.
+     * @return created panel
      */
     private static JPanel createButtonPanel() {
         JPanel buttonPanel = new JPanel();
@@ -516,12 +507,6 @@ public class AudioTool {
         return buttonPanel;
     }
 
-
-    /**
-     * Main method.
-     *
-     * @param args argv[0] : The name of an audio file argv[1] : SphinxProperties file
-     */
     static public void main(String[] args) {
         FrontEnd frontEnd;
         FrontEnd cepstrumFrontEnd;

@@ -199,8 +199,10 @@ public class DynamicFlatLinguist implements Linguist, Configurable {
     }
 
 
-    /** Allocates the acoustic model.
-     * @throws java.io.IOException*/
+    /** 
+     * Allocates the acoustic model.
+     * @throws java.io.IOException if error happens
+     **/
     protected void allocateAcousticModel() throws IOException {
         acousticModel.allocate();
         if (addOutOfGrammarBranch) {

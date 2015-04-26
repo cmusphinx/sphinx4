@@ -10,13 +10,17 @@ public class OVector implements Cloneable, Serializable {
     protected final double[] values;
 
 
-    /** Constructs a new observation for a given feature-vector. */
+    /** Constructs a new observation for a given feature-vector. 
+     * @param values vector values
+     */
     public OVector(double[] values) {
         this.values = values;
     }
 
 
-    /** Creates a one-dimensional instance of this class. */
+    /** Creates a one-dimensional instance of this class. 
+     * @param value vector value
+     */
     public OVector(double value) {
         this(new double[]{value});
     }
@@ -32,7 +36,7 @@ public class OVector implements Cloneable, Serializable {
     }
 
 
-    /** Returns the dimension of this observation. */
+    /** @return the dimension of this observation. */
     public int dimension() {
         return getValues().length;
     }

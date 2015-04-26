@@ -382,7 +382,8 @@ public class RaisedCosineWindower extends BaseDataProcessor {
     /**
      * Rounds a given sample-number to the number of samples will be processed by this instance including the padding
      * samples at the end..
-     * @param samples
+     * @param samples samples to round to
+     * @return rounded result
      */
     public long roundToFrames(long samples) {
         int windowSize = DataUtil.getSamplesPerWindow(sampleRate, windowSizeInMs);

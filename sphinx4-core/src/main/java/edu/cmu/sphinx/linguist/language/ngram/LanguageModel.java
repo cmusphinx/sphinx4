@@ -56,14 +56,14 @@ public interface LanguageModel extends Configurable {
     /**
      * Create the language model
      *
-     * @throws java.io.IOException
+     * @throws java.io.IOException if error occurrs
      */
     public void allocate() throws IOException;
 
     /**
      * Deallocate resources allocated to this language model
      *
-     * @throws IOException
+     * @throws IOException if error occurrs
      */
     public void deallocate() throws IOException;
 
@@ -72,7 +72,7 @@ public interface LanguageModel extends Configurable {
      * list
      *
      * @param wordSequence the wordSequence
-     * @return the probability of the word sequence in LogMath log base
+     * @return the probability of the word sequence in log base
      */
     public float getProbability(WordSequence wordSequence);
 

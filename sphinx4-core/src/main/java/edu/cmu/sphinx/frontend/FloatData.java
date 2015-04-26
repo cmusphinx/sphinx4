@@ -98,8 +98,10 @@ public class FloatData implements Data, Cloneable {
     }
 
 
-    /** Converts a given Data-object into a <code>FloatData</code> if possible.
-     *  @param data data to convert
+    /** 
+     * Converts a given Data-object into a <code>FloatData</code> if possible.
+     * @param data data to convert
+     * @return converted data
      */
     public static FloatData toFloatData(Data data) {
         FloatData convertData;

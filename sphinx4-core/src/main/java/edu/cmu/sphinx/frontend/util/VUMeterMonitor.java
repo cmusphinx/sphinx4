@@ -61,8 +61,9 @@ public class VUMeterMonitor extends BaseDataProcessor {
 
 
     /** A little test-function which plugs a microphone directly into the vu-meter.
-     * @param args
-     * @throws edu.cmu.sphinx.frontend.DataProcessingException*/
+     * @param args arguments to use
+     * @throws edu.cmu.sphinx.frontend.DataProcessingException if error occurs
+     */
     public static void main(String[] args) throws DataProcessingException {
         Microphone mic = new Microphone( 16000, 16, 1,
                           true, true, true, 10, false,

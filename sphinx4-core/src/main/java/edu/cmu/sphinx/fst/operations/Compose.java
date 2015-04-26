@@ -49,7 +49,7 @@ public class Compose {
      * @param fst1 the first Fst
      * @param fst2 the second Fst
      * @param semiring the semiring to use in the operation
-     * @param sorted
+     * @param sorted sort result
      * @return the composed Fst
      */
     public static Fst compose(Fst fst1, Fst fst2, Semiring semiring,

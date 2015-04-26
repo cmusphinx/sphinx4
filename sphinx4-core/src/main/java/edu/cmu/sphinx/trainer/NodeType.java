@@ -42,7 +42,9 @@ public class NodeType {
     public static final NodeType STATE = new NodeType("STATE");
 
 
-    /** Constructs a NodeType with the given name. */
+    /** Constructs a NodeType with the given name. 
+     * @param name of the node type
+     */
     protected NodeType(String name) {
         this.name = name;
     }

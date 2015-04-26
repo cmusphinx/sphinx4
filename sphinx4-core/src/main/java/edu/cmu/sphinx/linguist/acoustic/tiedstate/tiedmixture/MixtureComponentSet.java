@@ -192,6 +192,7 @@ public class MixtureComponentSet {
     /**
      * How long scores for previous frames should be stored.
      * For fast match this value is lookahead_window_length + 1)
+     * @param scoresQueueLen queue length
      */
     public void setScoreQueueLength(int scoresQueueLen) {
         toStoreScore = scoresQueueLen > 0;

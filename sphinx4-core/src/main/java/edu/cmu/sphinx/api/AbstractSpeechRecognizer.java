@@ -35,6 +35,8 @@ public class AbstractSpeechRecognizer {
 
     /**
      * Constructs recognizer object using provided configuration.
+     * @param configuration initial configuration
+     * @throws IOException if IO went wrong
      */
     public AbstractSpeechRecognizer(Configuration configuration)
         throws IOException

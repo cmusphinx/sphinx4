@@ -19,6 +19,7 @@ public class GDLDumper {
     /**
      * Dumps the given component as GDL to the given stream
      *
+     * @param cm configuration manager
      * @param out  where to dump the GDL
      * @param name the name of the component to dump
      */
@@ -53,6 +54,7 @@ public class GDLDumper {
     /**
      * Dumps the config as a GDL plot
      *
+     * @param ConfigurationManager manager
      * @param path where to output the GDL
      * @throws java.io.IOException if an error occurs
      */
@@ -91,8 +93,9 @@ public class GDLDumper {
     /**
      * Gets the color for the given component
      *
-     * @param ConfigurationManager
+     * @param ConfigurationManager manager
      * @param componentName        the name of the component @return the color name for the component
+     * @return color to assign
      */
     public static String getColor(ConfigurationManager ConfigurationManager, String componentName) {
         try {

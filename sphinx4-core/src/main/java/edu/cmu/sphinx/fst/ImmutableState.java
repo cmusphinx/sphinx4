@@ -34,7 +34,7 @@ public class ImmutableState extends State {
     /**
      * Constructor specifying the capacity of the arcs array.
      * 
-     * @param numArcs
+     * @param numArcs number of arcs
      */
     protected ImmutableState(int numArcs) {
         super(0);

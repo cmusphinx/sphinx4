@@ -176,7 +176,7 @@ public class SpeakerIdentification {
     }
 
     /**
-     * @param inputFileName The name of the file used for diarization
+     * @param stream stream to process
      * @return A cluster for each speaker found in the input file
      */
     public ArrayList<SpeakerCluster> cluster(InputStream stream) {

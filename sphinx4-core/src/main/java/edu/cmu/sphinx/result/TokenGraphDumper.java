@@ -53,7 +53,7 @@ public class TokenGraphDumper {
      * Dumps the GDL output of the search space to the given file.
      *
      * @param title    the title of the GDL graph
-     * @param fileName
+     * @param fileName filename to store
      */
     public void dumpGDL(String title, String fileName) {
         try {

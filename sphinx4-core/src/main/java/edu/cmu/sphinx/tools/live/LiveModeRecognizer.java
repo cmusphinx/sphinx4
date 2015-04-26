@@ -105,7 +105,9 @@ public class LiveModeRecognizer implements Configurable {
     }
 
 
-    /** Decodes the batch of audio files */
+    /** Decodes the batch of audio files 
+     * @throws IOException if IO went wrong
+     */
     public void decode() throws IOException {
         List<String> resultList = new LinkedList<String>();
         Result result;
@@ -247,7 +249,9 @@ public class LiveModeRecognizer implements Configurable {
     }
 
 
-    /** Do clean up */
+    /** Do clean up 
+     * @throws IOException if something went wrong
+     */
     public void close() throws IOException {
         hypothesisTranscript.close();
     }

@@ -2,12 +2,12 @@
 /* JavaCCOptions: */
 package edu.cmu.sphinx.jsgf.parser;
 
-/** Token Manager Error. */
+/* Token Manager Error. */
 @SuppressWarnings("all")
 public class TokenMgrError extends Error
 {
 
-  /**
+  /*
    * The version identifier for this Serializable class.
    * Increment only if the <i>serialized</i> form of the
    * class changes.
@@ -18,33 +18,33 @@ public class TokenMgrError extends Error
    * Ordinals for various reasons why an Error of this type can be thrown.
    */
 
-  /**
+  /*
    * Lexical error occurred.
    */
   static final int LEXICAL_ERROR = 0;
 
-  /**
+  /*
    * An attempt was made to create a second instance of a static token manager.
    */
   static final int STATIC_LEXER_ERROR = 1;
 
-  /**
+  /*
    * Tried to change to an invalid lexical state.
    */
   static final int INVALID_LEXICAL_STATE = 2;
 
-  /**
+  /*
    * Detected (and bailed out of) an infinite loop in the token manager.
    */
   static final int LOOP_DETECTED = 3;
 
-  /**
+  /*
    * Indicates the reason why the exception is thrown. It will have
    * one of the above 4 values.
    */
   int errorCode;
 
-  /**
+  /*
    * Replaces unprintable characters by their escaped (or unicode escaped)
    * equivalents in the given string
    */

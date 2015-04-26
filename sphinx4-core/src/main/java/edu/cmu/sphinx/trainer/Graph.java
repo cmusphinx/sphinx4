@@ -40,7 +40,10 @@ public class Graph {
     }
 
 
-    /** Set the initial node */
+    /** Set the initial node 
+      * @param node node
+      * @throws IllegalArgumentException if node is not in the graph
+      */
     public void setInitialNode(Node node) throws IllegalArgumentException {
         if (isNodeInGraph(node)) {
             initialNode = node;
@@ -50,7 +53,10 @@ public class Graph {
     }
 
 
-    /** Set the final node */
+    /** Set the final node
+      * @param node node
+      * @throws IllegalArgumentException if node is not in the graph
+      */
     public void setFinalNode(Node node) throws IllegalArgumentException {
         if (isNodeInGraph(node)) {
             finalNode = node;
@@ -60,13 +66,17 @@ public class Graph {
     }
 
 
-    /** Get the initial node */
+    /** Get the initial node 
+     * @return initial node
+     */
     public Node getInitialNode() {
         return initialNode;
     }
 
 
-    /** Get the final node */
+    /** Get the final node 
+     * @return final node
+    */
     public Node getFinalNode() {
         return finalNode;
     }
@@ -139,6 +149,9 @@ public class Graph {
     /**
      * Link two nodes. If the source or destination nodes are not in the graph, they are added to it. No check is
      * performed to ensure that the nodes are linked to other nodes in the graph.
+     * @param sourceNode source node
+     * @param destinationNode destination node
+     * @return created edge
      */
     public Edge linkNodes(Node sourceNode, Node destinationNode) {
         Edge newLink = new Edge(sourceNode, destinationNode);
@@ -160,25 +173,35 @@ public class Graph {
     }
 
 
-    /** Add node to list of nodes. */
+    /** Add node to list of nodes. 
+     * @param node node to add
+     */
     public void addNode(Node node) {
         nodes.add(node);
     }
 
 
-    /** Add edge to list of nodes. */
+    /** Add edge to list of nodes. 
+     * @param edge edge to add
+     */
     public void addEdge(Edge edge) {
         edges.add(edge);
     }
 
 
-    /** Check if a node is in the graph. */
+    /** Check if a node is in the graph.
+     * @param node node to check
+     * @return if node in the graph
+     */
     public boolean isNodeInGraph(Node node) {
         return nodes.contains(node);
     }
 
 
-    /** Check if an edge is in the graph. */
+    /** Check if an edge is in the graph. 
+     * @param edge edge to check
+     * @return if edge in the graph
+     */
     public boolean isEdgeInGraph(Node edge) {
         return edges.contains(edge);
     }
@@ -190,13 +213,15 @@ public class Graph {
     }
 
 
-    /** Whether there are more nodes. */
+    /** @return whether there are more nodes. 
+     */
     public boolean hasMoreNodes() {
         return nodeIterator.hasNext();
     }
 
 
-    /** Returns next node. */
+    /** @return next node.
+     */
     public Node nextNode() {
         return nodeIterator.next();
     }
@@ -208,13 +233,14 @@ public class Graph {
     }
 
 
-    /** Whether there are more edges. */
+    /** @return whether there are more edges. 
+     */
     public boolean hasMoreEdges() {
         return edgeIterator.hasNext();
     }
 
 
-    /** Returns next edge. */
+    /** @return next edge. */
     public Edge nextEdge() {
         return edgeIterator.next();
     }

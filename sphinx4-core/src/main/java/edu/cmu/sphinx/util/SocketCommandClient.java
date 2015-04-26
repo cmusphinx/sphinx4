@@ -39,6 +39,7 @@ public class SocketCommandClient {
      *
      * @param host the host machine
      * @param port the port to use
+     * @throws IOException if setup went wrong
      */
     public SocketCommandClient(String host, int port)
             throws IOException {
@@ -84,8 +85,9 @@ public class SocketCommandClient {
 
 
     /**
-     * Returns the SO_TIMEOUT of the Socket that this client uses. 0 returns implies that the option is disabled (i.e.,
+     * @return the SO_TIMEOUT of the Socket that this client uses. 0 returns implies that the option is disabled (i.e.,
      * timeout of infinity).
+     * @throws SocketException if configuration failed
      */
     public int getSoTimeout() throws SocketException {
         if (socket != null) {
@@ -101,7 +103,7 @@ public class SocketCommandClient {
      * is interpreted as an infinite timeout.
      *
      * @param millisecs the timeout in milliseconds
-     * @throws SocketException
+     * @throws SocketException if configuration failed
      */
     public void setSoTimeout(int millisecs) throws SocketException {
         if (socket != null) {
@@ -230,9 +232,6 @@ public class SocketCommandClient {
         }
         return socket != null;
     }
-
-
-    /** manual tester for the command interpreter. */
 
     public static void main(String[] args) {
         try {

@@ -679,6 +679,8 @@ public class HTKLoader implements Loader {
     /**
      * Returns true if the given senone sequence IDs are the same.
      * 
+     * @param ssid1 first sequence of senones
+     * @param ssid2 second sequence of senones
      * @return true if the given senone sequence IDs are the same, false
      *         otherwise
      */

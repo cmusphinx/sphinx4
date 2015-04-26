@@ -68,6 +68,7 @@ public class Utterance {
      * Determines if this utterance contains a relation with the given name.
      *
      * @param name the name of the relation of interest.
+     * @return if relation is present
      */
     public boolean hasRelation(String name) {
         return relations.isPresent(name);
@@ -127,10 +128,7 @@ public class Utterance {
      *
      * @param relation the name of the relation
      * @param time the time
-     *
-     * @throws IllegalStateException if the Segment durations have not been
-     *         calculated in the Utterance or if the given relation is not
-     *         present in the Utterance
+     * @return the item
      */
     public Item getItem(String relation, float time) {
         Relation segmentRelation = null;

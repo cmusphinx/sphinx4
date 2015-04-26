@@ -133,9 +133,6 @@ public class SocketCommandInterpreter extends Thread {
         }
     }
 
-
-    /** manual tester for the command interpreter. */
-
     public static void main(String[] args) {
         SocketCommandInterpreter sci = new SocketCommandInterpreter(7890);
         sci.add("testCommand", new CommandInterface() {

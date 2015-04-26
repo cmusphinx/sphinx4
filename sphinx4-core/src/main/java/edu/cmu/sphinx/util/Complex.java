@@ -28,13 +28,18 @@ public class Complex {
     }
 
 
-    /** Create a complex number from a real one */
+    /** Create a complex number from a real one 
+     * @param real source value
+     */
     public Complex(double real) {
         set(real, 0.0f);
     }
 
 
-    /** Create a complex number from the real and imaginary parts */
+    /** Create a complex number from the real and imaginary parts 
+     * @param real real part
+     * @param imaginary imaginary part
+     */
     public Complex(double real, double imaginary) {
         set(real, imaginary);
     }

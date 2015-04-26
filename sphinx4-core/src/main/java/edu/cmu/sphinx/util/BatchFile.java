@@ -27,6 +27,7 @@ public class BatchFile {
      *
      * @param batchFile the batch file to read
      * @return a List of the lines in a batch file
+     * @throws IOException if something went wrong
      */
     public static List<String> getLines(String batchFile) throws IOException {
         return getLines(batchFile, 0);
@@ -39,6 +40,7 @@ public class BatchFile {
      * @param batchFile the batch file to read
      * @param skip      the number of lines to skip between items
      * @return a List of the lines in a batch file
+     * @throws IOException if something went wrong
      */
     public static List<String> getLines(String batchFile, int skip) throws IOException {
         int curCount = skip;
@@ -63,6 +65,7 @@ public class BatchFile {
     /**
      * Returns the file name portion of a line in a batch file. This is the portion of the line before the first space.
      *
+     * @param batchFileLine the source line
      * @return the file name portion of a line in a batch file.
      */
     public static String getFilename(String batchFileLine) {
@@ -75,6 +78,7 @@ public class BatchFile {
      * Returns the reference string portion of a line in a batch file. This is the portion of the line after the first
      * space
      *
+     * @param batchFileLine the source line
      * @return the reference string portion of a line in a batch file.
      */
     public static String getReference(String batchFileLine) {

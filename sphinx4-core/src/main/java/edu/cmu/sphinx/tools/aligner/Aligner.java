@@ -38,6 +38,7 @@ public class Aligner {
 
     /**
      * @param args acoustic model, dictionary, audio file, text
+     * @throws Exception if error occurs
      */
     public static void main(String args[]) throws Exception {
         File file = new File(args[2]);

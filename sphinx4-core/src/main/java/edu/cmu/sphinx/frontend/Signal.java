@@ -56,7 +56,8 @@ public class Signal implements Data {
     }
 
 
-    /** Returns the properties associated to this signal.
+    /** 
+     * @return the properties associated to this signal.
      */
     public synchronized Map<String, Object> getProps() {
         if (props == null)

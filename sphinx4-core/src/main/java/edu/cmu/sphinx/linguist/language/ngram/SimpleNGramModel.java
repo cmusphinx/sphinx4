@@ -362,7 +362,7 @@ public class SimpleNGramModel implements LanguageModel {
      * Returns a list of all the word sequences in the language model This
      * method is used to create Finite State Transducers of the language model.
      *
-     * @return LinkedList<WordSequence> containing all the word sequences
+     * @return List containing all the word sequences
      */
     public LinkedList<WordSequence> getNGrams() {
         return tokens;

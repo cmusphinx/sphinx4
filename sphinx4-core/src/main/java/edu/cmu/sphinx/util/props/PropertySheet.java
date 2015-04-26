@@ -79,7 +79,13 @@ public class PropertySheet implements Cloneable {
     }
 
 
-    /** Returns the property names <code>name</code> which is still wrapped into the annotation instance. */
+    /** Returns the property names <code>name</code> which is still wrapped into the annotation instance.
+     *  
+     * @param name the name of the property
+     * @param propertyClass the class of the property
+     * @return the wrapper around property
+     * @throws PropertyException if there is no such property
+     **/
     public S4PropWrapper getProperty(String name, Class<?> propertyClass) throws PropertyException {
         if (!propValues.containsKey(name))
             throw new InternalConfigurationException(getInstanceName(), name,
@@ -338,7 +344,10 @@ public class PropertySheet implements Cloneable {
         return configurable;
     }
 
-    /** Returns the class of of a registered component property without instantiating it. */
+    /** Returns the class of of a registered component property without instantiating it. 
+     * @param propName the name of the property
+     * @return class of the component corresponding to that property
+     */
     public Class<? extends Configurable> getComponentClass(String propName) {
         Class<? extends Configurable> defClass = null;
 
@@ -376,12 +385,13 @@ public class PropertySheet implements Cloneable {
     /**
      * Gets a list of components associated with the given parameter name
      * 
+     * @param <T> parent component
      * @param name
      *            the parameter name
      * @param tclass
      *            the class of the list elements
      * @return the component associated with the name
-     * @throws edu.cmu.sphinx.util.props.PropertyException
+     * @throws PropertyException
      *             if the component does not exist or is of the wrong type.
      */
     public <T> List<T> getComponentList(String name, Class<T> tclass)
@@ -483,14 +493,14 @@ public class PropertySheet implements Cloneable {
     }
 
 
-    /** Returns true if the owner of this property sheet is already instantiated. */
+    /** @return true if the owner of this property sheet is already instantiated. */
     public boolean isInstanciated() {
         return !(owner == null);
     }
 
 
     /**
-     * Returns the owner of this property sheet. In most cases this will be the configurable instance which was
+     * @return the owner of this property sheet. In most cases this will be the configurable instance which was
      * instrumented by this property sheet.
      */
     public synchronized Configurable getOwner() {
@@ -518,7 +528,7 @@ public class PropertySheet implements Cloneable {
 
 
     /**
-     * Returns the set of all component properties which were tagged as mandatory but which are not set (or no default
+     * @return the set of all component properties which were tagged as mandatory but which are not set (or no default
      * value is given).
      */
     public Collection<String> getUndefinedMandatoryProps() {
@@ -544,7 +554,7 @@ public class PropertySheet implements Cloneable {
     }
 
 
-    /** Returns the class of the owner configurable of this property sheet. */
+    /** @return the class of the owner configurable of this property sheet. */
     public Class<? extends Configurable> getConfigurableClass() {
         return ownerClass;
     }
@@ -588,6 +598,8 @@ public class PropertySheet implements Cloneable {
      * Sets the given property to the given name
      *
      * @param name the simple property name
+     * @param value to set
+     * @throws PropertyException if error occurred
      */
     public void setString(String name, String value) throws PropertyException {
         // ensure that there is such a property
@@ -753,7 +765,12 @@ public class PropertySheet implements Cloneable {
     }
 
 
-    /** Returns the type of the given property. */
+    /** 
+     * Returns the type of the given property. 
+     * 
+     * @param propName the name of the property
+     * @return the type of the property
+     */
     public PropertyType getType(String propName) {
         S4PropWrapper wrapper = registeredProperties.get(propName);
         if (wrapper == null) {
@@ -817,7 +834,7 @@ public class PropertySheet implements Cloneable {
     }
 
 
-    /** Returns the names of registered properties of this PropertySheet object. */
+    /** @return the names of registered properties of this PropertySheet object. */
     public Collection<String> getRegisteredProperties() {
         return Collections.unmodifiableCollection(registeredProperties.keySet());
     }
@@ -881,7 +898,10 @@ public class PropertySheet implements Cloneable {
     }
 
 
-    /** Validates a configuration, by ensuring that only valid property-names have been used to configure the component. */
+    /** Validates a configuration, by ensuring that only valid property-names have been used to configure the component.
+     *
+     * @return if property is validated
+     */
     public boolean validate() {
         for (String propName : rawProps.keySet()) {
             if (propName.equals(ConfigurationManagerUtils.GLOBAL_COMMON_LOGLEVEL))

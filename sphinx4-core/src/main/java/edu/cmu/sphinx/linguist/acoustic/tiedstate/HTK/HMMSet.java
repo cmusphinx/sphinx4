@@ -144,13 +144,9 @@ public class HMMSet {
 	}
 
 	/**
-	 * 
-
-	 *            index of the HMM (begins at 0)
-
-	 *            index of the state WITHIN the HMM ! (begins at 1, as in MMF)
+	 * @param hmmidx index of the HMM (begins at 0)
+	 * @param stateidx index of the state WITHIN the HMM ! (begins at 1, as in MMF)
 	 * @return index of the state in the vector of all the states of the HMMSet
-	 *         !
 	 */
 	public int getStateIdx(int hmmidx, int stateidx) {
 		// TODO: store a table not to recalculate every time

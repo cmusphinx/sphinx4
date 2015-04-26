@@ -49,6 +49,7 @@ public class Transform {
      *
      * @param filePath path to store transform matrix
      * @param index index of transform to store 
+     * @throws Exception if something went wrong
      */
     public void store(String filePath, int index) throws Exception {
         PrintWriter writer = new PrintWriter(filePath, "UTF-8");

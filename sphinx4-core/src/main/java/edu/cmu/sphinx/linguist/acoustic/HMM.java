@@ -38,9 +38,8 @@ public interface HMM {
 
 
     /**
-     * Retrieves the hmm state
-     *
      * @param which the state of interest
+     * @return hmm state
      */
     public HMMState getState(int which);
 

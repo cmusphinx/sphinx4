@@ -90,6 +90,7 @@ public class GrammarPoint {
      * Creates a GrammarPoint that points to a fully specified unit
      *
      * @param node               the grammar node
+     * @param alternativeIndex   the index of alternative
      * @param wordIndex          the index of the word in the node
      * @param pronunciationIndex the index of the pronunciation in the word.
      * @param unitIndex          the index of the unit in the pronunciation

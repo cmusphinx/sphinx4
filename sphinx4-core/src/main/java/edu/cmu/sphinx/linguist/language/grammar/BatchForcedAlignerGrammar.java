@@ -98,8 +98,6 @@ public class BatchForcedAlignerGrammar extends ForcedAlignerGrammar implements G
             throw new Error(e);
         } catch (IOException e) {
             throw new Error(e);
-        } catch (NoSuchMethodException e) {
-            throw new Error(e);
         }
         return initialNode;
     }

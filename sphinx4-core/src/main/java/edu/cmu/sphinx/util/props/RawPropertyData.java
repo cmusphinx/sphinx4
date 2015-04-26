@@ -76,17 +76,17 @@ public class RawPropertyData {
         properties.remove(propName);
     }
 
-    /** Returns the className. */
+    /** @return the className. */
     public String getClassName() {
         return className;
     }
 
-    /** @return Returns the name. */
+    /** @return the name. */
     public String getName() {
         return name;
     }
 
-    /** @return Returns the properties. */
+    /** @return the properties. */
     public Map<String, Object> getProperties() {
         return properties;
     }
@@ -101,7 +101,10 @@ public class RawPropertyData {
         return properties.get(propName) != null;
     }
 
-    /** Returns a copy of this property data instance with all ${}-fields resolved. */
+    /** Return a copy of this property data instance with all ${}-fields resolved. 
+     * @param cm configuration manager
+     * @return the property data
+     **/
     public RawPropertyData flatten(ConfigurationManager cm) {
         RawPropertyData copyRPD = new RawPropertyData(name, className);
 
@@ -121,8 +124,8 @@ public class RawPropertyData {
     /**
      * Lookup a global symbol with a given name (and resolves
      *
-     * @param key              the name of the property
-     * @param globalProperties
+     * @param key the name of the property
+     * @param globalProperties global properties
      * @return the property value or null if it doesn't exist.
      */
     public String getGlobalProperty(String key, Map<String, String> globalProperties) {

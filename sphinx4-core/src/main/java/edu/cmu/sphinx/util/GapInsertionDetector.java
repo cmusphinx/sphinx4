@@ -41,6 +41,7 @@ public class GapInsertionDetector {
      * @param referenceFile     the file of references
      * @param hypothesisFile    the file of hypotheses
      * @param showGapInsertions if true show gap insertions.
+     * @throws IOException if IO went wrong
      */
     public GapInsertionDetector(String referenceFile, String hypothesisFile,
                                 boolean showGapInsertions)
@@ -54,6 +55,7 @@ public class GapInsertionDetector {
      * Detect the gap insertion errors.
      *
      * @return the total number of gap insertion errors
+     * @throws IOException if IO error occurred
      */
     public int detect() throws IOException {
         int gaps = 0;
@@ -115,7 +117,7 @@ public class GapInsertionDetector {
     }
 
 
-    /**
+    /*
      * A command line program for detecting gap insertion errors. To run this program, type: <code> java
      * GapInsertionDetector {propsFile} {referenceFile} {hypothesisFile} </code> The propsFile need to have only one
      * property: <code> edu.cmu.sphinx.util.GapInsertionDetector.showGapInsertions=true/false </code>

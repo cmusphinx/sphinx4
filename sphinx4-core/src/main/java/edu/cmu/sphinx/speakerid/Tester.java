@@ -51,8 +51,8 @@ public class Tester {
     /**
      * Returns string version of the given time in miliseconds
      * 
-     * @param seconds
-     * @return mm:ss
+     * @param seconds seconds to convert
+     * @return time in mm:ss format
      */
     public static String time(int seconds) {
         return (seconds / 60000) + ":" + (Math.round((double) (seconds % 60000) / 1000));
@@ -80,7 +80,8 @@ public class Tester {
      * @param speakers
      *            An array of clusters for which it is needed to be printed the
      *            speakers intervals
-     * @throws IOException
+     * @param fileName the file to print to 
+     * @throws IOException if error occurred
      */
     public static void printSpeakerIntervals(ArrayList<SpeakerCluster> speakers, String fileName)
             throws IOException {
@@ -140,6 +141,7 @@ public class Tester {
      * 
      * @param inputFile
      *            the input file that needs to be diarized
+     * @throws IOException if IO went wrong
      */
     public static void testSpeakerIdentification(String inputFile) throws IOException {
         InputStream stream = new FileInputStream(inputFile);
@@ -148,10 +150,6 @@ public class Tester {
         printSpeakerIntervals(speakers, inputFile);
     }
 
-    /**
-     * @param args
-     *            -i input file name
-     */
     public static void main(String[] args) throws IOException {
         String inputFile = null;
         for (int i = 0; i < args.length; i++)

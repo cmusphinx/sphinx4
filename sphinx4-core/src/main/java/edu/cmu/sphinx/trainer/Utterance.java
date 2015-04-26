@@ -33,11 +33,11 @@ public interface Utterance {
     public void startTranscriptIterator();
 
 
-    /** Returns whether there is a next transcript. */
+    /** @return whether there is a next transcript. */
     public boolean hasMoreTranscripts();
 
 
-    /** Returns next transcript. */
+    /** @return next transcript. */
     public Transcript nextTranscript();
 
 }

@@ -88,6 +88,7 @@ public abstract class Semiring implements Serializable {
      * 
      * @param w1: first operand
      * @param w2: second operand
+     * @return less or more
      */
     public boolean naturalLess(float w1, float w2) {
         return (plus(w1, w2) == w1) && (w1 != w2);

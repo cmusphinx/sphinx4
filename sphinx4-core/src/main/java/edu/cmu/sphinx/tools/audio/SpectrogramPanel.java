@@ -181,7 +181,9 @@ public class SpectrogramPanel extends JPanel {
     }
 
 
-    /** Zoom the image, preparing for new display. */
+    /** Zoom the image, preparing for new display. 
+     * @param zoom a zoom to set
+     **/
     protected void zoomSet(float zoom) {
         this.zoom = zoom;
         if (spectrogram != null) {

@@ -22,6 +22,8 @@ public interface ConfigurationChangeListener {
     /**
      * Called if a new compoenent defined by <code>ps</code> was registered to the ConfigurationManager
      * <code>cm</code>.
+     * @param cm               Configuration manager
+     * @param ps               Property sheet
      */
     public void componentAdded(ConfigurationManager cm, PropertySheet ps);
 
@@ -29,12 +31,17 @@ public interface ConfigurationChangeListener {
     /**
      * Called if a compoenent defined by <code>ps</code> was unregistered (removed) from the ConfigurationManager
      * <code>cm</code>.
+     * @param cm               Configuration manager
+     * @param ps               Property sheet
      */
     public void componentRemoved(ConfigurationManager cm, PropertySheet ps);
 
 
     /**
      * Called if a compoenent was renamed.
+     * @param cm               Configuration manager
+     * @param ps               Property sheet
+     * @param oldName          Old name
      */
     public void componentRenamed(ConfigurationManager cm, PropertySheet ps, String oldName);
 }

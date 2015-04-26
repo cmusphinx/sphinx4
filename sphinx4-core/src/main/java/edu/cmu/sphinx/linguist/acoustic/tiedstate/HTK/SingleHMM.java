@@ -90,9 +90,8 @@ public class SingleHMM {
 	}
 
 	/**
-	 * may return null if the state is non-emitting
-	 * 
-
+	 * May return null if the state is non-emitting
+	 * @param idx index of the state 
 	 * @return the HMM state
 	 */
 	public HMMState getState(int idx) {

@@ -42,8 +42,6 @@ import java.util.logging.Logger;
  * The format of the ASCII dictionary is the word, followed by spaces or tab,
  * followed by the pronunciation(s). For example, a digits dictionary will look
  * like:
- * <p>
- * 
  * <pre>
  *  ONE HH W AH N
  *  ONE(2) W AH N
@@ -59,8 +57,6 @@ import java.util.logging.Logger;
  *  ZERO(2) Z IY R OW
  *  OH OW
  * </pre>
- * <p>
- * <p>
  * In the above example, the words "one" and "zero" have two pronunciations
  * each.
  */

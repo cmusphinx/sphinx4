@@ -365,7 +365,7 @@ public class BinaryLoader {
      * @param position the starting position in the file
      * @param size     the number of bytes to load
      * @return the loaded ByteBuffer
-     * @throws java.io.IOException
+     * @throws java.io.IOException if IO went wrong
      */
     public byte[] loadBuffer(long position, int size) throws IOException {
         // assert ((position + size) <= fileChannel.size());
@@ -382,7 +382,7 @@ public class BinaryLoader {
      * Loads the language model from the given file.
      *
      * @param inputStream stream to read the language model data
-     * @throws java.io.IOException
+     * @throws java.io.IOException if IO went wrong
      */
     protected void loadModelLayout(InputStream inputStream) throws IOException {
 

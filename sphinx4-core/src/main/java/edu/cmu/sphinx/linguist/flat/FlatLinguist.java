@@ -38,13 +38,10 @@ import java.util.*;
  * graph for this grammar.
  * <p>
  * It makes the following simplifying assumptions:
- * <p>
  * <ul> <li>Zero or one word per grammar node <li> No fan-in allowed ever <li> No composites (yet) <li> Only Unit,
  * HMMState, and pronunciation states (and the initial/final grammar state are in the graph (no word, alternative or
  * grammar states attached). <li> Only valid transitions (matching contexts) are allowed <li> No tree organization of
  * units <li> Branching grammar states are  allowed </ul>
- * <p>
- * <p>
  * Note that all probabilities are maintained in the log math domain
  */
 public class FlatLinguist implements Linguist, Configurable {

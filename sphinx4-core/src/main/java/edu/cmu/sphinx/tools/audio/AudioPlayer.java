@@ -26,7 +26,7 @@ public class AudioPlayer extends Thread {
     private int selectionEnd;
 
 
-    /** Creates a new AudioPlayer for the given AudioData. */
+    /* Creates a new AudioPlayer for the given AudioData. */
     public AudioPlayer(AudioData audio) {
         this.audio = audio;
         selectionStart = 0;
@@ -34,7 +34,7 @@ public class AudioPlayer extends Thread {
     }
 
 
-    /** Notifies the AudioPlayer thread to play the audio. */
+    /* Notifies the AudioPlayer thread to play the audio. */
     public void play(int selectionStart, int selectionEnd) {
         synchronized (audio) {
             this.selectionStart = selectionStart;
@@ -44,7 +44,7 @@ public class AudioPlayer extends Thread {
     }
 
 
-    /** Plays the AudioData in a separate thread. */
+    /* Plays the AudioData in a separate thread. */
     @Override
     public void run() {
         while (true) {

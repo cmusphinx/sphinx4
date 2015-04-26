@@ -142,6 +142,7 @@ public class ConfigurationManager implements Cloneable {
      * Looks up a configurable component by name. Creates it if necessary
      *
      * @param instanceName the name of the component
+     * @param <C> component type
      * @return the component, or null if a component was not found.
      * @throws InternalConfigurationException If the requested object could not be properly created, or is not a
      *                                        configurable object, or if an error occured while setting a component
@@ -171,6 +172,7 @@ public class ConfigurationManager implements Cloneable {
      * registered components.
      *
      * @param <C> A component type
+     * @param confClass class to lookup
      * @return The <code>Configurable</code> instance of null if there is no matching <code>Configurable</code>.
      * @throws IllegalArgumentException if more than one component of the given type is registered to this
      *                                  ConfigurationManager.
@@ -188,6 +190,8 @@ public class ConfigurationManager implements Cloneable {
     /**
      * Given a <code>Configurable</code>-class/interface, all property-sheets which are subclassing/implemting this
      * class/interface are collected and returned.  No <code>Configurable</code> will be instantiated by this method.
+     * @param confClass class to lookup
+     * @return a list of property sheets
      */
     public List<PropertySheet> getPropSheets(Class<? extends Configurable> confClass) {
         List<PropertySheet> psCol = new ArrayList<PropertySheet>();
@@ -244,6 +248,7 @@ public class ConfigurationManager implements Cloneable {
     /**
      * Adds an already instantiated <code>Configurable</code> to this configuration manager.
      *
+     * @param configurable A configurable to add
      * @param name The desired lookup-instanceName of the configurable
      */
     public void addConfigurable(Configurable configurable, String name) {
@@ -280,7 +285,9 @@ public class ConfigurationManager implements Cloneable {
     }
 
 
-    /** Removes a configurable from this configuration manager. */
+    /** Removes a configurable from this configuration manager. 
+     * @param name a name to remove 
+     */
     public void removeConfigurable(String name) {
         assert getComponentNames().contains(name);
 
@@ -343,7 +350,7 @@ public class ConfigurationManager implements Cloneable {
     }
 
 
-    /** Returns a copy of the map of global properties set for this configuration manager. */
+    /** @return a copy of the map of global properties set for this configuration manager. */
     public Map<String, String> getGlobalProperties() {
         return new HashMap<String, String>(globalProperties);
     }
@@ -353,9 +360,10 @@ public class ConfigurationManager implements Cloneable {
      * Returns a global property.
      *
      * @param propertyName The name of the global property or <code>null</code> if no such property exists
+     * @return a global property
      */
     public String getGlobalProperty(String propertyName) {
-//        propertyName = propertyName.startsWith("$") ? propertyName : "${" + propertyName + "}";
+        // propertyName = propertyName.startsWith("$") ? propertyName : "${" + propertyName + "}";
         String globProp = globalProperties.get(propertyName);
         return globProp != null ? globProp.toString() : null;
     }
@@ -367,7 +375,7 @@ public class ConfigurationManager implements Cloneable {
 
 
     /**
-     * Returns the URL of the XML configuration which defined this configuration or <code>null</code>  if it was created
+     * @return the URL of the XML configuration which defined this configuration or <code>null</code>  if it was created
      * dynamically.
      */
     public URL getConfigURL() {
@@ -411,7 +419,9 @@ public class ConfigurationManager implements Cloneable {
     }
 
 
-    /** Adds a new listener for configuration change events. */
+    /** Adds a new listener for configuration change events. 
+     * @param l listener to add
+     **/
     public void addConfigurationChangeListener(ConfigurationChangeListener l) {
         if (l == null)
             return;
@@ -420,7 +430,9 @@ public class ConfigurationManager implements Cloneable {
     }
 
 
-    /** Removes a listener for configuration change events. */
+    /** Removes a listener for configuration change events. 
+     * @param l listener to remove
+     **/
     public void removeConfigurationChangeListener(ConfigurationChangeListener l) {
         if (l == null)
             return;
@@ -511,6 +523,10 @@ public class ConfigurationManager implements Cloneable {
     /**
      * Creates an instance of the given <code>Configurable</code> by using the default parameters as defined by the
      * class annotations to parameterize the component.
+     * @param <C> component class
+     * @param targetClass target class
+     * @return an instance of class
+     * @throws PropertyException if no such class is defined
      */
     public static <C extends Configurable> C getInstance(Class<C> targetClass) throws PropertyException {
         return getInstance(targetClass, new HashMap<String, Object>());
@@ -521,6 +537,11 @@ public class ConfigurationManager implements Cloneable {
      * Creates an instance of the given <code>Configurable</code> by using the default parameters as defined by the
      * class annotations to parameterize the component. Default parameters will be overridden if a their names are
      * contained in the given <code>props</code>-map
+     * @param <C> component class
+     * @param targetClass target class
+     * @param props additional properties
+     * @return an instance of class
+     * @throws PropertyException if no such class is defined
      */
     public static <C extends Configurable> C getInstance(Class<C> targetClass, Map<String, Object> props) throws PropertyException {
         return getInstance(targetClass, props, null);
@@ -533,6 +554,12 @@ public class ConfigurationManager implements Cloneable {
      * class annotations to parameterize the component. Default parameters will be overridden if a their names are
      * contained in the given <code>props</code>-map. The component is used to create a parameterized logger for the
      * Configurable being created.
+     * @param <C> component class
+     * @param targetClass target class
+     * @param props additional properties
+     * @param compName component name
+     * @return an instance of class
+     * @throws PropertyException if no such class is defined
      */
     public static <C extends Configurable> C getInstance(Class<C> targetClass, Map<String, Object> props, String compName) throws PropertyException {
         PropertySheet ps = getPropSheetInstanceFromClass(targetClass, props, compName, new ConfigurationManager());

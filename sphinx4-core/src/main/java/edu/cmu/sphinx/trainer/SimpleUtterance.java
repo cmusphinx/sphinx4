@@ -69,8 +69,6 @@ public class SimpleUtterance implements Utterance {
 
     /**
      * Starts the transcript iterator.
-     *
-     * @return the transcript iterator.
      */
     public void startTranscriptIterator() {
         transcriptIterator = transcriptSet.iterator();

@@ -32,19 +32,19 @@ public class LargeTrigramModel extends LargeNGramModel {
     public static final String PROP_TRIGRAM_CACHE_SIZE = "trigramCacheSize";
 
     /**
-     * @param format
-     * @param urlLocation
-     * @param ngramLogFile
-     * @param maxTrigramCacheSize
-     * @param maxBigramCacheSize
-     * @param clearCacheAfterUtterance
-     * @param maxDepth
-     * @param dictionary
-     * @param applyLanguageWeightAndWip
-     * @param languageWeight
-     * @param wip
-     * @param unigramWeight
-     * @param fullSmear
+     * @param format format of the model
+     * @param urlLocation Location of the model
+     * @param ngramLogFile log file to use
+     * @param maxTrigramCacheSize max cache size
+     * @param maxBigramCacheSize max cache size
+     * @param clearCacheAfterUtterance clear cache after each utterance
+     * @param maxDepth ngram order
+     * @param dictionary dictionary
+     * @param applyLanguageWeightAndWip apply lw during load
+     * @param languageWeight lw
+     * @param wip word insertion probability
+     * @param unigramWeight unigram weight
+     * @param fullSmear build full smear
      */
     public LargeTrigramModel(String format, URL urlLocation,
             String ngramLogFile, int maxTrigramCacheSize,

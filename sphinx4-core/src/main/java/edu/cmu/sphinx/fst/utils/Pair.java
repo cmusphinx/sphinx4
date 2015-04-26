@@ -30,7 +30,7 @@ public class Pair<L, R> {
     // The right element
     private R right;
 
-    /**
+    /*
      * Constructor specifying the left and right elements of the Pair.
      */
     public Pair(L left, R right) {

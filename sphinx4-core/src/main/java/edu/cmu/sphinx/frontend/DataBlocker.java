@@ -31,8 +31,7 @@ public class DataBlocker extends BaseDataProcessor {
     }
 
     /**
-     * 
-     * @param blockSizeMs
+     * @param blockSizeMs block size in milliseconds
      */
     public DataBlocker(double blockSizeMs) {
         initLogger();

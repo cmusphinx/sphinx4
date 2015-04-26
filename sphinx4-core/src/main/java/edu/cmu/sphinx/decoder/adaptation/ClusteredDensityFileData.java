@@ -34,7 +34,7 @@ public class ClusteredDensityFileData {
      * 
      * @param gaussian
      *            provided in a i * numStates + gaussianIndex form.
-     * @return
+     * @return class index
      */
     public int getClassIndex(int gaussian) {
         return corespondingClass[gaussian];

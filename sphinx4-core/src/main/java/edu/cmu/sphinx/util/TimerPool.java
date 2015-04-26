@@ -25,9 +25,10 @@ public class TimerPool {
     /**
      * Retrieves (or creates) a timer with the given name
      *
-     * @param owner
+     * @param owner owner of the timer
      * @param timerName the name of the particular timer to retrieve. If the timer does not already exist, it will be
-     *                  created  @return the timer.
+     *                  created  
+     * @return the timer
      */
     public static synchronized Timer getTimer(Object owner, String timerName) {
         if (!weakRefTimerPool.containsKey(owner))
@@ -48,7 +49,7 @@ public class TimerPool {
     }
 
 
-    /** Returns the number of currently caches {@code Timer} instances. */
+    /** @return the number of currently caches {@code Timer} instances. */
     public static int getNumCachedTimers() {
         int counter = 0;
         for (List<Timer> timers : weakRefTimerPool.values()) {
@@ -59,8 +60,10 @@ public class TimerPool {
     }
 
 
-    /** Dump all timers 
-     * @param logger */
+    /** 
+     * Dump all timers 
+     * @param logger the logger to use for dump
+     */
     public static void dumpAll(Logger logger) {
         showTimesShortTitle(logger);
 

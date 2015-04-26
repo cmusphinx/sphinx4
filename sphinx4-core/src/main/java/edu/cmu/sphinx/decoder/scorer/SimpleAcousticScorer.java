@@ -163,6 +163,7 @@ public class SimpleAcousticScorer extends ConfigurableAdapter implements Acousti
      *            The list of Scoreables to be scored
      * @param data
      *            The <code>Data</code>-object to be used for scoring.
+     * @param <T> type for scorables
      * @return the best scoring <code>Scoreable</code> or <code>null</code> if
      *         the list of scoreables was empty.
      */

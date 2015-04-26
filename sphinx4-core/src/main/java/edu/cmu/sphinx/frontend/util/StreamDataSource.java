@@ -20,7 +20,7 @@ import edu.cmu.sphinx.util.props.*;
 
 /**
  * A StreamDataSource converts data from an InputStream into Data objects. One
- * would call {@link #setInputStream(InputStream,String) setInputStream} to set
+ * would call {@link #setInputStream(InputStream,TimeFrame) setInputStream} to set
  * the input stream, and call {@link #getData} to obtain the Data object. The
  * InputStream can be an arbitrary stream, for example a data from the network
  * or from a pipe.
@@ -139,6 +139,7 @@ public class StreamDataSource extends BaseDataProcessor {
      * Sets the InputStream from which this StreamDataSource reads.
      *
      * @param inputStream the InputStream from which audio data comes
+     * @param timeFrame time frame to process
      */
     public void setInputStream(InputStream inputStream, TimeFrame timeFrame) {
         dataStream = inputStream;

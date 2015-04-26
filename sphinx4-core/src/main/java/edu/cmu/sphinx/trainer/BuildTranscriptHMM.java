@@ -41,6 +41,7 @@ public class BuildTranscriptHMM {
      * @param context       this object's context
      * @param transcript    the transcript to be converted to HMM
      * @param acousticModel the acoustic model to be used
+     * @param unitManager   the manager for units
      */
     public BuildTranscriptHMM(String context, Transcript transcript,
                               AcousticModel acousticModel, UnitManager unitManager) {

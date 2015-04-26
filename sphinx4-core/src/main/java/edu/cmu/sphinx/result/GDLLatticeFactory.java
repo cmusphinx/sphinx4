@@ -33,6 +33,8 @@ public class GDLLatticeFactory {
      *
      * @param gdlFile    the lattice file
      * @param dictionary the dictionary to use to look up words
+     * @return Lattice created from file
+     * @throws IOException if something went wrong
      */
     public static Lattice getLattice(String gdlFile, Dictionary dictionary)
             throws IOException {

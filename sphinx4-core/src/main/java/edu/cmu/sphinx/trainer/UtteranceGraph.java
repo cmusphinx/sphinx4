@@ -24,7 +24,7 @@ public interface UtteranceGraph {
     public void add(Graph transcriptGraph);
 
 
-    /** Returns the size of a graph. This is the number of nodes in a graph. */
+    /** @return the size of a graph. This is the number of nodes in a graph. */
     public int size();
 
 

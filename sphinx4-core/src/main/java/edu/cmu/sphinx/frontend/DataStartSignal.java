@@ -39,7 +39,6 @@ public class DataStartSignal extends Signal {
      * Constructs a DataStartSignal at the given time.
      *
      * @param sampleRate  the sampling rate of the started data stream.
-     * @param tagAsVadStream <code>true</code> if this feature stream will contain vad-signals
      */
     public DataStartSignal(int sampleRate) {
         this(sampleRate, System.currentTimeMillis());

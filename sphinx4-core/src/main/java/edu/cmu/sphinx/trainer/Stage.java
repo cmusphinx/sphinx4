@@ -46,7 +46,9 @@ public class Stage {
             new Stage("_90_CP_MODEL");
 
 
-    /** Constructs a Stage with the given name. */
+    /** Constructs a Stage with the given name.
+     * @param name the name to use
+     */
     protected Stage(String name) {
         this.name = name;
     }

@@ -173,6 +173,7 @@ public class Microphone extends BaseDataProcessor {
      * be what is often used for USB headsets, or an integer value which represents the index of the Mixer.Info that is
      * returned by AudioSystem.getMixerInfo(). To get the list of Mixer.Info objects, run the AudioTool application with
      * a command line argument of "-dumpMixers".
+     * @param audioBufferSize buffer size
      */
     public Microphone(int sampleRate, int bitsPerSample, int channels,
                       boolean bigEndian, boolean signed, boolean closeBetweenUtterances, int msecPerRead, boolean keepLastAudio,

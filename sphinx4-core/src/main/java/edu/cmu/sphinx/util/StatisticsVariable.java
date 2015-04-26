@@ -55,6 +55,7 @@ public class StatisticsVariable {
      *
      * @param instanceName the instance name of creator
      * @param statName     the name of the StatisticsVariable
+     * @return new variable
      */
     static public StatisticsVariable getStatisticsVariable(
             String instanceName, String statName) {
@@ -154,7 +155,6 @@ public class StatisticsVariable {
     }
 
 
-    /** Some simple tests for the StatisticsVariable */
     public static void main(String[] args) {
         StatisticsVariable loops =
                 StatisticsVariable.getStatisticsVariable("main", "loops");

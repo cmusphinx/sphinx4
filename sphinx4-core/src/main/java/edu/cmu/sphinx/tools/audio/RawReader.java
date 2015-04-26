@@ -29,6 +29,7 @@ public class RawReader {
      * @param audioStream the stream containing the raw bytes
      * @param audioFormat a hint of what to expect from the stream
      * @return samples, one sample per array element
+     * @throws IOException if IO went wrong
      */
     public static short[] readAudioData(InputStream audioStream,
                                         AudioFormat audioFormat)

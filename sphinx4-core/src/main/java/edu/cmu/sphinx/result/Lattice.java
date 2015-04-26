@@ -334,7 +334,7 @@ public class Lattice {
      * Create a Lattice from a LAT file. LAT files are created by the method
      * Lattice.dump()
      * 
-     * @param fileName
+     * @param fileName filename to load from
      */
     public Lattice(String fileName) {
         this();
@@ -470,10 +470,10 @@ public class Lattice {
      * Add an edge from fromNode to toNode. This method creates the Edge object
      * and does all the connecting
      * 
-     * @param fromNode
-     * @param toNode
-     * @param acousticScore
-     * @param lmScore
+     * @param fromNode from node
+     * @param toNode to node
+     * @param acousticScore acoustic score
+     * @param lmScore langauge model score
      * @return the new Edge
      */
     public Edge addEdge(Node fromNode, Node toNode, double acousticScore, double lmScore) {
@@ -489,9 +489,10 @@ public class Lattice {
      * was spoken over a given period of time. This method is used when loading
      * Lattices from .LAT files.
      * 
-     * @param word
-     * @param beginTime
-     * @param endTime
+     * @param id id of the node
+     * @param word word word
+     * @param beginTime begin time
+     * @param endTime end time
      * @return the new Node
      */
     protected Node addNode(String id, Word word, long beginTime, long endTime) {
@@ -505,9 +506,10 @@ public class Lattice {
      * was spoken over a given period of time. This method is used when loading
      * Lattices from .LAT files.
      * 
-     * @param word
-     * @param beginTime
-     * @param endTime
+     * @param id id
+     * @param word word
+     * @param beginTime begin time
+     * @param endTime end time
      * @return the new Node
      */
     public Node addNode(String id, String word, long beginTime, long endTime) {
@@ -518,7 +520,7 @@ public class Lattice {
     /**
      * Test to see if the Lattice contains an Edge
      * 
-     * @param edge
+     * @param edge edge to check
      * @return true if yes
      */
     boolean hasEdge(Edge edge) {
@@ -528,7 +530,7 @@ public class Lattice {
     /**
      * Test to see if the Lattice contains a Node
      * 
-     * @param node
+     * @param node node to check
      * @return true if yes
      */
     boolean hasNode(Node node) {
@@ -550,7 +552,7 @@ public class Lattice {
     /**
      * Add a Node to the set of all Nodes
      * 
-     * @param n
+     * @param n node to remove
      */
     protected void addNode(Node n) {
         assert !hasNode(n.getId());
@@ -560,7 +562,7 @@ public class Lattice {
     /**
      * Remove a Node from the set of all Nodes
      * 
-     * @param n
+     * @param n node to remove
      */
     protected void removeNode(Node n) {
         assert hasNode(n.getId());
@@ -570,7 +572,7 @@ public class Lattice {
     /**
      * Get the Node associated with an ID
      * 
-     * @param id
+     * @param id id to look for
      * @return the Node
      */
     protected Node getNode(String id) {
@@ -599,7 +601,7 @@ public class Lattice {
     /**
      * Remove an Edge from the set of all Edges.
      * 
-     * @param e
+     * @param e edge to remove
      */
     protected void removeEdge(Edge e) {
         edges.remove(e);
@@ -618,8 +620,8 @@ public class Lattice {
      * Dump the Lattice in the form understood by AiSee (a graph visualization
      * tool). See http://www.AbsInt.com
      * 
-     * @param fileName
-     * @param title
+     * @param fileName file to store to
+     * @param title title in the file
      */
     public void dumpAISee(String fileName, String title) {
         try {
@@ -660,8 +662,8 @@ public class Lattice {
      * Dump the Lattice in the form understood by Graphviz. See
      * http://graphviz.org
      * 
-     * @param fileName
-     * @param title
+     * @param fileName filename to store
+     * @param title title in graph
      */
     public void dumpDot(String fileName, String title) {
         try {
@@ -737,8 +739,8 @@ public class Lattice {
     /**
      * Dump the Lattice as a .LAT file
      * 
-     * @param out
-     * @throws IOException
+     * @param out writer for the lattice
+     * @throws IOException if error occurred
      */
     protected void dump(PrintWriter out) throws IOException {
         // System.err.println( "Dumping to " + out );
@@ -758,7 +760,7 @@ public class Lattice {
      * Dump the Lattice as a .LAT file. Used to save Lattices as ASCII files for
      * testing and experimentation.
      * 
-     * @param file
+     * @param file file to store
      */
     public void dump(String file) {
         try {
@@ -772,7 +774,7 @@ public class Lattice {
      * Remove a Node and all Edges connected to it. Also remove those Edges from
      * all connected Nodes.
      * 
-     * @param n
+     * @param n node to remove
      */
     protected void removeNodeAndEdges(Node n) {
 
@@ -804,7 +806,7 @@ public class Lattice {
      * <p>
      * Nodes A, B, M, N Edges A--&gt;M, A--&gt;N, B--&gt;M, B--&gt;N
      * 
-     * @param n
+     * @param n node to remove
      */
     protected void removeNodeAndCrossConnectEdges(Node n) {
         System.err.println("Removing node " + n + " and cross connecting edges");
@@ -832,17 +834,17 @@ public class Lattice {
      * Set the initialNode for this Lattice. This corresponds usually to the &lt;s&gt;
      * symbol
      * 
-     * @param p_initialNode
+     * @param initialNode node to set as initial
      */
-    public void setInitialNode(Node p_initialNode) {
-        initialNode = p_initialNode;
+    public void setInitialNode(Node initialNode) {
+        this.initialNode = initialNode;
     }
 
     /**
      * Get the terminalNode for this Lattice. This corresponds usually to the
      * &lt;/s&gt; symbol
      * 
-     * @return the initial Node
+     * @return the terminal node
      */
     public Node getTerminalNode() {
         return terminalNode;
@@ -852,10 +854,10 @@ public class Lattice {
      * Set the terminalNode for this Lattice. This corresponds usually to the
      * &lt;/s&gt; symbol
      * 
-     * @param p_terminalNode
+     * @param terminalNode not to set as terminal
      */
-    public void setTerminalNode(Node p_terminalNode) {
-        terminalNode = p_terminalNode;
+    public void setTerminalNode(Node terminalNode) {
+        this.terminalNode = terminalNode;
     }
 
     /** Dump all paths through this Lattice. Used for debugging. */
@@ -877,8 +879,8 @@ public class Lattice {
     /**
      * Internal routine used to generate all paths starting at a given node.
      * 
-     * @param path
-     * @param n
+     * @param path word path
+     * @param n node to start
      * @return a list of lists of Nodes
      */
     protected List<String> allPathsFrom(String path, Node n) {

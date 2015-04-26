@@ -205,7 +205,7 @@ public class WavWriter extends BaseDataProcessor {
      * @param bytesPerValue the number of bytes per value
      * @param signedData    whether the data is signed
      * @return a double array, or <code>null</code> if byteArray is of zero length
-     * @throws ArrayIndexOutOfBoundsException
+     * @throws ArrayIndexOutOfBoundsException if boundary fails
      */
     public static byte[] valuesToBytes(double[] values, int bytesPerValue, boolean signedData)
             throws ArrayIndexOutOfBoundsException {

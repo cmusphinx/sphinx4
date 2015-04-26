@@ -59,6 +59,7 @@ public interface TrainManager extends Configurable {
      * Initializes the acoustic models.
      *
      * @param context the context of this TrainManager
+     * @throws IOException if something went wrong
      */
     void initializeModels(String context) throws IOException;
 
@@ -68,7 +69,7 @@ public interface TrainManager extends Configurable {
      * automatically.
      *
      * @param context the context of this train manager.
-     * @throws IOException
+     * @throws IOException if something went wrong
      */
     void trainContextIndependentModels(String context) throws IOException;
 }

@@ -33,7 +33,7 @@ public interface Learner extends Configurable {
      * Sets the learner to use a utterance.
      *
      * @param utterance the utterance
-     * @throws IOException
+     * @throws IOException if exception occurred
      */
     public void setUtterance(Utterance utterance) throws IOException;
 
@@ -43,7 +43,7 @@ public interface Learner extends Configurable {
      *
      * @param utterance the current utterance
      * @param graph     the current utterance graph
-     * @throws IOException
+     * @throws IOException if exception occurred
      */
     public void initializeComputation(Utterance utterance,
                                       UtteranceGraph graph) throws IOException;
@@ -57,6 +57,6 @@ public interface Learner extends Configurable {
     public void setGraph(UtteranceGraph graph);
 
 
-    /** Gets posterior probabilities for a given state. */
+    /** @return posterior probabilities for a given state. */
     public TrainerScore[] getScore();
 }

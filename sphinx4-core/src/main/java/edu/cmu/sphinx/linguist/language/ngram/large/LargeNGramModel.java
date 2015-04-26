@@ -657,8 +657,8 @@ public class LargeNGramModel implements LanguageModel {
     /**
      * Returns true if the language model contains the given word
      * 
-     * @param w
-     * @return
+     * @param w word
+     * @return if word is in the language model
      */
     public boolean hasWord(Word w) {
         return (unigramIDMap.get(new Word(w.toString(), null, false)) != null);

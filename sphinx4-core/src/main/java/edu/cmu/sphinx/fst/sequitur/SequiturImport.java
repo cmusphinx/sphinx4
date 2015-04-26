@@ -190,7 +190,7 @@ public class SequiturImport {
         }
 
         /**
-         * return a first approximation State which does not yet incoroporate
+         * @return a first approximation State which does not yet incoroporate
          * arcs
          */
         public edu.cmu.sphinx.fst.State toUnconnectedOpenFstState() {
@@ -200,6 +200,7 @@ public class SequiturImport {
         /**
          * add arcs to the state now that all states are available as possible
          * targets
+         * @param openFstStates source states
          */
         public void connectStates(List<edu.cmu.sphinx.fst.State> openFstStates) {
             if (arcs != null)

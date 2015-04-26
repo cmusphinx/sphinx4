@@ -28,10 +28,10 @@ public class Edge {
     /**
      * Create an Edge from fromNode to toNode with acoustic and Language Model scores.
      *
-     * @param fromNode
-     * @param toNode
-     * @param acousticScore
-     * @param lmScore
+     * @param fromNode from node
+     * @param toNode to node
+     * @param acousticScore acoustic score
+     * @param lmScore langauge model score
      */
     protected Edge(Node fromNode, Node toNode,
                    double acousticScore, double lmScore) {
@@ -103,8 +103,8 @@ public class Edge {
     /**
      * Internal routine used when dumping a Lattice as an Graphviz file
      *
-     * @param f
-     * @throws IOException
+     * @param f file writer
+     * @throws IOException if error occured
      */
     public void dumpDot(FileWriter f) throws IOException {
         String label = "" + acousticScore + "," + lmScore;

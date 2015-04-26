@@ -52,6 +52,7 @@ public class DiagGmm extends ScoreCachingSenone {
      * Kaldi model uses 32-bit integer to store GMM id while Senone contract
      * imposes long type. This method is present to avaoid type cast when
      * working in the Kaldi domain.
+     * @return the ID of gmm
      */
     public int getId() {
         return id;

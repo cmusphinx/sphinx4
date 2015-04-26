@@ -30,7 +30,7 @@ public abstract class ConfigurableAdapter implements Configurable {
         this.logger = logger;
     }
 
-    /** Returns the configuration name this {@code Configurable}. */
+    /** @return the configuration name this {@code Configurable}. */
     public String getName() {
         // fix null names
         return name != null ? name : getClass().getSimpleName();

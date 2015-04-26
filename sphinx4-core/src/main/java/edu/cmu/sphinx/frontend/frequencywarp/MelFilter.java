@@ -16,7 +16,7 @@ package edu.cmu.sphinx.frontend.frequencywarp;
 
 /**
  * Defines a triangular mel-filter. The {@link edu.cmu.sphinx.frontend.frequencywarp.MelFrequencyFilterBank} creates
- * mel-filters and filters spectrum data using the method {@link #filterOutput(double[]) filterOutput}.
+ * mel-filters and filters spectrum data.
  * <p>
  * A mel-filter is a triangular shaped bandpass filter.  When a mel-filter is constructed, the parameters
  * <code>leftEdge</code>, <code>rightEdge</code>, <code>centerFreq</code>, <code>initialFreq</code>, and
@@ -54,7 +54,7 @@ public class MelFilter {
      * @param rightEdge   the filter's highest passing frequency
      * @param initialFreq the first frequency bin in the pass band
      * @param deltaFreq   the step in the frequency axis between frequency bins
-     * @throws IllegalArgumentException
+     * @throws IllegalArgumentException if input is invalid
      */
     public MelFilter(double leftEdge,
                      double centerFreq,

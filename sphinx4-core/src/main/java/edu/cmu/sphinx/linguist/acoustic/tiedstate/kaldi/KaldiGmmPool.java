@@ -11,6 +11,7 @@ public class KaldiGmmPool extends Pool<Senone> {
 
     /**
      * Constructs new pool of GMMs loading them from the provided parser.
+     * @param parser text parser
      */
     public KaldiGmmPool(KaldiTextParser parser) {
         super("senones");

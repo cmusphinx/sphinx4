@@ -41,11 +41,12 @@ public interface ControlFile extends Configurable {
     public void startUtteranceIterator();
 
 
-    /** Returns whether there is a next utterance. */
+    /** @return whether there is a next utterance. 
+     */
     public boolean hasMoreUtterances();
 
 
-    /** Returns next utterance. */
+    /** @return next utterance. */
     public Utterance nextUtterance();
 
 }

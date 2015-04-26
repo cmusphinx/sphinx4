@@ -23,7 +23,6 @@ import java.util.*;
 /**
  * Loads a grammar from a file representing a finite-state transducer (FST) in the 'ARPA' grammar format. The ARPA FST
  * format is like so (the explanation of the format is below): <br>
- * <p>
  * <pre>
  *  I 2
  *  F 0 2.30259
@@ -53,9 +52,7 @@ import java.util.*;
  *  T 7 0 , , 0.454282
  *  T 7 4 wood wood 1.28093
  *   </pre>
- * <p>
  * <b>Key: </b>
- * <p>
  * <pre>
  *  I - initial node, so &quot;I 2&quot; means node 2 is the initial node
  *  F - final node, e.g., &quot;F 0 2.30259&quot; means that node 0 is a final node,
@@ -66,8 +63,7 @@ import java.util.*;
  *  transition is 1.60951 (in -ln)&quot;. &quot;T 6 0 , , 0.587725&quot; is
  *  a backoff transition, and the output is null (epsilon in
  *  the picture), and the machine is now in the null node.
- *   </pre>
- * <p>
+ *  </pre>
  * Probabilities read in from the FST file are in negative natural log format and are converted to the internal logMath
  * log base.
  * <p>

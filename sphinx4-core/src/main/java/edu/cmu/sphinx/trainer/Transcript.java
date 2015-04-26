@@ -17,19 +17,19 @@ import edu.cmu.sphinx.linguist.dictionary.Dictionary;
 /** Provides mechanisms for accessing an utterance's transcription. */
 public interface Transcript {
 
-    /** Gets the transcript's text */
+    /** @return the transcript's text */
     public String getTranscriptText();
 
 
-    /** Gets the transcript's dictionary. */
+    /** @return the transcript's dictionary. */
     public Dictionary getDictionary();
 
 
-    /** Returns whether the transcript is exact. */
+    /** @return whether the transcript is exact. */
     public boolean isExact();
 
 
-    /** Get the number of words in the transcription. */
+    /** @return the number of words in the transcription. */
     public int numberOfWords();
 
 
@@ -37,10 +37,10 @@ public interface Transcript {
     public void startWordIterator();
 
 
-    /** Return whether there are more words. */
+    /** @return whether there are more words. */
     public boolean hasMoreWords();
 
 
-    /** Returns the next word. */
+    /** @return the next word. */
     public String nextWord();
 }

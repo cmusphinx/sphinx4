@@ -30,7 +30,6 @@ public final class SpeechResult {
     /**
      * Constructs recognition result based on {@link Result} object.
      *
-     * @param scorer confidence scorer
      * @param result recognition result returned by {@link Recognizer}
      */
     public SpeechResult(Result result) {
@@ -54,7 +53,7 @@ public final class SpeechResult {
     }
 
     /**
-     * Returns string representation of the result.
+     * @return string representation of the result.
      */
     public String getHypothesis() {
 	return result.getBestResultNoFiller();

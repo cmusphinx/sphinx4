@@ -156,6 +156,8 @@ public interface Linguist extends Configurable {
      * the counter reaches zero should the actually deallocation be performed.
      * <p>
      * (2) Do nothing in dellocate - just the the GC take care of things
+     *
+     * @throws IOException if an IO error occurs
      */
     public void deallocate() throws IOException;
 }

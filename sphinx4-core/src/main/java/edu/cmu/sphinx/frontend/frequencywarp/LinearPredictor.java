@@ -51,7 +51,7 @@ public class LinearPredictor {
      * Method to compute Linear Prediction Coefficients for a frame of speech. Assumes the following 
      * sign convention:<br> prediction(x[t]) = Sum_i {Ar[i] * x[t-i]}
      *
-     * @param autocor
+     * @param autocor autocorrlation array
      * @return the energy of the frame (alpha in the Levinson recursion)
      */
     public double[] getARFilter(double[] autocor) {

@@ -71,7 +71,7 @@ public class SpeechAligner {
      * @param audioUrl audio file URL to process
      * @param sentenceTranscript cleaned transcript
      * @return List of aligned words with timings
-     * @throws IOException
+     * @throws IOException if IO went wrong
      */
     public List<WordResult> align(URL audioUrl, List<String> sentenceTranscript) throws IOException {
         

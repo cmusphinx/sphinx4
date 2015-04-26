@@ -471,8 +471,10 @@ public class DataUtil {
     }
 
 
-    /** Converts DoubleData object to FloatDatas.
+    /** 
+     * Converts DoubleData object to FloatDatas.
      * @param data data to convert
+     * @return converted data
      */
     public static DoubleData FloatData2DoubleData(FloatData data) {
         int numSamples = data.getValues().length;
@@ -487,8 +489,10 @@ public class DataUtil {
     }
 
 
-    /** Converts FloatData object to DoubleData.
-     *  @param data data to convert
+    /** 
+     * Converts FloatData object to DoubleData.
+     * @param data data to convert
+     * @return converted data
      */
     public static FloatData DoubleData2FloatData(DoubleData data) {
         int numSamples = data.getValues().length;

@@ -59,6 +59,7 @@ public class FeatureFileDumper {
      *            the configuration manager
      * @param frontEndName
      *            the name for the frontend
+     * @throws IOException if error occurred
      */
     public FeatureFileDumper(ConfigurationManager cm, String frontEndName)
             throws IOException {
@@ -75,7 +76,7 @@ public class FeatureFileDumper {
      * 
      * @param inputAudioFile
      *            the input audio file
-     * @throws FileNotFoundException
+     * @throws FileNotFoundException if exception occurred
      */
     public void processFile(String inputAudioFile) throws FileNotFoundException {
         audioSource .setInputStream(new FileInputStream(inputAudioFile));
@@ -137,6 +138,7 @@ public class FeatureFileDumper {
      * 
      * @param outputFile
      *            the binary output file
+     * @throws IOException if error occurred
      */
     public void dumpBinary(String outputFile) throws IOException {
         DataOutputStream outStream = new DataOutputStream(new FileOutputStream(
@@ -157,6 +159,7 @@ public class FeatureFileDumper {
      * 
      * @param outputFile
      *            the ASCII output file
+     * @throws IOException if error occurred
      */
     public void dumpAscii(String outputFile) throws IOException {
         PrintStream ps = new PrintStream(new FileOutputStream(outputFile), true);
@@ -173,9 +176,6 @@ public class FeatureFileDumper {
         ps.close();
     }
 
-    /**
-     * Main program for this dumper.
-     */
     public static void main(String[] argv) {
 
         String configFile = null;

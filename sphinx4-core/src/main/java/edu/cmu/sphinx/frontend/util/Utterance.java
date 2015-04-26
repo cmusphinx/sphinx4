@@ -102,7 +102,7 @@ public class Utterance {
      *
      * @param fileName   the name of the audio file
      * @param fileFormat the audio file format
-     * @throws java.io.IOException
+     * @throws java.io.IOException if IO went wrong
      */
     public void save(String fileName, AudioFileFormat.Type fileFormat)
             throws IOException {

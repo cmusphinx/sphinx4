@@ -129,6 +129,7 @@ public class Stats {
 	 * 
 	 * @param result
 	 *            Result object to collect counts from.
+	 * @throws Exception if something went wrong
 	 */
 	public void collect(SpeechResult result) throws Exception {
 		Token token = result.getResult().getBestToken();

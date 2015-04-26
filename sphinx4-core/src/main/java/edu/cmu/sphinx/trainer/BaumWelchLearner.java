@@ -72,8 +72,7 @@ public class BaumWelchLearner implements Learner {
     }
 
 
-    // Cut and paste from e.c.s.d.Recognizer.java
-    /** Initialize and return the frontend based on the given sphinx properties. */
+    /* Initialize and return the frontend based on the given sphinx properties. */
     protected FrontEnd getFrontEnd() {
         return frontEnd;
     }
@@ -83,7 +82,7 @@ public class BaumWelchLearner implements Learner {
      * Sets the learner to use a utterance.
      *
      * @param utterance the utterance
-     * @throws IOException
+     * @throws IOException if error occurred
      */
     public void setUtterance(Utterance utterance) throws IOException {
         String file = utterance.toString();
@@ -93,10 +92,9 @@ public class BaumWelchLearner implements Learner {
 
 
     /**
-     * Returns a single frame of speech.
+     * Gets a single frame of speech.
      *
-     * @return a feature frame
-     * @throws IOException
+     * @return if success
      */
     private boolean getFeature() {
         try {
@@ -144,7 +142,7 @@ public class BaumWelchLearner implements Learner {
      *
      * @param utterance the current utterance
      * @param graph     the current utterance graph
-     * @throws IOException
+     * @throws IOException if exception occured
      */
     public void initializeComputation(Utterance utterance,
                                       UtteranceGraph graph) throws IOException {

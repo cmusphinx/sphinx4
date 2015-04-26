@@ -45,6 +45,8 @@ public class HMMPool {
      * Constructs a HMMPool object.
      *
      * @param model the model to use for the pool
+     * @param logger the logger for messages
+     * @param unitManager manager for units
      */
     public HMMPool(AcousticModel model, Logger logger, UnitManager unitManager)
     {

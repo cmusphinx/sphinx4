@@ -33,7 +33,6 @@ public class Pronunciation {
      *
      * @param units              represents the pronunciation
      * @param tag                a grammar specific tag
-     * @param wordClassification the classification for this word
      * @param probability        the probability of this pronunciation occurring
      */
     public Pronunciation(Unit[] units,
@@ -49,7 +48,6 @@ public class Pronunciation {
      *
      * @param units              represents the pronunciation
      * @param tag                a grammar specific tag
-     * @param wordClassification the classification for this word
      * @param probability        the probability of this pronunciation occurring
      */
     protected Pronunciation(List<Unit> units,

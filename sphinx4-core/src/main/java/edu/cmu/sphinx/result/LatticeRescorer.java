@@ -33,7 +33,8 @@ public class LatticeRescorer {
     /**
      * Create a new Lattice optimizer
      * 
-     * @param lattice
+     * @param lattice lattice to rescore
+     * @param model language model to rescore
      */
     public LatticeRescorer(Lattice lattice, LanguageModel model) {
         this.lattice = lattice;

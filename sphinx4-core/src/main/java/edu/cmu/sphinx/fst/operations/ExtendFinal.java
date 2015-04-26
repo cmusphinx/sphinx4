@@ -67,6 +67,7 @@ public class ExtendFinal {
 
     /**
      * Undo of the extend operation
+     * @param fst fst to work with
      */
     public static void undo(Fst fst) {
         State f = null;

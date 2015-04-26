@@ -35,7 +35,6 @@ import java.io.IOException;
  * begins, and repeatedly call <code> recognize </code> until Result.isFinal() returns true. Once a final result has
  * been obtained, <code> terminate </code> should be called.
  * <p>
- * <p>
  * All scores and probabilities are maintained in the log math log domain.
  * <p>
  * For information about breadth first search please refer to "Spoken Language Processing", X. Huang, PTR

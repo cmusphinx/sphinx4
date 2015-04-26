@@ -177,7 +177,7 @@ public class SimpleTrainManager implements TrainManager {
      * automatically.
      *
      * @param context the context of this train manager.
-     * @throws IOException
+     * @throws IOException if IO went wrong
      */
     public void trainContextIndependentModels(String context)
             throws IOException {

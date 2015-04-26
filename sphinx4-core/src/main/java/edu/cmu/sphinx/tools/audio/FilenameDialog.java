@@ -118,7 +118,6 @@ public class FilenameDialog extends JDialog {
     }
 
 
-    /** Debug and example use. */
     public static void main(String args[]) {
         JFrame frame = new JFrame();
         frame.setTitle("Debug");

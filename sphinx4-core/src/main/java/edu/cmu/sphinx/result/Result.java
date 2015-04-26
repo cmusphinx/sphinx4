@@ -53,6 +53,7 @@ public class Result {
     /**
      * Creates a result
      * 
+     * @param alternateHypothesisManager hypothesis manager
      * @param activeList
      *            the active list associated with this result
      * @param resultList
@@ -61,6 +62,8 @@ public class Result {
      *            token time in a stream.
      * @param isFinal
      *            if true, the result is a final result
+     * @param wordTokenFirst if word token goes first.
+     * @param toCreateLattice create lattice or not.
      */
     public Result(AlternateHypothesisManager alternateHypothesisManager, ActiveList activeList, List<Token> resultList,
             long collectTime, boolean isFinal, boolean wordTokenFirst, boolean toCreateLattice) {
@@ -80,6 +83,8 @@ public class Result {
      * @param isFinal
      *            if true, the result is a final result. This means that the
      *            last frame in the speech segment has been decoded.
+     * @param wordTokenFirst if word token goes first.
+     * @param toCreateLattice create lattice or not.
      */
     public Result(ActiveList activeList, List<Token> resultList, long collectTime, boolean isFinal, boolean wordTokenFirst, boolean toCreateLattice) {
         this.activeList = activeList;
@@ -272,6 +277,7 @@ public class Result {
      * 
      * @param text
      *            the text to match
+     * @return best token
      */
     public Token getBestActiveParitalMatchingToken(String text) {
         List<Token> matchingList = findPartialMatchingTokens(text);

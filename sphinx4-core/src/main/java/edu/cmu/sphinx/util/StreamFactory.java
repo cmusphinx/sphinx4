@@ -53,6 +53,7 @@ public class StreamFactory {
      * @param location the URL location of the input data, it can now be a directory or a ZIP file
      * @param file     the file in the given location to obtain the InputStream
      * @return an InputStream of the given file in the given location
+     * @throws IOException if IO went wrong
      */
     public static InputStream getInputStream(String location,
                                              String file) throws
@@ -86,6 +87,7 @@ public class StreamFactory {
      *                 location is given, which means that the <code>argument</code> also specifies the exact location
      * @param file     the file in the given location to obtain the InputStream
      * @return an InputStream of the given file in the given location
+     * @throws IOException if IO went wrong
      */
     public static InputStream getInputStream(String format,
                                              String location,
@@ -163,6 +165,7 @@ public class StreamFactory {
      * @param file     the file in the given location to obtain the OutputStream
      * @param append   if true and saving to a zip file, then file is appended rather than overwritten.
      * @return an OutputStream of the given file in the given location
+     * @throws IOException if IO went wrong
      */
     public static OutputStream getOutputStream(String location,
                                                String file,
@@ -200,6 +203,7 @@ public class StreamFactory {
      * @param file     the file in the given location to obtain the OutputStream
      * @param append   if true and saving to a zip file, then file is appended rather than overwritten.
      * @return an OutputStream of the given file in the given location
+     * @throws IOException if IO went wrong
      */
     public static OutputStream getOutputStream(String format,
                                                String location,
@@ -269,6 +273,7 @@ public class StreamFactory {
      * @param location the URL location of the output data, it can now be a directory or a ZIP file
      * @param file     the file in the given location to obtain the OutputStream
      * @return an OutputStream of the given file in the given location
+     * @throws IOException if IO went wrong
      */
     public static OutputStream getOutputStream(String location,
                                                String file) throws
@@ -303,6 +308,7 @@ public class StreamFactory {
      *                 location
      * @param file     the file in the given location to obtain the OutputStream
      * @return an OutputStream of the given file in the given location
+     * @throws IOException if IO went wrong
      */
     public static OutputStream getOutputStream(String format,
                                                String location,
@@ -322,7 +328,8 @@ public class StreamFactory {
 
 
     /**
-     * Returns the type of the given data source. The current supported types are: <code> StreamFactory.ZIP_FILE
+     * @param sourceName name of the source
+     * @return the type of the given data source. The current supported types are: <code> StreamFactory.ZIP_FILE
      * StreamFactory.DIRECTORY </code>
      */
     public static String resolve(String sourceName) {

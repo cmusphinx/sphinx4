@@ -25,8 +25,6 @@ public class RawWriter {
     private boolean signedData;
 
 
-    /**
-     */
     public RawWriter(OutputStream outputStream,
                      AudioFormat audioFormat) {
         AudioFormat.Encoding encoding = audioFormat.getEncoding();
@@ -46,7 +44,8 @@ public class RawWriter {
     /**
      * Writes the sample to the output stream.
      *
-     * @throws java.io.IOException
+     * @param sample sampel value
+     * @throws java.io.IOException if IO went wrong
      */
     public void writeSample(int sample) throws IOException {
         /* First byte contains the byte that carries the sign.

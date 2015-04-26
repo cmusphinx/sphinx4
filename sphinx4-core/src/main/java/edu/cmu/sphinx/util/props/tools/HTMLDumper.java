@@ -20,6 +20,7 @@ public class HTMLDumper {
     /**
      * Dumps the config as a set of HTML tables
      *
+     * @param ConfigurationManager the manager
      * @param path where to output the HTML
      * @throws java.io.IOException if an error occurs
      */
@@ -63,6 +64,7 @@ public class HTMLDumper {
      *
      * @param out  where to dump the HTML
      * @param name the name of the component to dump
+     * @param properties properties to dump
      */
     public static void dumpComponentAsHTML(PrintStream out, String name, PropertySheet properties) {
         out.println("<table border=1>");

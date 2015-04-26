@@ -5,10 +5,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * A custom thread factory, able to create threads with custom name prefix, daemon-ness and priority.
- * Based on java.util.concurrent.Executors.DefaultThreadFactory.
+ * Based on java.util.concurrent.ThreadFactory.
  *
  * @author Yaniv Kunda
- * @see java.util.concurrent.Executors.DefaultThreadFactory
+ * @see java.util.concurrent.ThreadFactory
  */
 public class CustomThreadFactory implements ThreadFactory {
     static final AtomicInteger poolNumber = new AtomicInteger(1);

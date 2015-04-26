@@ -59,7 +59,11 @@ public class Utils {
     }
 
 
-    /** Converts a byte array to a signed short value. */
+    /** Converts a byte array to a signed short value. 
+      * @param bytes array to convert
+      * @param bigEndian is big endian
+      * @return converted value
+      */
     static public short toShort(byte[] bytes, boolean bigEndian) {
         if (bytes.length == 1) {
             return bytes[0];
@@ -71,7 +75,11 @@ public class Utils {
     }
 
 
-    /** Converts a byte array into an unsigned short. */
+    /** Converts a byte array into an unsigned short.
+      * @param bytes array to convert
+      * @param bigEndian is big endian
+      * @return converted value
+      */
     static public int toUnsignedShort(byte[] bytes, boolean bigEndian) {
         if (bytes.length == 1) {
             return 0xff & bytes[0];
@@ -83,7 +91,11 @@ public class Utils {
     }
 
 
-    /** Converts a short into a byte array. */
+    /** Converts a short into a byte array.
+      * @param sVal source value
+      * @param bytes array to convert
+      * @param bigEndian is big endian
+      */
     public static void toBytes(short sVal, byte[] bytes, boolean bigEndian) {
         if (bigEndian) {
             bytes[0] = (byte) (sVal >> 8);
@@ -102,8 +114,6 @@ public class Utils {
      * @param format    the audio format
      * @param byteArray the byte array
      * @return a short
-     * @throws java.lang.ArrayIndexOutOfBoundsException if index goes out of bounds
-     *
      */
     public static short bytesToShort(AudioFormat format,
                                      byte[] byteArray) {
@@ -135,6 +145,9 @@ public class Utils {
      * Turns the AudioInputStream into a 16bit, SIGNED_PCM, little endian audio stream that preserves the original sample
      * rate of the AudioInputStream.  NOTE:  this assumes the frame size can be only 1 or 2 bytes.  The AudioInputStream
      * is left in a state of having all of its data being read.
+     * @param ais stream to convert
+     * @return result array
+     * @throws IOException if error occurred
      */
     static public short[] toSignedPCM(AudioInputStream ais)
             throws IOException {
@@ -158,6 +171,7 @@ public class Utils {
      *
      * @param filename the file containing audio data
      * @return the audio data or null if the audio cannot be parsed
+     * @throws IOException if error occured
      */
     static public AudioData readAudioFile(String filename) throws IOException {
         try {
@@ -178,6 +192,7 @@ public class Utils {
      *
      * @param filename the file containing audio data
      * @return the audio data or null if the audio cannot be parsed
+     * @throws IOException if exception occurred
      */
     static public AudioData readRawFile(String filename)
             throws IOException {
@@ -193,7 +208,11 @@ public class Utils {
     }
 
 
-    /** Writes the given 8kHz 16-bit signed PCM audio clip to the given file as raw little endian data. */
+    /** Writes the given 8kHz 16-bit signed PCM audio clip to the given file as raw little endian data.
+     * @param audio data
+     * @param filename filename to write to
+     * @throws IOException if IO went wrong
+     */
     static public void writeRawFile(AudioData audio, String filename)
             throws IOException {
 

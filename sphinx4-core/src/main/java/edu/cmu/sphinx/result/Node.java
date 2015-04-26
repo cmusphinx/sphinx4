@@ -28,7 +28,6 @@ import java.util.*;
  * and set the beginning and end frames of the word via the getBeginTime and getEndTime methods. When setting these
  * times, the beginning time must be earlier or equal to the end time, otherwise an error will be thrown. </p>
  * <p>
- * <p>
  * The posterior probability of any word in a word lattice is the probability that the node representing that word
  * occurs on any path through the lattice. It is usually computed as the ratio of the total likelihood scores of all
  * paths through the lattice that pass through the node, to the total likelihood score of all paths through the lattice.
@@ -78,10 +77,10 @@ public class Node {
     /**
      * Create a new Node with given ID. Used when creating a Lattice from a .LAT file
      *
-     * @param id
-     * @param word
-     * @param beginTime
-     * @param endTime
+     * @param id id of the node
+     * @param word word
+     * @param beginTime begin time
+     * @param endTime end time
      */
     protected Node(String id, Word word, long beginTime, long endTime) {
         this.id = id;
@@ -110,7 +109,7 @@ public class Node {
     /**
      * Test if a node has an Edge to a Node
      *
-     * @param n
+     * @param n node to check
      * @return unique Node ID
      */
     protected boolean hasEdgeToNode(Node n) {
@@ -137,7 +136,7 @@ public class Node {
     /**
      * Test is a Node has an Edge from a Node
      *
-     * @param n
+     * @param n node to check
      * @return true if this node has an Edge from n
      */
     protected boolean hasEdgeFromNode(Node n) {
@@ -164,7 +163,7 @@ public class Node {
     /**
      * Test if a Node has all Edges from the same Nodes and another Node.
      *
-     * @param n
+     * @param n node to check
      * @return true if this Node has Edges from the same Nodes as n
      */
     protected boolean hasEquivalentEnteringEdges(Node n) {
@@ -241,7 +240,7 @@ public class Node {
     /**
      * Add an Edge from this Node
      *
-     * @param e
+     * @param e edge to add
      */
     protected void addEnteringEdge(Edge e) {
         enteringEdges.add(e);
@@ -251,7 +250,7 @@ public class Node {
     /**
      * Add an Edge to this Node
      *
-     * @param e
+     * @param e edge to add
      */
     protected void addLeavingEdge(Edge e) {
         leavingEdges.add(e);
@@ -261,7 +260,7 @@ public class Node {
     /**
      * Remove an Edge from this Node
      *
-     * @param e
+     * @param e edge to remove
      */
     protected void removeEnteringEdge(Edge e) {
         enteringEdges.remove(e);
@@ -386,8 +385,8 @@ public class Node {
     /**
      * Internal routine when dumping Lattices as Graphviz files
      * 
-     * @param f
-     * @throws IOException
+     * @param f file writer to store
+     * @throws IOException if error occurred
      */
     public void dumpDot(FileWriter f) throws IOException {
         String posterior = String.valueOf(getPosterior());
@@ -401,8 +400,8 @@ public class Node {
     /**
      * Internal routine used when dumping Lattices as .LAT files
      *
-     * @param f
-     * @throws IOException
+     * @param f print writer to store
+     * @throws IOException if error occurred
      */
     void dump(PrintWriter f) throws IOException {
         f.println("node: " + id + ' ' + word.getSpelling() +

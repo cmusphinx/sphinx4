@@ -429,8 +429,11 @@ public class JSGFRuleGrammar {
         }
     }
 
-    /** Resolve the given rule. 
+    /** 
+     * Resolve the given rule. 
+     * 
      * @param r rule to resolve
+     * @throws JSGFGrammarException if something occurs
      **/
     protected void resolveRule(JSGFRule r) throws JSGFGrammarException {
 

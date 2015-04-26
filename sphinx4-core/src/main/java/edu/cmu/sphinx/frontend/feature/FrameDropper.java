@@ -44,9 +44,8 @@ public class FrameDropper extends BaseDataProcessor {
     private int id;   // first frame has ID "0", second "1", etc.
 
     /**
-     *
-     * @param dropEveryNthFrame
-     * @param replaceNthWithPrevious
+     * @param dropEveryNthFrame frame count to drop
+     * @param replaceNthWithPrevious replace each nth frame with previous
      */
     public FrameDropper( int dropEveryNthFrame, boolean replaceNthWithPrevious ) {
         initLogger();

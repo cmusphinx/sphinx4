@@ -123,8 +123,7 @@ public final class LogMath {
     /**
      * The property that controls whether we use the old, slow (but correct)
      * method of performing the LogMath.add by doing the actual computation.
-     *
-     * @throws IllegalStateException if LogMath instance has been already got
+     * @param useTable to configure table lookups
      */
     public static void setUseTable(boolean useTable) {
         synchronized(LogMath.class) {
@@ -248,16 +247,16 @@ public final class LogMath {
      * @param logSource  log value whose base is sourceBase
      * @param sourceBase the base of the log the source
      * @param resultBase the base to convert the source log to
-     * @throws IllegalArgumentException
+     * @return converted value
+     * @throws IllegalArgumentException if arguments out of bounds
      */
-    //  [[[ TODO: This is slow, but it probably doesn't need
-    //  to be too fast ]]]
-    // [ EBG: it can be made more efficient if one of the bases is
-    // Math.E. So maybe we should consider two functions logToLn and
-    // lnToLog instead of a generic function like this??
-    //
     public static float logToLog(float logSource, float sourceBase,
                                  float resultBase) throws IllegalArgumentException {
+        //  TODO: This is slow, but it probably doesn't need
+	//  to be too fast.
+        // It can be made more efficient if one of the bases is
+        // Math.E. So maybe we should consider two functions logToLn and
+        // lnToLog instead of a generic function like this??
         float lnSourceBase = (float) Math.log(sourceBase);
         float lnResultBase = (float) Math.log(resultBase);
         return (logSource * lnSourceBase / lnResultBase);
@@ -266,6 +265,7 @@ public final class LogMath {
     /**
      * Converts the source, which is a number in base Math.E, to a log value which base is the LogBase of this LogMath.
      *
+     * @return converted value
      * @param logSource the number in base Math.E to convert
      */
     public final float lnToLog(float logSource) {
@@ -275,6 +275,7 @@ public final class LogMath {
     /**
      * Converts the source, which is a number in base 10, to a log value which base is the LogBase of this LogMath.
      *
+     * @return converted value
      * @param logSource the number in base Math.E to convert
      */
     public final float log10ToLog(float logSource) {
@@ -285,6 +286,7 @@ public final class LogMath {
      * Converts the source, whose base is the LogBase of this LogMath, to a log value which is a number in base Math.E.
      *
      * @param logSource the number to convert to base Math.E
+     * @return converted value
      */
     public final float logToLn(float logSource) {
         return logSource * naturalLogBase;
@@ -296,7 +298,7 @@ public final class LogMath {
      *
      * @param linearValue the value to be converted to log scale
      * @return the value in log scale
-     * @throws IllegalArgumentException
+     * @throws IllegalArgumentException if value out of range
      */
     public final float linearToLog(double linearValue)
             throws IllegalArgumentException {
@@ -313,7 +315,8 @@ public final class LogMath {
         return Math.exp(logToLn(logValue));
     }
 
-    /** Returns the actual log base. */
+    /** @return the actual log base. 
+     */
     public final float getLogBase() {
         return logBase;
     }
@@ -336,7 +339,9 @@ public final class LogMath {
         // return ((1.0f / Math.log(10.0f)) * Math.log(value));
     }
 
-    /** Converts a vector from linear domain to log domain using a given <code>LogMath</code>-instance for conversion. */
+    /** Converts a vector from linear domain to log domain using a given <code>LogMath</code>-instance for conversion. 
+     * @param vector to convert in-place
+     */
     public void linearToLog(float[] vector) {
         int nbGaussians = vector.length;
         for (int i = 0; i < nbGaussians; i++) {
@@ -345,7 +350,10 @@ public final class LogMath {
     }
 
 
-    /** Converts a vector from log to linear domain using a given <code>LogMath</code>-instance for conversion. */
+    /** Converts a vector from log to linear domain using a given <code>LogMath</code>-instance for conversion. 
+     * @param vector to convert
+     * @param out result
+     */
     public void logToLinear(float[] vector, float[] out) {
         for (int i = 0; i < vector.length; i++) {
             out[i] = (float)logToLinear(vector[i]);

@@ -110,7 +110,10 @@ public class NISTAlign {
     private boolean showAlignedResults;
 
 
-    /** Creates a new NISTAlign object. */
+    /** Creates a new NISTAlign object. 
+     * @param showResults show decoding result
+     * @param showAlignedResults show alignment
+     */
     public NISTAlign(boolean showResults, boolean showAlignedResults) {
         this.showResults = showResults;
         this.showAlignedResults = showAlignedResults;
@@ -922,8 +925,8 @@ public class NISTAlign {
     }
 
 
-    /**
-     * Take two filenames -- the first contains a list of reference sentences, the second contains a list of hypothesis
+    /*
+     * Takes two filenames -- the first contains a list of reference sentences, the second contains a list of hypothesis
      * sentences. Aligns each pair of sentences and outputs the individual and total results.
      */
     public static void main(String args[]) {

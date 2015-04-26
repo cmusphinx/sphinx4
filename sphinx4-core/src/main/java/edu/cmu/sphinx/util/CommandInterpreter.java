@@ -95,7 +95,7 @@ public class CommandInterpreter extends Thread {
     }
 
 
-    /** Returns the Socket this CommandInterpreter uses. */
+    /** @return the Socket this CommandInterpreter uses. */
     public Socket getSocket() {
         return socket;
     }
@@ -430,8 +430,8 @@ public class CommandInterpreter extends Thread {
      * Execute the given command.
      *
      * @param args command args, args[0] contains name of cmd.
+     * @return result string
      */
-
     protected String execute(String[] args) {
         String response = "";
 
@@ -456,6 +456,7 @@ public class CommandInterpreter extends Thread {
      * Execute the given command string.
      *
      * @param cmdString the command string.
+     * @return result string
      */
     public String execute(String cmdString) {
         if (trace) {
@@ -682,8 +683,6 @@ public class CommandInterpreter extends Thread {
         return out;
     }
 
-
-    /** manual tester for the command interpreter. */
 
     public static void main(String[] args) {
         CommandInterpreter ci = new CommandInterpreter();

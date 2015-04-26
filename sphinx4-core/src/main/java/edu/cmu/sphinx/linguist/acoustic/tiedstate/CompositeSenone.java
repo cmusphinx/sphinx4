@@ -39,6 +39,7 @@ public class CompositeSenone extends ScoreCachingSenone {
      * a factory method that creates a CompositeSenone from a list of senones.
      *
      * @param senoneCollection the Collection of senones
+     * @param weight weigth
      * @return a composite senone
      */
     public static CompositeSenone create(Collection<Senone> senoneCollection,
@@ -51,6 +52,7 @@ public class CompositeSenone extends ScoreCachingSenone {
      * Constructs a CompositeSenone given the set of constituent senones
      *
      * @param senones the set of constituent senones
+     * @param weight weigth for composition
      */
     public CompositeSenone(Senone[] senones, float weight) {
         this.senones = senones;
