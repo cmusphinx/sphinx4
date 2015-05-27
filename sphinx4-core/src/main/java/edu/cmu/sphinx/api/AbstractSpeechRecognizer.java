@@ -67,7 +67,7 @@ public class AbstractSpeechRecognizer {
     }
 
     public void setTransform(Transform transform) {
-        if (clusters != null) {
+        if (clusters != null && transform != null) {
             context.getLoader().update(transform, clusters);
         }
     }

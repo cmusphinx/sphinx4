@@ -392,7 +392,6 @@ public class OutOfGrammarGraph {
         }
 
 
-		@Override
 		public float[] getComponentScore(Data data) {
 			return hmmState.calculateComponentScore(data);
 		}

@@ -1277,7 +1277,6 @@ public class Sphinx3Loader implements Loader {
         return props;
     }
 
-    @Override
     public void update(Transform transform, ClusteredDensityFileData clusters) {
         for (int index = 0; index < meansPool.size(); index++) {
             int transformClass = clusters.getClassIndex(index);

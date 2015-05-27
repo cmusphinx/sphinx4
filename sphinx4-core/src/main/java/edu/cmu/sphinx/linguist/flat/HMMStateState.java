@@ -96,7 +96,6 @@ public class HMMStateState extends SentenceHMMState
     }
 
 
-	@Override
 	public float[] getComponentScore(Data feature) {
 		return hmmState.calculateComponentScore(feature);
 	}

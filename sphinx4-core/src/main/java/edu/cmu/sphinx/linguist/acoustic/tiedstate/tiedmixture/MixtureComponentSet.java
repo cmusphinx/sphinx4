@@ -260,7 +260,6 @@ public class MixtureComponentSet {
     
     private Comparator<PrunableMixtureComponent> componentComparator = new Comparator<PrunableMixtureComponent>() {
 
-        @Override
         public int compare(PrunableMixtureComponent a, PrunableMixtureComponent b) {
             return (int)(a.getStoredScore() - b.getStoredScore());
         }

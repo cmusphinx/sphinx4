@@ -1466,7 +1466,6 @@ public class AFlatLinguist implements Linguist, Configurable {
 			return hmmState.getScore(data);
 		}
 
-		@Override
 		public float[] getComponentScore(Data data) {
 			return hmmState.calculateComponentScore(data);
 		}

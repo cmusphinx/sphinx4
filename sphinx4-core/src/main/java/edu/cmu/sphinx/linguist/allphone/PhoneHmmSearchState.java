@@ -96,12 +96,10 @@ public class PhoneHmmSearchState implements SearchState, SearchStateArc, ScorePr
         return 2;
     }
 
-    @Override
     public float getScore(Data data) {
         return state.getScore(data);
     }
 
-    @Override
     public float[] getComponentScore(Data feature) {
         return state.calculateComponentScore(feature);
     }

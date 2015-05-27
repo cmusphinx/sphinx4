@@ -1316,7 +1316,6 @@ public class LexTreeLinguist implements Linguist {
             return hmmState.getScore(data);
         }
 
-       @Override
        public float[] getComponentScore(Data feature) {
             return hmmState.calculateComponentScore(feature);
 		}

@@ -392,8 +392,6 @@ public class PhoneLoop {
 			return hmmState.getScore(feature);
 		}
 
-
-		@Override
 		public float[] getComponentScore(Data feature) {
 			return hmmState.calculateComponentScore(feature);
 		}

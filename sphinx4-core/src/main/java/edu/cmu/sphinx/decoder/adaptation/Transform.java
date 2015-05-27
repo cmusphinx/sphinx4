@@ -46,10 +46,13 @@ public class Transform {
     /**
      * Writes the transformation to file in a format that could further be used
      * in Sphinx3 and Sphinx4.
-     *
-     * @param filePath path to store transform matrix
-     * @param index index of transform to store 
-     * @throws Exception if something went wrong
+     * 
+     * @param filePath
+     *            path to store transform matrix
+     * @param index
+     *            index of transform to store
+     * @throws Exception
+     *             if something went wrong
      */
     public void store(String filePath, int index) throws Exception {
         PrintWriter writer = new PrintWriter(filePath, "UTF-8");
@@ -89,8 +92,7 @@ public class Transform {
      * Used for computing the actual transformations (A and B matrices). These
      * are stored in As and Bs.
      */
-    private void computeMllrTransforms(double[][][][][] regLs,
-            double[][][][] regRs) {
+    private void computeMllrTransforms(double[][][][][] regLs, double[][][][] regRs) {
         int len;
         DecompositionSolver solver;
         RealMatrix coef;
@@ -124,8 +126,10 @@ public class Transform {
     /**
      * Read the transformation from a file
      * 
-     * @param filePath file path to load transform
-     * @throws Exception if something went wrong
+     * @param filePath
+     *            file path to load transform
+     * @throws Exception
+     *             if something went wrong
      */
     public void load(String filePath) throws Exception {
 
@@ -134,9 +138,9 @@ public class Transform {
         int[] vectorLength = new int[1];
 
         nMllrClass = input.nextInt();
-        
+
         assert nMllrClass == 1;
-        
+
         numStreams = input.nextInt();
 
         this.As = new float[nMllrClass][][][];

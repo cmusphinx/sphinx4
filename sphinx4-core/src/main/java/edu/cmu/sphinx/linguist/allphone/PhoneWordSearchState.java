@@ -34,7 +34,6 @@ public class PhoneWordSearchState extends PhoneNonEmittingSearchState implements
         return true;
     }
 
-    @Override
     public Pronunciation getPronunciation() {
         Unit[] pronUnits = new Unit[1];
         pronUnits[0] = unit;
@@ -43,7 +42,6 @@ public class PhoneWordSearchState extends PhoneNonEmittingSearchState implements
         return p;
     }
     
-    @Override
     public boolean isWordStart() {
         return false;
     }
