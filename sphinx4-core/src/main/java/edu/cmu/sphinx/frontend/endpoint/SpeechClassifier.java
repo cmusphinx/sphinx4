@@ -247,7 +247,7 @@ public class SpeechClassifier extends AbstractVoiceActivityDetector {
      * @return signal to noise ratio
      */
     public double getSNR () {
-        double snr = (totalBackgroundLevel / backgroundFrames - totalSpeechLevel / speechFrames);
+        double snr = (totalSpeechLevel / speechFrames) - (totalBackgroundLevel / backgroundFrames);
         logger.fine ("Background " + totalBackgroundLevel / backgroundFrames);
         logger.fine ("Speech " + totalSpeechLevel / speechFrames);
         logger.fine ("SNR is " + snr);
@@ -257,11 +257,11 @@ public class SpeechClassifier extends AbstractVoiceActivityDetector {
     /** 
      * Return the estimation if input data was noisy enough to break
      * recognition. The audio is counted noisy if signal to noise ratio
-     * is less then -20dB.
+     * is less then 20dB.
      * 
      * @return estimation of data being noisy
      */
     public boolean getNoisy () {
-        return (getSNR() > -20);
+        return (getSNR() < 20);
     }
 }
