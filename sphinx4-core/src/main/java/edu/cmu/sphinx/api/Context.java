@@ -22,6 +22,7 @@ import edu.cmu.sphinx.frontend.frequencywarp.MelFrequencyFilterBank2;
 import edu.cmu.sphinx.frontend.util.StreamDataSource;
 import edu.cmu.sphinx.linguist.acoustic.tiedstate.Loader;
 import edu.cmu.sphinx.util.TimeFrame;
+import edu.cmu.sphinx.util.Utilities;
 import edu.cmu.sphinx.util.props.Configurable;
 import edu.cmu.sphinx.util.props.ConfigurationManager;
 
@@ -85,7 +86,7 @@ public class Context {
      */
     public void setAcousticModel(String path) throws IOException {
         setLocalProperty("acousticModelLoader->location", path);
-        setLocalProperty("dictionary->fillerPath", path + "/noisedict");
+        setLocalProperty("dictionary->fillerPath", Utilities.pathJoin(path, "noisedict"));
     }
 
     /**

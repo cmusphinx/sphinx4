@@ -322,6 +322,25 @@ public class Utilities {
         }
         return result;
     }
+    
+    /**
+     * Combines two paths without too much logic only cares about avoiding
+     * double backslashes since they hurt some resource searches.
+     * 
+     * @param path1 First path to join
+     * @param path2 Second path to join
+     * @return combined path
+     */
+    public static String pathJoin(String path1, String path2) {
+        if (path1.length() > 0 && path1.charAt(path1.length() - 1) == '/') {
+            path1 = path1.substring(0, path1.length() - 1);
+        }
+        if (path2.length() > 0 && path2.charAt(0) == '/') {
+            path2 = path2.substring(1);
+        }
+        return path1 + "/" + path2;
+    }
+    
 }
 
   

@@ -230,7 +230,7 @@ public class Sphinx3Loader implements Loader {
     // for the files.
     protected InputStream getDataStream(String path) throws IOException,
             URISyntaxException {
-        return new URL(location, path).openStream();
+        return new URL(Utilities.pathJoin(location.toString(), path)).openStream();
     }
 
     public void load() throws IOException {
@@ -249,7 +249,7 @@ public class Sphinx3Loader implements Loader {
 
             // do the actual acoustic model loading
             try {
-                loadModelFiles("mdef");
+                loadModelFiles();
             } catch (URISyntaxException e) {
                 throw new RuntimeException(e);
             }
@@ -289,18 +289,12 @@ public class Sphinx3Loader implements Loader {
 
     /**
      * Loads the AcousticModel from a directory in the file system.
-     * 
-     * @param modelDef
-     *            the name of the acoustic modelDef; if null we just load from
-     *            the default location
      * @throws IOException IO went wrong
      * @throws URISyntaxException uri was incorrectly specified
      */
-    protected void loadModelFiles(String modelDef) throws IOException,
+    protected void loadModelFiles() throws IOException,
             URISyntaxException {
-
-        logger.config("Loading Sphinx3 acoustic model: " + modelDef);
-
+        
         meansPool = loadDensityFile("means", -Float.MAX_VALUE);
         variancePool = loadDensityFile("variances",
                 varianceFloor);
@@ -779,8 +773,6 @@ public class Sphinx3Loader implements Loader {
      *            if true, loads also the context dependent units
      * @param inputStream
      *            the open input stream to use
-     * @param path
-     *            the path to a density file
      * @throws FileNotFoundException
      *             if a file cannot be found
      * @throws IOException
