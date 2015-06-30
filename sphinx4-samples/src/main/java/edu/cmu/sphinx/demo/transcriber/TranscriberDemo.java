@@ -41,7 +41,7 @@ public class TranscriberDemo {
         configuration
                 .setDictionaryPath("resource:/edu/cmu/sphinx/models/en-us/cmudict-en-us.dict");
         configuration
-                .setLanguageModelPath("resource:/edu/cmu/sphinx/models/en-us/en-us.lm.dmp");
+                .setLanguageModelPath("resource:/edu/cmu/sphinx/models/en-us/en-us.lm.bin");
 
         StreamSpeechRecognizer recognizer = new StreamSpeechRecognizer(
                 configuration);

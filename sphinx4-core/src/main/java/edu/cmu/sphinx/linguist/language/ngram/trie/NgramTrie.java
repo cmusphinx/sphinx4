@@ -125,7 +125,7 @@ public class NgramTrie {
      * Calculates pivot for binary search
      */
     private int calculatePivot(int offset, int range, int width) {
-    	return (offset * width) / (range + 1);
+    	return (int)(((long)offset * width) / (range + 1));
     }
 
     /**

@@ -5,6 +5,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -105,6 +106,7 @@ public class NgramTrieModel implements LanguageModel {
     // Trie structure
     //-----------------------------
     protected TrieUnigram[] unigrams;
+    protected String[] words;
     protected NgramTrieQuant quant;
     protected NgramTrie trie;
 
@@ -167,7 +169,7 @@ public class NgramTrieModel implements LanguageModel {
      * 
      * @param dictionary
      * */
-    private void buildUnigramIDMap(Dictionary dictionary, String[] words) {
+    private void buildUnigramIDMap() {
         int missingWords = 0;
         if (unigramIDMap == null)
             unigramIDMap = new HashMap<Word, Integer>();
@@ -205,10 +207,15 @@ public class NgramTrieModel implements LanguageModel {
         if (ngramLogFile != null)
             logFile = new PrintWriter(new FileOutputStream(ngramLogFile));
         BinaryLoader loader;
-        try {
-            loader = new BinaryLoader(new File(location.toURI()));
-        } catch (Exception ex) {
-            loader = new BinaryLoader(new File(location.getPath()));
+        if (location.getProtocol() == null
+                || location.getProtocol().equals("file")) {
+            try {
+                loader = new BinaryLoader(new File(location.toURI()));
+            } catch (Exception ex) {
+                loader = new BinaryLoader(new File(location.getPath()));
+            }
+        } else {
+            loader = new BinaryLoader(location);
         }
         loader.verifyHeader();
         counts = loader.readCounts();
@@ -223,8 +230,8 @@ public class NgramTrieModel implements LanguageModel {
             loader.readTrieByteArr(trie.getMem());
         }
         //string words can be read here
-        String[] words = loader.readWords(counts[0]);
-        buildUnigramIDMap(dictionary, words);
+        words = loader.readWords(counts[0]);
+        buildUnigramIDMap();
         ngramProbCache = new LRUCache<WordSequence, Float>(ngramCacheSize);
         loader.close();
         TimerPool.getTimer(this, "Load LM").stop();
@@ -378,11 +385,7 @@ public class NgramTrieModel implements LanguageModel {
      */
     @Override
     public Set<String> getVocabulary() {
-        Set<String> vocabulary = new HashSet<String>();
-        if (unigramIDMap != null) {
-            for (Word word : unigramIDMap.keySet())
-                vocabulary.add(word.toString());
-        }
+        Set<String> vocabulary = new HashSet<String>(Arrays.asList(words));
         return Collections.unmodifiableSet(vocabulary);
     }
 

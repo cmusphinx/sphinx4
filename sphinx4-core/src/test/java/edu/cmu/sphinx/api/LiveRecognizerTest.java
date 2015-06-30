@@ -16,7 +16,7 @@ public class LiveRecognizerTest {
 
         configuration.setAcousticModelPath("resource:/edu/cmu/sphinx/models/en-us/en-us");
         configuration.setDictionaryPath("resource:/edu/cmu/sphinx/models/en-us/cmudict-en-us.dict");
-        configuration.setLanguageModelPath("resource:/edu/cmu/sphinx/models/en-us/en-us.lm.dmp");
+        configuration.setLanguageModelPath("resource:/edu/cmu/sphinx/models/en-us/en-us.lm.bin");
 
         StreamSpeechRecognizer recognizer = new StreamSpeechRecognizer(configuration);
         InputStream stream = LiveRecognizerTest.class
@@ -30,7 +30,7 @@ public class LiveRecognizerTest {
         assertEquals("one zero zero zero one", result.getHypothesis());
 
         WordResult word = result.getWords().get(0);
-        assertEquals("{one, 0.685, [820:1060]}", word.toString());
+        assertEquals("{what, 0.776, [820:1080]}", word.toString());
     }
 
 

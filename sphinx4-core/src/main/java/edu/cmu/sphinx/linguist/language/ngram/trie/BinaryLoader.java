@@ -1,9 +1,14 @@
 package edu.cmu.sphinx.linguist.language.ngram.trie;
 
+import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 
 import edu.cmu.sphinx.linguist.language.ngram.trie.NgramTrieModel.TrieUnigram;
 import edu.cmu.sphinx.util.Utilities;
@@ -26,10 +31,26 @@ public class BinaryLoader {
 
     private static final String TRIE_HEADER = "Trie Language Model";
 
-    DataInputStream inStream;
+    private DataInputStream inStream;
 
     public BinaryLoader(File location) throws IOException {
         inStream = new DataInputStream(new FileInputStream(location));
+    }
+
+    private void loadModelData(InputStream stream) throws IOException {
+	DataInputStream dataStream = new DataInputStream(new BufferedInputStream(stream));
+	ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+	byte[] buffer = new byte[4096];
+	while (true) {
+	    if (dataStream.read(buffer) < 0)
+		break;
+	    bytes.write(buffer);
+	}
+	inStream = new DataInputStream(new ByteArrayInputStream(bytes.toByteArray()));
+    }
+
+    public BinaryLoader(URL location) throws IOException {
+        loadModelData(location.openStream());
     }
 
     /**

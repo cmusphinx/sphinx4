@@ -134,7 +134,7 @@ public class Context {
      * Sets path to the language model.
      *
      * Enables probabilistic language model and disables static grammar.
-     * Currently it supports ".lm" and ".dmp" file formats.
+     * Currently it supports ".lm", ".dmp" and ".bin" file formats.
      *
      * @param  path path to the language model file
      * @see   Context#setGrammar(String, String)
