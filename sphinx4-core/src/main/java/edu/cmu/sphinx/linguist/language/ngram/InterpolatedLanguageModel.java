@@ -177,4 +177,9 @@ public class InterpolatedLanguageModel implements LanguageModel {
         }
         return maxDepth;
     }
+
+    @Override
+    public void onUtteranceEnd() {
+    //TODO not implemented
+    }
 }

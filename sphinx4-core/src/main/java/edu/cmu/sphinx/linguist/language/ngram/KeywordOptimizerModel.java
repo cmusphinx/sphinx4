@@ -122,4 +122,9 @@ public class KeywordOptimizerModel implements LanguageModel {
     public Set<String> getVocabulary() {
         return parent.getVocabulary();
     }
+
+    @Override
+    public void onUtteranceEnd() {
+        //TODO not implemented
+    }
 }

@@ -39,7 +39,6 @@ import edu.cmu.sphinx.linguist.dictionary.Pronunciation;
 import edu.cmu.sphinx.linguist.dictionary.Word;
 import edu.cmu.sphinx.linguist.language.grammar.Grammar;
 import edu.cmu.sphinx.linguist.language.ngram.LanguageModel;
-import edu.cmu.sphinx.linguist.language.ngram.large.LargeNGramModel;
 import edu.cmu.sphinx.linguist.util.LRUCache;
 import edu.cmu.sphinx.util.LogMath;
 import edu.cmu.sphinx.util.TimerPool;
@@ -370,9 +369,7 @@ public class LexTreeLinguist implements Linguist {
 
     /** Called after a recognition */
     public void stopRecognition() {
-        // FIXME: remove
-        if (languageModel instanceof LargeNGramModel)
-            ((LargeNGramModel) languageModel).stop();
+        languageModel.onUtteranceEnd();
     }
 
 

@@ -99,4 +99,9 @@ public interface LanguageModel extends Configurable {
      * @return the maximum depth of the language model
      */
     public int getMaxDepth();
+
+    /**
+     * Called on utterance end to clear cache if needed
+     */
+    public void onUtteranceEnd();
 }

@@ -150,6 +150,10 @@ public class Context {
             setLocalProperty("largeTrigramModel->location", path);
             setLocalProperty(
                 "lexTreeLinguist->languageModel", "largeTrigramModel");
+        } else if (path.endsWith(".bin")) {
+            setLocalProperty("trieNgramModel->location", path);
+            setLocalProperty(
+                "lexTreeLinguist->languageModel", "trieNgramModel");
         } else {
             throw new IllegalArgumentException(
                 "Unknown format extension: " + path);

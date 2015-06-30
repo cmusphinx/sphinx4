@@ -152,6 +152,11 @@ public class ClassBasedLanguageModel implements LanguageModel {
         return classLM.getMaxDepth();
     }
 
+    @Override
+    public void onUtteranceEnd() {
+        //TODO not implemented
+    }
+
     /**
      * Converts a vocabulary of the class LM to a word vocabulary.
      */

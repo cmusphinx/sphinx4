@@ -206,6 +206,11 @@ public class SimpleNGramModel implements LanguageModel {
         return Collections.unmodifiableSet(vocabulary);
     }
 
+    @Override
+    public void onUtteranceEnd() {
+        //TODO not implemented
+    }
+
     /**
      * Gets the probability entry for the given word sequence or null if there
      * is no entry

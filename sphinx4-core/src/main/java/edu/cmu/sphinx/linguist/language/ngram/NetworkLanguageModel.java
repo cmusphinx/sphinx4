@@ -167,4 +167,10 @@ public class NetworkLanguageModel implements LanguageModel {
         }
         return result;
     }
+
+    @Override
+    public void onUtteranceEnd() {
+        //TODO not implemented
+    }
+
 }

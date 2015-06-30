@@ -312,8 +312,8 @@ public class LargeNGramModel implements LanguageModel {
         }
     }
 
-    /** Called after a recognition */
-    public void stop() {
+    @Override
+    public void onUtteranceEnd() {
         clearCache();
 
         if (logFile != null) {

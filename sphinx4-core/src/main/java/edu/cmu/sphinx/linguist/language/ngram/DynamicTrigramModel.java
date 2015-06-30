@@ -201,6 +201,11 @@ public class DynamicTrigramModel implements LanguageModel {
         return maxDepth;
     }
 
+    @Override
+    public void onUtteranceEnd() {
+        //TODO not implemented
+    }
+
     public void setText(List<String> sentences) {
         this.sentences = sentences;
     }
