@@ -30,7 +30,6 @@ public class FeatureExtractorTest {
 				.getResourceAsStream("/edu/cmu/sphinx/api/10001-90210-01803.features");
 		Scanner sc = new Scanner(asciiStream);
 		int numDataPoints = sc.nextInt();
-		System.out.println(numDataPoints);
 
 		features = new float[numDataPoints];
 		int i = 0;
@@ -99,3 +98,4 @@ public class FeatureExtractorTest {
 	}
 
 }
+
