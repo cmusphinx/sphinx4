@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
 
 import edu.cmu.sphinx.frontend.Data;
 import edu.cmu.sphinx.frontend.DataEndSignal;
@@ -12,8 +11,6 @@ import edu.cmu.sphinx.frontend.DataProcessingException;
 import edu.cmu.sphinx.frontend.DoubleData;
 import edu.cmu.sphinx.frontend.FloatData;
 import edu.cmu.sphinx.frontend.FrontEnd;
-import edu.cmu.sphinx.frontend.util.StreamDataSource;
-import edu.cmu.sphinx.util.props.ConfigurationManager;
 
 /**
  * Extracts features from input stream
@@ -22,125 +19,120 @@ import edu.cmu.sphinx.util.props.ConfigurationManager;
  * 
  */
 class FeatureExtractor {
-    private FrontEnd frontEnd;
-    private StreamDataSource audioSource;
-    private int featureLength = -1;
 
-    /** The logger for this class */
-    private static final Logger logger = Logger
-            .getLogger("edu.cmu.sphinx.api.FeatureExtractor");
+	private FrontEnd frontEnd;
+	private int featureLength = -1;
 
-    /**
-     * Constructs a FeatureExtractor. 
-     * 
-     * @param cm
-     *            the configuration manager
-     * @param frontEndName
-     *            the name for the frontEnd to be used
-     * @param inputStream
-     * 			  data stream 
-     *            
-     * @throws IOException if error occurred
-     */
-    public FeatureExtractor(ConfigurationManager cm, String frontEndName, InputStream inputStream)
-            throws IOException {
-    
-        if(cm.lookup(frontEndName) == null) {
-        	throw new RuntimeException("No such frontend: " + frontEndName);
-        }
-        
-        frontEnd = (FrontEnd) cm.lookup(frontEndName);
-        audioSource = (StreamDataSource) cm.lookup("streamDataSource");
-        audioSource.setInputStream(inputStream);
-    }
-	
-    /**
-     * Extracts all features from the supplied InputStream. 
-     * 
-     * @return float[][] when called first time, null otherwise 
-     * 
-     * @throws DataProcessinException if error occurred
-     */
-	public float[][] getAllFeatures() throws DataProcessingException {
+	/**
+	 * Constructs a FeatureExtractor.
+	 * 
+	 * @param cm
+	 *            the configuration manager
+	 * @param frontEndName
+	 *            the name for the frontEnd to be used
+	 * @param inputStream
+	 *            data stream
+	 * 
+	 * @throws IOException
+	 *             if error occurred
+	 */
+	public FeatureExtractor(InputStream inputStream, int sampleRate)
+			throws IOException {
+		Configuration configuration = new Configuration();
+
+		configuration
+				.setAcousticModelPath("resource:/edu/cmu/sphinx/models/en-us/en-us");
+		configuration
+				.setDictionaryPath("resource:/edu/cmu/sphinx/models/en-us/cmudict-en-us.dict");
+		configuration
+				.setLanguageModelPath("resource:/edu/cmu/sphinx/models/en-us/en-us.lm.bin");
+
+		Context ctx = new Context(configuration);
+		ctx.setSampleRate(sampleRate);
+		ctx.setSpeechSource(inputStream);
+
+		frontEnd = (FrontEnd) ctx.getInstance(FrontEnd.class);
+	}
+
+	/**
+	 * Extracts all features from the supplied InputStream.
+	 * 
+	 * @return float[][] when called first time, null otherwise
+	 * 
+	 * @throws DataProcessinException
+	 *             if error occurred
+	 */
+	public List<float[]> getAllFeatures() throws DataProcessingException {
 		List<float[]> featureList = new ArrayList<float[]>();
-	
-	    Data feature = frontEnd.getData();
-	    if(feature == null)
-	    	return null;
-	    
-        while (!(feature instanceof DataEndSignal)) {
-            if (feature instanceof DoubleData) {
-                double[] featureData = ((DoubleData) feature).getValues();
-                if (featureLength < 0) {
-                    featureLength = featureData.length;
-                    logger.info("Feature length: " + featureLength);
-                }
-                float[] convertedData = new float[featureData.length];
-                for (int i = 0; i < featureData.length; i++) {
-                    convertedData[i] = (float) featureData[i];
-                }
-                featureList.add(convertedData);
-            } else if (feature instanceof FloatData) {
-                float[] featureData = ((FloatData) feature).getValues();
-                if (featureLength < 0) {
-                    featureLength = featureData.length;
-                    logger.info("Feature length: " + featureLength);
-                }
-                featureList.add(featureData);
-            }
-            feature = frontEnd.getData();
-        }
 
-	     float[][] allFeatures = new float[featureList.size()][];
-	     for(int i=0;i<featureList.size();i++){
-	    	 allFeatures[i] = featureList.get(i);
-	     }
-	     return allFeatures;
-	       
-	} 
-	
-	
-    /**
-     * Extracts a single feature frame from the supplied InputStream. 
-     * 
-     * @return float[] or null if end of stream reached
-     * 
-     * @throws DataProcessinException if error occurred
-     */
-	public float[] getNextFeatureFrame() throws DataProcessingException{
-	    Data feature = frontEnd.getData();
-	    if(feature == null)
-	    	return null;
-	    
-        while (!(feature instanceof DoubleData || feature instanceof FloatData)) {
-        	feature = frontEnd.getData();
-        	if(feature == null)
-        		return null;
-        }
-        
-        
-        if (feature instanceof DoubleData) {
-            double[] featureData = ((DoubleData) feature).getValues();
-            if (featureLength < 0) {
-                featureLength = featureData.length;
-                logger.info("Feature length: " + featureLength);
-            }
-            float[] convertedData = new float[featureData.length];
-            for (int i = 0; i < featureData.length; i++) {
-                convertedData[i] = (float) featureData[i];
-            }
-            return convertedData;
-        } else if (feature instanceof FloatData) {
-            float[] featureData = ((FloatData) feature).getValues();
-            if (featureLength < 0) {
-                featureLength = featureData.length;
-                logger.info("Feature length: " + featureLength);
-            }
-            return featureData;
-        }
-        return null;
+		Data feature = frontEnd.getData();
+		if (feature == null)
+			return null;
 
-	} 
-	
+		while (!(feature instanceof DataEndSignal)) {
+			if (feature instanceof DoubleData) {
+				double[] featureData = ((DoubleData) feature).getValues();
+				if (featureLength < 0) {
+					featureLength = featureData.length;
+				}
+				float[] convertedData = new float[featureData.length];
+				for (int i = 0; i < featureData.length; i++) {
+					convertedData[i] = (float) featureData[i];
+				}
+				featureList.add(convertedData);
+			} else if (feature instanceof FloatData) {
+				float[] featureData = ((FloatData) feature).getValues();
+				if (featureLength < 0) {
+					featureLength = featureData.length;
+				}
+				featureList.add(featureData);
+			}
+			feature = frontEnd.getData();
+		}
+
+		return featureList;
+	}
+
+	/**
+	 * Extracts a single feature frame from the supplied InputStream.
+	 * 
+	 * @return float[] or null if end of stream reached
+	 * 
+	 * @throws DataProcessinException
+	 *             if error occurred
+	 */
+	public float[] getNextFeatureFrame() throws DataProcessingException {
+		Data feature = frontEnd.getData();
+		if (feature == null)
+			return null;
+
+		while (!(feature instanceof DoubleData || feature instanceof FloatData)) {
+			feature = frontEnd.getData();
+			if (feature == null)
+				return null;
+		}
+
+		if (feature instanceof DoubleData) {
+			double[] featureData = ((DoubleData) feature).getValues();
+			if (featureLength < 0) {
+				featureLength = featureData.length;
+			}
+			float[] convertedData = new float[featureData.length];
+			for (int i = 0; i < featureData.length; i++) {
+				convertedData[i] = (float) featureData[i];
+			}
+
+			return convertedData;
+		} else if (feature instanceof FloatData) {
+			float[] featureData = ((FloatData) feature).getValues();
+			if (featureLength < 0) {
+				featureLength = featureData.length;
+			}
+
+			return featureData;
+		}
+
+		return null;
+	}
 
 }
