@@ -1,0 +1,12 @@
+
+description = 'Sphinx4 demo applications'
+
+dependencies {
+  compile project(':sphinx4-core')
+  compile project(':sphinx4-data')
+}
+
+jar {
+    from configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+}
+    
