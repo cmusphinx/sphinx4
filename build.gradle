@@ -1,43 +1,50 @@
-allprojects  {
 
+def getRepositoryUsername() {
+    return hasProperty('mavenUsername') ? mavenUsername : ""
+}
+        
+def getRepositoryPassword() {
+    return hasProperty('mavenPassword') ? mavenPassword : ""
+}
+
+allprojects() {
     group = 'edu.cmu.sphinx'
     version = '5prealpha-SNAPSHOT'
 
     apply plugin: 'java'
     apply plugin: 'maven'
-
+    
     uploadArchives {
         repositories {
             mavenDeployer {
                 repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
-                    authentication(userName: ossrhUsername, password: ossrhPassword)
+                    authentication(userName: getRepositoryUsername(), password: getRepositoryPassword())
                 }
                 snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
-                    authentication(userName: ossrhUsername, password: ossrhPassword)
+                    authentication(userName: getRepositoryUsername(), password: getRepositoryPassword())
                 }
             }
         }
     }
 }
 
-subprojects() {
+subprojects  {
 
     task javadocJar(type: Jar) {
         classifier = 'javadoc'
         from javadoc
     }
-
+    
     task packageSources(type: Jar) {
         classifier = 'sources'
         from sourceSets.main.allSource
     }
+
+    repositories() {
+        mavenCentral()
+    }
   
     artifacts.archives packageSources, javadocJar
-  
-    repositories {
-        mavenLocal()    
-        maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
-    }
   
     dependencies {
         testCompile group: 'org.testng', name: 'testng', version:'6.8.8'
@@ -45,4 +52,5 @@ subprojects() {
     }
   
     test.useTestNG()
+
 }
