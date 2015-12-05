@@ -2,8 +2,8 @@
 description = 'Sphinx4 demo applications'
 
 dependencies {
-  compile project(':sphinx4-core')
-  compile project(':sphinx4-data')
+    compile project(':sphinx4-core')
+    compile project(':sphinx4-data')
 }
 
 jar {

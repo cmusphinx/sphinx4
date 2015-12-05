@@ -2,7 +2,3 @@ rootProject.name = 'sphinx4-parent'
 include ':sphinx4-core'
 include ':sphinx4-data'
 include ':sphinx4-samples'
-
-project(':sphinx4-core').projectDir = "$rootDir/sphinx4-core" as File
-project(':sphinx4-data').projectDir = "$rootDir/sphinx4-data" as File
-project(':sphinx4-samples').projectDir = "$rootDir/sphinx4-samples" as File
