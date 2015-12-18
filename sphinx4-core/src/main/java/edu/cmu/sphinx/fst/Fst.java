@@ -285,7 +285,7 @@ public class Fst {
      * @param in
      *            the ObjectInputStream. It should be already be initialized by
      *            the caller.
-     * @return
+     * @return Created FST
      * @throws IOException
      * @throws ClassNotFoundException
      */

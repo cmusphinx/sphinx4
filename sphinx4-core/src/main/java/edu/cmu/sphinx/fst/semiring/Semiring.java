@@ -86,8 +86,8 @@ public abstract class Semiring implements Serializable {
      * 
      * We define the strict version of this order below.
      * 
-     * @param w1: first operand
-     * @param w2: second operand
+     * @param w1 first operand
+     * @param w2 second operand
      * @return less or more
      */
     public boolean naturalLess(float w1, float w2) {
