@@ -277,7 +277,7 @@ public class NgramTrieModel implements LanguageModel {
      * unused in {@link #getAvailableProb(WordSequence, TrieRange, float) getAvailableProb}
      * Amount of unused words is specified by local variable curDepth
      * @param wordSequence - full word sequence that is scored
-     * @return
+     * @return backoff
      */
     private float getAvailableBackoff(WordSequence wordSequence) {
         float backoff = 0.0f;

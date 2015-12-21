@@ -35,6 +35,8 @@ subprojects() {
 
     compileJava.options.encoding = 'UTF-8'
     javadoc.options.encoding = 'UTF-8'
+    sourceCompatibility = 1.7
+    targetCompatibility = 1.7
 
     task javadocJar(type: Jar) {
         classifier = 'javadoc'
