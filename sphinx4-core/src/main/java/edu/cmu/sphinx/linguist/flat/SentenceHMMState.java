@@ -270,7 +270,7 @@ public abstract class SentenceHMMState implements Serializable, SearchState {
      * @param arc the arc to remove
      */
     void deleteSuccessor(SentenceHMMStateArc arc) {
-        arcs.remove(arc);
+        arcs.values().remove(arc);
     }
 
 

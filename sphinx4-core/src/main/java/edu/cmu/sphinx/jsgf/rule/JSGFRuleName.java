@@ -19,9 +19,9 @@ public class JSGFRuleName extends JSGFRule {
 
 	public String resolvedRuleName;
 
-	public static JSGFRuleName NULL = new JSGFRuleName("NULL");
+	public static final JSGFRuleName NULL = new JSGFRuleName("NULL");
 
-	public static JSGFRuleName VOID = new JSGFRuleName("VOID");
+	public static final JSGFRuleName VOID = new JSGFRuleName("VOID");
 
 	public JSGFRuleName() {
 		this("NULL");

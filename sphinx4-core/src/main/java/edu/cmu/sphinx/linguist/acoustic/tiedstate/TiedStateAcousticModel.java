@@ -544,7 +544,7 @@ public class TiedStateAcousticModel implements AcousticModel {
             properties = new Properties();
             try {
                 properties.load
-                        (getClass().getResource("model.props").openStream());
+                        (TiedStateAcousticModel.class.getResource("model.props").openStream());
             } catch (IOException ioe) {
                 ioe.printStackTrace();
             }

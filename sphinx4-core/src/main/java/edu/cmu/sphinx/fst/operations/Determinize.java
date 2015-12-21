@@ -118,7 +118,7 @@ public class Determinize {
         while (!queue.isEmpty()) {
             ArrayList<Pair<State, Float>> p = queue.remove();
             State pnew = getStateLabel(p, stateMapper);
-            queue.remove(0);
+            //queue.remove(0);
             ArrayList<Integer> labels = getUniqueLabels(fst, p);
             for (int label : labels) {
                 Float wnew = semiring.zero();

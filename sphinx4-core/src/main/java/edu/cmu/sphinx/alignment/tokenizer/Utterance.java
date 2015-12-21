@@ -131,7 +131,7 @@ public class Utterance {
      * @return the item
      */
     public Item getItem(String relation, float time) {
-        Relation segmentRelation = null;
+        Relation segmentRelation = getRelation(relation);
         String pathName = null;
 
         if (relation.equals(Relation.WORD)) {
