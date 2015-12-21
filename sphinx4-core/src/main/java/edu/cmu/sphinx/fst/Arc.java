@@ -155,6 +155,18 @@ public class Arc {
     /*
      * (non-Javadoc)
      * 
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode() {
+        return iLabel + oLabel +
+            (nextState == null ? 0 : nextState.getId()) +
+            Float.floatToIntBits(weight);
+    }
+
+    /*
+     * (non-Javadoc)
+     *
      * @see java.lang.Object#toString()
      */
     @Override

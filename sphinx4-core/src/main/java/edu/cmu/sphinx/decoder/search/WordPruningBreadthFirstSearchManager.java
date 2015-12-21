@@ -146,7 +146,7 @@ public class WordPruningBreadthFirstSearchManager extends TokenSearchManager {
     protected long currentCollectTime; // the current frame number
     protected ActiveList activeList; // the list of active tokens
     protected List<Token> resultList; // the current set of results
-    protected Map<SearchState, Token> bestTokenMap;
+    protected Map<SearchState, Object> bestTokenMap;
     protected AlternateHypothesisManager loserManager;
     private int numStateOrder;
     // private TokenTracker tokenTracker;
@@ -336,7 +336,7 @@ public class WordPruningBreadthFirstSearchManager extends TokenSearchManager {
         if (mapSize == 0) {
             mapSize = 1;
         }
-        bestTokenMap = new HashMap<SearchState, Token>(mapSize, 0.3F);
+        bestTokenMap = new HashMap<SearchState, Object>(mapSize, 0.3F);
     }
 
     /** Terminates a recognition */
@@ -548,7 +548,7 @@ public class WordPruningBreadthFirstSearchManager extends TokenSearchManager {
      * @return the best token
      */
     protected Token getBestToken(SearchState state) {
-        return bestTokenMap.get(state);
+        return (Token) bestTokenMap.get(state);
     }
 
     /**

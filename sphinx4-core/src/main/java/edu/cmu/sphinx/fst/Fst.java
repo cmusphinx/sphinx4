@@ -364,7 +364,7 @@ public class Fst {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.lang.Object#equals(java.lang.Object)
      */
     @Override
@@ -401,13 +401,26 @@ public class Fst {
     /*
      * (non-Javadoc)
      * 
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode() {
+        return Arrays.hashCode(isyms) + Arrays.hashCode(osyms) +
+            (start == null ? 0 : start.hashCode()) +
+            (states == null ? 0 : states.hashCode()) +
+            (semiring == null ? 0 : semiring.hashCode());
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
      * @see java.lang.Object#toString()
      */
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("Fst(start=" + start + ", isyms=" + isyms + ", osyms="
-                + osyms + ", semiring=" + semiring + ")\n");
+        sb.append("Fst(start=" + start + ", isyms=" + Arrays.toString(isyms) +
+                  ", osyms=" + Arrays.toString(osyms) + ", semiring=" + semiring + ")\n");
         int numStates = states.size();
         for (int i = 0; i < numStates; i++) {
             State s = states.get(i);

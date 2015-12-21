@@ -196,7 +196,7 @@ public class JSGFParser implements JSGFParserConstants {
         }
         //
         // Now c[] should have first line of text in UTF-8 format
-        //
+        //        
         String estr = new String(c, 0, i);
         StringTokenizer st = new StringTokenizer(estr, " \u005ct\u005cn\u005cr\u005cf;");
         String id = null;

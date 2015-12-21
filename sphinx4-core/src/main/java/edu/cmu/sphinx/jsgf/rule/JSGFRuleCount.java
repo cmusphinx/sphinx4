@@ -11,9 +11,9 @@ public class JSGFRuleCount extends JSGFRule {
 	protected JSGFRule rule;
 	protected int count;
 
-	public static int OPTIONAL = 2;
-	public static int ONCE_OR_MORE = 3;
-	public static int ZERO_OR_MORE = 4;
+	public static final int OPTIONAL = 2;
+	public static final int ONCE_OR_MORE = 3;
+	public static final int ZERO_OR_MORE = 4;
 
 	public JSGFRuleCount() {
 		setRule(null);

@@ -21,6 +21,9 @@ public final class ConfigurationManagerUtils {
     // this pattern matches strings of the form '${word}'
     private static final Pattern globalSymbolPattern = Pattern.compile("\\$\\{(\\w+)\\}");
 
+    // to prevent losing the changes due to weak references on OpenJDK
+    private static Logger cmRootLogger;
+
     /**
      * A common property (used by all components) that sets the log level for the component.
      */
@@ -141,7 +144,7 @@ public final class ConfigurationManagerUtils {
         // apply the log level (if defined) for the root logger (because we're using package based logging now)
 
         String cmPrefix = getLogPrefix(cm);
-        Logger cmRootLogger = Logger.getLogger(cmPrefix.substring(0, cmPrefix.length() - 1));
+        cmRootLogger = Logger.getLogger(cmPrefix.substring(0, cmPrefix.length() - 1));
 
         // we need to determine the root-level here, because the logManager will reset it
         Level rootLevel = Logger.getLogger("").getLevel();
@@ -660,10 +663,10 @@ public final class ConfigurationManagerUtils {
                 ps.setBoolean(propName, Boolean.valueOf(propValue));
                 break;
             case DOUBLE:
-                ps.setDouble(propName, new Double(propValue));
+                ps.setDouble(propName, Double.parseDouble(propValue));
                 break;
             case INT:
-                ps.setInt(propName, new Integer(propValue));
+                ps.setInt(propName, Integer.parseInt(propValue));
                 break;
             case STRING:
                 ps.setString(propName, propValue);

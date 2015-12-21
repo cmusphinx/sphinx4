@@ -87,7 +87,7 @@ public class NShortestPaths {
                     r[a.getNextState().getId()] = semiring.plus(r[a
                             .getNextState().getId()], semiring.times(rnew,
                             a.getWeight()));
-                    if (!queue.contains(nextState.getId())) {
+                    if (!queue.contains(nextState)) {
                         queue.add(nextState);
                     }
                 }

@@ -11,13 +11,15 @@
 
 package edu.cmu.sphinx.util;
 
+import java.io.Serializable;
+
 /**
  * Provides a set of methods for performing simple math in the log domain.
  *
  * The logarithmic base can be set by the
  * property: <code>edu.cmu.sphinx.util.LogMath.logBase</code>
  */
-public final class LogMath {
+public final class LogMath implements java.io.Serializable {
 
     public static final float LOG_ZERO = -Float.MAX_VALUE;
     public static final float LOG_ONE = 0.f;
