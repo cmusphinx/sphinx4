@@ -206,7 +206,7 @@ public class Convert {
         FileInputStream fis = new FileInputStream(basename + ".fst.txt");
 
         DataInputStream dis = new DataInputStream(fis);
-        BufferedReader br = new BufferedReader(new InputStreamReader(dis));
+        BufferedReader br = new BufferedReader(new InputStreamReader(dis, "UTF-8"));
         boolean firstLine = true;
         String strLine;
         HashMap<Integer, State> stateMap = new HashMap<Integer, State>();

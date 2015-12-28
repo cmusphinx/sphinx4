@@ -478,7 +478,7 @@ public class BinaryLoader {
         stream.readByte(); // read the '\0'
         bytesRead++;
 
-        if (!header.equals(DARPA_TG_HEADER) & !header.equals(DARPA_QG_HEADER) & !Pattern.matches(DARPA_NG_HEADER, header)) {
+        if (!header.equals(DARPA_TG_HEADER) && !header.equals(DARPA_QG_HEADER) && !Pattern.matches(DARPA_NG_HEADER, header)) {
             throw new Error("Bad binary LM file header: " + header);
         }
         else {

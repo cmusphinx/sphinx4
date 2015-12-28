@@ -152,6 +152,14 @@ public class Arc {
         return true;
     }
 
+    @Override
+    public int hashCode() {
+      return 31 * (iLabel + 
+            (31 * (oLabel + 
+            (31 * (nextState == null ? 0 : nextState.getId())
+                   + Float.floatToIntBits(weight)))));
+    }
+
     /*
      * (non-Javadoc)
      * 

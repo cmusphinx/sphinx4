@@ -398,6 +398,15 @@ public class Fst {
         return true;
     }
 
+    @Override
+    public int hashCode() {
+      return 31 * (Arrays.hashCode(isyms) +
+             31 * (Arrays.hashCode(osyms) +
+             31 * ((start == null ? 0 : start.hashCode()) +
+             31 * ((states == null ? 0 : states.hashCode()) +
+             31 * ((semiring == null ? 0 : semiring.hashCode()))))));
+    }
+
     /*
      * (non-Javadoc)
      * 
@@ -406,8 +415,8 @@ public class Fst {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("Fst(start=" + start + ", isyms=" + isyms + ", osyms="
-                + osyms + ", semiring=" + semiring + ")\n");
+        sb.append("Fst(start=" + start + ", isyms=" + Arrays.toString(isyms) + ", osyms="
+                + Arrays.toString(osyms) + ", semiring=" + semiring + ")\n");
         int numStates = states.size();
         for (int i = 0; i < numStates; i++) {
             State s = states.get(i);

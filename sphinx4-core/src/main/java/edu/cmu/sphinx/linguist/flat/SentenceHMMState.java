@@ -270,7 +270,8 @@ public abstract class SentenceHMMState implements Serializable, SearchState {
      * @param arc the arc to remove
      */
     void deleteSuccessor(SentenceHMMStateArc arc) {
-        arcs.remove(arc);
+        // FIXME: iterates over entire collection, can be a performance hit.
+        arcs.values().remove(arc);
     }
 
 

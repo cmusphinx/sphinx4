@@ -131,7 +131,6 @@ public class Utterance {
      * @return the item
      */
     public Item getItem(String relation, float time) {
-        Relation segmentRelation = null;
         String pathName = null;
 
         if (relation.equals(Relation.WORD)) {
@@ -144,9 +143,8 @@ public class Utterance {
         }
 
         PathExtractor path = new PathExtractor(pathName, false);
-
         // get the Item in the Segment Relation with the given time
-        Item segmentItem = getItem(segmentRelation, time);
+        Item segmentItem = getItem(getRelation(relation), time);
 
         if (segmentItem != null) {
             return path.findItem(segmentItem);

@@ -40,7 +40,7 @@ public class PrunableMixtureComponent extends MixtureComponent {
     
     private float convertScore(float val) {
         // Convert to the appropriate base.
-        val = logMath.lnToLog(val);
+        val = LogMath.getLogMath().lnToLog(val);
 
         // TODO: Need to use mean and variance transforms here
 

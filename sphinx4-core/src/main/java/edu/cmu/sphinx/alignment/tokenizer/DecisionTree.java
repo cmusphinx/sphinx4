@@ -182,20 +182,20 @@ public class DecisionTree {
         out.write("rankdir = LR\n");
 
         for (Node n : cart) {
-            out.println("\tnode" + Math.abs(n.hashCode()) + " [ label=\""
+            out.println("\t\"node" + n.hashCode() + "\" [ label=\""
                     + n.toString() + "\", color=" + dumpDotNodeColor(n)
                     + ", shape=" + dumpDotNodeShape(n) + " ]\n");
             if (n instanceof DecisionNode) {
                 DecisionNode dn = (DecisionNode) n;
                 if (dn.qtrue < cart.length && cart[dn.qtrue] != null) {
-                    out.write("\tnode" + Math.abs(n.hashCode()) + " -> node"
-                            + Math.abs(cart[dn.qtrue].hashCode())
-                            + " [ label=" + "TRUE" + " ]\n");
+                    out.write("\t\"node" + n.hashCode() + "\" -> \"node"
+                            + cart[dn.qtrue].hashCode()
+                            + "\" [ label=" + "TRUE" + " ]\n");
                 }
                 if (dn.qfalse < cart.length && cart[dn.qfalse] != null) {
-                    out.write("\tnode" + Math.abs(n.hashCode()) + " -> node"
-                            + Math.abs(cart[dn.qfalse].hashCode())
-                            + " [ label=" + "FALSE" + " ]\n");
+                    out.write("\t\"node" + n.hashCode() + "\" -> \"node"
+                            + cart[dn.qfalse].hashCode()
+                            + "\" [ label=" + "FALSE" + " ]\n");
                 }
             }
         }

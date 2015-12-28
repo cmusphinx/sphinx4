@@ -657,13 +657,13 @@ public final class ConfigurationManagerUtils {
 
         switch (ps.getType(propName)) {
             case BOOLEAN:
-                ps.setBoolean(propName, Boolean.valueOf(propValue));
+                ps.setBoolean(propName, Boolean.parseBoolean(propValue));
                 break;
             case DOUBLE:
-                ps.setDouble(propName, new Double(propValue));
+                ps.setDouble(propName, Double.parseDouble(propValue));
                 break;
             case INT:
-                ps.setInt(propName, new Integer(propValue));
+                ps.setInt(propName, Integer.parseInt(propValue));
                 break;
             case STRING:
                 ps.setString(propName, propValue);
