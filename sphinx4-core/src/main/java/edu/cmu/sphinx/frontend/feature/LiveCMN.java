@@ -40,7 +40,7 @@ import edu.cmu.sphinx.util.props.S4Integer;
  * "Constant Field Values" below to see the actual name of the Sphinx
  * properties.
  * <p>
- * The mean of all the input cepstrum so far is not reestimated for each
+ * The mean of all the input cepstrum so far is not re-estimated for each
  * cepstrum. This mean is recalculated after every
  * {@link #PROP_CMN_SHIFT_WINDOW} cepstra. This mean is estimated by dividing
  * the sum of all input cepstrum so far. After obtaining the mean, the sum is
@@ -108,9 +108,6 @@ public class LiveCMN extends BaseDataProcessor {
     /**
      * Initializes the currentMean and sum arrays with the given cepstrum
      * length.
-     * 
-     * @param cepstrumLength
-     *            the length of the cepstrum
      */
     private void initMeansSums() {
         int size = -1;
@@ -118,33 +115,38 @@ public class LiveCMN extends BaseDataProcessor {
         for (Data data : initialList) {
             if (!(data instanceof DoubleData))
                 continue;
-        
-            double[] cepstrum = ((DoubleData) data).getValues();
-
-            // Initialize arrays if needed
-            if (size < 0) {
-                size = cepstrum.length;
-                sum = new double[size];
-                numberFrame = 0;
-            }
-
-            // Accumulate cepstrum, avoid counting zero energy in CMN
-            if (cepstrum[0] >= 0) {
-                for (int j = 0; j < size; j++) {
-                    sum[j] += cepstrum[j];
-                }
-                numberFrame++;
-            }
+            DoubleData dd = (DoubleData)data;
+            size = addSums(size, dd);
         }
+        updateMeans(size);
+    }
 
+    private void updateMeans(int size) {
         // If we didn't meet any data, do nothing
         if (size < 0)
             return;
-
         currentMean = new double[size];
         for (int j = 0; j < size; j++) {
             currentMean[j] = sum[j] / numberFrame;
         }
+    }
+
+    private int addSums(int size, DoubleData dd) {
+        double[] cepstrum = dd.getValues();
+        // Initialize arrays if needed
+        if (size < 0) {
+            size = cepstrum.length;
+            sum = new double[size];
+            numberFrame = 0;
+        }
+        // Accumulate cepstrum, avoid counting zero energy in CMN
+        if (cepstrum[0] >= 0) {
+            for (int j = 0; j < size; j++) {
+                sum[j] += cepstrum[j];
+            }
+            numberFrame++;
+        }
+        return size;
     }
 
     /**
@@ -167,8 +169,7 @@ public class LiveCMN extends BaseDataProcessor {
             while (initialList.size() < initialCmnWindow) {
                 input = getPredecessor().getData();
                 initialList.add(input);
-                if (input instanceof SpeechEndSignal
-                        || input instanceof DataEndSignal)
+                if (input instanceof SpeechEndSignal || input instanceof DataEndSignal)
                     break;
             }
             initMeansSums();
@@ -189,13 +190,20 @@ public class LiveCMN extends BaseDataProcessor {
      * Normalizes the given Data with using the currentMean array. Updates the
      * sum array with the given Data.
      * 
-     * @param cepstrumObject
-     *            the Data object to normalize
+     * @param data - the Data object to normalize
      */
     private void normalize(Data data) {
 
         if (!(data instanceof DoubleData))
             return;
+
+        // https://github.com/cmusphinx/sphinx4/issues/51
+        if (sum == null) {
+            int size = -1;
+            DoubleData dd = (DoubleData)data;
+            size = addSums(size, dd);
+            updateMeans(size);
+        }
 
         double[] cepstrum = ((DoubleData) data).getValues();
 
