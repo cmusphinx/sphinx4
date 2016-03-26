@@ -169,7 +169,8 @@ public class LiveCMN extends BaseDataProcessor {
             while (initialList.size() < initialCmnWindow) {
                 input = getPredecessor().getData();
                 initialList.add(input);
-                if (input instanceof SpeechEndSignal || input instanceof DataEndSignal)
+                if (input instanceof SpeechEndSignal
+                        || input instanceof DataEndSignal)
                     break;
             }
             initMeansSums();
