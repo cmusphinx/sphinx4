@@ -204,15 +204,19 @@ public class JSGFGrammar extends Grammar {
             Dictionary dictionary) {
         super(showGrammar, optimizeGrammar, addSilenceWords, addFillerWords,
                 dictionary);
-        logMath = LogMath.getLogMath();
         this.baseURL = baseURL;
         this.grammarName = grammarName;
-        loadGrammar = true;
-        logger = Logger.getLogger(getClass().getName());
+        init();
     }
 
     public JSGFGrammar() {
+        init();
+    }
 
+    public void init() {
+        logMath = LogMath.getLogMath();
+        loadGrammar = true;
+        logger = Logger.getLogger(getClass().getName());
     }
 
     /*
