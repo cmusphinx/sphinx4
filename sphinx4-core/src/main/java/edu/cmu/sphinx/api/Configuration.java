@@ -29,6 +29,9 @@ public class Configuration {
     private String grammarPath;
     private String grammarName;
 
+    public static String DEFAULT_CONFIG_XML_PATH = "resource:/edu/cmu/sphinx/api/default.config.xml";
+    private String configXmlPath = DEFAULT_CONFIG_XML_PATH;
+
     private int sampleRate = 16000;
     private boolean useGrammar = false;
 
@@ -135,5 +138,20 @@ public class Configuration {
      */
     public void setSampleRate(int sampleRate) {
         this.sampleRate = sampleRate;
+    }
+
+    /**
+     * @return the configured configuration xml path
+     */
+    public String getConfigXmlPath() {
+        return configXmlPath;
+    }
+
+    /**
+     * Sets the configuration xml path
+     * @param configXmlPath
+     */
+    public void setConfigXmlPath(String configXmlPath) {
+        this.configXmlPath = configXmlPath;
     }
 }

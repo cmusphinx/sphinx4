@@ -43,15 +43,46 @@ public class TranscriberDemo {
         configuration
                 .setLanguageModelPath("resource:/edu/cmu/sphinx/models/en-us/en-us.lm.bin");
 
+        configuration
+                .setConfigXmlPath("resource:/edu/cmu/sphinx/demo/transcriber/not_so_default.config.xml");
+
         StreamSpeechRecognizer recognizer = new StreamSpeechRecognizer(
                 configuration);
         InputStream stream = TranscriberDemo.class
                 .getResourceAsStream("/edu/cmu/sphinx/demo/aligner/10001-90210-01803.wav");
         stream.skip(44);
 
-        // Simple recognition with generic model
+        // Simple recognition with generic model but custom config
         recognizer.startRecognition(stream);
         SpeechResult result;
+        while ((result = recognizer.getResult()) != null) {
+
+            System.out.format("Hypothesis: %s\n", result.getHypothesis());
+
+            System.out.println("List of recognized words and their times:");
+            for (WordResult r : result.getWords()) {
+                System.out.println(r);
+            }
+
+            System.out.println("Best 3 hypothesis:");
+            for (String s : result.getNbest(3))
+                System.out.println(s);
+
+        }
+        recognizer.stopRecognition();
+
+        //Xml config swap
+        configuration.setConfigXmlPath(Configuration.DEFAULT_CONFIG_XML_PATH);
+
+        recognizer = new StreamSpeechRecognizer(
+                configuration);
+
+        stream = TranscriberDemo.class
+                .getResourceAsStream("/edu/cmu/sphinx/demo/aligner/10001-90210-01803.wav");
+        stream.skip(44);
+
+        // Simple recognition with generic model and default config
+        recognizer.startRecognition(stream);
         while ((result = recognizer.getResult()) != null) {
 
             System.out.format("Hypothesis: %s\n", result.getHypothesis());
