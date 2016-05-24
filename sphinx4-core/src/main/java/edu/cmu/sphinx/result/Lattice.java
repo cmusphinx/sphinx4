@@ -159,20 +159,22 @@ public class Lattice {
      */
     public Lattice(Result result) {
         this();
-        visitedWordTokens = new HashSet<Token>();
-        wordTokenFirst = result.getWordTokenFirst();
-        loserManager = result.getAlternateHypothesisManager();
-        if (loserManager != null) {
-            loserManager.purge();
-        }
+        assert result != null;
         Token token = result.getBestFinalToken();
-        assert token != null && token.getWord().isSentenceEndWord();
-        if (terminalNode == null) {
-            terminalNode = new Node(getNodeID(result.getBestToken()), token.getWord(), -1, -1);
+        if (token != null) {
+            assert token.getWord().isSentenceEndWord();
+            terminalNode = new Node(getNodeID(token), token.getWord(), -1, -1);
             initialNode = terminalNode;
             addNode(terminalNode);
+
+            visitedWordTokens = new HashSet<Token>();
+            wordTokenFirst = result.getWordTokenFirst();
+            loserManager = result.getAlternateHypothesisManager();
+            if (loserManager != null) {
+                loserManager.purge();
+            }
+            collapseWordToken(token);
         }
-        collapseWordToken(token);
     }
 
     private TimeFrame getTimeFrameWordTokenFirst(Token token) {
