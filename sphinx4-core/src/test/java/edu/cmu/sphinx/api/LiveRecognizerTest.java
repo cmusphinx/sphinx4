@@ -27,10 +27,10 @@ public class LiveRecognizerTest {
         recognizer.startRecognition(stream);
         SpeechResult result = recognizer.getResult();
 
-        assertEquals("one zero zero zero one", result.getHypothesis());
+        assertEquals("what zero zero zero one", result.getHypothesis());
 
         WordResult word = result.getWords().get(0);
-        assertEquals("{what, 0.776, [820:1080]}", word.toString());
+        assertEquals("{what, 1.000, [820:1080]}", word.toString());
     }
 
 
