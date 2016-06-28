@@ -1,0 +1,5 @@
+#JSGF V1.0;
+
+grammar weights;
+
+public <weights> = (/0.5/ one | /0.5/ zero)* ;

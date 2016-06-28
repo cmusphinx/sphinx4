@@ -204,11 +204,13 @@ public class JSGFGrammar extends Grammar {
             Dictionary dictionary) {
         super(showGrammar, optimizeGrammar, addSilenceWords, addFillerWords,
                 dictionary);
+
+        logger = Logger.getLogger(getClass().getName());
         logMath = LogMath.getLogMath();
+
         this.baseURL = baseURL;
         this.grammarName = grammarName;
         loadGrammar = true;
-        logger = Logger.getLogger(getClass().getName());
     }
 
     public JSGFGrammar() {
@@ -225,10 +227,13 @@ public class JSGFGrammar extends Grammar {
     @Override
     public void newProperties(PropertySheet ps) throws PropertyException {
         super.newProperties(ps);
+        logger = ps.getLogger();
+        logMath = LogMath.getLogMath();
+
         baseURL = ConfigurationManagerUtils.getResource(PROP_BASE_GRAMMAR_URL,
                 ps);
-        logger = ps.getLogger();
         grammarName = ps.getString(PROP_GRAMMAR_NAME);
+
         loadGrammar = true;
     }
 
