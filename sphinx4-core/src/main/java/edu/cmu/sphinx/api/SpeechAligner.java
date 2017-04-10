@@ -10,6 +10,7 @@
 package edu.cmu.sphinx.api;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayDeque;
@@ -113,7 +114,8 @@ public class SpeechAligner {
                     grammar.setWords(text);
                 }
 
-                context.setSpeechSource(audioUrl.openStream(), frame);
+                InputStream stream = audioUrl.openStream();
+                context.setSpeechSource(stream, frame);
 
                 List<WordResult> hypothesis = new ArrayList<WordResult>();
                 Result result;
@@ -147,6 +149,7 @@ public class SpeechAligner {
                     }
                 }
 
+                stream.close();
                 recognizer.deallocate();
             }
 
