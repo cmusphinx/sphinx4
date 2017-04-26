@@ -257,7 +257,7 @@ public class WordPruningBreadthFirstLookaheadSearchManager extends WordPruningBr
         fastmatchActiveList = fastmatchActiveListFactory.newInstance();
         float fastmathThreshold = oldActiveList.getBeamThreshold();
         // TODO more precise range of baseIds, remove magic number
-        float[] frameCiScores = new float[100];
+        float[] frameCiScores = new float[1024];
 
         Arrays.fill(frameCiScores, -Float.MAX_VALUE);
         float frameMaxCiScore = -Float.MAX_VALUE;
