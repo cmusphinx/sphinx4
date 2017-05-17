@@ -1,0 +1,5 @@
+edu.cmu.sphinx.demo.dialog
+edu.cmu.sphinx.demo.transcriber
+edu.cmu.sphinx.demo.aligner
+edu.cmu.sphinx.demo
+edu.cmu.sphinx.demo.speakerid
