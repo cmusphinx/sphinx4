@@ -31,7 +31,7 @@ import edu.cmu.sphinx.linguist.language.grammar.GrammarNode;
 /**
  * Grammar for GrXML W3C Standard
  */
-public class GrXMLGrammar extends JSGFGrammar {
+public class GrXMLGrammar extends JSGFBaseGrammar {
 
     Map<String, JSGFRule> rules;
 
