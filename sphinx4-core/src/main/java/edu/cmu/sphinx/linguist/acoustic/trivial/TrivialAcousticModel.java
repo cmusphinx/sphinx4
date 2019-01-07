@@ -252,9 +252,7 @@ class TrivialHMM implements HMM {
 
 
     /**
-     * Returns the order of the HMM
-     *
-     * @return the order of the HMM
+     * {@inheritDoc}
      */
     public int getOrder() {
         return hmmStates.length;
