@@ -48,6 +48,10 @@ public class Microphone {
         line.stop();
     }
 
+public void closeConnection() {
+	line.close();
+}
+
     public InputStream getStream() {
         return inputStream;
     }
