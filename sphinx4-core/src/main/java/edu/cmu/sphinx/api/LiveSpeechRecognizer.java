@@ -61,9 +61,9 @@ public class LiveSpeechRecognizer extends AbstractSpeechRecognizer {
     }
 
 
-/**
+    /**
      * Stops Recognition process.
-     * 
+     *
      * Closes the Microphone Connection and Data Line is made available for other applications.
      */
 
