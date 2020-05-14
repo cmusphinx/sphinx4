@@ -218,7 +218,7 @@ public class WavWriter extends BaseDataProcessor {
             int val = (int) value;
 
 
-            for (int j = bytesPerValue - 1; j >= 0; j++) {
+            for (int j = bytesPerValue - 1; j >= 0; j--) {
                 byteArray[byteArInd + j] = (byte) (val & 0xff);
                 val = val >> 8;
             }
