@@ -146,7 +146,7 @@ public class SpeechMarker extends BaseDataProcessor {
 
             if (data instanceof DataEndSignal) {
                 if (inSpeech) {
-                    outputQueue.add(new SpeechEndSignal());
+                    outputQueue.add(new SpeechEndSignal(((DataEndSignal)data).getDuration()));
                 }
                 outputQueue.add(data);
                 break;
@@ -174,7 +174,7 @@ public class SpeechMarker extends BaseDataProcessor {
 
                 if (!inSpeech && speechCount == startSpeechFrames) {
                     inSpeech = true;
-                    outputQueue.add(new SpeechStartSignal(cdata.getCollectTime() - speechLeader - startSpeechFrames));
+                    outputQueue.add(new SpeechStartSignal(cdata.getCollectTime() - speechLeader - startSpeechTime));
                     outputQueue.addAll(inputQueue.subList(
                             Math.max(0, inputQueue.size() - startSpeechFrames - speechLeaderFrames), inputQueue.size()));
                     inputQueue.clear();
