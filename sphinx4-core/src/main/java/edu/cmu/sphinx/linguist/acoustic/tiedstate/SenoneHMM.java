@@ -90,9 +90,7 @@ public class SenoneHMM implements HMM {
 
 
     /**
-     * Returns the order of the HMM
-     *
-     * @return the order of the HMM
+     * {@inheritDoc}
      */
     // [[[NOTE: this method is probably not explicitly needed since
     // getSenoneSequence.getSenones().length will provide the same
