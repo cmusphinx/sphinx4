@@ -70,7 +70,10 @@ public class BatchFile {
      */
     public static String getFilename(String batchFileLine) {
         int firstSpace = batchFileLine.indexOf(' ');
-        return batchFileLine.substring(0, firstSpace).trim();
+        if (firstSpace >= 0) {
+            return batchFileLine.substring(0, firstSpace).trim();
+        }
+        return "";
     }
 
 
@@ -87,4 +90,3 @@ public class BatchFile {
     }
 }
 
-  
