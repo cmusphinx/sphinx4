@@ -2,11 +2,11 @@
 description = 'Sphinx4 demo applications'
 
 dependencies {
-    compile project(':sphinx4-core')
-    compile project(':sphinx4-data')
+    implementation project(':sphinx4-core')
+    implementation project(':sphinx4-data')
 }
 
 jar {
-    from configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+    from configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
 }
     
