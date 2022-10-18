@@ -14,20 +14,9 @@ allprojects() {
 
 subprojects() {
     apply plugin: 'java'
-    apply plugin: 'maven'
-    
-    uploadArchives {
-        repositories {
-            mavenDeployer {
-                repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
-                    authentication(userName: getRepositoryUsername(), password: getRepositoryPassword())
-                }
-                snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
-                    authentication(userName: getRepositoryUsername(), password: getRepositoryPassword())
-                }
-            }
-        }
-    }
+    apply plugin: 'maven-publish'
+
+
     
     repositories() {
          mavenCentral()
@@ -35,8 +24,8 @@ subprojects() {
 
     compileJava.options.encoding = 'UTF-8'
     javadoc.options.encoding = 'UTF-8'
-    sourceCompatibility = 1.7
-    targetCompatibility = 1.7
+    sourceCompatibility = 11
+    targetCompatibility = 11
 
     task javadocJar(type: Jar) {
         classifier = 'javadoc'
@@ -47,6 +36,27 @@ subprojects() {
         classifier = 'sources'
         from sourceSets.main.allSource
     }
+
+    publishing {
+        repositories {
+            maven {
+                url = uri("${rootProject.projectDir}/maven-repo")
+            }
+        }
+    }
+
+//    uploadArchives {
+//        repositories {
+//            mavenDeployer {
+//                repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+//                    authentication(userName: getRepositoryUsername(), password: getRepositoryPassword())
+//                }
+//                snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+//                    authentication(userName: getRepositoryUsername(), password: getRepositoryPassword())
+//                }
+//            }
+//        }
+//    }
 
     artifacts.archives packageSources, javadocJar
 }
